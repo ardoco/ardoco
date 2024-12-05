@@ -34,7 +34,7 @@ public class CoreNLPProvider extends NlpInformant {
 
     @Override
     public Text getAnnotatedText(String textName) {
-        this.logger.warn("Returning annotated text ignoring the provided name");
+        this.getLogger().warn("Returning annotated text ignoring the provided name");
         return this.getAnnotatedText();
     }
 

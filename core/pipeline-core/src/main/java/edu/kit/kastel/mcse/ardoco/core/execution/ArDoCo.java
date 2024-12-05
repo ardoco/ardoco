@@ -68,7 +68,7 @@ public final class ArDoCo extends Pipeline {
         classLogger.info("Starting {}", this.projectName);
 
         if (!this.hasPipelineSteps()) {
-            this.logger.error("Pipeline has not been defined and initialized beforehand. Aborting!");
+            this.getLogger().error("Pipeline has not been defined and initialized beforehand. Aborting!");
             return null;
         }
 
@@ -79,7 +79,7 @@ public final class ArDoCo extends Pipeline {
         ArDoCoResult arDoCoResult = new ArDoCoResult(this.getDataRepository());
         saveOutput(this.projectName, outputDir, arDoCoResult);
 
-        if (this.logger.isInfoEnabled()) {
+        if (this.getLogger().isInfoEnabled()) {
             var duration = Duration.between(startTime, endTime);
             long minutesPart = duration.toMinutes();
             int secondsPart = duration.toSecondsPart();

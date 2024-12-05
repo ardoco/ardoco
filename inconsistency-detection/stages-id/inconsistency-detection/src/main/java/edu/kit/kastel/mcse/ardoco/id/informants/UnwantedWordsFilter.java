@@ -41,7 +41,7 @@ public class UnwantedWordsFilter extends Filter {
 
     public UnwantedWordsFilter(DataRepository dataRepository) {
         super(UnwantedWordsFilter.class.getSimpleName(), dataRepository);
-        this.commonBlacklist = loadCommonBlacklist();
+        this.commonBlacklist = this.loadCommonBlacklist();
     }
 
     @Override
@@ -50,9 +50,10 @@ public class UnwantedWordsFilter extends Filter {
         var recommendedInstances = inconsistencyState.getRecommendedInstances();
 
         for (var recommendedInstance : recommendedInstances) {
-            boolean shallBeFiltered = checkRecommendedInstance(recommendedInstance);
-            if (!shallBeFiltered)
+            boolean shallBeFiltered = this.checkRecommendedInstance(recommendedInstance);
+            if (!shallBeFiltered) {
                 recommendedInstancesToKeep.add(recommendedInstance);
+            }
         }
 
         inconsistencyState.setRecommendedInstances(recommendedInstancesToKeep);
@@ -61,9 +62,10 @@ public class UnwantedWordsFilter extends Filter {
     private boolean checkRecommendedInstance(RecommendedInstance recommendedInstance) {
         for (var nounMapping : recommendedInstance.getNameMappings()) {
             // apply heuristics
-            if (referenceContainsUnwantedWord(nounMapping) || referenceContainsPluralWord(nounMapping) || referenceContainsOnlyNumbers(
-                    nounMapping) || referenceEndsWithFileEnding(nounMapping))
+            if (this.referenceContainsUnwantedWord(nounMapping) || referenceContainsPluralWord(nounMapping) || referenceContainsOnlyNumbers(nounMapping) || this
+                    .referenceEndsWithFileEnding(nounMapping)) {
                 return true;
+            }
         }
         return false;
     }
@@ -72,10 +74,7 @@ public class UnwantedWordsFilter extends Filter {
         var referenceWords = nounMapping.getReferenceWords();
         for (var referenceWord : referenceWords) {
             var lemma = referenceWord.getLemma().toLowerCase();
-            if (customBlacklist.contains(lemma)) {
-                return true;
-            }
-            if (enableCommonBlacklist && commonBlacklist.contains(lemma)) {
+            if (this.customBlacklist.contains(lemma) || (this.enableCommonBlacklist && this.commonBlacklist.contains(lemma))) {
                 return true;
             }
         }
@@ -85,8 +84,9 @@ public class UnwantedWordsFilter extends Filter {
 
     private static boolean referenceContainsPluralWord(NounMapping nounMapping) {
         for (var word : nounMapping.getReferenceWords()) {
-            if (word.getPosTag().name().toLowerCase().contains("plural"))
+            if (word.getPosTag().name().toLowerCase().contains("plural")) {
                 return true;
+            }
         }
         return false;
     }
@@ -102,7 +102,7 @@ public class UnwantedWordsFilter extends Filter {
         var referenceWords = nounMapping.getReferenceWords();
         for (var referenceWord : referenceWords) {
             var text = referenceWord.getText().toLowerCase();
-            for (var commonFileEnding : commonFileEndings) {
+            for (var commonFileEnding : this.commonFileEndings) {
                 if (text.endsWith("." + commonFileEnding)) {
                     return true;
                 }
@@ -122,7 +122,7 @@ public class UnwantedWordsFilter extends Filter {
                     new TypeReference<List<String>>() {
                     }));
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            this.getLogger().error(e.getMessage(), e);
             return List.of();
         }
     }

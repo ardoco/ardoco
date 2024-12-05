@@ -65,10 +65,10 @@ public final class ArCoTLModelProviderInformant extends Informant {
         }
 
         IdentifierProvider.reset();
-        this.logger.info("Extracting code model.");
+        this.getLogger().info("Extracting code model.");
         extractedModel = this.extractor.extractModel();
         if (this.extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
-            this.logger.info("Writing out code model to file in directory.");
+            this.getLogger().info("Writing out code model to file in directory.");
             codeExtractor.writeOutCodeModel(codeModel);
         }
         this.addModelStateToDataRepository(this.extractor.getModelId(), extractedModel);

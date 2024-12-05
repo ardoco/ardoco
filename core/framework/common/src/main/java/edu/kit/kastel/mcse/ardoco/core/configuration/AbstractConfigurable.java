@@ -1,10 +1,6 @@
 /* Licensed under MIT 2022-2024. */
 package edu.kit.kastel.mcse.ardoco.core.configuration;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serial;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -14,7 +10,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +17,12 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 @Deterministic
 public abstract class AbstractConfigurable implements IConfigurable {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     public static final String CLASS_ATTRIBUTE_CONNECTOR = "::";
     public static final String KEY_VALUE_CONNECTOR = "=";
     public static final String LIST_SEPARATOR = ",";
+
+    @SuppressWarnings("java:S2065") // The logger is used in the subclasses that are serializable
+    private transient Logger logger;
 
     private SortedMap<String, String> lastAppliedConfiguration = new TreeMap<>();
 
@@ -50,7 +46,7 @@ public abstract class AbstractConfigurable implements IConfigurable {
         }
 
         if (currentClassInHierarchy.getAnnotation(NoConfiguration.class) != null) {
-            this.logger.debug("Skipping configuration for class {}", currentClassInHierarchy.getSimpleName());
+            this.getLogger().debug("Skipping configuration for class {}", currentClassInHierarchy.getSimpleName());
             return;
         }
 
@@ -101,7 +97,7 @@ public abstract class AbstractConfigurable implements IConfigurable {
             field.setAccessible(true);
             field.set(this, parsedValue);
         } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
+            this.getLogger().error(e.getMessage(), e);
         }
     }
 
@@ -131,20 +127,10 @@ public abstract class AbstractConfigurable implements IConfigurable {
         throw new IllegalArgumentException("Could not find a parse method for fields of type: " + fieldsClass);
     }
 
-    @Serial
-    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.defaultWriteObject();
-    }
-
-    @Serial
-    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
-        objectInputStream.defaultReadObject();
-        try {
-            var loggerField = Arrays.stream(FieldUtils.getAllFields(this.getClass())).filter(f -> f.getName().equals("logger")).findFirst().orElseThrow();
-            loggerField.setAccessible(true);
-            loggerField.set(this, LoggerFactory.getLogger(this.getClass()));
-        } catch (IllegalAccessException e) {
-            throw new IllegalAccessError(e.getMessage());
+    protected final Logger getLogger() {
+        if (this.logger == null) {
+            this.logger = LoggerFactory.getLogger(this.getClass());
         }
+        return this.logger;
     }
 }

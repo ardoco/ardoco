@@ -74,12 +74,12 @@ public class Pipeline extends AbstractPipelineStep {
     public void process() {
         this.preparePipelineSteps();
         for (var pipelineStep : this.pipelineSteps) {
-            this.logger.info("Starting {} - {}", this.getId(), pipelineStep.getId());
+            this.getLogger().info("Starting {} - {}", this.getId(), pipelineStep.getId());
             var start = Instant.now();
 
             pipelineStep.run();
 
-            if (this.logger.isInfoEnabled()) {
+            if (this.getLogger().isInfoEnabled()) {
                 var end = Instant.now();
                 var duration = Duration.between(start, end);
                 long minutesPart = duration.toMinutes();
@@ -92,7 +92,7 @@ public class Pipeline extends AbstractPipelineStep {
                     durationString = String.format("%01d.%03d s", secondsPart, millisPart);
                 }
 
-                this.logger.info("Finished {} - {} in {}", this.getId(), pipelineStep.getId(), durationString);
+                this.getLogger().info("Finished {} - {} in {}", this.getId(), pipelineStep.getId(), durationString);
             }
         }
     }
