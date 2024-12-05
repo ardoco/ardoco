@@ -1,0 +1,28 @@
+name: Maven Deploy
+
+on:
+  push:
+    branches:
+      - 'main' # Build the latest develop-SNAPSHOT
+    paths:
+      - '**/src/**'
+      - '**/pom.xml'
+      - 'pom.xml'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: ardoco/actions/.github/workflows/maven.yml@main
+    with:
+      deploy: true
+      with-submodules: true
+      runs-on: self-hosted
+      install-self: false
+      dependencies: "https://github.com/ArDoCo/TLR.git"
+    secrets:
+      OSSRH_USER: ${{secrets.OSSRH_USER}}
+      OSSRH_TOKEN: ${{secrets.OSSRH_TOKEN}}
+      GPG_KEY: ${{secrets.GPG_KEY}}
+
