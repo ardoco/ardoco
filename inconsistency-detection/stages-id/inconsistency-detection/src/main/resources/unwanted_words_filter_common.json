@@ -1,0 +1,7 @@
+[
+  "cpu", "gpu", "file", "directory", "event", "bus",
+  "browser", "chrome", "firefox", "safari", "edge",
+  "instance", "object", "module",
+  "code", "java", "javascript", "nodejs", "npm", "kotlin",
+  "request", "response", "servlet", "unit", "test"
+]
