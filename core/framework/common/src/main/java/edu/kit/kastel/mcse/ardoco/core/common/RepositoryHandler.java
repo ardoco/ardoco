@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.common;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class RepositoryHandler {
             List<RevCommit> commits = new ArrayList<>();
             git.log().setMaxCount(1).call().forEach(commits::add);
             assert commits.size() == 1;
-            if (commits.get(0).getId().startsWith(AbbreviatedObjectId.fromString(desiredHash))) {
+            if (commits.getFirst().getId().startsWith(AbbreviatedObjectId.fromString(desiredHash))) {
                 return true;
             }
 

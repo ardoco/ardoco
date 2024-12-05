@@ -62,7 +62,7 @@ public class TraceLinkCombiner extends Informant {
                 String samCodeTraceLinkModelElementId = samCodeTraceLink.getFirstEndpoint().getId();
                 if (modelElementUid.equals(samCodeTraceLinkModelElementId)) {
                     var transitiveTraceLinkOptional = TransitiveTraceLink.createTransitiveTraceLink(sadSamTraceLink, samCodeTraceLink);
-                    transitiveTraceLinkOptional.ifPresent(it -> transitiveTraceLinks.add(it));
+                    transitiveTraceLinkOptional.ifPresent(transitiveTraceLinks::add);
                 }
             }
         }

@@ -89,7 +89,7 @@ public class DtoToObjectConverter {
                 if (wordsOfSentence.isEmpty()) {
                     throw new NotConvertableException("Constituency tree does not match words of sentence");
                 }
-                words.add(wordsOfSentence.remove(0));
+                words.add(wordsOfSentence.removeFirst());
             } else {
                 subPhrases.add(parseConstituencyTree(subtree, wordsOfSentence));
             }

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.List;
@@ -42,9 +42,9 @@ public class SubpackageFilter extends DependentHeuristic {
             if (thisPackages.isEmpty() || otherPackages.isEmpty()) {
                 return new Confidence();
             }
-            List<CodePackage> parentPackages = NameComparisonUtils.getPackageList(thisPackages.get(0));
-            parentPackages.remove(thisPackages.get(0));
-            if (parentPackages.contains(otherPackages.get(otherPackages.size() - 1))) {
+            List<CodePackage> parentPackages = NameComparisonUtils.getPackageList(thisPackages.getFirst());
+            parentPackages.remove(thisPackages.getFirst());
+            if (parentPackages.contains(otherPackages.getLast())) {
                 return new Confidence(1.0);
             }
         }

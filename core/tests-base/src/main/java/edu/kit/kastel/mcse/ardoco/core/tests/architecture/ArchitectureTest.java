@@ -169,11 +169,12 @@ public class ArchitectureTest {
                                 continue;
                             var erasure = field.getType().toErasure();
                             if (isContainer.test(erasure)) {
-                                getAllInvolvedRawTypesExceptSelf(field).stream().filter(erasureIsSerializableShallow.negate()).forEach(parameter -> {
-                                    violated(conditionEvents, javaClass, "Non-transient field " + field.getFullName() + " of serializable class " + javaClass
-                                            .getFullName() + " needs to be serializable or the class must have custom serialization, but has non-serializable parameter " + parameter
-                                                    .getName());
-                                });
+                                getAllInvolvedRawTypesExceptSelf(field).stream()
+                                        .filter(erasureIsSerializableShallow.negate())
+                                        .forEach(parameter -> violated(conditionEvents, javaClass, "Non-transient field " + field
+                                                .getFullName() + " of serializable class " + javaClass
+                                                        .getFullName() + " needs to be serializable or the class must have custom serialization, but has non-serializable parameter " + parameter
+                                                                .getName()));
                             } else {
                                 if (erasureIsSerializableShallow.negate().test(erasure)) {
                                     //Class has non-transient field that is not serializable
@@ -186,14 +187,11 @@ public class ArchitectureTest {
                 }
             });
 
-    private static final Predicate<? super JavaClass> isContainer = (JavaClass javaClass) -> {
-        return javaClass.isArray() || javaClass.isAssignableTo(Collection.class) || javaClass.isAssignableTo(Map.class) || javaClass.isAssignableTo(
-                Iterable.class);
-    };
+    private static final Predicate<? super JavaClass> isContainer = (JavaClass javaClass) -> javaClass.isArray() || javaClass.isAssignableTo(
+            Collection.class) || javaClass.isAssignableTo(Map.class) || javaClass.isAssignableTo(Iterable.class);
 
-    private static final Predicate<? super JavaClass> erasureIsSerializableShallow = (JavaClass javaClass) -> {
-        return javaClass.isPrimitive() || javaClass.isAssignableTo(Serializable.class) || isContainer.test(javaClass);
-    };
+    private static final Predicate<? super JavaClass> erasureIsSerializableShallow = (JavaClass javaClass) -> javaClass.isPrimitive() || javaClass
+            .isAssignableTo(Serializable.class) || isContainer.test(javaClass);
 
     /**
      * Returns all types of a field, except the (outer) type of the field itself. Generic type variables are not considered.

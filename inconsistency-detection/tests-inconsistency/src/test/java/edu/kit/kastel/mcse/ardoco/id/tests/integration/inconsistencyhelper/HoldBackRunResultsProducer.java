@@ -71,7 +71,6 @@ public class HoldBackRunResultsProducer {
      *
      * @param goldStandardProject            the current project
      * @param holdElementsBackModelConnector the model connector with the held-back model element
-     * @param preRunDataRepository           a deep copy of the data repository of the shared part
      * @param useInconsistencyBaseline       whether the inconsistency baseline is used or ArDoCo's inconsistency checker
      * @return the data repository that is produced
      */

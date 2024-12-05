@@ -212,7 +212,7 @@ public class DeterministicArDoCoTest {
             public void check(JavaField javaField, ConditionEvents conditionEvents) {
                 var type = javaField.getType();
                 if (type instanceof JavaParameterizedType parameterizedType) {
-                    var typeParameter = parameterizedType.getActualTypeArguments().get(0);
+                    var typeParameter = parameterizedType.getActualTypeArguments().getFirst();
                     if ((typeParameter instanceof JavaClass typeParameterClass) && typeParameterClass.getAllRawInterfaces()
                             .stream()
                             .anyMatch(i -> i.getFullName().equals(Comparable.class.getName()))) {
@@ -241,14 +241,14 @@ public class DeterministicArDoCoTest {
                     return;
                 }
 
-                var typeParameter = parameterizedType.getActualTypeArguments().get(0);
+                var typeParameter = parameterizedType.getActualTypeArguments().getFirst();
                 if ((typeParameter instanceof JavaClass typeParameterClass) && typeParameterClass.getAllRawInterfaces()
                         .stream()
                         .anyMatch(i -> i.getFullName().equals(Comparable.class.getName()))) {
 
                     satisfied(conditionEvents, javaMethod, "Method " + javaMethod.getFullName() + " has a Comparable generic type");
                 } else if ((typeParameter instanceof JavaWildcardType typeParameterWildCard)) {
-                    var upperBound = typeParameterWildCard.getUpperBounds().get(0);
+                    var upperBound = typeParameterWildCard.getUpperBounds().getFirst();
 
                     if (!(upperBound instanceof JavaClass upperBoundClass) || upperBoundClass.getAllRawInterfaces()
                             .stream()

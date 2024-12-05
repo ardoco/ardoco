@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2024. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.vector;
 
 import java.util.Objects;
@@ -76,10 +76,6 @@ public class VectorUtils {
     public static boolean isZero(double[] vector) {
         Objects.requireNonNull(vector);
 
-        if (vector.length == 0) {
-            return true;
-        }
-
         for (double entry : vector) {
             if (entry != 0.0) {
                 return false;
@@ -97,10 +93,6 @@ public class VectorUtils {
      */
     public static boolean isZero(float[] vector) {
         Objects.requireNonNull(vector);
-
-        if (vector.length <= 0) {
-            return true;
-        }
 
         for (float entry : vector) {
             if (entry != 0.0f) {

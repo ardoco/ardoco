@@ -64,7 +64,7 @@ class WordImpl implements Word {
         var currentPhrase = getSentence().getPhrases().stream().filter(p -> p.getContainedWords().contains(this)).findFirst().orElseThrow();
         var subPhrases = List.of(currentPhrase);
         while (!subPhrases.isEmpty()) {
-            currentPhrase = subPhrases.get(0);
+            currentPhrase = subPhrases.getFirst();
             subPhrases = currentPhrase.getSubPhrases().stream().filter(p -> p.getContainedWords().contains(this)).toList();
         }
         return currentPhrase;

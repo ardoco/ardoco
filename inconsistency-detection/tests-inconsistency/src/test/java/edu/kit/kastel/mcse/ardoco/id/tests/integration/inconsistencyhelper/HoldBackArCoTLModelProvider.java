@@ -89,8 +89,6 @@ public class HoldBackArCoTLModelProvider {
             }
         })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
 
-            private static final long serialVersionUID = -816629373178698328L;
-
             @Override
             protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
                 // empty

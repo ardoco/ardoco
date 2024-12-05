@@ -37,7 +37,7 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public int getSentenceNo() {
-        return words.get(0).getSentenceNo();
+        return words.getFirst().getSentenceNo();
     }
 
     @Override

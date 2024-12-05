@@ -54,7 +54,7 @@
     <connection>scm:git:git://github.com/ArDoCo/InconsistencyDetection.git</connection>
     <developerConnection>scm:git:ssh://github.com:ArDoCo/InconsistencyDetection.git</developerConnection>
     <tag>HEAD</tag>
-    <url>http://github.com/ArDoCo/InconsistencyDetection/tree/main</url>
+    <url>https://github.com/ArDoCo/InconsistencyDetection/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
@@ -82,19 +82,6 @@
             ${project.basedir}/../../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     <aggregate.report.dir>report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>com.google.errorprone</groupId>
-      <artifactId>error_prone_core</artifactId>
-      <version>${error-prone.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-  </dependencies>
   <repositories>
     <repository>
       <id>mavenCentral</id>

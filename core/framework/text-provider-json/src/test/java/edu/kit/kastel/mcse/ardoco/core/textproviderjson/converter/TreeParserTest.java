@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ class TreeParserTest {
             POSTag.VERB_SINGULAR_PRESENT_THIRD_PERSON, null, null, null), new WordImpl(null, 2, 0, "me", POSTag.PRONOUN_PERSONAL, null, null, null),
             new WordImpl(null, 3, 0, ".", POSTag.CLOSER, null, null, null)));
     Phrase subsubphrase = new PhraseImpl(Lists.immutable.of(words.get(2)), PhraseType.NP, new ArrayList<>());
-    List<Phrase> subphrases = List.of(new PhraseImpl(Lists.immutable.of(words.get(0)), PhraseType.NP, new ArrayList<>()), new PhraseImpl(Lists.immutable.of(
+    List<Phrase> subphrases = List.of(new PhraseImpl(Lists.immutable.of(words.getFirst()), PhraseType.NP, new ArrayList<>()), new PhraseImpl(Lists.immutable.of(
             words.get(1)), PhraseType.VP, List.of(subsubphrase)));
     Phrase phrase = new PhraseImpl(Lists.immutable.of(words.get(3)), PhraseType.S, subphrases);
     Phrase expectedPhrase = new PhraseImpl(Lists.immutable.empty(), PhraseType.ROOT, List.of(phrase));

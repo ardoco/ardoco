@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.aggregation;
 
 import java.util.ArrayList;
@@ -39,12 +39,12 @@ public class Filter extends Matcher {
 
     @Override
     protected NodeResult matchEndpoint(Entity endpointToMatch, List<NodeResult> childrenResults) {
-        NodeResult unfiltered = childrenResults.get(0).getResultForEndpoint(endpointToMatch);
+        NodeResult unfiltered = childrenResults.getFirst().getResultForEndpoint(endpointToMatch);
         NodeResult filtered = new NodeResult();
         filtered.addAll(unfiltered);
 
         List<NodeResult> resultsToFilter = new ArrayList<>(childrenResults);
-        resultsToFilter.remove(0);
+        resultsToFilter.removeFirst();
         for (NodeResult resultToFilter : resultsToFilter) {
             filtered = filtered.filter(resultToFilter);
         }

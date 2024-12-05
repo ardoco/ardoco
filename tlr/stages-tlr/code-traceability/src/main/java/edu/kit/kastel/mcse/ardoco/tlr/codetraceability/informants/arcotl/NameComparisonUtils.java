@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl;
 
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class NameComparisonUtils {
         for (int i = p.size() - 1; i > 0; i--) {
             double similarity2 = NameComparisonUtils.getContainedRatio(archEndpoint, p.subList(0, i), PreprocessingMethod.STEMMING);
             if (similarity2 < similarity) {
-                matchedPackages.add(0, p2.get(i));
+                matchedPackages.addFirst(p2.get(i));
             }
             if (similarity2 == 0) {
                 break;
@@ -128,12 +128,12 @@ public class NameComparisonUtils {
         List<CodePackage> parents = new ArrayList<>();
         CodeModule parent = codePackage;
         if (parent instanceof CodePackage parentPackage) {
-            parents.add(0, parentPackage);
+            parents.addFirst(parentPackage);
         }
         while (parent.hasParent()) {
             parent = parent.getParent();
             if (parent instanceof CodePackage parentPackage) {
-                parents.add(0, parentPackage);
+                parents.addFirst(parentPackage);
             }
         }
         return parents;
@@ -193,9 +193,9 @@ public class NameComparisonUtils {
 
     private static boolean areEqual(String name1, String name2, PreprocessingMethod methodToUse) {
         return switch (methodToUse) {
-        case NONE -> areEqual(name1, name2);
-        case STEMMING -> areEqualStemmed(name1, name2);
-        case LEMMATIZATION -> areEqualLemmatized(name1, name2);
+            case NONE -> areEqual(name1, name2);
+            case STEMMING -> areEqualStemmed(name1, name2);
+            case LEMMATIZATION -> areEqualLemmatized(name1, name2);
         };
     }
 

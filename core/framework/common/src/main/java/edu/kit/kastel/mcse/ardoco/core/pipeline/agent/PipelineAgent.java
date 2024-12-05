@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.Pipeline;
 
 /**
  * This class represents a pipeline agent that calculates some results for an {@link AbstractExecutionStage} execution stage}.
- *
+ * <p>
  * Implementing classes need to override. Additionally, sub-classes are free to override {@link #initializeState()} to execute code at the beginning of the
  * initialization before the main processing.
  */

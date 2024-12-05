@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree;
 
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public abstract class Node {
         if (children.size() != 1) {
             throw new IllegalStateException("Not exactly one child exists");
         }
-        return children.get(0);
+        return children.getFirst();
     }
 
     /**

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import java.io.IOException;
@@ -116,22 +116,22 @@ public class ObjectToDtoConverter {
         while (!words.isEmpty() || !subphrases.isEmpty()) {
             if (subphrases.isEmpty()) {
                 // word next
-                Word word = words.remove(0);
+                Word word = words.removeFirst();
                 constituencyTree.append(TREE_SEPARATOR).append(convertWordToTree(word));
             } else if (words.isEmpty()) {
                 // phrase next
-                Phrase subphrase = subphrases.remove(0);
+                Phrase subphrase = subphrases.removeFirst();
                 constituencyTree.append(TREE_SEPARATOR).append(convertToSubtree(subphrase));
             } else {
-                int wordIndex = words.get(0).getPosition();
-                List<Integer> phraseWordIndices = subphrases.get(0).getContainedWords().toList().stream().map(Word::getPosition).toList();
+                int wordIndex = words.getFirst().getPosition();
+                List<Integer> phraseWordIndices = subphrases.getFirst().getContainedWords().toList().stream().map(Word::getPosition).toList();
                 if (wordIndex < Collections.min(phraseWordIndices)) {
                     // word next
-                    Word word = words.remove(0);
+                    Word word = words.removeFirst();
                     constituencyTree.append(TREE_SEPARATOR).append(convertWordToTree(word));
                 } else {
                     // phrase next
-                    Phrase subphrase = subphrases.remove(0);
+                    Phrase subphrase = subphrases.removeFirst();
                     constituencyTree.append(TREE_SEPARATOR).append(convertToSubtree(subphrase));
                 }
             }

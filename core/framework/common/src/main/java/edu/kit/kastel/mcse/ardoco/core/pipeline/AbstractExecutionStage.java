@@ -60,7 +60,7 @@ public abstract class AbstractExecutionStage extends Pipeline {
      */
     @Override
     protected void before() {
-        //Nothing by default
+        // Nothing by default
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class AbstractExecutionStage extends Pipeline {
      */
     @Override
     protected void after() {
-        //Nothing by default
+        // Nothing by default
     }
 
     /**

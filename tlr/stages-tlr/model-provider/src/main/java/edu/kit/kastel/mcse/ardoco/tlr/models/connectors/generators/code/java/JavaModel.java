@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
 import java.nio.file.Path;
@@ -306,7 +306,7 @@ public final class JavaModel {
             return null;
         }
         List<String> packageNamesCopy = new ArrayList<>(packageNames);
-        String name = packageNamesCopy.remove(0);
+        String name = packageNamesCopy.removeFirst();
         CodePackage codePackage = new CodePackage(codeItemRepository, name);
         CodePackage childCodePackage = getPackage(packageNamesCopy, codeCompilationUnit);
         if (null == childCodePackage) {
