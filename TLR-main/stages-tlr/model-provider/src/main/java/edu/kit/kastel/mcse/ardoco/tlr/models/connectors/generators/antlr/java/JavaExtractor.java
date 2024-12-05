@@ -1,61 +1,89 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaParser;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaLexer;
 
 public class JavaExtractor extends CodeExtractor {
+    private CodeModel extractedModel;
+    SortedSet <CodeItem> modelContent;
 
     public JavaExtractor(CodeItemRepository codeItemRepository, String path) {
         super(codeItemRepository, path);
+        extractedModel = null;
     }
 
     @Override
-    public CodeModel extractModel() {
-
-        try{
-            CharStream input = CharStreams.fromFileName(path);
-
-            JavaLexer lexer = new JavaLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-            JavaParser parser = new JavaParser(tokens);
-            ParseTree tree = parser.compilationUnit();
-
-            CodeItem codeItem = null;
-            if (tree instanceof JavaParser.CompilationUnitContext ctx) {
-                if (ctx.moduleDeclaration() != null) {
-                    JavaModuleExtractor moduleExtractor = new JavaModuleExtractor(codeItemRepository);
-                    codeItem = moduleExtractor.visitModuleDeclaration(ctx.moduleDeclaration());
-                } else {
-                    JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor(codeItemRepository);
-                    codeItem = compilationUnitExtractor.visitCompilationUnit(ctx);
-                }
-            }
-            return wrapInModel(codeItem);
-
-            } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-            }
+    public synchronized CodeModel extractModel() {
+        if (extractedModel == null) {
+            Path directoryPath = Path.of(path);
+            SortedSet<CodeItem> modelContent = parseDirectory(directoryPath);
+            extractedModel = new CodeModel(codeItemRepository, modelContent);
+        }
+        return this.extractedModel;
     }
 
-    private CodeModel wrapInModel(CodeItem codeItem) {
-        SortedSet<CodeItem> codeItems = new TreeSet<>();
-        codeItems.add(codeItem);
-        CodeModel model = new CodeModel(codeItemRepository, codeItems);
-        return model;
+    private SortedSet<CodeItem> parseDirectory(Path dir) {
+        final SortedSet<CodeItem> items = new TreeSet<>();
+        String[] javaFiles = getEntries(dir, ".java");
+
+        for (String filePath : javaFiles) {
+            try {
+                Path file = Path.of(filePath);
+                CodeItem item = parseFile(file, dir);
+                items.add(item);
+            } catch (IOException e) {
+                throw new IllegalStateException("Error while parsing file: " + filePath, e);
+            }
+        }
+        return items;
+    }
+
+    private CodeItem parseFile(Path file, Path dir) throws IOException {
+        CharStream input = CharStreams.fromFileName(file.toString());
+        
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+        
+        ParseTree tree = parser.compilationUnit();
+
+        JavaVisitorManager visitor = new JavaVisitorManager(codeItemRepository, dir, file);
+        visitor.visit(tree);
+
+        return visitor.getCodeItem();
+    }
+
+    private static String[] getEntries(Path dir, String suffix) {
+        try (Stream<Path> paths = Files.walk(dir)) {
+            return paths.filter(path -> Files.isRegularFile(path) && path.getFileName().toString().toLowerCase().endsWith(suffix))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::normalize)
+                    .map(Path::toString)
+                    .toArray(String[]::new);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error reading directory: " + dir, e);
+        }
     }
 }

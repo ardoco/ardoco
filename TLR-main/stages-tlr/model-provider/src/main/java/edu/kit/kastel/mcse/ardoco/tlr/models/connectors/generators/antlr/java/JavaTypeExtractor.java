@@ -4,6 +4,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generat
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaParserBaseVisitor;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.Datatype;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -12,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 
 
-public class JavaTypeExtractor extends JavaParserBaseVisitor<CodeItem> {
+public class JavaTypeExtractor extends JavaParserBaseVisitor<Datatype> {
 
     private CodeItemRepository codeItemRepository;
 
@@ -21,7 +22,7 @@ public class JavaTypeExtractor extends JavaParserBaseVisitor<CodeItem> {
     }
 
     @Override 
-    public CodeItem visitTypeDeclaration(JavaParser.TypeDeclarationContext ctx) {
+    public Datatype visitTypeDeclaration(JavaParser.TypeDeclarationContext ctx) {
         if (ctx.classDeclaration() != null) {
             return visitClassDeclaration(ctx.classDeclaration());
         } 
@@ -29,27 +30,32 @@ public class JavaTypeExtractor extends JavaParserBaseVisitor<CodeItem> {
             return visitInterfaceDeclaration(ctx.interfaceDeclaration());
         } 
         if (ctx.enumDeclaration() != null) {
+            // Do nothing
         }
         if (ctx.annotationTypeDeclaration() != null) {
+            //Do nothing
         } 
         if (ctx.recordDeclaration() != null) {
+            //Do nothing
         }
         return null;
     }
 
     @Override
-    public CodeItem visitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
+    public Datatype visitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
         String name = ctx.identifier().getText();
         SortedSet<? extends CodeItem> content = extractContent(ctx);
         return new ClassUnit(codeItemRepository, name, content);
     }
 
     @Override
-    public CodeItem visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
+    public Datatype visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         String name = ctx.identifier().getText();
         SortedSet<? extends CodeItem> content = extractContent(ctx);
         return new InterfaceUnit(codeItemRepository, name, content);
     }
+
+
 
     private SortedSet<? extends CodeItem> extractContent(JavaParser.ClassDeclarationContext ctx) {
         SortedSet<CodeItem> content = new TreeSet<>();
