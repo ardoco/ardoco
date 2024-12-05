@@ -1,0 +1,3 @@
+A list of PDFs you have to download:
+* https://ieeexplore.ieee.org/document/8016712   <-- 24765-2017 - ISO/IEC/IEEE International Standard - Systems and software engineering--Vocabulary
+* https://www.iqbba.org/files/content/iqbba/downloads/Standard_glossary_of_terms_used_in_Software_Engineering_1.0.pdf    <-- Standard glossary of terms used in Software Engineering
