@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<repository:Repository xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:repository="http://palladiosimulator.org/PalladioComponentModel/Repository/5.2" id="__nu3UEl3Ee243f2e4VWs6w" entityName="JabRef">
+  <components__Repository xsi:type="repository:BasicComponent" id="_Coy0kEl4Ee243f2e4VWs6w" entityName="gui"/>
+  <components__Repository xsi:type="repository:BasicComponent" id="_EBiwMEl4Ee243f2e4VWs6w" entityName="cli"/>
+  <components__Repository xsi:type="repository:BasicComponent" id="_He3LoEl4Ee243f2e4VWs6w" entityName="logic"/>
+  <components__Repository xsi:type="repository:BasicComponent" id="_KsOfgEl4Ee243f2e4VWs6w" entityName="globals"/>
+  <components__Repository xsi:type="repository:BasicComponent" id="_MFIzMEl4Ee243f2e4VWs6w" entityName="model"/>
+  <components__Repository xsi:type="repository:BasicComponent" id="_NUdtEEl4Ee243f2e4VWs6w" entityName="preferences"/>
+</repository:Repository>

@@ -1,0 +1,65 @@
+ae_id,ae_name,ce_ids
+_0e5u8FkHEeyewPSmlgszyA,Component: HTML5 Client,build/packages-template/bbb-html5/
+_0e5u8FkHEeyewPSmlgszyA,Component: HTML5 Client,bigbluebutton-html5/
+_2BgxMFkHEeyewPSmlgszyA,Component: Presentation Conversion,bbb-common-web/src/main/java/org/bigbluebutton/presentation/
+_2I1EsFkIEeyewPSmlgszyA,Interface: HTML5 Client,build/packages-template/bbb-html5/
+_2I1EsFkIEeyewPSmlgszyA,Interface: HTML5 Client,bigbluebutton-html5/
+_4yx-8FkHEeyewPSmlgszyA,Component: BBB web,bigbluebutton-web/
+_4yx-8FkHEeyewPSmlgszyA,Component: BBB web,bbb-common-web/src/main/java/org/bigbluebutton/web/
+_4yx-8FkHEeyewPSmlgszyA,Component: BBB web,build/packages-template/bbb-web/
+_6sergFkHEeyewPSmlgszyA,Component: Redis PubSub,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/pubsub/
+_7b12cFkIEeyewPSmlgszyA,Interface: Presentation Conversion,bbb-common-web/src/main/java/org/bigbluebutton/presentation/
+_9wZIcFkHEeyewPSmlgszyA,Component: FSESL,bbb-fsesl-client/
+_9wZIcFkHEeyewPSmlgszyA,Component: FSESL,akka-bbb-fsesl/
+_9wZIcFkHEeyewPSmlgszyA,Component: FSESL,build/packages-template/bbb-fsesl-akka/
+_FhvIYFkJEeyewPSmlgszyA,Interface: BBB web,bigbluebutton-web/
+_FhvIYFkJEeyewPSmlgszyA,Interface: BBB web,bbb-common-web/src/main/java/org/bigbluebutton/web/
+_FhvIYFkJEeyewPSmlgszyA,Interface: BBB web,build/packages-template/bbb-web/
+_IixQcFkJEeyewPSmlgszyA,Interface: Redis PubSub,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/pubsub/
+_MUFl8FkJEeyewPSmlgszyA,Interface: FSESL,bbb-fsesl-client/
+_MUFl8FkJEeyewPSmlgszyA,Interface: FSESL,akka-bbb-fsesl/
+_MUFl8FkJEeyewPSmlgszyA,Interface: FSESL,build/packages-template/bbb-fsesl-akka/
+_RDHFIFwPEeyiuNx_RO7j-Q,Component: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/RedisStorageService.java
+_RDHFIFwPEeyiuNx_RO7j-Q,Component: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/Keys.java
+_RDHFIFwPEeyiuNx_RO7j-Q,Component: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/RedisAwareCommunicator.java
+_UV7gwFwPEeyiuNx_RO7j-Q,Interface: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/RedisStorageService.java
+_UV7gwFwPEeyiuNx_RO7j-Q,Interface: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/RedisAwareCommunicator.java
+_UV7gwFwPEeyiuNx_RO7j-Q,Interface: Redis DB,bbb-common-message/src/main/java/org/bigbluebutton/common2/redis/Keys.java
+_XuNf4FkJEeyewPSmlgszyA,Component: Apps,akka-bbb-apps/
+_XuNf4FkJEeyewPSmlgszyA,Component: Apps,build/packages-template/bbb-apps-akka/
+_ZADiQFkJEeyewPSmlgszyA,Interface: Apps,akka-bbb-apps/
+_ZADiQFkJEeyewPSmlgszyA,Interface: Apps,build/packages-template/bbb-apps-akka/
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-recording-imex/
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api2/IRecordingService.java
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/service/impl/RecordingServiceDbImpl.java
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/RecordingServiceHelper.java
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/service/impl/RecordingServiceFileImpl.java
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api2/RecordingServiceGW.java
+_d9jzgFkIEeyewPSmlgszyA,Interface: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/RecordingService.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-recording-imex/
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api2/IRecordingService.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/service/impl/RecordingServiceDbImpl.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/RecordingServiceHelper.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/service/impl/RecordingServiceFileImpl.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api2/RecordingServiceGW.java
+_kvWs4FkHEeyewPSmlgszyA,Component: Recording Service,bbb-common-web/src/main/java/org/bigbluebutton/api/RecordingService.java
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,akka-bbb-fsesl/src/main/java/org/bigbluebutton/freeswitch/
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,bbb-fsesl-client/src/main/java/org/freeswitch/
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,bbb-fsesl-client/src/test/java/org/freeswitch/
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,build/packages-template/bbb-freeswitch-core/
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,build/packages-template/bbb-freeswitch-sounds/
+_nwrCMFwPEeyiuNx_RO7j-Q,Component: FreeSWITCH,freeswitch.placeholder.sh
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,akka-bbb-fsesl/src/main/java/org/bigbluebutton/freeswitch/
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,bbb-fsesl-client/src/main/java/org/freeswitch/
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,bbb-fsesl-client/src/test/java/org/freeswitch/
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,build/packages-template/bbb-freeswitch-core/
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,build/packages-template/bbb-freeswitch-sounds/
+_qa5z0FwPEeyiuNx_RO7j-Q,Interface: FreeSWITCH,freeswitch.placeholder.sh
+_s0aIcFkHEeyewPSmlgszyA,Component: WebRTC-SFU,build/packages-template/bbb-webrtc-sfu/
+_s0aIcFkHEeyewPSmlgszyA,Component: WebRTC-SFU,bbb-webrtc-sfu.placeholder.sh
+_ur280FkIEeyewPSmlgszyA,Interface: WebRTC-SFU,build/packages-template/bbb-webrtc-sfu/
+_ur280FkIEeyewPSmlgszyA,Interface: WebRTC-SFU,bbb-webrtc-sfu.placeholder.sh
+_xqkJoFkIEeyewPSmlgszyA,Interface: HTML5 Server,build/packages-template/bbb-html5/
+_xqkJoFkIEeyewPSmlgszyA,Interface: HTML5 Server,bigbluebutton-html5/
+_yGgUMFkHEeyewPSmlgszyA,Component: HTML5 Server,build/packages-template/bbb-html5/
+_yGgUMFkHEeyewPSmlgszyA,Component: HTML5 Server,bigbluebutton-html5/

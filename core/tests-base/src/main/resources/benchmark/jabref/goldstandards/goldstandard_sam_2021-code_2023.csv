@@ -1,0 +1,12 @@
+ae_id,ae_name,ce_ids
+_Coy0kEl4Ee243f2e4VWs6w,Component: gui,src/main/java/org/jabref/gui/
+_Coy0kEl4Ee243f2e4VWs6w,Component: gui,src/test/java/org/jabref/gui/
+_EBiwMEl4Ee243f2e4VWs6w,Component: cli,src/main/java/org/jabref/cli/
+_EBiwMEl4Ee243f2e4VWs6w,Component: cli,src/test/java/org/jabref/cli/
+_He3LoEl4Ee243f2e4VWs6w,Component: logic,src/main/java/org/jabref/logic/
+_He3LoEl4Ee243f2e4VWs6w,Component: logic,src/test/java/org/jabref/logic/
+_He3LoEl4Ee243f2e4VWs6w,Component: logic,buildSrc/src/copied/java/org/jabref/logic/
+_KsOfgEl4Ee243f2e4VWs6w,Component: globals,src/main/java/org/jabref/gui/Globals.java
+_MFIzMEl4Ee243f2e4VWs6w,Component: model,src/main/java/org/jabref/model/
+_MFIzMEl4Ee243f2e4VWs6w,Component: model,src/test/java/org/jabref/model/
+_NUdtEEl4Ee243f2e4VWs6w,Component: preferences,src/main/java/org/jabref/preferences/

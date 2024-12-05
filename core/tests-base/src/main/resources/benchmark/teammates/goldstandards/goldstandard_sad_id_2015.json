@@ -1,0 +1,1316 @@
+{
+    "$schema": "../../DiagramSchema.json",
+    "diagrams": [
+        {
+            "path": "/benchmark/teammates/diagrams_2015/highlevelArchitecture.png",
+            "boxes": [
+                {
+                    "boundingBox": {
+                        "x": 68,
+                        "y": 5,
+                        "w": 198,
+                        "h": 491
+                    },
+                    "textBoxes": [],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 127,
+                                "y": 19,
+                                "w": 123,
+                                "h": 189
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "UI (browser)",
+                                    "boundingBox": {
+                                        "x": 146,
+                                        "y": 35,
+                                        "w": 83,
+                                        "h": 43
+                                    }
+                                },
+                                {
+                                    "text": "HTML, CSS, Javascript, JQuery",
+                                    "boundingBox": {
+                                        "x": 141,
+                                        "y": 104,
+                                        "w": 86,
+                                        "h": 60
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        3,
+                                        4,
+                                        12,
+                                        23,
+                                        54,
+                                        65,
+                                        73,
+                                        74,
+                                        75,
+                                        81,
+                                        174,
+                                        180
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 87,
+                                "y": 221,
+                                "w": 163,
+                                "h": 131
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Test Driver",
+                                    "boundingBox": {
+                                        "x": 120,
+                                        "y": 236,
+                                        "w": 95,
+                                        "h": 14
+                                    }
+                                },
+                                {
+                                    "text": "TestNG, QUnit, Selenium, HttpUnit, NekoHtml",
+                                    "boundingBox": {
+                                        "x": 109,
+                                        "y": 264,
+                                        "w": 117,
+                                        "h": 80
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        13,
+                                        69,
+                                        77,
+                                        161,
+                                        167,
+                                        169,
+                                        173
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                172
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 87,
+                                "y": 365,
+                                "w": 163,
+                                "h": 123
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Client",
+                                    "boundingBox": {
+                                        "x": 143,
+                                        "y": 380,
+                                        "w": 50,
+                                        "h": 14
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        15,
+                                        182
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                183,
+                                                184,
+                                                185
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": []
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 367,
+                        "y": 5,
+                        "w": 486,
+                        "h": 491
+                    },
+                    "textBoxes": [],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 380,
+                                "y": 19,
+                                "w": 462,
+                                "h": 51
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Common",
+                                    "boundingBox": {
+                                        "x": 570,
+                                        "y": 33,
+                                        "w": 77,
+                                        "h": 13
+                                    }
+                                },
+                                {
+                                    "text": "GSon",
+                                    "boundingBox": {
+                                        "x": 721,
+                                        "y": 34,
+                                        "w": 41,
+                                        "h": 12
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        17,
+                                        152,
+                                        175
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                126,
+                                                153,
+                                                154,
+                                                155,
+                                                156,
+                                                158
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 383,
+                                "y": 101,
+                                "w": 105,
+                                "h": 123
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "UI (server)",
+                                    "boundingBox": {
+                                        "x": 401,
+                                        "y": 117,
+                                        "w": 66,
+                                        "h": 43
+                                    }
+                                },
+                                {
+                                    "text": "JSP, Servlets",
+                                    "boundingBox": {
+                                        "x": 406,
+                                        "y": 168,
+                                        "w": 65,
+                                        "h": 35
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        3,
+                                        4,
+                                        12,
+                                        23,
+                                        54,
+                                        65,
+                                        73,
+                                        74,
+                                        75,
+                                        81,
+                                        174,
+                                        180
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 543,
+                                "y": 101,
+                                "w": 131,
+                                "h": 259
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Logic",
+                                    "boundingBox": {
+                                        "x": 587,
+                                        "y": 117,
+                                        "w": 43,
+                                        "h": 18
+                                    }
+                                },
+                                {
+                                    "text": "Java, Servlets",
+                                    "boundingBox": {
+                                        "x": 574,
+                                        "y": 152,
+                                        "w": 65,
+                                        "h": 35
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        20,
+                                        34,
+                                        60,
+                                        61,
+                                        62,
+                                        72,
+                                        73,
+                                        81,
+                                        121,
+                                        130,
+                                        176
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                7,
+                                                60,
+                                                61,
+                                                63,
+                                                112,
+                                                118,
+                                                130
+                                            ],
+                                            "traceType": "COMMON_NOUN"
+                                        },
+                                        {
+                                            "sentences": [
+                                                67,
+                                                68,
+                                                69,
+                                                70,
+                                                71,
+                                                72,
+                                                77,
+                                                172,
+                                                176
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 719,
+                                "y": 101,
+                                "w": 123,
+                                "h": 123
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Storage",
+                                    "boundingBox": {
+                                        "x": 747,
+                                        "y": 117,
+                                        "w": 66,
+                                        "h": 17
+                                    }
+                                },
+                                {
+                                    "text": "Java",
+                                    "boundingBox": {
+                                        "x": 758,
+                                        "y": 160,
+                                        "w": 32,
+                                        "h": 12
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        9,
+                                        61,
+                                        87,
+                                        113,
+                                        118,
+                                        122,
+                                        129,
+                                        177
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                114,
+                                                115,
+                                                116,
+                                                117,
+                                                123,
+                                                172,
+                                                177
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 367,
+                                "y": 421,
+                                "w": 486,
+                                "h": 75
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Google App Engine (GAE)",
+                                    "boundingBox": {
+                                        "x": 465,
+                                        "y": 466,
+                                        "w": 221,
+                                        "h": 19
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        1,
+                                        25,
+                                        127,
+                                        134,
+                                        139
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                9
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 719,
+                                "y": 341,
+                                "w": 110,
+                                "h": 147
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "GAE Datastore",
+                                    "boundingBox": {
+                                        "x": 732,
+                                        "y": 407,
+                                        "w": 83,
+                                        "h": 39
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        9,
+                                        117,
+                                        121,
+                                        124,
+                                        133,
+                                        136
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "/benchmark/teammates/diagrams_2015/packageDiagram.png",
+            "boxes": [
+                {
+                    "boundingBox": {
+                        "x": 13,
+                        "y": 7,
+                        "w": 882,
+                        "h": 91
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Common",
+                            "boundingBox": {
+                                "x": 26,
+                                "y": 22,
+                                "w": 77,
+                                "h": 13
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 125,
+                                "y": 26,
+                                "w": 179,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "common::util",
+                                    "boundingBox": {
+                                        "x": 161,
+                                        "y": 54,
+                                        "w": 104,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        153,
+                                        154
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 397,
+                                "y": 26,
+                                "w": 178,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "common::exception",
+                                    "boundingBox": {
+                                        "x": 407,
+                                        "y": 55,
+                                        "w": 157,
+                                        "h": 15
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        153,
+                                        155
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 652,
+                                "y": 26,
+                                "w": 203,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "common:datatransfer",
+                                    "boundingBox": {
+                                        "x": 663,
+                                        "y": 54,
+                                        "w": 177,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        153,
+                                        156,
+                                        158
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                17,
+                                152,
+                                175
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        126,
+                                        153,
+                                        154,
+                                        155,
+                                        156,
+                                        158
+                                    ],
+                                    "traceType": "OTHER_ENTITY"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 45,
+                        "y": 148,
+                        "w": 195,
+                        "h": 339
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Test Driver",
+                            "boundingBox": {
+                                "x": 59,
+                                "y": 165,
+                                "w": 94,
+                                "h": 14
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 69,
+                                "y": 186,
+                                "w": 163,
+                                "h": 42
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "test:pageobjects",
+                                    "boundingBox": {
+                                        "x": 81,
+                                        "y": 204,
+                                        "w": 136,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        168,
+                                        170
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 69,
+                                "y": 242,
+                                "w": 163,
+                                "h": 61
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "test::cases:: ui::browsertests",
+                                    "boundingBox": {
+                                        "x": 85,
+                                        "y": 260,
+                                        "w": 129,
+                                        "h": 34
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        172,
+                                        174
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 93,
+                                "y": 311,
+                                "w": 139,
+                                "h": 43
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "test::cases::*",
+                                    "boundingBox": {
+                                        "x": 108,
+                                        "y": 329,
+                                        "w": 105,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        172,
+                                        173,
+                                        174,
+                                        175,
+                                        176,
+                                        177
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 69,
+                                "y": 366,
+                                "w": 163,
+                                "h": 43
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "test::cases",
+                                    "boundingBox": {
+                                        "x": 107,
+                                        "y": 386,
+                                        "w": 84,
+                                        "h": 11
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        168,
+                                        171
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 69,
+                                "y": 425,
+                                "w": 163,
+                                "h": 49
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "test::driver",
+                                    "boundingBox": {
+                                        "x": 105,
+                                        "y": 446,
+                                        "w": 89,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        168,
+                                        169
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                13,
+                                69,
+                                77,
+                                161,
+                                167,
+                                169,
+                                173
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        172
+                                    ],
+                                    "traceType": "OTHER_ENTITY"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 261,
+                        "y": 146,
+                        "w": 163,
+                        "h": 221
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "UI",
+                            "boundingBox": {
+                                "x": 332,
+                                "y": 163,
+                                "w": 18,
+                                "h": 13
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 269,
+                                "y": 170,
+                                "w": 145,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "ui::website",
+                                    "boundingBox": {
+                                        "x": 296,
+                                        "y": 196,
+                                        "w": 89,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        21
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 269,
+                                "y": 228,
+                                "w": 145,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "ui::view",
+                                    "boundingBox": {
+                                        "x": 309,
+                                        "y": 256,
+                                        "w": 63,
+                                        "h": 12
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        20,
+                                        21
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 269,
+                                "y": 292,
+                                "w": 145,
+                                "h": 56
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "ui::controller",
+                                    "boundingBox": {
+                                        "x": 289,
+                                        "y": 319,
+                                        "w": 104,
+                                        "h": 13
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        20
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                3,
+                                4,
+                                23,
+                                54,
+                                65,
+                                73,
+                                74,
+                                75,
+                                81,
+                                174
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 452,
+                        "y": 143,
+                        "w": 211,
+                        "h": 469
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Logic",
+                            "boundingBox": {
+                                "x": 537,
+                                "y": 160,
+                                "w": 43,
+                                "h": 18
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 476,
+                                "y": 191,
+                                "w": 147,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "logic::core",
+                                    "boundingBox": {
+                                        "x": 509,
+                                        "y": 233,
+                                        "w": 81,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        67,
+                                        70
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 476,
+                                "y": 303,
+                                "w": 147,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "logic::api",
+                                    "boundingBox": {
+                                        "x": 515,
+                                        "y": 345,
+                                        "w": 69,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        67,
+                                        68
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 476,
+                                "y": 431,
+                                "w": 147,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "logic::backdoor",
+                                    "boundingBox": {
+                                        "x": 490,
+                                        "y": 472,
+                                        "w": 119,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        67,
+                                        69
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 468,
+                                "y": 529,
+                                "w": 155,
+                                "h": 59
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "logic::automated",
+                                    "boundingBox": {
+                                        "x": 480,
+                                        "y": 559,
+                                        "w": 132,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        67,
+                                        71
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                34,
+                                60,
+                                61,
+                                62,
+                                72,
+                                73,
+                                81,
+                                121,
+                                130,
+                                176
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 700,
+                        "y": 143,
+                        "w": 195,
+                        "h": 507
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Storage",
+                            "boundingBox": {
+                                "x": 812,
+                                "y": 161,
+                                "w": 66,
+                                "h": 17
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 716,
+                                "y": 207,
+                                "w": 171,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "storage::entity",
+                                    "boundingBox": {
+                                        "x": 743,
+                                        "y": 250,
+                                        "w": 116,
+                                        "h": 15
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        114,
+                                        116,
+                                        123
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 716,
+                                "y": 358,
+                                "w": 171,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "storage::api",
+                                    "boundingBox": {
+                                        "x": 754,
+                                        "y": 401,
+                                        "w": 93,
+                                        "h": 15
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        114,
+                                        115
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 708,
+                                "y": 512,
+                                "w": 179,
+                                "h": 83
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "storage::datastore",
+                                    "boundingBox": {
+                                        "x": 725,
+                                        "y": 554,
+                                        "w": 145,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        114,
+                                        117
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                9,
+                                61,
+                                87,
+                                113,
+                                118,
+                                122,
+                                129,
+                                177
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 13,
+                        "y": 521,
+                        "w": 243,
+                        "h": 133
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Client",
+                            "boundingBox": {
+                                "x": 27,
+                                "y": 537,
+                                "w": 50,
+                                "h": 14
+                            }
+                        }
+                    ],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 29,
+                                "y": 547,
+                                "w": 203,
+                                "h": 43
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "client::scripts",
+                                    "boundingBox": {
+                                        "x": 76,
+                                        "y": 564,
+                                        "w": 107,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        183,
+                                        185
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 29,
+                                "y": 605,
+                                "w": 203,
+                                "h": 43
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "client::remoteapi",
+                                    "boundingBox": {
+                                        "x": 61,
+                                        "y": 623,
+                                        "w": 136,
+                                        "h": 16
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "teammates_2015.txt",
+                                    "sentences": [
+                                        183,
+                                        184
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "teammates_2015.txt",
+                            "sentences": [
+                                15,
+                                182
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        183,
+                                        184,
+                                        185
+                                    ],
+                                    "traceType": "OTHER_ENTITY"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
