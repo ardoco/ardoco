@@ -47,15 +47,15 @@ public class RecommendedInstanceProbabilityFilter extends Filter {
         var filteredRecommendedInstances = Lists.mutable.<RecommendedInstance>empty();
         var recommendedInstances = inconsistencyState.getRecommendedInstances();
 
-        if (dynamicThreshold) {
-            var highestProbability = analyzeProbabilitiesofRecommendedInstances(recommendedInstances);
-            this.threshold = dynamicThresholdFactor * highestProbability;
+        if (this.dynamicThreshold) {
+            var highestProbability = this.analyzeProbabilitiesofRecommendedInstances(recommendedInstances);
+            this.threshold = this.dynamicThresholdFactor * highestProbability;
         }
 
-        logger.debug("Threshold for RecommendedInstances: {}", threshold);
+        this.getLogger().debug("Threshold for RecommendedInstances: {}", this.threshold);
 
         for (var recommendedInstance : recommendedInstances) {
-            if (performHeuristicsAndChecks(recommendedInstance)) {
+            if (this.performHeuristicsAndChecks(recommendedInstance)) {
                 filteredRecommendedInstances.add(recommendedInstance);
             }
         }
@@ -70,31 +70,31 @@ public class RecommendedInstanceProbabilityFilter extends Filter {
             if (probability > highestProbability) {
                 highestProbability = probability;
             }
-            if (logger.isDebugEnabled()) {
+            if (this.getLogger().isDebugEnabled()) {
                 var roundedProbability = Math.round(probability * 10.0) / 10.0;
                 this.probabilities.addOccurrences(roundedProbability, 1);
             }
         }
 
-        if (logger.isDebugEnabled()) {
-            var view = probabilities.toMapOfItemToCount().keyValuesView();
+        if (this.getLogger().isDebugEnabled()) {
+            var view = this.probabilities.toMapOfItemToCount().keyValuesView();
             for (var prob : view) {
-                logger.debug("{}: {}", prob.getOne(), prob.getOne());
+                this.getLogger().debug("{}: {}", prob.getOne(), prob.getOne());
             }
-            logger.debug("Highest probability: {}", highestProbability);
+            this.getLogger().debug("Highest probability: {}", highestProbability);
         }
 
         return highestProbability;
     }
 
     private boolean performHeuristicsAndChecks(RecommendedInstance recommendedInstance) {
-        var checksArePositive = checkProbabilityOfBeingRecommendedInstance(recommendedInstance);
-        return checksArePositive && checkProbabilitiesForNounMappingTypes(recommendedInstance);
+        var checksArePositive = this.checkProbabilityOfBeingRecommendedInstance(recommendedInstance);
+        return checksArePositive && this.checkProbabilitiesForNounMappingTypes(recommendedInstance);
     }
 
     private boolean checkProbabilityOfBeingRecommendedInstance(RecommendedInstance recommendedInstance) {
         var probability = recommendedInstance.getProbability();
-        return probability > threshold;
+        return probability > this.threshold;
     }
 
     /**
@@ -105,10 +105,10 @@ public class RecommendedInstanceProbabilityFilter extends Filter {
      * @return true if the probabilities of the types exceed a threshold
      */
     private boolean checkProbabilitiesForNounMappingTypes(RecommendedInstance recommendedInstance) {
-        var highestTypeProbability = getHighestTypeProbability(recommendedInstance.getTypeMappings());
-        var highestNameProbability = getHighestNameProbability(recommendedInstance.getTypeMappings());
+        var highestTypeProbability = this.getHighestTypeProbability(recommendedInstance.getTypeMappings());
+        var highestNameProbability = this.getHighestNameProbability(recommendedInstance.getTypeMappings());
 
-        return (highestTypeProbability > thresholdNameAndTypeProbability && highestNameProbability > thresholdNameAndTypeProbability) || highestTypeProbability > thresholdNameOrTypeProbability || highestNameProbability > thresholdNameOrTypeProbability;
+        return (highestTypeProbability > this.thresholdNameAndTypeProbability && highestNameProbability > this.thresholdNameAndTypeProbability) || highestTypeProbability > this.thresholdNameOrTypeProbability || highestNameProbability > this.thresholdNameOrTypeProbability;
 
     }
 
