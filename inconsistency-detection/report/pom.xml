@@ -8,7 +8,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>report</artifactId>
+  <artifactId>report-id</artifactId>
   <packaging>jar</packaging>
 
   <properties>

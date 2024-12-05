@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.ardoco.core</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>parent-core</artifactId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>report</artifactId>
+  <artifactId>report-core</artifactId>
   <packaging>jar</packaging>
-  <name>Report</name>
+  <name>Report (Core)</name>
   <description>This module is used to create reports for SonarCloud and similar.</description>
 
   <properties>
