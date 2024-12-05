@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2024. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.util.List;
@@ -118,7 +118,7 @@ public class WordImpl implements Word {
         var currentPhrase = getSentence().getPhrases().toList().stream().filter(p -> p.getContainedWords().contains(this)).findFirst().orElseThrow();
         var subPhrases = List.of(currentPhrase);
         while (!subPhrases.isEmpty()) {
-            currentPhrase = subPhrases.get(0);
+            currentPhrase = subPhrases.getFirst();
             subPhrases = currentPhrase.getSubPhrases().toList().stream().filter(p -> p.getContainedWords().contains(this)).toList();
         }
         return currentPhrase;

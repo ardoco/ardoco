@@ -54,7 +54,7 @@
     <connection>scm:git:git://github.com/ArDoCo/TLR.git</connection>
     <developerConnection>scm:git:ssh://github.com:ArDoCo/TLR.git</developerConnection>
     <tag>HEAD</tag>
-    <url>http://github.com/ArDoCo/TLR/tree/main</url>
+    <url>https://github.com/ArDoCo/TLR/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>

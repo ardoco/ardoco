@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy;
 
 import java.util.ArrayList;
@@ -83,16 +83,16 @@ public class LegacyModelExtractionStateByArCoTL implements LegacyModelExtraction
     }
 
     private static void fillPackages(Collection<? extends CodePackage> packages, List<ModelInstance> instances) {
-        for (var modelElement : packages) { 
-            String path = modelElement.getName();
+        for (var modelElement : packages) {
+            StringBuilder path = new StringBuilder(modelElement.getName());
             CodeModule parent = modelElement.getParent();
             while (parent != null) {
-                path = parent.getName() + "/" + path;
+                path.insert(0, parent.getName() + "/");
                 parent = parent.getParent();
             }
             // Ensure that package is handled as directory
-            path += "/";
-            instances.add(new ModelInstanceImpl(modelElement.getName(), "Package", path));
+            path.append("/");
+            instances.add(new ModelInstanceImpl(modelElement.getName(), "Package", path.toString()));
         }
     }
 

@@ -42,9 +42,4 @@ public class SamCodeTraceLink extends TraceLink<ArchitectureEntity, CodeCompilat
         }
         return Objects.equals(this.asPair(), other.asPair());
     }
-
-    @Override
-    public String toString() {
-        return this.asPair().toString();
-    }
 }

@@ -54,7 +54,7 @@ public class SEWordSimMeasure implements WordSimMeasure {
         try {
             similarity = this.getDataSource().getSimilarity(ctx.firstTerm(), ctx.secondTerm()).orElse(Double.NaN);
         } catch (SQLException e) {
-            LOGGER.error("Failed to query the SEWordSim database for word comparison: " + ctx, e);
+            LOGGER.error("Failed to query the SEWordSim database for word comparison: {}", ctx, e);
         }
         return similarity; // words are probably missing from the database
     }

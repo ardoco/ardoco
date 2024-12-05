@@ -60,7 +60,7 @@
     <connection>scm:git:git://github.com/ArDoCo/Core.git</connection>
     <developerConnection>scm:git:ssh://github.com:ArDoCo/Core.git</developerConnection>
     <tag>HEAD</tag>
-    <url>http://github.com/ArDoCo/Core/tree/main</url>
+    <url>https://github.com/ArDoCo/Core/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>

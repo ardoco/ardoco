@@ -63,7 +63,7 @@ public final class CodeCompilationUnit extends CodeModule {
         while (parent.hasParent()) {
             parent = parent.getParent();
             if (parent instanceof CodePackage) {
-                parents.add(0, parent.getName());
+                parents.addFirst(parent.getName());
             }
         }
         return parents;

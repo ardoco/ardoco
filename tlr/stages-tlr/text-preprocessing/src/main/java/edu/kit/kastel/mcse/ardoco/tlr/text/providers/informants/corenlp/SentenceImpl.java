@@ -86,7 +86,7 @@ class SentenceImpl implements Sentence {
     protected List<Word> getWordsForPhrase(Tree phrase) {
         List<Word> phraseWords = Lists.mutable.empty();
         var coreLabels = phrase.taggedLabeledYield();
-        var index = findIndexOfFirstWordInPhrase(coreLabels.get(0), this);
+        var index = findIndexOfFirstWordInPhrase(coreLabels.getFirst(), this);
         logger.debug("phrase starting position: {}", index);
         for (int wordIndexInSentence = 0; wordIndexInSentence < coreLabels.size(); wordIndexInSentence++) {
             var phraseWord = parent.words().get(index++);

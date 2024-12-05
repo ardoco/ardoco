@@ -55,7 +55,7 @@ public class GloveMeasure extends VectorBasedWordSimMeasure {
         try {
             return this.compareVectors(ctx.firstTerm(), ctx.secondTerm());
         } catch (RetrieveVectorException e) {
-            LOGGER.error("Failed to compare glove vectors: " + ctx, e);
+            LOGGER.error("Failed to compare glove vectors: {}", ctx, e);
             return Double.NaN;
         }
     }

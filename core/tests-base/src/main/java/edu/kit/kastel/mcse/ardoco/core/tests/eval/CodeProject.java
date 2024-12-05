@@ -89,7 +89,7 @@ public enum CodeProject implements GoldStandardProject {
             new ExpectedResults(.885, .999, .935, .960, .915, .935) //
     );
 
-    private static final Logger logger = LoggerFactory.getLogger(Project.class);
+    private static final Logger logger = LoggerFactory.getLogger(CodeProject.class);
 
     private final String codeRepository;
     private final String commitHash;

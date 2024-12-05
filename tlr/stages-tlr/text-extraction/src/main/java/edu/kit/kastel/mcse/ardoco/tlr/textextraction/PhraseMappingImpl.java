@@ -60,7 +60,7 @@ public final class PhraseMappingImpl implements PhraseMapping {
         if (phrases.isEmpty()) {
             throw new IllegalStateException("A phrase mapping should always contain some phrases!");
         }
-        return phrases.iterator().next().getPhraseType();
+        return phrases.getFirst().getPhraseType();
     }
 
     @Override

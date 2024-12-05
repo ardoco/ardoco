@@ -124,7 +124,7 @@ public class MappingCombinerInformant extends Informant {
             return null;
         }
 
-        return similarNounMappings.get(0);
+        return similarNounMappings.getFirst();
     }
 
     @Override

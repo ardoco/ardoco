@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.List;
@@ -90,7 +90,7 @@ public class ProvidedInterfaceCorrespondence extends DependentHeuristic {
     private SortedSet<CodeModule> getPackage(Entity ae, CodeCompilationUnit ce) {
         List<CodePackage> cePackages = NameComparisonUtils.getMatchedPackages(ae, ce);
         if (!cePackages.isEmpty()) {
-            return new TreeSet<>(List.of(cePackages.get(cePackages.size() - 1)));
+            return new TreeSet<>(List.of(cePackages.getLast()));
         }
         if (ce.hasParent()) {
             return new TreeSet<>(List.of(ce.getParent()));

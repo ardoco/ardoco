@@ -65,7 +65,7 @@ public interface GoldStandardProject {
             logger.info("Checksum for source file {} matches", resourceName);
             return true;
         } catch (IOException e) {
-            logger.error("Couldn't calculate checksum for resource at " + resourceName, e);
+            logger.error("Couldn't calculate checksum for resource at {}", resourceName, e);
             return false;
         }
     }
