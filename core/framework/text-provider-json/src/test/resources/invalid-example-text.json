@@ -1,0 +1,67 @@
+{
+  "sentences": [
+    {
+      "sentenceNo": 1,
+      "text": "Hello World!",
+      "constituencyTree": "(ROOT (FRAG (INTJ (UH Hello)) (NP (NNP World)) (. !)))",
+      "words": [
+        {
+          "sentenceNo": 1,
+          "id": 1,
+          "text": "Hello",
+          "lemma": "hello",
+          "posTag": "UH"
+        },
+        {
+          "sentenceNo": 1,
+          "id": 2,
+          "text": "World",
+          "lemma": "World",
+          "posTag": "NNP"
+        },
+        {
+          "sentenceNo": 1,
+          "id": 3,
+          "text": "!",
+          "lemma": "!",
+          "posTag": "."
+        }
+      ]
+    },
+    {
+      "sentenceNo": 2,
+      "text": "This is me.",
+      "constituencyTree": "(ROOT (S (NP (DT This)) (VP (VBZ is) (NP (PRP me))) (. .)))",
+      "words": [
+        {
+          "sentenceNo": 2,
+          "id": 4,
+          "text": "This",
+          "lemma": "this",
+          "posTag": "DT"
+        },
+        {
+          "sentenceNo": 2,
+          "id": 5,
+          "text": "is",
+          "lemma": "be",
+          "posTag": "VBZ"
+        },
+        {
+          "sentenceNo": 2,
+          "id": 6,
+          "text": "me",
+          "lemma": "I",
+          "posTag": "PRP"
+        },
+        {
+          "sentenceNo": 2,
+          "id": 7,
+          "text": ".",
+          "lemma": ".",
+          "posTag": "."
+        }
+      ]
+    }
+  ]
+}

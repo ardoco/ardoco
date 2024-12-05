@@ -1,0 +1,4 @@
+UnwantedWordsFilter::enableCommonBlacklist=true
+UnwantedWordsFilter::customBlacklist=aspect,bibdatases,bibentries,bus,event,core
+RecommendedInstanceProbabilityFilter::thresholdNameAndTypeProbability=0.2
+RecommendedInstanceProbabilityFilter::thresholdNameOrTypeProbability=0.5

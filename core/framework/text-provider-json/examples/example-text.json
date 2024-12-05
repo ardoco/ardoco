@@ -1,0 +1,128 @@
+{
+  "sentences": [
+    {
+      "sentenceNo": 1,
+      "text": "Hello World!",
+      "constituencyTree": "(ROOT (FRAG (INTJ (UH Hello)) (NP (NNP World)) (. !)))",
+      "words": [
+        {
+          "sentenceNo": 1,
+          "id": 1,
+          "text": "Hello",
+          "lemma": "hello",
+          "posTag": "UH",
+          "outgoingDependencies": [],
+          "incomingDependencies": [
+            {
+              "sourceWordId": 2,
+              "dependencyType": "DISCOURSE"
+            }
+          ]
+        },
+        {
+          "sentenceNo": 1,
+          "id": 2,
+          "text": "World",
+          "lemma": "World",
+          "posTag": "NNP",
+          "outgoingDependencies": [
+            {
+              "targetWordId": 1,
+              "dependencyType": "DISCOURSE"
+            },
+            {
+              "targetWordId": 3,
+              "dependencyType": "PUNCT"
+            }
+          ],
+          "incomingDependencies": []
+        },
+        {
+          "sentenceNo": 1,
+          "id": 3,
+          "text": "!",
+          "lemma": "!",
+          "posTag": ".",
+          "outgoingDependencies": [],
+          "incomingDependencies": [
+            {
+              "sourceWordId": 2,
+              "dependencyType": "PUNCT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sentenceNo": 2,
+      "text": "This is me.",
+      "constituencyTree": "(ROOT (S (NP (DT This)) (VP (VBZ is) (NP (PRP me))) (. .)))",
+      "words": [
+        {
+          "sentenceNo": 2,
+          "id": 4,
+          "text": "This",
+          "lemma": "this",
+          "posTag": "DT",
+          "outgoingDependencies": [],
+          "incomingDependencies": [
+            {
+              "sourceWordId": 6,
+              "dependencyType": "NSUBJ"
+            }
+          ]
+        },
+        {
+          "sentenceNo": 2,
+          "id": 5,
+          "text": "is",
+          "lemma": "be",
+          "posTag": "VBZ",
+          "outgoingDependencies": [],
+          "incomingDependencies": [
+            {
+              "sourceWordId": 6,
+              "dependencyType": "COP"
+            }
+          ]
+        },
+        {
+          "sentenceNo": 2,
+          "id": 6,
+          "text": "me",
+          "lemma": "I",
+          "posTag": "PRP",
+          "outgoingDependencies": [
+            {
+              "targetWordId": 4,
+              "dependencyType": "NSUBJ"
+            },
+            {
+              "targetWordId": 5,
+              "dependencyType": "COP"
+            },
+            {
+              "targetWordId": 7,
+              "dependencyType": "PUNCT"
+            }
+          ],
+          "incomingDependencies": []
+        },
+        {
+          "sentenceNo": 2,
+          "id": 7,
+          "text": ".",
+          "lemma": ".",
+          "posTag": ".",
+          "outgoingDependencies": [],
+          "incomingDependencies": [
+            {
+              "sourceWordId": 6,
+              "dependencyType": "PUNCT"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

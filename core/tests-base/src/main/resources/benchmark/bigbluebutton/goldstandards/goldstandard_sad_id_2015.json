@@ -1,0 +1,453 @@
+{
+    "$schema": "../../DiagramSchema.json",
+    "diagrams": [
+        {
+            "path": "/benchmark/bigbluebutton/diagrams_2015/bbb-arch-overview.png",
+            "boxes": [
+                {
+                    "boundingBox": {
+                        "x": 643,
+                        "y": 13,
+                        "w": 75,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "3rd-party",
+                            "boundingBox": {
+                                "x": 657,
+                                "y": 43,
+                                "w": 48,
+                                "h": 11
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                9,
+                                10,
+                                11,
+                                20
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 469,
+                        "y": 13,
+                        "w": 75,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Nginx",
+                            "boundingBox": {
+                                "x": 491,
+                                "y": 43,
+                                "w": 30,
+                                "h": 11
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                7,
+                                14,
+                                15,
+                                16,
+                                18
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 308,
+                        "y": 13,
+                        "w": 75,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Client",
+                            "boundingBox": {
+                                "x": 331,
+                                "y": 43,
+                                "w": 31,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                4,
+                                5,
+                                6,
+                                8,
+                                16,
+                                22,
+                                31,
+                                46,
+                                60,
+                                65,
+                                66,
+                                67,
+                                70,
+                                71
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 124,
+                        "y": 168,
+                        "w": 444,
+                        "h": 146
+                    },
+                    "textBoxes": [],
+                    "subBoxes": [
+                        {
+                            "boundingBox": {
+                                "x": 166,
+                                "y": 211,
+                                "w": 75,
+                                "h": 69
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Deskshare",
+                                    "boundingBox": {
+                                        "x": 175,
+                                        "y": 241,
+                                        "w": 58,
+                                        "h": 9
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "text_2015/bigbluebutton_2015.txt",
+                                    "sentences": [
+                                        30,
+                                        33,
+                                        69
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 270,
+                                "y": 211,
+                                "w": 75,
+                                "h": 69
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Apps",
+                                    "boundingBox": {
+                                        "x": 294,
+                                        "y": 241,
+                                        "w": 28,
+                                        "h": 11
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "text_2015/bigbluebutton_2015.txt",
+                                    "sentences": [
+                                        30,
+                                        32,
+                                        41,
+                                        42,
+                                        44,
+                                        45
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 374,
+                                "y": 211,
+                                "w": 75,
+                                "h": 69
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Voice",
+                                    "boundingBox": {
+                                        "x": 396,
+                                        "y": 241,
+                                        "w": 31,
+                                        "h": 9
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "text_2015/bigbluebutton_2015.txt",
+                                    "sentences": [
+                                        30,
+                                        34
+                                    ],
+                                    "typedTracelinks": [
+                                        {
+                                            "sentences": [
+                                                18,
+                                                34,
+                                                37,
+                                                38,
+                                                52,
+                                                53
+                                            ],
+                                            "traceType": "COMMON_NOUN"
+                                        },
+                                        {
+                                            "sentences": [
+                                                52
+                                            ],
+                                            "traceType": "OTHER_ENTITY"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "boundingBox": {
+                                "x": 478,
+                                "y": 211,
+                                "w": 75,
+                                "h": 69
+                            },
+                            "textBoxes": [
+                                {
+                                    "text": "Video",
+                                    "boundingBox": {
+                                        "x": 500,
+                                        "y": 241,
+                                        "w": 32,
+                                        "h": 9
+                                    }
+                                }
+                            ],
+                            "subBoxes": [],
+                            "tracelinks": [
+                                {
+                                    "name": "text_2015/bigbluebutton_2015.txt",
+                                    "sentences": [
+                                        30,
+                                        35
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": []
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 7,
+                        "y": 311,
+                        "w": 97,
+                        "h": 81
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "FreeSWITCH",
+                            "boundingBox": {
+                                "x": 20,
+                                "y": 347,
+                                "w": 72,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                18,
+                                36,
+                                37,
+                                40,
+                                48,
+                                58,
+                                69
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 172,
+                        "y": 345,
+                        "w": 272,
+                        "h": 31
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Redis PubSub",
+                            "boundingBox": {
+                                "x": 270,
+                                "y": 356,
+                                "w": 77,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                25,
+                                26,
+                                47,
+                                65
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 674,
+                        "y": 211,
+                        "w": 75,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Web API",
+                            "boundingBox": {
+                                "x": 688,
+                                "y": 241,
+                                "w": 47,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                8,
+                                17,
+                                19,
+                                20
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 795,
+                        "y": 211,
+                        "w": 141,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Presentation Conversion",
+                            "boundingBox": {
+                                "x": 800,
+                                "y": 241,
+                                "w": 132,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                21
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 553,
+                        "y": 430,
+                        "w": 97,
+                        "h": 81
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Redis DB",
+                            "boundingBox": {
+                                "x": 577,
+                                "y": 466,
+                                "w": 50,
+                                "h": 9
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                27,
+                                28,
+                                49
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 711,
+                        "y": 436,
+                        "w": 141,
+                        "h": 69
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Recording Processor",
+                            "boundingBox": {
+                                "x": 726,
+                                "y": 466,
+                                "w": 113,
+                                "h": 11
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2015/bigbluebutton_2015.txt",
+                            "sentences": [
+                                29
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

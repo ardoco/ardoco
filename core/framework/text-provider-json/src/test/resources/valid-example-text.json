@@ -1,0 +1,28 @@
+{
+  "sentences": [
+    {
+      "sentenceNo": 1,
+      "text": "Hello World!",
+      "constituencyTree": "(ROOT (FRAG (INTJ (UH Hello)) (NP (NNP World)) (. !)))",
+      "words": [
+        {
+          "sentenceNo": 1,
+          "id": 1,
+          "text": "Hello",
+          "lemma": "hello",
+          "posTag": "UH",
+          "outgoingDependencies": [
+            {
+              "targetWordId": 1,
+              "dependencyType": "APPOS"}
+          ],
+          "incomingDependencies": [
+            {
+            "sourceWordId": 1,
+            "dependencyType": "APPOS"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema#",
+    "$id": "https://raw.githubusercontent.com/ArDoCo/Core/main/framework/text-provider-json/src/main/resources/schemas/text.json",
+    "title": "Text",
+    "description": "A definition of a text",
+    "type": "object",
+    "required": [
+        "sentences"
+    ],
+    "properties": {
+        "sentences": {
+            "description": "the words that are contained in this sentence",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "description": "Sentence in a text",
+                "type": "object",
+                "required": [
+                    "sentenceNo",
+                    "text",
+                    "constituencyTree",
+                    "words"
+                ],
+                "properties": {
+                    "sentenceNo": {
+                        "description": "index of the sentence",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "text": {
+                        "description": "the text of the sentence",
+                        "type": "string"
+                    },
+                    "constituencyTree": {
+                        "description": "the constituency tree of the sentence in bracket notation",
+                        "type": "string"
+                    },
+                    "words": {
+                        "description": "the words that are contained in this sentence",
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "description": "Definition of a word",
+                            "type": "object",
+                            "required": [
+                                "sentenceNo",
+                                "id",
+                                "text",
+                                "lemma",
+                                "posTag",
+                                "outgoingDependencies",
+                                "incomingDependencies"
+                            ],
+                            "properties": {
+                                "sentenceNo": {
+                                    "description": "index of the sentence the word is contained in",
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "id": {
+                                    "description": "The id of the word. Should be ascending from 1 for the first word in the text.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "text": {
+                                    "description": "the text of the word",
+                                    "type": "string"
+                                },
+                                "lemma": {
+                                    "description": "the lemma of the word",
+                                    "type": "string"
+                                },
+                                "posTag": {
+                                    "$ref": "#/$defs/posTags"
+                                },
+                                "outgoingDependencies": {
+                                    "description": "the outgoing dependencies",
+                                    "type": "array",
+                                    "uniqueItems": false,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "targetWordId",
+                                            "dependencyType"
+                                        ],
+                                        "properties": {
+                                            "targetWordId": {
+                                                "description": "The id of the word the dependency points to.",
+                                                "type": "integer"
+                                            },
+                                            "dependencyType": {
+                                                "$refs": "#/$defs/dependencyTypes"
+                                            }
+                                        }
+                                    }
+                                },
+                                "incomingDependencies": {
+                                    "description": "the incoming dependencies",
+                                    "type": "array",
+                                    "uniqueItems": false,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "sourceWordId",
+                                            "dependencyType"
+                                        ],
+                                        "properties": {
+                                            "sourceWordId": {
+                                                "description": "The id of the word the dependency originates from.",
+                                                "type": "integer"
+                                            },
+                                            "dependencyType": {
+                                                "$refs": "#/$defs/dependencyTypes"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "posTags": {
+            "description": "the lemma of the word",
+            "type": "string",
+            "enum": [
+                "JJ",
+                "JJR",
+                "JJS",
+                "RB",
+                "RBR",
+                "RBS",
+                "WRB",
+                "CC",
+                "IN",
+                "CD",
+                "DT",
+                "WDT",
+                "EX",
+                "FW",
+                "HYPH",
+                "LS",
+                "NN",
+                "NNS",
+                "NNP",
+                "NNPS",
+                "PDT",
+                "POS",
+                "PRP",
+                "PRP$",
+                "WP$",
+                "WP",
+                "RP",
+                "SYM",
+                "TO",
+                "UH",
+                "VB",
+                "VBD",
+                "VBG",
+                "VBN",
+                "VBP",
+                "VBZ",
+                "MD",
+                ".",
+                ",",
+                ":",
+                "-LRB-",
+                "-RRB-",
+                "-NONE-",
+                "``",
+                "''",
+                "$",
+                "#",
+                "HYPH",
+                "NFP",
+                "ADD",
+                "AFX",
+                "GW",
+                "XX"
+            ]
+        },
+        "dependencyTypes": {
+            "description": "The valid dependency tags",
+            "type": "string",
+            "enum": [
+                "APPOS",
+                "NSUBJ",
+                "POSS",
+                "OBJ",
+                "IOBJ",
+                "NMOD",
+                "NSUBJPASS",
+                "POBJ",
+                "AGENT",
+                "NUM",
+                "PREDET",
+                "RCMOD",
+                "CSUBJ",
+                "CCOMP",
+                "XCOMP",
+                "OBL",
+                "VOCATIVE",
+                "EXPL",
+                "DISLOCATED",
+                "ADVCL",
+                "ADVMOD",
+                "DISCOURSE",
+                "AUXILIARY",
+                "COP",
+                "MARK",
+                "ACL",
+                "AMOD",
+                "DET",
+                "CLF",
+                "CASE",
+                "CONJ",
+                "CC",
+                "FIXED",
+                "FLAT",
+                "COMPOUND",
+                "LIST",
+                "PARATAXIS",
+                "ORPHAN",
+                "GOES_WITH",
+                "REPARANDUM",
+                "PUNCT",
+                "CSUBJ_PASS",
+                "ACL_RELCL",
+                "COMPOUND_PRT",
+                "NMOD_POSS",
+                "REF",
+                "NSUBJ_XSUBJ",
+                "NSUBJ_PASS_XSUBJ",
+                "NSUBJ_RELSUBJ",
+                "NSUBJ_PASS_RELSUBJ",
+                "OBJ_RELOBJ"
+            ]
+        }
+    }
+}

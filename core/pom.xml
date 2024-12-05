@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.ardoco</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.0.0-refactoring</version>
+  </parent>
+
+  <groupId>io.github.ardoco.core</groupId>
+  <artifactId>parent</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <name>ArDoCo - The Consistency Analyzer: Core Framework</name>
+  <description>The goal of this project is to connect architecture documentation and models while identifying missing
+        or deviating elements (inconsistencies). An element can be any representable item of the model, like a component
+        or a relation. To do so, we first create trace links and then make use of them and other information to identify
+        inconsistencies. ArDoCo is actively developed by researchers of the Modelling for Continuous Software
+        Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
+  <url>https://github.com/ArDoCo/Core</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>Hossiphi</id>
+      <name>Sophie Corallo</name>
+      <email>sophie.corallo@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_sophie_corallo.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>dfuchss</id>
+      <name>Dominik Fuchss</name>
+      <email>dominik.fuchss@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_dominik_fuchss.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>Gram21</id>
+      <name>Jan Keim</name>
+      <email>jan.keim@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_Keim_Jan.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/ArDoCo/Core.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ArDoCo/Core.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://github.com/ArDoCo/Core/tree/main</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/ArDoCo/Core/issues</url>
+  </issueManagement>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <revision>2.0.0-refactoring</revision>
+    <ardoco.version>${revision}</ardoco.version>
+
+    <sonar.projectKey>ArDoCo_Core</sonar.projectKey>
+    <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
+    <sonar.organization>ardoco</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../${aggregate.report.dir},
+            ${project.basedir}/../../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    <aggregate.report.dir>report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+    <argLine>-Xmx4g -Xss256m</argLine>
+    <doclint.options>all,-missing</doclint.options>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>mavenCentral</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>mavenSnapshot</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless.version}</version>
+        <configuration>
+          <formats>
+            <format>
+              <includes>
+                <include>*.md</include>
+                <include>.gitignore</include>
+              </includes>
+              <trimTrailingWhitespace />
+              <endWithNewline />
+              <indent>
+                <tabs>true</tabs>
+                <spacesPerTab>4</spacesPerTab>
+              </indent>
+            </format>
+          </formats>
+          <!-- define a language-specific format -->
+          <java>
+            <eclipse>
+              <!--suppress UnresolvedMavenProperty -->
+              <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
+            </eclipse>
+            <removeUnusedImports />
+            <licenseHeader>
+              <!--suppress UnresolvedMavenProperty -->
+              <file>${maven.multiModuleProjectDirectory}/license-header</file>
+            </licenseHeader>
+            <importOrder>
+              <!--suppress UnresolvedMavenProperty -->
+              <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
+            </importOrder>
+          </java>
+          <pom>
+            <sortPom>
+              <encoding>UTF-8</encoding>
+              <keepBlankLines>true</keepBlankLines>
+              <indentBlankLines>false</indentBlankLines>
+              <nrOfIndentSpace>2</nrOfIndentSpace>
+              <expandEmptyElements>false</expandEmptyElements>
+              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+              <sortDependencies>groupId,artifactId</sortDependencies>
+              <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
+              <sortDependencyManagement>groupId,artifactId</sortDependencyManagement>
+              <sortPlugins>groupId,artifactId</sortPlugins>
+              <sortProperties>false</sortProperties>
+              <sortModules>true</sortModules>
+              <sortExecutions>true</sortExecutions>
+              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+            </sortPom>
+          </pom>
+          <ratchetFrom>origin/main</ratchetFrom>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.7.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten.clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>clean</phase>
+          </execution>
+          <execution>
+            <id>flatten</id>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.16.2</version>
+        <configuration>
+          <ruleSet>
+            <rule>
+              <groupId>*</groupId>
+              <ignoreVersion>
+                <type>regex</type>
+                <version>.+-(alpha|Alpha|beta|Beta|RC).*</version>
+              </ignoreVersion>
+            </rule>
+          </ruleSet>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>deployment</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>framework</module>
+        <module>pipeline-core</module>
+        <module>tests-base</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <phase>test-compile</phase>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <keyname>2673EE7DF64D33426A93D642E88F0DA2FB06A126</keyname>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>complete</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>framework</module>
+        <module>pipeline-core</module>
+        <module>report</module>
+        <module>tests-base</module>
+      </modules>
+    </profile>
+  </profiles>
+</project>
