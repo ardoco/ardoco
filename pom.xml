@@ -584,6 +584,7 @@
         <module>core</module>
         <module>inconsistency-detection</module>
         <module>tlr</module>
+		<module>secdreqan</module>
       </modules>
       <build>
         <plugins>
@@ -631,6 +632,7 @@
         <module>core</module>
         <module>inconsistency-detection</module>
         <module>tlr</module>
+		<module>secdreqan</module>
       </modules>
     </profile>
   </profiles>
