@@ -27,7 +27,7 @@ public interface ConnectionState extends IConfigurable {
      *
      * @return all instance links
      */
-    ImmutableList<InstanceLink> getInstanceLinks();
+    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks();
 
     /**
      * Returns all instance links with a model instance containing the given name.
@@ -35,7 +35,7 @@ public interface ConnectionState extends IConfigurable {
      * @param name the name of a model instance
      * @return all instance links with a model instance containing the given name as list
      */
-    ImmutableList<InstanceLink> getInstanceLinksByName(String name);
+    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByName(String name);
 
     /**
      * Returns all instance links with a model instance containing the given type.
@@ -43,7 +43,7 @@ public interface ConnectionState extends IConfigurable {
      * @param type the type of a model instance
      * @return all instance links with a model instance containing the given type as list
      */
-    ImmutableList<InstanceLink> getInstanceLinksByType(String type);
+    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByType(String type);
 
     /**
      * Returns all instance links with a model instance containing the given recommended instance.
@@ -51,7 +51,7 @@ public interface ConnectionState extends IConfigurable {
      * @param recommendedInstance the recommended instance to consider
      * @return all instance links found
      */
-    ImmutableList<InstanceLink> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance);
+    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance);
 
     /**
      * Returns all instance links with a model instance containing the given name and type.
@@ -60,7 +60,7 @@ public interface ConnectionState extends IConfigurable {
      * @param type the type of a model instance
      * @return all instance links with a model instance containing the given name and type as list
      */
-    ImmutableList<InstanceLink> getInstanceLinks(String name, String type);
+    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks(String name, String type);
 
     /**
      * Returns a list of tracelinks that are contained within this connection state.
@@ -69,11 +69,11 @@ public interface ConnectionState extends IConfigurable {
      */
     default ImmutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> getTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> traceLinks = Sets.mutable.empty();
-        for (var instanceLink : getInstanceLinks()) {
-            var textualInstance = instanceLink.getTextualInstance();
+        for (var instanceLink : this.getInstanceLinks()) {
+            var textualInstance = instanceLink.getFirstEndpoint();
             for (var nm : textualInstance.getNameMappings()) {
                 for (var word : nm.getWords()) {
-                    var traceLink = new SadSamTraceLink(word.getSentence(), instanceLink.getModelInstance());
+                    var traceLink = new SadSamTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
                     traceLinks.add(traceLink);
                 }
             }
@@ -98,14 +98,14 @@ public interface ConnectionState extends IConfigurable {
      * @param instanceLink the given instance link
      * @return true if it is already contained
      */
-    boolean isContainedByInstanceLinks(InstanceLink instanceLink);
+    boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, ModelInstance> instanceLink);
 
     /**
      * Removes an instance link from the state.
      *
      * @param instanceMapping the instance link to remove
      */
-    void removeFromMappings(InstanceLink instanceMapping);
+    void removeFromMappings(TraceLink<RecommendedInstance, ModelInstance> instanceMapping);
 
     /**
      * Removes all instance links containing the given instance.

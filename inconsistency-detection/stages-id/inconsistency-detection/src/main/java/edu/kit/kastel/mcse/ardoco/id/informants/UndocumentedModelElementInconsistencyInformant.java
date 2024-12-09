@@ -10,8 +10,8 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -38,7 +38,7 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
 
     @Override
     public void process() {
-        var dataRepository = getDataRepository();
+        var dataRepository = this.getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
@@ -49,26 +49,27 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
             var connectionState = connectionStates.getConnectionState(metaModel);
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metaModel);
 
-            var linkedModelInstances = connectionState.getInstanceLinks().collect(InstanceLink::getModelInstance).distinct();
+            var linkedModelInstances = connectionState.getInstanceLinks().collect(TraceLink::getSecondEndpoint).distinct();
 
             // find model instances of given types that are not linked and, thus, are candidates
             var candidateModelInstances = Lists.mutable.<ModelInstance>empty();
             for (var modelInstance : modelState.getInstances()) {
-                if (modelInstanceHasTargetedType(modelInstance, types) && !modelInstanceHasMinimumNumberOfAppearances(linkedModelInstances, modelInstance)) {
+                if (modelInstanceHasTargetedType(modelInstance, this.types) && !this.modelInstanceHasMinimumNumberOfAppearances(linkedModelInstances,
+                        modelInstance)) {
                     candidateModelInstances.add(modelInstance);
                 }
             }
 
             // further filtering
-            candidateModelInstances = filterWithWhitelist(candidateModelInstances, whitelist);
+            candidateModelInstances = filterWithWhitelist(candidateModelInstances, this.whitelist);
 
             // create Inconsistencies
-            createInconsistencies(candidateModelInstances, inconsistencyState);
+            this.createInconsistencies(candidateModelInstances, inconsistencyState);
         }
     }
 
     private boolean modelInstanceHasMinimumNumberOfAppearances(ImmutableList<ModelInstance> linkedModelInstances, ModelInstance modelInstance) {
-        return linkedModelInstances.count(modelInstance::equals) >= minimumNeededTraceLinks;
+        return linkedModelInstances.count(modelInstance::equals) >= this.minimumNeededTraceLinks;
     }
 
     public static boolean modelInstanceHasTargetedType(ModelInstance modelInstance, List<String> types) {

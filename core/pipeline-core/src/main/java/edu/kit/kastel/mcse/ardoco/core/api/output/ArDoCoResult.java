@@ -96,7 +96,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         MutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> traceLinks = Sets.mutable.empty();
 
         for (var modelId : this.getModelIds()) {
-            if (this.getModelState(modelId).getMetamodel() == Metamodel.ARCHITECTURE) {
+            if (modelId == Metamodel.ARCHITECTURE) {
                 traceLinks.addAll(this.getTraceLinksForModel(modelId).castToCollection());
             }
         }
@@ -255,8 +255,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     public ConnectionState getConnectionState(Metamodel modelId) {
         if (DataRepositoryHelper.hasConnectionStates(this.dataRepository)) {
             var connectionStates = DataRepositoryHelper.getConnectionStates(this.dataRepository);
-            var modelState = this.getModelState(modelId);
-            return connectionStates.getConnectionState(modelState.getMetamodel());
+            return connectionStates.getConnectionState(modelId);
         }
         ArDoCoResult.logger.warn("No ConnectionState found.");
         return null;
@@ -271,8 +270,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     public InconsistencyState getInconsistencyState(Metamodel modelId) {
         if (DataRepositoryHelper.hasInconsistencyStates(this.dataRepository)) {
             var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(this.dataRepository);
-            var modelState = this.getModelState(modelId);
-            return inconsistencyStates.getInconsistencyState(modelState.getMetamodel());
+            return inconsistencyStates.getInconsistencyState(modelId);
         }
         ArDoCoResult.logger.warn("No InconsistencyState found.");
         return null;
