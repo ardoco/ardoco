@@ -8,6 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
  */
 public class ProjectPipelineDataImpl implements ProjectPipelineData {
 
+    private static final long serialVersionUID = -993634357212795104L;
     private final String projectName;
 
     /**
@@ -22,6 +23,6 @@ public class ProjectPipelineDataImpl implements ProjectPipelineData {
 
     @Override
     public String getProjectName() {
-        return projectName;
+        return this.projectName;
     }
 }
