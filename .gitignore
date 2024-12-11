@@ -1,5 +1,6 @@
 *
 !.gitignore
+!*.drawio
 !TLR-main/
 !TLR-main/stages-tlr/
 !TLR-main/stages-tlr/model-provider/
