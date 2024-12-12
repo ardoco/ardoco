@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Helper class for {@link GoldStandardProject} implementations.
@@ -24,6 +26,7 @@ public class ProjectHelper {
      */
     public static File loadFileFromResources(String resource) {
         InputStream is = ProjectHelper.class.getResourceAsStream(resource);
+
         if (is == null)
             throw new IllegalArgumentException("Resource not found: " + resource);
         try {
@@ -38,5 +41,17 @@ public class ProjectHelper {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+
+    public static List<File> loadFilesFromFolder(String directory){
+        File folder = new File(directory);
+        List<File> listOfFiles = List.of(Objects.requireNonNull(folder.listFiles()));
+        for(File file : listOfFiles){
+            if (file.isDirectory()) {
+                throw new UnsupportedOperationException("Only files expected but also a directory found!");
+            }
+        }
+        return listOfFiles;
     }
 }

@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.secdreqan;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
