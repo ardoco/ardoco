@@ -1,9 +1,12 @@
 package edu.kit.kastel.mcse.ardoco.secdreqan;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 public class SecDReqAnMultiRunner {
@@ -14,8 +17,11 @@ public class SecDReqAnMultiRunner {
         this.projectName = projectName;
     }
 
-    public void varyTextkeepSAM(List<File> inputFiles, File inputArchitectureModel, ArchitectureModelType architectureModelType,
+    public Map<String, ArDoCoResult> varyTextkeepSAM(List<File> inputFiles, File inputArchitectureModel, ArchitectureModelType architectureModelType,
             SortedMap<String, String> additionalConfigs, String outputDirectory) {
+
+
+        Map<String, ArDoCoResult> resultMap = new LinkedHashMap<>();
 
         File architecture_out = new File(outputDirectory, "architecture");
 
@@ -31,9 +37,11 @@ public class SecDReqAnMultiRunner {
             //TODO: Implement deepCopy
             // var dataRepositoryVariation = dataRepositoryWithModel.deepCopy();
             runner.setUp(inputFile, dataRepositoryWithModel, additionalConfigs, tracelink_out);
-            runner.run();
+            ArDoCoResult result = runner.run();
+            resultMap.put(requirementId, result);
         }
 
+        return resultMap;
     }
 
 }
