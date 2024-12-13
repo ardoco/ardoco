@@ -1,7 +1,6 @@
 package edu.kit.kastel.mcse.ardoco.secdreqan;
 
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.core.tests.eval.ProjectHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 
 import org.eclipse.collections.impl.factory.Lists;
@@ -23,11 +22,11 @@ public enum MultiGoldStandardProject{
 
     EVEREST(//
             "EV", //
-                    "/benchmark/everest/model_2016/pcm/ev.repository", //
-                    "/benchmark/everest/requirements/", //
-                    "/configurations/ev/filterlists_all.txt", // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-                    "/benchmark/everest/goldstandards/", //
-                    new ExpectedResults(.0, .0, .0, .0, .0, .0) //
+                    "../evaluation/pcm/everest.repository", //
+                    "../evaluation/requirements/requirement-per-file/", //
+                    "../evaluation/configurations/filterlists_none.txt", // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
+                    "../evaluation/goldstandards/req-sam-tlr/annotator1/components", //
+                    new ExpectedResults(.50, .80, .47, .94, .25, .95) //macro
     ); //
 
 
@@ -96,7 +95,9 @@ public enum MultiGoldStandardProject{
             }
             goldLinks.removeFirst();
             goldLinks.removeIf(String::isBlank);
-            requirementTLRGoldstandards.add(new RequirementTLREvaluationObject(goldstandardFile.getName(), Lists.immutable.ofAll(goldLinks)));
+            // goldStandardFile name convention: "requirement_01_goldstandard.csv"
+            String identifier = goldstandardFile.getName().replace("_goldstandard.csv", "");
+            requirementTLRGoldstandards.add(new RequirementTLREvaluationObject(identifier, Lists.immutable.ofAll(goldLinks)));
         }
 
         return requirementTLRGoldstandards;

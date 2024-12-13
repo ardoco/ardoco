@@ -38,7 +38,7 @@ public class SecDReqAnMultiRunner {
             // var dataRepositoryVariation = dataRepositoryWithModel.deepCopy();
             runner.setUp(inputFile, dataRepositoryWithModel, additionalConfigs, tracelink_out);
             ArDoCoResult result = runner.run();
-            resultMap.put(requirementId, result);
+            resultMap.put(requirementId.replace(".txt",""), result);
         }
 
         return resultMap;

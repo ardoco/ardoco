@@ -1,8 +1,11 @@
 /* Licensed under MIT 2021-2024. */
 package edu.kit.kastel.mcse.ardoco.core.tests;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
 
 import org.eclipse.collections.api.collection.ImmutableCollection;
 import org.slf4j.Logger;

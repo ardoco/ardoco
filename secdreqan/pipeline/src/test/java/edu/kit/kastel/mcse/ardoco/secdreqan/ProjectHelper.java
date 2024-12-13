@@ -1,7 +1,10 @@
-/* Licensed under MIT 2023-2024. */
-package edu.kit.kastel.mcse.ardoco.core.tests.eval;
+package edu.kit.kastel.mcse.ardoco.secdreqan;
+
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.GoldStandardProject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,12 +28,15 @@ public class ProjectHelper {
      * @return the file if loaded or null if not possible
      */
     public static File loadFileFromResources(String resource) {
-        InputStream is = ProjectHelper.class.getResourceAsStream(resource);
 
-        if (is == null)
-            throw new IllegalArgumentException("Resource not found: " + resource);
+        InputStream is;
         try {
-            File temporaryFile = File.createTempFile("ArDoCo", ".tmp");
+            is = new FileInputStream(resource);
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Resource not found: " + System.getProperty("user.dir") + "/" + resource);
+        }
+        try {
+            File temporaryFile = File.createTempFile("SecDReqAn", ".tmp");
             temporaryFile.deleteOnExit();
             try (FileOutputStream fos = new FileOutputStream(temporaryFile)) {
                 try (is) {
@@ -41,5 +47,16 @@ public class ProjectHelper {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public static List<File> loadFilesFromFolder(String directory) {
+        File folder = new File(directory);
+        List<File> listOfFiles = List.of(Objects.requireNonNull(folder.listFiles()));
+        for (File file : listOfFiles) {
+            if (file.isDirectory()) {
+                throw new UnsupportedOperationException("Only files expected but also a directory found!");
+            }
+        }
+        return listOfFiles;
     }
 }

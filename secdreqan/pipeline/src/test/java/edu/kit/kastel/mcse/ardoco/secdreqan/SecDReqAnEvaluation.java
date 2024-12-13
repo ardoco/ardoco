@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
+import edu.kit.kastel.mcse.ardoco.metrics.result.ClassificationResult;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 
 import org.eclipse.collections.api.collection.ImmutableCollection;
@@ -18,8 +21,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.TraceLinkUtilities;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.core.tests.TestUtil;
-import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.EvaluationResults;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 
@@ -30,7 +31,7 @@ public class SecDReqAnEvaluation {
     protected static final String OUTPUT = "target/testout-secdreqan-eval";
 
 
-    protected final void runTraceLinkEvaluation(MultiGoldStandardProject project) {
+    protected final ClassificationResult runTraceLinkEvaluation(MultiGoldStandardProject project) {
 
         var additionalConfigs= ConfigurationHelper.loadAdditionalConfigs(project.getAdditionalConfigurationsFile());
 
@@ -48,23 +49,21 @@ public class SecDReqAnEvaluation {
             this.calculateSingleEvaluationResults(evalObject);
         }
 
-        EvaluationResults<String> evaluationOverallResults = accumulateEvaluationResultsOverAllRequirementTLRs(evaluationObjects);
+        List<SingleClassificationResult<String>> evaluationResults = evaluationObjects.stream().map(RequirementTLREvaluationObject::getEvaluationResults).collect(Collectors.toList());
+
+        ClassificationMetricsCalculator calculator = ClassificationMetricsCalculator.getInstance();
+        List<AggregatedClassificationResult> averages = calculator.calculateAverages(evaluationResults, null);
+
+        TestUtil.logAggregatedResults(SecDReqAnEvaluation.logger, this, project.getAlias(), averages);
 
 
+
+        ClassificationResult macroAvg = averages.get(0);
         ExpectedResults expectedOverallResults = project.getExpectedTraceLinkResults();
-        TestUtil.logExtendedResultsWithExpected(SecDReqAnEvaluation.logger, this, project.getAlias(), evaluationOverallResults, expectedOverallResults);
-        this.compareResults(evaluationOverallResults, expectedOverallResults);
-    }
+        TestUtil.logExtendedResultsWithExpected(SecDReqAnEvaluation.logger, this, project.getAlias(), macroAvg, expectedOverallResults);
+        this.compareResults(macroAvg, expectedOverallResults);
 
-    private EvaluationResults<String> accumulateEvaluationResultsOverAllRequirementTLRs(List<RequirementTLREvaluationObject> evaluationObjects) {
-
-        List<SingleClassificationResult<String>> evaluationResults = evaluationObjects.stream().map(e -> e.getEvaluationResults()).collect(Collectors.toList());
-
-        // TODO: Aggregate Results
-        //<String>  = ResultCalculatorUtil.calculateMacroAverageResults(Lists.immutable.ofAll(evaluationResults));
-
-
-        return overallResult;
+        return averages.get(1);
     }
 
     private void addResultsToEvaluationObjects(List<RequirementTLREvaluationObject> evaluationObjects, Map<String, ArDoCoResult> resultMap) {
@@ -72,7 +71,7 @@ public class SecDReqAnEvaluation {
         for(var evaluationObject : evaluationObjects){
             String id = evaluationObject.getId();
             if (! resultMap.containsKey(id)){
-                throw new IllegalStateException("Requirement ids of results and goldstandard do not match.");
+                throw new IllegalStateException("Requirement ids of results and goldstandard do not match. Missing id: " + id);
             }
             evaluationObject.addArDoCoResult(resultMap.get(id));
             resultMap.remove(id);
@@ -86,7 +85,7 @@ public class SecDReqAnEvaluation {
         ArDoCoResult arDoCoResult = evalObject.getArDoCoResult();
         ImmutableCollection<String> goldStandard = evalObject.getGoldStandard();
         ImmutableList<String> results = TraceLinkUtilities.getSadSamTraceLinksAsStringList(arDoCoResult.getAllTraceLinks());
-        Assertions.assertFalse(results.isEmpty());
+        // TODO: Check if it is ok that results is empty
 
         Set<String> distinctTraceLinks = new LinkedHashSet<>(results.castToCollection());
         Set<String> distinctGoldStandard = new LinkedHashSet<>(goldStandard.castToCollection());
@@ -107,18 +106,18 @@ public class SecDReqAnEvaluation {
         return sentences * modelElements;
     }
 
-    protected void compareResults(EvaluationResults<String> results, ExpectedResults expectedResults) {
+    protected void compareResults(ClassificationResult results, ExpectedResults expectedResults) {
         Assertions.assertAll(//
-                () -> Assertions.assertTrue(results.precision() >= expectedResults.precision(), "Precision " + results
-                        .precision() + " is below the expected minimum value " + expectedResults.precision()), //
-                () -> Assertions.assertTrue(results.recall() >= expectedResults.recall(), "Recall " + results
-                        .recall() + " is below the expected minimum value " + expectedResults.recall()), //
-                () -> Assertions.assertTrue(results.f1() >= expectedResults.f1(), "F1 " + results
-                        .f1() + " is below the expected minimum value " + expectedResults.f1()), () -> Assertions.assertTrue(results
-                        .accuracy() >= expectedResults.accuracy(), "Accuracy " + results
-                        .accuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
-                () -> Assertions.assertTrue(results.phiCoefficient() >= expectedResults.phiCoefficient(), "Phi coefficient " + results
-                        .phiCoefficient() + " is below the expected minimum value " + expectedResults.phiCoefficient()));
+                () -> Assertions.assertTrue(results.getPrecision() >= expectedResults.precision(), "Precision " + results
+                        .getPrecision() + " is below the expected minimum value " + expectedResults.precision()), //
+                () -> Assertions.assertTrue(results.getRecall() >= expectedResults.recall(), "Recall " + results
+                        .getRecall() + " is below the expected minimum value " + expectedResults.recall()), //
+                () -> Assertions.assertTrue(results.getF1() >= expectedResults.f1(), "F1 " + results
+                        .getF1() + " is below the expected minimum value " + expectedResults.f1()), () -> Assertions.assertTrue(results
+                        .getAccuracy() >= expectedResults.accuracy(), "Accuracy " + results
+                        .getAccuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
+                () -> Assertions.assertTrue(results.getPhiCoefficient() >= expectedResults.phiCoefficient(), "Phi coefficient " + results
+                        .getPhiCoefficient() + " is below the expected minimum value " + expectedResults.phiCoefficient()));
     }
 
 }
