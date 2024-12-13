@@ -24,6 +24,8 @@ import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 
+import static edu.kit.kastel.mcse.ardoco.secdreqan.TestUtil.logDetailsOfEvalObject;
+
 public class SecDReqAnEvaluation {
 
     protected static final Logger logger = LoggerFactory.getLogger(SecDReqAnEvaluation.class);
@@ -47,6 +49,7 @@ public class SecDReqAnEvaluation {
 
         for(var evalObject: evaluationObjects){
             this.calculateSingleEvaluationResults(evalObject);
+            logDetailsOfEvalObject(SecDReqAnEvaluation.logger, this, project.getAlias(), evalObject);
         }
 
         List<SingleClassificationResult<String>> evaluationResults = evaluationObjects.stream().map(RequirementTLREvaluationObject::getEvaluationResults).collect(Collectors.toList());
@@ -55,8 +58,6 @@ public class SecDReqAnEvaluation {
         List<AggregatedClassificationResult> averages = calculator.calculateAverages(evaluationResults, null);
 
         TestUtil.logAggregatedResults(SecDReqAnEvaluation.logger, this, project.getAlias(), averages);
-
-
 
         ClassificationResult macroAvg = averages.get(0);
         ExpectedResults expectedOverallResults = project.getExpectedTraceLinkResults();
