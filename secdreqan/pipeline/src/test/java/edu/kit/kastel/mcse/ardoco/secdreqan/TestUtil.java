@@ -5,6 +5,8 @@ import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
 import edu.kit.kastel.mcse.ardoco.metrics.result.ClassificationResult;
 
+import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
+
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -60,5 +62,27 @@ public class TestUtil {
                 %s""", name, testClass.getClass().getSimpleName(), results.get(0), results.get(1), results.get(2));
 
         logger.info(infoString);
+    }
+
+    public static void logDetailsOfEvalObject(Logger logger, Object testClass, String name, RequirementTLREvaluationObject evalObject){
+
+            var id = evalObject.getId();
+            var tp = evalObject.getEvaluationResults().getTruePositives();
+            var fp = evalObject.getEvaluationResults().getFalsePositives();
+            var fn = evalObject.getEvaluationResults().getFalseNegatives();
+            var tn = evalObject.getEvaluationResults().getTrueNegatives();
+            var precision = evalObject.getEvaluationResults().getPrecision();
+            var recall = evalObject.getEvaluationResults().getRecall();
+
+            var infoString = String.format(Locale.ENGLISH, """
+                    
+                    %s (%s) %s (precision: %.2f, recall: %.2f):
+                    TP: %s
+                    FP: %s
+                    FN: %s
+                    TN: %s""", name, testClass.getClass().getSimpleName(), id, precision, recall, tp, fp, fn, tn);
+
+            logger.info(infoString);
+
     }
 }
