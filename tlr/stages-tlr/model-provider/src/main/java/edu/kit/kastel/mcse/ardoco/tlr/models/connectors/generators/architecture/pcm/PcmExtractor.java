@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm;
 
 import java.io.File;
@@ -57,10 +57,10 @@ public final class PcmExtractor extends ArchitectureExtractor {
         for (PcmInterface originalInterface : originalModel.getRepository().getInterfaces()) {
             SortedSet<ArchitectureMethod> signatures = new TreeSet<>();
             for (PcmSignature originalMethod : originalInterface.getMethods()) {
-                ArchitectureMethod signature = new ArchitectureMethod(originalMethod.getEntityName());
+                ArchitectureMethod signature = new ArchitectureMethod(originalMethod.getEntityName(), null);
                 signatures.add(signature);
             }
-            ArchitectureInterface modelInterface = new ArchitectureInterface(originalInterface.getEntityName(), originalInterface.getId(), signatures);
+            ArchitectureInterface modelInterface = new ArchitectureInterface(originalInterface.getEntityName(), originalInterface.getId(), signatures, null);
             interfaces.add(modelInterface);
         }
         return interfaces;

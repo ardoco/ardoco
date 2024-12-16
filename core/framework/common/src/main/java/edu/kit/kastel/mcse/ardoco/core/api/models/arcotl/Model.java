@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.List;
@@ -16,14 +16,14 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
     }
 
     /**
-     * Returns the content of this model.
+     * Returns the content of this model. Contains all elements of the model.
      *
      * @return the content of this model
      */
     public abstract List<? extends Entity> getContent();
 
     /**
-     * Returns the endpoints of this model.
+     * Returns the endpoints of this model. Contains all targetable elements for trace links, e.g. compilation units in case of CodeModel.
      *
      * @return the endpoints of this model
      */

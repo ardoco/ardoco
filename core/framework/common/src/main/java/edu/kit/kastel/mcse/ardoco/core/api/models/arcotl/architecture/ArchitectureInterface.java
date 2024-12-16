@@ -1,8 +1,11 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
 import java.util.Objects;
 import java.util.SortedSet;
+
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
 
 public final class ArchitectureInterface extends ArchitectureItem {
 
@@ -10,9 +13,15 @@ public final class ArchitectureInterface extends ArchitectureItem {
 
     private final SortedSet<ArchitectureMethod> signatures;
 
-    public ArchitectureInterface(String name, String id, SortedSet<ArchitectureMethod> signatures) {
+    private final String type;
+    private MutableList<String> nameParts;
+    private MutableList<String> typeParts;
+
+    public ArchitectureInterface(String name, String id, SortedSet<ArchitectureMethod> signatures, String type) {
         super(name, id);
         this.signatures = signatures;
+        this.type = type;
+
     }
 
     public SortedSet<ArchitectureMethod> getSignatures() {
@@ -38,5 +47,20 @@ public final class ArchitectureInterface extends ArchitectureItem {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), this.signatures);
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public ImmutableList<String> getNameParts() {
+        return this.nameParts.toImmutable();
+    }
+
+    @Override
+    public ImmutableList<String> getTypeParts() {
+        return this.typeParts.toImmutable();
     }
 }

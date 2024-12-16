@@ -37,7 +37,7 @@ public class TestUtil {
         int sentences = arDoCoResult.getText().getSentences().size();
         int modelElements = 0;
         for (var model : arDoCoResult.getModelIds()) {
-            modelElements += arDoCoResult.getModelState(model).getInstances().size();
+            modelElements += arDoCoResult.getModelState(model).getEndpoints().size();
         }
 
         int confusionMatrixSum = sentences * modelElements;

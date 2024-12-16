@@ -20,7 +20,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
@@ -50,6 +50,18 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 @Deterministic
 public record ArDoCoResult(DataRepository dataRepository) {
     private static final Logger logger = LoggerFactory.getLogger(ArDoCoResult.class);
+
+    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, ArchitectureEntity> traceLink) {
+        String modelElementName = ((ModelInstance) traceLink.getSecondEndpoint()).getFullName();
+        String modelElementUid = traceLink.getSecondEndpoint().getId();
+        String modelInfo = String.format("%s (%s)", modelElementName, modelElementUid);
+
+        var sentence = traceLink.getFirstEndpoint().getSentence();
+        int sentenceNumber = sentence.getSentenceNumberForOutput();
+        String sentenceInfo = String.format("S%3d: \"%s\"", sentenceNumber, sentence.getText());
+
+        return String.format("%-42s <--> %s", modelInfo, sentenceInfo);
+    }
 
     /**
      * Returns the name of the project the results are based on.
@@ -112,18 +124,6 @@ public record ArDoCoResult(DataRepository dataRepository) {
         return this.getAllTraceLinks()
                 .toSortedList(Comparator.comparingInt(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber()))
                 .collect(ArDoCoResult::formatTraceLinksHumanReadable);
-    }
-
-    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, ArchitectureEntity> traceLink) {
-        String modelElementName = ((ModelInstance) traceLink.getSecondEndpoint()).getFullName();
-        String modelElementUid = traceLink.getSecondEndpoint().getId();
-        String modelInfo = String.format("%s (%s)", modelElementName, modelElementUid);
-
-        var sentence = traceLink.getFirstEndpoint().getSentence();
-        int sentenceNumber = sentence.getSentenceNumberForOutput();
-        String sentenceInfo = String.format("S%3d: \"%s\"", sentenceNumber, sentence.getText());
-
-        return String.format("%-42s <--> %s", modelInfo, sentenceInfo);
     }
 
     /**
@@ -309,14 +309,14 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link LegacyModelExtractionState} for the modelId with the given ID.
+     * Returns the internal {@link Model} for the modelId with the given ID.
      *
      * @param modelId the ID of the model
      * @return the LegacyModelExtractionState
      */
-    public LegacyModelExtractionState getModelState(Metamodel modelId) {
+    public Model getModelState(Metamodel modelId) {
         ModelStates modelStates = this.getModelStates();
-        return modelStates.getModelExtractionState(modelId);
+        return modelStates.getModel(modelId);
     }
 
     /**

@@ -1,14 +1,15 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
 import java.util.SortedSet;
 
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+
 /**
- * A representation of the model object <i>Component</i> from AMTL. Components
- * are building blocks of a software architecture. A component can contain
- * subcomponents but doesn't have to. A component can provide and require
- * interfaces. Provided interfaces are implemented by the component. Required
- * interfaces specify some functionality that is needed by the component.
+ * A representation of the model object <i>Component</i> from AMTL. Components are building blocks of a software architecture. A component can contain
+ * subcomponents but doesn't have to. A component can provide and require interfaces. Provided interfaces are implemented by the component. Required interfaces
+ * specify some functionality that is needed by the component.
  */
 public final class ArchitectureComponent extends ArchitectureItem {
 
@@ -19,6 +20,9 @@ public final class ArchitectureComponent extends ArchitectureItem {
 
     private final SortedSet<ArchitectureInterface> requiredInterfaces;
     private final String type;
+    private final MutableList<String> nameParts;
+
+    private final MutableList<String> typeParts;
 
     public ArchitectureComponent(String name, String id, SortedSet<ArchitectureComponent> subcomponents, SortedSet<ArchitectureInterface> providedInterfaces,
             SortedSet<ArchitectureInterface> requiredInterfaces, String type) {
@@ -27,6 +31,8 @@ public final class ArchitectureComponent extends ArchitectureItem {
         this.providedInterfaces = providedInterfaces;
         this.requiredInterfaces = requiredInterfaces;
         this.type = type;
+        this.nameParts = splitIdentifierIntoParts(name);
+        this.typeParts = splitIdentifierIntoParts(type);
     }
 
     /**
@@ -39,8 +45,7 @@ public final class ArchitectureComponent extends ArchitectureItem {
     }
 
     /**
-     * Returns the provided interfaces of this component. Provided interfaces are
-     * implemented by this component.
+     * Returns the provided interfaces of this component. Provided interfaces are implemented by this component.
      *
      * @return the provided interfaces of this component
      */
@@ -49,8 +54,7 @@ public final class ArchitectureComponent extends ArchitectureItem {
     }
 
     /**
-     * Returns the required interfaces of this component. Required interfaces
-     * specify some functionality that is needed by this component.
+     * Returns the required interfaces of this component. Required interfaces specify some functionality that is needed by this component.
      *
      * @return the required interfaces of this component
      */
@@ -68,6 +72,16 @@ public final class ArchitectureComponent extends ArchitectureItem {
     }
 
     @Override
+    public ImmutableList<String> getNameParts() {
+        return this.nameParts.toImmutable();
+    }
+
+    @Override
+    public ImmutableList<String> getTypeParts() {
+        return this.typeParts.toImmutable();
+    }
+
+    @Override
     public String toString() {
         return "Component: " + this.getName();
     }
@@ -77,7 +91,8 @@ public final class ArchitectureComponent extends ArchitectureItem {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ArchitectureComponent that) || !super.equals(o) || !this.subcomponents.equals(that.subcomponents) || !this.providedInterfaces.equals(that.providedInterfaces)) {
+        if (!(o instanceof ArchitectureComponent that) || !super.equals(o) || !this.subcomponents.equals(that.subcomponents) || !this.providedInterfaces.equals(
+                that.providedInterfaces)) {
             return false;
         }
         return this.requiredInterfaces.equals(that.requiredInterfaces);
