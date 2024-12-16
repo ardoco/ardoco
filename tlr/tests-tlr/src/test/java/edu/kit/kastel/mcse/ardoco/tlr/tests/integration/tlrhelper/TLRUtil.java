@@ -7,7 +7,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -35,8 +35,8 @@ public final class TLRUtil {
 
         List<ConnectionState> connectionStatesList = modelStates.modelIds()
                 .stream()
-                .map(modelStates::getModelExtractionState)
-                .map(LegacyModelExtractionState::getMetamodel)
+                .map(modelStates::getModel)
+                .map(Model::getMetamodel)
                 .map(connectionStates::getConnectionState)
                 .toList();
         for (var connectionState : connectionStatesList) {

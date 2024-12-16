@@ -17,8 +17,8 @@ public abstract sealed class ArchitectureItem extends ArchitectureEntity permits
      *
      * @param name the name of the architecture item to be created
      */
-    protected ArchitectureItem(String name) {
-        super(name);
+    protected ArchitectureItem(String name, String type) {
+        super(name, type);
     }
 
     /**
@@ -27,7 +27,14 @@ public abstract sealed class ArchitectureItem extends ArchitectureEntity permits
      * @param name the name of the architecture item to be created
      * @param id   the identifier of the architecture item to be created
      */
-    protected ArchitectureItem(String name, String id) {
-        super(name, id);
+    protected ArchitectureItem(String name, String type, String id) {
+        super(name, type, id);
     }
+
+    /**
+     * Return the type of the architecture item as string
+     * 
+     * @return the type of the architecture item
+     */
+    public abstract String getType();
 }

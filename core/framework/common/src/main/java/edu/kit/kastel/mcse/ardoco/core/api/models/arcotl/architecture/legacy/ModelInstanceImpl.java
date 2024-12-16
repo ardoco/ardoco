@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2023. */
+/* Licensed under MIT 2021-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy;
 
 import java.util.Objects;
@@ -48,6 +48,15 @@ public final class ModelInstanceImpl extends ModelInstance {
         this.uid = uid;
         this.fullName = name;
         this.fullType = type;
+    }
+
+    @Override
+    public String getType() {
+        try {
+            throw new IllegalAccessException("This method was just added for refactoring");
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

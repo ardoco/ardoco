@@ -9,20 +9,20 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.SortedSet;
 import java.util.StringJoiner;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -35,9 +35,8 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  * General helper class for outsourced, common methods.
  */
 public final class CommonUtilities {
-    private static final Logger logger = LoggerFactory.getLogger(CommonUtilities.class);
-
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final Logger logger = LoggerFactory.getLogger(CommonUtilities.class);
 
     private CommonUtilities() {
         throw new IllegalAccessError();
@@ -195,9 +194,8 @@ public final class CommonUtilities {
     }
 
     /**
-     * Creates {@link RecommendedInstance}s for the given {@link NounMapping}s using the given information about similar
-     * types and probability and type mappings. Adds the created {@link RecommendedInstance}s to the given
-     * {@link RecommendationState}
+     * Creates {@link RecommendedInstance}s for the given {@link NounMapping}s using the given information about similar types and probability and type
+     * mappings. Adds the created {@link RecommendedInstance}s to the given {@link RecommendationState}
      *
      * @param similarTypes        The list of similar types
      * @param nameMappings        the noun mappings
@@ -219,36 +217,35 @@ public final class CommonUtilities {
     /**
      * Retrieves a list of similar types in the given model state given the word.
      *
-     * @param word       the word that might have type names in the model state
-     * @param modelState the model state containing information about types
+     * @param word  the word that might have type names in the model state
+     * @param model the model containing information about types
      * @return List of type names in the model state that are similar to the given word
      */
-    public static ImmutableList<String> getSimilarTypes(Word word, LegacyModelExtractionState modelState) {
-        var identifiers = getTypeIdentifiers(modelState);
+    public static ImmutableList<String> getSimilarTypes(Word word, Model model) {
+        var identifiers = getTypeIdentifiers(model);
         return Lists.immutable.fromStream(identifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getText())));
     }
 
     /**
      * Returns a set of identifiers for the types in the model state.
      *
-     * @param modelState the model state
+     * @param model the model state
      * @return Set of identifiers for existing types
      */
-    public static SortedSet<String> getTypeIdentifiers(LegacyModelExtractionState modelState) {
-        SortedSet<String> identifiers = modelState.getInstanceTypes()
-                .stream()
-                .map(CommonUtilities::splitSnakeAndKebabCase)
-                .map(CommonUtilities::splitCamelCase)
-                .map(type -> type.split(" "))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toCollection(TreeSet::new));
-        identifiers.addAll(modelState.getInstanceTypes().toSet());
-        return identifiers;
+    public static SortedSet<String> getTypeIdentifiers(Model model) {
+
+        for (var entity : model.getContent()) {
+            switch (entity) {
+                case ArchitectureEntity architectureEntity -> architectureEntity.getType();
+                case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+                case TextEntity ignored -> throw new IllegalArgumentException("TextEntities have not types");
+            }
+        }
+        return null;
     }
 
     /**
-     * Splits a given String at Snake and Kebab cases. For example, "test-string" and "test_string" become "test
-     * string".
+     * Splits a given String at Snake and Kebab cases. For example, "test-string" and "test_string" become "test string".
      *
      * @param name the given name
      * @return the name split at snake and kebab case
@@ -344,8 +341,7 @@ public final class CommonUtilities {
     }
 
     /**
-     * Check if the word is CamelCased. Additionally, the word needs to have a length > 4, otherwise it is probably only
-     * a abbreviation.
+     * Check if the word is CamelCased. Additionally, the word needs to have a length > 4, otherwise it is probably only a abbreviation.
      *
      * @param word Word to check
      * @return <code>true</code> if the word is CamelCased and has a length greater than 4
@@ -358,8 +354,7 @@ public final class CommonUtilities {
     }
 
     /**
-     * Checks a given list of {@link Word words} to find out if there are words that the given recommendedInstance has
-     * in its {@link NounMapping NounMappings}.
+     * Checks a given list of {@link Word words} to find out if there are words that the given recommendedInstance has in its {@link NounMapping NounMappings}.
      *
      * @param wordList            the word list to check
      * @param recommendedInstance the RecommendedInstance in question

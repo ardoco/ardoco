@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -47,14 +47,14 @@ public class NameTypeInformant extends Informant {
     }
 
     private void exec(TextState textState, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            var recommendationState = recommendationStates.getRecommendationState(modelState.getMetamodel());
+        for (var modelID : modelStates.modelIds()) {
+            var model = modelStates.getModel(modelID);
+            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
 
-            this.addRecommendedInstanceIfNameAfterType(textState, word, modelState, recommendationState);
-            this.addRecommendedInstanceIfNameBeforeType(textState, word, modelState, recommendationState);
-            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState, word, modelState, recommendationState);
-            this.addRecommendedInstanceIfNameOrTypeAfterType(textState, word, modelState, recommendationState);
+            this.addRecommendedInstanceIfNameAfterType(textState, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameBeforeType(textState, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameOrTypeAfterType(textState, word, model, recommendationState);
         }
     }
 
@@ -65,13 +65,12 @@ public class NameTypeInformant extends Informant {
      * @param textExtractionState text extraction state
      * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState, Word word, LegacyModelExtractionState modelState,
-            RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
-        var similarTypes = CommonUtilities.getSimilarTypes(word, modelState);
+        var similarTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!similarTypes.isEmpty()) {
             textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
@@ -90,13 +89,12 @@ public class NameTypeInformant extends Informant {
      * @param textExtractionState text extraction state
      * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState, Word word, LegacyModelExtractionState modelState,
-            RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
-        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, modelState);
+        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
@@ -114,13 +112,12 @@ public class NameTypeInformant extends Informant {
      * @param textExtractionState text extraction state
      * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState, Word word, LegacyModelExtractionState modelState,
-            RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
-        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, modelState);
+        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!sameLemmaTypes.isEmpty()) {
             textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
@@ -138,14 +135,15 @@ public class NameTypeInformant extends Informant {
      *
      * @param textExtractionState text extraction state
      * @param word                the current word
+     * @param recommendationState the recommendation state
+     * @param model               the model
      */
-    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState, Word word, LegacyModelExtractionState modelState,
-            RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
-        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, modelState);
+        var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 

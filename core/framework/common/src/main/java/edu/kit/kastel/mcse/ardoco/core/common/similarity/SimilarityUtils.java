@@ -13,6 +13,10 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -35,12 +39,56 @@ public final class SimilarityUtils {
 
     private final WordSimUtils wordSimUtils;
 
+    public SimilarityUtils(WordSimUtils wordSimUtils) {
+        this.wordSimUtils = wordSimUtils;
+    }
+
     public static SimilarityUtils getInstance() {
         return INSTANCE;
     }
 
-    public SimilarityUtils(WordSimUtils wordSimUtils) {
-        this.wordSimUtils = wordSimUtils;
+    private static boolean coversOtherPhraseVector(PhraseMapping phraseMapping1, PhraseMapping phraseMapping2) {
+
+        ImmutableSortedMap<Word, Integer> phraseVector1 = phraseMapping1.getPhraseVector();
+        ImmutableSortedMap<Word, Integer> phraseVector2 = phraseMapping2.getPhraseVector();
+
+        return phraseVector1.keysView().containsAll(phraseVector2.keysView().toSortedSet());
+    }
+
+    static double cosineSimilarity(Map<Word, Integer> firstPhraseVector, Map<Word, Integer> secondPhraseVector) {
+
+        CosineSimilarity cosineSimilarity = new CosineSimilarity();
+
+        Map<CharSequence, Integer> firstVector = firstPhraseVector.entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> e.getKey().getText(), Map.Entry::getValue));
+        Map<CharSequence, Integer> secondVector = secondPhraseVector.entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> e.getKey().getText(), Map.Entry::getValue));
+
+        return cosineSimilarity.cosineSimilarity(firstVector, secondVector);
+    }
+
+    public static <A extends Serializable, B extends Serializable> ImmutableList<Pair<A, B>> uniqueDot(ImmutableList<A> first, ImmutableList<B> second) {
+        List<Pair<A, B>> result = new ArrayList<>();
+        for (A a : first) {
+            for (B b : second) {
+                result.add(new Pair<>(a, b));
+            }
+        }
+        return Lists.immutable.withAll(result);
+    }
+
+    private static int similarEntriesOfList(ImmutableList<String> list1, ImmutableList<String> list2) {
+        MutableList<String> removed = Lists.mutable.empty();
+
+        for (var element : list1) {
+            if (list2.contains(element) || (list2.select(e -> !removed.contains(e) && (e.contains(element) || element.contains(e))).size() == 1)) {
+                removed.add(element);
+            }
+        }
+
+        return removed.size();
     }
 
     public ImmutableList<String> getSimilarSurfaceWords(RecommendedInstance recommendedInstance, ModelInstance instance) {
@@ -102,16 +150,22 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Compares a given {@link Word} with a given {@link ModelInstance} for similarity.
+     * Compares a given {@link Word} with a given {@link Entity} for similarity.
      *
-     * @param word     the {@link Word}
-     * @param instance the {@link ModelInstance}
-     * @return true, iff the {@link Word} and {@link ModelInstance} are similar.
+     * @param word   the {@link Word}
+     * @param entity the {@link Entity} of a model
+     * @return true, iff the {@link Word} and {@link Entity} are similar.
      */
-    public boolean isWordSimilarToModelInstance(Word word, ModelInstance instance) {
-        var names = instance.getNameParts();
-        return this.compareWordWithStringListEntries(word, names);
+    public boolean isWordSimilarToModelEntity(Word word, Entity entity) {
+        switch (entity) {
+            case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getNameParts());
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        }
+        throw new IllegalStateException("Undefined for entity type");
     }
+
+    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
 
     /**
      * Compares a given {@link RecommendedInstance} with a given {@link ModelInstance} for similarity.
@@ -126,16 +180,23 @@ public final class SimilarityUtils {
         return instance.getFullName().equalsIgnoreCase(ri.getName()) || this.areWordsOfListsSimilar(instance.getNameParts(), nameList);
     }
 
+    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
+
     /**
-     * Compares a given {@link Word} with the type of a given {@link ModelInstance} for similarity.
+     * Compares a given {@link Word} with the type of a given {@link Entity} for similarity.
      *
-     * @param word     the {@link Word}
-     * @param instance the {@link ModelInstance}
-     * @return true, iff the {@link Word} and the type of the {@link ModelInstance} are similar.
+     * @param word   the {@link Word}
+     * @param entity the {@link Entity}
+     * @return true, iff the {@link Word} and the type of the {@link Entity} are similar.
      */
-    public boolean isWordSimilarToModelInstanceType(Word word, ModelInstance instance) {
-        var types = instance.getTypeParts();
-        return this.compareWordWithStringListEntries(word, types);
+    public boolean isWordSimilarToModelInstanceType(Word word, Entity entity) {
+        switch (entity) {
+            case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getTypeParts());
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        }
+        throw new IllegalStateException("Undefined for entity type");
+
     }
 
     private boolean compareWordWithStringListEntries(Word word, ImmutableList<String> names) {
@@ -151,7 +212,6 @@ public final class SimilarityUtils {
         return false;
     }
 
-    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
     /**
      * Checks the similarity of two {@link Word}s.
      *
@@ -163,7 +223,6 @@ public final class SimilarityUtils {
         return this.wordSimUtils.areWordsSimilar(word1, word2);
     }
 
-    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
     /**
      * Checks the similarity of two string. Uses Jaro-Winkler similarity and Levenshtein to assess the similarity.
      *
@@ -321,30 +380,8 @@ public final class SimilarityUtils {
         return false;
     }
 
-    private static boolean coversOtherPhraseVector(PhraseMapping phraseMapping1, PhraseMapping phraseMapping2) {
-
-        ImmutableSortedMap<Word, Integer> phraseVector1 = phraseMapping1.getPhraseVector();
-        ImmutableSortedMap<Word, Integer> phraseVector2 = phraseMapping2.getPhraseVector();
-
-        return phraseVector1.keysView().containsAll(phraseVector2.keysView().toSortedSet());
-    }
-
     private boolean containsAllNounMappingsOfPhraseMapping(TextState textState, PhraseMapping phraseMapping1, PhraseMapping phraseMapping2) {
         return phraseMapping1.getNounMappings(textState).containsAllIterable(phraseMapping2.getNounMappings(textState));
-    }
-
-    static double cosineSimilarity(Map<Word, Integer> firstPhraseVector, Map<Word, Integer> secondPhraseVector) {
-
-        CosineSimilarity cosineSimilarity = new CosineSimilarity();
-
-        Map<CharSequence, Integer> firstVector = firstPhraseVector.entrySet()
-                .stream()
-                .collect(Collectors.toMap(e -> e.getKey().getText(), Map.Entry::getValue));
-        Map<CharSequence, Integer> secondVector = secondPhraseVector.entrySet()
-                .stream()
-                .collect(Collectors.toMap(e -> e.getKey().getText(), Map.Entry::getValue));
-
-        return cosineSimilarity.cosineSimilarity(firstVector, secondVector);
     }
 
     public PhraseMapping getMostSimilarPhraseMapping(TextState textState, PhraseMapping phraseMapping, ImmutableList<PhraseMapping> otherPhraseMappings,
@@ -367,16 +404,6 @@ public final class SimilarityUtils {
         return mostSimilarPhraseMapping;
     }
 
-    public static <A extends Serializable, B extends Serializable> ImmutableList<Pair<A, B>> uniqueDot(ImmutableList<A> first, ImmutableList<B> second) {
-        List<Pair<A, B>> result = new ArrayList<>();
-        for (A a : first) {
-            for (B b : second) {
-                result.add(new Pair<>(a, b));
-            }
-        }
-        return Lists.immutable.withAll(result);
-    }
-
     public double getPhraseMappingSimilarity(TextState textState, PhraseMapping firstPhraseMapping, PhraseMapping secondPhraseMapping,
             PhraseMappingAggregatorStrategy strategy) {
         PhraseType firstPhraseType = firstPhraseMapping.getPhraseType();
@@ -394,18 +421,6 @@ public final class SimilarityUtils {
         }
 
         return strategy.applyAsDouble(firstPhraseMapping, secondPhraseMapping);
-    }
-
-    private static int similarEntriesOfList(ImmutableList<String> list1, ImmutableList<String> list2) {
-        MutableList<String> removed = Lists.mutable.empty();
-
-        for (var element : list1) {
-            if (list2.contains(element) || (list2.select(e -> !removed.contains(e) && (e.contains(element) || element.contains(e))).size() == 1)) {
-                removed.add(element);
-            }
-        }
-
-        return removed.size();
     }
 
 }
