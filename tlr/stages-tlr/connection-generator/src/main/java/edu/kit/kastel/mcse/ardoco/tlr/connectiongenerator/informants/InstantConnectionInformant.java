@@ -62,7 +62,7 @@ public class InstantConnectionInformant extends Informant {
         for (var recommendedInstance : recommendationState.getRecommendedInstances()) {
             var sameInstances = model.getEndpoints()
                     .stream()
-                    .filter(instance -> SimilarityUtils.getInstance().isRecommendedInstanceSimilarToModelInstance(recommendedInstance, entity));
+                    .filter(entity -> SimilarityUtils.getInstance().isRecommendedInstanceSimilarToModelInstance(recommendedInstance, entity));
             sameInstances.forEach(instance -> connectionState.addToLinks(recommendedInstance, instance, this, this.probability));
         }
     }

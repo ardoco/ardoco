@@ -168,16 +168,16 @@ public final class SimilarityUtils {
     //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
 
     /**
-     * Compares a given {@link RecommendedInstance} with a given {@link ModelInstance} for similarity.
+     * Compares a given {@link RecommendedInstance} with a given {@link Entity} for similarity.
      *
-     * @param ri       the {@link RecommendedInstance}
-     * @param instance the {@link ModelInstance}
-     * @return true, iff the {@link RecommendedInstance} and {@link ModelInstance} are similar.
+     * @param ri     the {@link RecommendedInstance}
+     * @param entity the {@link Entity}
+     * @return true, iff the {@link RecommendedInstance} and {@link Entity} are similar.
      */
-    public boolean isRecommendedInstanceSimilarToModelInstance(RecommendedInstance ri, ModelInstance instance) {
+    public boolean isRecommendedInstanceSimilarToModelInstance(RecommendedInstance ri, Entity entity) {
         var name = ri.getName();
         var nameList = Lists.immutable.with(name.split(" "));
-        return instance.getFullName().equalsIgnoreCase(ri.getName()) || this.areWordsOfListsSimilar(instance.getNameParts(), nameList);
+        return entity.getName().equalsIgnoreCase(ri.getName()) || this.areWordsOfListsSimilar(CommonUtilities.getNamePartsOfEntity(entity), nameList);
     }
 
     //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
@@ -285,17 +285,6 @@ public final class SimilarityUtils {
         return this.areWordsOfListsSimilar(originals, words2test, CommonTextToolsConfig.JAROWINKLER_SIMILARITY_THRESHOLD);
     }
 
-    //TODO: Is there a better place for this method?
-    private ImmutableList<String> getNamePartsOfEntity(Entity entity) {
-        switch (entity) {
-        case ArchitectureEntity architectureEntity -> {
-            return architectureEntity.getNameParts();
-        }
-        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
-        }
-    }
-
     /**
      * Extracts most likely matches of a list of recommended instances by similarity to a given instance. For this, the method uses an increasing minimal
      * proportional threshold with the method areWordsOfListsSimilar method. If all lists are similar to the given instance by a threshold of 1-increase value
@@ -309,7 +298,7 @@ public final class SimilarityUtils {
     public ImmutableList<RecommendedInstance> getMostRecommendedInstancesToInstanceByReferences(Entity entity,
             ImmutableList<RecommendedInstance> recommendedInstances) {
 
-        var instanceNames = this.getNamePartsOfEntity(entity);
+        var instanceNames = CommonUtilities.getNamePartsOfEntity(entity);
         var similarity = CommonTextToolsConfig.JAROWINKLER_SIMILARITY_THRESHOLD;
         var selection = recommendedInstances.select(ri -> this.checkRecommendedInstanceForSelection(entity, ri, similarity));
 
@@ -346,7 +335,7 @@ public final class SimilarityUtils {
     }
 
     private boolean checkRecommendedInstanceWordSimilarityToInstance(Entity entity, RecommendedInstance ri) {
-        var instanceNames = this.getNamePartsOfEntity(entity);
+        var instanceNames = CommonUtilities.getNamePartsOfEntity(entity);
         for (var sf : ri.getNameMappings().flatCollect(NounMapping::getSurfaceForms)) {
             var splitSF = CommonUtilities.splitCases(String.join(" ", CommonUtilities.splitAtSeparators(sf)));
             if (this.areWordsSimilar(String.join(" ", instanceNames), splitSF)) {
@@ -357,7 +346,7 @@ public final class SimilarityUtils {
     }
 
     private boolean checkRecommendedInstanceForSelection(Entity entity, RecommendedInstance ri, double similarity) {
-        var entityNameParts = this.getNamePartsOfEntity(entity);
+        var entityNameParts = CommonUtilities.getNamePartsOfEntity(entity);
         ImmutableList<String> longestNameSplit = Lists.immutable.of(CommonUtilities.splitCases(entity.getName()).split(" "));
         ImmutableList<String> recommendedInstanceNames = Lists.immutable.with(ri.getName());
 

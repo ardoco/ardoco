@@ -30,7 +30,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguages;
 
-public class LegacyModelExtractionStateByArCoTL implements LegacyModelExtractionState {
+public class LegacyModelExtractionStateByArCoTL implements Model {
     private static final long serialVersionUID = -9079063953852495629L;
 
     private static final Logger logger = LoggerFactory.getLogger(LegacyModelExtractionStateByArCoTL.class);
@@ -67,9 +67,9 @@ public class LegacyModelExtractionStateByArCoTL implements LegacyModelExtraction
         MutableList<ModelInstance> instances = Lists.mutable.empty();
         for (ArchitectureItem architectureItem : architectureModel.getEndpoints()) {
             switch (architectureItem) {
-                case ArchitectureComponent component -> instances.add(new ModelInstanceImpl(component.getName(), component.getType(), component.getId()));
-                case ArchitectureInterface ignored -> LegacyModelExtractionStateByArCoTL.logger.debug("Skipping .. ArchitectureInterface not supported yet");
-                case ArchitectureMethod ignored -> LegacyModelExtractionStateByArCoTL.logger.debug("Skipping .. ArchitectureMethod not supported yet");
+            case ArchitectureComponent component -> instances.add(new ModelInstanceImpl(component.getName(), component.getType(), component.getId()));
+            case ArchitectureInterface ignored -> LegacyModelExtractionStateByArCoTL.logger.debug("Skipping .. ArchitectureInterface not supported yet");
+            case ArchitectureMethod ignored -> LegacyModelExtractionStateByArCoTL.logger.debug("Skipping .. ArchitectureMethod not supported yet");
             }
         }
         return instances.toImmutable();

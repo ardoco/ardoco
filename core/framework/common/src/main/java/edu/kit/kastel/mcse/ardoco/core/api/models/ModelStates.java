@@ -20,35 +20,6 @@ public class ModelStates implements PipelineStepData {
     public ModelStates() {
     }
 
-    /*
-    /**
-     * Returns the {@link LegacyModelExtractionState} with the given id
-     *
-     * @param id the id
-     * @return the corresponding {@link LegacyModelExtractionState}
-     * @deprecated use {@link #getModel(Metamodel)} instead
-     /
-    @Deprecated
-    public LegacyModelExtractionState getModelExtractionState(Metamodel id) {
-        if (this.legacyModels.containsKey(id)) {
-            return this.legacyModels.get(id);
-        }
-    
-        var model = this.models.get(id);
-        if (model == null) {
-            return null;
-        }
-    
-        var legacyModel = switch (model) {
-            case ArchitectureModel am -> new LegacyModelExtractionStateByArCoTL(am);
-            case CodeModel cm -> new LegacyModelExtractionStateByArCoTL(cm);
-        };
-    
-        this.legacyModels.put(id, legacyModel);
-        return legacyModel;
-    }
-    */
-
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
      *

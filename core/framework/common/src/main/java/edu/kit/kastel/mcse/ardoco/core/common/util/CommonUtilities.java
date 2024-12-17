@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.SortedSet;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -234,14 +236,16 @@ public final class CommonUtilities {
      */
     public static SortedSet<String> getTypeIdentifiers(Model model) {
 
+        SortedSet<String> identifiers = new TreeSet<>();
+
         for (var entity : model.getContent()) {
             switch (entity) {
-                case ArchitectureEntity architectureEntity -> architectureEntity.getType();
-                case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-                case TextEntity ignored -> throw new IllegalArgumentException("TextEntities have not types");
+            case ArchitectureEntity architectureEntity -> identifiers.add(architectureEntity.getType());
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("TextEntities have not types");
             }
         }
-        return null;
+        return identifiers;
     }
 
     /**
@@ -406,5 +410,21 @@ public final class CommonUtilities {
             logger.error(e.getMessage(), e.getCause());
             return "";
         }
+    }
+
+    public static ImmutableList<String> getTypePartsOfEntity(Entity entity) {
+        return switch (entity) {
+            case ArchitectureEntity architectureEntity -> architectureEntity.getTypeParts();
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Types are undefined for text entities");
+        };
+    }
+
+    public static ImmutableList<String> getNamePartsOfEntity(Entity entity) {
+        return switch (entity) {
+            case ArchitectureEntity architectureEntity -> architectureEntity.getNameParts();
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        };
     }
 }
