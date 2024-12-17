@@ -7,6 +7,7 @@ import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
@@ -82,15 +83,15 @@ public interface ConnectionState extends IConfigurable {
     }
 
     /**
-     * Adds the connection of a recommended instance and a model instance to the state. If the model instance is already
-     * contained by the state it is extended. Elsewhere a new instance link is created
+     * Adds the connection of a recommended instance and a model instance to the state. If the model instance is already contained by the state it is extended.
+     * Elsewhere a new instance link is created
      *
      * @param recommendedModelInstance the recommended instance
-     * @param instance                 the model instance
+     * @param entity                   the model instance
      * @param claimant                 the claimant
      * @param probability              the probability of the link
      */
-    void addToLinks(RecommendedInstance recommendedModelInstance, ModelInstance instance, Claimant claimant, double probability);
+    void addToLinks(RecommendedInstance recommendedModelInstance, Entity entity, Claimant claimant, double probability);
 
     /**
      * Checks if an instance link is already contained by the state.
