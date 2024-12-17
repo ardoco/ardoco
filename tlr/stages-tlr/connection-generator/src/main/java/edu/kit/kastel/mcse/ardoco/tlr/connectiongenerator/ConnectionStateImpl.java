@@ -5,6 +5,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
@@ -14,12 +15,12 @@ import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * The connection state encapsulates all connections between the model extraction state and the recommendation state.
- * These connections are stored in instance and relation links.
+ * The connection state encapsulates all connections between the model extraction state and the recommendation state. These connections are stored in instance
+ * and relation links.
  */
 public class ConnectionStateImpl extends AbstractState implements ConnectionState {
 
-    private MutableList<TraceLink<RecommendedInstance, ModelInstance>> instanceLinks;
+    private final MutableList<TraceLink<RecommendedInstance, ModelInstance>> instanceLinks;
 
     /**
      * Creates a new connection state.
@@ -75,23 +76,22 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      */
     @Override
     public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks(String name, String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream()
-                .filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name))//
+        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name))//
                 .filter(imapping -> imapping.getSecondEndpoint().getTypeParts().contains(type)));
     }
 
     /**
-     * Adds the connection of a recommended instance and a model instance to the state. If the model instance is already
-     * contained by the state it is extended. Elsewhere a new instance link is created
+     * Adds the connection of a recommended instance and a model instance to the state. If the model instance is already contained by the state it is extended.
+     * Elsewhere a new instance link is created
      *
      * @param recommendedModelInstance the recommended instance
-     * @param instance                 the model instance
+     * @param entity                   the model instance
      * @param probability              the probability of the link
      */
     @Override
-    public void addToLinks(RecommendedInstance recommendedModelInstance, ModelInstance instance, Claimant claimant, double probability) {
+    public void addToLinks(RecommendedInstance recommendedModelInstance, Entity entity, Claimant claimant, double probability) {
 
-        var newInstanceLink = new InstanceLink(recommendedModelInstance, instance, claimant, probability);
+        var newInstanceLink = new InstanceLink(recommendedModelInstance, entity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
         } else {

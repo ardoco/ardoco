@@ -136,8 +136,8 @@ public final class SimilarityUtils {
      * @return true, iff the {@link NounMapping} and {@link ModelInstance} are similar.
      */
     public boolean isNounMappingSimilarToModelInstance(NounMapping nounMapping, ModelInstance instance) {
-        if (this.areWordsOfListsSimilar(instance.getNameParts(), Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(instance
-                .getFullName(), nounMapping.getReference())) {
+        if (this.areWordsOfListsSimilar(instance.getNameParts(), Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(
+                instance.getFullName(), nounMapping.getReference())) {
             return true;
         }
 
@@ -158,9 +158,9 @@ public final class SimilarityUtils {
      */
     public boolean isWordSimilarToModelEntity(Word word, Entity entity) {
         switch (entity) {
-            case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getNameParts());
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getNameParts());
+        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
         }
         throw new IllegalStateException("Undefined for entity type");
     }
@@ -191,9 +191,9 @@ public final class SimilarityUtils {
      */
     public boolean isWordSimilarToModelInstanceType(Word word, Entity entity) {
         switch (entity) {
-            case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getTypeParts());
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getTypeParts());
+        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
         }
         throw new IllegalStateException("Undefined for entity type");
 
@@ -285,21 +285,33 @@ public final class SimilarityUtils {
         return this.areWordsOfListsSimilar(originals, words2test, CommonTextToolsConfig.JAROWINKLER_SIMILARITY_THRESHOLD);
     }
 
+    //TODO: Is there a better place for this method?
+    private ImmutableList<String> getNamePartsOfEntity(Entity entity) {
+        switch (entity) {
+        case ArchitectureEntity architectureEntity -> {
+            return architectureEntity.getNameParts();
+        }
+        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        }
+    }
+
     /**
      * Extracts most likely matches of a list of recommended instances by similarity to a given instance. For this, the method uses an increasing minimal
      * proportional threshold with the method areWordsOfListsSimilar method. If all lists are similar to the given instance by a threshold of 1-increase value
      * the while loop can be left. If the while loop ends with more than one possibility or all remaining lists are sorted out in the same run, all are
      * returned. Elsewhere only the remaining recommended instance is returned within the list.
      *
-     * @param instance             instance to use as original for compare
+     * @param entity               instance to use as original for compare
      * @param recommendedInstances recommended instances to check for similarity
      * @return a list of the most similar recommended instances (to the instance names)
      */
-    public ImmutableList<RecommendedInstance> getMostRecommendedInstancesToInstanceByReferences(ModelInstance instance,
+    public ImmutableList<RecommendedInstance> getMostRecommendedInstancesToInstanceByReferences(Entity entity,
             ImmutableList<RecommendedInstance> recommendedInstances) {
-        var instanceNames = instance.getNameParts();
+
+        var instanceNames = this.getNamePartsOfEntity(entity);
         var similarity = CommonTextToolsConfig.JAROWINKLER_SIMILARITY_THRESHOLD;
-        var selection = recommendedInstances.select(ri -> this.checkRecommendedInstanceForSelection(instance, ri, similarity));
+        var selection = recommendedInstances.select(ri -> this.checkRecommendedInstanceForSelection(entity, ri, similarity));
 
         var getMostRecommendedIByRefMinProportion = CommonTextToolsConfig.GET_MOST_RECOMMENDED_I_BY_REF_MIN_PROPORTION;
         var getMostRecommendedIByRefIncrease = CommonTextToolsConfig.GET_MOST_RECOMMENDED_I_BY_REF_INCREASE;
@@ -312,7 +324,7 @@ public final class SimilarityUtils {
             getMostRecommendedIByRefMinProportion += getMostRecommendedIByRefIncrease;
             MutableList<RecommendedInstance> risToRemove = Lists.mutable.empty();
             for (RecommendedInstance ri : whileSelection) {
-                if (this.checkRecommendedInstanceWordSimilarityToInstance(instance, ri)) {
+                if (this.checkRecommendedInstanceWordSimilarityToInstance(entity, ri)) {
                     allListsSimilar++;
                 }
 
@@ -333,8 +345,8 @@ public final class SimilarityUtils {
 
     }
 
-    private boolean checkRecommendedInstanceWordSimilarityToInstance(ModelInstance instance, RecommendedInstance ri) {
-        var instanceNames = instance.getNameParts();
+    private boolean checkRecommendedInstanceWordSimilarityToInstance(Entity entity, RecommendedInstance ri) {
+        var instanceNames = this.getNamePartsOfEntity(entity);
         for (var sf : ri.getNameMappings().flatCollect(NounMapping::getSurfaceForms)) {
             var splitSF = CommonUtilities.splitCases(String.join(" ", CommonUtilities.splitAtSeparators(sf)));
             if (this.areWordsSimilar(String.join(" ", instanceNames), splitSF)) {
@@ -344,17 +356,17 @@ public final class SimilarityUtils {
         return false;
     }
 
-    private boolean checkRecommendedInstanceForSelection(ModelInstance instance, RecommendedInstance ri, double similarity) {
-        var instanceNames = instance.getNameParts();
-        ImmutableList<String> longestNameSplit = Lists.immutable.of(CommonUtilities.splitCases(instance.getFullName()).split(" "));
+    private boolean checkRecommendedInstanceForSelection(Entity entity, RecommendedInstance ri, double similarity) {
+        var entityNameParts = this.getNamePartsOfEntity(entity);
+        ImmutableList<String> longestNameSplit = Lists.immutable.of(CommonUtilities.splitCases(entity.getName()).split(" "));
         ImmutableList<String> recommendedInstanceNames = Lists.immutable.with(ri.getName());
 
-        boolean instanceNameAndRIName = this.areWordsSimilar(instance.getFullName(), ri.getName());
-        boolean instanceNamesAndRIs = this.areWordsOfListsSimilar(instanceNames, recommendedInstanceNames, similarity);
+        boolean instanceNameAndRIName = this.areWordsSimilar(entity.getName(), ri.getName());
+        boolean instanceNamesAndRIs = this.areWordsOfListsSimilar(entityNameParts, recommendedInstanceNames, similarity);
         boolean longestNameSplitAndRINames = this.areWordsOfListsSimilar(longestNameSplit, recommendedInstanceNames, similarity);
-        boolean listOfNamesSimilarEnough = 1.0 * similarEntriesOfList(instanceNames, recommendedInstanceNames) / Math.max(instanceNames.size(),
+        boolean listOfNamesSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, recommendedInstanceNames) / Math.max(entityNameParts.size(),
                 recommendedInstanceNames.size()) >= similarity;
-        boolean listOfNameSplitSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, recommendedInstanceNames) / Math.max(instanceNames.size(),
+        boolean listOfNameSplitSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, recommendedInstanceNames) / Math.max(entityNameParts.size(),
                 recommendedInstanceNames.size()) >= similarity;
 
         if (instanceNameAndRIName || instanceNamesAndRIs || longestNameSplitAndRINames || listOfNamesSimilarEnough || listOfNameSplitSimilarEnough) {
@@ -365,12 +377,12 @@ public final class SimilarityUtils {
                 var splitSurfaceForm = CommonUtilities.splitCases(surfaceForm);
                 var surfaceFormWords = CommonUtilities.splitAtSeparators(splitSurfaceForm);
 
-                boolean instanceNamesXSurfaceForms = this.areWordsOfListsSimilar(instanceNames, surfaceFormWords, similarity);
+                boolean instanceNamesXSurfaceForms = this.areWordsOfListsSimilar(entityNameParts, surfaceFormWords, similarity);
                 boolean longestNameXSurfaceForms = this.areWordsOfListsSimilar(longestNameSplit, surfaceFormWords, similarity);
-                boolean listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(instanceNames, surfaceFormWords) / Math.max(instanceNames.size(),
+                boolean listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, surfaceFormWords) / Math.max(entityNameParts.size(),
                         surfaceFormWords.size()) >= similarity;
-                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(longestNameSplit
-                        .size(), surfaceFormWords.size()) >= similarity;
+                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(
+                        longestNameSplit.size(), surfaceFormWords.size()) >= similarity;
 
                 if (instanceNamesXSurfaceForms || longestNameXSurfaceForms || listOfNamesXSurfaceFormSimilarEnough || listOfSplitNamesXSurfaceFormSimilarEnough) {
                     return true;
@@ -413,9 +425,9 @@ public final class SimilarityUtils {
         }
 
         // Maybe REWORK. Remove NounMappings?
-        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping, firstPhraseMapping)) && this
-                .containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping, secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(
-                        textState, secondPhraseMapping, firstPhraseMapping)) {
+        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping,
+                firstPhraseMapping)) && this.containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping,
+                secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(textState, secondPhraseMapping, firstPhraseMapping)) {
             // HARD CODED... Change?
             return 1.0;
         }
