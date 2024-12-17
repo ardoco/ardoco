@@ -312,7 +312,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      * Returns the internal {@link Model} for the modelId with the given ID.
      *
      * @param modelId the ID of the model
-     * @return the LegacyModelExtractionState
+     * @return the Model
      */
     public Model getModelState(Metamodel modelId) {
         ModelStates modelStates = this.getModelStates();

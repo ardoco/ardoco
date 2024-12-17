@@ -8,7 +8,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
@@ -27,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
 public class MissingModelElementInconsistencyInformant extends Informant {
 
     @Configurable
-    private double minSupport = 1;
+    private final double minSupport = 1;
 
     public MissingModelElementInconsistencyInformant(DataRepository dataRepository) {
         super(MissingModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
@@ -46,8 +46,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
         }
     }
 
-    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates,
-            LegacyModelExtractionState modelState) {
+    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates, Model modelState) {
         Metamodel metamodel = modelState.getMetamodel();
         var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
         var connectionState = connectionStates.getConnectionState(metamodel);

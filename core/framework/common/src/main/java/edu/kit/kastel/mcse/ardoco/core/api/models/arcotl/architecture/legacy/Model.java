@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
  * @deprecated use {@link ModelStates#getModel(Metamodel)}
  */
 @Deprecated(since = "0.32.0")
-public interface LegacyModelExtractionState extends IConfigurable, Serializable {
+public interface Model extends IConfigurable, Serializable {
     /**
      * Returns the unique id of the model
      *
