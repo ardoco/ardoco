@@ -6,6 +6,7 @@ import java.io.File;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.raw.RawArchitectureExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 
 public record ArchitectureConfiguration(File architectureFile, ArchitectureModelType type) {
@@ -22,7 +23,7 @@ public record ArchitectureConfiguration(File architectureFile, ArchitectureModel
         return switch (type) {
         case PCM -> new PcmExtractor(architectureFile.getAbsolutePath());
         case UML -> new UmlExtractor(architectureFile.getAbsolutePath());
-        case RAW -> throw new IllegalArgumentException("Raw model is not supported for this project.");
+        case RAW -> new RawArchitectureExtractor(architectureFile.getAbsolutePath());
         };
     }
 }
