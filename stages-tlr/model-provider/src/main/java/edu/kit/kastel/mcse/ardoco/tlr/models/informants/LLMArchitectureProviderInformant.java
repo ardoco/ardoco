@@ -46,15 +46,15 @@ public class LLMArchitectureProviderInformant extends Informant {
         super(LLMArchitectureProviderInformant.class.getSimpleName(), dataRepository);
         String apiKey = System.getenv("OPENAI_API_KEY");
         String orgId = System.getenv("OPENAI_ORG_ID");
-        if (apiKey == null || orgId == null) {
-            throw new IllegalArgumentException("OPENAI_API_KEY and OPENAI_ORG_ID must be set as environment variables");
+        if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
+            throw new IllegalArgumentException("OpenAI API Key and Organization ID must be set");
         }
-        this.chatLanguageModel = largeLanguageModel.create();
+        this.chatLanguageModel = largeLanguageModel == null ? null : largeLanguageModel.create();
         this.documentationPrompt = documentation;
         this.codePrompt = code;
         this.codeFeature = codeFeature;
         this.aggregationPrompt = aggregation;
-        if (documentationPrompt == null && codePrompt == null) {
+        if (largeLanguageModel != null && documentationPrompt == null && codePrompt == null) {
             throw new IllegalArgumentException("At least one prompt must be provided");
         }
         if (documentationPrompt != null && codePrompt != null && aggregationPrompt == null) {

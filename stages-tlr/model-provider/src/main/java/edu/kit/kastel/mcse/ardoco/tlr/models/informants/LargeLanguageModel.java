@@ -8,8 +8,10 @@ import java.util.function.Supplier;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import okhttp3.Credentials;
 
+@Deterministic
 public enum LargeLanguageModel {
     // OPENAI
     GPT_4_O_MINI("GPT-4o mini", () -> createOpenAiModel("gpt-4o-mini-2024-07-18")), //
