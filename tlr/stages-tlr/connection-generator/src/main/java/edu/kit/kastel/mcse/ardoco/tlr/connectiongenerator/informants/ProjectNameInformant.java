@@ -21,15 +21,14 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
- * This informant looks for (parts of) the project's name within RecommendedInstances and if it finds the project's name, influences the
- * probability of the
+ * This informant looks for (parts of) the project's name within RecommendedInstances and if it finds the project's name, influences the probability of the
  * RecommendedInstance negatively because it then should not be a recommended instance.
  */
 public class ProjectNameInformant extends Informant {
     private static final String ERROR_EMPTY_LIST = "List cannot be empty";
 
     @Configurable
-    private double penalty = Double.NEGATIVE_INFINITY;
+    private final double penalty = Double.NEGATIVE_INFINITY;
 
     /**
      * Constructs a new instance of the {@link ProjectNameInformant} with the given data repository.
@@ -40,15 +39,20 @@ public class ProjectNameInformant extends Informant {
         super("ProjectNameExtractor", dataRepository);
     }
 
+    private static String getEditedProjectName(String projectName) {
+        // remove white spaces from project name
+        return projectName.replace(" ", "");
+    }
+
     @Override
     public void process() {
         DataRepository dataRepository = this.getDataRepository();
         var projectName = DataRepositoryHelper.getProjectPipelineData(dataRepository).getProjectName();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            Metamodel metamodel = modelState.getMetamodel();
+        for (var modelId : modelStates.modelIds()) {
+            var model = modelStates.getModel(modelId);
+            Metamodel metamodel = model.getMetamodel();
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.checkForProjectNameInRecommendedInstances(projectName, recommendationState);
@@ -138,11 +142,6 @@ public class ProjectNameInformant extends Informant {
             }
             testWordText = concatenation.apply(testWordText, wordText);
         }
-    }
-
-    private static String getEditedProjectName(String projectName) {
-        // remove white spaces from project name
-        return projectName.replace("\s", "");
     }
 
     @Override

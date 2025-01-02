@@ -427,4 +427,12 @@ public final class CommonUtilities {
             case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
         };
     }
+
+    public static String getTypeOfEntity(Entity entity) {
+        return switch (entity) {
+            case ArchitectureEntity architectureEntity -> architectureEntity.getType();
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+        };
+    }
 }

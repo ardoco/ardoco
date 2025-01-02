@@ -17,7 +17,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.PhraseMapping;
@@ -91,13 +90,6 @@ public final class SimilarityUtils {
         return removed.size();
     }
 
-    public ImmutableList<String> getSimilarSurfaceWords(RecommendedInstance recommendedInstance, ModelInstance instance) {
-        return Lists.immutable.fromStream(recommendedInstance.getNameMappings()
-                .stream()
-                .flatMap(n -> n.getSurfaceForms().stream())
-                .filter(s -> this.wordSimUtils.areWordsSimilar(s, instance.getFullName())));
-    }
-
     /**
      * Checks the similarity of two {@link NounMapping}s.
      *
@@ -128,20 +120,21 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Compares a given {@link NounMapping} with a given {@link ModelInstance} for similarity. Checks if all names, the longest name or a single name are
-     * similar to the reference of the NounMapping.
+     * Compares a given {@link NounMapping} with a given {@link Entity} for similarity. Checks if all names, the longest name or a single name are similar to
+     * the reference of the NounMapping.
      *
      * @param nounMapping the {@link NounMapping}
-     * @param instance    the {@link ModelInstance}
-     * @return true, iff the {@link NounMapping} and {@link ModelInstance} are similar.
+     * @param entity      the {@link Entity}
+     * @return true, iff the {@link NounMapping} and {@link Entity} are similar.
      */
-    public boolean isNounMappingSimilarToModelInstance(NounMapping nounMapping, ModelInstance instance) {
-        if (this.areWordsOfListsSimilar(instance.getNameParts(), Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(
-                instance.getFullName(), nounMapping.getReference())) {
+    public boolean isNounMappingSimilarToModelInstance(NounMapping nounMapping, Entity entity) {
+        var namePartsOfEntity = CommonUtilities.getNamePartsOfEntity(entity);
+        if (this.areWordsOfListsSimilar(namePartsOfEntity, Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(entity.getName(),
+                nounMapping.getReference())) {
             return true;
         }
 
-        for (String name : instance.getNameParts()) {
+        for (String name : namePartsOfEntity) {
             if (this.areWordsSimilar(name, nounMapping.getReference())) {
                 return true;
             }
@@ -156,13 +149,8 @@ public final class SimilarityUtils {
      * @param entity the {@link Entity} of a model
      * @return true, iff the {@link Word} and {@link Entity} are similar.
      */
-    public boolean isWordSimilarToModelEntity(Word word, Entity entity) {
-        switch (entity) {
-        case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getNameParts());
-        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
-        }
-        throw new IllegalStateException("Undefined for entity type");
+    public boolean isWordSimilarToEntity(Word word, Entity entity) {
+        return this.compareWordWithStringListEntries(word, CommonUtilities.getNamePartsOfEntity(entity));
     }
 
     //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed

@@ -5,8 +5,8 @@ import java.util.SortedMap;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -32,20 +32,19 @@ public class ReferenceInformant extends Informant {
         var textState = DataRepositoryHelper.getTextState(dataRepository);
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            var recommendationState = recommendationStates.getRecommendationState(modelState.getMetamodel());
-            this.findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(modelState, recommendationState, textState);
+        for (var modelId : modelStates.modelIds()) {
+            var model = modelStates.getModel(modelId);
+            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+            this.findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(model, recommendationState, textState);
         }
     }
 
     /**
      * Searches for instances mentioned in the text extraction state as names. If it founds some similar names it creates recommendations.
      */
-    private void findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(Model modelState, RecommendationState recommendationState,
-            TextState textState) {
-        for (ModelInstance instance : modelState.getInstances()) {
-            var similarToInstanceMappings = this.getSimilarNounMappings(instance, textState);
+    private void findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(Model model, RecommendationState recommendationState, TextState textState) {
+        for (Entity entity : model.getEndpoints()) {
+            var similarToInstanceMappings = this.getSimilarNounMappings(entity, textState);
 
             for (NounMapping similarNameMapping : similarToInstanceMappings) {
                 recommendationState.addRecommendedInstance(similarNameMapping.getReference(), this, this.probability, similarToInstanceMappings);
@@ -54,9 +53,9 @@ public class ReferenceInformant extends Informant {
 
     }
 
-    private ImmutableList<NounMapping> getSimilarNounMappings(ModelInstance instance, TextState textState) {
+    private ImmutableList<NounMapping> getSimilarNounMappings(Entity entity, TextState textState) {
         return textState.getNounMappingsOfKind(MappingKind.NAME)
-                .select(nounMapping -> SimilarityUtils.getInstance().isNounMappingSimilarToModelInstance(nounMapping, instance));
+                .select(nounMapping -> SimilarityUtils.getInstance().isNounMappingSimilarToModelInstance(nounMapping, entity));
     }
 
     @Override
