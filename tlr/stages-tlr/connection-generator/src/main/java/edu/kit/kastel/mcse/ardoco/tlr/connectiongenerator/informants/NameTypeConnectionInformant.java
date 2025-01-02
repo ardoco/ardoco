@@ -191,8 +191,7 @@ public class NameTypeConnectionInformant extends Informant {
      * @param word                the node for name identification
      * @return the unique matching instance
      */
-    private Entity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, Word word,
-            edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model model) {
+    private Entity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, Word word, Model model) {
         if (textExtractionState == null || similarTypes == null || word == null) {
             return null;
         }
@@ -212,7 +211,7 @@ public class NameTypeConnectionInformant extends Informant {
         return null;
     }
 
-    private List<Entity> getEntitiesOfType(edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model model, String type) {
+    private List<Entity> getEntitiesOfType(Model model, String type) {
         return model.getEndpoints().stream().filter(e -> CommonUtilities.getTypePartsOfEntity(e).contains(type)).collect(Collectors.toList());
     }
 

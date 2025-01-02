@@ -6,12 +6,9 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.SadSamTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -28,7 +25,7 @@ public interface ConnectionState extends IConfigurable {
      *
      * @return all instance links
      */
-    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks();
+    ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinks();
 
     /**
      * Returns all instance links with a model instance containing the given name.
@@ -36,7 +33,7 @@ public interface ConnectionState extends IConfigurable {
      * @param name the name of a model instance
      * @return all instance links with a model instance containing the given name as list
      */
-    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByName(String name);
+    ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByName(String name);
 
     /**
      * Returns all instance links with a model instance containing the given type.
@@ -44,7 +41,7 @@ public interface ConnectionState extends IConfigurable {
      * @param type the type of a model instance
      * @return all instance links with a model instance containing the given type as list
      */
-    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByType(String type);
+    ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByType(String type);
 
     /**
      * Returns all instance links with a model instance containing the given recommended instance.
@@ -52,7 +49,7 @@ public interface ConnectionState extends IConfigurable {
      * @param recommendedInstance the recommended instance to consider
      * @return all instance links found
      */
-    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance);
+    ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance);
 
     /**
      * Returns all instance links with a model instance containing the given name and type.
@@ -61,20 +58,20 @@ public interface ConnectionState extends IConfigurable {
      * @param type the type of a model instance
      * @return all instance links with a model instance containing the given name and type as list
      */
-    ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks(String name, String type);
+    ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinks(String name, String type);
 
     /**
      * Returns a list of tracelinks that are contained within this connection state.
      *
      * @return list of tracelinks within this connection state
      */
-    default ImmutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> getTraceLinks() {
-        MutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> traceLinks = Sets.mutable.empty();
+    default ImmutableSet<TraceLink<SentenceEntity, Entity>> getTraceLinks() {
+        MutableSet<TraceLink<SentenceEntity, Entity>> traceLinks = Sets.mutable.empty();
         for (var instanceLink : this.getInstanceLinks()) {
             var textualInstance = instanceLink.getFirstEndpoint();
             for (var nm : textualInstance.getNameMappings()) {
                 for (var word : nm.getWords()) {
-                    var traceLink = new SadSamTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
+                    var traceLink = new SadModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
                     traceLinks.add(traceLink);
                 }
             }
@@ -99,21 +96,21 @@ public interface ConnectionState extends IConfigurable {
      * @param instanceLink the given instance link
      * @return true if it is already contained
      */
-    boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, ModelInstance> instanceLink);
+    boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, Entity> instanceLink);
 
     /**
      * Removes an instance link from the state.
      *
      * @param instanceMapping the instance link to remove
      */
-    void removeFromMappings(TraceLink<RecommendedInstance, ModelInstance> instanceMapping);
+    void removeFromMappings(TraceLink<RecommendedInstance, Entity> instanceMapping);
 
     /**
      * Removes all instance links containing the given instance.
      *
      * @param instance the given instance
      */
-    void removeAllInstanceLinksWith(ModelInstance instance);
+    void removeAllInstanceLinksWith(Entity instance);
 
     /**
      * Removes all instance links containing the given recommended instance.

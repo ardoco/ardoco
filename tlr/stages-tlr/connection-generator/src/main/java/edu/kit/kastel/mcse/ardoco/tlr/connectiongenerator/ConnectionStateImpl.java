@@ -6,11 +6,11 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -20,7 +20,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  */
 public class ConnectionStateImpl extends AbstractState implements ConnectionState {
 
-    private final MutableList<TraceLink<RecommendedInstance, ModelInstance>> instanceLinks;
+    private final MutableList<TraceLink<RecommendedInstance, Entity>> instanceLinks;
 
     /**
      * Creates a new connection state.
@@ -36,7 +36,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @return all instance links
      */
     @Override
-    public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks() {
+    public ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinks() {
         return Lists.immutable.withAll(this.instanceLinks);
     }
 
@@ -47,8 +47,9 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @return all instance links with a model instance containing the given name as list
      */
     @Override
-    public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByName(String name) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name)));
+    public ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByName(String name) {
+        return Lists.immutable.fromStream(
+                this.instanceLinks.stream().filter(imapping -> CommonUtilities.getNamePartsOfEntity(imapping.getSecondEndpoint()).contains(name)));
     }
 
     /**
@@ -58,12 +59,13 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @return all instance links with a model instance containing the given type as list
      */
     @Override
-    public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByType(String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(ilink -> ilink.getSecondEndpoint().getTypeParts().contains(type)));
+    public ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByType(String type) {
+        return Lists.immutable.fromStream(
+                this.instanceLinks.stream().filter(ilink -> CommonUtilities.getTypePartsOfEntity(ilink.getSecondEndpoint()).contains(type)));
     }
 
     @Override
-    public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance) {
+    public ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance) {
         return Lists.immutable.fromStream(this.instanceLinks.stream().filter(il -> il.getFirstEndpoint().equals(recommendedInstance)));
     }
 
@@ -75,9 +77,10 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @return all instance links with a model instance containing the given name and type as list
      */
     @Override
-    public ImmutableList<TraceLink<RecommendedInstance, ModelInstance>> getInstanceLinks(String name, String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name))//
-                .filter(imapping -> imapping.getSecondEndpoint().getTypeParts().contains(type)));
+    public ImmutableList<TraceLink<RecommendedInstance, Entity>> getInstanceLinks(String name, String type) {
+        return Lists.immutable.fromStream(
+                this.instanceLinks.stream().filter(imapping -> CommonUtilities.getNamePartsOfEntity(imapping.getSecondEndpoint()).contains(name))//
+                        .filter(imapping -> CommonUtilities.getTypePartsOfEntity(imapping.getSecondEndpoint()).contains(type)));
     }
 
     /**
@@ -112,7 +115,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @return true if it is already contained
      */
     @Override
-    public boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, ModelInstance> instanceLink) {
+    public boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, Entity> instanceLink) {
         return this.instanceLinks.contains(instanceLink);
     }
 
@@ -122,18 +125,18 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * @param instanceMapping the instance link to remove
      */
     @Override
-    public void removeFromMappings(TraceLink<RecommendedInstance, ModelInstance> instanceMapping) {
+    public void removeFromMappings(TraceLink<RecommendedInstance, Entity> instanceMapping) {
         this.instanceLinks.remove(instanceMapping);
     }
 
     /**
      * Removes all instance links containing the given instance
      *
-     * @param instance the given instance
+     * @param entity the given instance
      */
     @Override
-    public void removeAllInstanceLinksWith(ModelInstance instance) {
-        this.instanceLinks.removeIf(mapping -> mapping.getSecondEndpoint().equals(instance));
+    public void removeAllInstanceLinksWith(Entity entity) {
+        this.instanceLinks.removeIf(mapping -> mapping.getSecondEndpoint().equals(entity));
     }
 
     /**
