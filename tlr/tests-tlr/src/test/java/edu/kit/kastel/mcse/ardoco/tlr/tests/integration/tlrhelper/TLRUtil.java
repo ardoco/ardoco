@@ -40,10 +40,8 @@ public final class TLRUtil {
                 .map(connectionStates::getConnectionState)
                 .toList();
         for (var connectionState : connectionStatesList) {
-            traceLinks.addAll(connectionState.getTraceLinks()
-                    .stream()
-                    .map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint()))
-                    .toList());
+            traceLinks.addAll(
+                    connectionState.getTraceLinks().stream().map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint())).toList());
         }
         return traceLinks.toImmutable();
     }

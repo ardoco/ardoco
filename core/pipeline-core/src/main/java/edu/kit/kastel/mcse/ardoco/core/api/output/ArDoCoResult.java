@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.ModelInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
@@ -35,8 +35,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.SadSamTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.SamCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
@@ -51,8 +49,8 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public record ArDoCoResult(DataRepository dataRepository) {
     private static final Logger logger = LoggerFactory.getLogger(ArDoCoResult.class);
 
-    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, ArchitectureEntity> traceLink) {
-        String modelElementName = ((ModelInstance) traceLink.getSecondEndpoint()).getFullName();
+    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, Entity> traceLink) {
+        String modelElementName = traceLink.getSecondEndpoint().getName();
         String modelElementUid = traceLink.getSecondEndpoint().getId();
         String modelInfo = String.format("%s (%s)", modelElementName, modelElementUid);
 
@@ -73,12 +71,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link SadSamTraceLink}s that were found for the Model with the given ID.
+     * Returns the set of {@link TraceLink}s that were found for the Model with the given ID.
      *
      * @param modelId the ID of the model that should be traced
      * @return Trace links for the model with the given id
      */
-    public ImmutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> getTraceLinksForModel(Metamodel modelId) {
+    public ImmutableSet<TraceLink<SentenceEntity, Entity>> getTraceLinksForModel(Metamodel modelId) {
         ConnectionState connectionState = this.getConnectionState(modelId);
         if (connectionState != null) {
             return connectionState.getTraceLinks();
@@ -87,7 +85,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link SadSamTraceLink}s that were found for the Model with the given ID as strings in the format "ModelElementId,SentenceNo".
+     * Returns the set of {@link TraceLink}s that were found for the Model with the given ID as strings in the format "ModelElementId,SentenceNo".
      *
      * @param modelId the ID of the model that should be traced
      * @return Trace links for the model with the given id as Strings
@@ -100,12 +98,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link SadSamTraceLink}s
+     * Returns the set of {@link TraceLink}s
      *
      * @return set of Trace links
      */
-    public ImmutableList<TraceLink<SentenceEntity, ArchitectureEntity>> getAllTraceLinks() {
-        MutableSet<TraceLink<SentenceEntity, ArchitectureEntity>> traceLinks = Sets.mutable.empty();
+    public ImmutableList<TraceLink<SentenceEntity, Entity>> getAllTraceLinks() {
+        MutableSet<TraceLink<SentenceEntity, Entity>> traceLinks = Sets.mutable.empty();
 
         for (var modelId : this.getModelIds()) {
             if (modelId == Metamodel.ARCHITECTURE) {
@@ -116,7 +114,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link SadSamTraceLink SadSamTraceLinks} as strings. The strings are beautified to have a human-readable format
+     * Returns the set of {@link TraceLink SadSamTraceLinks} as strings. The strings are beautified to have a human-readable format
      *
      * @return Trace links as Strings
      */
@@ -127,9 +125,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Return the list of {@link SamCodeTraceLink SamCodeTraceLinks}. If there are none, it will return an empty list.
+     * Return the list of {@link TraceLink SamCodeTraceLinks}. If there are none, it will return an empty list.
      *
-     * @return the list of {@link SamCodeTraceLink SamCodeTraceLinks}.
+     * @return the list of {@link TraceLink SamCodeTraceLinks}.
      */
     public List<TraceLink<ArchitectureEntity, CodeCompilationUnit>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();

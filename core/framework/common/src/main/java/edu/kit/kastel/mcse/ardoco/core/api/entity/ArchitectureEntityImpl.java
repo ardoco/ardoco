@@ -1,5 +1,4 @@
-/* Licensed under MIT 2021-2024. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy;
+package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.util.Objects;
 
@@ -9,12 +8,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 
-/**
- * This class represents an instance extracted from a model. The name of an instance (as well as the type) are splitted at spaces and can be seen as multiple
- * names. Therefore, the longestName (and type) is the original name (type) of the instance.
- */
-@Deprecated
-public final class ModelInstanceImpl extends ModelInstance {
+public class ArchitectureEntityImpl extends ArchitectureEntity {
 
     private static final long serialVersionUID = 9185325416212743266L;
 
@@ -31,7 +25,7 @@ public final class ModelInstanceImpl extends ModelInstance {
      * @param type type of the instance.
      * @param uid  unique identifier of the instance needed for trace linking.
      */
-    public ModelInstanceImpl(String name, String type, String uid) {
+    public ArchitectureEntityImpl(String name, String type, String uid) {
         super(name, uid);
 
         String splitName = CommonUtilities.splitCases(name);
@@ -50,22 +44,13 @@ public final class ModelInstanceImpl extends ModelInstance {
         this.fullType = type;
     }
 
-    @Override
-    public String getType() {
-        try {
-            throw new IllegalAccessException("This method was just added for refactoring");
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * Returns the longest name of the instance.
      *
      * @return the original name of the instance
      */
     @Override
-    public String getFullName() {
+    public String getName() {
         return this.fullName;
     }
 
@@ -75,7 +60,7 @@ public final class ModelInstanceImpl extends ModelInstance {
      * @return the original type of the instance
      */
     @Override
-    public String getFullType() {
+    public String getType() {
         return this.fullType;
     }
 
@@ -105,7 +90,7 @@ public final class ModelInstanceImpl extends ModelInstance {
      * @return the unique identifier of the instance
      */
     @Override
-    public String getUid() {
+    public String getId() {
         return this.uid;
     }
 
@@ -124,10 +109,9 @@ public final class ModelInstanceImpl extends ModelInstance {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof ModelInstanceImpl other)) {
+        if (!(obj instanceof ArchitectureEntityImpl other)) {
             return false;
         }
         return Objects.equals(this.fullName, other.fullName) && Objects.equals(this.fullType, other.fullType) && Objects.equals(this.uid, other.uid);
     }
-
 }
