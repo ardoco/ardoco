@@ -27,7 +27,7 @@ public class SadSamTraceabilityLinkRecoveryEvaluation<T extends GoldStandardProj
 
     @Override
     protected boolean resultHasRequiredData(ArDoCoResult arDoCoResult) {
-        var traceLinks = arDoCoResult.getAllTraceLinks();
+        var traceLinks = arDoCoResult.getArchitectureTraceLinks();
         return !traceLinks.isEmpty();
     }
 
@@ -62,7 +62,7 @@ public class SadSamTraceabilityLinkRecoveryEvaluation<T extends GoldStandardProj
 
     @Override
     protected ImmutableList<String> createTraceLinkStringList(ArDoCoResult arDoCoResult) {
-        var sadSamTls = Lists.immutable.ofAll(arDoCoResult.getAllTraceLinks());
+        var sadSamTls = Lists.immutable.ofAll(arDoCoResult.getArchitectureTraceLinks());
         return TraceLinkUtilities.getSadSamTraceLinksAsStringList(sadSamTls);
     }
 

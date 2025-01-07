@@ -39,7 +39,7 @@ public class TraceLinkCombiner extends Informant {
         }
         var samCodeTraceLinks = codeTraceabilityState.getSamCodeTraceLinks();
         for (var modelId : modelStatesData.modelIds()) {
-            var metamodel = modelStatesData.getModelExtractionState(modelId).getMetamodel();
+            var metamodel = modelStatesData.getModel(modelId).getMetamodel();
             var connectionState = connectionStates.getConnectionState(metamodel);
             var sadSamTraceLinks = connectionState.getTraceLinks();
 

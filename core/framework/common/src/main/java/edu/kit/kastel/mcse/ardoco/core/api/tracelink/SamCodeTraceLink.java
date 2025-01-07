@@ -8,17 +8,17 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.Architectu
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 
 /**
- * A trace link between exactly one architecture endpoint and exactly one code
- * endpoint. Trace links are created to connect corresponding elements of an
+ * A trace link between exactly one architecture endpoint and exactly one code endpoint. Trace links are created to connect corresponding elements of an
  * architecture and a code model.
  */
+// TODO: Replace with SadModelTraceLink
+@Deprecated
 public class SamCodeTraceLink extends TraceLink<ArchitectureEntity, CodeCompilationUnit> {
 
     private static final long serialVersionUID = -7683024763031647537L;
 
     /**
-     * Creates a new trace link between an architecture endpoint and a code endpoint
-     * as given in the specified endpoint tuple.
+     * Creates a new trace link between an architecture endpoint and a code endpoint as given in the specified endpoint tuple.
      *
      * @param architectureEndpoint the architecture endpoint
      * @param codeEndpoint         the code endpoint

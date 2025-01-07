@@ -102,7 +102,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return set of Trace links
      */
-    public ImmutableList<TraceLink<SentenceEntity, Entity>> getAllTraceLinks() {
+    public ImmutableList<TraceLink<SentenceEntity, Entity>> getArchitectureTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, Entity>> traceLinks = Sets.mutable.empty();
 
         for (var modelId : this.getModelIds()) {
@@ -119,7 +119,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      * @return Trace links as Strings
      */
     public List<String> getAllTraceLinksAsBeautifiedStrings() {
-        return this.getAllTraceLinks()
+        return this.getArchitectureTraceLinks()
                 .toSortedList(Comparator.comparingInt(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber()))
                 .collect(ArDoCoResult::formatTraceLinksHumanReadable);
     }
