@@ -94,7 +94,7 @@ public final class FilePrinter {
         String name = arDoCoResult.getProjectName();
         String header;
 
-        var sadSamTls = Lists.immutable.ofAll(arDoCoResult.getAllTraceLinks());
+        var sadSamTls = Lists.immutable.ofAll(arDoCoResult.getArchitectureTraceLinks());
         if (!sadSamTls.isEmpty()) {
             var sadSamTlr = outputDir.toPath().resolve("sadSamTlr_" + name + ".csv");
             header = "modelElementID,sentence";

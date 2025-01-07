@@ -35,8 +35,8 @@ public class InconsistencyBaselineInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
 
         var sentences = Sets.mutable.fromStream(text.getSentences().stream().map(Sentence::getSentenceNumber));
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
+        for (var modelId : modelStates.modelIds()) {
+            var modelState = modelStates.getModel(modelId);
             Metamodel metamodel = modelState.getMetamodel();
             var traceLinks = connectionStates.getConnectionState(metamodel).getTraceLinks();
             var sentencesWithTraceLinks = traceLinks.collect(it -> it.getFirstEndpoint().getSentence().getSentenceNumber()).toSet();

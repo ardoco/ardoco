@@ -7,20 +7,19 @@ import java.util.SortedSet;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
+//TODO: Discuss how to handle the missing type
 public final class ArchitectureInterface extends ArchitectureItem {
 
     private static final long serialVersionUID = 2232013345166120690L;
 
     private final SortedSet<ArchitectureMethod> signatures;
 
-    private final String type;
-    private MutableList<String> nameParts;
-    private MutableList<String> typeParts;
+    private final MutableList<String> nameParts;
 
-    public ArchitectureInterface(String name, String id, SortedSet<ArchitectureMethod> signatures, String type) {
+    public ArchitectureInterface(String name, String id, SortedSet<ArchitectureMethod> signatures) {
         super(name, id);
         this.signatures = signatures;
-        this.type = type;
+        this.nameParts = splitIdentifierIntoParts(name);
 
     }
 
@@ -51,7 +50,7 @@ public final class ArchitectureInterface extends ArchitectureItem {
 
     @Override
     public String getType() {
-        return this.type;
+        throw new UnsupportedOperationException("Not implemented yet. Interfaces currently have no specified type.");
     }
 
     @Override
@@ -61,6 +60,6 @@ public final class ArchitectureInterface extends ArchitectureItem {
 
     @Override
     public ImmutableList<String> getTypeParts() {
-        return this.typeParts.toImmutable();
+        throw new UnsupportedOperationException("Not implemented yet. Interfaces currently have no specified type.");
     }
 }

@@ -31,36 +31,15 @@ public final class PcmExtractor extends ArchitectureExtractor {
         super(path);
     }
 
-    /**
-     * Extracts an architecture model, i.e. an AMTL instance, from a PCM instance.
-     *
-     * @return the extracted architecture model
-     */
-    @Override
-    public ArchitectureModel extractModel() {
-        PcmModel originalModel = new PcmModel(new File(path));
-        List<ArchitectureInterface> interfaces = extractInterfaces(originalModel);
-        List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
-        List<ArchitectureItem> endpoints = new ArrayList<>();
-        endpoints.addAll(interfaces);
-        endpoints.addAll(components);
-        return new ArchitectureModel(endpoints);
-    }
-
-    @Override
-    public ModelType getModelType() {
-        return ArchitectureModelType.PCM;
-    }
-
     private static List<ArchitectureInterface> extractInterfaces(PcmModel originalModel) {
         List<ArchitectureInterface> interfaces = new ArrayList<>();
         for (PcmInterface originalInterface : originalModel.getRepository().getInterfaces()) {
             SortedSet<ArchitectureMethod> signatures = new TreeSet<>();
             for (PcmSignature originalMethod : originalInterface.getMethods()) {
-                ArchitectureMethod signature = new ArchitectureMethod(originalMethod.getEntityName(), null);
+                ArchitectureMethod signature = new ArchitectureMethod(originalMethod.getEntityName());
                 signatures.add(signature);
             }
-            ArchitectureInterface modelInterface = new ArchitectureInterface(originalInterface.getEntityName(), originalInterface.getId(), signatures, null);
+            ArchitectureInterface modelInterface = new ArchitectureInterface(originalInterface.getEntityName(), originalInterface.getId(), signatures);
             interfaces.add(modelInterface);
         }
         return interfaces;
@@ -89,6 +68,27 @@ public final class PcmExtractor extends ArchitectureExtractor {
 
     private static ArchitectureInterface findInterface(String id, List<ArchitectureInterface> interfaces) {
         return interfaces.stream().filter(modelInterface -> modelInterface.getId().equals(id)).findFirst().orElseThrow();
+    }
+
+    /**
+     * Extracts an architecture model, i.e. an AMTL instance, from a PCM instance.
+     *
+     * @return the extracted architecture model
+     */
+    @Override
+    public ArchitectureModel extractModel() {
+        PcmModel originalModel = new PcmModel(new File(path));
+        List<ArchitectureInterface> interfaces = extractInterfaces(originalModel);
+        List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
+        List<ArchitectureItem> endpoints = new ArrayList<>();
+        endpoints.addAll(interfaces);
+        endpoints.addAll(components);
+        return new ArchitectureModel(endpoints);
+    }
+
+    @Override
+    public ModelType getModelType() {
+        return ArchitectureModelType.PCM;
     }
 
 }

@@ -6,6 +6,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -23,10 +24,9 @@ public class TraceLinkUtilities {
         return firstElementId + ENTRY_SEPARATOR + secondElementId;
     }
 
-    public static ImmutableList<String> getSadSamTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ArchitectureEntity>> sadSamTraceLinks) {
-        return sadSamTraceLinks.collect(tl -> createTraceLinkString(tl.getSecondEndpoint().getId(), String.valueOf(tl.getFirstEndpoint()
-                .getSentence()
-                .getSentenceNumber() + 1)));
+    public static ImmutableList<String> getSadSamTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, Entity>> sadSamTraceLinks) {
+        return sadSamTraceLinks.collect(
+                tl -> createTraceLinkString(tl.getSecondEndpoint().getId(), String.valueOf(tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1)));
     }
 
     public static ImmutableList<String> getSamCodeTraceLinksAsStringList(ImmutableList<TraceLink<ArchitectureEntity, CodeCompilationUnit>> samCodeTraceLinks) {
