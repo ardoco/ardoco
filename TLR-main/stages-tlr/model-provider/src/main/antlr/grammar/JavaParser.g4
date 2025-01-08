@@ -34,7 +34,7 @@
 
 parser grammar JavaParser;
 @header {
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources;
+package generated.antlr;
 }
 
 options {

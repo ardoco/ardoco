@@ -1,6 +1,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaParserBaseVisitor;
+import generated.antlr.JavaParserBaseVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUni
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaParser;
+import generated.antlr.JavaParser;
 
 public class JavaCompilationUnitExtractor extends JavaParserBaseVisitor<CodeItem> {
     private CodeItemRepository codeItemRepository;

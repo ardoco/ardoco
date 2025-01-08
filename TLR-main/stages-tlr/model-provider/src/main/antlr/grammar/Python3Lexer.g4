@@ -34,7 +34,9 @@
 // $antlr-format alignColons trailing, singleLineOverrulesHangingColon true, alignLexerCommands true, alignLabels true, alignTrailers true
 
 lexer grammar Python3Lexer;
-
+@header {
+package generated.antlr;
+}
 // All comments that start with "///" are copy-pasted from
 // The Python Language Reference
 

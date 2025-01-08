@@ -57,7 +57,7 @@
     <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
-       <version>4.13.2</version>
+       <version>${antlr.version}</version>
     </dependency>
   </dependencies>
 
@@ -66,7 +66,7 @@
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.13.2</version>
+        <version>${antlr.version}</version>
         <executions>
             <execution>
                 <id>antlr</id>
@@ -76,8 +76,8 @@
                 </goals>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/antlr/grammar</sourceDirectory>
-                    <outputDirectory>${project.basedir}/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/connectors/generators/antlr/generated/sources</outputDirectory>
-                    <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources</packageName>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr</outputDirectory>
+                    <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr</packageName>
                     <visitor>true</visitor>
                     <clean>true</clean>
                 </configuration>

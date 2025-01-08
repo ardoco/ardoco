@@ -21,9 +21,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUni
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaParser;
+import generated.antlr.JavaParser;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaModel;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.generated.sources.JavaLexer;
+import generated.antlr.JavaLexer;
 
 public class JavaExtractor extends CodeExtractor {
     private CodeModel extractedModel;
