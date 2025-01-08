@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
 
 class JavaExtractorANTLRTest {
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractorANTLRTest.class);
 
     @Test
     void extractorTest() {
-        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/interface");
+        var extractor = new ANTLRExtractor(new CodeItemRepository(), "src/test/resources/interface");
         CodeModel model = extractor.extractModel();
         Assertions.assertNotNull(model);
         for (Entity codePackage : model.getAllPackages()) {
