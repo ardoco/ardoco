@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.List;
@@ -50,8 +50,8 @@ public class NameTypeConnectionInformant extends Informant {
     }
 
     private void exec(TextState textState, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
             this.checkForNameAfterType(textState, word, model, recommendationState);
             this.checkForNameBeforeType(textState, word, model, recommendationState);
@@ -202,8 +202,8 @@ public class NameTypeConnectionInformant extends Informant {
         }
 
         var text = word.getText();
-        matchingEntities = matchingEntities.select(
-                e -> SimilarityUtils.getInstance().areWordsOfListsSimilar(CommonUtilities.getNamePartsOfEntity(e), Lists.immutable.with(text)));
+        matchingEntities = matchingEntities.select(e -> SimilarityUtils.getInstance()
+                .areWordsOfListsSimilar(CommonUtilities.getNamePartsOfEntity(e), Lists.immutable.with(text)));
 
         if (!matchingEntities.isEmpty()) {
             return matchingEntities.getFirst();

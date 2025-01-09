@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import java.io.File;
@@ -240,9 +240,8 @@ public final class CommonUtilities {
 
         for (var entity : model.getContent()) {
             switch (entity) {
-            case ArchitectureEntity architectureEntity -> identifiers.add(architectureEntity.getType());
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("TextEntities have not types");
+                case ArchitectureEntity architectureEntity -> identifiers.add(architectureEntity.getType());
+                case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
             }
         }
         return identifiers;

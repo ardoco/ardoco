@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024. */
+/* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -7,7 +7,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 
-public abstract non-sealed class ArchitectureEntity extends Entity {
+public abstract non-sealed class ArchitectureEntity extends ModelEntity {
     private static final long serialVersionUID = 5118724938904048363L;
 
     protected ArchitectureEntity(String name, String type) {

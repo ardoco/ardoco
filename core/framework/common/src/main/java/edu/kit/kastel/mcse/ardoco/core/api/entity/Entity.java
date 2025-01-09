@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 /**
  * An entity defines the smallest unit of a trace link.
  */
-public abstract sealed class Entity implements Serializable, Comparable<Entity> permits ArchitectureEntity, TextEntity, CodeEntity {
+public abstract sealed class Entity implements Serializable, Comparable<Entity> permits TextEntity, ModelEntity {
 
     private static final long serialVersionUID = 5916408204883918465L;
 

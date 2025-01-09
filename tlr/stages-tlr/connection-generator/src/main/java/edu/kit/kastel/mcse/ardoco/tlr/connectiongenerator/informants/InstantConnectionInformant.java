@@ -1,10 +1,9 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -30,9 +29,8 @@ public class InstantConnectionInformant extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
-            Metamodel metamodel = model.getMetamodel();
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
             var connectionState = connectionStates.getConnectionState(metamodel);
 
@@ -47,7 +45,7 @@ public class InstantConnectionInformant extends Informant {
      */
     private void findNamesOfModelInstancesInSupposedMappings(Model model, RecommendationState recommendationState, ConnectionState connectionState) {
         var recommendedInstances = recommendationState.getRecommendedInstances();
-        for (Entity entity : model.getEndpoints()) {
+        for (ModelEntity entity : model.getEndpoints()) {
             var mostLikelyRi = SimilarityUtils.getInstance().getMostRecommendedInstancesToInstanceByReferences(entity, recommendedInstances);
 
             for (var recommendedInstance : mostLikelyRi) {

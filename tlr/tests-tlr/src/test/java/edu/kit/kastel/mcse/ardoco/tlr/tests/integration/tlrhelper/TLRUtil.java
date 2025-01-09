@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.tlrhelper;
 
 import java.util.List;
@@ -33,15 +33,17 @@ public final class TLRUtil {
         var connectionStates = data.getData(ConnectionStates.ID, ConnectionStates.class).orElseThrow();
         var modelStates = data.getData(ModelStates.ID, ModelStates.class).orElseThrow();
 
-        List<ConnectionState> connectionStatesList = modelStates.modelIds()
+        List<ConnectionState> connectionStatesList = modelStates.metamodels()
                 .stream()
                 .map(modelStates::getModel)
                 .map(Model::getMetamodel)
                 .map(connectionStates::getConnectionState)
                 .toList();
         for (var connectionState : connectionStatesList) {
-            traceLinks.addAll(
-                    connectionState.getTraceLinks().stream().map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint())).toList());
+            traceLinks.addAll(connectionState.getTraceLinks()
+                    .stream()
+                    .map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint()))
+                    .toList());
         }
         return traceLinks.toImmutable();
     }

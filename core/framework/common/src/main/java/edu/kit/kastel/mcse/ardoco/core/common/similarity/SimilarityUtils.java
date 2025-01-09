@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity;
 
 import java.io.Serializable;
@@ -179,9 +179,9 @@ public final class SimilarityUtils {
      */
     public boolean isWordSimilarToModelInstanceType(Word word, Entity entity) {
         switch (entity) {
-        case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getTypeParts());
-        case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-        case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
+            case ArchitectureEntity architectureEntity -> this.compareWordWithStringListEntries(word, architectureEntity.getTypeParts());
+            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
+            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
         }
         throw new IllegalStateException("Undefined for entity type");
 
@@ -358,8 +358,8 @@ public final class SimilarityUtils {
                 boolean longestNameXSurfaceForms = this.areWordsOfListsSimilar(longestNameSplit, surfaceFormWords, similarity);
                 boolean listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, surfaceFormWords) / Math.max(entityNameParts.size(),
                         surfaceFormWords.size()) >= similarity;
-                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(
-                        longestNameSplit.size(), surfaceFormWords.size()) >= similarity;
+                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(longestNameSplit
+                        .size(), surfaceFormWords.size()) >= similarity;
 
                 if (instanceNamesXSurfaceForms || longestNameXSurfaceForms || listOfNamesXSurfaceFormSimilarEnough || listOfSplitNamesXSurfaceFormSimilarEnough) {
                     return true;
@@ -402,9 +402,9 @@ public final class SimilarityUtils {
         }
 
         // Maybe REWORK. Remove NounMappings?
-        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping,
-                firstPhraseMapping)) && this.containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping,
-                secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(textState, secondPhraseMapping, firstPhraseMapping)) {
+        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping, firstPhraseMapping)) && this
+                .containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping, secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(
+                        textState, secondPhraseMapping, firstPhraseMapping)) {
             // HARD CODED... Change?
             return 1.0;
         }

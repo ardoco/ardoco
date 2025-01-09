@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.SortedMap;
@@ -32,9 +32,9 @@ public class ReferenceInformant extends Informant {
         var textState = DataRepositoryHelper.getTextState(dataRepository);
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
-            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
+            var recommendationState = recommendationStates.getRecommendationState(metamodel);
             this.findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(model, recommendationState, textState);
         }
     }

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.util.ArrayList;
@@ -85,8 +85,8 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
     }
 
     private CodeModel findCodeModel(ModelStates models) {
-        for (var modelId : models.modelIds()) {
-            var model = models.getModel(modelId);
+        for (var metamodel : models.metamodels()) {
+            var model = models.getModel(metamodel);
             if (model instanceof CodeModel codeModel) {
                 return codeModel;
             }

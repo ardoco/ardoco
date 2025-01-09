@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
 import java.util.Objects;
@@ -7,7 +7,7 @@ import java.util.SortedSet;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
-//TODO: Discuss how to handle the missing type
+// TODO: Discuss how to handle the missing type
 public final class ArchitectureInterface extends ArchitectureItem {
 
     private static final long serialVersionUID = 2232013345166120690L;

@@ -1,33 +1,34 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
 import java.util.Objects;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
-public class SadModelTraceLink extends TraceLink<SentenceEntity, Entity> {
+public class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEntity> {
 
     private final Sentence sentence;
-    private final Entity entity;
+    private final ModelEntity modelEntity;
 
     /**
-     * Create a trace link based on a {@link Sentence} and a concrete {@link Entity} .
+     * Create a trace link based on a {@link Sentence} and a concrete {@link ModelEntity} .
      */
-    public SadModelTraceLink(Sentence sentence, Entity entity) {
-        super(new SentenceEntity(sentence), entity);
+    public SadModelTraceLink(Sentence sentence, ModelEntity modelEntity) {
+        super(new SentenceEntity(sentence), modelEntity);
         this.sentence = sentence;
-        this.entity = entity;
+        this.modelEntity = modelEntity;
     }
 
     /**
-     * Create a trace link based on a {@link SentenceEntity} and a concrete {@link Entity} .
+     * Create a trace link based on a {@link SentenceEntity} and a concrete {@link ModelEntity} .
      */
-    public SadModelTraceLink(SentenceEntity sentenceEntity, Entity entity) {
-        super(sentenceEntity, entity);
+    public SadModelTraceLink(SentenceEntity sentenceEntity, ModelEntity modelEntity) {
+        super(sentenceEntity, modelEntity);
         this.sentence = sentenceEntity.getSentence();
-        this.entity = entity;
+        this.modelEntity = modelEntity;
     }
 
     /**
@@ -54,7 +55,7 @@ public class SadModelTraceLink extends TraceLink<SentenceEntity, Entity> {
      * @return Uid of the model element that the trace link is based on.
      */
     public String getEntityId() {
-        return this.entity.getId();
+        return this.modelEntity.getId();
     }
 
     /**
