@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -30,4 +31,11 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
     public abstract List<? extends ModelEntity> getEndpoints();
 
     public abstract Metamodel getMetamodel();
+
+    /**
+     * Returns a set of identifiers for the types in the model state.
+     *
+     * @return Set of identifiers for existing types
+     */
+    public abstract SortedSet<String> getTypeIdentifiers();
 }

@@ -11,4 +11,5 @@ public non-sealed class CodeEntity extends ModelEntity {
     protected CodeEntity(String name, String id) {
         super(name, id);
     }
+
 }

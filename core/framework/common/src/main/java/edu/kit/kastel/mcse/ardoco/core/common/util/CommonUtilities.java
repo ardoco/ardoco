@@ -11,9 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
-import java.util.SortedSet;
 import java.util.StringJoiner;
-import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -224,27 +222,8 @@ public final class CommonUtilities {
      * @return List of type names in the model state that are similar to the given word
      */
     public static ImmutableList<String> getSimilarTypes(Word word, Model model) {
-        var identifiers = getTypeIdentifiers(model);
+        var identifiers = model.getTypeIdentifiers();
         return Lists.immutable.fromStream(identifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getText())));
-    }
-
-    /**
-     * Returns a set of identifiers for the types in the model state.
-     *
-     * @param model the model state
-     * @return Set of identifiers for existing types
-     */
-    public static SortedSet<String> getTypeIdentifiers(Model model) {
-
-        SortedSet<String> identifiers = new TreeSet<>();
-
-        for (var entity : model.getContent()) {
-            switch (entity) {
-                case ArchitectureEntity architectureEntity -> identifiers.add(architectureEntity.getType());
-                case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            }
-        }
-        return identifiers;
     }
 
     /**

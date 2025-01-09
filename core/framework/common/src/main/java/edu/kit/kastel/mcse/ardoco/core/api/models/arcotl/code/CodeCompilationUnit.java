@@ -86,6 +86,28 @@ public final class CodeCompilationUnit extends CodeModule {
         return pathBuilder.toString();
     }
 
+    public String getType() {
+        // Assumption mostly one class per unit
+        var content = this.getContent().stream().filter(it -> this.getName().contains(it.getName())).findFirst().orElse(null);
+        if (content instanceof ClassUnit) {
+            return "Class";
+        }
+        if (content instanceof InterfaceUnit) {
+            return "Interface";
+        }
+        if (this.getPath().endsWith("package-info.java")) {
+            return "PackageInfo";
+        }
+        if (this.getPath().endsWith(".java")) {
+            // Default to Class
+            return "Class";
+        }
+        if (ProgrammingLanguages.SHELL.equals(this.getLanguage())) {
+            return "ShellScript";
+        }
+        throw new IllegalStateException("Unknown type of CodeCompilationUnit");
+    }
+
     @Override
     public String toString() {
         return this.getPath();

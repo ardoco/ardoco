@@ -10,11 +10,11 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 public abstract non-sealed class ArchitectureEntity extends ModelEntity {
     private static final long serialVersionUID = 5118724938904048363L;
 
-    protected ArchitectureEntity(String name, String type) {
+    protected ArchitectureEntity(String name) {
         super(name);
     }
 
-    protected ArchitectureEntity(String name, String type, String id) {
+    protected ArchitectureEntity(String name, String id) {
         super(name, id);
     }
 
