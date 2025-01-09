@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.util.Arrays;
@@ -20,6 +20,14 @@ public class ArCoTLInformant extends Informant {
         super(ArCoTLInformant.class.getSimpleName(), dataRepository);
     }
 
+    private static boolean isACodeModel(Metamodel metamodel) {
+        return Arrays.stream(CodeModelType.values()).anyMatch(codeModelType -> codeModelType.getMetamodel().equals(metamodel));
+    }
+
+    private static boolean isAnArchitectureModel(Metamodel metamodel) {
+        return Arrays.stream(ArchitectureModelType.values()).anyMatch(architectureModelType -> architectureModelType.getMetamodel().equals(metamodel));
+    }
+
     @Override
     public void process() {
         var dataRepository = this.getDataRepository();
@@ -28,25 +36,17 @@ public class ArCoTLInformant extends Informant {
 
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
-        for (var modelId : modelStates.modelIds()) {
-            if (ArCoTLInformant.isAnArchitectureModel(modelId)) {
-                architectureModel = (ArchitectureModel) modelStates.getModel(modelId);
-            } else if (ArCoTLInformant.isACodeModel(modelId)) {
-                codeModel = (CodeModel) modelStates.getModel(modelId);
+        for (var metamodel : modelStates.metamodels()) {
+            if (ArCoTLInformant.isAnArchitectureModel(metamodel)) {
+                architectureModel = (ArchitectureModel) modelStates.getModel(metamodel);
+            } else if (ArCoTLInformant.isACodeModel(metamodel)) {
+                codeModel = (CodeModel) modelStates.getModel(metamodel);
             }
         }
 
         Node root = TraceLinkGenerator.getRoot(); //TODO maybe add preprocessing
         var traceLinks = TraceLinkGenerator.generateTraceLinks(root, architectureModel, codeModel);
         samCodeTraceabilityState.addSamCodeTraceLinks(traceLinks);
-    }
-
-    private static boolean isACodeModel(Metamodel modelId) {
-        return Arrays.stream(CodeModelType.values()).anyMatch(codeModelType -> codeModelType.getMetamodel().equals(modelId));
-    }
-
-    private static boolean isAnArchitectureModel(Metamodel modelId) {
-        return Arrays.stream(ArchitectureModelType.values()).anyMatch(architectureModelType -> architectureModelType.getMetamodel().equals(modelId));
     }
 
     @Override

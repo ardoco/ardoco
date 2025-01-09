@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.List;
@@ -10,6 +10,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
@@ -76,11 +77,10 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
-            var metaModel = model.getMetamodel();
-            var connectionState = connectionStates.getConnectionState(metaModel);
-            var inconsistencyState = inconsistencyStates.getInconsistencyState(metaModel);
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
+            var connectionState = connectionStates.getConnectionState(metamodel);
+            var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
 
             var linkedModelInstances = connectionState.getInstanceLinks().collect(TraceLink::getSecondEndpoint).distinct();
 
@@ -100,8 +100,8 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
         }
     }
 
-    private boolean modelInstanceHasMinimumNumberOfAppearances(ImmutableList<Entity> linkedModelInstances, Entity modelInstance) {
-        return linkedModelInstances.count(modelInstance::equals) >= this.minimumNeededTraceLinks;
+    private boolean modelInstanceHasMinimumNumberOfAppearances(ImmutableList<ModelEntity> linkedModelEntities, Entity modelInstance) {
+        return linkedModelEntities.count(modelInstance::equals) >= this.minimumNeededTraceLinks;
     }
 
     private void createInconsistencies(MutableList<Entity> candidateEntities, InconsistencyState inconsistencyState) {

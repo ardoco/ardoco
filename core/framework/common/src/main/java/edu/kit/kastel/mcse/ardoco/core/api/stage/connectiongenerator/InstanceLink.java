@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
 import java.util.Arrays;
@@ -10,8 +10,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -21,10 +20,10 @@ import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * An InstanceLink defines a link between an {@link RecommendedInstance} and an {@link Entity}.
+ * An InstanceLink defines a link between an {@link RecommendedInstance} and an {@link ModelEntity}.
  */
 @Deterministic
-public class InstanceLink extends TraceLink<RecommendedInstance, Entity> {
+public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
 
     private static final long serialVersionUID = -8630933950725516269L;
     private final Confidence confidence;
@@ -35,7 +34,7 @@ public class InstanceLink extends TraceLink<RecommendedInstance, Entity> {
      * @param textualInstance the recommended instance
      * @param entity          the model instance
      */
-    public InstanceLink(RecommendedInstance textualInstance, Entity entity) {
+    public InstanceLink(RecommendedInstance textualInstance, ModelEntity entity) {
         super(textualInstance, entity);
         this.confidence = new Confidence(AggregationFunctions.AVERAGE);
     }
@@ -48,7 +47,7 @@ public class InstanceLink extends TraceLink<RecommendedInstance, Entity> {
      * @param claimant        the claimant
      * @param probability     the probability of this link
      */
-    public InstanceLink(RecommendedInstance textualInstance, Entity entity, Claimant claimant, double probability) {
+    public InstanceLink(RecommendedInstance textualInstance, ModelEntity entity, Claimant claimant, double probability) {
         this(textualInstance, entity);
         this.confidence.addAgentConfidence(claimant, probability);
     }
@@ -90,9 +89,8 @@ public class InstanceLink extends TraceLink<RecommendedInstance, Entity> {
 
         String typeInfo;
         switch (this.getSecondEndpoint()) {
-        case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType();
-        case CodeEntity ignored -> typeInfo = "";
-        case TextEntity ignored -> typeInfo = "";
+            case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType();
+            case CodeEntity ignored -> typeInfo = "";
         }
 
         return "InstanceMapping [ uid=" + this.getSecondEndpoint().getId() + ", name=" + this.getSecondEndpoint().getName() + //

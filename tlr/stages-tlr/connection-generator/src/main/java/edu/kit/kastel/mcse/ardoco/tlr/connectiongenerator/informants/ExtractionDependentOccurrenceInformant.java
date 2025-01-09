@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.SortedMap;
@@ -38,8 +38,8 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
     }
 
     private void exec(TextState textState, ModelStates modelStates, Word word) {
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
 
             this.searchForNameInModel(model, textState, word);
             this.searchForType(model, textState, word);

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -23,7 +23,7 @@ public abstract class Extractor {
 
     public abstract Model extractModel();
 
-    public Metamodel getModelId() {
+    public Metamodel getMetamodel() {
         return this.getModelType().getMetamodel();
     }
 

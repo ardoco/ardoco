@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
 import java.util.SortedMap;
@@ -25,10 +25,21 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class CompoundRecommendationInformant extends Informant {
 
     @Configurable
-    private double confidence = 0.8;
+    private final double confidence = 0.8;
 
     public CompoundRecommendationInformant(DataRepository dataRepository) {
         super(CompoundRecommendationInformant.class.getSimpleName(), dataRepository);
+    }
+
+    private static ImmutableList<Word> getCompoundWordsFromNounMapping(NounMapping nounMapping) {
+        ImmutableList<Word> compoundWords = Lists.immutable.empty();
+        for (var word : nounMapping.getWords()) {
+            var currentCompoundWords = CommonUtilities.getCompoundWords(word);
+            if (currentCompoundWords.size() > compoundWords.size()) {
+                compoundWords = currentCompoundWords;
+            }
+        }
+        return compoundWords;
     }
 
     @Override
@@ -38,9 +49,9 @@ public class CompoundRecommendationInformant extends Informant {
         var textState = DataRepositoryHelper.getTextState(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
 
-        for (var modelID : modelStatesData.modelIds()) {
-            var model = modelStatesData.getModel(modelID);
-            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+        for (var metamodel : modelStatesData.metamodels()) {
+            var model = modelStatesData.getModel(metamodel);
+            var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.createRecommendationInstancesFromCompoundNounMappings(textState, recommendationState, model);
             this.findMoreCompoundsForRecommendationInstances(textState, recommendationState, model);
@@ -147,17 +158,6 @@ public class CompoundRecommendationInformant extends Informant {
                 this.addRecommendedInstance(nounMapping, typeMappings, recommendationState, model);
             }
         }
-    }
-
-    private static ImmutableList<Word> getCompoundWordsFromNounMapping(NounMapping nounMapping) {
-        ImmutableList<Word> compoundWords = Lists.immutable.empty();
-        for (var word : nounMapping.getWords()) {
-            var currentCompoundWords = CommonUtilities.getCompoundWords(word);
-            if (currentCompoundWords.size() > compoundWords.size()) {
-                compoundWords = currentCompoundWords;
-            }
-        }
-        return compoundWords;
     }
 
     @Override

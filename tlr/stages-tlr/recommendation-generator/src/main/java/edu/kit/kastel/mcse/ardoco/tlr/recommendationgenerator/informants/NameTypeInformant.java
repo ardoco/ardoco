@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
 import java.util.SortedMap;
@@ -18,13 +18,12 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
  * This analyzer searches for name type patterns. If these patterns occur recommendations are created.
- *
  */
 
 public class NameTypeInformant extends Informant {
 
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
 
     /**
      * Creates a new NameTypeAnalyzer
@@ -47,9 +46,9 @@ public class NameTypeInformant extends Informant {
     }
 
     private void exec(TextState textState, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
-        for (var modelID : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelID);
-            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
+            var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.addRecommendedInstanceIfNameAfterType(textState, word, model, recommendationState);
             this.addRecommendedInstanceIfNameBeforeType(textState, word, model, recommendationState);
@@ -59,8 +58,8 @@ public class NameTypeInformant extends Informant {
     }
 
     /**
-     * Checks if the current node is a type in the text extraction state. If the names of the text extraction state
-     * contain the previous node. If that's the case a recommendation for the combination of both is created.
+     * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the previous node. If that's the
+     * case a recommendation for the combination of both is created.
      *
      * @param textExtractionState text extraction state
      * @param word                the current word
@@ -83,8 +82,8 @@ public class NameTypeInformant extends Informant {
     }
 
     /**
-     * Checks if the current node is a type in the text extraction state. If the names of the text extraction state
-     * contain the following node. If that's the case a recommendation for the combination of both is created.
+     * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the following node. If that's the
+     * case a recommendation for the combination of both is created.
      *
      * @param textExtractionState text extraction state
      * @param word                the current word
@@ -106,8 +105,8 @@ public class NameTypeInformant extends Informant {
     }
 
     /**
-     * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction
-     * state contain the previous node. If that's the case a recommendation for the combination of both is created.
+     * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the previous node. If that's
+     * the case a recommendation for the combination of both is created.
      *
      * @param textExtractionState text extraction state
      * @param word                the current word
@@ -130,8 +129,8 @@ public class NameTypeInformant extends Informant {
     }
 
     /**
-     * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction
-     * state contain the afterwards node. If that's the case a recommendation for the combination of both is created.
+     * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the afterwards node. If
+     * that's the case a recommendation for the combination of both is created.
      *
      * @param textExtractionState text extraction state
      * @param word                the current word

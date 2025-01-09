@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests;
 
 import java.util.Locale;
@@ -36,7 +36,7 @@ public class TestUtil {
 
         int sentences = arDoCoResult.getText().getSentences().size();
         int modelElements = 0;
-        for (var model : arDoCoResult.getModelIds()) {
+        for (var model : arDoCoResult.getMetamodels()) {
             modelElements += arDoCoResult.getModelState(model).getEndpoints().size();
         }
 

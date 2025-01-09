@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
@@ -24,7 +24,7 @@ public abstract class Filter extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var model : modelStates.modelIds()) {
+        for (var model : modelStates.metamodels()) {
             var modelState = modelStates.getModel(model);
             var inconsistencyState = inconsistencyStates.getInconsistencyState(modelState.getMetamodel());
             filterRecommendedInstances(inconsistencyState);

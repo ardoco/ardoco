@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.Objects;
@@ -9,7 +9,6 @@ import java.util.function.UnaryOperator;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -50,9 +49,7 @@ public class ProjectNameInformant extends Informant {
         var projectName = DataRepositoryHelper.getProjectPipelineData(dataRepository).getProjectName();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
-            Metamodel metamodel = model.getMetamodel();
+        for (var metamodel : modelStates.metamodels()) {
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.checkForProjectNameInRecommendedInstances(projectName, recommendationState);

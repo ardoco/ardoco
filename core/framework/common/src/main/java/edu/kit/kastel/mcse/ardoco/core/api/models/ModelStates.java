@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.SortedMap;
@@ -25,7 +25,7 @@ public class ModelStates implements PipelineStepData {
      *
      * @return the IDs of all contained {@link Model Models}
      */
-    public SortedSet<Metamodel> modelIds() {
+    public SortedSet<Metamodel> metamodels() {
         return new TreeSet<>(this.models.keySet());
     }
 

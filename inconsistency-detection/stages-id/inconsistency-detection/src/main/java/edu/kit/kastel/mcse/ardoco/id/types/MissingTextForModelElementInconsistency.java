@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
 import java.util.Locale;
@@ -22,8 +22,8 @@ public class MissingTextForModelElementInconsistency implements ModelInconsisten
 
     @Override
     public String getReason() {
-        return String.format(Locale.US, "Model contains an Instance \"%s\" (type: \"%s\")  that seems to be undocumented.", entity.getName(),
-                CommonUtilities.getTypeOfEntity(entity));
+        return String.format(Locale.US, "Model contains an Instance \"%s\" (type: \"%s\")  that seems to be undocumented.", entity.getName(), CommonUtilities
+                .getTypeOfEntity(entity));
     }
 
     @Override

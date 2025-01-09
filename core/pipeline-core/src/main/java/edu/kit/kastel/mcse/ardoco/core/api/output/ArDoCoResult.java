@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.output;
 
 import java.util.Comparator;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
@@ -49,7 +49,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public record ArDoCoResult(DataRepository dataRepository) {
     private static final Logger logger = LoggerFactory.getLogger(ArDoCoResult.class);
 
-    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, Entity> traceLink) {
+    private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, ModelEntity> traceLink) {
         String modelElementName = traceLink.getSecondEndpoint().getName();
         String modelElementUid = traceLink.getSecondEndpoint().getId();
         String modelInfo = String.format("%s (%s)", modelElementName, modelElementUid);
@@ -73,26 +73,26 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns the set of {@link TraceLink}s that were found for the Model with the given ID.
      *
-     * @param modelId the ID of the model that should be traced
      * @return Trace links for the model with the given id
      */
-    public ImmutableSet<TraceLink<SentenceEntity, Entity>> getTraceLinksForModel(Metamodel modelId) {
-        ConnectionState connectionState = this.getConnectionState(modelId);
+    public ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinksForModel(Metamodel metamodel) {
+        ConnectionState connectionState = this.getConnectionState(metamodel);
         if (connectionState != null) {
             return connectionState.getTraceLinks();
         }
         return Sets.immutable.empty();
     }
 
+    //TODO: Is this method still in use?
+
     /**
      * Returns the set of {@link TraceLink}s that were found for the Model with the given ID as strings in the format "ModelElementId,SentenceNo".
      *
-     * @param modelId the ID of the model that should be traced
      * @return Trace links for the model with the given id as Strings
      */
-    public ImmutableSortedSet<String> getTraceLinksForModelAsStrings(Metamodel modelId) {
+    public ImmutableSortedSet<String> getTraceLinksForModelAsStrings(Metamodel metamodel) {
         var formatString = "%s,%d";
-        return this.getTraceLinksForModel(modelId)
+        return this.getTraceLinksForModel(metamodel)
                 .collect(tl -> String.format(formatString, tl.getSecondEndpoint().getId(), tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1))
                 .toImmutableSortedSet();
     }
@@ -102,12 +102,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return set of Trace links
      */
-    public ImmutableList<TraceLink<SentenceEntity, Entity>> getArchitectureTraceLinks() {
-        MutableSet<TraceLink<SentenceEntity, Entity>> traceLinks = Sets.mutable.empty();
+    public ImmutableList<TraceLink<SentenceEntity, ModelEntity>> getArchitectureTraceLinks() {
+        MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
-        for (var modelId : this.getModelIds()) {
-            if (modelId == Metamodel.ARCHITECTURE) {
-                traceLinks.addAll(this.getTraceLinksForModel(modelId).castToCollection());
+        for (var metamodel : this.getMetamodels()) {
+            if (metamodel == Metamodel.ARCHITECTURE) {
+                traceLinks.addAll(this.getTraceLinksForModel(metamodel).castToCollection());
             }
         }
         return traceLinks.toImmutableList();
@@ -153,11 +153,10 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns all {@link Inconsistency inconsistencies} that were found for the model with the given ID.
      *
-     * @param modelId the ID of the model
      * @return Inconsistencies for the model
      */
-    public ImmutableList<Inconsistency> getAllInconsistenciesForModel(Metamodel modelId) {
-        InconsistencyState inconsistencyState = this.getInconsistencyState(modelId);
+    public ImmutableList<Inconsistency> getAllInconsistenciesForModel(Metamodel metamodel) {
+        InconsistencyState inconsistencyState = this.getInconsistencyState(metamodel);
         if (inconsistencyState != null) {
             return inconsistencyState.getInconsistencies();
         }
@@ -167,13 +166,10 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns a list of {@link Inconsistency inconsistencies} that were found for the model with the given ID and that are of the given Inconsistency class.
      *
-     * @param modelId           the ID of the model
-     * @param inconsistencyType type of the Inconsistency that should be returned
-     * @param <T>               Type-parameter of the inconsistency
      * @return Inconsistencies for the model with the given type
      */
-    public <T extends Inconsistency> ImmutableList<T> getInconsistenciesOfTypeForModel(Metamodel modelId, Class<T> inconsistencyType) {
-        return this.getAllInconsistenciesForModel(modelId).select(i -> inconsistencyType.isAssignableFrom(i.getClass())).collect(inconsistencyType::cast);
+    public <T extends Inconsistency> ImmutableList<T> getInconsistenciesOfTypeForModel(Metamodel metamodel, Class<T> inconsistencyType) {
+        return this.getAllInconsistenciesForModel(metamodel).select(i -> inconsistencyType.isAssignableFrom(i.getClass())).collect(inconsistencyType::cast);
     }
 
     /**
@@ -183,7 +179,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      */
     public ImmutableList<Inconsistency> getAllInconsistencies() {
         MutableList<Inconsistency> inconsistencies = Lists.mutable.empty();
-        for (var model : this.getModelIds()) {
+        for (var model : this.getMetamodels()) {
             inconsistencies.addAll(this.getAllInconsistenciesForModel(model).castToCollection());
         }
         return inconsistencies.toImmutable();
@@ -247,13 +243,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns the internal {@link ConnectionState} for the modelId with the given ID or null, if there is none.
      *
-     * @param modelId the ID of the model
      * @return the connection state or null, if there is no {@link ConnectionState} for the given model ID
      */
-    public ConnectionState getConnectionState(Metamodel modelId) {
+    public ConnectionState getConnectionState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasConnectionStates(this.dataRepository)) {
             var connectionStates = DataRepositoryHelper.getConnectionStates(this.dataRepository);
-            return connectionStates.getConnectionState(modelId);
+            return connectionStates.getConnectionState(metamodel);
         }
         ArDoCoResult.logger.warn("No ConnectionState found.");
         return null;
@@ -262,13 +257,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns the internal {@link InconsistencyState} for the modelId with the given ID or null, if there is none.
      *
-     * @param modelId the ID of the model
      * @return the inconsistency state or null, if there is no {@link InconsistencyState} for the given model ID
      */
-    public InconsistencyState getInconsistencyState(Metamodel modelId) {
+    public InconsistencyState getInconsistencyState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasInconsistencyStates(this.dataRepository)) {
             var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(this.dataRepository);
-            return inconsistencyStates.getInconsistencyState(modelId);
+            return inconsistencyStates.getInconsistencyState(metamodel);
         }
         ArDoCoResult.logger.warn("No InconsistencyState found.");
         return null;
@@ -301,20 +295,19 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return list of all model IDs
      */
-    public List<Metamodel> getModelIds() {
+    public List<Metamodel> getMetamodels() {
         ModelStates modelStates = this.getModelStates();
-        return Lists.mutable.ofAll(modelStates.modelIds());
+        return Lists.mutable.ofAll(modelStates.metamodels());
     }
 
     /**
      * Returns the internal {@link Model} for the modelId with the given ID.
      *
-     * @param modelId the ID of the model
      * @return the Model
      */
-    public Model getModelState(Metamodel modelId) {
+    public Model getModelState(Metamodel metamodel) {
         ModelStates modelStates = this.getModelStates();
-        return modelStates.getModel(modelId);
+        return modelStates.getModel(metamodel);
     }
 
     /**

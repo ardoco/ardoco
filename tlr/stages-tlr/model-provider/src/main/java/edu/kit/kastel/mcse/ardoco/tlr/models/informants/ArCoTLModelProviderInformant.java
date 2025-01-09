@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.io.File;
@@ -71,15 +71,15 @@ public final class ArCoTLModelProviderInformant extends Informant {
             this.getLogger().info("Writing out code model to file in directory.");
             codeExtractor.writeOutCodeModel(codeModel);
         }
-        this.addModelStateToDataRepository(this.extractor.getModelId(), extractedModel);
+        this.addModelStateToDataRepository(this.extractor.getMetamodel(), extractedModel);
     }
 
-    private void addModelStateToDataRepository(Metamodel modelId, Model model) {
+    private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
         var dataRepository = this.getDataRepository();
         Optional<ModelStates> modelStatesOptional = dataRepository.getData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);
         var modelStates = modelStatesOptional.orElseGet(ModelStates::new);
 
-        modelStates.addModel(modelId, model);
+        modelStates.addModel(metamodel, model);
 
         if (modelStatesOptional.isEmpty()) {
             dataRepository.addData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, modelStates);

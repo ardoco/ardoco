@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.SortedMap;
@@ -40,8 +40,8 @@ public class MissingModelElementInconsistencyInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var modelId : modelStates.modelIds()) {
-            var model = modelStates.getModel(modelId);
+        for (var metamodel : modelStates.metamodels()) {
+            var model = modelStates.getModel(metamodel);
             this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, model);
         }
     }
