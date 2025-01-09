@@ -6,7 +6,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,12 +19,17 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeModule;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ComputationalObject;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.Datatype;
 
 /**
  * A code model that is a CMTL instance.
  */
 public final class CodeModel extends Model {
+
+    private static final Logger logger = LoggerFactory.getLogger(CodeModel.class);
 
     @JsonProperty
     private CodeItemRepository codeItemRepository;
@@ -57,8 +65,25 @@ public final class CodeModel extends Model {
         return Metamodel.CODE;
     }
 
+    @Override
+    public SortedSet<String> getTypeIdentifiers() {
+
+        SortedSet<String> identifiers = new TreeSet<>();
+
+        for (var codeItem : this.getContent()) {
+            switch (codeItem) {
+            case CodePackage codePackage -> identifiers.add("Package");
+            case CodeCompilationUnit codeCompilationUnit -> identifiers.add(codeCompilationUnit.getType());
+            case CodeModule ignored -> logger.debug("Type not defined yet");
+            case ComputationalObject ignored -> logger.debug("Type not defined yet");
+            case Datatype ignored -> logger.debug("Type not defined yet");
+            }
+        }
+        return identifiers;
+    }
+
     @JsonGetter("content")
-    protected List<String> getContentIds() {
+    private List<String> getContentIds() {
         this.initialize();
         return this.content;
     }

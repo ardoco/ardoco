@@ -12,7 +12,7 @@ public final class ArchitectureMethod extends ArchitectureItem {
     private final MutableList<String> nameParts;
 
     public ArchitectureMethod(String name) {
-        super(name, null);
+        super(name);
         this.nameParts = splitIdentifierIntoParts(name);
     }
 

@@ -36,8 +36,8 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
     }
 
     protected Entity(String name, String id) {
+        this.name = name;
         this.id = Objects.requireNonNull(id);
-        this.name = Objects.requireNonNull(name);
     }
 
     public String getId() {

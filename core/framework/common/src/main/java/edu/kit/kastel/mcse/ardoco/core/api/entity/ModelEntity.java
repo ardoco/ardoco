@@ -17,7 +17,8 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
         super(name);
     }
 
-    protected ModelEntity(String name, String type) {
-        super(name, type);
+    protected ModelEntity(String name, String id) {
+        super(name, id);
     }
+
 }

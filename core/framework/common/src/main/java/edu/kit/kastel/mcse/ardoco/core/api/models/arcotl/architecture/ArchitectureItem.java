@@ -4,9 +4,8 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 
 /**
- * An architecture item of an architecture model. A possible candidate for the
- * architecture endpoint of a trace link that connects corresponding elements of
- * an architecture model and a code model.
+ * An architecture item of an architecture model. A possible candidate for the architecture endpoint of a trace link that connects corresponding elements of an
+ * architecture model and a code model.
  */
 public abstract sealed class ArchitectureItem extends ArchitectureEntity permits ArchitectureComponent, ArchitectureInterface, ArchitectureMethod {
 
@@ -17,8 +16,8 @@ public abstract sealed class ArchitectureItem extends ArchitectureEntity permits
      *
      * @param name the name of the architecture item to be created
      */
-    protected ArchitectureItem(String name, String type) {
-        super(name, type);
+    protected ArchitectureItem(String name) {
+        super(name);
     }
 
     /**
@@ -27,13 +26,13 @@ public abstract sealed class ArchitectureItem extends ArchitectureEntity permits
      * @param name the name of the architecture item to be created
      * @param id   the identifier of the architecture item to be created
      */
-    protected ArchitectureItem(String name, String type, String id) {
-        super(name, type, id);
+    protected ArchitectureItem(String name, String id) {
+        super(name, id);
     }
 
     /**
      * Return the type of the architecture item as string
-     * 
+     *
      * @return the type of the architecture item
      */
     public abstract String getType();
