@@ -1,20 +1,57 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import java.util.ArrayList;
+import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import generated.antlr.JavaParser;
 import generated.antlr.JavaParserBaseVisitor;
 
-public class JavaVariableExtractor extends JavaParserBaseVisitor<VariableElement> {
+public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableElement>> {
+    private final List<VariableElement> variables = new ArrayList<>();
 
-    @Override
-    public VariableElement visitVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
-        String variableName = ctx.variableDeclaratorId().identifier().getText();
-        String variableType = ctx.variableInitializer().getText();
-        Parent parent = JavaParentExtractor.getParent(ctx);
-        return new VariableElement(variableName, variableType, parent);
+    @Override 
+    public List<VariableElement> visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+        super.visitCompilationUnit(ctx);
+        return variables;
     }
+
+    @Override 
+    public List<VariableElement> visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+        String variableType = ctx.typeType().getText();
+        Parent parent = JavaParentExtractor.getParent(ctx);
+        List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
+        parseToVariablesList(varNames, variableType, parent);
+        return variables;
+    }
+
+    @Override 
+    public List<VariableElement> visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
+        String variableType = ctx.typeType().getText();
+        Parent parent = JavaParentExtractor.getParent(ctx);
+        List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
+        parseToVariablesList(varNames, variableType, parent);
+        return variables;
+    }
+
+    private List<String> extractVariableNames(List<JavaParser.VariableDeclaratorContext> variableDeclarators) {
+        List<String> variableNames = new ArrayList<>();
+        for (JavaParser.VariableDeclaratorContext variableDeclarator : variableDeclarators) {
+            String name = variableDeclarator.variableDeclaratorId().identifier().getText();
+            variableNames.add(name);
+        }
+        return variableNames;
+    }
+
+    private void parseToVariablesList(List<String> varNames, String variableType, Parent parent) {
+        for (String variableName : varNames) {
+            VariableElement variable = new VariableElement(variableName, variableType, parent);
+            variables.add(variable);
+        }
+    }
+
+
+
+
 }

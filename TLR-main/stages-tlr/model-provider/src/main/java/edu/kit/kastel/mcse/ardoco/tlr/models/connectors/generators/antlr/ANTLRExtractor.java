@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -68,10 +69,11 @@ public class ANTLRExtractor extends CodeExtractor {
         
         ParseTree tree = parser.compilationUnit();
 
-        JavaVisitorManager visitor = new JavaVisitorManager(codeItemRepository, dir, file);
-        visitor.visit(tree);
+        //JavaVisitorManager visitor = new JavaVisitorManager(codeItemRepository, dir, file);
+       // visitor.visit(tree);
 
-        return visitor.getCodeItem();
+        //return visitor.getCodeItem();
+        return null;
     }
 
     private static String[] getEntries(Path dir, String suffix) {

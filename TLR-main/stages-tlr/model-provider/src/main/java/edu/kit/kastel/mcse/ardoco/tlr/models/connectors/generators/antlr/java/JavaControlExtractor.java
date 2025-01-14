@@ -1,16 +1,28 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.JavaParser;
 import generated.antlr.JavaParserBaseVisitor;
 
-public class JavaControlExtractor extends JavaParserBaseVisitor<ControlElement> {
-    
+public class JavaControlExtractor extends JavaParserBaseVisitor<List<ControlElement>> {
+    private final List<ControlElement> controls = new ArrayList<>(); 
+
+        @Override 
+        public List<ControlElement> visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+            super.visitCompilationUnit(ctx);
+            return controls;
+        }
+        
         @Override
-        public ControlElement visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
+        public List<ControlElement> visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
             String name = ctx.identifier().getText();
             Parent parent = JavaParentExtractor.getParent(ctx);
-            return new ControlElement(name, parent);
+            ControlElement controlElement = new ControlElement(name, parent);
+            controls.add(controlElement);
+            return controls;
         }    
 }

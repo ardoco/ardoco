@@ -1,15 +1,15 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 public class Parent extends BasicElement {
-    private final BasicType parentType;
+    private final BasicType type;
 
     public Parent(String name, BasicType parentType) {
         super(name);
-        this.parentType = parentType;
+        this.type = parentType;
     }
 
-    public BasicType getParentType() {
-        return parentType;
+    public BasicType getType() {
+        return type;
     }
     
 }

@@ -51,33 +51,40 @@ public class JavaExtractor extends ANTLRExtractor {
             extractControls();
             extractClasses();
             extractInterfaces();
+            extractCompilationUnits();
         }
     }
 
     public void mapToCodeModel() {
-        mapper.mapVariables(variables);
+        //mapper.mapVariables(variables);
     }
 
     
 
     private void extractVariables() {
         JavaVariableExtractor variableExtractor = new JavaVariableExtractor();
-        variables.add(variableExtractor.visit(tree));
+
+        variables.addAll(variableExtractor.visit(tree));
     }
 
     private void extractControls() {
         JavaControlExtractor controlExtractor = new JavaControlExtractor();
-        controls.add(controlExtractor.visit(tree));
+        controls.addAll(controlExtractor.visit(tree));
     }
 
     private void extractClasses() {
         JavaClassExtractor classExtractor = new JavaClassExtractor();
-        classes.add(classExtractor.visit(tree));
+        classes.addAll(classExtractor.visit(tree));
     }
 
     private void extractInterfaces() {
         JavaInterfaceExtractor interfaceExtractor = new JavaInterfaceExtractor();
         interfaces.add(interfaceExtractor.visit(tree));
+    }
+
+    private void extractCompilationUnits() {
+        // JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor();
+        // compilationUnitExtractor.visit(tree);
     }
 
 

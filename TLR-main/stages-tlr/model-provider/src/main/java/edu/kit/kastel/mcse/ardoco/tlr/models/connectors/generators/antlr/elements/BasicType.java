@@ -3,5 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 public enum BasicType {
     INTERFACE,
     CLASS,
-    CONTROL
+    CONTROL,
+    FILE,
+    PACKAGE,
+    COMPILATIONUNIT
 }
