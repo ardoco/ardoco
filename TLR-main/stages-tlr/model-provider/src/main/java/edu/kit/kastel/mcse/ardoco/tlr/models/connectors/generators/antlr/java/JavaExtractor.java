@@ -22,13 +22,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.JavaModelMapper;
 import generated.antlr.JavaLexer;
 import generated.antlr.JavaParser;
+import generated.antlr.JavaParser.CompilationUnitContext;
 public class JavaExtractor extends ANTLRExtractor {
     private ProgrammingLanguage language = ProgrammingLanguage.JAVA;
-    private List<VariableElement> variables = new ArrayList<VariableElement>();
-    private List<ControlElement> controls = new ArrayList<ControlElement>();
-    private List<ClassElement> classes = new ArrayList<ClassElement>();
-    private List<InterfaceElement> interfaces = new ArrayList<InterfaceElement>();
-    private ParseTree tree;
+    private List<VariableElement> variables = new ArrayList<>();
+    private List<ControlElement> controls = new ArrayList<>();
+    private List<ClassElement> classes = new ArrayList<>();
+    private List<InterfaceElement> interfaces = new ArrayList<>();
+    private CompilationUnitContext tree;
     private JavaModelMapper mapper = new JavaModelMapper();
 
     public JavaExtractor(CodeItemRepository repository, String path) {
@@ -64,22 +65,22 @@ public class JavaExtractor extends ANTLRExtractor {
     private void extractVariables() {
         JavaVariableExtractor variableExtractor = new JavaVariableExtractor();
 
-        variables.addAll(variableExtractor.visit(tree));
+        variables.addAll(variableExtractor.visitCompilationUnit(tree));
     }
 
     private void extractControls() {
         JavaControlExtractor controlExtractor = new JavaControlExtractor();
-        controls.addAll(controlExtractor.visit(tree));
+        controls.addAll(controlExtractor.visitCompilationUnit(tree));
     }
 
     private void extractClasses() {
         JavaClassExtractor classExtractor = new JavaClassExtractor();
-        classes.addAll(classExtractor.visit(tree));
+        classes.addAll(classExtractor.visitCompilationUnit(tree));
     }
 
     private void extractInterfaces() {
         JavaInterfaceExtractor interfaceExtractor = new JavaInterfaceExtractor();
-        interfaces.addAll(interfaceExtractor.visit(tree));
+        interfaces.addAll(interfaceExtractor.visitCompilationUnit(tree));
     }
 
     private void extractCompilationUnits() {
