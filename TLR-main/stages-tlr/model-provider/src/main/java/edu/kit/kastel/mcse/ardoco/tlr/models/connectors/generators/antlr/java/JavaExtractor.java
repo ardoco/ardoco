@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
@@ -29,42 +32,54 @@ public class JavaExtractor extends ANTLRExtractor {
     private List<ControlElement> controls = new ArrayList<>();
     private List<ClassElement> classes = new ArrayList<>();
     private List<InterfaceElement> interfaces = new ArrayList<>();
+    private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
     private CompilationUnitContext tree;
     private JavaModelMapper mapper = new JavaModelMapper();
+    private CodeModel codeModel;
 
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
     }
 
-    public void buildParseTree(Path file, Path dir) throws IOException {
+    public void execute(Path dir) throws IOException {
+        List<Path> files = getFiles(dir);
+        for (Path file : files) {
+            buildCompilationCtxForFile(file);
+            extractElementsFromFile(file);
+        }
+        mapToCodeModel();
+    }
+
+    private List<Path> getFiles(Path dir) throws IOException {
+        List<Path> files = new ArrayList<>();
+        Files.walk(dir).filter(Files::isRegularFile).forEach(files::add);
+        return files;
+    }
+
+    private void buildCompilationCtxForFile(Path file) throws IOException {
         CharStream input = CharStreams.fromFileName(file.toString());
-        
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
-        
         this.tree = parser.compilationUnit();
     }
 
-    public void extractAllFromParseTree() {
+    private void extractElementsFromFile(Path file) {
         if (this.tree != null) {
             extractVariables();
             extractControls();
             extractClasses();
             extractInterfaces();
-            extractCompilationUnits();
+            extractCompilationUnits(file);
         }
     }
 
-    public void mapToCodeModel() {
-        //mapper.mapVariables(variables);
+    private void mapToCodeModel() {
+        // this.mapper = new JavaModelMapper(variables, controls, classes, interfaces, compilationUnits);
     }
-
-    
 
     private void extractVariables() {
         JavaVariableExtractor variableExtractor = new JavaVariableExtractor();
-
         variables.addAll(variableExtractor.visitCompilationUnit(tree));
     }
 
@@ -83,17 +98,10 @@ public class JavaExtractor extends ANTLRExtractor {
         interfaces.addAll(interfaceExtractor.visitCompilationUnit(tree));
     }
 
-    private void extractCompilationUnits() {
-        // JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor();
-        // compilationUnitExtractor.visit(tree);
+    private void extractCompilationUnits(Path file) {
+        JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor(file.toString());
+        compilationUnits.add(compilationUnitExtractor.visitCompilationUnit(tree));
     }
-
-
-
-
-
-
-
 }
     
 
