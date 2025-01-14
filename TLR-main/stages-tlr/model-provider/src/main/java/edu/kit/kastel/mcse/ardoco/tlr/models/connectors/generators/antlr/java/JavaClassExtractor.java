@@ -56,8 +56,13 @@ private String getExtendsClass(JavaParser.ClassDeclarationContext ctx) {
 private List<String> extractImplementedInterfaces(JavaParser.ClassDeclarationContext ctx) {
     List<String> implementedInterfaces = new ArrayList<>();
     for (JavaParser.TypeListContext typeListContext : ctx.typeList()) {
-        if (typeListContext.typeType() != null) {
-            typeListContext.typeType().forEach(typeTypeContext -> implementedInterfaces.add(typeTypeContext.getText()));
+        if (typeListContext != null) {
+            typeListContext.typeType().forEach(typeTypeContext -> {
+                // Extract the text and remove generic type parameters
+                String typeName = typeTypeContext.getText();
+                String simpleName = typeName.replaceAll("<.*?>", ""); // Remove everything inside <>
+                implementedInterfaces.add(simpleName);
+            });
         }
     }
     return implementedInterfaces;

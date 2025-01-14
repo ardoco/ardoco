@@ -2,20 +2,13 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 
 public class InterfaceElement extends BasicElement {
     private final Parent parent;
-    private final String packageName;
 
-    public InterfaceElement(String name, Parent parent, String packageName) {
+    public InterfaceElement(String name, Parent parent) {
         super(name);
         this.parent = parent;
-        this.packageName = packageName;
     }
 
     public Parent getParent() {
         return parent;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-    
+    } 
 }

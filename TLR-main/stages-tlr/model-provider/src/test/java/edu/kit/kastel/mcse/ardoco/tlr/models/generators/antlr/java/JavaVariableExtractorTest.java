@@ -20,11 +20,11 @@ import generated.antlr.JavaParser.CompilationUnitContext;
 
 class JavaVariableExtractorTest {
     private static final Logger logger = LoggerFactory.getLogger(JavaVariableExtractorTest.class);
-
+    private final String sourcePath = "src/test/resources/interface/edu/";
 
     @Test
     void variableExtractorAClassTest() throws IOException {
-        String filePath = "src/test/resources/interface/edu/AClass.java";
+        String filePath = sourcePath + "AClass.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assertions.assertEquals(3, variables.size());
         Assertions.assertEquals("s", variables.get(0).getName());
@@ -47,42 +47,42 @@ class JavaVariableExtractorTest {
 
     @Test
     void variableExtractorAnEnum() throws IOException {
-        String filePath = "src/test/resources/interface/edu/AnEnum.java";
+        String filePath = sourcePath + "AnEnum.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorAnInterface() throws IOException {
-        String filePath = "src/test/resources/interface/edu/AnInterface.java";
+        String filePath = sourcePath + "AnInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorExtendedInterface() throws IOException {
-        String filePath = "src/test/resources/interface/edu/ExtendedInterface.java";
+        String filePath = sourcePath + "ExtendedInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorSuperclass() throws IOException {
-        String filePath = "src/test/resources/interface/edu/Superclass.java";
+        String filePath = sourcePath + "Superclass.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorOtherInterfaceZwei() throws IOException {
-        String filePath = "src/test/resources/interface/edu/zwei/OtherInterface.java";
+        String filePath = sourcePath + "zwei/OtherInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorOtherInterfaceDrei() throws IOException {
-        String filePath = "src/test/resources/interface/edu/drei/OtherInterface.java";
+        String filePath = sourcePath + "drei/OtherInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
         Assert.assertTrue(variables.isEmpty());
     }

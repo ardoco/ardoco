@@ -79,7 +79,7 @@ public class JavaExtractor extends ANTLRExtractor {
 
     private void extractInterfaces() {
         JavaInterfaceExtractor interfaceExtractor = new JavaInterfaceExtractor();
-        interfaces.add(interfaceExtractor.visit(tree));
+        interfaces.addAll(interfaceExtractor.visit(tree));
     }
 
     private void extractCompilationUnits() {

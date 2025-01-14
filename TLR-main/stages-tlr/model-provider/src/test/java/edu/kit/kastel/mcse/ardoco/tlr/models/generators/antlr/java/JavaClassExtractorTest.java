@@ -31,7 +31,7 @@ class JavaClassExtractorTest {
         Assertions.assertEquals("AClass", classes.get(0).getParent().getName());
         Assertions.assertEquals(BasicType.COMPILATIONUNIT, classes.get(0).getParent().getType());
         Assertions.assertEquals("Superclass", classes.get(0).getExtendsClass());
-        Assertions.assertEquals("AnInterface<T>", classes.get(0).getImplementedInterfaces().get(0));
+        Assertions.assertEquals("AnInterface", classes.get(0).getImplementedInterfaces().get(0));
         Assertions.assertEquals("OtherInterface", classes.get(0).getImplementedInterfaces().get(1));
 
         //Assertions Class AnInnerClass

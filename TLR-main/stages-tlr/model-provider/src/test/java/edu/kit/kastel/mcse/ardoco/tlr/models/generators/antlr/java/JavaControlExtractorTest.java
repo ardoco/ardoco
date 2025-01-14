@@ -33,6 +33,48 @@ class JavaControlExtractorTest {
         Assertions.assertEquals("AClass", controls.get(0).getParent().getName());
     }
 
+    @Test
+    void controlExtractorAnEnum() throws IOException {
+        String filePath = sourcePath + "AnEnum.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorAnInterface() throws IOException {
+        String filePath = sourcePath + "AnInterface.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorSuperclass() throws IOException {
+        String filePath = sourcePath + "Superclass.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorExtendedInterface() throws IOException {
+        String filePath = sourcePath + "ExtendedInterface.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorOtherInterfaceZwei() throws IOException {
+        String filePath = sourcePath + "zwei/OtherInterface.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorOtherInterfaceDrei() throws IOException {
+        String filePath = sourcePath + "drei/OtherInterface.java";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertTrue(controls.isEmpty());
+    }
+
 
     private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));

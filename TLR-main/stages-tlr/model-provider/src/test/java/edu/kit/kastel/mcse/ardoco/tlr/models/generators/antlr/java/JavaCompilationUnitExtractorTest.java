@@ -18,10 +18,11 @@ import generated.antlr.JavaParser.CompilationUnitContext;
 
 class JavaCompilationUnitExtractorTest {
     private static final Logger logger = LoggerFactory.getLogger(JavaCompilationUnitExtractorTest.class);
+    private final String sourcePath = "src/test/resources/interface/edu/";
 
     @Test
     void compilationUnitAClassTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/AClass.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AClass.java");
         Assertions.assertEquals("AClass", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
         Assertions.assertEquals("edu", element.getPackageName());
@@ -29,7 +30,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitAnEnumTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/AnEnum.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnEnum.java");
         Assertions.assertEquals("AnEnum", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
         Assertions.assertEquals("edu", element.getPackageName());
@@ -37,7 +38,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitAnInterfaceTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/AnInterface.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnInterface.java");
         Assertions.assertEquals("AnInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
         Assertions.assertEquals("edu", element.getPackageName());
@@ -45,7 +46,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitExtendedInterfaceTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/ExtendedInterface.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "ExtendedInterface.java");
         Assertions.assertEquals("ExtendedInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
         Assertions.assertEquals("edu", element.getPackageName());
@@ -53,7 +54,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitSuperclassTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/Superclass.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "Superclass.java");
         Assertions.assertEquals("Superclass", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
         Assertions.assertEquals("edu", element.getPackageName());
@@ -61,7 +62,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitOtherInterfaceZweiTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/zwei/OtherInterface.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "zwei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/zwei/", element.getPathString());
         Assertions.assertEquals("edu.zwei", element.getPackageName());
@@ -69,7 +70,7 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitOtherInterfaceDreiTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest("src/test/resources/interface/edu/drei/OtherInterface.java");
+        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "drei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/drei/", element.getPathString());
         Assertions.assertEquals("edu.drei", element.getPackageName());
