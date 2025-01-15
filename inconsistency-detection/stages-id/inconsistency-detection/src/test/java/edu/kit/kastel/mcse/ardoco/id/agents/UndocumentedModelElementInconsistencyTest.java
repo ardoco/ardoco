@@ -8,14 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntityImpl;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.id.informants.UndocumentedModelElementInconsistencyInformant;
 
 /**
  * Tests for the {@link UndocumentedModelElementInconsistencyInformant}.
  */
 class UndocumentedModelElementInconsistencyTest {
-    private MutableList<Entity> modelInstances;
+    private MutableList<ModelEntity> modelInstances;
 
     @BeforeEach
     void beforeEach() {
@@ -50,20 +50,25 @@ class UndocumentedModelElementInconsistencyTest {
 
         Assertions.assertAll(//
                 () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.getFirst(), exactTypes),
-                        "Instance 0 with 'exactTypes'"), () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant
-                                .modelInstanceHasTargetedType(modelInstances.get(1), exactTypes), "Instance 1 with 'exactTypes'"), () -> Assertions.assertFalse(
-                                        UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(2), exactTypes),
-                                        "Instance 2 with 'exactTypes'"), () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant
-                                                .modelInstanceHasTargetedType(modelInstances.get(3), exactTypes), "Instance 3 with 'exactTypes'"),
+                        "Instance 0 with 'exactTypes'"),
+                () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(1), exactTypes),
+                        "Instance 1 with 'exactTypes'"),
+                () -> Assertions.assertFalse(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(2), exactTypes),
+                        "Instance 2 with 'exactTypes'"),
+                () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(3), exactTypes),
+                        "Instance 3 with 'exactTypes'"),
                 () -> Assertions.assertFalse(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(4), exactTypes),
-                        "Instance 4 with 'types'"), () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(
-                                modelInstances.getFirst(), shortenedType), "Instance 0 with 'shortenedType'"), () -> Assertions.assertTrue(
-                                        UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(1), shortenedType),
-                                        "Instance 1 with 'shortenedType'"), () -> Assertions.assertFalse(UndocumentedModelElementInconsistencyInformant
-                                                .modelInstanceHasTargetedType(modelInstances.get(2), shortenedType), "Instance 2 with 'shortenedType'"),
+                        "Instance 4 with 'types'"), () -> Assertions.assertTrue(
+                        UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.getFirst(), shortenedType),
+                        "Instance 0 with 'shortenedType'"),
+                () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(1), shortenedType),
+                        "Instance 1 with 'shortenedType'"),
+                () -> Assertions.assertFalse(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(2), shortenedType),
+                        "Instance 2 with 'shortenedType'"),
                 () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(3), shortenedType),
-                        "Instance 3 with 'shortenedType'"), () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant
-                                .modelInstanceHasTargetedType(modelInstances.get(4), shortenedType), "Instance 4 with 'shortenedType'"));
+                        "Instance 3 with 'shortenedType'"),
+                () -> Assertions.assertTrue(UndocumentedModelElementInconsistencyInformant.modelInstanceHasTargetedType(modelInstances.get(4), shortenedType),
+                        "Instance 4 with 'shortenedType'"));
     }
 
 }

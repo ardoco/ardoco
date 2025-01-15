@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.id.types;
 import org.junit.jupiter.api.BeforeEach;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntityImpl;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 
 /**
@@ -16,7 +16,7 @@ public class MissingTextForModelElementInconsistencyTest extends AbstractInconsi
 
     @BeforeEach
     void beforeEach() {
-        Entity instance = new ArchitectureEntityImpl("instance", "type", "uid1");
+        ModelEntity instance = new ArchitectureEntityImpl("instance", "type", "uid1");
         missingTextForModelElementInconsistency = new MissingTextForModelElementInconsistency(instance);
     }
 

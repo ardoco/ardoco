@@ -81,4 +81,5 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
         }
         return this.id.compareTo(o.id);
     }
+
 }

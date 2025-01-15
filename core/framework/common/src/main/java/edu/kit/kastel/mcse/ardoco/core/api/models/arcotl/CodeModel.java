@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.ArrayList;
@@ -8,8 +8,6 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,17 +17,12 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeModule;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ComputationalObject;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.Datatype;
 
 /**
  * A code model that is a CMTL instance.
  */
 public final class CodeModel extends Model {
-
-    private static final Logger logger = LoggerFactory.getLogger(CodeModel.class);
 
     @JsonProperty
     private CodeItemRepository codeItemRepository;
@@ -71,13 +64,7 @@ public final class CodeModel extends Model {
         SortedSet<String> identifiers = new TreeSet<>();
 
         for (var codeItem : this.getContent()) {
-            switch (codeItem) {
-            case CodePackage codePackage -> identifiers.add("Package");
-            case CodeCompilationUnit codeCompilationUnit -> identifiers.add(codeCompilationUnit.getType());
-            case CodeModule ignored -> logger.debug("Type not defined yet");
-            case ComputationalObject ignored -> logger.debug("Type not defined yet");
-            case Datatype ignored -> logger.debug("Type not defined yet");
-            }
+            codeItem.getType().ifPresent(identifiers::add);
         }
         return identifiers;
     }

@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -28,6 +29,23 @@ public final class ArchitectureInterface extends ArchitectureItem {
     }
 
     @Override
+    public Optional<ImmutableList<String>> getNameParts() {
+        return Optional.of(this.nameParts.toImmutable());
+    }
+
+    @Override
+    public Optional<String> getType() {
+        // Not implemented yet. Interfaces currently have no specified type.
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImmutableList<String>> getTypeParts() {
+        // Not implemented yet. Interfaces currently have no specified type.
+        return Optional.empty();
+    }
+
+    @Override
     public String toString() {
         return "Interface: " + this.getName();
     }
@@ -48,18 +66,4 @@ public final class ArchitectureInterface extends ArchitectureItem {
         return Objects.hash(super.hashCode(), this.signatures);
     }
 
-    @Override
-    public String getType() {
-        throw new UnsupportedOperationException("Not implemented yet. Interfaces currently have no specified type.");
-    }
-
-    @Override
-    public ImmutableList<String> getNameParts() {
-        return this.nameParts.toImmutable();
-    }
-
-    @Override
-    public ImmutableList<String> getTypeParts() {
-        throw new UnsupportedOperationException("Not implemented yet. Interfaces currently have no specified type.");
-    }
 }

@@ -1,6 +1,8 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
+import java.util.Optional;
+
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 
 /**
@@ -35,5 +37,5 @@ public abstract sealed class ArchitectureItem extends ArchitectureEntity permits
      *
      * @return the type of the architecture item
      */
-    public abstract String getType();
+    public abstract Optional<String> getType();
 }

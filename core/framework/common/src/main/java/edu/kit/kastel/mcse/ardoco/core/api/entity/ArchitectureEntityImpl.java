@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -56,23 +57,23 @@ public class ArchitectureEntityImpl extends ArchitectureEntity {
     }
 
     /**
-     * Returns the longest type of the instance.
-     *
-     * @return the original type of the instance
-     */
-    @Override
-    public String getType() {
-        return this.fullType;
-    }
-
-    /**
      * Returns all name parts of the instance.
      *
      * @return all name parts of the instance as list
      */
     @Override
-    public ImmutableList<String> getNameParts() {
-        return this.names.toImmutable();
+    public Optional<ImmutableList<String>> getNameParts() {
+        return Optional.of(this.names.toImmutable());
+    }
+
+    /**
+     * Returns the longest type of the instance.
+     *
+     * @return the original type of the instance
+     */
+    @Override
+    public Optional<String> getType() {
+        return Optional.of(this.fullType);
     }
 
     /**
@@ -81,8 +82,8 @@ public class ArchitectureEntityImpl extends ArchitectureEntity {
      * @return all type parts of the instance as list
      */
     @Override
-    public ImmutableList<String> getTypeParts() {
-        return this.types.toImmutable();
+    public Optional<ImmutableList<String>> getTypeParts() {
+        return Optional.of(this.types.toImmutable());
     }
 
     /**

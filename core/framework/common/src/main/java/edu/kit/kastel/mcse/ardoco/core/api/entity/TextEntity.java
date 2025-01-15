@@ -11,4 +11,5 @@ public non-sealed class TextEntity extends Entity {
     protected TextEntity(String name, String id) {
         super(name, id);
     }
+
 }
