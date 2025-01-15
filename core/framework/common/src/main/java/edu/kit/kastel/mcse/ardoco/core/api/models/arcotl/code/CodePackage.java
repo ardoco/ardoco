@@ -1,6 +1,7 @@
 /* Licensed under MIT 2023-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code;
 
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -42,6 +43,11 @@ public final class CodePackage extends CodeModule {
             }
         }
         return compilationUnits;
+    }
+
+    @Override
+    public Optional<String> getType() {
+        return Optional.of("Package");
     }
 
     @Override

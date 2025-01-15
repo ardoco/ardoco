@@ -1,6 +1,7 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
+import java.util.Optional;
 import java.util.SortedSet;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -62,23 +63,23 @@ public final class ArchitectureComponent extends ArchitectureItem {
         return this.requiredInterfaces;
     }
 
+    @Override
+    public Optional<ImmutableList<String>> getNameParts() {
+        return Optional.of(this.nameParts.toImmutable());
+    }
+
     /**
      * Returns the type of this component as specified in the meta model.
      *
      * @return the type of this component
      */
-    public String getType() {
-        return this.type;
+    public Optional<String> getType() {
+        return Optional.of(this.type);
     }
 
     @Override
-    public ImmutableList<String> getNameParts() {
-        return this.nameParts.toImmutable();
-    }
-
-    @Override
-    public ImmutableList<String> getTypeParts() {
-        return this.typeParts.toImmutable();
+    public Optional<ImmutableList<String>> getTypeParts() {
+        return Optional.of(this.typeParts.toImmutable());
     }
 
     @Override

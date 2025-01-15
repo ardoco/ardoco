@@ -89,8 +89,8 @@ public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
 
         String typeInfo;
         switch (this.getSecondEndpoint()) {
-            case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType();
-            case CodeEntity ignored -> typeInfo = "";
+        case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType().orElseThrow();
+        case CodeEntity ignored -> typeInfo = "";
         }
 
         return "InstanceMapping [ uid=" + this.getSecondEndpoint().getId() + ", name=" + this.getSecondEndpoint().getName() + //

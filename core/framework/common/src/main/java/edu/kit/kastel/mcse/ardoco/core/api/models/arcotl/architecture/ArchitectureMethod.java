@@ -1,6 +1,8 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
+import java.util.Optional;
+
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -17,18 +19,20 @@ public final class ArchitectureMethod extends ArchitectureItem {
     }
 
     @Override
-    public String getType() {
-        throw new UnsupportedOperationException("Not implemented yet. Methods currently have no specified type.");
+    public Optional<String> getType() {
+        // Not implemented yet. Methods currently have no specified type.//
+        return Optional.empty();
     }
 
     @Override
-    public ImmutableList<String> getNameParts() {
-        return this.nameParts.toImmutable();
+    public Optional<ImmutableList<String>> getNameParts() {
+        return Optional.of(this.nameParts.toImmutable());
     }
 
     @Override
-    public ImmutableList<String> getTypeParts() {
-        throw new UnsupportedOperationException("Not implemented yet. Methods currently have no specified type.");
+    public Optional<ImmutableList<String>> getTypeParts() {
+        // Not implemented yet. Methods currently have no specified type.
+        return Optional.empty();
     }
 
 }

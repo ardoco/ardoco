@@ -18,10 +18,6 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -390,27 +386,4 @@ public final class CommonUtilities {
         }
     }
 
-    public static ImmutableList<String> getTypePartsOfEntity(Entity entity) {
-        return switch (entity) {
-            case ArchitectureEntity architectureEntity -> architectureEntity.getTypeParts();
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("Types are undefined for text entities");
-        };
-    }
-
-    public static ImmutableList<String> getNamePartsOfEntity(Entity entity) {
-        return switch (entity) {
-            case ArchitectureEntity architectureEntity -> architectureEntity.getNameParts();
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
-        };
-    }
-
-    public static String getTypeOfEntity(Entity entity) {
-        return switch (entity) {
-            case ArchitectureEntity architectureEntity -> architectureEntity.getType();
-            case CodeEntity ignored -> throw new UnsupportedOperationException("Currently not implemented");
-            case TextEntity ignored -> throw new IllegalArgumentException("Are no model entity");
-        };
-    }
 }

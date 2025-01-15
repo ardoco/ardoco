@@ -10,6 +10,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -195,15 +196,15 @@ public class NameTypeConnectionInformant extends Informant {
         if (textExtractionState == null || similarTypes == null || word == null) {
             return null;
         }
-        MutableList<Entity> matchingEntities = Lists.mutable.empty();
+        MutableList<ModelEntity> matchingEntities = Lists.mutable.empty();
 
         for (String type : similarTypes) {
             matchingEntities.addAll(getEntitiesOfType(model, type));
         }
 
         var text = word.getText();
-        matchingEntities = matchingEntities.select(e -> SimilarityUtils.getInstance()
-                .areWordsOfListsSimilar(CommonUtilities.getNamePartsOfEntity(e), Lists.immutable.with(text)));
+        matchingEntities = matchingEntities.select(
+                e -> SimilarityUtils.getInstance().areWordsOfListsSimilar(e.getNameParts().orElseThrow(), Lists.immutable.with(text)));
 
         if (!matchingEntities.isEmpty()) {
             return matchingEntities.getFirst();
@@ -211,8 +212,8 @@ public class NameTypeConnectionInformant extends Informant {
         return null;
     }
 
-    private List<Entity> getEntitiesOfType(Model model, String type) {
-        return model.getEndpoints().stream().filter(e -> CommonUtilities.getTypePartsOfEntity(e).contains(type)).collect(Collectors.toList());
+    private List<ModelEntity> getEntitiesOfType(Model model, String type) {
+        return model.getEndpoints().stream().filter(e -> e.getTypeParts().orElseThrow().contains(type)).collect(Collectors.toList());
     }
 
     @Override

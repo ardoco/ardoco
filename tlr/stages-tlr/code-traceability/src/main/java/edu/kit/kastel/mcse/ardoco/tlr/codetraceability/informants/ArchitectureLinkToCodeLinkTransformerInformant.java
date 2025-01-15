@@ -77,7 +77,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
 
     private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId, CodeModel codeModel) {
         for (var codeCompilationUnit : codeModel.getEndpoints()) {
-            if (codeCompilationUnit.getPath().equals(modelElementId)) {
+            if (codeCompilationUnit.getId().equals(modelElementId)) {
                 return List.of(codeCompilationUnit);
             }
         }

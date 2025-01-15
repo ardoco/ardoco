@@ -10,7 +10,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionS
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -48,8 +47,8 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      */
     @Override
     public ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinksByName(String name) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream()
-                .filter(imapping -> CommonUtilities.getNamePartsOfEntity(imapping.getSecondEndpoint()).contains(name)));
+        return Lists.immutable.fromStream(
+                this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().orElseThrow().contains(name)));
     }
 
     /**
@@ -60,8 +59,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      */
     @Override
     public ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinksByType(String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream()
-                .filter(ilink -> CommonUtilities.getTypePartsOfEntity(ilink.getSecondEndpoint()).contains(type)));
+        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(ilink -> ilink.getSecondEndpoint().getTypeParts().orElseThrow().contains(type)));
     }
 
     @Override
@@ -78,9 +76,9 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      */
     @Override
     public ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks(String name, String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream()
-                .filter(imapping -> CommonUtilities.getNamePartsOfEntity(imapping.getSecondEndpoint()).contains(name))//
-                .filter(imapping -> CommonUtilities.getTypePartsOfEntity(imapping.getSecondEndpoint()).contains(type)));
+        return Lists.immutable.fromStream(
+                this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().orElseThrow().contains(name))//
+                        .filter(imapping -> imapping.getSecondEndpoint().getTypeParts().orElseThrow().contains(type)));
     }
 
     /**

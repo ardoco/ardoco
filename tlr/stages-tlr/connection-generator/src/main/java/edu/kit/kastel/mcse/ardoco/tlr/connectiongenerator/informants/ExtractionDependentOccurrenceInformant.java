@@ -74,7 +74,10 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
      * text extraction state. If multiple options are available the node value is taken as reference.
      */
     private void searchForType(Model model, TextState textState, Word word) {
-        var instanceTypeIsSimilar = model.getEndpoints().stream().anyMatch(i -> SimilarityUtils.getInstance().isWordSimilarToModelInstanceType(word, i));
+        var instanceTypeIsSimilar = model.getEndpoints()
+                .stream()
+                .filter(modelEntity -> modelEntity.getType().isPresent())
+                .anyMatch(modelEntity -> SimilarityUtils.getInstance().isWordSimilarToModelInstanceType(word, modelEntity));
         if (instanceTypeIsSimilar) {
             textState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
         }

@@ -1,9 +1,10 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -86,26 +87,27 @@ public final class CodeCompilationUnit extends CodeModule {
         return pathBuilder.toString();
     }
 
-    public String getType() {
+    @Override
+    public Optional<String> getType() {
         // Assumption mostly one class per unit
         var content = this.getContent().stream().filter(it -> this.getName().contains(it.getName())).findFirst().orElse(null);
         if (content instanceof ClassUnit) {
-            return "Class";
+            return Optional.of("Class");
         }
         if (content instanceof InterfaceUnit) {
-            return "Interface";
+            return Optional.of("Interface");
         }
         if (this.getPath().endsWith("package-info.java")) {
-            return "PackageInfo";
+            return Optional.of("PackageInfo");
         }
         if (this.getPath().endsWith(".java")) {
             // Default to Class
-            return "Class";
+            return Optional.of("Class");
         }
         if (ProgrammingLanguages.SHELL.equals(this.getLanguage())) {
-            return "ShellScript";
+            return Optional.of("ShellScript");
         }
-        throw new IllegalStateException("Unknown type of CodeCompilationUnit");
+        return Optional.empty();
     }
 
     @Override

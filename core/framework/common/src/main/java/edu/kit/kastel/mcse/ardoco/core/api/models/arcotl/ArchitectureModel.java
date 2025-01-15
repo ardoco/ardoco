@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public final class ArchitectureModel extends Model {
 
         for (var architectureItem : this.getContent()) {
             switch (architectureItem) {
-            case ArchitectureComponent component -> identifiers.add(component.getType());
+            case ArchitectureComponent component -> identifiers.add(component.getType().orElseThrow());
             case ArchitectureInterface ignored -> logger.debug("Type not defined for interfaces");
             case ArchitectureMethod ignored -> logger.debug("Type not defined for methods");
             }
