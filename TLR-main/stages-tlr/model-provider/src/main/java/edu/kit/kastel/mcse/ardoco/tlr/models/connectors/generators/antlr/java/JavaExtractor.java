@@ -49,8 +49,28 @@ public class JavaExtractor extends ANTLRExtractor {
         }
     }
 
-    private void mapToCodeModel() {
+    public void mapToCodeModel() {
         // this.mapper = new JavaModelMapper(variables, controls, classes, interfaces, compilationUnits);
+    }
+
+    public List<VariableElement> getVariables() {
+        return variables;
+    }
+
+    public List<ControlElement> getControls() {
+        return controls;
+    }
+
+    public List<ClassElement> getClasses() {
+        return classes;
+    }
+
+    public List<InterfaceElement> getInterfaces() {
+        return interfaces;
+    }
+
+    public List<CompilationUnitElement> getCompilationUnits() {
+        return compilationUnits;
     }
 
     private List<Path> getJavaFiles() throws IOException {
@@ -106,25 +126,6 @@ public class JavaExtractor extends ANTLRExtractor {
         compilationUnits.add(compilationUnitExtractor.visitCompilationUnit(tree));
     }
 
-    public List<VariableElement> getVariables() {
-        return variables;
-    }
-
-    public List<ControlElement> getControls() {
-        return controls;
-    }
-
-    public List<ClassElement> getClasses() {
-        return classes;
-    }
-
-    public List<InterfaceElement> getInterfaces() {
-        return interfaces;
-    }
-
-    public List<CompilationUnitElement> getCompilationUnits() {
-        return compilationUnits;
-    }
 }
     
 
