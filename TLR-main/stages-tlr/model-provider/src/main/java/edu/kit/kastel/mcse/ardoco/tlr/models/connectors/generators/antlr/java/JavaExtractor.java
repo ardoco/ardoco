@@ -41,19 +41,26 @@ public class JavaExtractor extends ANTLRExtractor {
         super(repository, path);
     }
 
-    public void execute(Path dir) throws IOException {
-        List<Path> files = getFiles(dir);
+    public void execute() throws IOException {
+        List<Path> files = getJavaFiles();
         for (Path file : files) {
             buildCompilationCtxForFile(file);
             extractElementsFromFile(file);
         }
-        mapToCodeModel();
     }
 
-    private List<Path> getFiles(Path dir) throws IOException {
-        List<Path> files = new ArrayList<>();
-        Files.walk(dir).filter(Files::isRegularFile).forEach(files::add);
-        return files;
+    private void mapToCodeModel() {
+        // this.mapper = new JavaModelMapper(variables, controls, classes, interfaces, compilationUnits);
+    }
+
+    private List<Path> getJavaFiles() throws IOException {
+        Path dir = Path.of(this.path);
+        List<Path> javaFiles = new ArrayList<>();
+        Files.walk(dir)
+             .filter(Files::isRegularFile)
+             .filter(path -> path.toString().endsWith(".java")) // Filter for .java files
+             .forEach(javaFiles::add);
+        return javaFiles;
     }
 
     private void buildCompilationCtxForFile(Path file) throws IOException {
@@ -72,10 +79,6 @@ public class JavaExtractor extends ANTLRExtractor {
             extractInterfaces();
             extractCompilationUnits(file);
         }
-    }
-
-    private void mapToCodeModel() {
-        // this.mapper = new JavaModelMapper(variables, controls, classes, interfaces, compilationUnits);
     }
 
     private void extractVariables() {
@@ -101,6 +104,26 @@ public class JavaExtractor extends ANTLRExtractor {
     private void extractCompilationUnits(Path file) {
         JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor(file.toString());
         compilationUnits.add(compilationUnitExtractor.visitCompilationUnit(tree));
+    }
+
+    public List<VariableElement> getVariables() {
+        return variables;
+    }
+
+    public List<ControlElement> getControls() {
+        return controls;
+    }
+
+    public List<ClassElement> getClasses() {
+        return classes;
+    }
+
+    public List<InterfaceElement> getInterfaces() {
+        return interfaces;
+    }
+
+    public List<CompilationUnitElement> getCompilationUnits() {
+        return compilationUnits;
     }
 }
     
