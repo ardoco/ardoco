@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import java.io.Serializable;

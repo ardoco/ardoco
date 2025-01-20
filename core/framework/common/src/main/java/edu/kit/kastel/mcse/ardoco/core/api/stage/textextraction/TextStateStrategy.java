@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
@@ -132,6 +132,6 @@ public interface TextStateStrategy {
     void mergePhraseMappingsAndNounMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping,
             MutableList<Pair<NounMapping, NounMapping>> similarNounMappings, Claimant claimant);
 
-    NounMapping mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant);
+    void mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant);
 
 }

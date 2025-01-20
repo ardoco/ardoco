@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.Arrays;
@@ -85,8 +85,8 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
     }
 
     @Override
-    public NounMapping mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant) {
-        return this.mergeNounMappings(nounMapping, textuallyEqualNounMapping, null, null, nounMapping.getKind(), claimant, nounMapping.getProbabilityForKind(
+    public void mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant) {
+        this.mergeNounMappings(nounMapping, textuallyEqualNounMapping, null, null, nounMapping.getKind(), claimant, nounMapping.getProbabilityForKind(
                 nounMapping.getKind()));
 
     }
@@ -100,8 +100,7 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
         }
     }
 
-    private PhraseMapping mergePhraseMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping) {
-
+    private void mergePhraseMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping) {
         MutableSortedSet<Phrase> mergedPhrases = phraseMapping.getPhrases().toSortedSet();
         mergedPhrases.addAll(similarPhraseMapping.getPhrases().toList());
 
@@ -109,7 +108,6 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
         this.textState.addPhraseMapping(mergedPhraseMapping);
         this.textState.removePhraseMapping(phraseMapping, mergedPhraseMapping);
         this.textState.removePhraseMapping(similarPhraseMapping, mergedPhraseMapping);
-        return mergedPhraseMapping;
     }
 
     private Confidence putAllConfidencesTogether(Confidence confidence, Confidence confidence1) {
@@ -175,11 +173,11 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
         var mergedNounMapping = this.mergeNounMappingsStateless(firstNounMapping, secondNounMapping, referenceWords, reference, mappingKind, claimant,
                 probability);
 
-        // We just need to remove them plain from the state.
-        ((TextStateImpl) this.textState).removeNounMappingFromState(this.dataRepository, firstNounMapping, mergedNounMapping);
-        ((TextStateImpl) this.textState).removeNounMappingFromState(this.dataRepository, secondNounMapping, mergedNounMapping);
-        this.textState.addNounMapping(mergedNounMapping);
+        // We just need to remove them plain from the state -> no cascade.
+        this.textState.removeNounMapping(this.dataRepository, firstNounMapping, mergedNounMapping, false);
+        this.textState.removeNounMapping(this.dataRepository, secondNounMapping, mergedNounMapping, false);
 
+        this.textState.addNounMapping(mergedNounMapping);
         return mergedNounMapping;
     }
 

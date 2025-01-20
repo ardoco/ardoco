@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
