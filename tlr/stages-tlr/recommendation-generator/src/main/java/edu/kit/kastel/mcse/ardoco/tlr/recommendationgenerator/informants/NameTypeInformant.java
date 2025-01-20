@@ -1,7 +1,6 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
-import java.util.Objects;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;

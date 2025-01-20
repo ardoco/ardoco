@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import java.util.SortedMap;
@@ -78,7 +78,7 @@ public class CompoundAgentInformant extends TextExtractionInformant {
         } else {
             for (var nounMapping : similarReferenceNounMappings) {
 
-                textState.removeNounMapping(this.getDataRepository(), nounMapping, null);
+                textState.removeNounMapping(this.getDataRepository(), nounMapping, null, true);
 
                 var newWords = nounMapping.getWords().toSortedSet();
                 newWords.addAllIterable(compoundWords);

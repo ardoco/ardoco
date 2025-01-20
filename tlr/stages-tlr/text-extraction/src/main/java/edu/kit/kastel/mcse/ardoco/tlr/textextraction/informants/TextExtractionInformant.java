@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024. */
+/* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrategy;
