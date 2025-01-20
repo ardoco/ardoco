@@ -93,21 +93,9 @@ public abstract class RecommendedInstance extends TextEntity {
     @Override
     public abstract String getName();
 
-    /**
-     * Sets the type of this recommended instance to the given type.
-     *
-     * @param type the new type
-     */
-    public abstract void setType(String type);
-
-    /**
-     * Sets the name of this recommended instance to the given name.
-     *
-     * @param name the new name
-     */
-    public abstract void setName(String name);
-
     public abstract ImmutableSortedSet<Integer> getSentenceNumbers();
 
     public abstract ImmutableList<Claimant> getClaimants();
+
+    public abstract void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
 }

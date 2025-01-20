@@ -6,41 +6,28 @@ import java.util.SortedMap;
 
 import org.eclipse.collections.api.block.predicate.Predicate;
 import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.ordered.SortedIterable;
-import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.PhraseMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrategy;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Comparators;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepositorySyncer;
 
 /**
  * The Class TextState defines the basic implementation of a {@link TextState}.
  */
 public class TextStateImpl extends AbstractState implements TextState {
 
-    private static final Comparator<NounMapping> ORDER_NOUNMAPPING = (n1, n2) -> {
-        if (n1.equals(n2)) {
-            return 0;
-        }
-        var nm1 = (NounMappingImpl) n1;
-        var nm2 = (NounMappingImpl) n2;
-        int compare = Long.compare(nm1.earliestCreationTime(), nm2.earliestCreationTime());
-        if (compare != 0) {
-            return compare;
-        }
-        throw new IllegalStateException("NounMappings are not equal but have same creation time");
-    };
+    private static final long serialVersionUID = -8204535036570535865L;
 
     /**
      * Minimum difference that need to shall not be reached to identify a NounMapping as NameOrType.
@@ -50,24 +37,10 @@ public class TextStateImpl extends AbstractState implements TextState {
     private static final double MAPPING_KIND_MAX_DIFF = 0.1;
     private MutableList<NounMapping> nounMappings;
     private MutableList<PhraseMapping> phraseMappings;
-    private final TextStateStrategy strategy;
 
-    // Configuration Test
-    @SuppressWarnings("unused")
-    private TextStateImpl() {
-        this.strategy = null;
-    }
-
-    public TextStateImpl(TextStateStrategy strategy) {
-        this.strategy = strategy;
+    public TextStateImpl() {
         this.nounMappings = Lists.mutable.empty();
         this.phraseMappings = Lists.mutable.empty();
-        this.strategy.setState(this);
-    }
-
-    @Override
-    public TextStateStrategy getTextStateStrategy() {
-        return this.strategy;
     }
 
     @Override
@@ -80,7 +53,14 @@ public class TextStateImpl extends AbstractState implements TextState {
         return this.phraseMappings.toImmutableList();
     }
 
-    public ImmutableList<PhraseMapping> getPhraseMappingsByNounMapping(NounMapping nounMapping) {
+    @Override
+    public PhraseMapping getPhraseMappingByNounMapping(NounMapping nounMapping) {
+        ImmutableList<PhraseMapping> phraseMappingsByNounMapping = this.getPhraseMappingsByNounMapping(nounMapping);
+        assert (!phraseMappingsByNounMapping.isEmpty()) : "Every noun mapping should be connected to a phrase mapping";
+        return phraseMappingsByNounMapping.get(0);
+    }
+
+    private ImmutableList<PhraseMapping> getPhraseMappingsByNounMapping(NounMapping nounMapping) {
 
         MutableList<PhraseMapping> result = Lists.mutable.empty();
 
@@ -89,13 +69,6 @@ public class TextStateImpl extends AbstractState implements TextState {
         }
 
         return result.toImmutable();
-    }
-
-    @Override
-    public PhraseMapping getPhraseMappingByNounMapping(NounMapping nounMapping) {
-        ImmutableList<PhraseMapping> phraseMappingsByNounMapping = this.getPhraseMappingsByNounMapping(nounMapping);
-        assert (!phraseMappingsByNounMapping.isEmpty()) : "Every noun mapping should be connected to a phrase mapping";
-        return phraseMappingsByNounMapping.get(0);
     }
 
     @Override
@@ -115,24 +88,8 @@ public class TextStateImpl extends AbstractState implements TextState {
         return this.getNounMappings().select(this.nounMappingIsOfKind(kind)).toImmutable();
     }
 
-    @Override
-    public ImmutableList<NounMapping> getNounMappingsThatBelongToTheSamePhraseMapping(NounMapping nounMapping) {
-
+    private ImmutableList<NounMapping> getNounMappingsThatBelongToTheSamePhraseMapping(NounMapping nounMapping) {
         return this.getNounMappingsByPhraseMapping(this.getPhraseMappingByNounMapping(nounMapping)).select(nm -> !nm.equals(nounMapping));
-    }
-
-    @Override
-    public void mergeNounMappings(NounMapping nounMapping, NounMapping otherNounMapping, Claimant claimant, ImmutableList<Word> referenceWords) {
-        this.strategy.mergeNounMappings(nounMapping, otherNounMapping, referenceWords, null, nounMapping.getKind(), claimant, nounMapping.getProbabilityForKind(
-                nounMapping.getKind()));
-    }
-
-    @Override
-    public NounMapping setReferenceOfNounMapping(NounMapping nounMapping, ImmutableList<Word> referenceWords, String reference) {
-
-        return this.addNounMapping(nounMapping.getWords().toImmutableSortedSet(), nounMapping.getDistribution(), referenceWords, nounMapping.getSurfaceForms(),
-                reference);
-
     }
 
     @Override
@@ -186,72 +143,21 @@ public class TextStateImpl extends AbstractState implements TextState {
 
     @Override
     public ImmutableList<NounMapping> getNounMappingsWithSimilarReference(String reference) {
-        return this.strategy.getNounMappingsWithSimilarReference(reference);
-    }
-
-    @Override
-    public NounMapping mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant) {
-        return this.strategy.mergeNounMappings(nounMapping, textuallyEqualNounMapping, null, null, nounMapping.getKind(), claimant, nounMapping
-                .getProbabilityForKind(nounMapping.getKind()));
-
-    }
-
-    @Override
-    public void mergePhraseMappingsAndNounMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping,
-            MutableList<Pair<NounMapping, NounMapping>> similarNounMappings, Claimant claimant) {
-        this.mergePhraseMappings(phraseMapping, similarPhraseMapping);
-        for (Pair<NounMapping, NounMapping> nounMappingPair : similarNounMappings) {
-            this.mergeNounMappings(nounMappingPair.first(), nounMappingPair.second(), claimant);
-        }
-    }
-
-    @Override
-    public PhraseMapping mergePhraseMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping) {
-
-        MutableSortedSet<Phrase> mergedPhrases = phraseMapping.getPhrases().toSortedSet();
-        mergedPhrases.addAll(similarPhraseMapping.getPhrases().toList());
-
-        PhraseMapping mergedPhraseMapping = new PhraseMappingImpl(mergedPhrases.toImmutable());
-
-        this.phraseMappings.add(mergedPhraseMapping);
-
-        this.removePhraseMappingFromState(phraseMapping, mergedPhraseMapping);
-        this.removePhraseMappingFromState(similarPhraseMapping, mergedPhraseMapping);
-        return mergedPhraseMapping;
-    }
-
-    @Override
-    public NounMapping getNounMappingByWord(Word word) {
-        var result = this.getNounMappings().select(nMapping -> nMapping.getWords().contains(word)).toImmutable();
-
-        assert (result.size() <= 1) : "A word should only contained by one noun mapping";
-        if (result.isEmpty()) {
-            return null;
-        }
-        return result.get(0);
-    }
-
-    /**
-     * Returns a list of all references of kind mappings.
-     *
-     * @return all references of type mappings as list.
-     */
-    @Override
-    public ImmutableList<String> getListOfReferences(MappingKind kind) {
-        MutableSortedSet<String> referencesOfKind = SortedSets.mutable.empty();
-        var kindMappings = this.getNounMappingsOfKind(kind);
-        for (NounMapping nnm : kindMappings) {
-            referencesOfKind.add(nnm.getReference());
-        }
-        return Lists.immutable.withAll(referencesOfKind);
+        return this.getNounMappings().select(nm -> SimilarityUtils.getInstance().areWordsSimilar(reference, nm.getReference())).toImmutable();
     }
 
     private Predicate<? super NounMapping> nounMappingIsOfKind(MappingKind mappingKind) {
         return n -> n.getKind() == mappingKind;
     }
 
-    void addNounMappingAddPhraseMapping(NounMapping nounMapping) {
-        this.addNounMappingToState(nounMapping);
+    @Override
+    public void addNounMapping(NounMapping nounMapping) {
+        if (this.nounMappings.contains(nounMapping)) {
+            throw new IllegalArgumentException("Nounmapping was already in state");
+        }
+        this.nounMappings.add(nounMapping);
+        this.nounMappings.sortThis(ORDER_NOUNMAPPING);
+
         if (this.phraseMappings.anySatisfy(it -> {
             SortedIterable<Phrase> sortedIt = it.getPhrases();
             SortedIterable<Phrase> phrases = nounMapping.getPhrases();
@@ -264,7 +170,7 @@ public class TextStateImpl extends AbstractState implements TextState {
     }
 
     @Override
-    public void removeNounMapping(NounMapping nounMapping, NounMapping replacement) {
+    public void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement) {
         PhraseMapping phraseMapping = this.getPhraseMappingByNounMapping(nounMapping);
 
         var otherNounMappings = this.getNounMappingsThatBelongToTheSamePhraseMapping(nounMapping);
@@ -272,41 +178,32 @@ public class TextStateImpl extends AbstractState implements TextState {
             var phrases = nounMapping.getPhrases().select(p -> !otherNounMappings.flatCollect(NounMapping::getPhrases).contains(p));
             phrases.forEach(phraseMapping::removePhrase);
         }
-        this.removeNounMappingFromState(nounMapping, replacement);
-    }
-
-    private void addNounMappingToState(NounMapping nounMapping) {
-        if (this.nounMappings.contains(nounMapping)) {
-            throw new IllegalArgumentException("Nounmapping was already in state");
-        }
-        this.nounMappings.add(nounMapping);
-        this.nounMappings.sortThis(ORDER_NOUNMAPPING);
-    }
-
-    /**
-     * Removes the specified phrase mapping from the state and replaces it with an (optional) replacement
-     *
-     * @param phraseMapping the mapping
-     * @param replacement   the replacement
-     * @return true if removed, false otherwise
-     */
-    boolean removePhraseMappingFromState(PhraseMapping phraseMapping, PhraseMapping replacement) {
-        var success = this.phraseMappings.remove(phraseMapping);
-        phraseMapping.onDelete(replacement);
-        return success;
+        this.removeNounMappingFromState(dataRepository, nounMapping, replacement);
     }
 
     /**
      * Removes the specified noun mapping from the state and replaces it with an (optional) replacement
      *
-     * @param nounMapping the mapping
-     * @param replacement the replacement
+     * @param dataRepository
+     *
+     * @param nounMapping    the mapping
+     * @param replacement    the replacement
      * @return true if removed, false otherwise
      */
-    boolean removeNounMappingFromState(NounMapping nounMapping, NounMapping replacement) {
+    boolean removeNounMappingFromState(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement) {
         var success = this.nounMappings.remove(nounMapping);
-        nounMapping.onDelete(replacement);
+        DataRepositorySyncer.onNounMappingDeletion(dataRepository, nounMapping, replacement);
         return success;
+    }
+
+    @Override
+    public void addPhraseMapping(PhraseMapping phraseMapping) {
+        this.phraseMappings.add(phraseMapping);
+    }
+
+    @Override
+    public boolean removePhraseMapping(PhraseMapping phraseMapping, PhraseMapping replacement) {
+        return this.phraseMappings.remove(phraseMapping);
     }
 
     @Override
@@ -318,4 +215,18 @@ public class TextStateImpl extends AbstractState implements TextState {
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
         // handle additional configuration
     }
+
+    private static final Comparator<NounMapping> ORDER_NOUNMAPPING = (n1, n2) -> {
+        if (n1.equals(n2)) {
+            return 0;
+        }
+        var nm1 = (NounMappingImpl) n1;
+        var nm2 = (NounMappingImpl) n2;
+        int compare = Long.compare(nm1.earliestCreationTime(), nm2.earliestCreationTime());
+        if (compare != 0) {
+            return compare;
+        }
+        throw new IllegalStateException("NounMappings are not equal but have same creation time");
+    };
+
 }

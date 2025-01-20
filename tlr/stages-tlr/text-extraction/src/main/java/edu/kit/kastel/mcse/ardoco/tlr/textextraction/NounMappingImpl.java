@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +20,6 @@ import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMappingChangeListener;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
@@ -48,7 +45,6 @@ public class NounMappingImpl implements NounMapping {
     private final MutableList<String> surfaceForms;
     private final String reference;
     private boolean isDefinedAsCompound;
-    private final Set<NounMappingChangeListener> changeListeners;
 
     /**
      * Instantiates a new noun mapping. A new creation time will be generated.
@@ -100,7 +96,7 @@ public class NounMappingImpl implements NounMapping {
         this.surfaceForms = surfaceForms.toList();
         this.reference = reference;
         this.isDefinedAsCompound = false;
-        this.changeListeners = Collections.newSetFromMap(new IdentityHashMap<>());
+
     }
 
     /**
@@ -126,18 +122,8 @@ public class NounMappingImpl implements NounMapping {
     }
 
     @Override
-    public void registerChangeListener(NounMappingChangeListener listener) {
-        changeListeners.add(listener);
-    }
-
-    @Override
-    public void onDelete(NounMapping replacement) {
-        changeListeners.forEach(l -> l.onDelete(this, replacement));
-    }
-
-    @Override
     public final ImmutableSortedSet<Word> getWords() {
-        return words.toImmutable();
+        return this.words.toImmutable();
     }
 
     @Override
@@ -151,13 +137,13 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public final ImmutableList<Word> getReferenceWords() {
-        return referenceWords.toImmutable();
+        return this.referenceWords.toImmutable();
     }
 
     @Override
     public final ImmutableList<Integer> getMappingSentenceNo() {
         MutableList<Integer> positions = Lists.mutable.empty();
-        for (Word word : words) {
+        for (Word word : this.words) {
             positions.add(word.getSentenceNo() + 1);
         }
         return positions.toSortedList().toImmutable();
@@ -165,12 +151,13 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public ImmutableSortedSet<Phrase> getPhrases() {
-        if (phrases == null) {
+        if (this.phrases == null) {
             this.phrases = SortedSets.mutable.empty();
-            for (Word word : words) {
-                if (phrases.contains(word.getPhrase()))
+            for (Word word : this.words) {
+                if (this.phrases.contains(word.getPhrase())) {
                     continue;
-                phrases.add(word.getPhrase());
+                }
+                this.phrases.add(word.getPhrase());
             }
         }
         return this.phrases.toImmutable();
@@ -178,25 +165,25 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public void addKindWithProbability(MappingKind kind, Claimant claimant, double probability) {
-        var currentProbability = distribution.get(kind);
+        var currentProbability = this.distribution.get(kind);
         Objects.requireNonNull(claimant);
         currentProbability.addAgentConfidence(claimant, probability);
     }
 
     @Override
     public ImmutableSortedMap<MappingKind, Confidence> getDistribution() {
-        return distribution.toImmutable();
+        return this.distribution.toImmutable();
     }
 
     @Override
     public double getProbability() {
-        return distribution.get(getKind()).getConfidence();
+        return this.distribution.get(this.getKind()).getConfidence();
     }
 
     @Override
     public MappingKind getKind() {
-        var probName = distribution.get(MappingKind.NAME).getConfidence();
-        var probType = distribution.get(MappingKind.TYPE).getConfidence();
+        var probName = this.distribution.get(MappingKind.NAME).getConfidence();
+        var probType = this.distribution.get(MappingKind.TYPE).getConfidence();
         if (probName >= probType) {
             return MappingKind.NAME;
         }
@@ -205,21 +192,21 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public boolean isCompound() {
-        return isDefinedAsCompound;
+        return this.isDefinedAsCompound;
     }
 
     @Override
     public String toString() {
-        return "NounMapping [" + "distribution=" + distribution.keyValuesView().collect(entry -> entry.getOne() + ":" + entry.getTwo()).makeString(",") + //
-                ", reference=" + getReference() + //
-                ", node=" + String.join(", ", surfaceForms) + //
-                ", position=" + String.join(", ", getWords().collect(word -> String.valueOf(word.getPosition()))) + //
-                ", probability=" + getProbability() + ", isCompound=" + isCompound() + "]";
+        return "NounMapping [" + "distribution=" + this.distribution.keyValuesView().collect(entry -> entry.getOne() + ":" + entry.getTwo()).makeString(",") + //
+                ", reference=" + this.getReference() + //
+                ", node=" + String.join(", ", this.surfaceForms) + //
+                ", position=" + String.join(", ", this.getWords().collect(word -> String.valueOf(word.getPosition()))) + //
+                ", probability=" + this.getProbability() + ", isCompound=" + this.isCompound() + "]";
     }
 
     @Override
     public double getProbabilityForKind(MappingKind mappingKind) {
-        return distribution.get(mappingKind).getConfidence();
+        return this.distribution.get(mappingKind).getConfidence();
     }
 
     @Override
@@ -230,42 +217,44 @@ public class NounMappingImpl implements NounMapping {
     @Override
     public ImmutableList<Claimant> getClaimants() {
         Set<Claimant> identitySet = new LinkedHashSet<>();
-        for (var claimant : this.distribution.valuesView().flatCollect(Confidence::getClaimants))
+        for (var claimant : this.distribution.valuesView().flatCollect(Confidence::getClaimants)) {
             identitySet.add(claimant);
+        }
         return Lists.immutable.withAll(identitySet);
     }
 
     public static Long earliestCreationTime(NounMapping... nounMappings) {
         Long earliest = Long.MAX_VALUE;
         for (var mapping : nounMappings) {
-            if (mapping instanceof NounMappingImpl impl && impl.earliestCreationTime() < earliest)
+            if (mapping instanceof NounMappingImpl impl && impl.earliestCreationTime() < earliest) {
                 earliest = impl.earliestCreationTime();
+            }
         }
         return earliest == Long.MAX_VALUE ? null : earliest;
     }
 
     public Long earliestCreationTime() {
-        return earliestCreationTime;
+        return this.earliestCreationTime;
     }
 
     public ImmutableSortedSet<Word> words() {
-        return words.toImmutable();
+        return this.words.toImmutable();
     }
 
     public MutableSortedMap<MappingKind, Confidence> distribution() {
-        return distribution;
+        return this.distribution;
     }
 
     public ImmutableList<Word> referenceWords() {
-        return referenceWords.toImmutable();
+        return this.referenceWords.toImmutable();
     }
 
     public ImmutableList<String> surfaceForms() {
-        return surfaceForms.toImmutable();
+        return this.surfaceForms.toImmutable();
     }
 
     public String reference() {
-        return reference;
+        return this.reference;
     }
 
     public void setIsDefinedAsCompound(boolean isDefinedAsCompound) {
