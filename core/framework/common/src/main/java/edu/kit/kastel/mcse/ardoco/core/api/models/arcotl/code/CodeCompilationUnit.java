@@ -100,7 +100,7 @@ public final class CodeCompilationUnit extends CodeModule {
                 this.extension, that.extension)) {
             return false;
         }
-        return this.language == that.language;
+        return Objects.equals(this.language, that.language);
     }
 
     @Override

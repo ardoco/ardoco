@@ -14,13 +14,16 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
+import java.io.Serial;
+
 /**
  * The recommendation state encapsulates all recommended instances and relations. These recommendations should be contained by the model by their probability.
  */
 public class RecommendationStateImpl extends AbstractState implements RecommendationState {
 
+    @Serial
     private static final long serialVersionUID = 3088770775218314854L;
-    private MutableSortedSet<RecommendedInstance> recommendedInstances;
+    private final MutableSortedSet<RecommendedInstance> recommendedInstances;
 
     /**
      * Creates a new recommendation state.

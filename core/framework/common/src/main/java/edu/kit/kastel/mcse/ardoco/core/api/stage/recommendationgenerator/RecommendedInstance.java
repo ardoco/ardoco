@@ -8,11 +8,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
+import java.io.Serial;
+
 /**
  * The Interface IRecommendedInstance defines the aggregation of noun mappings to one recommendation.
  */
 public abstract class RecommendedInstance extends TextEntity {
 
+    @Serial
     private static final long serialVersionUID = -5422301094494768943L;
 
     protected RecommendedInstance(String name, String id) {

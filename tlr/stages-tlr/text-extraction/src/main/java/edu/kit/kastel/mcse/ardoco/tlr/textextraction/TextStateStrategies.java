@@ -9,7 +9,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public enum TextStateStrategies implements Function<DataRepository, TextStateStrategy> {
     DEFAULT(DefaultTextStateStrategy::new);
 
-    private Function<DataRepository, TextStateStrategy> creator;
+    private final Function<DataRepository, TextStateStrategy> creator;
 
     TextStateStrategies(Function<DataRepository, TextStateStrategy> creator) {
         this.creator = creator;

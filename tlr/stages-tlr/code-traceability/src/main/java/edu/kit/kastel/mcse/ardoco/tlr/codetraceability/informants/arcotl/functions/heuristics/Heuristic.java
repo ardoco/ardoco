@@ -40,14 +40,14 @@ public abstract class Heuristic {
 
     protected Confidence calculateConfidence(ArchitectureComponent archComponent, CodeCompilationUnit compUnit) {
         if (archComponent == null || compUnit == null) {
-            logger.warn("null values when calculating confidence");
+            logger.warn("null values when calculating confidence (component)");
         }
         return new Confidence();
     }
 
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
         if (archInterface == null || compUnit == null) {
-            logger.warn("null values when calculating confidence");
+            logger.warn("null values when calculating confidence (interface)");
         }
         return new Confidence();
     }
