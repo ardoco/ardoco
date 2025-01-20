@@ -23,7 +23,7 @@ public class Python3ClassExtractorTest {
         String filePath = sourcePath + "APyClass.py";
         List<Python3ClassElement> classes = extractClassElementsFromFile(filePath);
 
-        Assertions.assertEquals(3, classes.size());
+        Assertions.assertEquals(4, classes.size());
 
         // Test the first class
         Assertions.assertEquals("AClass", classes.get(0).getName());
@@ -34,18 +34,24 @@ public class Python3ClassExtractorTest {
 
         // Test the second class
         Assertions.assertEquals("InnerClass1", classes.get(1).getName());
-        Assertions.assertEquals(1, classes.get(1).getIsChildOfClasses().size());
-        Assertions.assertEquals("AClass", classes.get(1).getIsChildOfClasses().get(0));
+        Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
         Assertions.assertEquals("AClass", classes.get(1).getParent().getName());
         Assertions.assertEquals(BasicType.CLASS, classes.get(1).getParent().getType());
 
         // Test the third class
         Assertions.assertEquals("InnerClass2", classes.get(2).getName());
-        Assertions.assertEquals(1, classes.get(2).getIsChildOfClasses().size());
-        Assertions.assertEquals("AClass", classes.get(2).getIsChildOfClasses().get(0));
+        Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
         Assertions.assertEquals("AClass", classes.get(2).getParent().getName());
         Assertions.assertEquals(BasicType.CLASS, classes.get(2).getParent().getType());
+
+        // Test the fourth class
+        Assertions.assertEquals("BClass", classes.get(3).getName());
+        Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
+        Assertions.assertEquals("APyClass", classes.get(3).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, classes.get(3).getParent().getType());
     }
+
+    
 
     private List<Python3ClassElement> extractClassElementsFromFile(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
@@ -55,7 +61,7 @@ public class Python3ClassExtractorTest {
         File_inputContext ctx = parser.file_input();
 
         // Create a ClassExtractor and visit the File_inputContext
-        Python3ClassExtractor extractor = new Python3ClassExtractor();
+        Python3ClassExtractor extractor = new Python3ClassExtractor(filePath);
         return extractor.visitFile_input(ctx);
     }
 

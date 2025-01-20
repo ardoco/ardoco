@@ -11,6 +11,20 @@ import generated.antlr.Python3ParserBaseVisitor;
 
 public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3ClassElement>> {
     private final List<Python3ClassElement> classes = new ArrayList<>();
+    private final String fileName;
+
+    public Python3ClassExtractor(String filePath) {
+        String potentialFileName = filePath;
+        if (potentialFileName.contains("/")) {
+            potentialFileName = potentialFileName.substring(potentialFileName.lastIndexOf("/") + 1, potentialFileName.length());
+        } 
+        if (potentialFileName.contains(".")) {
+            potentialFileName = potentialFileName.substring(0, potentialFileName.lastIndexOf("."));
+        }
+        this.fileName = potentialFileName;
+    }
+
+
 
     @Override
     public List<Python3ClassElement> visitFile_input(Python3Parser.File_inputContext ctx) {
@@ -21,10 +35,11 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
     @Override
     public List<Python3ClassElement> visitClassdef(Python3Parser.ClassdefContext ctx) {
         String name = ctx.name().getText();
+        Parent parent = Python3ParentExtractor.getParent(ctx, this.fileName);
         List<String> childClassOf = getParentClasses(ctx);
-        Parent parent = Python3ParentExtractor.getParent(ctx);
         Python3ClassElement Python3ClassElement = new Python3ClassElement(name, parent, childClassOf);
         classes.add(Python3ClassElement);
+        super.visitClassdef(ctx);
         return classes;
     }
 

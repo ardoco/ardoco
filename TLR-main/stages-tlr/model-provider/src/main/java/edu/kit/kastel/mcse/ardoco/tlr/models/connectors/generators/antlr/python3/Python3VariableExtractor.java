@@ -10,6 +10,18 @@ import generated.antlr.Python3ParserBaseVisitor;
 
 public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Python3VariableElement>> {
     private final List<Python3VariableElement> variables = new ArrayList<>();
+    private final String fileName;
+
+    public Python3VariableExtractor(String filePath) {
+        String potentialFileName = filePath;
+        if (potentialFileName.contains("/")) {
+            potentialFileName = potentialFileName.substring(potentialFileName.lastIndexOf("/") + 1, potentialFileName.length());
+        }
+        if (potentialFileName.contains(".")) {
+            potentialFileName = potentialFileName.substring(0, potentialFileName.lastIndexOf("."));
+        }
+        this.fileName = potentialFileName;
+    }
 
     @Override
     public List<Python3VariableElement> visitFile_input(Python3Parser.File_inputContext ctx) {
@@ -43,7 +55,7 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         List<String> varName = extract(ctx.testlist_star_expr(0));
         List<String> values = extract(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
-        Parent parent = Python3ParentExtractor.getParent(ctx);
+        Parent parent = Python3ParentExtractor.getParent(ctx, this.fileName);
 
         if (varName.size() != values.size()) {
             throw new IllegalArgumentException("The number of variable names and values does not match");

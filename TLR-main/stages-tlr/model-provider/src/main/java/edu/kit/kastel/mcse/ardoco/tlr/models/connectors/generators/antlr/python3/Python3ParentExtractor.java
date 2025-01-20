@@ -7,7 +7,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import generated.antlr.Python3Parser;
 
 public final class Python3ParentExtractor {
-    public static Parent getParent(ParserRuleContext ctx) {
+    public static Parent getParent(ParserRuleContext ctx, String fileName) {
         ParserRuleContext parentCtx = ctx.getParent();
         while (parentCtx != null) {
             if (parentCtx instanceof Python3Parser.ClassdefContext) {
@@ -17,8 +17,7 @@ public final class Python3ParentExtractor {
                 Python3Parser.FuncdefContext funcCtx = (Python3Parser.FuncdefContext) parentCtx;
                 return buildParentFromFuncContext(funcCtx, BasicType.CONTROL);
             } else if (parentCtx instanceof Python3Parser.File_inputContext) {
-                Python3Parser.File_inputContext fileCtx = (Python3Parser.File_inputContext) parentCtx;
-                return buildParentFromModuleContext(fileCtx, BasicType.MODULE);
+                return buildParentFromModuleContext(fileName, BasicType.MODULE);
             } else {
                 parentCtx = parentCtx.getParent();
             }
@@ -36,8 +35,7 @@ public final class Python3ParentExtractor {
         return new Parent(name, type);
     }
 
-    private static Parent buildParentFromModuleContext(Python3Parser.File_inputContext ctx, BasicType type) {
-        String name = ctx.getText();
-        return new Parent(name, type);
+    private static Parent buildParentFromModuleContext(String fileName, BasicType type) {
+        return new Parent(fileName, type);
     }
 }

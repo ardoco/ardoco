@@ -64,7 +64,7 @@ public class Python3ControlExtractorTest {
         File_inputContext ctx = parser.file_input();
 
         // Create a VariableExtractor and visit the File_inputContext
-        Python3ControlExtractor extractor = new Python3ControlExtractor();
+        Python3ControlExtractor extractor = new Python3ControlExtractor(filePath);
         return extractor.visitFile_input(ctx);
     }
 }
