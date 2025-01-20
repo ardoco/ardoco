@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -8,11 +8,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
+import java.io.Serial;
+
 /**
  * The Interface IRecommendedInstance defines the aggregation of noun mappings to one recommendation.
  */
 public abstract class RecommendedInstance extends TextEntity {
 
+    @Serial
     private static final long serialVersionUID = -5422301094494768943L;
 
     protected RecommendedInstance(String name, String id) {
@@ -93,21 +96,9 @@ public abstract class RecommendedInstance extends TextEntity {
     @Override
     public abstract String getName();
 
-    /**
-     * Sets the type of this recommended instance to the given type.
-     *
-     * @param type the new type
-     */
-    public abstract void setType(String type);
-
-    /**
-     * Sets the name of this recommended instance to the given name.
-     *
-     * @param name the new name
-     */
-    public abstract void setName(String name);
-
     public abstract ImmutableSortedSet<Integer> getSentenceNumbers();
 
     public abstract ImmutableList<Claimant> getClaimants();
+
+    public abstract void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
 }

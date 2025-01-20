@@ -9,12 +9,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrategy;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
+import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 
 /**
  * This analyzer searches for name type patterns. If these patterns occur recommendations are created.
@@ -23,13 +25,15 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class NameTypeInformant extends Informant {
 
     @Configurable
-    private final double probability = 1.0;
+    private double probability = 1.0;
+    private final TextStateStrategies tss;
 
     /**
      * Creates a new NameTypeAnalyzer
      */
-    public NameTypeInformant(DataRepository dataRepository) {
+    public NameTypeInformant(DataRepository dataRepository, TextStateStrategies tss) {
         super(NameTypeInformant.class.getSimpleName(), dataRepository);
+        this.tss = tss;
     }
 
     @Override
@@ -37,34 +41,32 @@ public class NameTypeInformant extends Informant {
         DataRepository dataRepository = this.getDataRepository();
         var text = DataRepositoryHelper.getAnnotatedText(dataRepository);
         var textState = DataRepositoryHelper.getTextState(dataRepository);
+        var textStateStrategy = this.tss.apply(this.getDataRepository());
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
 
         for (var word : text.words()) {
-            this.exec(textState, modelStatesData, recommendationStates, word);
+            this.exec(textState, textStateStrategy, modelStatesData, recommendationStates, word);
         }
     }
 
-    private void exec(TextState textState, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
+    private void exec(TextState textState, TextStateStrategy tss,ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
         for (var metamodel : modelStates.metamodels()) {
             var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
-            this.addRecommendedInstanceIfNameAfterType(textState, word, model, recommendationState);
-            this.addRecommendedInstanceIfNameBeforeType(textState, word, model, recommendationState);
-            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState, word, model, recommendationState);
-            this.addRecommendedInstanceIfNameOrTypeAfterType(textState, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameAfterType(textState, tss,word, model, recommendationState);
+            this.addRecommendedInstanceIfNameBeforeType(textState, tss,word, model, recommendationState);
+            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState,tss, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameOrTypeAfterType(textState, tss, word, model, recommendationState);
         }
     }
 
     /**
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the previous node. If that's the
      * case a recommendation for the combination of both is created.
-     *
-     * @param textExtractionState text extraction state
-     * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -72,7 +74,7 @@ public class NameTypeInformant extends Informant {
         var similarTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!similarTypes.isEmpty()) {
-            textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(word.getPreWord(), MappingKind.NAME);
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
@@ -84,18 +86,15 @@ public class NameTypeInformant extends Informant {
     /**
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the following node. If that's the
      * case a recommendation for the combination of both is created.
-     *
-     * @param textExtractionState text extraction state
-     * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
-            textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(word.getNextWord(), MappingKind.NAME);
@@ -107,11 +106,8 @@ public class NameTypeInformant extends Informant {
     /**
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the previous node. If that's
      * the case a recommendation for the combination of both is created.
-     *
-     * @param textExtractionState text extraction state
-     * @param word                the current word
      */
-    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -119,7 +115,7 @@ public class NameTypeInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!sameLemmaTypes.isEmpty()) {
-            textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(word.getPreWord(), MappingKind.NAME, MappingKind.TYPE);
@@ -137,14 +133,15 @@ public class NameTypeInformant extends Informant {
      * @param recommendationState the recommendation state
      * @param model               the model
      */
-    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState, Word word, Model model, RecommendationState recommendationState) {
+
+    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
 
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
-            textExtractionState.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(word.getNextWord(), MappingKind.NAME, MappingKind.TYPE);
