@@ -119,7 +119,7 @@ public abstract class AbstractConfigurable implements IConfigurable {
         if (List.class.isAssignableFrom(fieldsClass) && field.getGenericType() instanceof ParameterizedType parameterizedType) {
             var generics = parameterizedType.getActualTypeArguments();
 
-            if (generics != null && generics.length == 1 && generics[0] == String.class) {
+            if (generics.length == 1 && generics[0] == String.class) {
                 return new ArrayList<>(Arrays.stream(value.split(LIST_SEPARATOR)).toList());
             }
         }

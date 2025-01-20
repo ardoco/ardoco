@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import java.util.SortedMap;
@@ -12,12 +12,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
  * The analyzer classifies nouns.
  */
-public class NounInformant extends Informant {
+public class NounInformant extends TextExtractionInformant {
     @Configurable
     private double nameOrTypeWeight = 0.5;
 
@@ -35,12 +34,12 @@ public class NounInformant extends Informant {
 
     @Override
     public void process() {
-        ImmutableList<Word> words = DataRepositoryHelper.getAnnotatedText(getDataRepository()).words();
-        var textState = DataRepositoryHelper.getTextState(getDataRepository());
+        ImmutableList<Word> words = DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words();
+        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
         for (var word : words) {
             var text = word.getText();
             if (text.length() > 1 && Character.isLetter(text.charAt(0))) {
-                findSingleNouns(textState, word);
+                this.findSingleNouns(textState, word);
             }
         }
     }
@@ -51,11 +50,11 @@ public class NounInformant extends Informant {
     private void findSingleNouns(TextState textState, Word word) {
         var pos = word.getPosTag();
         if (POSTag.NOUN_PROPER_SINGULAR == pos || POSTag.NOUN == pos || POSTag.NOUN_PROPER_PLURAL == pos) {
-            textState.addNounMapping(word, MappingKind.NAME, this, probability * nameOrTypeWeight);
-            textState.addNounMapping(word, MappingKind.TYPE, this, probability * nameOrTypeWeight);
+            this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability * this.nameOrTypeWeight);
+            this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability * this.nameOrTypeWeight);
         }
         if (POSTag.NOUN_PLURAL == pos) {
-            textState.addNounMapping(word, MappingKind.TYPE, this, probability);
+            this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability);
         }
 
     }

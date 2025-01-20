@@ -31,7 +31,7 @@ public abstract class ArDoCoRunner {
         if (this.isSetUp() && this.outputDirectory != null) {
             return this.getArDoCo().runAndSave(this.outputDirectory);
         } else {
-            logger.error("Cannot run ArDoCo because the runner is not properly set up.");
+            logger.error("Cannot run ArDoCo because the runner is not properly set up (#run).");
             return null;
         }
     }
@@ -44,7 +44,7 @@ public abstract class ArDoCoRunner {
             this.getArDoCo().run();
             return this.getArDoCo().getDataRepository();
         } else {
-            logger.error("Cannot run ArDoCo because the runner is not properly set up.");
+            logger.error("Cannot run ArDoCo because the runner is not properly set up (#runWithoutSaving).");
             return null;
         }
     }

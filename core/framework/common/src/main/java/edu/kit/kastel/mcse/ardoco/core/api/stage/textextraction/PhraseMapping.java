@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import java.io.Serializable;
@@ -22,20 +22,4 @@ public interface PhraseMapping extends Serializable {
     ImmutableSortedMap<Word, Integer> getPhraseVector();
 
     void removePhrase(Phrase phrase);
-
-    /**
-     * Register a listener that will be notified on certain events.
-     *
-     * @param listener the listener
-     * @see #onDelete(PhraseMapping)
-     */
-    void registerChangeListener(PhraseMappingChangeListener listener);
-
-    /**
-     * Will be invoked during the deletion from a state.
-     * Note: This can be invoked multiple times if the replacement is not available during deletion of the phrase mapping
-     *
-     * @param replacement the replacing new phrase mapping (or null if none exist)
-     */
-    void onDelete(PhraseMapping replacement);
 }

@@ -1,14 +1,17 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
+import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -22,7 +25,16 @@ public interface TextStateStrategy {
      */
     AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
 
-    void setState(TextState textState);
+    /**
+     * Adds a name mapping to the state.
+     *
+     * @param word        word of the mapping
+     * @param kind        the kind of the mapping
+     * @param probability probability to be a name mapping
+     */
+    default NounMapping addNounMapping(Word word, MappingKind kind, Claimant claimant, double probability) {
+        return this.addNounMapping(word, kind, claimant, probability, Lists.immutable.with(word.getText()));
+    }
 
     /**
      * Tries to add a mapping to the state using the specified parameters. If a matching mapping already exists, the mapping is extended instead.
@@ -35,33 +47,33 @@ public interface TextStateStrategy {
      * @return the resulting noun mapping, either new or merged
      */
 
-    NounMapping addOrExtendNounMapping(Word word, MappingKind kind, Claimant claimant, double probability, ImmutableList<String> surfaceForms);
+    NounMapping addNounMapping(Word word, MappingKind kind, Claimant claimant, double probability, ImmutableList<String> surfaceForms);
 
     /**
      * Adds a mapping to the state using the specified parameters. Does not consider whether a matching mapping already exists.
      *
-     * @param words          the words
-     * @param distribution   the distribution
-     * @param referenceWords the reference words
-     * @param surfaceForms   the surface forms
-     * @param reference      the reference, nullable
-     * @return the newly created noun mapping
+     * @param words          words of the mapping
+     * @param distribution   distribution of the mapping for the mapping kinds
+     * @param referenceWords reference words of the mapping
+     * @param surfaceForms   surface forms of the mapping
+     * @param reference      a joined reference string
+     * @return the new or merged mapping
      */
 
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms, String reference);
 
     /**
-     * Adds a mapping to the state using the specified parameters. Does not consider whether a matching mapping already exists.
+     * Adds a noun mapping of the specified kind to the state that contains the specified words, surface forms, etc.
      *
-     * @param words          the words
-     * @param kind           the kind
-     * @param claimant       the claimant
-     * @param probability    the probability that the mapping is of this kind
-     * @param referenceWords the reference words
-     * @param surfaceForms   the surface forms
-     * @param reference      the reference, nullable
-     * @return the newly created noun mapping
+     * @param words          words of the mapping
+     * @param kind           kind of the mapping
+     * @param claimant       claimant of the mapping
+     * @param probability    probability to be a noun mapping of this kind
+     * @param referenceWords references of this noun mapping
+     * @param surfaceForms   surface forms of this noun mapping
+     * @param reference      a joined reference string
+     * @return the new or merged mapping
      */
 
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability, ImmutableList<Word> referenceWords,
@@ -117,5 +129,9 @@ public interface TextStateStrategy {
         return refBuilder.toString();
     }
 
-    ImmutableList<NounMapping> getNounMappingsWithSimilarReference(String reference);
+    void mergePhraseMappingsAndNounMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping,
+            MutableList<Pair<NounMapping, NounMapping>> similarNounMappings, Claimant claimant);
+
+    void mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant);
+
 }
