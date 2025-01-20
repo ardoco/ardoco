@@ -42,7 +42,7 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         List<Python3VariableElement> variables = new ArrayList<>();
         List<String> varName = extract(ctx.testlist_star_expr(0));
         List<String> values = extract(ctx.testlist_star_expr(1));
-        List<String> types = extractTypesFromValues(values);
+        List<String> types = inferTypesFromValues(values);
         Parent parent = Python3ParentExtractor.getParent(ctx);
 
         if (varName.size() != values.size()) {
@@ -66,7 +66,7 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         return variableNames;
     }
 
-    private List<String> extractTypesFromValues(List<String> values) {
+    private List<String> inferTypesFromValues(List<String> values) {
         List<String> types = new ArrayList<>();
 
         for (String value : values) {
