@@ -6,5 +6,6 @@ public enum BasicType {
     CONTROL,
     FILE,
     PACKAGE,
-    COMPILATIONUNIT
+    COMPILATIONUNIT,
+    MODULE
 }
