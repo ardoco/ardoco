@@ -18,9 +18,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Comparators;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
-public class MappingCombinerInformant extends Informant {
+public class MappingCombinerInformant extends TextExtractionInformant {
 
     @Configurable
     private double minCosineSimilarity = 0.4;
@@ -90,7 +89,7 @@ public class MappingCombinerInformant extends Informant {
         merge &= similarPhraseMappings.size() == similarNounMappings.collect(Pair::second).distinct().size() * 2;
 
         if (merge) {
-            textState.mergePhraseMappingsAndNounMappings(phraseMapping, similarPhraseMapping, similarNounMappings, this);
+            this.getTextStateStrategy().mergePhraseMappingsAndNounMappings(phraseMapping, similarPhraseMapping, similarNounMappings, this);
         }
     }
 
@@ -104,7 +103,7 @@ public class MappingCombinerInformant extends Informant {
                     continue;
                 }
                 if (SimilarityUtils.getInstance().areNounMappingsSimilar(nounMapping, nounMappingOfSimilarPhraseMapping)) {
-                    textState.mergeNounMappings(nounMapping, nounMappingOfSimilarPhraseMapping, this);
+                    this.getTextStateStrategy().mergeNounMappings(nounMapping, nounMappingOfSimilarPhraseMapping, this);
                 }
             }
         }

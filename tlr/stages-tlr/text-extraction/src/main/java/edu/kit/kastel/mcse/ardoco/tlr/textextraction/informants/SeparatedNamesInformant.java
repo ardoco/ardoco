@@ -11,14 +11,13 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
  * This analyzer classifies all nodes, containing separators, as names and adds them as mappings to the current text
  * extraction state.
  */
 
-public class SeparatedNamesInformant extends Informant {
+public class SeparatedNamesInformant extends TextExtractionInformant {
 
     @Configurable
     private double probability = 0.8;
@@ -34,9 +33,9 @@ public class SeparatedNamesInformant extends Informant {
 
     @Override
     public void process() {
-        var textState = DataRepositoryHelper.getTextState(getDataRepository());
-        for (var word : DataRepositoryHelper.getAnnotatedText(getDataRepository()).words()) {
-            exec(textState, word);
+        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
+        for (var word : DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words()) {
+            this.exec(textState, word);
         }
     }
 
@@ -45,7 +44,7 @@ public class SeparatedNamesInformant extends Informant {
      * extraction state.
      */
     private void exec(TextState textState, Word word) {
-        checkForSeparatedNode(textState, word);
+        this.checkForSeparatedNode(textState, word);
     }
 
     /**
@@ -54,7 +53,7 @@ public class SeparatedNamesInformant extends Informant {
      */
     private void checkForSeparatedNode(TextState textState, Word word) {
         if (word.getPosTag() != POSTag.FOREIGN_WORD && CommonUtilities.containsSeparator(word.getText())) {
-            textState.addNounMapping(word, MappingKind.NAME, this, probability);
+            this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability);
         }
     }
 

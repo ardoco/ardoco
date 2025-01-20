@@ -11,13 +11,12 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.common.util.WordHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
  * The analyzer examines the outgoing arcs of the current node.
  */
 
-public class OutDepArcsInformant extends Informant {
+public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Configurable
     private double nameOrTypeWeight = 0.5;
@@ -36,9 +35,9 @@ public class OutDepArcsInformant extends Informant {
 
     @Override
     public void process() {
-        var textState = DataRepositoryHelper.getTextState(getDataRepository());
-        for (var word : DataRepositoryHelper.getAnnotatedText(getDataRepository()).words()) {
-            exec(textState, word);
+        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
+        for (var word : DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words()) {
+            this.exec(textState, word);
         }
     }
 
@@ -48,7 +47,7 @@ public class OutDepArcsInformant extends Informant {
         if (nodeValue.length() == 1 && !Character.isLetter(nodeValue.charAt(0))) {
             return;
         }
-        examineOutgoingDepArcs(textState, word);
+        this.examineOutgoingDepArcs(textState, word);
     }
 
     /**
@@ -61,10 +60,10 @@ public class OutDepArcsInformant extends Informant {
         for (DependencyTag shortDepTag : outgoingDepArcs) {
 
             if (DependencyTag.AGENT == shortDepTag || DependencyTag.RCMOD == shortDepTag) {
-                textState.addNounMapping(word, MappingKind.NAME, this, probability * nameOrTypeWeight);
-                textState.addNounMapping(word, MappingKind.TYPE, this, probability * nameOrTypeWeight);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability * this.nameOrTypeWeight);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability * this.nameOrTypeWeight);
             } else if (DependencyTag.NUM == shortDepTag || DependencyTag.PREDET == shortDepTag) {
-                textState.addNounMapping(word, MappingKind.TYPE, this, probability);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability);
             }
         }
     }

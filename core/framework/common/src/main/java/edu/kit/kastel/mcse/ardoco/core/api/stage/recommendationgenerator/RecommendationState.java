@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2023. */
+/* Licensed under MIT 2021-2024. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -88,5 +88,10 @@ public interface RecommendationState extends IConfigurable {
      * @return the list of recommended instances with a similar type.
      */
     ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarType(String type);
+
+    /**
+     * Sync noun mappings. This method will be invoked if a noun mapping gets removed from the text extraction state
+     */
+    void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
 
 }

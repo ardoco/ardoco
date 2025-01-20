@@ -189,4 +189,11 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
     public ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarType(String type) {
         return this.recommendedInstances.select(ri -> SimilarityUtils.getInstance().areWordsSimilar(ri.getType(), type)).toImmutableList();
     }
+
+    @Override
+    public void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement) {
+        for (RecommendedInstance ri : this.recommendedInstances.toImmutable()) {
+            ri.onNounMappingDeletion(nounMapping, replacement);
+        }
+    }
 }
