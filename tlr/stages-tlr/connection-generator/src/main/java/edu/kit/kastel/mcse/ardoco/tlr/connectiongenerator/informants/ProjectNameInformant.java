@@ -27,7 +27,7 @@ public class ProjectNameInformant extends Informant {
     private static final String ERROR_EMPTY_LIST = "List cannot be empty";
 
     @Configurable
-    private final double penalty = Double.NEGATIVE_INFINITY;
+    private double penalty = Double.NEGATIVE_INFINITY;
 
     /**
      * Constructs a new instance of the {@link ProjectNameInformant} with the given data repository.
