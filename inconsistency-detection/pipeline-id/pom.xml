@@ -12,6 +12,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>pipeline-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
       <groupId>io.github.ardoco.id</groupId>
       <artifactId>inconsistency-detection</artifactId>
       <version>${revision}</version>
