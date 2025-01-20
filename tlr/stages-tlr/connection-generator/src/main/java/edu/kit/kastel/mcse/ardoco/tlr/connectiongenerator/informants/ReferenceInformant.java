@@ -20,7 +20,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class ReferenceInformant extends Informant {
 
     @Configurable
-    private final double probability = 0.75;
+    private double probability = 0.75;
 
     public ReferenceInformant(DataRepository dataRepository) {
         super(ReferenceInformant.class.getSimpleName(), dataRepository);

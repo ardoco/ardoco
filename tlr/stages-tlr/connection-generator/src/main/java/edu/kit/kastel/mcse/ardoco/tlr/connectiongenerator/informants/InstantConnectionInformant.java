@@ -15,9 +15,9 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 public class InstantConnectionInformant extends Informant {
     @Configurable
-    private final double probability = 1.0;
+    private double probability = 1.0;
     @Configurable
-    private final double probabilityWithoutType = 0.8;
+    private double probabilityWithoutType = 0.8;
 
     public InstantConnectionInformant(DataRepository dataRepository) {
         super(InstantConnectionInformant.class.getSimpleName(), dataRepository);

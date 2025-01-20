@@ -64,7 +64,10 @@ public final class CodeModel extends Model {
         SortedSet<String> identifiers = new TreeSet<>();
 
         for (var codeItem : this.getContent()) {
-            codeItem.getType().ifPresent(identifiers::add);
+            var type = codeItem.getType();
+            if (type.isPresent()) {
+                identifiers.add(type.get());
+            }
         }
         return identifiers;
     }
