@@ -16,10 +16,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
  */
 public class Average extends ConfidenceAggregator {
 
-    private Optional<List<Double>> weights;
+    private final List<Double> weights;
 
     private Average() {
-        weights = Optional.empty();
+        weights = null;
     }
 
     private Average(List<Double> weights) {
@@ -31,7 +31,7 @@ public class Average extends ConfidenceAggregator {
                 throw new IllegalArgumentException("Weights must not be smaller than 0");
             }
         }
-        this.weights = Optional.of(new ArrayList<>(weights));
+        this.weights = new ArrayList<>(weights);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Average extends ConfidenceAggregator {
         if (weights.isEmpty()) {
             return 1.0;
         }
-        return weights.get().get(index);
+        return weights.get(index);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class Average extends ConfidenceAggregator {
     @Override
     public String toString() {
         String weightsString = "";
-        if (weights.isPresent()) {
+        if (weights != null) {
             weightsString = "-" + weights;
         }
         return "Average" + weightsString;

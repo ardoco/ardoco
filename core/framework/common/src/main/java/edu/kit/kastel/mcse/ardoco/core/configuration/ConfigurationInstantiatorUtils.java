@@ -30,7 +30,7 @@ public final class ConfigurationInstantiatorUtils {
     public static AbstractConfigurable createObject(Class<? extends AbstractConfigurable> clazz) throws InvocationTargetException, InstantiationException,
             IllegalAccessException {
         var constructors = Arrays.asList(clazz.getDeclaredConstructors());
-        AbstractConfigurable result = null;
+        AbstractConfigurable result;
 
         result = findAndCreate(constructors, c -> c.getParameterCount() == 0, new Object[0]);
         if (result != null) {

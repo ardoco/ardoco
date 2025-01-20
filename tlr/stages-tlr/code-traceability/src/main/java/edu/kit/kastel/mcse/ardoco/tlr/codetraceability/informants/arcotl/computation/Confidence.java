@@ -3,7 +3,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.comput
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.OptionalDouble;
 
 /**
  * The calculated confidence of an endpoint tuple. The confidence has a value
@@ -19,13 +18,13 @@ import java.util.OptionalDouble;
  */
 public class Confidence implements Comparable<Confidence> {
 
-    private final OptionalDouble confidenceOptional;
+    private final Double confidence;
 
     /**
      * Creates a new confidence that doesn't have a value.
      */
     public Confidence() {
-        confidenceOptional = OptionalDouble.empty();
+        confidence = null;
     }
 
     /**
@@ -41,18 +40,19 @@ public class Confidence implements Comparable<Confidence> {
         if (!(confidenceValue >= 0 && confidenceValue <= 1)) {
             throw new IllegalArgumentException("Confidence value must not be smaller than 0 or bigger than 1");
         }
-        this.confidenceOptional = OptionalDouble.of(confidenceValue);
+        this.confidence = confidenceValue;
     }
 
     /**
-     * Returns the value of this confidence if it exists, otherwise throws a
-     * {@code NoSuchElementException}.
+     * Returns the value of this confidence if it exists, otherwise throws an exception.
      *
      * @return the value of this confidence
-     * @throws NoSuchElementException if no value exists
      */
-    public double getValue() throws NoSuchElementException {
-        return confidenceOptional.getAsDouble();
+    public double getValue() {
+        if(confidence == null) {
+            throw new NoSuchElementException("Confidence has no value");
+        }
+        return confidence;
     }
 
     /**
@@ -61,7 +61,7 @@ public class Confidence implements Comparable<Confidence> {
      * @return true if this confidence has a value; false otherwise
      */
     public boolean hasValue() {
-        return confidenceOptional.isPresent();
+        return confidence != null;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Confidence implements Comparable<Confidence> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(confidenceOptional);
+        return Objects.hashCode(confidence);
     }
 
     @Override
@@ -94,13 +94,13 @@ public class Confidence implements Comparable<Confidence> {
         if (!(obj instanceof Confidence other)) {
             return false;
         }
-        return Objects.equals(confidenceOptional, other.confidenceOptional);
+        return Objects.equals(confidence, other.confidence);
     }
 
     @Override
     public String toString() {
-        if (confidenceOptional.isPresent()) {
-            return Double.toString(confidenceOptional.getAsDouble());
+        if (confidence != null) {
+            return Double.toString(confidence);
         }
         return "no value";
     }

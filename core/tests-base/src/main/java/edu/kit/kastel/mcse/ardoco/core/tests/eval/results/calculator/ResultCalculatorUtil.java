@@ -26,8 +26,6 @@ public final class ResultCalculatorUtil {
 
     public static <T> EvaluationResults<T> calculateMacroAverageResults(ImmutableList<EvaluationResults<T>> results) {
         var averages = getAverages(results);
-        if (averages == null)
-            return null;
 
         var macroAverage = averages.stream().filter(it -> it.getType() == AggregationType.MACRO_AVERAGE).findFirst().orElseThrow();
         return evaluationResults(macroAverage);
@@ -35,8 +33,6 @@ public final class ResultCalculatorUtil {
 
     public static <T> EvaluationResults<T> calculateWeightedAverageResults(ImmutableList<EvaluationResults<T>> results) {
         var averages = getAverages(results);
-        if (averages == null)
-            return null;
 
         var macroAverage = averages.stream().filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE).findFirst().orElseThrow();
         return evaluationResults(macroAverage);
@@ -44,8 +40,6 @@ public final class ResultCalculatorUtil {
 
     public static EvaluationResults<String> calculateMicroAverageResults(ImmutableList<EvaluationResults<String>> results) {
         var averages = getAverages(results);
-        if (averages == null)
-            return null;
 
         var microAverage = averages.stream().filter(it -> it.getType() == AggregationType.MICRO_AVERAGE).findFirst().orElseThrow();
         return evaluationResults(microAverage);
