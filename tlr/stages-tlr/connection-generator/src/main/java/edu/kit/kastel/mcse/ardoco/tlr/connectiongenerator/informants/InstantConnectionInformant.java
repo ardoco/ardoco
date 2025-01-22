@@ -1,9 +1,11 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
+import java.util.List;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -15,9 +17,9 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 public class InstantConnectionInformant extends Informant {
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
     @Configurable
-    private double probabilityWithoutType = 0.8;
+    private final double probabilityWithoutType = 0.8;
 
     public InstantConnectionInformant(DataRepository dataRepository) {
         super(InstantConnectionInformant.class.getSimpleName(), dataRepository);
@@ -29,7 +31,9 @@ public class InstantConnectionInformant extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
-        for (var metamodel : modelStates.metamodels()) {
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
             var connectionState = connectionStates.getConnectionState(metamodel);

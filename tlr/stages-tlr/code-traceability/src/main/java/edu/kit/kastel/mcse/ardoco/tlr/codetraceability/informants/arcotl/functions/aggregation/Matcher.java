@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
 public abstract class Matcher extends Aggregation {
 
     protected enum EndpointType {
+        // TODO: Extension necessary?
         ARCHITECTURE("Architecture"), CODE("Code");
 
         private final String name;
@@ -25,7 +26,7 @@ public abstract class Matcher extends Aggregation {
         }
     }
 
-    private EndpointType endpointTypeToMatch;
+    private final EndpointType endpointTypeToMatch;
 
     protected Matcher(EndpointType endpointsToUse) {
         this.endpointTypeToMatch = endpointsToUse;
@@ -35,8 +36,8 @@ public abstract class Matcher extends Aggregation {
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, List<NodeResult> childrenResults) {
         NodeResult matchResult = new NodeResult(archModel, codeModel);
         List<? extends Entity> endpoints = switch (endpointTypeToMatch) {
-        case ARCHITECTURE -> archModel.getEndpoints();
-        case CODE -> codeModel.getEndpoints();
+            case ARCHITECTURE -> archModel.getEndpoints();
+            case CODE -> codeModel.getEndpoints();
         };
         for (Entity endpointToMatch : endpoints) {
             NodeResult partialMatchResult = matchEndpoint(endpointToMatch, childrenResults);

@@ -1,11 +1,13 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
+import java.util.List;
 import java.util.SortedMap;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -20,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class ReferenceInformant extends Informant {
 
     @Configurable
-    private double probability = 0.75;
+    private final double probability = 0.75;
 
     public ReferenceInformant(DataRepository dataRepository) {
         super(ReferenceInformant.class.getSimpleName(), dataRepository);
@@ -32,7 +34,9 @@ public class ReferenceInformant extends Informant {
         var textState = DataRepositoryHelper.getTextState(dataRepository);
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var metamodel : modelStates.metamodels()) {
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
             this.findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(model, recommendationState, textState);
@@ -54,8 +58,8 @@ public class ReferenceInformant extends Informant {
     }
 
     private ImmutableList<NounMapping> getSimilarNounMappings(ModelEntity modelEntity, TextState textState) {
-        return textState.getNounMappingsOfKind(MappingKind.NAME)
-                .select(nounMapping -> SimilarityUtils.getInstance().isNounMappingSimilarToModelInstance(nounMapping, modelEntity));
+        var nameMappings = textState.getNounMappingsOfKind(MappingKind.NAME);
+        return nameMappings.select(nounMapping -> SimilarityUtils.getInstance().isNounMappingSimilarToModelInstance(nounMapping, modelEntity));
     }
 
     @Override

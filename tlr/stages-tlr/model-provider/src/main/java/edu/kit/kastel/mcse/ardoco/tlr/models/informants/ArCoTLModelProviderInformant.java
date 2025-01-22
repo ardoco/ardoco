@@ -7,6 +7,7 @@ import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
@@ -61,12 +62,18 @@ public final class ArCoTLModelProviderInformant extends Informant {
         if (this.fromFile != null) {
             extractedModel = CodeExtractor.readInCodeModel(this.fromFile);
             this.addModelStateToDataRepository(Metamodel.CODE, extractedModel);
+            if (extractedModel instanceof CodeModel codeModel) {
+                this.addModelStateToDataRepository(Metamodel.CODE_AS_ARCHITECTURE, new CoarseGrainedCodeModel(codeModel));
+            }
             return;
         }
 
         IdentifierProvider.reset();
         this.getLogger().info("Extracting code model.");
         extractedModel = this.extractor.extractModel();
+        if (extractedModel instanceof CodeModel codeModel) {
+            this.addModelStateToDataRepository(Metamodel.CODE_AS_ARCHITECTURE, new CoarseGrainedCodeModel(codeModel));
+        }
         if (this.extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
             this.getLogger().info("Writing out code model to file in directory.");
             codeExtractor.writeOutCodeModel(codeModel);

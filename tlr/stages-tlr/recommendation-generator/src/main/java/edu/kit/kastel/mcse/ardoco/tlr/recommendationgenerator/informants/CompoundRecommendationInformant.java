@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
+import java.util.List;
 import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -9,6 +10,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -25,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class CompoundRecommendationInformant extends Informant {
 
     @Configurable
-    private double confidence = 0.8;
+    private final double confidence = 0.8;
 
     public CompoundRecommendationInformant(DataRepository dataRepository) {
         super(CompoundRecommendationInformant.class.getSimpleName(), dataRepository);
@@ -49,7 +51,9 @@ public class CompoundRecommendationInformant extends Informant {
         var textState = DataRepositoryHelper.getTextState(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
 
-        for (var metamodel : modelStatesData.metamodels()) {
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStatesData.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
@@ -100,8 +104,8 @@ public class CompoundRecommendationInformant extends Informant {
                 var wordText = word.getText();
                 if (CommonUtilities.isCamelCasedWord(wordText) || CommonUtilities.nameIsSnakeCased(wordText)) {
                     var localNounMappings = Lists.immutable.of(nounMapping);
-                    recommendationState.addRecommendedInstance(nounMapping.getReference(), "", this, this.confidence, localNounMappings, Lists.immutable
-                            .empty());
+                    recommendationState.addRecommendedInstance(nounMapping.getReference(), "", this, this.confidence, localNounMappings,
+                            Lists.immutable.empty());
                 }
             }
         }
@@ -122,14 +126,14 @@ public class CompoundRecommendationInformant extends Informant {
 
     private ImmutableList<String> getSimilarModelTypes(ImmutableList<NounMapping> typeMappings, Model model) {
         MutableSortedSet<String> similarModelTypes = SortedSets.mutable.empty();
-        var typeIdentifiers = model.getTypeIdentifiers();
+        var typeIdentifiers = CommonUtilities.getSplittedTypeIdentifiers(model);
         for (var typeMapping : typeMappings) {
-            var currSimilarTypes = Lists.immutable.fromStream(typeIdentifiers.stream()
-                    .filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, typeMapping.getReference())));
+            var currSimilarTypes = Lists.immutable.fromStream(
+                    typeIdentifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, typeMapping.getReference())));
             similarModelTypes.addAll(currSimilarTypes.toList());
             for (var word : typeMapping.getWords()) {
-                currSimilarTypes = Lists.immutable.fromStream(typeIdentifiers.stream()
-                        .filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getLemma())));
+                currSimilarTypes = Lists.immutable.fromStream(
+                        typeIdentifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getLemma())));
                 similarModelTypes.addAll(currSimilarTypes.toList());
             }
         }
