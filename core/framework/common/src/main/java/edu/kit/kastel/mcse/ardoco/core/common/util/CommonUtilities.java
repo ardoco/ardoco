@@ -9,9 +9,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.SortedSet;
 import java.util.StringJoiner;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -218,8 +222,25 @@ public final class CommonUtilities {
      * @return List of type names in the model state that are similar to the given word
      */
     public static ImmutableList<String> getSimilarTypes(Word word, Model model) {
-        var identifiers = model.getTypeIdentifiers();
+        var identifiers = getSplittedTypeIdentifiers(model);
         return Lists.immutable.fromStream(identifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getText())));
+    }
+
+    /**
+     * Returns a set of identifiers for the types in the model.
+     *
+     * @return Set of identifiers for existing types
+     */
+    public static SortedSet<String> getSplittedTypeIdentifiers(Model model) {
+        SortedSet<String> identifiers = model.getTypeIdentifiers()
+                .stream()
+                .map(CommonUtilities::splitSnakeAndKebabCase)
+                .map(CommonUtilities::splitCamelCase)
+                .map(type -> type.split(" "))
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toCollection(TreeSet::new));
+        identifiers.addAll(model.getTypeIdentifiers());
+        return identifiers;
     }
 
     /**

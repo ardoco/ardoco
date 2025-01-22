@@ -21,7 +21,6 @@ public final class ArchitectureComponent extends ArchitectureItem {
 
     private final SortedSet<ArchitectureInterface> requiredInterfaces;
     private final String type;
-    private final MutableList<String> nameParts;
 
     private final MutableList<String> typeParts;
 
@@ -32,7 +31,6 @@ public final class ArchitectureComponent extends ArchitectureItem {
         this.providedInterfaces = providedInterfaces;
         this.requiredInterfaces = requiredInterfaces;
         this.type = type;
-        this.nameParts = splitIdentifierIntoParts(name);
         this.typeParts = splitIdentifierIntoParts(type);
     }
 
@@ -61,11 +59,6 @@ public final class ArchitectureComponent extends ArchitectureItem {
      */
     public SortedSet<ArchitectureInterface> getRequiredInterfaces() {
         return this.requiredInterfaces;
-    }
-
-    @Override
-    public Optional<ImmutableList<String>> getNameParts() {
-        return Optional.of(this.nameParts.toImmutable());
     }
 
     /**

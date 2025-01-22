@@ -40,7 +40,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
 
         CodeModel codeModel = this.findCodeModel(modelStatesData);
 
-        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE).getTraceLinks()) {
+        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_AS_ARCHITECTURE).getTraceLinks()) {
             var modelElement = traceLink.getSecondEndpoint().getId();
             var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, codeModel);
             for (var mid : mentionedCodeModelElements) {
@@ -64,9 +64,10 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
     private List<CodeCompilationUnit> findAllClassesInPackage(String modelElementId, CodeModel codeModel) {
         List<CodeCompilationUnit> codeCompilationUnits = new ArrayList<>();
         for (var codeCompilationUnit : codeModel.getEndpoints()) {
-            var path = codeCompilationUnit.getPath();
+            var path = ((CodeCompilationUnit) codeCompilationUnit).getPath();
             if (path.contains(modelElementId)) {
-                codeCompilationUnits.add(codeCompilationUnit);
+                //TODO: Remove Cast
+                codeCompilationUnits.add(((CodeCompilationUnit) codeCompilationUnit));
             }
         }
         if (codeCompilationUnits.isEmpty()) {
@@ -78,7 +79,8 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
     private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId, CodeModel codeModel) {
         for (var codeCompilationUnit : codeModel.getEndpoints()) {
             if (codeCompilationUnit.getId().equals(modelElementId)) {
-                return List.of(codeCompilationUnit);
+                //TODO: Remove Cast
+                return List.of(((CodeCompilationUnit) codeCompilationUnit));
             }
         }
         throw new IllegalStateException("Could not find model element " + modelElementId);

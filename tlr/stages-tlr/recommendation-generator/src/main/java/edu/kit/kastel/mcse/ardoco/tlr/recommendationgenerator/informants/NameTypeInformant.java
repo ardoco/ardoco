@@ -1,8 +1,10 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
+import java.util.List;
 import java.util.SortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -25,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 public class NameTypeInformant extends Informant {
 
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
     private final TextStateStrategies tss;
 
     /**
@@ -50,14 +52,17 @@ public class NameTypeInformant extends Informant {
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy tss,ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
-        for (var metamodel : modelStates.metamodels()) {
+    private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
+
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
-            this.addRecommendedInstanceIfNameAfterType(textState, tss,word, model, recommendationState);
-            this.addRecommendedInstanceIfNameBeforeType(textState, tss,word, model, recommendationState);
-            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState,tss, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameAfterType(textState, tss, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameBeforeType(textState, tss, word, model, recommendationState);
+            this.addRecommendedInstanceIfNameOrTypeBeforeType(textState, tss, word, model, recommendationState);
             this.addRecommendedInstanceIfNameOrTypeAfterType(textState, tss, word, model, recommendationState);
         }
     }
@@ -66,7 +71,8 @@ public class NameTypeInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the previous node. If that's the
      * case a recommendation for the combination of both is created.
      */
-    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -87,7 +93,8 @@ public class NameTypeInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the following node. If that's the
      * case a recommendation for the combination of both is created.
      */
-    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -107,7 +114,8 @@ public class NameTypeInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the previous node. If that's
      * the case a recommendation for the combination of both is created.
      */
-    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameOrTypeBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -134,7 +142,8 @@ public class NameTypeInformant extends Informant {
      * @param model               the model
      */
 
-    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void addRecommendedInstanceIfNameOrTypeAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }

@@ -1,8 +1,10 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
+import java.util.List;
 import java.util.SortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -22,7 +24,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 public class ExtractionDependentOccurrenceInformant extends Informant {
 
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
     private final TextStateStrategies strategy = TextStateStrategies.DEFAULT;
 
     public ExtractionDependentOccurrenceInformant(DataRepository dataRepository) {
@@ -42,7 +44,9 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
     }
 
     private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, Word word) {
-        for (var metamodel : modelStates.metamodels()) {
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStates.getModel(metamodel);
 
             this.searchForNameInModel(model, textState, tss, word);
@@ -54,10 +58,12 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
      * This method checks whether a given node is a name of an instance given in the model extraction state. If it appears to be a name this is stored in the
      * text extraction state.
      */
-    private void searchForNameInModel(Model model, TextState textState,TextStateStrategy tss, Word word) {
+    private void searchForNameInModel(Model model, TextState textState, TextStateStrategy tss, Word word) {
         if (this.posTagIsUndesired(word) && !this.wordStartsWithCapitalLetter(word)) {
             return;
         }
+
+        var instancesWithSimilarInstanceName = model.getEndpoints().stream().filter(i -> SimilarityUtils.getInstance().isWordSimilarToEntity(word, i)).toList();
 
         var instanceNameIsSimilar = model.getEndpoints().stream().anyMatch(i -> SimilarityUtils.getInstance().isWordSimilarToEntity(word, i));
         if (instanceNameIsSimilar) {

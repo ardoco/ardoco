@@ -11,6 +11,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -34,9 +35,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 public class NameTypeConnectionInformant extends Informant {
 
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
     private final TextStateStrategies strategy = TextStateStrategies.DEFAULT;
-
 
     public NameTypeConnectionInformant(DataRepository dataRepository) {
         super(NameTypeConnectionInformant.class.getSimpleName(), dataRepository);
@@ -56,15 +56,17 @@ public class NameTypeConnectionInformant extends Informant {
         }
     }
 
-
     private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
-        for (var metamodel : modelStates.metamodels()) {
+
+        //TODO: Only defined on LegacyModel
+        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
+        for (var metamodel : definedModels) {
             var model = modelStates.getModel(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
-            this.checkForNameAfterType(textState,tss, word, model, recommendationState);
-            this.checkForNameBeforeType(textState,tss, word, model, recommendationState);
-            this.checkForNortBeforeType(textState,tss, word, model, recommendationState);
-            this.checkForNortAfterType(textState,tss, word, model, recommendationState);
+            this.checkForNameAfterType(textState, tss, word, model, recommendationState);
+            this.checkForNameBeforeType(textState, tss, word, model, recommendationState);
+            this.checkForNortBeforeType(textState, tss, word, model, recommendationState);
+            this.checkForNortAfterType(textState, tss, word, model, recommendationState);
         }
     }
 
@@ -72,7 +74,7 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the previous node. If that's the
      * case a recommendation for the combination of both is created.
      */
-    private void checkForNameBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNameBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -101,7 +103,7 @@ public class NameTypeConnectionInformant extends Informant {
      * @param model               the current model state
      * @param recommendationState the current recommendation state
      */
-    private void checkForNameAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNameAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -124,7 +126,7 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the previous node. If that's
      * the case a recommendation for the combination of both is created.
      */
-    private void checkForNortBeforeType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNortBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -148,7 +150,7 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the afterwards node. If
      * that's the case a recommendation for the combination of both is created.
      */
-    private void checkForNortAfterType(TextState textExtractionState,TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNortAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -206,7 +208,8 @@ public class NameTypeConnectionInformant extends Informant {
         MutableList<ModelEntity> matchingEntities = Lists.mutable.empty();
 
         for (String type : similarTypes) {
-            matchingEntities.addAll(getEntitiesOfType(model, type));
+            var entitiesOfType = getEntitiesOfType(model, type);
+            matchingEntities.addAll(entitiesOfType);
         }
 
         var text = word.getText();
@@ -220,7 +223,8 @@ public class NameTypeConnectionInformant extends Informant {
     }
 
     private List<ModelEntity> getEntitiesOfType(Model model, String type) {
-        return model.getEndpoints().stream().filter(e -> e.getTypeParts().orElseThrow().contains(type)).collect(Collectors.toList());
+        var entitiesWithTypeParts = model.getEndpoints().stream().filter(e -> e.getTypeParts().isPresent());
+        return entitiesWithTypeParts.filter(e -> e.getTypeParts().orElseThrow().contains(type)).collect(Collectors.toList());
     }
 
     @Override

@@ -29,9 +29,4 @@ public non-sealed class CodeEntity extends ModelEntity {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImmutableList<String>> getNameParts() {
-        return Optional.empty();
-    }
-
 }

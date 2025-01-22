@@ -57,16 +57,6 @@ public class ArchitectureEntityImpl extends ArchitectureEntity {
     }
 
     /**
-     * Returns all name parts of the instance.
-     *
-     * @return all name parts of the instance as list
-     */
-    @Override
-    public Optional<ImmutableList<String>> getNameParts() {
-        return Optional.of(this.names.toImmutable());
-    }
-
-    /**
      * Returns the longest type of the instance.
      *
      * @return the original type of the instance

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.SortedSet;
 
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.list.MutableList;
 
 // TODO: Discuss how to handle the missing type
 public final class ArchitectureInterface extends ArchitectureItem {
@@ -15,22 +14,14 @@ public final class ArchitectureInterface extends ArchitectureItem {
 
     private final SortedSet<ArchitectureMethod> signatures;
 
-    private final MutableList<String> nameParts;
-
     public ArchitectureInterface(String name, String id, SortedSet<ArchitectureMethod> signatures) {
         super(name, id);
         this.signatures = signatures;
-        this.nameParts = splitIdentifierIntoParts(name);
 
     }
 
     public SortedSet<ArchitectureMethod> getSignatures() {
         return this.signatures;
-    }
-
-    @Override
-    public Optional<ImmutableList<String>> getNameParts() {
-        return Optional.of(this.nameParts.toImmutable());
     }
 
     @Override

@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
-public abstract sealed class Model permits ArchitectureModel, CodeModel {
+public abstract sealed class Model permits ArchitectureModel, CoarseGrainedCodeModel, CodeModel {
 
     private final String id = IdentifierProvider.createId();
 
@@ -38,4 +38,5 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
      * @return Set of identifiers for existing types
      */
     public abstract SortedSet<String> getTypeIdentifiers();
+
 }
