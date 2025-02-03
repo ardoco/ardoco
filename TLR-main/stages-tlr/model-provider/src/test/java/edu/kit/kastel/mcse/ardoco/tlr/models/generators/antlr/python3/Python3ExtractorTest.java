@@ -1,0 +1,36 @@
+package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.python3;
+
+import java.io.IOException;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3Extractor;
+
+public class Python3ExtractorTest {
+    private static final Logger logger = LoggerFactory.getLogger(Python3ClassExtractorTest.class);
+    
+    @Test
+    void executePython3ExtractorForMinimalDirectoryTest() throws IOException {
+        String sourcePath = "src/test/resources/python/interface/edu/";
+        Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
+        python3Extractor.execute();
+
+
+        // Assertions
+        Assertions.assertEquals(13 , python3Extractor.getVariables().size());
+        Assertions.assertEquals(17 , python3Extractor.getControls().size());
+        Assertions.assertEquals(10 , python3Extractor.getClasses().size());
+        Assertions.assertEquals(8, python3Extractor.getModules().size());
+    }
+
+
+    private Python3Extractor buildPython3Extractor(String sourcePath) {
+        CodeItemRepository repository = new CodeItemRepository();
+        return new Python3Extractor(repository, sourcePath);
+    }
+}
+

@@ -11,10 +11,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import generated.antlr.Python3Lexer;
 import generated.antlr.Python3Parser;
@@ -25,7 +25,7 @@ public class Python3Extractor extends ANTLRExtractor {
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
     private List<Python3ClassElement> classes = new ArrayList<>();
-    private File_inputContext tree;
+    private List<Python3ModuleElement> modules = new ArrayList<>();
     // private PythonModelMapper mapper = new PythonModelMapper();
     private CodeModel codeModel;
 
@@ -37,8 +37,8 @@ public class Python3Extractor extends ANTLRExtractor {
     public void execute() throws IOException {
         List<Path> files = getPythonFiles();
         for (Path file : files) {
-            buildFileInputContext(file);
-            extractElementsFromFile(file);
+            File_inputContext ctx = buildFileInputContext(file);
+            extractElementsFromFile(ctx);
         }
     }
 
@@ -58,6 +58,10 @@ public class Python3Extractor extends ANTLRExtractor {
         return classes;
     }
 
+    public List<Python3ModuleElement> getModules() {
+        return modules;
+    }
+
     private List<Path> getPythonFiles() throws IOException {
         Path dir = Path.of(path);
         List<Path> pythonFiles = new ArrayList<>();
@@ -68,39 +72,39 @@ public class Python3Extractor extends ANTLRExtractor {
         return pythonFiles;
     }
 
-    private void buildFileInputContext(Path file) throws IOException {
+    private File_inputContext buildFileInputContext(Path file) throws IOException {
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(file));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
-        this.tree = parser.file_input();
+        return parser.file_input();
     }
 
-    private void extractElementsFromFile(Path file) {
-        if (this.tree != null) {
-            extractVariables(file);
-            extractControls(file);
-            extractClasses(file);
+    private void extractElementsFromFile(File_inputContext ctx) {
+        if (ctx != null) {
+            extractVariables(ctx);
+            extractControls(ctx);
+            extractClasses(ctx);
+            extractModules(ctx);
         }
     }
 
-    private void extractVariables(Path file) {
-        Python3VariableExtractor extractor = new Python3VariableExtractor(file.toString());
-        this.variables.addAll(extractor.visitFile_input(this.tree));
+    private void extractVariables(File_inputContext ctx) {
+        Python3VariableExtractor extractor = new Python3VariableExtractor();
+        this.variables.addAll(extractor.visitFile_input(ctx));
     }
 
-    private void extractControls(Path file) {
-        Python3ControlExtractor extractor = new Python3ControlExtractor(file.toString());
-        this.controls.addAll(extractor.visitFile_input(this.tree));
+    private void extractControls(File_inputContext ctx){
+        Python3ControlExtractor extractor = new Python3ControlExtractor();
+        this.controls.addAll(extractor.visitFile_input(ctx));
     }
 
-    private void extractClasses(Path file) {
-        Python3ClassExtractor extractor = new Python3ClassExtractor(file.toString());
-        this.classes.addAll(extractor.visitFile_input(this.tree));
+    private void extractClasses(File_inputContext ctx) { 
+        Python3ClassExtractor extractor = new Python3ClassExtractor();
+        this.classes.addAll(extractor.visitFile_input(ctx));
     }
 
-
-
-
-
-    
+    private void extractModules(File_inputContext ctx) {
+        Python3ModuleExtractor extractor = new Python3ModuleExtractor(path);
+        this.modules.addAll(extractor.visitFile_input(ctx));
+    }
 }

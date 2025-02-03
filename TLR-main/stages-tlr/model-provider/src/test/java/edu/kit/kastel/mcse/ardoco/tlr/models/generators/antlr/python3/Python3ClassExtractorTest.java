@@ -83,6 +83,20 @@ public class Python3ClassExtractorTest {
     }
 
     @Test
+    void testPyDataClassPython3ExtractorTest() throws IOException {
+        String filePath = sourcePath + "APyDataClass.py";
+        List<Python3ClassElement> classes = extractClassElementsFromFile(filePath);
+
+        Assertions.assertEquals(1, classes.size());
+
+        // Test the first class
+        Assertions.assertEquals("APyDataclass", classes.get(0).getName());
+        Assertions.assertEquals(0, classes.get(0).getIsChildOfClasses().size());
+        Assertions.assertEquals("APyDataClass", classes.get(0).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, classes.get(0).getParent().getType());
+    }
+
+    @Test
     void testPyModulePython3ExtractorTest() throws IOException {
         String filePath = sourcePath + "APyModule.py";
         List<Python3ClassElement> classes = extractClassElementsFromFile(filePath);
@@ -99,7 +113,7 @@ public class Python3ClassExtractorTest {
         File_inputContext ctx = parser.file_input();
 
         // Create a ClassExtractor and visit the File_inputContext
-        Python3ClassExtractor extractor = new Python3ClassExtractor(filePath);
+        Python3ClassExtractor extractor = new Python3ClassExtractor();
         return extractor.visitFile_input(ctx);
     }    
 }

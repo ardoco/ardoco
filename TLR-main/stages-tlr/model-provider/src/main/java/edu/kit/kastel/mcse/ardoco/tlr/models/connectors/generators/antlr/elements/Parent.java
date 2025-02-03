@@ -11,5 +11,15 @@ public class Parent extends BasicElement {
     public BasicType getType() {
         return type;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Parent) {
+            Parent parent = (Parent) obj;
+            return parent.getName().equals(this.getName()) && parent.getType().equals(this.getType());
+        }
+        return false;
+    }
     
 }

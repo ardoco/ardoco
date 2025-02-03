@@ -1,6 +1,159 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+
 public class JavaModelMapper {
+    private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.JAVA;
+    private List<VariableElement> variables;
+    private List<ControlElement> controls;
+    private List<ClassElement> classes;
+    private List<InterfaceElement> interfaces;
+    private List<CompilationUnitElement> compilationUnits;
+    private CodeModel codeModel;
+    private final CodeItemRepository codeItemRepository;
+
+
+    public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits) {
+        this.codeItemRepository = codeItemRepository;
+        this.variables = variables;
+        this.controls = controls;
+        this.classes = classes;
+        this.interfaces = interfaces;
+        this.compilationUnits = compilationUnits;
+    }
     
-    
+
+    public CodeModel getCodeModel() {
+        return codeModel;
+    }
+
+    public void mapToCodeModel() {
+        SortedSet<CodeItem> content = new TreeSet<>();
+        for (CompilationUnitElement compilationUnit : compilationUnits) {
+            content.add(buildCodeCompilationUnit(compilationUnit));
+        }
+        codeModel = new CodeModel(codeItemRepository, content);
+    }
+
+    private CodeCompilationUnit buildCodeCompilationUnit(CompilationUnitElement compilationUnit) {
+        String name = compilationUnit.getName();
+        Parent comparable = new Parent(name, BasicType.COMPILATIONUNIT);
+        List<ClassElement> classesOfCompilationUnit = getAllClassesWith(comparable);
+        List<InterfaceElement> interfacesOfCompilationUnit = getAllInterfacesWith(comparable);
+        SortedSet<CodeItem> content = new TreeSet<>();
+
+        for (ClassElement classElement : classesOfCompilationUnit) {
+            content.add(buildClassUnit(classElement));
+        }
+        for (InterfaceElement interfaceElement : interfacesOfCompilationUnit) {
+            content.add(buildInterfaceUnit(interfaceElement));
+        }
+        List<String> pathElements = Arrays.asList(compilationUnit.getPathString().split("/"));
+        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, compilationUnit.getPackageName(), programmingLanguage);
+    }
+
+
+    private ClassUnit buildClassUnit(ClassElement classElement) {
+        String name = classElement.getName();
+        Parent comparable = new Parent(name, BasicType.CLASS);
+        List<VariableElement> variablesOfClass = getAllVariablesWith(comparable);
+        List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
+        List<ClassElement> innerClasses = getAllClassesWith(comparable);
+        SortedSet<CodeItem> content = new TreeSet<>();
+
+        // variables not implemented yet
+        for (ControlElement control : controlsOfClass) {
+            content.add(buildControlElement(control.getName()));
+        }
+        for (ClassElement innerClass : innerClasses) {
+            content.add(buildClassUnit(innerClass));
+        }
+        return new ClassUnit(codeItemRepository, name, content);      
+    }
+
+    private InterfaceUnit buildInterfaceUnit(InterfaceElement interfaceElement) {
+        String name = interfaceElement.getName();
+        Parent comparable = new Parent(name, BasicType.INTERFACE);
+        List<ControlElement> controlsOfInterface = getAllControlsWith(comparable);
+        SortedSet<CodeItem> content = new TreeSet<>();
+
+        for (ControlElement control : controlsOfInterface) {
+            content.add(buildControlElement(control.getName()));
+        }
+        return new InterfaceUnit(codeItemRepository, name, content);
+    }
+
+    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(String name) {
+        Parent comparable = new Parent(name, BasicType.CONTROL);
+        List<VariableElement> contentOfControl = new ArrayList<>();
+        for (VariableElement variable : variables) {
+            if (variable.getParent().equals(comparable)) {
+                contentOfControl.add(variable);
+                // not implemented yet
+            }
+        }
+        return new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+    }
+
+    private List<VariableElement> getAllVariablesWith(Parent parent) {
+        List<VariableElement> variablesWithParent = new ArrayList<>();
+        for (VariableElement variable : variables) {
+            if (variable.getParent().equals(parent)) {
+                variablesWithParent.add(variable);
+            }
+        }
+        return variablesWithParent;
+    }
+
+    private List<ControlElement> getAllControlsWith(Parent parent) {
+        List<ControlElement> controlsWithParent = new ArrayList<>();
+        for (ControlElement control : controls) {
+            if (control.getParent().equals(parent)) {
+                controlsWithParent.add(control);
+            }
+        }
+        for (ControlElement control : controlsWithParent) {
+            controls.remove(control);
+        }
+        return controlsWithParent;
+    }
+
+    private List<ClassElement> getAllClassesWith(Parent parent) {
+        List<ClassElement> classesWithParent = new ArrayList<>();
+        for (ClassElement classElement : classes) {
+            if (classElement.getParent().equals(parent)) {
+                classesWithParent.add(classElement);
+            }
+        }
+        return classesWithParent;
+    }
+
+    private List<InterfaceElement> getAllInterfacesWith(Parent parent) {
+        List<InterfaceElement> interfacesWithParent = new ArrayList<>();
+        for (InterfaceElement interfaceElement : interfaces) {
+            if (interfaceElement.getParent().equals(parent)) {
+                interfacesWithParent.add(interfaceElement);
+            }
+        }
+        return interfacesWithParent;
+    }
 }

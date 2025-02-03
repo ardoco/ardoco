@@ -21,7 +21,7 @@ public class Python3VariableExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
 
     @Test
-    public void testPyAClassVariableExtractor() throws IOException {
+    void testPyAClassVariableExtractor() throws IOException {
         String filePath = sourcePath + "APyClass.py";
         List<Python3VariableElement> variables = extractVariablesFromFile(filePath);
         Assertions.assertEquals(10, variables.size());
@@ -95,7 +95,7 @@ public class Python3VariableExtractorTest {
         File_inputContext ctx = parser.file_input();
 
         // Create a VariableExtractor and visit the File_inputContext
-        Python3VariableExtractor extractor = new Python3VariableExtractor(filePath);
+        Python3VariableExtractor extractor = new Python3VariableExtractor();
         return extractor.visitFile_input(ctx);
     }
 

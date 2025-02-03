@@ -68,6 +68,20 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
             for (var child : ctx.children) {
                 if (child instanceof Python3Parser.ClassdefContext) {
                     visitClassdef((Python3Parser.ClassdefContext) child);
+                } else if (child instanceof Python3Parser.DecoratedContext) {
+                    visitDecorated((Python3Parser.DecoratedContext) child);
+                }
+            }
+        }
+        return classes;
+    }
+
+    @Override
+    public List<Python3ClassElement> visitDecorated(Python3Parser.DecoratedContext ctx) {
+        if (ctx.children != null) {
+            for (var child : ctx.children) {
+                if (child instanceof Python3Parser.ClassdefContext) {
+                    visitClassdef((Python3Parser.ClassdefContext) child);
                 }
             }
         }

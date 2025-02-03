@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
@@ -31,8 +32,8 @@ public class JavaExtractor extends ANTLRExtractor {
     private List<InterfaceElement> interfaces = new ArrayList<>();
     private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
     private CompilationUnitContext tree;
-    private JavaModelMapper mapper = new JavaModelMapper();
-    private CodeModel codeModel;
+    private JavaModelMapper mapper;
+
 
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
@@ -46,8 +47,8 @@ public class JavaExtractor extends ANTLRExtractor {
         }
     }
 
-    public void mapToCodeModel() {
-        // this.mapper = new JavaModelMapper(variables, controls, classes, interfaces, compilationUnits);
+    public void mapToCodeModel() {   
+        this.mapper = new JavaModelMapper(this.codeItemRepository, variables, controls, classes, interfaces, compilationUnits);
     }
 
     public List<VariableElement> getVariables() {
