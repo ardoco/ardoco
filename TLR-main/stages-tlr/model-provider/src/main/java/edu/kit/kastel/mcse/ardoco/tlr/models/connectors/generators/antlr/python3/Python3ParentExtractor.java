@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
@@ -37,7 +38,9 @@ public final class Python3ParentExtractor {
     }
 
     private static Parent buildParentFromModuleContext(Python3Parser.File_inputContext ctx, BasicType type) {
-        String name = ctx.getText();
+        Token token = ctx.getStart();
+        String path = token.getTokenSource().getSourceName();
+        String name = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
         return new Parent(name, type);
     }
 }

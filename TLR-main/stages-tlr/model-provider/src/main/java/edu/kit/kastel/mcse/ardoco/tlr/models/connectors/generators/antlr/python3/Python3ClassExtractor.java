@@ -25,6 +25,7 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
         Parent parent = Python3ParentExtractor.getParent(ctx);
         Python3ClassElement Python3ClassElement = new Python3ClassElement(name, parent, childClassOf);
         classes.add(Python3ClassElement);
+        traverseInnerClasses(ctx);
         return classes;
     }
 
@@ -36,7 +37,41 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
             }
         }
         return parentClasses;
+    }
 
+    private void traverseInnerClasses(Python3Parser.ClassdefContext ctx) {
+        if (ctx.children != null) {
+            for (var child : ctx.children) {
+                if (child instanceof Python3Parser.BlockContext) {
+                    visitBlock(ctx.block());
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<Python3ClassElement> visitBlock(Python3Parser.BlockContext ctx) {
+        if (ctx.children != null) {
+            for (var child : ctx.children) {
+                if (child instanceof Python3Parser.StmtContext && ((Python3Parser.StmtContext) child).compound_stmt() != null) {
+                    visitCompound_stmt(((Python3Parser.StmtContext) child).compound_stmt());
+
+                }
+            }
+        }
+        return classes;
+    }
+
+    @Override
+    public List<Python3ClassElement> visitCompound_stmt(Python3Parser.Compound_stmtContext ctx) {
+        if (ctx.children != null) {
+            for (var child : ctx.children) {
+                if (child instanceof Python3Parser.ClassdefContext) {
+                    visitClassdef((Python3Parser.ClassdefContext) child);
+                }
+            }
+        }
+        return classes;
     }
     
 }

@@ -19,7 +19,7 @@ public class Python3ControlExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
 
     @Test
-    public void testPyAClassControlExtractor() throws IOException {
+    void testPyAClassControlExtractor() throws IOException {
         String filePath = sourcePath + "APyClass.py";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
         Assertions.assertEquals(6, controls.size());
@@ -52,8 +52,53 @@ public class Python3ControlExtractorTest {
         // Test the sixth control
         Assertions.assertEquals("display_value", controls.get(5).getName());
         Assertions.assertEquals("InnerClass2", controls.get(5).getParent().getName());
-        Assertions.assertEquals(BasicType.CLASS, controls.get(5).getParent().getType());
-        
+        Assertions.assertEquals(BasicType.CLASS, controls.get(5).getParent().getType());     
+    }
+
+    @Test
+    void testPyModuleControlExtractor() throws IOException {
+        String filePath = sourcePath + "APyModule.py";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertEquals(3, controls.size());
+
+        // Test the first control
+        Assertions.assertEquals("greet", controls.get(0).getName());
+        Assertions.assertEquals("APyModule", controls.get(0).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, controls.get(0).getParent().getType());
+
+        // Test the second control
+        Assertions.assertEquals("add", controls.get(1).getName());
+        Assertions.assertEquals("APyModule", controls.get(1).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, controls.get(1).getParent().getType());
+
+        // Test the third control
+        Assertions.assertEquals("subtract", controls.get(2).getName());
+        Assertions.assertEquals("APyModule", controls.get(2).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, controls.get(2).getParent().getType());
+    }
+
+    @Test
+    void testPyMetaclassExtractor() throws IOException {
+        String filePath = sourcePath + "APyMetaclass.py";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertEquals(2, controls.size());
+
+        // Test the first control
+        Assertions.assertEquals("__new__", controls.get(0).getName());
+        Assertions.assertEquals("APyMetaclass", controls.get(0).getParent().getName());
+        Assertions.assertEquals(BasicType.CLASS, controls.get(0).getParent().getType());
+
+        // Test the second control
+        Assertions.assertEquals("__init__", controls.get(1).getName());
+        Assertions.assertEquals("APyMetaclass", controls.get(1).getParent().getName());
+        Assertions.assertEquals(BasicType.CLASS, controls.get(1).getParent().getType());
+    }
+
+    @Test
+    void testPyEnumControlExtractor() throws IOException {
+        String filePath = sourcePath + "APyEnum.py";
+        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        Assertions.assertEquals(0, controls.size());
     }
     
     private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
