@@ -18,8 +18,8 @@ public final class Python3ParentExtractor {
                 Python3Parser.FuncdefContext funcCtx = (Python3Parser.FuncdefContext) parentCtx;
                 return buildParentFromFuncContext(funcCtx, BasicType.CONTROL);
             } else if (parentCtx instanceof Python3Parser.File_inputContext) {
-                Python3Parser.File_inputContext fileCtx = (Python3Parser.File_inputContext) parentCtx;
-                return buildParentFromModuleContext(fileCtx, BasicType.MODULE);
+                Python3Parser.File_inputContext moduleCtx = (Python3Parser.File_inputContext) parentCtx;
+                return buildParentFromModuleContext(moduleCtx, BasicType.MODULE);
             } else {
                 parentCtx = parentCtx.getParent();
             }

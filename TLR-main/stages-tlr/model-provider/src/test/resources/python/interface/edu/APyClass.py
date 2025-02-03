@@ -33,3 +33,6 @@ class AClass:
             print(f"InnerClass2 value: {self.value}")
             print(f"InnerClass2 instance variable: {self.instance_variable}")
             print(f"InnerClass2 class variable: {AClass.InnerClass2.class_variable}")
+
+class BClass:
+    class_variable = "Class Variable for BClass"

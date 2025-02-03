@@ -23,7 +23,7 @@ public class Python3ClassExtractorTest {
         String filePath = sourcePath + "APyClass.py";
         List<Python3ClassElement> classes = extractClassElementsFromFile(filePath);
 
-        Assertions.assertEquals(3, classes.size());
+        Assertions.assertEquals(4, classes.size());
 
         // Test the first class
         Assertions.assertEquals("AClass", classes.get(0).getName());
@@ -35,6 +35,7 @@ public class Python3ClassExtractorTest {
         // Test the second class
         Assertions.assertEquals("InnerClass1", classes.get(1).getName());
         Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
+        Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
         Assertions.assertEquals("AClass", classes.get(1).getParent().getName());
         Assertions.assertEquals(BasicType.CLASS, classes.get(1).getParent().getType());
 
@@ -43,6 +44,12 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals(0, classes.get(2).getIsChildOfClasses().size());
         Assertions.assertEquals("AClass", classes.get(2).getParent().getName());
         Assertions.assertEquals(BasicType.CLASS, classes.get(2).getParent().getType());
+
+        // Test the fourth class
+        Assertions.assertEquals("BClass", classes.get(3).getName());
+        Assertions.assertEquals(0, classes.get(1).getIsChildOfClasses().size());
+        Assertions.assertEquals("APyClass", classes.get(3).getParent().getName());
+        Assertions.assertEquals(BasicType.MODULE, classes.get(3).getParent().getType());
     }
 
     @Test
@@ -92,7 +99,7 @@ public class Python3ClassExtractorTest {
         File_inputContext ctx = parser.file_input();
 
         // Create a ClassExtractor and visit the File_inputContext
-        Python3ClassExtractor extractor = new Python3ClassExtractor();
+        Python3ClassExtractor extractor = new Python3ClassExtractor(filePath);
         return extractor.visitFile_input(ctx);
     }    
 }
