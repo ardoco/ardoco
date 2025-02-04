@@ -11,6 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
@@ -18,6 +19,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 
@@ -28,17 +30,20 @@ public class JavaModelMapper {
     private List<ClassElement> classes;
     private List<InterfaceElement> interfaces;
     private List<CompilationUnitElement> compilationUnits;
+    private List<PackageElement> packages;
     private CodeModel codeModel;
     private final CodeItemRepository codeItemRepository;
 
 
-    public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits) {
+    public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, 
+    List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages) {
         this.codeItemRepository = codeItemRepository;
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
         this.interfaces = interfaces;
         this.compilationUnits = compilationUnits;
+        this.packages = packages;
     }
     
 
@@ -48,10 +53,33 @@ public class JavaModelMapper {
 
     public void mapToCodeModel() {
         SortedSet<CodeItem> content = new TreeSet<>();
-        for (CompilationUnitElement compilationUnit : compilationUnits) {
-            content.add(buildCodeCompilationUnit(compilationUnit));
+        List<PackageElement> rootPackages = new ArrayList<>();
+
+        for (PackageElement packageElement : packages) {
+            if (packageNotAdded(packageElement, rootPackages)) {
+                content.add(buildCodePackage(packageElement));
+                rootPackages.add(packageElement);
+            }
         }
         codeModel = new CodeModel(codeItemRepository, content);
+
+    }
+
+    private CodePackage buildCodePackage(PackageElement packageElement) {
+        List<CompilationUnitElement> compilationUnitsOfPackage = getAllCompilationUnitElementsWith(packageElement);
+        SortedSet<CodeItem> content = new TreeSet<>();
+        
+        for (CompilationUnitElement compilationUnitElement : compilationUnitsOfPackage) {
+            content.add(buildCodeCompilationUnit(compilationUnitElement));
+        }
+
+        for (PackageElement innerPackage : packages) {
+            if (innerPackage.extendsPackage(packageElement)) {
+                innerPackage.updateShortName(innerPackage.getShortName().substring(packageElement.getShortName().length() + 1));
+                content.add(buildCodePackage(innerPackage));
+            }
+        }
+        return new CodePackage(codeItemRepository, packageElement.getShortName(), content);
     }
 
     private CodeCompilationUnit buildCodeCompilationUnit(CompilationUnitElement compilationUnit) {
@@ -68,14 +96,13 @@ public class JavaModelMapper {
             content.add(buildInterfaceUnit(interfaceElement));
         }
         List<String> pathElements = Arrays.asList(compilationUnit.getPathString().split("/"));
-        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, compilationUnit.getPackageName(), programmingLanguage);
+        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, compilationUnit.getPackage().getName(), programmingLanguage);
     }
 
 
     private ClassUnit buildClassUnit(ClassElement classElement) {
         String name = classElement.getName();
         Parent comparable = new Parent(name, BasicType.CLASS);
-        List<VariableElement> variablesOfClass = getAllVariablesWith(comparable);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
         List<ClassElement> innerClasses = getAllClassesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
@@ -108,20 +135,10 @@ public class JavaModelMapper {
         for (VariableElement variable : variables) {
             if (variable.getParent().equals(comparable)) {
                 contentOfControl.add(variable);
-                // not implemented yet
+                // variables not implemented yet
             }
         }
         return new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
-    }
-
-    private List<VariableElement> getAllVariablesWith(Parent parent) {
-        List<VariableElement> variablesWithParent = new ArrayList<>();
-        for (VariableElement variable : variables) {
-            if (variable.getParent().equals(parent)) {
-                variablesWithParent.add(variable);
-            }
-        }
-        return variablesWithParent;
     }
 
     private List<ControlElement> getAllControlsWith(Parent parent) {
@@ -155,5 +172,24 @@ public class JavaModelMapper {
             }
         }
         return interfacesWithParent;
+    }
+
+    private List<CompilationUnitElement> getAllCompilationUnitElementsWith(PackageElement packageElement) {
+        List<CompilationUnitElement> compilationUnitElementsOfPackage = new ArrayList<>();
+        for (CompilationUnitElement compilationUnitElement : compilationUnits) {
+            if (compilationUnitElement.getPackage().equals(packageElement)) {
+                compilationUnitElementsOfPackage.add(compilationUnitElement);
+            }
+        }
+        return compilationUnitElementsOfPackage;
+    }
+
+    private boolean packageNotAdded(PackageElement packageElement, List<PackageElement> addedPackages) {
+        for (PackageElement addedPackage : addedPackages) {
+            if (packageElement.extendsPackage(addedPackage)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -21,12 +21,17 @@ public class JavaModelMapperTest {
         JavaExtractor extractor = new JavaExtractor(repository, "src/test/resources/interface/edu/");
         extractor.execute();
 
-        JavaModelMapper mapper = new JavaModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getCompilationUnits());
+        JavaModelMapper mapper = new JavaModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getCompilationUnits(), extractor.getPackages());
         mapper.mapToCodeModel();
         CodeModel codeModel = mapper.getCodeModel();
         // Assertions
         Assertions.assertNotNull(mapper);
         Assertions.assertNotNull(codeModel);
+        Assertions.assertEquals(7, codeModel.getEndpoints().size());
+
+        // More Detailed Assertions
+        Assertions.assertEquals(codeModel.getAllPackages().size(), 3);
+
     }
 
 }

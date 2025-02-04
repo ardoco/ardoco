@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
@@ -13,30 +14,30 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.JavaModelMapper;
 import generated.antlr.JavaLexer;
 import generated.antlr.JavaParser;
 import generated.antlr.JavaParser.CompilationUnitContext;
 public class JavaExtractor extends ANTLRExtractor {
-    private ProgrammingLanguage language = ProgrammingLanguage.JAVA;
     private List<VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
     private List<ClassElement> classes = new ArrayList<>();
     private List<InterfaceElement> interfaces = new ArrayList<>();
     private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
+    private List<PackageElement> packages = new ArrayList<>();
     private CompilationUnitContext tree;
     private JavaModelMapper mapper;
+    private boolean extracted;
 
 
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
+        this.extracted = false;
     }
 
     public void execute() throws IOException {
@@ -47,8 +48,15 @@ public class JavaExtractor extends ANTLRExtractor {
         }
     }
 
-    public void mapToCodeModel() {   
-        this.mapper = new JavaModelMapper(this.codeItemRepository, variables, controls, classes, interfaces, compilationUnits);
+    public void buildMapper() {
+        if (!extracted) {
+            throw new IllegalStateException("Elements have not been extracted yet.");
+        }
+        this.mapper = new JavaModelMapper(this.codeItemRepository, variables, controls, classes, interfaces, compilationUnits, packages);
+    }
+
+    public JavaModelMapper getMapper() {
+        return mapper;
     }
 
     public List<VariableElement> getVariables() {
@@ -69,6 +77,10 @@ public class JavaExtractor extends ANTLRExtractor {
 
     public List<CompilationUnitElement> getCompilationUnits() {
         return compilationUnits;
+    }
+
+    public List<PackageElement> getPackages() {
+        return packages;
     }
 
     private List<Path> getJavaFiles() throws IOException {
@@ -96,7 +108,9 @@ public class JavaExtractor extends ANTLRExtractor {
             extractClasses();
             extractInterfaces();
             extractCompilationUnits(file);
+            extractPackages();
         }
+        this.extracted = true;
     }
 
     private void extractVariables() {
@@ -122,6 +136,16 @@ public class JavaExtractor extends ANTLRExtractor {
     private void extractCompilationUnits(Path file) {
         JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor(file.toString());
         compilationUnits.add(compilationUnitExtractor.visitCompilationUnit(tree));
+    }
+
+    private void extractPackages() {
+        for (CompilationUnitElement compilationUnit : compilationUnits) {
+            PackageElement packageElement = compilationUnit.getPackage();
+            if (!packages.contains(packageElement)) {
+                packages.add(packageElement);
+            }
+        }
+        packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts().length));
     }
 
 }
