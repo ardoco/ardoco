@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import generated.antlr.Python3Parser;
@@ -44,13 +45,14 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         List<String> values = extract(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
         Parent parent = Python3ParentExtractor.getParent(ctx);
+        String path = PathExtractor.extractPath(ctx);
 
         if (varName.size() != values.size()) {
             throw new IllegalArgumentException("The number of variable names and values does not match");
         }
 
         for (int i = 0; i < varName.size(); i++) {
-            Python3VariableElement variable = new Python3VariableElement(varName.get(i), types.get(i), parent, values.get(i));
+            Python3VariableElement variable = new Python3VariableElement(varName.get(i), path, types.get(i), parent, values.get(i));
             variables.add(variable);
         }
 

@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.JavaParser;
@@ -21,8 +22,9 @@ public class JavaInterfaceExtractor extends JavaParserBaseVisitor<List<Interface
     @Override
     public List<InterfaceElement> visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         String name = ctx.identifier().getText();
+        String path = PathExtractor.extractPath(ctx);
         Parent parent = JavaParentExtractor.getParent(ctx);
-        InterfaceElement interfaceElement = new InterfaceElement(name, parent);
+        InterfaceElement interfaceElement = new InterfaceElement(name, path, parent);
         interfaces.add(interfaceElement);
         return interfaces;
     }    

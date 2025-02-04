@@ -21,7 +21,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitAClassTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AClass.java");
         Assertions.assertEquals("AClass", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPath());
         Assertions.assertEquals("edu", element.getPackage().getName());
     }
 
@@ -29,7 +29,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitAnEnumTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnEnum.java");
         Assertions.assertEquals("AnEnum", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPath());
         Assertions.assertEquals("edu", element.getPackage().getName());
     }
 
@@ -37,7 +37,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitAnInterfaceTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnInterface.java");
         Assertions.assertEquals("AnInterface", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPath());
         Assertions.assertEquals("edu", element.getPackage().getName());
     }
 
@@ -45,7 +45,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitExtendedInterfaceTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "ExtendedInterface.java");
         Assertions.assertEquals("ExtendedInterface", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPath());
         Assertions.assertEquals("edu", element.getPackage().getName());
     }
 
@@ -53,7 +53,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitSuperclassTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "Superclass.java");
         Assertions.assertEquals("Superclass", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/", element.getPath());
         Assertions.assertEquals("edu", element.getPackage().getName());
     }
 
@@ -61,7 +61,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitOtherInterfaceZweiTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "zwei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/zwei/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/zwei/", element.getPath());
         Assertions.assertEquals("edu.zwei", element.getPackage().getName());
     }
 
@@ -69,7 +69,7 @@ class JavaCompilationUnitExtractorTest {
     void compilationUnitOtherInterfaceDreiTest() throws IOException {
         CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "drei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
-        Assertions.assertEquals("src/test/resources/interface/edu/drei/", element.getPathString());
+        Assertions.assertEquals("src/test/resources/interface/edu/drei/", element.getPath());
         Assertions.assertEquals("edu.drei", element.getPackage().getName());
     }
 
@@ -83,7 +83,7 @@ class JavaCompilationUnitExtractorTest {
         CompilationUnitContext ctx = parser.compilationUnit();
 
         // Create a JavaCompilationUnitExtractor and visit the CompilationUnitContext
-        JavaCompilationUnitExtractor extractor = new JavaCompilationUnitExtractor(filePath);
+        JavaCompilationUnitExtractor extractor = new JavaCompilationUnitExtractor();
         return extractor.visitCompilationUnit(ctx);
     }
 

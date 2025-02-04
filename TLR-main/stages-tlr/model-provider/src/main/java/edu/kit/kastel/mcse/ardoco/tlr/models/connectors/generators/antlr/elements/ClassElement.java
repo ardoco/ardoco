@@ -9,15 +9,15 @@ public class ClassElement extends BasicElement {
     private final List<String> implementedInterfaces;
 
 
-    public ClassElement(String name, Parent parent) {
-        super(name);
+    public ClassElement(String name, String path, Parent parent) {
+        super(name, path);
         this.parent = parent;
         this.extendsClass = "";
         this.implementedInterfaces = new ArrayList<String>();
     }
 
-    public ClassElement(String name, Parent parent, String extendsClass, List<String> implementedInterfaces) {
-        super(name);
+    public ClassElement(String name, String path, Parent parent, String extendsClass, List<String> implementedInterfaces) {
+        super(name, path);
         this.parent = parent;
         this.extendsClass = extendsClass;
         this.implementedInterfaces = implementedInterfaces;

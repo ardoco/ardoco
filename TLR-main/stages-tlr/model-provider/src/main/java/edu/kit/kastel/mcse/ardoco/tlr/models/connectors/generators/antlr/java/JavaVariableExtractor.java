@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import generated.antlr.JavaParser;
@@ -22,7 +23,8 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         String variableType = ctx.typeType().getText();
         Parent parent = JavaParentExtractor.getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
-        parseToVariablesList(varNames, variableType, parent);
+        String path = PathExtractor.extractPath(ctx);
+        parseToVariablesList(varNames, path, variableType, parent);
         return variables;
     }
 
@@ -31,7 +33,8 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         String variableType = ctx.typeType().getText();
         Parent parent = JavaParentExtractor.getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
-        parseToVariablesList(varNames, variableType, parent);
+        String path = PathExtractor.extractPath(ctx);
+        parseToVariablesList(varNames, path, variableType, parent);
         return variables;
     }
 
@@ -44,9 +47,9 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         return variableNames;
     }
 
-    private void parseToVariablesList(List<String> varNames, String variableType, Parent parent) {
+    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent) {
         for (String variableName : varNames) {
-            VariableElement variable = new VariableElement(variableName, variableType, parent);
+            VariableElement variable = new VariableElement(variableName, path, variableType, parent);
             variables.add(variable);
         }
     }

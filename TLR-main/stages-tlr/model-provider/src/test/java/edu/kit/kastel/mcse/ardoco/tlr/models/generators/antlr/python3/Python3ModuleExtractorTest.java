@@ -25,8 +25,8 @@ public class Python3ModuleExtractorTest {
         // Assertions
         Assertions.assertEquals(1, modules.size());
         Assertions.assertEquals("APyClass", modules.get(0).getName());
-        Assertions.assertEquals("src/test/resources/python/interface/edu/", modules.get(0).getPathString());
-        Assertions.assertEquals("edu", modules.get(0).getPackageName());
+        Assertions.assertEquals("src/test/resources/python/interface/edu/", modules.get(0).getPath());
+        Assertions.assertEquals("edu", modules.get(0).getPackage().getName());
     }
 
     @Test
@@ -36,8 +36,8 @@ public class Python3ModuleExtractorTest {
         // Assertions
         Assertions.assertEquals(1, modules.size());
         Assertions.assertEquals("OtherPyAbstractBaseClass", modules.get(0).getName());
-        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/", modules.get(0).getPathString());
-        Assertions.assertEquals("edu/drei", modules.get(0).getPackageName());
+        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/", modules.get(0).getPath());
+        Assertions.assertEquals("edu/drei", modules.get(0).getPackage().getName());
     }
 
     private List<Python3ModuleElement> extractModuleElement(String filePath) throws IOException {

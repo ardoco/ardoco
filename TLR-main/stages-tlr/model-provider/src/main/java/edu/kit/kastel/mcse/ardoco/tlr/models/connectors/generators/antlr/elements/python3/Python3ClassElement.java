@@ -10,14 +10,14 @@ public class Python3ClassElement extends BasicElement {
     private final Parent parent;
     private final List<String> isChildOfClasses;
 
-    public Python3ClassElement(String name, Parent parent) {
-        super(name);
+    public Python3ClassElement(String name, String path, Parent parent) {
+        super(name, path);
         this.parent = parent;
         this.isChildOfClasses = new ArrayList<String>();
     }
 
-    public Python3ClassElement(String name, Parent parent, List<String> isChildOfClasses) {
-        super(name);
+    public Python3ClassElement(String name, String path, Parent parent, List<String> isChildOfClasses) {
+        super(name, path);
         this.parent = parent;
         this.isChildOfClasses = isChildOfClasses;
     }

@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.JavaParser;
@@ -21,7 +22,8 @@ public class JavaControlExtractor extends JavaParserBaseVisitor<List<ControlElem
         public List<ControlElement> visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
             String name = ctx.identifier().getText();
             Parent parent = JavaParentExtractor.getParent(ctx);
-            ControlElement controlElement = new ControlElement(name, parent);
+            String path = PathExtractor.extractPath(ctx);
+            ControlElement controlElement = new ControlElement(name, path, parent);
             controls.add(controlElement);
             return controls;
         }    

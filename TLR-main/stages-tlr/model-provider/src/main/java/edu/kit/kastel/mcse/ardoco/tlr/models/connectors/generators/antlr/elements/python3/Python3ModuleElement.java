@@ -1,23 +1,29 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 
 public class Python3ModuleElement extends BasicElement {
-    private final String packageName;
-    private final String pathString;
+    private final PackageElement packageElement;
 
-    public Python3ModuleElement(String name, String pathString, String packageName) {
-        super(name);
-        this.pathString = pathString;
-        this.packageName = packageName;
+    public Python3ModuleElement(String name, String path, String packageName) {
+        super(name, path);
+        this.packageElement = new PackageElement(packageName, path);
     }
 
-    public String getPathString() {
-        return pathString;
+    public PackageElement getPackage() {
+        return packageElement;
     }
 
-    public String getPackageName() {
-        return packageName;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Python3ModuleElement) {
+            Python3ModuleElement module = (Python3ModuleElement) obj;
+            return module.getName().equals(this.getName()) &&
+                    module.getPath().equals(this.getPath()) &&
+                    module.getPackage().equals(this.getPackage());
+        }
+        return false;
     }
     
 }

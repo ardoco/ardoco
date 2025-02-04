@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python
 import java.util.ArrayList;
 import java.util.List;
 
+
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.Python3Parser;
@@ -20,8 +22,9 @@ public class Python3ControlExtractor extends Python3ParserBaseVisitor<List<Contr
     @Override
     public List<ControlElement> visitFuncdef(Python3Parser.FuncdefContext ctx) {
         String name = ctx.name().getText();
+        String path = PathExtractor.extractPath(ctx);
         Parent parent = Python3ParentExtractor.getParent(ctx);
-        ControlElement controlElement = new ControlElement(name, parent);
+        ControlElement controlElement = new ControlElement(name, path, parent);
         controls.add(controlElement);
         return controls;
     }

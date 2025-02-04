@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.JavaParser;
@@ -28,10 +29,11 @@ public List<ClassElement> visitCompilationUnit(JavaParser.CompilationUnitContext
 @Override
 public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
     String name = ctx.identifier().getText();
+    String path = PathExtractor.extractPath(ctx);
     Parent parent = JavaParentExtractor.getParent(ctx);
     String extendsClass = getExtendsClass(ctx);
     List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
-    ClassElement classElement = new ClassElement(name, parent, extendsClass, implementedInterfaces);
+    ClassElement classElement = new ClassElement(name, path, parent, extendsClass, implementedInterfaces);
     classes.add(classElement);
     return visitChildClasses(ctx);
 }
@@ -40,7 +42,8 @@ public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationConte
 public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
-    ClassElement classElement = new ClassElement(name, parent);
+    String path = PathExtractor.extractPath(ctx);
+    ClassElement classElement = new ClassElement(name, path, parent);
     classes.add(classElement);
     // You cannot have inner classes/enums in an enum
     return classes;
@@ -50,10 +53,11 @@ public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext
 public List<ClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx) {
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
+    String path = PathExtractor.extractPath(ctx);
 
     // Records can only implement Interfaces, not extend classes
     List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
-    ClassElement classElement = new ClassElement(name, parent);
+    ClassElement classElement = new ClassElement(name, path, parent);
     classElement.addImplementedInterfaces(implementedInterfaces);
     classes.add(classElement);
     return classes;

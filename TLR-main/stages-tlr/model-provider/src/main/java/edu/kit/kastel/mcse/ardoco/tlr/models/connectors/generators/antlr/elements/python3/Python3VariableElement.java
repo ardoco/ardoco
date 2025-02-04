@@ -10,8 +10,8 @@ public class Python3VariableElement extends BasicElement {
     private boolean typeHasBeenSet = false;
 
 
-    public Python3VariableElement(String name, String type, Parent parent, String value) {
-        super(name);
+    public Python3VariableElement(String name, String path, String type, Parent parent, String value) {
+        super(name, path);
         this.type = type;
         this.parent = parent;
         this.value = value;

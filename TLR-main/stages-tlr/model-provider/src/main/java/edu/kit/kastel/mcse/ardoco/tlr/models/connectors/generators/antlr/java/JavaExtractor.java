@@ -134,7 +134,7 @@ public class JavaExtractor extends ANTLRExtractor {
     }
 
     private void extractCompilationUnits(Path file) {
-        JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor(file.toString());
+        JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor();
         compilationUnits.add(compilationUnitExtractor.visitCompilationUnit(tree));
     }
 
@@ -145,7 +145,7 @@ public class JavaExtractor extends ANTLRExtractor {
                 packages.add(packageElement);
             }
         }
-        packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts().length));
+        packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts(".").length));
     }
 
 }

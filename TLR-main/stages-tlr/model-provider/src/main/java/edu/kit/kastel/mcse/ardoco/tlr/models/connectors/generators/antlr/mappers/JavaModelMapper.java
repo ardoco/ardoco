@@ -75,7 +75,7 @@ public class JavaModelMapper {
 
         for (PackageElement innerPackage : packages) {
             if (innerPackage.extendsPackage(packageElement)) {
-                innerPackage.updateShortName(innerPackage.getShortName().substring(packageElement.getShortName().length() + 1));
+                innerPackage.updateShortName(innerPackage.getShortName().substring(packageElement.getName().length() + 1));
                 content.add(buildCodePackage(innerPackage));
             }
         }
@@ -84,7 +84,8 @@ public class JavaModelMapper {
 
     private CodeCompilationUnit buildCodeCompilationUnit(CompilationUnitElement compilationUnit) {
         String name = compilationUnit.getName();
-        Parent comparable = new Parent(name, BasicType.COMPILATIONUNIT);
+        String path = compilationUnit.getPath();
+        Parent comparable = new Parent(name, path, BasicType.COMPILATIONUNIT);
         List<ClassElement> classesOfCompilationUnit = getAllClassesWith(comparable);
         List<InterfaceElement> interfacesOfCompilationUnit = getAllInterfacesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
@@ -95,21 +96,22 @@ public class JavaModelMapper {
         for (InterfaceElement interfaceElement : interfacesOfCompilationUnit) {
             content.add(buildInterfaceUnit(interfaceElement));
         }
-        List<String> pathElements = Arrays.asList(compilationUnit.getPathString().split("/"));
+        List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
         return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, compilationUnit.getPackage().getName(), programmingLanguage);
     }
 
 
     private ClassUnit buildClassUnit(ClassElement classElement) {
         String name = classElement.getName();
-        Parent comparable = new Parent(name, BasicType.CLASS);
+        String path = classElement.getPath();
+        Parent comparable = new Parent(name, path, BasicType.CLASS);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
         List<ClassElement> innerClasses = getAllClassesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
 
         // variables not implemented yet
         for (ControlElement control : controlsOfClass) {
-            content.add(buildControlElement(control.getName()));
+            content.add(buildControlElement(control));
         }
         for (ClassElement innerClass : innerClasses) {
             content.add(buildClassUnit(innerClass));
@@ -119,18 +121,22 @@ public class JavaModelMapper {
 
     private InterfaceUnit buildInterfaceUnit(InterfaceElement interfaceElement) {
         String name = interfaceElement.getName();
-        Parent comparable = new Parent(name, BasicType.INTERFACE);
+        String path = interfaceElement.getPath();
+        Parent comparable = new Parent(name, path, BasicType.INTERFACE);
         List<ControlElement> controlsOfInterface = getAllControlsWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
 
         for (ControlElement control : controlsOfInterface) {
-            content.add(buildControlElement(control.getName()));
+            content.add(buildControlElement(control));
         }
         return new InterfaceUnit(codeItemRepository, name, content);
     }
 
-    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(String name) {
-        Parent comparable = new Parent(name, BasicType.CONTROL);
+    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement controlElement) {
+        String name = controlElement.getName();
+        String path = controlElement.getPath();
+        Parent comparable = new Parent(name, path, BasicType.CONTROL);
+
         List<VariableElement> contentOfControl = new ArrayList<>();
         for (VariableElement variable : variables) {
             if (variable.getParent().equals(comparable)) {

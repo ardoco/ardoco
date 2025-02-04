@@ -4,18 +4,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.Python3ModelMapper;
 import generated.antlr.Python3Lexer;
 import generated.antlr.Python3Parser;
 import generated.antlr.Python3Parser.File_inputContext;
@@ -26,8 +28,10 @@ public class Python3Extractor extends ANTLRExtractor {
     private List<ControlElement> controls = new ArrayList<>();
     private List<Python3ClassElement> classes = new ArrayList<>();
     private List<Python3ModuleElement> modules = new ArrayList<>();
-    // private PythonModelMapper mapper = new PythonModelMapper();
-    private CodeModel codeModel;
+    private List<PackageElement> packages = new ArrayList<>();
+    private Python3ModelMapper mapper;
+    private boolean extracted;
+    
 
 
     public Python3Extractor(CodeItemRepository repository, String path) {
@@ -43,7 +47,10 @@ public class Python3Extractor extends ANTLRExtractor {
     }
 
     public void mapToCodeModel() {
-        // this.mapper = new PythonModelMapper(variables, controls, classes);
+        if (!extracted) {
+            throw new IllegalStateException("Elements have not been extracted yet.");
+        }
+        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages);
     }
 
     public List<Python3VariableElement> getVariables() {
@@ -61,6 +68,16 @@ public class Python3Extractor extends ANTLRExtractor {
     public List<Python3ModuleElement> getModules() {
         return modules;
     }
+
+    public List<PackageElement> getPackages() {
+        return packages;
+    }
+
+    public Python3ModelMapper getMapper() {
+        return mapper;
+    }
+
+
 
     private List<Path> getPythonFiles() throws IOException {
         Path dir = Path.of(path);
@@ -85,6 +102,8 @@ public class Python3Extractor extends ANTLRExtractor {
             extractControls(ctx);
             extractClasses(ctx);
             extractModules(ctx);
+            extractPackages();
+            this.extracted = true;
         }
     }
 
@@ -106,5 +125,15 @@ public class Python3Extractor extends ANTLRExtractor {
     private void extractModules(File_inputContext ctx) {
         Python3ModuleExtractor extractor = new Python3ModuleExtractor(path);
         this.modules.addAll(extractor.visitFile_input(ctx));
+    }
+
+    private void extractPackages() {
+        for (Python3ModuleElement module : modules) {
+            PackageElement packageElement = module.getPackage();
+            if (!packages.contains(packageElement)) {
+                packages.add(packageElement);
+            }
+        }
+        packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts("/").length));
     }
 }

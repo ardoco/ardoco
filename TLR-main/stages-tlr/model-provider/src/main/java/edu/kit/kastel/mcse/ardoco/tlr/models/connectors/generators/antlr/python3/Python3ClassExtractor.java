@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import generated.antlr.Python3Parser;
 
@@ -21,9 +22,10 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
     @Override
     public List<Python3ClassElement> visitClassdef(Python3Parser.ClassdefContext ctx) {
         String name = ctx.name().getText();
+        String path = PathExtractor.extractPath(ctx);
         List<String> childClassOf = getParentClasses(ctx);
         Parent parent = Python3ParentExtractor.getParent(ctx);
-        Python3ClassElement Python3ClassElement = new Python3ClassElement(name, parent, childClassOf);
+        Python3ClassElement Python3ClassElement = new Python3ClassElement(name, path, parent, childClassOf);
         classes.add(Python3ClassElement);
         traverseInnerClasses(ctx);
         return classes;

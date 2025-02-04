@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 public class Parent extends BasicElement {
     private final BasicType type;
 
-    public Parent(String name, BasicType parentType) {
-        super(name);
+    public Parent(String name, String path, BasicType parentType) {
+        super(name, path);
         this.type = parentType;
     }
 
@@ -17,7 +17,8 @@ public class Parent extends BasicElement {
     public boolean equals(Object obj) {
         if (obj instanceof Parent) {
             Parent parent = (Parent) obj;
-            return parent.getName().equals(this.getName()) && parent.getType().equals(this.getType());
+            return parent.getName().equals(this.getName()) && parent.getType().equals(this.getType()) 
+                && parent.getPath().equals(this.getPath());
         }
         return false;
     }

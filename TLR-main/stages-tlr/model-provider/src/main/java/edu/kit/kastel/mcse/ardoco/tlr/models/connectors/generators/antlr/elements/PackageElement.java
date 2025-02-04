@@ -3,13 +3,13 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 public class PackageElement extends BasicElement {
     private String shortName;
 
-    public PackageElement(String name) {
-        super(name);
+    public PackageElement(String name, String path) {
+        super(name, path);
         this.shortName = name;
     }
 
-    public String[] getPackageNameParts() {
-        return this.getName().split(".");
+    public String[] getPackageNameParts(String regex) {
+        return this.getName().split(regex);
     }
 
     public void updateShortName(String shortName) {
