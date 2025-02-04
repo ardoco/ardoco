@@ -7,8 +7,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3ModuleExtractor;
@@ -18,7 +16,6 @@ import generated.antlr.Python3Parser.File_inputContext;
 
 
 public class Python3ModuleExtractorTest {
-    private static final Logger logger = LoggerFactory.getLogger(Python3ClassExtractorTest.class);
     String sourcePath = "src/test/resources/python/interface/edu/";
     
     @Test

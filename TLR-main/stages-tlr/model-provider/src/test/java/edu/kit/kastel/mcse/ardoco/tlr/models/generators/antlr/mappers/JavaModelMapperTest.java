@@ -3,8 +3,6 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -13,7 +11,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers
 
 
 public class JavaModelMapperTest {
-    private static final Logger logger = LoggerFactory.getLogger(JavaModelMapperTest.class);
 
     @Test
     void testJavaModelMapper() throws IOException {

@@ -4,14 +4,11 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3Extractor;
 
 public class Python3ExtractorTest {
-    private static final Logger logger = LoggerFactory.getLogger(Python3ClassExtractorTest.class);
     
     @Test
     void executePython3ExtractorForMinimalDirectoryTest() throws IOException {

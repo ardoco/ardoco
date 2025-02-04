@@ -7,8 +7,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
@@ -18,7 +16,6 @@ import generated.antlr.JavaParser;
 import generated.antlr.JavaParser.CompilationUnitContext;
 
 public class JavaInterfaceExtractorTest {
-    private static final Logger logger = LoggerFactory.getLogger(JavaClassExtractorTest.class);
     private final String sourcePath = "src/test/resources/interface/edu/";
 
     @Test
