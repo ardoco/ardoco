@@ -3,9 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
@@ -14,15 +12,10 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import generated.antlr.JavaParser;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaModel;
 import generated.antlr.JavaLexer;
 
 public class ANTLRExtractor extends CodeExtractor {

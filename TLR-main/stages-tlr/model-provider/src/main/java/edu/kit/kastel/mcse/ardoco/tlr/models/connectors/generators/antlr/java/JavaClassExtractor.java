@@ -18,6 +18,8 @@ public List<ClassElement> visitCompilationUnit(JavaParser.CompilationUnitContext
             visitClassDeclaration(typeDeclarationContext.classDeclaration());
         } else if (typeDeclarationContext.enumDeclaration() != null) {
             visitEnumDeclaration(typeDeclarationContext.enumDeclaration());
+        } else if (typeDeclarationContext.recordDeclaration() != null) {
+            visitRecordDeclaration(typeDeclarationContext.recordDeclaration());
         }
     }
     return classes;
@@ -44,6 +46,19 @@ public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext
     return classes;
 }
 
+@Override
+public List<ClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx) {
+    String name = ctx.identifier().getText();
+    Parent parent = JavaParentExtractor.getParent(ctx);
+
+    // Records can only implement Interfaces, not extend classes
+    List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
+    ClassElement classElement = new ClassElement(name, parent);
+    classElement.addImplementedInterfaces(implementedInterfaces);
+    classes.add(classElement);
+    return classes;
+}
+
 private String getExtendsClass(JavaParser.ClassDeclarationContext ctx) {
     if (ctx.typeType() != null) {
         return ctx.typeType().getText();
@@ -55,13 +70,29 @@ private List<String> extractImplementedInterfaces(JavaParser.ClassDeclarationCon
     List<String> implementedInterfaces = new ArrayList<>();
     for (JavaParser.TypeListContext typeListContext : ctx.typeList()) {
         if (typeListContext != null) {
-            typeListContext.typeType().forEach(typeTypeContext -> {
-                // Extract the text and remove generic type parameters
-                String typeName = typeTypeContext.getText();
-                String simpleName = typeName.replaceAll("<.*?>", ""); // Remove everything inside <>
-                implementedInterfaces.add(simpleName);
-            });
+            implementedInterfaces = extractImplementedInterfaces(typeListContext);
         }
+    }
+    return implementedInterfaces;
+}
+
+private List<String> extractImplementedInterfaces(JavaParser.RecordDeclarationContext ctx) {
+    List<String> implementedInterfaces = new ArrayList<>();
+    if (ctx.typeList() != null) {
+        implementedInterfaces = extractImplementedInterfaces(ctx.typeList());
+    }
+    return implementedInterfaces;
+}
+
+private List<String> extractImplementedInterfaces(JavaParser.TypeListContext ctx) {
+    List<String> implementedInterfaces = new ArrayList<>();
+    if (ctx != null) {
+        ctx.typeType().forEach(typeTypeContext -> {
+            // Extract the text and remove generic type parameters
+            String typeName = typeTypeContext.getText();
+            String simpleName = typeName.replaceAll("<.*?>", ""); // Remove everything inside <>
+            implementedInterfaces.add(simpleName);
+        });
     }
     return implementedInterfaces;
 }
