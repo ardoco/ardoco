@@ -18,7 +18,7 @@ public class JavaModelMapperTest {
         JavaExtractor extractor = new JavaExtractor(repository, "src/test/resources/interface/edu/");
         extractor.execute();
 
-        JavaModelMapper mapper = new JavaModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getCompilationUnits(), extractor.getPackages());
+        JavaModelMapper mapper = new JavaModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getCompilationUnits(), extractor.getPackages(), extractor.getComments());
         mapper.mapToCodeModel();
         CodeModel codeModel = mapper.getCodeModel();
         // Assertions

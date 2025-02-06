@@ -3,10 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 public class BasicElement {
     private final String path;
     private final String name;
+    private int fromLine;
+    private int toLine;
+    private String comment;
 
     public BasicElement(String name, String path) {
         this.name = name;
         this.path = path;
+        this.comment = "";
 
     }
 
@@ -16,6 +20,30 @@ public class BasicElement {
 
     public String getPath() {
         return path;
+    }
+
+    public int getFromLine() {
+        return fromLine;
+    }
+
+    public int getToLine() {
+        return toLine;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setFromLine(int fromLine) {
+        this.fromLine = fromLine;
+    }
+
+    public void setToLine(int toLine) {
+        this.toLine = toLine;
+    }
+
+    public String setComment(String comment) {
+        return this.comment += comment + "\n";
     }
 
     @Override

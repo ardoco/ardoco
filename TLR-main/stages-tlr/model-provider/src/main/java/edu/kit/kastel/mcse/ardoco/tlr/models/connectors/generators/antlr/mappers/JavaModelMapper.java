@@ -16,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
@@ -36,12 +37,17 @@ public class JavaModelMapper {
 
 
     public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, 
-    List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages) {
+    List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages,
+    List<CommentElement> comments) {
         this.codeItemRepository = codeItemRepository;
-        this.variables = variables;
-        this.controls = controls;
-        this.classes = classes;
-        this.interfaces = interfaces;
+
+        JavaCommentMapper javaCommentMapper = new JavaCommentMapper(variables, controls, classes, interfaces, comments);
+        javaCommentMapper.mapComments();
+        this.variables = javaCommentMapper.getVariables();
+        this.controls = javaCommentMapper.getControls();
+        this.classes = javaCommentMapper.getClasses();
+        this.interfaces = javaCommentMapper.getInterfaces();
+        
         this.compilationUnits = compilationUnits;
         this.packages = packages;
     }
@@ -52,6 +58,7 @@ public class JavaModelMapper {
     }
 
     public void mapToCodeModel() {
+
         SortedSet<CodeItem> content = new TreeSet<>();
         List<PackageElement> rootPackages = new ArrayList<>();
 
@@ -153,9 +160,6 @@ public class JavaModelMapper {
             if (control.getParent().equals(parent)) {
                 controlsWithParent.add(control);
             }
-        }
-        for (ControlElement control : controlsWithParent) {
-            controls.remove(control);
         }
         return controlsWithParent;
     }

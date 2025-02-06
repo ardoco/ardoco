@@ -24,7 +24,12 @@ public class JavaInterfaceExtractor extends JavaParserBaseVisitor<List<Interface
         String name = ctx.identifier().getText();
         String path = PathExtractor.extractPath(ctx);
         Parent parent = JavaParentExtractor.getParent(ctx);
+        int fromLine = ctx.getStart().getLine();
+        int toLine = ctx.getStop().getLine();
+
         InterfaceElement interfaceElement = new InterfaceElement(name, path, parent);
+        interfaceElement.setFromLine(fromLine);
+        interfaceElement.setToLine(toLine);
         interfaces.add(interfaceElement);
         return interfaces;
     }    

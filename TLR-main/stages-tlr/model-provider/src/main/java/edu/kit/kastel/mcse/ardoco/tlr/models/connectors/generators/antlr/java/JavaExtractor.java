@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -30,6 +31,8 @@ public class JavaExtractor extends ANTLRExtractor {
     private List<InterfaceElement> interfaces = new ArrayList<>();
     private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
+    private List<CommentElement> comments = new ArrayList<>();
+    private CommonTokenStream tokens;
     private CompilationUnitContext tree;
     private JavaModelMapper mapper;
     private boolean extracted;
@@ -52,7 +55,7 @@ public class JavaExtractor extends ANTLRExtractor {
         if (!extracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new JavaModelMapper(this.codeItemRepository, variables, controls, classes, interfaces, compilationUnits, packages);
+        this.mapper = new JavaModelMapper(this.codeItemRepository, variables, controls, classes, interfaces, compilationUnits, packages, comments);
     }
 
     public JavaModelMapper getMapper() {
@@ -83,6 +86,10 @@ public class JavaExtractor extends ANTLRExtractor {
         return packages;
     }
 
+    public List<CommentElement> getComments() {
+        return comments;
+    }
+
     private List<Path> getJavaFiles() throws IOException {
         Path dir = Path.of(this.path);
         List<Path> javaFiles = new ArrayList<>();
@@ -96,19 +103,20 @@ public class JavaExtractor extends ANTLRExtractor {
     private void buildCompilationCtxForFile(Path file) throws IOException {
         CharStream input = CharStreams.fromFileName(file.toString());
         JavaLexer lexer = new JavaLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        this.tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
         this.tree = parser.compilationUnit();
     }
 
     private void extractElementsFromFile(Path file) {
-        if (this.tree != null) {
+        if (this.tree != null && this.tokens != null) {
             extractVariables();
             extractControls();
             extractClasses();
             extractInterfaces();
             extractCompilationUnits(file);
             extractPackages();
+            extractComments(file);
         }
         this.extracted = true;
     }
@@ -148,6 +156,12 @@ public class JavaExtractor extends ANTLRExtractor {
         packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts(".").length));
     }
 
+    private void extractComments(Path file) {
+        String filePath = file.toString();
+        JavaCommentExtractor commentExtractor = new JavaCommentExtractor(tokens, filePath);
+        commentExtractor.extract();
+        comments.addAll(commentExtractor.getComments());
+    }
 }
     
 
