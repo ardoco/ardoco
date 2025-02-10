@@ -18,7 +18,7 @@ public class Pyhton3ModelMapperTest {
         Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
         extractor.execute();
 
-        Python3ModelMapper mapper = new Python3ModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getModules(), extractor.getPackages());
+        Python3ModelMapper mapper = new Python3ModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getModules(), extractor.getPackages(), extractor.getComments());
         mapper.mapToCodeModel();
         CodeModel codeModel = mapper.getCodeModel();
         // Assertions

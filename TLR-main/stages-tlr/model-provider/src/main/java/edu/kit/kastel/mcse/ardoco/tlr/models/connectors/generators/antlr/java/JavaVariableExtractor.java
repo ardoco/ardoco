@@ -24,9 +24,9 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         Parent parent = JavaParentExtractor.getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
         String path = PathExtractor.extractPath(ctx);
-        int fromLine = ctx.getStart().getLine();
-        int toLine = ctx.getStop().getLine();
-        parseToVariablesList(varNames, path, variableType, parent, fromLine, toLine);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
+        parseToVariablesList(varNames, path, variableType, parent, startLine, endLine);
         return variables;
     }
 
@@ -36,10 +36,10 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         Parent parent = JavaParentExtractor.getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
         String path = PathExtractor.extractPath(ctx);
-        int fromLine = ctx.getStart().getLine();
-        int toLine = ctx.getStop().getLine();
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
         
-        parseToVariablesList(varNames, path, variableType, parent, fromLine, toLine);
+        parseToVariablesList(varNames, path, variableType, parent, startLine, endLine);
         return variables;
     }
 
@@ -52,11 +52,11 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         return variableNames;
     }
 
-    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent, int fromLine, int toLine) {
+    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent, int startLine, int endLine) {
         for (String variableName : varNames) {
             VariableElement variable = new VariableElement(variableName, path, variableType, parent);
-            variable.setFromLine(fromLine);
-            variable.setToLine(toLine);
+            variable.setStartLine(startLine);
+            variable.setEndLine(endLine);
             variables.add(variable);
         }
     }

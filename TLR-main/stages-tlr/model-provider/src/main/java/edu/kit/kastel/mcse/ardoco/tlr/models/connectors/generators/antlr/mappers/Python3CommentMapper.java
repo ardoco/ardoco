@@ -4,25 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 
-public class JavaCommentMapper {
-    private List<VariableElement> variables;
+public class Python3CommentMapper {
+    private List<Python3VariableElement> variables;
     private List<ControlElement> controls;
-    private List<ClassElement> classes;
-    private List<InterfaceElement> interfaces;
+    private List<Python3ClassElement> classes;
     private List<CommentElement> comments;
 
-
-    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
+    public Python3CommentMapper(List<Python3VariableElement> variables, List<ControlElement> controls, List<Python3ClassElement> classes, List<CommentElement> comments) {
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
-        this.interfaces = interfaces;
         this.comments = comments;
     }
 
@@ -31,7 +27,6 @@ public class JavaCommentMapper {
         allElements.addAll(variables);
         allElements.addAll(controls);
         allElements.addAll(classes);
-        allElements.addAll(interfaces);
 
         for (CommentElement comment : comments) {
             BasicElement closestElement = findClosestElement(comment, allElements);
@@ -44,7 +39,7 @@ public class JavaCommentMapper {
         }
     }
 
-    public List<VariableElement> getVariables() {
+    public List<Python3VariableElement> getVariables() {
         return variables;
     }
 
@@ -52,12 +47,8 @@ public class JavaCommentMapper {
         return controls;
     }
 
-    public List<ClassElement> getClasses() {
+    public List<Python3ClassElement> getClasses() {
         return classes;
-    }
-
-    public List<InterfaceElement> getInterfaces() {
-        return interfaces;
     }
 
     private BasicElement findClosestElement(CommentElement comment, List<BasicElement> elements) {
@@ -100,44 +91,41 @@ public class JavaCommentMapper {
         return Math.abs(elementStartLine - commentEndLine);
     }
 
-
     private void setCommentToElement(BasicElement element, CommentElement comment) {
         boolean found = false;
-        for (VariableElement var : variables) {
-            if (var.equals(element)) {
-                var.setComment(comment.getText());
+
+        for (Python3VariableElement variable : variables) {
+            if (variable.equals(element)) {
+                variable.setComment(comment.getText());
                 found = true;
+                break;
             }
         }
+
         if (!found) {
             for (ControlElement control : controls) {
                 if (control.equals(element)) {
                     control.setComment(comment.getText());
                     found = true;
-                }
-            }
-        }
-        if (!found) {
-            for (ClassElement clazz : classes) {
-                if (clazz.equals(element)) {
-                    clazz.setComment(comment.getText());
-                    found = true;
-                }
-            }
-        }
-        if (!found) {
-            for (InterfaceElement interf : interfaces) {
-                if (interf.equals(element)) {
-                    interf.setComment(comment.getText());
-                    found = true;
+                    break;
                 }
             }
         }
 
         if (!found) {
-            throw new IllegalStateException("Element not found in any list.");
+            for (Python3ClassElement classElement : classes) {
+                if (classElement.equals(element)) {
+                    classElement.setComment(comment.getText());
+                    found = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!found) {
+            throw new IllegalStateException("No element found for comment.");
         }
     }
-
+    
     
 }

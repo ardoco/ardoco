@@ -10,8 +10,10 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLRExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
@@ -29,6 +31,8 @@ public class Python3Extractor extends ANTLRExtractor {
     private List<Python3ClassElement> classes = new ArrayList<>();
     private List<Python3ModuleElement> modules = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
+    private List<CommentElement> comments = new ArrayList<>();
+    private CommonTokenStream tokens;
     private Python3ModelMapper mapper;
     private boolean extracted;
     
@@ -42,7 +46,7 @@ public class Python3Extractor extends ANTLRExtractor {
         List<Path> files = getPythonFiles();
         for (Path file : files) {
             File_inputContext ctx = buildFileInputContext(file);
-            extractElementsFromFile(ctx);
+            extractElementsFromFile(ctx, file);
         }
     }
 
@@ -50,7 +54,7 @@ public class Python3Extractor extends ANTLRExtractor {
         if (!extracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages);
+        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages, comments);
     }
 
     public List<Python3VariableElement> getVariables() {
@@ -73,6 +77,10 @@ public class Python3Extractor extends ANTLRExtractor {
         return packages;
     }
 
+    public List<CommentElement> getComments() {
+        return comments;
+    }
+
     public Python3ModelMapper getMapper() {
         return mapper;
     }
@@ -91,18 +99,19 @@ public class Python3Extractor extends ANTLRExtractor {
 
     private File_inputContext buildFileInputContext(Path file) throws IOException {
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(file));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        this.tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
         return parser.file_input();
     }
 
-    private void extractElementsFromFile(File_inputContext ctx) {
+    private void extractElementsFromFile(File_inputContext ctx, Path file) {
         if (ctx != null) {
             extractVariables(ctx);
             extractControls(ctx);
             extractClasses(ctx);
             extractModules(ctx);
             extractPackages();
+            extractComments(file);
             this.extracted = true;
         }
     }
@@ -135,5 +144,12 @@ public class Python3Extractor extends ANTLRExtractor {
             }
         }
         packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts("/").length));
+    }
+
+    private void extractComments(Path file) {
+        String path = file.toString();
+        Python3CommentExtractor commentExtractor = new Python3CommentExtractor(tokens, path);
+        commentExtractor.extract();
+        comments.addAll(commentExtractor.getComments());
     }
 }

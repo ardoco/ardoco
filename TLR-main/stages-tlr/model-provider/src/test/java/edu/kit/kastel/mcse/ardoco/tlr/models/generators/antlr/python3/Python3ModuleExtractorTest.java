@@ -25,7 +25,7 @@ public class Python3ModuleExtractorTest {
         // Assertions
         Assertions.assertEquals(1, modules.size());
         Assertions.assertEquals("APyClass", modules.get(0).getName());
-        Assertions.assertEquals("src/test/resources/python/interface/edu/", modules.get(0).getPath());
+        Assertions.assertEquals("src/test/resources/python/interface/edu/APyClass.py", modules.get(0).getPath());
         Assertions.assertEquals("edu", modules.get(0).getPackage().getName());
     }
 
@@ -36,7 +36,7 @@ public class Python3ModuleExtractorTest {
         // Assertions
         Assertions.assertEquals(1, modules.size());
         Assertions.assertEquals("OtherPyAbstractBaseClass", modules.get(0).getName());
-        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/", modules.get(0).getPath());
+        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/OtherPyAbstractBaseClass.py", modules.get(0).getPath());
         Assertions.assertEquals("edu/drei", modules.get(0).getPackage().getName());
     }
 

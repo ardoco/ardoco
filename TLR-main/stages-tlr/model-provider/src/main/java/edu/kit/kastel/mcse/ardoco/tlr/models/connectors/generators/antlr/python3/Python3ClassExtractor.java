@@ -25,8 +25,13 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
         String path = PathExtractor.extractPath(ctx);
         List<String> childClassOf = getParentClasses(ctx);
         Parent parent = Python3ParentExtractor.getParent(ctx);
-        Python3ClassElement Python3ClassElement = new Python3ClassElement(name, path, parent, childClassOf);
-        classes.add(Python3ClassElement);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
+
+        Python3ClassElement python3ClassElement = new Python3ClassElement(name, path, parent, childClassOf);
+        python3ClassElement.setStartLine(startLine);
+        python3ClassElement.setEndLine(endLine);
+        classes.add(python3ClassElement);
         traverseInnerClasses(ctx);
         return classes;
     }

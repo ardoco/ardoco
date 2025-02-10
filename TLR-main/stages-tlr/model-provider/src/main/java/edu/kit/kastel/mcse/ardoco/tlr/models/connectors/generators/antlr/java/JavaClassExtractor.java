@@ -33,12 +33,12 @@ public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationConte
     Parent parent = JavaParentExtractor.getParent(ctx);
     String extendsClass = getExtendsClass(ctx);
     List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
-    int fromLine = ctx.getStart().getLine();
-    int toLine = ctx.getStop().getLine();
+    int startLine = ctx.getStart().getLine();
+    int endLine = ctx.getStop().getLine();
 
     ClassElement classElement = new ClassElement(name, path, parent, extendsClass, implementedInterfaces);
-    classElement.setFromLine(fromLine);
-    classElement.setToLine(toLine);
+    classElement.setStartLine(startLine);
+    classElement.setEndLine(endLine);
     classes.add(classElement);
     return visitChildClasses(ctx);
 }
@@ -48,12 +48,12 @@ public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
     String path = PathExtractor.extractPath(ctx);
-    int fromLine = ctx.getStart().getLine();
-    int toLine = ctx.getStop().getLine();
+    int startLine = ctx.getStart().getLine();
+    int endLine = ctx.getStop().getLine();
 
     ClassElement classElement = new ClassElement(name, path, parent);
-    classElement.setFromLine(fromLine);
-    classElement.setToLine(toLine);
+    classElement.setStartLine(startLine);
+    classElement.setEndLine(endLine);
     classes.add(classElement);
     // You cannot have inner classes/enums in an enum
     return classes;
@@ -64,15 +64,15 @@ public List<ClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationCon
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
     String path = PathExtractor.extractPath(ctx);
-    int fromLine = ctx.getStart().getLine();
-    int toLine = ctx.getStop().getLine();
+    int startLine = ctx.getStart().getLine();
+    int endLine = ctx.getStop().getLine();
 
     // Records can only implement Interfaces, not extend classes
     List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
     ClassElement classElement = new ClassElement(name, path, parent);
     classElement.addImplementedInterfaces(implementedInterfaces);
-    classElement.setFromLine(fromLine);
-    classElement.setToLine(toLine);
+    classElement.setStartLine(startLine);
+    classElement.setEndLine(endLine);
     classes.add(classElement);
     return classes;
 }

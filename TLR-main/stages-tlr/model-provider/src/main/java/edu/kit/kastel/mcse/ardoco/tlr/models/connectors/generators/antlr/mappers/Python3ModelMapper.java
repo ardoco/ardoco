@@ -13,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
@@ -32,10 +33,12 @@ public class Python3ModelMapper {
 
 
     public Python3ModelMapper(CodeItemRepository codeItemRepository, List<Python3VariableElement> variables, List<ControlElement> controls, 
-    List<Python3ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages) {
-        this.variables = variables;
-        this.controls = controls;
-        this.classes = classes;
+    List<Python3ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages, List<CommentElement> comments) {
+        Python3CommentMapper commentMapper = new Python3CommentMapper(variables, controls, classes, comments);
+        commentMapper.mapComments();
+        this.variables = commentMapper.getVariables();
+        this.controls = commentMapper.getControls();
+        this.classes = commentMapper.getClasses();
         this.modules = modules;
         this.packages = packages;
         this.codeItemRepository = codeItemRepository;

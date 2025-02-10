@@ -46,6 +46,8 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         List<String> types = inferTypesFromValues(values);
         Parent parent = Python3ParentExtractor.getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
 
         if (varName.size() != values.size()) {
             throw new IllegalArgumentException("The number of variable names and values does not match");
@@ -53,6 +55,8 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
 
         for (int i = 0; i < varName.size(); i++) {
             Python3VariableElement variable = new Python3VariableElement(varName.get(i), path, types.get(i), parent, values.get(i));
+            variable.setStartLine(startLine);
+            variable.setEndLine(endLine);
             variables.add(variable);
         }
 

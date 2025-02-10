@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 public class BasicElement {
     private final String path;
     private final String name;
-    private int fromLine;
-    private int toLine;
+    private int startLine;
+    private int endLine;
     private String comment;
 
     public BasicElement(String name, String path) {
@@ -22,24 +22,24 @@ public class BasicElement {
         return path;
     }
 
-    public int getFromLine() {
-        return fromLine;
+    public int getStartLine() {
+        return startLine;
     }
 
-    public int getToLine() {
-        return toLine;
+    public int getEndLine() {
+        return endLine;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setFromLine(int fromLine) {
-        this.fromLine = fromLine;
+    public void setStartLine(int fromLine) {
+        this.startLine = fromLine;
     }
 
-    public void setToLine(int toLine) {
-        this.toLine = toLine;
+    public void setEndLine(int toLine) {
+        this.endLine = toLine;
     }
 
     public String setComment(String comment) {

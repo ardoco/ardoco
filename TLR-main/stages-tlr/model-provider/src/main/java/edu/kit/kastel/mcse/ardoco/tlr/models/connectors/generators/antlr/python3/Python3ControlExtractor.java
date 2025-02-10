@@ -24,7 +24,12 @@ public class Python3ControlExtractor extends Python3ParserBaseVisitor<List<Contr
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
         Parent parent = Python3ParentExtractor.getParent(ctx);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
+
         ControlElement controlElement = new ControlElement(name, path, parent);
+        controlElement.setStartLine(startLine);
+        controlElement.setEndLine(endLine);
         controls.add(controlElement);
         return controls;
     }

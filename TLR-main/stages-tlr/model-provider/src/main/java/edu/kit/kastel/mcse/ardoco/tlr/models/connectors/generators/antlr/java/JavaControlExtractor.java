@@ -23,12 +23,12 @@ public class JavaControlExtractor extends JavaParserBaseVisitor<List<ControlElem
             String name = ctx.identifier().getText();
             Parent parent = JavaParentExtractor.getParent(ctx);
             String path = PathExtractor.extractPath(ctx);
-            int fromLine = ctx.getStart().getLine();
-            int toLine = ctx.getStop().getLine();
+            int startLine = ctx.getStart().getLine();
+            int endLine = ctx.getStop().getLine();
             
             ControlElement controlElement = new ControlElement(name, path, parent);
-            controlElement.setFromLine(fromLine);
-            controlElement.setToLine(toLine);
+            controlElement.setStartLine(startLine);
+            controlElement.setEndLine(endLine);
             controls.add(controlElement);
             return controls;
         }    
