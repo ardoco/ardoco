@@ -2,8 +2,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParserBaseVisitor;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParserBaseVisitor;
 
 public class JavaCompilationUnitExtractor extends JavaParserBaseVisitor<CompilationUnitElement> {
 

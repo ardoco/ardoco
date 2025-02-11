@@ -20,9 +20,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.Python3ModelMapper;
-import generated.antlr.Python3Lexer;
-import generated.antlr.Python3Parser;
-import generated.antlr.Python3Parser.File_inputContext;
+import generated.antlr.python3.Python3Lexer;
+import generated.antlr.python3.Python3Parser;
+import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3Extractor extends ANTLRExtractor {
     // private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;

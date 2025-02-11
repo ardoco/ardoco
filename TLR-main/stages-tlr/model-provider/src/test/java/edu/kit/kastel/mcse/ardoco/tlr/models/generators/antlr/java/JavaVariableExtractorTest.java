@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaVariableExtractor;
-import generated.antlr.JavaLexer;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParser.CompilationUnitContext;
+import generated.antlr.java.JavaLexer;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 class JavaVariableExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";

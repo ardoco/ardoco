@@ -6,8 +6,8 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
-import generated.antlr.Python3Parser;
-import generated.antlr.Python3ParserBaseVisitor;
+import generated.antlr.python3.Python3Parser;
+import generated.antlr.python3.Python3ParserBaseVisitor;
 
 public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Python3VariableElement>> {
     private final List<Python3VariableElement> variables = new ArrayList<>();

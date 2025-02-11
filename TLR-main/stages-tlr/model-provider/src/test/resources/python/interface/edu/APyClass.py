@@ -1,5 +1,6 @@
+# This is a Comment for AClass
 class AClass:
-    class_variable = "Class Variable for AClass"
+    class_variable = "Class Variable for AClass" # This is an inline comment for class_variable of AClass
 
     def __init__(self, name):
         self.name = name
@@ -11,6 +12,10 @@ class AClass:
         print(f"AClass class variable: {AClass.class_variable}")
 
     class InnerClass1:
+        """
+        This is a multiple line 
+        comment for InnerClass1
+        """
         class_variable = "Class Variable for InnerClass1"
 
         def __init__(self, value):
@@ -23,6 +28,10 @@ class AClass:
             print(f"InnerClass1 class variable: {AClass.InnerClass1.class_variable}")
 
     class InnerClass2:
+        '''
+        This is a multiple line comment
+        for InnerClass2
+        '''
         class_variable = "Class Variable for InnerClass2"
 
         def __init__(self, value):

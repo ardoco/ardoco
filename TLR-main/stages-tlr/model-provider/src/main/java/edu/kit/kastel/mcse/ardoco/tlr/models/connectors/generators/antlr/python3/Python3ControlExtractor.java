@@ -7,8 +7,8 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import generated.antlr.Python3Parser;
-import generated.antlr.Python3ParserBaseVisitor;
+import generated.antlr.python3.Python3Parser;
+import generated.antlr.python3.Python3ParserBaseVisitor;
 
 public class Python3ControlExtractor extends Python3ParserBaseVisitor<List<ControlElement>> {
     private final List<ControlElement> controls = new ArrayList<>();

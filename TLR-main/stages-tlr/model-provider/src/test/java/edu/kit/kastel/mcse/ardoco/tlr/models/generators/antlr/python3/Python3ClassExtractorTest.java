@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3ClassExtractor;
-import generated.antlr.Python3Lexer;
-import generated.antlr.Python3Parser;
-import generated.antlr.Python3Parser.File_inputContext;
+import generated.antlr.python3.Python3Lexer;
+import generated.antlr.python3.Python3Parser;
+import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3ClassExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";

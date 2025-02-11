@@ -25,5 +25,10 @@ public class Python3ModuleElement extends BasicElement {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode() + this.getPath().hashCode() + this.getPackage().hashCode();
+    }
     
 }

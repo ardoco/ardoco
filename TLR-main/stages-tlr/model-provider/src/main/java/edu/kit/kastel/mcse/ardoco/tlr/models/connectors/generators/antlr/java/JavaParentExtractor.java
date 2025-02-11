@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import generated.antlr.JavaParser;
+import generated.antlr.java.JavaParser;
 
 public final class JavaParentExtractor {
     public static Parent getParent(ParserRuleContext ctx) {

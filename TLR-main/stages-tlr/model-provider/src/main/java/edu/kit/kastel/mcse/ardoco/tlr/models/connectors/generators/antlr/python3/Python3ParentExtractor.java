@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import generated.antlr.Python3Parser;
+import generated.antlr.python3.Python3Parser;
 
 public final class Python3ParentExtractor {
     public static Parent getParent(ParserRuleContext ctx) {

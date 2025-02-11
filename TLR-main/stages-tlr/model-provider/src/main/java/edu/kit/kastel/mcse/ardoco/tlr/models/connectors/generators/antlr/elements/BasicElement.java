@@ -1,5 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
+import java.util.Objects;
+
 public class BasicElement {
     private final String path;
     private final String name;
@@ -53,5 +55,10 @@ public class BasicElement {
             return basicElement.getName().equals(this.getName()) && basicElement.getPath().equals(this.getPath());
         }
         return false;
+    }
+
+    @Override 
+    public int hashCode() {
+        return Objects.hash(name, path);
     }
 }

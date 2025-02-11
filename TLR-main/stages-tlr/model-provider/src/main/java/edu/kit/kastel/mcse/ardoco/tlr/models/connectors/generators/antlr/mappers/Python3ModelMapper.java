@@ -22,7 +22,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 
 public class Python3ModelMapper {
-    private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.PYTHON3;
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
     private List<Python3ClassElement> classes = new ArrayList<>();
@@ -141,6 +140,7 @@ public class Python3ModelMapper {
     private ClassUnit buildClassUnit(Python3ClassElement classElement) {
         String name = classElement.getName();
         String path = classElement.getPath();
+        String comment = classElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.CLASS);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
         List<Python3ClassElement> innerClasses = getAllClassesWith(comparable);
@@ -153,12 +153,14 @@ public class Python3ModelMapper {
         for (Python3ClassElement innerClass : innerClasses) {
             content.add(buildClassUnit(innerClass));
         }
-        return new ClassUnit(codeItemRepository, name, content);
+        ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);
+        return classUnit;
     }
 
     private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement control) {
         String name = control.getName();
         String path = control.getPath();
+        String comment = control.getComment();
         Parent comparable = new Parent(name, path, BasicType.CONTROL);
         List<Python3VariableElement> contentOfControl = new ArrayList<>();
         for (Python3VariableElement variable : variables) {
@@ -167,7 +169,8 @@ public class Python3ModelMapper {
                 // variables not implemented yet
             }
         }
-        return new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, control.getName());
+        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        return controlElement;
     }
 
 

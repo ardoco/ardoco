@@ -21,9 +21,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.JavaModelMapper;
-import generated.antlr.JavaLexer;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParser.CompilationUnitContext;
+import generated.antlr.java.JavaLexer;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParser.CompilationUnitContext;
 public class JavaExtractor extends ANTLRExtractor {
     private List<VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();

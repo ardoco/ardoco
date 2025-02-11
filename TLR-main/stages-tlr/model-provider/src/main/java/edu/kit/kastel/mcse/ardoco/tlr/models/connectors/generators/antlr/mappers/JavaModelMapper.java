@@ -111,6 +111,7 @@ public class JavaModelMapper {
     private ClassUnit buildClassUnit(ClassElement classElement) {
         String name = classElement.getName();
         String path = classElement.getPath();
+        String comment = classElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.CLASS);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
         List<ClassElement> innerClasses = getAllClassesWith(comparable);
@@ -123,12 +124,14 @@ public class JavaModelMapper {
         for (ClassElement innerClass : innerClasses) {
             content.add(buildClassUnit(innerClass));
         }
-        return new ClassUnit(codeItemRepository, name, content);      
+        ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);
+        return classUnit;      
     }
 
     private InterfaceUnit buildInterfaceUnit(InterfaceElement interfaceElement) {
         String name = interfaceElement.getName();
         String path = interfaceElement.getPath();
+        String comment = interfaceElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.INTERFACE);
         List<ControlElement> controlsOfInterface = getAllControlsWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
@@ -136,12 +139,14 @@ public class JavaModelMapper {
         for (ControlElement control : controlsOfInterface) {
             content.add(buildControlElement(control));
         }
-        return new InterfaceUnit(codeItemRepository, name, content);
+        InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, name, content);
+        return interfaceUnit;
     }
 
     private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement controlElement) {
         String name = controlElement.getName();
         String path = controlElement.getPath();
+        String comment = controlElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.CONTROL);
 
         List<VariableElement> contentOfControl = new ArrayList<>();
@@ -151,7 +156,8 @@ public class JavaModelMapper {
                 // variables not implemented yet
             }
         }
-        return new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement control = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        return control;
     }
 
     private List<ControlElement> getAllControlsWith(Parent parent) {

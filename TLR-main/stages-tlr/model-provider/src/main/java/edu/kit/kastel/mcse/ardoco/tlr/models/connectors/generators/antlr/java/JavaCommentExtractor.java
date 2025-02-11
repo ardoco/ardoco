@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
-import generated.antlr.JavaLexer;
+import generated.antlr.java.JavaLexer;
 
 public class JavaCommentExtractor {
     private final List<CommentElement> comments;

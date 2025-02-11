@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaCommentExtractor;
-import generated.antlr.JavaLexer;
-import generated.antlr.JavaParser;
+import generated.antlr.java.JavaLexer;
+import generated.antlr.java.JavaParser;
 
 public class JavaCommentExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";

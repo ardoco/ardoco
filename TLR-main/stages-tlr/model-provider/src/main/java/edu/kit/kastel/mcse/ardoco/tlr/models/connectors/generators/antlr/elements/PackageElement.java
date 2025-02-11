@@ -20,6 +20,10 @@ public class PackageElement extends BasicElement {
         return shortName;
     }
 
+    public boolean extendsPackage(PackageElement packageElement) {
+        return this.getName().startsWith(packageElement.getName()) && !this.equals(packageElement);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PackageElement) {
@@ -29,8 +33,9 @@ public class PackageElement extends BasicElement {
         return false;
     }
 
-    public boolean extendsPackage(PackageElement packageElement) {
-        return this.getName().startsWith(packageElement.getName()) && !this.equals(packageElement);
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode();
     }
     
 }

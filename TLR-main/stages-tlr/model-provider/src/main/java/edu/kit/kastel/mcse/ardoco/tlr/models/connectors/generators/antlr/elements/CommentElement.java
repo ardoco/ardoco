@@ -40,5 +40,9 @@ public class CommentElement {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return this.text.hashCode() + this.startLine + this.endLine + this.path.hashCode();
+    }
 
 }

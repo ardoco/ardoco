@@ -69,18 +69,36 @@
         <version>${antlr.version}</version>
         <executions>
             <execution>
-                <id>antlr</id>
+              <!-- Compile Java Grammar -->
+                <id>generate-java-parser</id>
                 <phase>generate-sources</phase>
                 <goals>
                     <goal>antlr4</goal>
                 </goals>
                 <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar</sourceDirectory>
-                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr</outputDirectory>
-                    <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr</packageName>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/java</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/java</outputDirectory>
+                    <packageName>generated.antlr.java</packageName>
                     <visitor>true</visitor>
                     <clean>true</clean>
                 </configuration>
+            </execution>
+
+            <execution>
+              <!-- Compile Python3 Grammar -->
+                <id>generate-python-parser</id>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/python3</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/python3</outputDirectory>
+                    <packageName>generated.antlr.python3</packageName>
+                    <visitor>true</visitor>
+                    <clean>true</clean>
+                </configuration>
+            
             </execution>
         </executions>
       </plugin>

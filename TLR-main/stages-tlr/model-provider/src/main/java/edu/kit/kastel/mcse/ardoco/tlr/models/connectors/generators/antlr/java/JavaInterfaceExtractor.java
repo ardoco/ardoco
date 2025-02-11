@@ -6,8 +6,8 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParserBaseVisitor;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParserBaseVisitor;
 
 public class JavaInterfaceExtractor extends JavaParserBaseVisitor<List<InterfaceElement>> {
     private final List<InterfaceElement> interfaces = new ArrayList<>();

@@ -6,8 +6,8 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParserBaseVisitor;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParserBaseVisitor;
 
 public class JavaClassExtractor extends JavaParserBaseVisitor<List<ClassElement>> {
     private final List<ClassElement> classes = new ArrayList<>();

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3VariableExtractor;
-import generated.antlr.Python3Lexer;
-import generated.antlr.Python3Parser;
-import generated.antlr.Python3Parser.File_inputContext;
+import generated.antlr.python3.Python3Lexer;
+import generated.antlr.python3.Python3Parser;
+import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3VariableExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";

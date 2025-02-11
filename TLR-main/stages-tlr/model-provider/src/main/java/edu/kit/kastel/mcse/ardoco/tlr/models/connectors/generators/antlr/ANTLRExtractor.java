@@ -15,8 +15,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaLexer;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaLexer;
 
 public class ANTLRExtractor extends CodeExtractor {
     private CodeModel extractedModel;

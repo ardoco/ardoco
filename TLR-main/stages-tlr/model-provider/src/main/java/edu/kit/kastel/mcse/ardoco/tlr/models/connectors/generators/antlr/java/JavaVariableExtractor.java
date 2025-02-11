@@ -6,8 +6,8 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import generated.antlr.JavaParser;
-import generated.antlr.JavaParserBaseVisitor;
+import generated.antlr.java.JavaParser;
+import generated.antlr.java.JavaParserBaseVisitor;
 
 public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableElement>> {
     private final List<VariableElement> variables = new ArrayList<>();
