@@ -75,12 +75,8 @@ public class Python3CommentMapper {
         int commentStartLine = comment.getStartLine();
         int commentEndLine = comment.getEndLine();
 
-        if (elementStartLine <= commentStartLine && elementEndLine >= commentEndLine) {
-            return 0;
-        }
-
-        // comment just before element
-        if (elementStartLine == commentEndLine + 1) {
+        // comment just after beginning of element
+        if (commentStartLine == elementStartLine + 1) {
             return 0;
         }
 

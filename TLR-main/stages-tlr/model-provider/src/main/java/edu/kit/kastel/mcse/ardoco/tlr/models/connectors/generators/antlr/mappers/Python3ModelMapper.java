@@ -22,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 
 public class Python3ModelMapper {
+    private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
     private List<Python3ClassElement> classes = new ArrayList<>();
@@ -154,6 +155,9 @@ public class Python3ModelMapper {
             content.add(buildClassUnit(innerClass));
         }
         ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);
+        if (comment != null) {
+            classUnit.setComment(comment);
+        }
         return classUnit;
     }
 
@@ -170,6 +174,9 @@ public class Python3ModelMapper {
             }
         }
         edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        if (comment != null) {
+            control.setComment(comment);
+        }
         return controlElement;
     }
 

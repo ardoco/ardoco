@@ -44,8 +44,12 @@ public class BasicElement {
         this.endLine = toLine;
     }
 
-    public String setComment(String comment) {
-        return this.comment += comment + "\n";
+    public void setComment(String comment) {
+        if (this.comment != "") {
+            this.comment += "\n";
+        }
+        
+        this.comment += comment;
     }
 
     @Override

@@ -1,5 +1,5 @@
-# This is a Comment for AClass
 class AClass:
+    # This is a Comment for AClass
     class_variable = "Class Variable for AClass" # This is an inline comment for class_variable of AClass
 
     def __init__(self, name):

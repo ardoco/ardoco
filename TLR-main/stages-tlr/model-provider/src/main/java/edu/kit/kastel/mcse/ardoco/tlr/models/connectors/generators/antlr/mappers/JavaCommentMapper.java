@@ -84,10 +84,6 @@ public class JavaCommentMapper {
         int commentStartLine = comment.getStartLine();
         int commentEndLine = comment.getEndLine();
 
-        if (elementStartLine <= commentStartLine && elementEndLine >= commentEndLine) {
-            return 0;
-        }
-
         // comment just before element
         if (elementStartLine == commentEndLine + 1) {
             return 0;
@@ -103,16 +99,17 @@ public class JavaCommentMapper {
 
     private void setCommentToElement(BasicElement element, CommentElement comment) {
         boolean found = false;
+        String text = comment.getText();
         for (VariableElement var : variables) {
             if (var.equals(element)) {
-                var.setComment(comment.getText());
+                var.setComment(text);
                 found = true;
             }
         }
         if (!found) {
             for (ControlElement control : controls) {
                 if (control.equals(element)) {
-                    control.setComment(comment.getText());
+                    control.setComment(text);
                     found = true;
                 }
             }
@@ -120,7 +117,7 @@ public class JavaCommentMapper {
         if (!found) {
             for (ClassElement clazz : classes) {
                 if (clazz.equals(element)) {
-                    clazz.setComment(comment.getText());
+                    clazz.setComment(text);
                     found = true;
                 }
             }
@@ -128,7 +125,7 @@ public class JavaCommentMapper {
         if (!found) {
             for (InterfaceElement interf : interfaces) {
                 if (interf.equals(element)) {
-                    interf.setComment(comment.getText());
+                    interf.setComment(text);
                     found = true;
                 }
             }

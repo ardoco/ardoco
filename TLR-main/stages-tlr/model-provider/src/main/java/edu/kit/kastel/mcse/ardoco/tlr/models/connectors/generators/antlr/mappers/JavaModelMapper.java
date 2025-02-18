@@ -125,6 +125,9 @@ public class JavaModelMapper {
             content.add(buildClassUnit(innerClass));
         }
         ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);
+        if (comment != null) {
+            classUnit.setComment(comment);
+        }
         return classUnit;      
     }
 
@@ -140,6 +143,9 @@ public class JavaModelMapper {
             content.add(buildControlElement(control));
         }
         InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, name, content);
+        if (comment != null) {
+            interfaceUnit.setComment(comment);
+        }
         return interfaceUnit;
     }
 
@@ -157,6 +163,9 @@ public class JavaModelMapper {
             }
         }
         edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement control = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        if (comment != null) {
+            control.setComment(comment);
+        }
         return control;
     }
 
