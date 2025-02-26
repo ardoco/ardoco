@@ -59,7 +59,7 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
     
             if (memberCtx.memberDeclaratorList() != null && memberCtx.declSpecifierSeq() != null) {
                 String variableType = memberCtx.declSpecifierSeq().getText();
-                Parent parent = CppParentExtractor.getParent(ctx);
+                Parent parent = CppParentExtractor.getParent(memberCtx);
                 List<String> varNames = extractVariableNames(memberCtx.memberDeclaratorList());
                 String path = PathExtractor.extractPath(ctx);
                 int startLine = ctx.getStart().getLine();
