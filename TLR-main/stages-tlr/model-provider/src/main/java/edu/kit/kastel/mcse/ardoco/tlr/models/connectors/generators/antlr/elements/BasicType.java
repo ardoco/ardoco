@@ -7,5 +7,6 @@ public enum BasicType {
     FILE,
     PACKAGE,
     COMPILATIONUNIT,
-    MODULE
+    MODULE,
+    NAMESPACE
 }

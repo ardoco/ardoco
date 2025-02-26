@@ -98,7 +98,22 @@
                     <visitor>true</visitor>
                     <clean>true</clean>
                 </configuration>
-            
+            </execution>
+
+            <execution>
+              <!-- Compile C++ Grammar -->
+                <id>generate-cpp-parser</id>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/cpp</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/cpp</outputDirectory>
+                    <packageName>generated.antlr.cpp</packageName>
+                    <visitor>true</visitor>
+                    <clean>true</clean>
+                </configuration>
             </execution>
         </executions>
       </plugin>

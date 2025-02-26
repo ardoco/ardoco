@@ -41,7 +41,7 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
 
     private List<Python3VariableElement> extractVariables(Python3Parser.Expr_stmtContext ctx) {
         List<Python3VariableElement> variables = new ArrayList<>();
-        List<String> varName = extract(ctx.testlist_star_expr(0));
+        List<String> varNames = extract(ctx.testlist_star_expr(0));
         List<String> values = extract(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
         Parent parent = Python3ParentExtractor.getParent(ctx);
@@ -49,12 +49,12 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        if (varName.size() != values.size()) {
+        if (varNames.size() != values.size()) {
             throw new IllegalArgumentException("The number of variable names and values does not match");
         }
 
-        for (int i = 0; i < varName.size(); i++) {
-            Python3VariableElement variable = new Python3VariableElement(varName.get(i), path, types.get(i), parent, values.get(i));
+        for (int i = 0; i < varNames.size(); i++) {
+            Python3VariableElement variable = new Python3VariableElement(varNames.get(i), path, types.get(i), parent, values.get(i));
             variable.setStartLine(startLine);
             variable.setEndLine(endLine);
             variables.add(variable);
