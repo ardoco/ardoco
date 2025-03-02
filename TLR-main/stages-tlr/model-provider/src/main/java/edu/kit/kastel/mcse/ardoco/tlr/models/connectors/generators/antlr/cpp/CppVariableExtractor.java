@@ -20,8 +20,7 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
 
     @Override
     public List<VariableElement> visitSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx) {
-        // If it does not have a declSpecifier, it is not a declaration, but an assignment -> skip it
-        if (ctx.declSpecifierSeq() == null) {
+        if (isAssignment(ctx)) {
             return variables;
         }
 
@@ -62,8 +61,8 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
                 Parent parent = CppParentExtractor.getParent(memberCtx);
                 List<String> varNames = extractVariableNames(memberCtx.memberDeclaratorList());
                 String path = PathExtractor.extractPath(ctx);
-                int startLine = ctx.getStart().getLine();
-                int endLine = ctx.getStop().getLine();
+                int startLine = memberCtx.getStart().getLine();
+                int endLine = memberCtx.getStop().getLine();
 
                 parseToVariablesList(varNames, path, variableType, parent, startLine, endLine);
             }
@@ -117,5 +116,9 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
         variable.setStartLine(startLine);
         variable.setEndLine(endLine);
         return variable;
+    }
+
+    private boolean isAssignment(CPP14Parser.SimpleDeclarationContext ctx) {
+        return ctx.declSpecifierSeq() == null;
     }
 }

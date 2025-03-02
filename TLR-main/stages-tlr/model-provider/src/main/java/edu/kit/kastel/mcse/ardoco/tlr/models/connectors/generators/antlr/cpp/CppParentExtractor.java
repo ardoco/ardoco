@@ -19,7 +19,7 @@ public final class CppParentExtractor {
             } else if (parentCtx instanceof CPP14Parser.FunctionDefinitionContext) {
                 return buildParentFromFunctionContext((CPP14Parser.FunctionDefinitionContext) parentCtx, path, BasicType.CONTROL);
             } else if (parentCtx instanceof CPP14Parser.TranslationUnitContext) {
-                return buildParentFromTranslationUnitContext((CPP14Parser.TranslationUnitContext) parentCtx, path, BasicType.COMPILATIONUNIT);
+                return buildParentFromTranslationUnitContext((CPP14Parser.TranslationUnitContext) parentCtx, path, BasicType.FILE);
             } else {
                 parentCtx = parentCtx.getParent(); // Continue traversing upwards
             }
@@ -28,28 +28,9 @@ public final class CppParentExtractor {
     }
 
     private static Parent buildParentFromTranslationUnitContext(CPP14Parser.TranslationUnitContext ctx, String path, BasicType type) {
-        // If a translation unit contains a class, struct, or namespace, use that as the parent name
-        CPP14Parser.DeclarationseqContext decSeq = ctx.declarationseq();
-        for (CPP14Parser.DeclarationContext dec : decSeq.declaration()) {
-            if (dec.blockDeclaration() != null) {
-                CPP14Parser.BlockDeclarationContext blockDec = dec.blockDeclaration();
-                if (blockDec.simpleDeclaration() != null) {
-                    CPP14Parser.SimpleDeclarationContext simpleDec = blockDec.simpleDeclaration();
-                    if (simpleDec.declSpecifierSeq() != null) {
-                        return new Parent(simpleDec.declSpecifierSeq().getText(), path, type);
-                    }
-                }
-            }
-            if (dec.namespaceDefinition() != null) {
-                CPP14Parser.NamespaceDefinitionContext namespaceDef = dec.namespaceDefinition();
-                return buildParentFromNamespaceContext(namespaceDef, path, type);
-            }
-            if (dec.functionDefinition() != null) {
-                CPP14Parser.FunctionDefinitionContext functionDef = dec.functionDefinition();
-                return buildParentFromFunctionContext(functionDef, path, type);
-            }
-        }
-        return null;
+        // Use file name as parent name
+        String parentName = PathExtractor.extractNameFromPath(ctx);
+        return new Parent(parentName, path, type);
     }
 
     private static Parent buildParentFromClassContext(CPP14Parser.ClassSpecifierContext ctx, String path, BasicType type) {
