@@ -36,7 +36,12 @@ UserDefinedLiteral:
 
 MultiLineMacro: '#' (~[\n]*? '\\' '\r'? '\n')+ ~ [\n]+ -> channel (HIDDEN);
 
-Directive: '#' ~ [\n]* -> channel (HIDDEN);
+BlockComment: '/*' .*? '*/' -> channel (HIDDEN);
+
+LineComment: '//' ~ [\r\n]* -> channel (HIDDEN);
+
+// Preprocessor Directives (Stop capturing at `//`!)
+Directive: '#' (~[/\r\n])* -> channel (HIDDEN); 
 /*Keywords*/
 
 Alignas: 'alignas';
@@ -396,6 +401,3 @@ Whitespace: [ \t]+ -> skip;
 
 Newline: ('\r' '\n'? | '\n') -> skip;
 
-BlockComment: '/*' .*? '*/' -> skip;
-
-LineComment: '//' ~ [\r\n]* -> skip;

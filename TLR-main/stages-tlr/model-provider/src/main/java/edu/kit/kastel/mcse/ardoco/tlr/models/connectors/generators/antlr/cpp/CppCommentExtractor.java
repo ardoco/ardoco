@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +7,14 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
-import generated.antlr.java.JavaLexer;
+import generated.antlr.cpp.CPP14Lexer;
 
-public class JavaCommentExtractor {
+public class CppCommentExtractor {
     private final List<CommentElement> comments;
     private final String path;
     private final CommonTokenStream tokens;
 
-    public JavaCommentExtractor(CommonTokenStream tokens, String path) {
+    public CppCommentExtractor(CommonTokenStream tokens, String path) {
         this.tokens = tokens;
         this.path = path;
         this.comments = new ArrayList<>();
@@ -24,13 +24,12 @@ public class JavaCommentExtractor {
         return this.comments;
     }
 
-
     public void extract() {
         List<Token> allTokens = tokens.getTokens();
 
         for (Token token : allTokens) {
-            if (token.getChannel() == JavaLexer.HIDDEN) {
-                String text = token.getText().trim(); // Trim whitespace 
+            if (token.getType() == CPP14Lexer.LineComment || token.getType() == CPP14Lexer.BlockComment) {
+                String text = token.getText().trim(); // Trim whitespace
                 if (!text.isEmpty() && text.startsWith("//") || text.startsWith("/*")) {
                     int startLine = token.getLine();
                     int endLine = token.getLine() + countNewLines(text);
@@ -42,7 +41,6 @@ public class JavaCommentExtractor {
         }
     }
 
-
     private int countNewLines(String text) {
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -53,23 +51,22 @@ public class JavaCommentExtractor {
         return count;
     }
 
-
     private String cleanseText(String text) {
-        // Remove block comment delimiters (/** and */)
-        text = text.replaceAll("^/\\*+|\\*/$", "").trim();
+        // Remove block comment delimiters (/* and */)
+        text = text.replaceAll("^/\\*+|\\*+/$", "").trim();
     
-        // Remove leading '*' characters from each line but keep newlines
-        text = text.replaceAll("(?m)^\\s*\\* ?", "").trim(); 
+        // Remove leading '*' characters from each line while keeping line breaks
+        text = text.replaceAll("(?m)^\\s*\\* ?", "");
     
-        // Remove inline '//' comments
-        text = text.replaceAll("^//", "").trim();
+        // Remove '//' from the start of each line
+        text = text.replaceAll("(?m)^\\s*// ?", "");
     
-        // Normalize spaces: Convert multiple spaces/newlines into a single space
-        text = text.replaceAll("\\s+", " ");
+        // Normalize multiple newlines and spaces → Collapse multiple newlines into a single space
+        text = text.replaceAll("\\s*[\r\n]+\\s*", " ");
     
-        return text;
+        return text.trim();
     }
-
     
-
+    
+    
 }
