@@ -1,3 +1,4 @@
 Core-main/**
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/
 !Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/**
-TLR-main/stages-tlr/model-provider/target/**
+TLR-main/stages-tlr/model-provider/target/
