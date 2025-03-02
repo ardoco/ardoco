@@ -37,7 +37,8 @@ public class CppControlExtractorTest {
         String filePath = sourcePath + "src/Entities.cpp";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
 
-        Assertions.assertEquals(5, controls.size());
+        Assertions.assertEquals(8, controls.size());
+
     }
 
     @Test
@@ -45,7 +46,7 @@ public class CppControlExtractorTest {
         String filePath = sourcePath + "include/Entities.h";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
 
-        Assertions.assertEquals(8, controls.size());
+        Assertions.assertEquals(0, controls.size());
     }
 
     private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException{

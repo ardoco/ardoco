@@ -10,7 +10,8 @@ public final class PathExtractor {
 
     public static String extractNameFromPath(ParserRuleContext ctx) {
         String path = extractPath(ctx);
-        String name = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+        String normalizedPath = path.replace("\\", "/");
+        String name = normalizedPath.substring(normalizedPath.lastIndexOf("/") + 1, normalizedPath.lastIndexOf("."));
         return name;
     }
 
