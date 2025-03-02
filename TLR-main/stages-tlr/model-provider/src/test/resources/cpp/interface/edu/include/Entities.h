@@ -39,6 +39,11 @@ namespace Entities {
             void repairCar(Car& car);
         };
     };
+
+    class Child : public Person {
+    public:
+        Child(std::string name, int age);
+    };
 }
 
 #endif // ENTITIES_H

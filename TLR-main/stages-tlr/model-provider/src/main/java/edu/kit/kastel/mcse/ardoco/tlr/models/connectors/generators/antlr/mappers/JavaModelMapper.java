@@ -15,7 +15,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
@@ -23,12 +22,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 
 public class JavaModelMapper {
     private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.JAVA;
     private List<VariableElement> variables;
     private List<ControlElement> controls;
-    private List<ClassElement> classes;
+    private List<JavaClassElement> classes;
     private List<InterfaceElement> interfaces;
     private List<CompilationUnitElement> compilationUnits;
     private List<PackageElement> packages;
@@ -37,7 +37,7 @@ public class JavaModelMapper {
 
 
     public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, 
-    List<ClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages,
+    List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages,
     List<CommentElement> comments) {
         this.codeItemRepository = codeItemRepository;
 
@@ -93,11 +93,11 @@ public class JavaModelMapper {
         String name = compilationUnit.getName();
         String path = compilationUnit.getPath();
         Parent comparable = new Parent(name, path, BasicType.COMPILATIONUNIT);
-        List<ClassElement> classesOfCompilationUnit = getAllClassesWith(comparable);
+        List<JavaClassElement> classesOfCompilationUnit = getAllClassesWith(comparable);
         List<InterfaceElement> interfacesOfCompilationUnit = getAllInterfacesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
 
-        for (ClassElement classElement : classesOfCompilationUnit) {
+        for (JavaClassElement classElement : classesOfCompilationUnit) {
             content.add(buildClassUnit(classElement));
         }
         for (InterfaceElement interfaceElement : interfacesOfCompilationUnit) {
@@ -108,20 +108,20 @@ public class JavaModelMapper {
     }
 
 
-    private ClassUnit buildClassUnit(ClassElement classElement) {
+    private ClassUnit buildClassUnit(JavaClassElement classElement) {
         String name = classElement.getName();
         String path = classElement.getPath();
         String comment = classElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.CLASS);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
-        List<ClassElement> innerClasses = getAllClassesWith(comparable);
+        List<JavaClassElement> innerClasses = getAllClassesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
 
         // variables not implemented yet
         for (ControlElement control : controlsOfClass) {
             content.add(buildControlElement(control));
         }
-        for (ClassElement innerClass : innerClasses) {
+        for (JavaClassElement innerClass : innerClasses) {
             content.add(buildClassUnit(innerClass));
         }
         ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);
@@ -179,9 +179,9 @@ public class JavaModelMapper {
         return controlsWithParent;
     }
 
-    private List<ClassElement> getAllClassesWith(Parent parent) {
-        List<ClassElement> classesWithParent = new ArrayList<>();
-        for (ClassElement classElement : classes) {
+    private List<JavaClassElement> getAllClassesWith(Parent parent) {
+        List<JavaClassElement> classesWithParent = new ArrayList<>();
+        for (JavaClassElement classElement : classes) {
             if (classElement.getParent().equals(parent)) {
                 classesWithParent.add(classElement);
             }

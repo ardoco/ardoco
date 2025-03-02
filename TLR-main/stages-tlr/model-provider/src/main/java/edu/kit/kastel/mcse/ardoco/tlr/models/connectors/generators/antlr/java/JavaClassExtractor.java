@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParserBaseVisitor;
 
-public class JavaClassExtractor extends JavaParserBaseVisitor<List<ClassElement>> {
-    private final List<ClassElement> classes = new ArrayList<>();
+public class JavaClassExtractor extends JavaParserBaseVisitor<List<JavaClassElement>> {
+    private final List<JavaClassElement> classes = new ArrayList<>();
 
 @Override
-public List<ClassElement> visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+public List<JavaClassElement> visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
     for (JavaParser.TypeDeclarationContext typeDeclarationContext : ctx.typeDeclaration()) {
         if (typeDeclarationContext.classDeclaration() != null) {
             visitClassDeclaration(typeDeclarationContext.classDeclaration());
@@ -27,7 +27,7 @@ public List<ClassElement> visitCompilationUnit(JavaParser.CompilationUnitContext
 }
 
 @Override
-public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
+public List<JavaClassElement> visitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
     String name = ctx.identifier().getText();
     String path = PathExtractor.extractPath(ctx);
     Parent parent = JavaParentExtractor.getParent(ctx);
@@ -36,7 +36,7 @@ public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationConte
     int startLine = ctx.getStart().getLine();
     int endLine = ctx.getStop().getLine();
 
-    ClassElement classElement = new ClassElement(name, path, parent, extendsClass, implementedInterfaces);
+    JavaClassElement classElement = new JavaClassElement(name, path, parent, extendsClass, implementedInterfaces);
     classElement.setStartLine(startLine);
     classElement.setEndLine(endLine);
     classes.add(classElement);
@@ -44,14 +44,14 @@ public List<ClassElement> visitClassDeclaration(JavaParser.ClassDeclarationConte
 }
 
 @Override 
-public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
+public List<JavaClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
     String path = PathExtractor.extractPath(ctx);
     int startLine = ctx.getStart().getLine();
     int endLine = ctx.getStop().getLine();
 
-    ClassElement classElement = new ClassElement(name, path, parent);
+    JavaClassElement classElement = new JavaClassElement(name, path, parent);
     classElement.setStartLine(startLine);
     classElement.setEndLine(endLine);
     classes.add(classElement);
@@ -60,7 +60,7 @@ public List<ClassElement> visitEnumDeclaration(JavaParser.EnumDeclarationContext
 }
 
 @Override
-public List<ClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx) {
+public List<JavaClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx) {
     String name = ctx.identifier().getText();
     Parent parent = JavaParentExtractor.getParent(ctx);
     String path = PathExtractor.extractPath(ctx);
@@ -69,7 +69,7 @@ public List<ClassElement> visitRecordDeclaration(JavaParser.RecordDeclarationCon
 
     // Records can only implement Interfaces, not extend classes
     List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
-    ClassElement classElement = new ClassElement(name, path, parent);
+    JavaClassElement classElement = new JavaClassElement(name, path, parent);
     classElement.addImplementedInterfaces(implementedInterfaces);
     classElement.setStartLine(startLine);
     classElement.setEndLine(endLine);
@@ -115,7 +115,7 @@ private List<String> extractImplementedInterfaces(JavaParser.TypeListContext ctx
     return implementedInterfaces;
 }
 
-private List<ClassElement> visitChildClasses(JavaParser.ClassDeclarationContext ctx) {
+private List<JavaClassElement> visitChildClasses(JavaParser.ClassDeclarationContext ctx) {
     for (JavaParser.ClassBodyDeclarationContext child : ctx.classBody().classBodyDeclaration()) {
         if (hasInnerClasses(child)) {
             visitClassDeclaration(child.memberDeclaration().classDeclaration());

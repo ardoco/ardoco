@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLREx
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.Python3ModelMapper;
@@ -28,7 +28,7 @@ public class Python3Extractor extends ANTLRExtractor {
     // private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
-    private List<Python3ClassElement> classes = new ArrayList<>();
+    private List<ClassElement> classes = new ArrayList<>();
     private List<Python3ModuleElement> modules = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
     private List<CommentElement> comments = new ArrayList<>();
@@ -65,7 +65,7 @@ public class Python3Extractor extends ANTLRExtractor {
         return controls;
     }
 
-    public List<Python3ClassElement> getClasses() {
+    public List<ClassElement> getClasses() {
         return classes;
     }
 

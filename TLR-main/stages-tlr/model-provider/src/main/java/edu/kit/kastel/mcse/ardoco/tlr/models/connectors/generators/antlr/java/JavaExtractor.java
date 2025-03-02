@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
@@ -20,6 +19,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.ANTLREx
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.JavaModelMapper;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
@@ -27,7 +27,7 @@ import generated.antlr.java.JavaParser.CompilationUnitContext;
 public class JavaExtractor extends ANTLRExtractor {
     private List<VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
-    private List<ClassElement> classes = new ArrayList<>();
+    private List<JavaClassElement> classes = new ArrayList<>();
     private List<InterfaceElement> interfaces = new ArrayList<>();
     private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
@@ -70,7 +70,7 @@ public class JavaExtractor extends ANTLRExtractor {
         return controls;
     }
 
-    public List<ClassElement> getClasses() {
+    public List<JavaClassElement> getClasses() {
         return classes;
     }
 

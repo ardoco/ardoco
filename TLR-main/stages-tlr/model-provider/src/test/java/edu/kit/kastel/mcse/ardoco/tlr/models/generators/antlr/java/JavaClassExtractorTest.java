@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaClassExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
@@ -22,7 +22,7 @@ class JavaClassExtractorTest {
     @Test
     void classExtractorAClassTest() throws IOException{
         String filePath = sourcePath + "AClass.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(4, classes.size());
         //Assertions Class AClass
         Assertions.assertEquals("AClass", classes.get(0).getName());
@@ -49,7 +49,7 @@ class JavaClassExtractorTest {
     @Test
     void classExtractorSuperclass() throws IOException{
         String filePath = sourcePath + "Superclass.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(1, classes.size());
         Assertions.assertEquals("Superclass", classes.get(0).getName());
         Assertions.assertEquals("Superclass", classes.get(0).getParent().getName());
@@ -59,7 +59,7 @@ class JavaClassExtractorTest {
     @Test
     void classExtractorAnEnum() throws IOException{
         String filePath = sourcePath + "AnEnum.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(1, classes.size());
         Assertions.assertEquals("AnEnum", classes.get(0).getName());
         Assertions.assertEquals("AnEnum", classes.get(0).getParent().getName());
@@ -69,14 +69,14 @@ class JavaClassExtractorTest {
     @Test
     void classExtractorAnInterface() throws IOException{
         String filePath = sourcePath + "AnInterface.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertTrue(classes.isEmpty());
     }
 
     @Test
     void classExtractorExtendedInterface() throws IOException{
         String filePath = sourcePath + "ExtendedInterface.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertTrue(classes.isEmpty());
     }
 
@@ -85,18 +85,18 @@ class JavaClassExtractorTest {
     @Test
     void classExtractorOtherInterfaceZwei() throws IOException{
         String filePath = sourcePath + "zwei/OtherInterface.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertTrue(classes.isEmpty());
     }
 
     @Test
     void classExtractorOtherInterfaceDrei() throws IOException{
         String filePath = sourcePath + "drei/OtherInterface.java";
-        List<ClassElement> classes = extractClassesFromFile(filePath);
+        List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertTrue(classes.isEmpty());
     }
 
-    private List<ClassElement> extractClassesFromFile(String filePath) throws IOException {
+    private List<JavaClassElement> extractClassesFromFile(String filePath) throws IOException {
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);

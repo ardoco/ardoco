@@ -30,4 +30,6 @@ namespace Entities {
     void Garage::Mechanic::repairCar(Car& car) {
         std::cout << mechanicName << " is repairing the " << car << std::endl;
     }
+
+    Child::Child(std::string name, int age): Person(name, age) {}
 }

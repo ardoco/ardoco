@@ -37,7 +37,7 @@ public class CppControlExtractorTest {
         String filePath = sourcePath + "src/Entities.cpp";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
 
-        Assertions.assertEquals(8, controls.size());
+        Assertions.assertEquals(9, controls.size());
 
     }
 

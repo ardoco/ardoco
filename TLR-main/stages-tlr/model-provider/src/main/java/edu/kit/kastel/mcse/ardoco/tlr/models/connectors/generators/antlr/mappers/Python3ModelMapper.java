@@ -17,7 +17,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 
@@ -25,7 +25,7 @@ public class Python3ModelMapper {
     private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
-    private List<Python3ClassElement> classes = new ArrayList<>();
+    private List<ClassElement> classes = new ArrayList<>();
     private List<Python3ModuleElement> modules = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
     private CodeModel codeModel;
@@ -33,7 +33,7 @@ public class Python3ModelMapper {
 
 
     public Python3ModelMapper(CodeItemRepository codeItemRepository, List<Python3VariableElement> variables, List<ControlElement> controls, 
-    List<Python3ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages, List<CommentElement> comments) {
+    List<ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages, List<CommentElement> comments) {
         Python3CommentMapper commentMapper = new Python3CommentMapper(variables, controls, classes, comments);
         commentMapper.mapComments();
         this.variables = commentMapper.getVariables();
@@ -101,12 +101,12 @@ public class Python3ModelMapper {
         String name = module.getName();
         String path = module.getPath();
         Parent comparable = new Parent(name, path, BasicType.MODULE);
-        List<Python3ClassElement> classesOfModule = getAllClassesWith(comparable);
+        List<ClassElement> classesOfModule = getAllClassesWith(comparable);
         List<ControlElement> controlsOfModule = getAllControlsWith(comparable);
         // Variables not yet implemented
         SortedSet<CodeItem> content = new TreeSet<>();
 
-        for (Python3ClassElement clazz : classesOfModule) {
+        for (ClassElement clazz : classesOfModule) {
             content.add(buildClassUnit(clazz));
         }
 
@@ -118,9 +118,9 @@ public class Python3ModelMapper {
 
     }
 
-    private List<Python3ClassElement> getAllClassesWith(Parent parent) {
-        List<Python3ClassElement> classesOfModule = new ArrayList<>();
-        for (Python3ClassElement clazz : this.classes) {
+    private List<ClassElement> getAllClassesWith(Parent parent) {
+        List<ClassElement> classesOfModule = new ArrayList<>();
+        for (ClassElement clazz : this.classes) {
             if (clazz.getParent().equals(parent)) {
                 classesOfModule.add(clazz);
             }
@@ -138,20 +138,20 @@ public class Python3ModelMapper {
         return controlsOfModule;
     }
 
-    private ClassUnit buildClassUnit(Python3ClassElement classElement) {
+    private ClassUnit buildClassUnit(ClassElement classElement) {
         String name = classElement.getName();
         String path = classElement.getPath();
         String comment = classElement.getComment();
         Parent comparable = new Parent(name, path, BasicType.CLASS);
         List<ControlElement> controlsOfClass = getAllControlsWith(comparable);
-        List<Python3ClassElement> innerClasses = getAllClassesWith(comparable);
+        List<ClassElement> innerClasses = getAllClassesWith(comparable);
         SortedSet<CodeItem> content = new TreeSet<>();
 
         // variables not implemented yet
         for (ControlElement control : controlsOfClass) {
             content.add(buildControlElement(control));
         }
-        for (Python3ClassElement innerClass : innerClasses) {
+        for (ClassElement innerClass : innerClasses) {
             content.add(buildClassUnit(innerClass));
         }
         ClassUnit classUnit = new ClassUnit(codeItemRepository, name, content);

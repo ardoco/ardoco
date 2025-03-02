@@ -3,24 +3,24 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import generated.antlr.python3.Python3Parser;
 
 import generated.antlr.python3.Python3ParserBaseVisitor;
 
-public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3ClassElement>> {
-    private final List<Python3ClassElement> classes = new ArrayList<>();
+public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<ClassElement>> {
+    private final List<ClassElement> classes = new ArrayList<>();
 
     @Override
-    public List<Python3ClassElement> visitFile_input(Python3Parser.File_inputContext ctx) {
+    public List<ClassElement> visitFile_input(Python3Parser.File_inputContext ctx) {
         super.visitFile_input(ctx);
         return classes;
     }
 
     @Override
-    public List<Python3ClassElement> visitClassdef(Python3Parser.ClassdefContext ctx) {
+    public List<ClassElement> visitClassdef(Python3Parser.ClassdefContext ctx) {
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
         List<String> childClassOf = getParentClasses(ctx);
@@ -28,7 +28,7 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        Python3ClassElement python3ClassElement = new Python3ClassElement(name, path, parent, childClassOf);
+        ClassElement python3ClassElement = new ClassElement(name, path, parent, childClassOf);
         python3ClassElement.setStartLine(startLine);
         python3ClassElement.setEndLine(endLine);
         classes.add(python3ClassElement);
@@ -57,7 +57,7 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
     }
 
     @Override
-    public List<Python3ClassElement> visitBlock(Python3Parser.BlockContext ctx) {
+    public List<ClassElement> visitBlock(Python3Parser.BlockContext ctx) {
         if (ctx.children != null) {
             for (var child : ctx.children) {
                 if (child instanceof Python3Parser.StmtContext && ((Python3Parser.StmtContext) child).compound_stmt() != null) {
@@ -70,7 +70,7 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
     }
 
     @Override
-    public List<Python3ClassElement> visitCompound_stmt(Python3Parser.Compound_stmtContext ctx) {
+    public List<ClassElement> visitCompound_stmt(Python3Parser.Compound_stmtContext ctx) {
         if (ctx.children != null) {
             for (var child : ctx.children) {
                 if (child instanceof Python3Parser.ClassdefContext) {
@@ -84,7 +84,7 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<Python3
     }
 
     @Override
-    public List<Python3ClassElement> visitDecorated(Python3Parser.DecoratedContext ctx) {
+    public List<ClassElement> visitDecorated(Python3Parser.DecoratedContext ctx) {
         if (ctx.children != null) {
             for (var child : ctx.children) {
                 if (child instanceof Python3Parser.ClassdefContext) {

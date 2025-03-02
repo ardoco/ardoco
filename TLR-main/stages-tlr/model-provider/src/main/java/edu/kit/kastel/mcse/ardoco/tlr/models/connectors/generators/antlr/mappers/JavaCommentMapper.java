@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 
 public class JavaCommentMapper {
     private List<VariableElement> variables;
     private List<ControlElement> controls;
-    private List<ClassElement> classes;
+    private List<JavaClassElement> classes;
     private List<InterfaceElement> interfaces;
     private List<CommentElement> comments;
 
 
-    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
+    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
@@ -52,7 +52,7 @@ public class JavaCommentMapper {
         return controls;
     }
 
-    public List<ClassElement> getClasses() {
+    public List<JavaClassElement> getClasses() {
         return classes;
     }
 
@@ -115,7 +115,7 @@ public class JavaCommentMapper {
             }
         }
         if (!found) {
-            for (ClassElement clazz : classes) {
+            for (JavaClassElement clazz : classes) {
                 if (clazz.equals(element)) {
                     clazz.setComment(text);
                     found = true;

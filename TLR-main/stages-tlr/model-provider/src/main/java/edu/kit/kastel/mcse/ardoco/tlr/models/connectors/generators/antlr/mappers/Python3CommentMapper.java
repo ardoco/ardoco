@@ -6,16 +6,16 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 
 public class Python3CommentMapper {
     private List<Python3VariableElement> variables;
     private List<ControlElement> controls;
-    private List<Python3ClassElement> classes;
+    private List<ClassElement> classes;
     private List<CommentElement> comments;
 
-    public Python3CommentMapper(List<Python3VariableElement> variables, List<ControlElement> controls, List<Python3ClassElement> classes, List<CommentElement> comments) {
+    public Python3CommentMapper(List<Python3VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<CommentElement> comments) {
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
@@ -47,7 +47,7 @@ public class Python3CommentMapper {
         return controls;
     }
 
-    public List<Python3ClassElement> getClasses() {
+    public List<ClassElement> getClasses() {
         return classes;
     }
 
@@ -109,7 +109,7 @@ public class Python3CommentMapper {
         }
 
         if (!found) {
-            for (Python3ClassElement classElement : classes) {
+            for (ClassElement classElement : classes) {
                 if (classElement.equals(element)) {
                     classElement.setComment(comment.getText());
                     found = true;
