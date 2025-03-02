@@ -1,4 +1,34 @@
+.vscode/**
 Core-main/**
+
+# Include changed CodeItem.java
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/CodeItem.java
+
+# Includ directory structure for CodeItem.java
 !Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/
-!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/**
-TLR-main/stages-tlr/model-provider/target/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/
+!Core-main/framework/common/src/main/java/edu/kit/kastel/
+!Core-main/framework/common/src/main/java/edu/kit/
+!Core-main/framework/common/src/main/java/edu/
+!Core-main/framework/common/src/main/java/
+!Core-main/framework/common/src/main/
+!Core-main/framework/common/src/
+!Core-main/framework/common/
+!Core-main/framework/
+
+
+TLR-main/**
+
+# Include model-provider
+!TLR-main/stages-tlr/model-provider/**
+
+# Include all mvn pom files
+!**/pom.xml
+
+
+
