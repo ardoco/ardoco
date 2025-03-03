@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp.CppExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.CppCommentMapper;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCommentMapper;
 
 public class CppCommentMapperTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
@@ -45,7 +45,7 @@ public class CppCommentMapperTest {
     private CppCommentMapper buildCppCommentMapper(String path) throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         CppExtractor extractor = new CppExtractor(repository, path);
-        extractor.execute();
+        extractor.extractElements();
 
         CppCommentMapper commentMapper = new CppCommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
         commentMapper.mapComments();

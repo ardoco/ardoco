@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaControlExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaControlExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParser.CompilationUnitContext;

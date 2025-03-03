@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3CommentExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
 import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
 
@@ -24,8 +24,8 @@ public class Python3CommentExtractorTest {
         Assertions.assertEquals(4, comments.size());
 
         // Detailed Assertions
-        Assertions.assertEquals(1, comments.get(0).getStartLine());
-        Assertions.assertEquals(1, comments.get(0).getEndLine());
+        Assertions.assertEquals(2, comments.get(0).getStartLine());
+        Assertions.assertEquals(2, comments.get(0).getEndLine());
         Assertions.assertEquals("This is a Comment for AClass", comments.get(0).getText());
 
         Assertions.assertEquals(3, comments.get(1).getStartLine());

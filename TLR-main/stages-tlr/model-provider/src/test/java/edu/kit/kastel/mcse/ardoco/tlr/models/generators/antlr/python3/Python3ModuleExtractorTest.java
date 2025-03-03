@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3ModuleExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ModuleExtractor;
 import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
 import generated.antlr.python3.Python3Parser.File_inputContext;

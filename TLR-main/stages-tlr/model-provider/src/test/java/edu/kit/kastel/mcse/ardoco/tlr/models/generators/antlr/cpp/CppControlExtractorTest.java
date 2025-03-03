@@ -9,9 +9,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp.CppControlExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppControlExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
 import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;

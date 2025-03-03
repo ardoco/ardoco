@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.JavaCommentMapper;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCommentMapper;
 
 public class JavaCommentMapperTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
@@ -39,7 +39,7 @@ public class JavaCommentMapperTest {
     private JavaCommentMapper testJavaCommentMapper(String path) throws IOException{
         CodeItemRepository repository = new CodeItemRepository();
         JavaExtractor extractor = new JavaExtractor(repository, path);
-        extractor.execute();
+        extractor.extractElements();
 
         JavaCommentMapper commentMapper = new JavaCommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getComments());
         commentMapper.mapComments();

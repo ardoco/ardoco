@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp.CppExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
 
 public class CppExtractorTest {
     @Test
     void executeCppExtractorForMinimalDirectoryTest() throws IOException {
         String sourcePath = "src/test/resources/cpp/interface/edu/";
         CppExtractor cppExtractor = buildCppExtractor(sourcePath);
-        cppExtractor.execute();
+        cppExtractor.extractModel();
 
         // Assertions
         Assertions.assertEquals(9 , cppExtractor.getVariables().size());

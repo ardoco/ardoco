@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.Python3ModelMapper;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3Extractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3ModelMapper;
 
 public class Pyhton3ModelMapperTest {
 
@@ -16,7 +16,7 @@ public class Pyhton3ModelMapperTest {
     void testPython3ModelMapper() throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
-        extractor.execute();
+        extractor.extractModel();
 
         Python3ModelMapper mapper = new Python3ModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getModules(), extractor.getPackages(), extractor.getComments());
         mapper.mapToCodeModel();

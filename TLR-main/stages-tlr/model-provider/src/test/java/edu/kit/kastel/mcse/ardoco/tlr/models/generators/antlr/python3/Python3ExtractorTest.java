@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3Extractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 
 public class Python3ExtractorTest {
     
@@ -14,7 +14,7 @@ public class Python3ExtractorTest {
     void executePython3ExtractorForMinimalDirectoryTest() throws IOException {
         String sourcePath = "src/test/resources/python/interface/edu/";
         Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
-        python3Extractor.execute();
+        python3Extractor.extractModel();
 
 
         // Assertions

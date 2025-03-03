@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp.CppExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.CppModelMapper;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
 
 public class CppModelMapperTest {
 
@@ -16,7 +16,7 @@ public class CppModelMapperTest {
     void testCppModelMapper() throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         CppExtractor extractor = new CppExtractor(repository, "src/test/resources/cpp/interface/edu/");
-        extractor.execute();
+        extractor.extractModel();
 
         CppModelMapper mapper = new CppModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
         mapper.mapToCodeModel();

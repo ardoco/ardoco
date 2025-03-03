@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
 
 public class JavaExtractorTest {
     
@@ -14,7 +14,7 @@ public class JavaExtractorTest {
     void executeJavaExtractorForMinimalDirectoryTest() throws IOException {
         String sourcePath = "src/test/resources/interface/edu/";
         JavaExtractor javaExtractor = buildJavaExtractor(sourcePath);
-        javaExtractor.execute();
+        javaExtractor.extractModel();
 
         // Assertions
         Assertions.assertEquals(3 , javaExtractor.getVariables().size());

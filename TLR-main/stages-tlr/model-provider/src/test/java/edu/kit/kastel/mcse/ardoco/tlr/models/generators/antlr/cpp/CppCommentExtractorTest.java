@@ -10,8 +10,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.cpp.CppCommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppCommentExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
 import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
@@ -65,8 +65,8 @@ public class CppCommentExtractorTest {
         Assertions.assertEquals(1, comments.get(0).getEndLine());
         Assertions.assertEquals("Entities.h", comments.get(0).getText());
 
-        Assertions.assertEquals(44, comments.get(1).getStartLine());
-        Assertions.assertEquals(44, comments.get(1).getEndLine());
+        Assertions.assertEquals(49, comments.get(1).getStartLine());
+        Assertions.assertEquals(49, comments.get(1).getEndLine());
         Assertions.assertEquals("ENTITIES_H", comments.get(1).getText());
     }
 

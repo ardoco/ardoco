@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.java.JavaInterfaceExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaInterfaceExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParser.CompilationUnitContext;

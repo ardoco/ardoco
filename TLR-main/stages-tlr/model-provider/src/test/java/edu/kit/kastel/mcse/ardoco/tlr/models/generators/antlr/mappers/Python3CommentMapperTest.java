@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappers.Python3CommentMapper;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.python3.Python3Extractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3CommentMapper;
 
 public class Python3CommentMapperTest {
     private final String sourcePath = "src/test/resources/python/interface/edu/";
@@ -35,7 +35,7 @@ public class Python3CommentMapperTest {
     private Python3CommentMapper testPython3CommentMapper(String path) throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, path);
-        extractor.execute();
+        extractor.extractElements();
 
         Python3CommentMapper commentMapper = new Python3CommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getComments());
         commentMapper.mapComments();
