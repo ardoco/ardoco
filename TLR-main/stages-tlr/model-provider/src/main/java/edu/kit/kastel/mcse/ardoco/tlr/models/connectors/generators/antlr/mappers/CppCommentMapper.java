@@ -4,25 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.NamespaceElement;
 
-public class JavaCommentMapper {
+public class CppCommentMapper {
     private List<VariableElement> variables;
     private List<ControlElement> controls;
-    private List<JavaClassElement> classes;
-    private List<InterfaceElement> interfaces;
+    private List<ClassElement> classes;
+    private List<NamespaceElement> namespaces;
     private List<CommentElement> comments;
 
-
-    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
+    public CppCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<NamespaceElement> namespaces, List<CommentElement> comments) {
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
-        this.interfaces = interfaces;
+        this.namespaces = namespaces;
         this.comments = comments;
     }
 
@@ -31,15 +30,13 @@ public class JavaCommentMapper {
         allElements.addAll(variables);
         allElements.addAll(controls);
         allElements.addAll(classes);
-        allElements.addAll(interfaces);
+        allElements.addAll(namespaces);
 
-        for (CommentElement comment : comments) {
+        for (CommentElement comment: comments) {
             BasicElement closestElement = findClosestElement(comment, allElements);
 
             if (closestElement != null) {
                 setCommentToElement(closestElement, comment);
-            } else {
-                throw new IllegalStateException("No element found for comment.");
             }
         }
     }
@@ -52,25 +49,26 @@ public class JavaCommentMapper {
         return controls;
     }
 
-    public List<JavaClassElement> getClasses() {
+    public List<ClassElement> getClasses() {
         return classes;
     }
 
-    public List<InterfaceElement> getInterfaces() {
-        return interfaces;
+    public List<NamespaceElement> getNamespaces() {
+        return namespaces;
     }
 
     private BasicElement findClosestElement(CommentElement comment, List<BasicElement> elements) {
-        int lineDifference = Integer.MAX_VALUE;
         BasicElement closestElement = null;
-        for (BasicElement element : elements) {
+        int minDistance = Integer.MAX_VALUE;
+
+        for (BasicElement element: elements) {
             if (element.getPath().equals(comment.getPath())) {
-                int lineDifferenceForElement = getLineDifference(comment, element, lineDifference);
-                if (lineDifferenceForElement < lineDifference) {
-                    lineDifference = lineDifferenceForElement;
+                int distance = getLineDifference(comment, element, minDistance);
+                if (distance < minDistance) {
+                    minDistance = distance;
                     closestElement = element;
                 }
-                if (lineDifferenceForElement == 0) {
+                if (minDistance == 0) {
                     return element;
                 }
             }
@@ -78,11 +76,11 @@ public class JavaCommentMapper {
         return closestElement;
     }
 
-    private int getLineDifference(CommentElement comment, BasicElement element, int closestLineDifferenceSoFar) {
-        int elementStartLine = element.getStartLine();
-        int elementEndLine = element.getEndLine();
+    private int getLineDifference(CommentElement comment, BasicElement element, int minDistance) {
         int commentStartLine = comment.getStartLine();
         int commentEndLine = comment.getEndLine();
+        int elementStartLine = element.getStartLine();
+        int elementEndLine = element.getEndLine();
 
         // comment just before element
         if (elementStartLine == commentEndLine + 1) {
@@ -95,20 +93,21 @@ public class JavaCommentMapper {
 
         return Math.abs(elementStartLine - commentEndLine);
     }
-
-
+    
     private void setCommentToElement(BasicElement element, CommentElement comment) {
         boolean found = false;
         String text = comment.getText();
-        for (VariableElement var : variables) {
-            if (var.equals(element)) {
-                var.setComment(text);
+
+        for (VariableElement variable: variables) {
+            if (variable.equals(element)) {
+                variable.setComment(text);
                 found = true;
                 break;
             }
         }
+
         if (!found) {
-            for (ControlElement control : controls) {
+            for (ControlElement control: controls) {
                 if (control.equals(element)) {
                     control.setComment(text);
                     found = true;
@@ -116,8 +115,9 @@ public class JavaCommentMapper {
                 }
             }
         }
+
         if (!found) {
-            for (JavaClassElement clazz : classes) {
+            for (ClassElement clazz: classes) {
                 if (clazz.equals(element)) {
                     clazz.setComment(text);
                     found = true;
@@ -125,20 +125,16 @@ public class JavaCommentMapper {
                 }
             }
         }
+
         if (!found) {
-            for (InterfaceElement interf : interfaces) {
-                if (interf.equals(element)) {
-                    interf.setComment(text);
+            for (NamespaceElement namespace: namespaces) {
+                if (namespace.equals(element)) {
+                    namespace.setComment(text);
                     found = true;
                     break;
                 }
             }
         }
-
-        if (!found) {
-            throw new IllegalStateException("Element not found in any list.");
-        }
     }
-
     
 }
