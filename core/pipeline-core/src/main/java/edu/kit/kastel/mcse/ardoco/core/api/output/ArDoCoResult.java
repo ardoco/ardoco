@@ -106,7 +106,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
         for (var metamodel : this.getMetamodels()) {
-            if (metamodel == Metamodel.ARCHITECTURE) {
+            if (metamodel == Metamodel.COMPONENT) {
                 traceLinks.addAll(this.getTraceLinksForModel(metamodel).castToCollection());
             }
         }
@@ -297,7 +297,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      */
     public List<Metamodel> getMetamodels() {
         ModelStates modelStates = this.getModelStates();
-        return Lists.mutable.ofAll(modelStates.metamodels());
+        return Lists.mutable.ofAll(modelStates.getMetamodels());
     }
 
     /**

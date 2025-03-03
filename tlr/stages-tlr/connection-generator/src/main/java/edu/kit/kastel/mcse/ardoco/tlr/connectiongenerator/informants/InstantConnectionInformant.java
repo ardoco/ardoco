@@ -1,11 +1,9 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
-import java.util.List;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -31,10 +29,11 @@ public class InstantConnectionInformant extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
-        //TODO: Only defined on LegacyModel
-        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
-        for (var metamodel : definedModels) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
+            if (model == null) {
+                continue;
+            }
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
             var connectionState = connectionStates.getConnectionState(metamodel);
 
@@ -59,7 +58,6 @@ public class InstantConnectionInformant extends Informant {
         }
     }
 
-    // TODO: Refactoring to be continued
     private void createLinksForEqualOrSimilarRecommendedInstances(Model model, RecommendationState recommendationState, ConnectionState connectionState) {
         for (var recommendedInstance : recommendationState.getRecommendedInstances()) {
             var sameInstances = model.getEndpoints()

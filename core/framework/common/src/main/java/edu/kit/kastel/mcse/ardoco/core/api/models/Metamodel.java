@@ -2,5 +2,5 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 public enum Metamodel {
-    CODE, ARCHITECTURE, CODE_AS_ARCHITECTURE
+    CODE, ARCHITECTURE, CODE_AS_ARCHITECTURE, COMPONENT
 }

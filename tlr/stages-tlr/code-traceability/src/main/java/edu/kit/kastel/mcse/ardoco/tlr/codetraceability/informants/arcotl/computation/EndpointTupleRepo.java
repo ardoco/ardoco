@@ -29,8 +29,7 @@ public class EndpointTupleRepo {
         this.endpointTuples = new ArrayList<>();
         for (var architectureEndpoint : archModel.getEndpoints()) {
             for (var codeEndpoint : codeModel.getEndpoints()) {
-                //TODO: Remove Cast
-                this.endpointTuples.add(new Pair<>(architectureEndpoint, ((CodeCompilationUnit) codeEndpoint)));
+                this.endpointTuples.add(new Pair<>(architectureEndpoint, codeEndpoint));
             }
         }
     }

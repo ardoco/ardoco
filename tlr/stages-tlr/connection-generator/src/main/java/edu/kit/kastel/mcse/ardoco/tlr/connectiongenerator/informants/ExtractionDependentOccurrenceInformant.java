@@ -1,10 +1,8 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
-import java.util.List;
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -44,11 +42,11 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
     }
 
     private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, Word word) {
-        //TODO: Only defined on LegacyModel
-        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
-        for (var metamodel : definedModels) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
-
+            if (model == null) {
+                continue;
+            }
             this.searchForNameInModel(model, textState, tss, word);
             this.searchForType(model, textState, tss, word);
         }

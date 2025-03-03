@@ -11,7 +11,6 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -58,10 +57,11 @@ public class NameTypeConnectionInformant extends Informant {
 
     private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
 
-        //TODO: Only defined on LegacyModel
-        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
-        for (var metamodel : definedModels) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
+            if (model == null) {
+                continue;
+            }
             var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
             this.checkForNameAfterType(textState, tss, word, model, recommendationState);
             this.checkForNameBeforeType(textState, tss, word, model, recommendationState);
@@ -213,8 +213,7 @@ public class NameTypeConnectionInformant extends Informant {
         }
 
         var text = word.getText();
-        matchingEntities = matchingEntities.select(
-                e -> SimilarityUtils.getInstance().areWordsOfListsSimilar(e.getNameParts().orElseThrow(), Lists.immutable.with(text)));
+        matchingEntities = matchingEntities.select(e -> SimilarityUtils.getInstance().areWordsOfListsSimilar(e.getNameParts(), Lists.immutable.with(text)));
 
         if (!matchingEntities.isEmpty()) {
             return matchingEntities.getFirst();

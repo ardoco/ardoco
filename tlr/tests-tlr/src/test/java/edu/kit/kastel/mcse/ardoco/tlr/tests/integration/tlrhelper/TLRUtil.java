@@ -33,17 +33,15 @@ public final class TLRUtil {
         var connectionStates = data.getData(ConnectionStates.ID, ConnectionStates.class).orElseThrow();
         var modelStates = data.getData(ModelStates.ID, ModelStates.class).orElseThrow();
 
-        List<ConnectionState> connectionStatesList = modelStates.metamodels()
+        List<ConnectionState> connectionStatesList = modelStates.getMetamodels()
                 .stream()
                 .map(modelStates::getModel)
                 .map(Model::getMetamodel)
                 .map(connectionStates::getConnectionState)
                 .toList();
         for (var connectionState : connectionStatesList) {
-            traceLinks.addAll(connectionState.getTraceLinks()
-                    .stream()
-                    .map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint()))
-                    .toList());
+            traceLinks.addAll(
+                    connectionState.getTraceLinks().stream().map(it -> new ModelElementSentenceLink(it.getFirstEndpoint(), it.getSecondEndpoint())).toList());
         }
         return traceLinks.toImmutable();
     }

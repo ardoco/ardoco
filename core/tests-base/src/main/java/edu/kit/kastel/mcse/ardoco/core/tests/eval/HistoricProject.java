@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 
@@ -87,8 +87,8 @@ public enum HistoricProject implements GoldStandardProject {
         this.goldStandardMissingTextForModelElement = goldStandardMissingTextForModelElement;
         this.expectedTraceLinkResults = expectedTraceLinkResults;
         this.expectedInconsistencyResults = expectedInconsistencyResults;
-        resourceNames = new TreeSet<>(List.of(model, textFile, goldStandardTraceabilityLinkRecovery, configurationsFile,
-                goldStandardMissingTextForModelElement));
+        resourceNames = new TreeSet<>(
+                List.of(model, textFile, goldStandardTraceabilityLinkRecovery, configurationsFile, goldStandardMissingTextForModelElement));
     }
 
     @Override
@@ -174,8 +174,8 @@ public enum HistoricProject implements GoldStandardProject {
     }
 
     @Override
-    public GoldStandard getTlrGoldStandard(ArchitectureModel architectureModel) {
-        return new GoldStandard(getTlrGoldStandardFile(), architectureModel);
+    public GoldStandard getTlrGoldStandard(ComponentModel componentModel) {
+        return new GoldStandard(getTlrGoldStandardFile(), componentModel);
     }
 
     @Override

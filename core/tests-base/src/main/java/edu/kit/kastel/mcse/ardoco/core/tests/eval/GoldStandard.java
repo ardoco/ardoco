@@ -12,18 +12,18 @@ import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
 public class GoldStandard {
-    private Logger logger = LoggerFactory.getLogger(GoldStandard.class);
+    private final Logger logger = LoggerFactory.getLogger(GoldStandard.class);
 
-    private File goldStandard;
-    private ArchitectureModel model;
+    private final File goldStandard;
+    private final ComponentModel model;
 
-    private MutableList<MutableList<ArchitectureItem>> sentence2instance = Lists.mutable.empty();
+    private final MutableList<MutableList<ArchitectureItem>> sentence2instance = Lists.mutable.empty();
 
-    public GoldStandard(File goldStandard, ArchitectureModel model) {
+    public GoldStandard(File goldStandard, ComponentModel model) {
         this.goldStandard = goldStandard;
         this.model = model;
         this.load();

@@ -1,10 +1,8 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
-import java.util.List;
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -54,10 +52,11 @@ public class NameTypeInformant extends Informant {
 
     private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
 
-        //TODO: Only defined on LegacyModel
-        var definedModels = List.of(Metamodel.ARCHITECTURE, Metamodel.CODE_AS_ARCHITECTURE);
-        for (var metamodel : definedModels) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
+            if (model == null) {
+                continue;
+            }
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.addRecommendedInstanceIfNameAfterType(textState, tss, word, model, recommendationState);

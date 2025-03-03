@@ -25,7 +25,7 @@ public class ModelStates implements PipelineStepData {
      *
      * @return the IDs of all contained {@link Model Models}
      */
-    public SortedSet<Metamodel> metamodels() {
+    public SortedSet<Metamodel> getMetamodels() {
         return new TreeSet<>(this.models.keySet());
     }
 

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
-// TODO: Discuss how to handle the missing type
 public final class ArchitectureMethod extends ArchitectureItem {
 
     private static final long serialVersionUID = 6560555992331464264L;
@@ -16,7 +15,7 @@ public final class ArchitectureMethod extends ArchitectureItem {
 
     @Override
     public Optional<String> getType() {
-        // Not implemented yet. Methods currently have no specified type.//
+        // Not implemented yet. Methods currently have no specified type.
         return Optional.empty();
     }
 

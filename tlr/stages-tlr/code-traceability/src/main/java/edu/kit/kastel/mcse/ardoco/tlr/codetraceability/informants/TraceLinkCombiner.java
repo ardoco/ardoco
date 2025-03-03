@@ -8,6 +8,7 @@ import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
@@ -38,13 +39,13 @@ public class TraceLinkCombiner extends Informant {
             return;
         }
         var samCodeTraceLinks = codeTraceabilityState.getSamCodeTraceLinks();
-        for (var metamodel : modelStatesData.metamodels()) {
-            var connectionState = connectionStates.getConnectionState(metamodel);
-            var sadSamTraceLinks = connectionState.getTraceLinks();
 
-            var combinedLinks = this.combineToTransitiveTraceLinks(sadSamTraceLinks, samCodeTraceLinks);
-            transitiveTraceLinks.addAll(combinedLinks.toList());
-        }
+        var connectionState = connectionStates.getConnectionState(Metamodel.COMPONENT);
+        //evtl CodeAsArchitecture, assumed that only one leads to transitive tracelinks
+        var sadSamTraceLinks = connectionState.getTraceLinks();
+
+        var combinedLinks = this.combineToTransitiveTraceLinks(sadSamTraceLinks, samCodeTraceLinks);
+        transitiveTraceLinks.addAll(combinedLinks.toList());
 
         codeTraceabilityState.addSadCodeTraceLinks(transitiveTraceLinks);
     }

@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
@@ -84,9 +84,9 @@ public final class CodeModel extends Model {
     }
 
     @Override
-    public List<? extends ModelEntity> getEndpoints() {
+    public List<CodeCompilationUnit> getEndpoints() {
 
-        List<ModelEntity> entities = new ArrayList<>();
+        List<CodeCompilationUnit> entities = new ArrayList<>();
         this.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
 
         return entities;

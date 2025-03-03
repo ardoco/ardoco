@@ -27,11 +27,11 @@ import edu.kit.kastel.mcse.ardoco.id.types.MissingTextForModelElementInconsisten
 public class UndocumentedModelElementInconsistencyInformant extends Informant {
 
     @Configurable
-    private int minimumNeededTraceLinks = 1;
+    private final int minimumNeededTraceLinks = 1;
     @Configurable
-    private List<String> whitelist = Lists.mutable.of();
+    private final List<String> whitelist = Lists.mutable.of();
     @Configurable
-    private List<String> types = Lists.mutable.of("Component", "BasicComponent", "CompositeComponent");
+    private final List<String> types = Lists.mutable.of("Component", "BasicComponent", "CompositeComponent");
 
     public UndocumentedModelElementInconsistencyInformant(DataRepository dataRepository) {
         super(UndocumentedModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
@@ -60,7 +60,7 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
                 if (pattern.matcher(c.getName()).matches()) {
                     return true;
                 }
-                for (var name : c.getNameParts().orElseThrow()) {
+                for (var name : c.getNameParts()) {
                     if (pattern.matcher(name).matches()) {
                         return true;
                     }
@@ -79,7 +79,7 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var metamodel : modelStates.metamodels()) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
             var connectionState = connectionStates.getConnectionState(metamodel);
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);

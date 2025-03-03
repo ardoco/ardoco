@@ -8,10 +8,13 @@ import java.util.SortedMap;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.set.MutableSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeModule;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.SadCodeTraceLink;
@@ -38,11 +41,11 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
             return;
         }
 
-        CodeModel codeModel = this.findCodeModel(modelStatesData);
+        CoarseGrainedCodeModel coarseGrainedCodeModel = this.findCoarseGrainedCodeModel(modelStatesData);
 
         for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_AS_ARCHITECTURE).getTraceLinks()) {
-            var modelElement = traceLink.getSecondEndpoint().getId();
-            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, codeModel);
+            var modelElement = traceLink.getSecondEndpoint();
+            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, coarseGrainedCodeModel);
             for (var mid : mentionedCodeModelElements) {
                 sadCodeTracelinks.add(new SadCodeTraceLink(traceLink.getFirstEndpoint(), mid));
             }
@@ -53,43 +56,62 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         codeTraceabilityState.addSadCodeTraceLinks(sadCodeTracelinks);
     }
 
-    private List<CodeCompilationUnit> findMentionedCodeModelElementsById(String modelElementId, CodeModel codeModel) {
-        boolean isPackage = modelElementId.endsWith("/");
-        if (isPackage) {
-            return this.findAllClassesInPackage(modelElementId, codeModel);
+    private String retrievePath(CodePackage codePackage) {
+        StringBuilder path = new StringBuilder(codePackage.getName());
+        CodeModule parent = codePackage.getParent();
+
+        while (parent instanceof CodePackage) {
+            path.insert(0, parent.getName() + "/");
+            parent = parent.getParent();
         }
-        return this.findCompilationUnitById(modelElementId, codeModel);
+        path.append("/");
+        return path.toString();
     }
 
-    private List<CodeCompilationUnit> findAllClassesInPackage(String modelElementId, CodeModel codeModel) {
+    private List<CodeCompilationUnit> findMentionedCodeModelElementsById(ModelEntity modelElement, CoarseGrainedCodeModel coarseGrainedCodeModel) {
+
+        if (modelElement instanceof CodePackage codePackage) {
+            String packagePath = retrievePath(codePackage);
+            return this.findAllClassesInPackage(packagePath, coarseGrainedCodeModel);
+        }
+        return this.findCompilationUnitById(modelElement.getId(), coarseGrainedCodeModel);
+    }
+
+    private List<CodeCompilationUnit> findAllClassesInPackage(String packagePath, CoarseGrainedCodeModel coarseGrainedCodeModel) {
         List<CodeCompilationUnit> codeCompilationUnits = new ArrayList<>();
-        for (var codeCompilationUnit : codeModel.getEndpoints()) {
-            var path = ((CodeCompilationUnit) codeCompilationUnit).getPath();
-            if (path.contains(modelElementId)) {
-                //TODO: Remove Cast
-                codeCompilationUnits.add(((CodeCompilationUnit) codeCompilationUnit));
+        List<CodeCompilationUnit> allCodeCompilationUnits = coarseGrainedCodeModel.getEndpoints()
+                .stream()
+                .filter(endpoint -> endpoint instanceof CodeCompilationUnit)
+                .map(endpoint -> (CodeCompilationUnit) endpoint)
+                .toList();
+
+        for (var codeCompilationUnit : allCodeCompilationUnits) {
+            var path = codeCompilationUnit.getPath();
+            if (path.contains(packagePath)) {
+                codeCompilationUnits.add(codeCompilationUnit);
             }
         }
         if (codeCompilationUnits.isEmpty()) {
-            throw new IllegalStateException("Could not find any code for " + modelElementId);
+            throw new IllegalStateException("Could not find any code for " + packagePath);
         }
         return codeCompilationUnits;
     }
 
-    private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId, CodeModel codeModel) {
-        for (var codeCompilationUnit : codeModel.getEndpoints()) {
-            if (codeCompilationUnit.getId().equals(modelElementId)) {
-                //TODO: Remove Cast
-                return List.of(((CodeCompilationUnit) codeCompilationUnit));
+    private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId, CoarseGrainedCodeModel coarseGrainedCodeModel) {
+        for (var entity : coarseGrainedCodeModel.getEndpoints()) {
+            if (entity instanceof CodeCompilationUnit codeCompilationUnit) {
+                if (codeCompilationUnit.getId().equals(modelElementId)) {
+                    return List.of(codeCompilationUnit);
+                }
             }
         }
         throw new IllegalStateException("Could not find model element " + modelElementId);
     }
 
-    private CodeModel findCodeModel(ModelStates models) {
-        for (var metamodel : models.metamodels()) {
+    private CoarseGrainedCodeModel findCoarseGrainedCodeModel(ModelStates models) {
+        for (var metamodel : models.getMetamodels()) {
             var model = models.getModel(metamodel);
-            if (model instanceof CodeModel codeModel) {
+            if (model instanceof CoarseGrainedCodeModel codeModel) {
                 return codeModel;
             }
         }
