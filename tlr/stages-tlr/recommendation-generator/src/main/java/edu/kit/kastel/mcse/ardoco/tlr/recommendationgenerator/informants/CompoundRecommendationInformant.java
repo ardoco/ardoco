@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 public class CompoundRecommendationInformant extends Informant {
 
     @Configurable
-    private final double confidence = 0.8;
+    private double confidence = 0.8;
 
     public CompoundRecommendationInformant(DataRepository dataRepository) {
         super(CompoundRecommendationInformant.class.getSimpleName(), dataRepository);

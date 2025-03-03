@@ -34,7 +34,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 public class NameTypeConnectionInformant extends Informant {
 
     @Configurable
-    private final double probability = 1.0;
+    private double probability = 1.0;
     private final TextStateStrategies strategy = TextStateStrategies.DEFAULT;
 
     public NameTypeConnectionInformant(DataRepository dataRepository) {

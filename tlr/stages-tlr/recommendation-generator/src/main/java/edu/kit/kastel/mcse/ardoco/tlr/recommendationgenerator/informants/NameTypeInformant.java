@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
 public class NameTypeInformant extends Informant {
 
     @Configurable
-    private final double probability = 1.0;
+    private double probability = 1.0;
     private final TextStateStrategies tss;
 
     /**
