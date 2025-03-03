@@ -27,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
 public class MissingModelElementInconsistencyInformant extends Informant {
 
     @Configurable
-    private double minSupport = 1;
+    private final double minSupport = 1;
 
     public MissingModelElementInconsistencyInformant(DataRepository dataRepository) {
         super(MissingModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
@@ -40,7 +40,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var metamodel : modelStates.metamodels()) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
             this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, model);
         }

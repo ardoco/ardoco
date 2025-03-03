@@ -25,7 +25,7 @@ public class InitialInconsistencyAgent extends PipelineAgent {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
-        for (var model : modelStates.metamodels()) {
+        for (var model : modelStates.getMetamodels()) {
             var modelState = modelStates.getModel(model);
             Metamodel metamodel = modelState.getMetamodel();
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);

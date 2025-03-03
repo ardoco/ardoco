@@ -19,7 +19,6 @@ public final class CoarseGrainedCodeModel extends Model {
 
     @Override
     public List<? extends ModelEntity> getContent() {
-        //TODO: Is the amount correct?
         return this.getEndpoints();
     }
 

@@ -7,7 +7,6 @@ import java.util.SortedSet;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
-// TODO: Discuss how to handle the missing type
 public final class ArchitectureInterface extends ArchitectureItem {
 
     private static final long serialVersionUID = 2232013345166120690L;

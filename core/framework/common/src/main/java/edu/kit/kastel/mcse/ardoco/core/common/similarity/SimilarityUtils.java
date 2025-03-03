@@ -129,12 +129,12 @@ public final class SimilarityUtils {
         var nameParts = modelEntity.getNameParts();
         if (nameParts.isEmpty())
             return false;
-        if (this.areWordsOfListsSimilar(nameParts.get(), Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(modelEntity.getName(),
+        if (this.areWordsOfListsSimilar(nameParts, Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(modelEntity.getName(),
                 nounMapping.getReference())) {
             return true;
         }
 
-        for (String name : nameParts.get()) {
+        for (String name : nameParts) {
             if (this.areWordsSimilar(name, nounMapping.getReference())) {
                 return true;
             }
@@ -153,7 +153,7 @@ public final class SimilarityUtils {
         if (modelEntity.getNameParts().isEmpty()) {
             return false;
         }
-        return this.compareWordWithStringListEntries(word, modelEntity.getNameParts().orElseThrow());
+        return this.compareWordWithStringListEntries(word, modelEntity.getNameParts());
     }
 
     //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
@@ -174,7 +174,7 @@ public final class SimilarityUtils {
         if (modelEntity.getNameParts().isEmpty()) {
             return result;
         }
-        return result || this.areWordsOfListsSimilar(modelEntity.getNameParts().get(), nameList);
+        return result || this.areWordsOfListsSimilar(modelEntity.getNameParts(), nameList);
     }
 
     //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
@@ -312,11 +312,10 @@ public final class SimilarityUtils {
                     allListsSimilar++;
                 }
 
-                if (instanceNames.isPresent()) {
-                    if (!this.areWordsOfListsSimilar(instanceNames.get(), Lists.immutable.with(ri.getName()), getMostRecommendedIByRefMinProportion)) {
-                        risToRemove.add(ri);
-                    }
+                if (!this.areWordsOfListsSimilar(instanceNames, Lists.immutable.with(ri.getName()), getMostRecommendedIByRefMinProportion)) {
+                    risToRemove.add(ri);
                 }
+
             }
             whileSelection.removeAll(risToRemove);
             if (allListsSimilar == whileSelection.size()) {
@@ -340,7 +339,7 @@ public final class SimilarityUtils {
 
         for (var sf : ri.getNameMappings().flatCollect(NounMapping::getSurfaceForms)) {
             var splitSF = CommonUtilities.splitCases(String.join(" ", CommonUtilities.splitAtSeparators(sf)));
-            if (this.areWordsSimilar(String.join(" ", instanceNames.get()), splitSF)) {
+            if (this.areWordsSimilar(String.join(" ", instanceNames), splitSF)) {
                 return true;
             }
         }
@@ -354,17 +353,12 @@ public final class SimilarityUtils {
 
         boolean instanceNameAndRIName = this.areWordsSimilar(modelEntity.getName(), ri.getName());
         boolean longestNameSplitAndRINames = this.areWordsOfListsSimilar(longestNameSplit, recommendedInstanceNames, similarity);
-        boolean instanceNamesAndRIs = false;
-        boolean listOfNamesSimilarEnough = false;
-        boolean listOfNameSplitSimilarEnough = false;
 
-        if (entityNameParts.isPresent()) {
-            instanceNamesAndRIs = this.areWordsOfListsSimilar(entityNameParts.get(), recommendedInstanceNames, similarity);
-            listOfNamesSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts.get(), recommendedInstanceNames) / Math.max(entityNameParts.get().size(),
-                    recommendedInstanceNames.size()) >= similarity;
-            listOfNameSplitSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, recommendedInstanceNames) / Math.max(entityNameParts.get().size(),
-                    recommendedInstanceNames.size()) >= similarity;
-        }
+        boolean instanceNamesAndRIs = this.areWordsOfListsSimilar(entityNameParts, recommendedInstanceNames, similarity);
+        boolean listOfNamesSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, recommendedInstanceNames) / Math.max(entityNameParts.size(),
+                recommendedInstanceNames.size()) >= similarity;
+        boolean listOfNameSplitSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, recommendedInstanceNames) / Math.max(entityNameParts.size(),
+                recommendedInstanceNames.size()) >= similarity;
 
         if (instanceNameAndRIName || instanceNamesAndRIs || longestNameSplitAndRINames || listOfNamesSimilarEnough || listOfNameSplitSimilarEnough) {
             return true;
@@ -375,13 +369,10 @@ public final class SimilarityUtils {
                 var surfaceFormWords = CommonUtilities.splitAtSeparators(splitSurfaceForm);
 
                 boolean longestNameXSurfaceForms = this.areWordsOfListsSimilar(longestNameSplit, surfaceFormWords, similarity);
-                boolean instanceNamesXSurfaceForms = false;
-                boolean listOfNamesXSurfaceFormSimilarEnough = false;
-                if (entityNameParts.isPresent()) {
-                    instanceNamesXSurfaceForms = this.areWordsOfListsSimilar(entityNameParts.get(), surfaceFormWords, similarity);
-                    listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts.get(), surfaceFormWords) / Math.max(
-                            entityNameParts.get().size(), surfaceFormWords.size()) >= similarity;
-                }
+
+                boolean instanceNamesXSurfaceForms = this.areWordsOfListsSimilar(entityNameParts, surfaceFormWords, similarity);
+                boolean listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, surfaceFormWords) / Math.max(entityNameParts.size(),
+                        surfaceFormWords.size()) >= similarity;
 
                 boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(
                         longestNameSplit.size(), surfaceFormWords.size()) >= similarity;

@@ -36,7 +36,7 @@ public class ArCoTLInformant extends Informant {
 
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
-        for (var metamodel : modelStates.metamodels()) {
+        for (var metamodel : modelStates.getMetamodels()) {
             if (ArCoTLInformant.isAnArchitectureModel(metamodel)) {
                 architectureModel = (ArchitectureModel) modelStates.getModel(metamodel);
             } else if (ArCoTLInformant.isACodeModel(metamodel)) {

@@ -27,7 +27,7 @@ public class ProjectNameInformant extends Informant {
     private static final String ERROR_EMPTY_LIST = "List cannot be empty";
 
     @Configurable
-    private double penalty = Double.NEGATIVE_INFINITY;
+    private final double penalty = Double.NEGATIVE_INFINITY;
 
     /**
      * Constructs a new instance of the {@link ProjectNameInformant} with the given data repository.
@@ -49,7 +49,7 @@ public class ProjectNameInformant extends Informant {
         var projectName = DataRepositoryHelper.getProjectPipelineData(dataRepository).getProjectName();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        for (var metamodel : modelStates.metamodels()) {
+        for (var metamodel : modelStates.getMetamodels()) {
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
             this.checkForProjectNameInRecommendedInstances(projectName, recommendationState);

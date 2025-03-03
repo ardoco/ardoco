@@ -33,9 +33,8 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
 
     public abstract Optional<ImmutableList<String>> getTypeParts();
 
-    //TODO: Remove Optional
-    public Optional<ImmutableList<String>> getNameParts() {
-        return Optional.of(splitIdentifierIntoParts(this.getName()).toImmutable());
+    public ImmutableList<String> getNameParts() {
+        return splitIdentifierIntoParts(this.getName()).toImmutable();
     }
 
     protected MutableList<String> splitIdentifierIntoParts(String identifier) {

@@ -12,7 +12,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
 public abstract class Matcher extends Aggregation {
 
     protected enum EndpointType {
-        // TODO: Extension necessary?
         ARCHITECTURE("Architecture"), CODE("Code");
 
         private final String name;
