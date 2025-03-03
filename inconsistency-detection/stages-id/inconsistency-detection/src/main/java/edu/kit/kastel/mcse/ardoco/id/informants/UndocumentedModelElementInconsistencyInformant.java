@@ -27,11 +27,11 @@ import edu.kit.kastel.mcse.ardoco.id.types.MissingTextForModelElementInconsisten
 public class UndocumentedModelElementInconsistencyInformant extends Informant {
 
     @Configurable
-    private final int minimumNeededTraceLinks = 1;
+    private int minimumNeededTraceLinks = 1;
     @Configurable
-    private final List<String> whitelist = Lists.mutable.of();
+    private List<String> whitelist = Lists.mutable.of();
     @Configurable
-    private final List<String> types = Lists.mutable.of("Component", "BasicComponent", "CompositeComponent");
+    private List<String> types = Lists.mutable.of("Component", "BasicComponent", "CompositeComponent");
 
     public UndocumentedModelElementInconsistencyInformant(DataRepository dataRepository) {
         super(UndocumentedModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);

@@ -27,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
 public class MissingModelElementInconsistencyInformant extends Informant {
 
     @Configurable
-    private final double minSupport = 1;
+    private double minSupport = 1;
 
     public MissingModelElementInconsistencyInformant(DataRepository dataRepository) {
         super(MissingModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
