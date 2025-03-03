@@ -11,5 +11,5 @@ public class ControlElement extends BasicElement {
     public Parent getParent() {
         return parent;
     }
-    
+
 }

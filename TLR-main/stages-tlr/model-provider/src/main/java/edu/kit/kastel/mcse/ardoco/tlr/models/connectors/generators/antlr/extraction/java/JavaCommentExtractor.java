@@ -26,19 +26,17 @@ public class JavaCommentExtractor extends CommentExtractor {
     protected String cleanseComment(String text) {
         // Remove block comment delimiters (/** and */)
         text = text.replaceAll("^/\\*+|\\*/$", "").trim();
-    
+
         // Remove leading '*' characters from each line but keep newlines
-        text = text.replaceAll("(?m)^\\s*\\* ?", "").trim(); 
-    
+        text = text.replaceAll("(?m)^\\s*\\* ?", "").trim();
+
         // Remove inline '//' comments
         text = text.replaceAll("^//", "").trim();
-    
+
         // Normalize spaces: Convert multiple spaces/newlines into a single space
         text = text.replaceAll("\\s+", " ");
-    
+
         return text;
     }
-
-    
 
 }

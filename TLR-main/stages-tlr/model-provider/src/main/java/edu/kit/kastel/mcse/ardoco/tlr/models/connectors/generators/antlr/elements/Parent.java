@@ -14,13 +14,12 @@ public class Parent extends BasicElement {
         return type;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Parent) {
             Parent parent = (Parent) obj;
-            return parent.getName().equals(this.getName()) && parent.getType().equals(this.getType()) 
-                && parent.getPath().equals(this.getPath());
+            return parent.getName().equals(this.getName()) && parent.getType().equals(this.getType())
+                    && parent.getPath().equals(this.getPath());
         }
         return false;
     }
@@ -29,5 +28,5 @@ public class Parent extends BasicElement {
     public int hashCode() {
         return Objects.hash(getName(), getPath(), getType());
     }
-    
+
 }

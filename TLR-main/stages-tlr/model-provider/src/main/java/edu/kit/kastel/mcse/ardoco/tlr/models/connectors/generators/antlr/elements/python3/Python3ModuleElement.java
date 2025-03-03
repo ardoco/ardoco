@@ -30,5 +30,5 @@ public class Python3ModuleElement extends BasicElement {
     public int hashCode() {
         return this.getName().hashCode() + this.getPath().hashCode() + this.getPackage().hashCode();
     }
-    
+
 }

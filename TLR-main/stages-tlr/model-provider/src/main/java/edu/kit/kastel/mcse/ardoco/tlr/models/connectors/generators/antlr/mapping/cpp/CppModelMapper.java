@@ -20,7 +20,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.NamespaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
-public class CppModelMapper implements ModelMapper{
+public class CppModelMapper implements ModelMapper {
     private ProgrammingLanguage language = ProgrammingLanguage.CPP;
     private List<VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
@@ -29,7 +29,9 @@ public class CppModelMapper implements ModelMapper{
     private CodeModel codeModel;
     private final CodeItemRepository codeItemRepository;
 
-    public CppModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<NamespaceElement> namespaces, List<CommentElement> comments) {
+    public CppModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables,
+            List<ControlElement> controls, List<ClassElement> classes, List<NamespaceElement> namespaces,
+            List<CommentElement> comments) {
         CppCommentMapper commentMapper = new CppCommentMapper(variables, controls, classes, namespaces, comments);
         commentMapper.mapComments();
         this.variables = commentMapper.getVariables();
@@ -164,13 +166,15 @@ public class CppModelMapper implements ModelMapper{
         return classUnit;
     }
 
-    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement control) {
+    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(
+            ControlElement control) {
         String name = control.getName();
         String path = control.getPath();
         String comment = control.getComment();
         Parent comparable = new Parent(name, path, BasicType.CONTROL);
         List<VariableElement> contentOfControl = getAllVariablesWithParent(comparable);
-        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(
+                codeItemRepository, name);
         if (comment != null) {
             controlElement.setComment(comment);
         }
@@ -217,14 +221,4 @@ public class CppModelMapper implements ModelMapper{
         return result;
     }
 
-
-
-
-
-
-
-
-
-
-    
 }

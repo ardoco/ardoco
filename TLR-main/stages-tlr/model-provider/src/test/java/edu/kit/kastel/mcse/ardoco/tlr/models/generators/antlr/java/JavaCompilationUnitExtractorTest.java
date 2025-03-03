@@ -73,8 +73,6 @@ class JavaCompilationUnitExtractorTest {
         Assertions.assertEquals("edu.drei", element.getPackage().getName());
     }
 
-
-
     private CompilationUnitElement compilationUnitExtractorTest(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
@@ -87,6 +85,4 @@ class JavaCompilationUnitExtractorTest {
         return extractor.visitCompilationUnit(ctx);
     }
 
-
-    
 }

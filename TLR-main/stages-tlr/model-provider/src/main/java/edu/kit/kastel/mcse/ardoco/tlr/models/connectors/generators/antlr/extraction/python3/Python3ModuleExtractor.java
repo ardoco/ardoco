@@ -25,13 +25,14 @@ public class Python3ModuleExtractor extends Python3ParserBaseVisitor<List<Python
         modules.add(module);
         super.visitFile_input(ctx);
         return modules;
-    }    
+    }
 
     private String getPackageName(String path, String fileName) {
         String packagePath = path.substring(0, path.lastIndexOf(fileName));
 
         // base package is source directory of the file
-        String basePackageName = this.dirPath.substring(0, this.dirPath.lastIndexOf('/', this.dirPath.lastIndexOf('/') - 1));
+        String basePackageName = this.dirPath.substring(0,
+                this.dirPath.lastIndexOf('/', this.dirPath.lastIndexOf('/') - 1));
 
         // build package name relative to the base package
         String packageName = packagePath.substring(basePackageName.length() + 1, packagePath.length() - 1);

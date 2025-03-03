@@ -33,15 +33,15 @@ public class CppExtractor extends ANTLRExtractor {
         super(repository, path);
     }
 
-    @Override 
+    @Override
     protected List<Path> getFiles() {
         Path dir = Path.of(path);
         List<Path> cppFiles = new ArrayList<>();
         try {
             Files.walk(dir)
-            .filter(Files::isRegularFile)
-            .filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h"))
-            .forEach(cppFiles::add);
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h"))
+                    .forEach(cppFiles::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class CppExtractor extends ANTLRExtractor {
         this.mapper = new CppModelMapper(this.codeItemRepository, variables, controls, classes, namespaces, comments);
     }
 
-    @Override 
+    @Override
     protected CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path) {
         return new CppCommentExtractor(tokens, path);
     }
@@ -123,5 +123,5 @@ public class CppExtractor extends ANTLRExtractor {
     private void extractNamespaces(TranslationUnitContext ctx) {
         CppNamespaceExtractor extractor = new CppNamespaceExtractor();
         this.namespaces.addAll(extractor.visitTranslationUnit(ctx));
-    }    
+    }
 }

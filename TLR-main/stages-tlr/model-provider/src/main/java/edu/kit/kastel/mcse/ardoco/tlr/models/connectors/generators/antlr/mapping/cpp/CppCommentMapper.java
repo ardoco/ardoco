@@ -17,18 +17,21 @@ public class CppCommentMapper extends CommentMapper {
     private List<ClassElement> classes;
     private List<NamespaceElement> namespaces;
 
-    public CppCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<NamespaceElement> namespaces, List<CommentElement> comments) {
+    public CppCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes,
+            List<NamespaceElement> namespaces, List<CommentElement> comments) {
         super(comments);
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
         this.namespaces = namespaces;
-        this.allElements = new ArrayList<>() {{
-            addAll(variables);
-            addAll(controls);
-            addAll(classes);
-            addAll(namespaces);
-        }};
+        this.allElements = new ArrayList<>() {
+            {
+                addAll(variables);
+                addAll(controls);
+                addAll(classes);
+                addAll(namespaces);
+            }
+        };
     }
 
     public List<VariableElement> getVariables() {
@@ -46,7 +49,7 @@ public class CppCommentMapper extends CommentMapper {
     public List<NamespaceElement> getNamespaces() {
         return namespaces;
     }
-    
+
     @Override
     protected int calculateDistance(CommentElement comment, BasicElement element) {
         int elementStartLine = element.getStartLine();
@@ -85,12 +88,12 @@ public class CppCommentMapper extends CommentMapper {
             lineDifference = 0;
         } else if (commentStartLine <= elementStartLine) {
             lineDifference = Math.abs(elementStartLine - commentEndLine);
-        } 
+        }
         return lineDifference;
     }
 
     private boolean tryAddingToVariable(BasicElement element, String text) {
-        for (VariableElement variable: variables) {
+        for (VariableElement variable : variables) {
             if (variable.equals(element)) {
                 variable.setComment(text);
                 return true;
@@ -100,7 +103,7 @@ public class CppCommentMapper extends CommentMapper {
     }
 
     private boolean tryAddingToControl(BasicElement element, String text) {
-        for (ControlElement control: controls) {
+        for (ControlElement control : controls) {
             if (control.equals(element)) {
                 control.setComment(text);
                 return true;
@@ -110,7 +113,7 @@ public class CppCommentMapper extends CommentMapper {
     }
 
     private boolean tryAddingToClass(BasicElement element, String text) {
-        for (ClassElement clazz: classes) {
+        for (ClassElement clazz : classes) {
             if (clazz.equals(element)) {
                 clazz.setComment(text);
                 return true;
@@ -120,12 +123,12 @@ public class CppCommentMapper extends CommentMapper {
     }
 
     private boolean tryAddingToNamespace(BasicElement element, String text) {
-        for (NamespaceElement namespace: namespaces) {
+        for (NamespaceElement namespace : namespaces) {
             if (namespace.equals(element)) {
                 namespace.setComment(text);
                 return true;
             }
         }
         return false;
-    }    
+    }
 }

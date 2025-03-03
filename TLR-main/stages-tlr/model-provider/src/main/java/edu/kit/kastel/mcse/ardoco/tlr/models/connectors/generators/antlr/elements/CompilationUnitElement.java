@@ -1,6 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
-
 public class CompilationUnitElement extends BasicElement {
     private final PackageElement packageElement;
 
@@ -13,11 +12,4 @@ public class CompilationUnitElement extends BasicElement {
         return packageElement;
     }
 
-
-
-
-
-
-
-    
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
@@ -32,8 +31,6 @@ public class Python3Extractor extends ANTLRExtractor {
     private List<ClassElement> classes = new ArrayList<>();
     private List<Python3ModuleElement> modules = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
-    
-
 
     public Python3Extractor(CodeItemRepository repository, String path) {
         super(repository, path);
@@ -45,9 +42,9 @@ public class Python3Extractor extends ANTLRExtractor {
         List<Path> pythonFiles = new ArrayList<>();
         try {
             Files.walk(dir)
-            .filter(Files::isRegularFile)
-            .filter(f -> f.toString().endsWith(".py"))
-            .forEach(pythonFiles::add);
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".py"))
+                    .forEach(pythonFiles::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,7 +66,8 @@ public class Python3Extractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages, comments);
+        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages,
+                comments);
     }
 
     @Override
@@ -120,12 +118,12 @@ public class Python3Extractor extends ANTLRExtractor {
         this.variables.addAll(extractor.visitFile_input(ctx));
     }
 
-    private void extractControls(File_inputContext ctx){
+    private void extractControls(File_inputContext ctx) {
         Python3ControlExtractor extractor = new Python3ControlExtractor();
         this.controls.addAll(extractor.visitFile_input(ctx));
     }
 
-    private void extractClasses(File_inputContext ctx) { 
+    private void extractClasses(File_inputContext ctx) {
         Python3ClassExtractor extractor = new Python3ClassExtractor();
         this.classes.addAll(extractor.visitFile_input(ctx));
     }

@@ -44,7 +44,7 @@ public class CppVariableExtractorTest {
     }
 
     @Test
-    void variableExtractorEntitiesHTest() throws IOException{
+    void variableExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
 
@@ -89,5 +89,4 @@ public class CppVariableExtractorTest {
         return extractor.visitTranslationUnit(translationUnit);
     }
 
-    
 }

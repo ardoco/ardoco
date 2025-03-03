@@ -19,10 +19,10 @@ public class JavaCommentMapperTest {
         // Assertions
         Assertions.assertEquals("s", commentMapper.getVariables().get(0).getName());
         Assertions.assertEquals("This is a Test Line Comment", commentMapper.getVariables().get(0).getComment());
-        
+
         Assertions.assertEquals("AClass", commentMapper.getClasses().get(0).getName());
         Assertions.assertEquals("This is a Test Java Doc Comment", commentMapper.getClasses().get(0).getComment());
-       Assertions.assertEquals("aMethod", commentMapper.getControls().get(0).getName());
+        Assertions.assertEquals("aMethod", commentMapper.getControls().get(0).getName());
         Assertions.assertEquals("This is a Test Block Comment", commentMapper.getControls().get(0).getComment());
     }
 
@@ -33,18 +33,19 @@ public class JavaCommentMapperTest {
 
         // Assertions
         Assertions.assertEquals("Superclass", commentMapper.getClasses().get(0).getName());
-        Assertions.assertEquals("This is a Test Java Doc Comment over multiple lines", commentMapper.getClasses().get(0).getComment());
+        Assertions.assertEquals("This is a Test Java Doc Comment over multiple lines",
+                commentMapper.getClasses().get(0).getComment());
     }
 
-    private JavaCommentMapper testJavaCommentMapper(String path) throws IOException{
+    private JavaCommentMapper testJavaCommentMapper(String path) throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         JavaExtractor extractor = new JavaExtractor(repository, path);
         extractor.extractElements();
 
-        JavaCommentMapper commentMapper = new JavaCommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getInterfaces(), extractor.getComments());
+        JavaCommentMapper commentMapper = new JavaCommentMapper(extractor.getVariables(), extractor.getControls(),
+                extractor.getClasses(), extractor.getInterfaces(), extractor.getComments());
         commentMapper.mapComments();
         return commentMapper;
     }
 
-    
 }

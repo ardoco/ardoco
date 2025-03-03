@@ -29,10 +29,9 @@ public class CppControlExtractorTest {
         Assertions.assertEquals("main", controls.get(0).getParent().getName());
         Assertions.assertEquals(BasicType.FILE, controls.get(0).getParent().getType());
 
-        
     }
 
-    @Test 
+    @Test
     void controlExtractorEntitiesCPPTest() throws IOException {
         String filePath = sourcePath + "src/Entities.cpp";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
@@ -42,14 +41,14 @@ public class CppControlExtractorTest {
     }
 
     @Test
-    void controlExtractorEntitiesHTest() throws IOException{
+    void controlExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
 
         Assertions.assertEquals(0, controls.size());
     }
 
-    private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException{
+    private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
         CharStream charStream = CharStreams.fromFileName(filePath);
         CPP14Lexer lexer = new CPP14Lexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -59,5 +58,5 @@ public class CppControlExtractorTest {
         CppControlExtractor extractor = new CppControlExtractor();
         return extractor.visitTranslationUnit(ctx);
     }
-    
+
 }

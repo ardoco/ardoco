@@ -11,10 +11,10 @@ import generated.antlr.cpp.CPP14ParserBaseVisitor;
 
 public class CppControlExtractor extends CPP14ParserBaseVisitor<List<ControlElement>> {
     List<ControlElement> controls = new ArrayList<>();
-    
+
     @Override
     public List<ControlElement> visitTranslationUnit(CPP14Parser.TranslationUnitContext ctx) {
-        if (ctx.declarationseq()!= null) {
+        if (ctx.declarationseq() != null) {
             for (CPP14Parser.DeclarationContext declaration : ctx.declarationseq().declaration()) {
                 visitDeclaration(declaration);
             }
@@ -29,8 +29,8 @@ public class CppControlExtractor extends CPP14ParserBaseVisitor<List<ControlElem
         }
         if (ctx.functionDefinition() != null) {
             visitFunctionDefinition(ctx.functionDefinition());
-        } 
-        
+        }
+
         return controls;
     }
 

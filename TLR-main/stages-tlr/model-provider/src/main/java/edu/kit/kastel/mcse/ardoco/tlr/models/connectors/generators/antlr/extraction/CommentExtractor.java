@@ -12,7 +12,6 @@ public abstract class CommentExtractor {
     private final List<CommentElement> comments;
     private final String path;
     protected final CommonTokenStream tokens;
-    
 
     protected CommentExtractor(CommonTokenStream tokens, String path) {
         this.tokens = tokens;
@@ -22,7 +21,7 @@ public abstract class CommentExtractor {
 
     public void extract() {
         List<Token> allTokens = tokens.getTokens();
-        
+
         for (Token token : allTokens) {
             if (isComment(token)) {
                 String text = token.getText().trim();
@@ -38,7 +37,9 @@ public abstract class CommentExtractor {
     }
 
     protected abstract boolean isComment(Token token);
+
     protected abstract boolean isValidComment(String text);
+
     protected abstract String cleanseComment(String comment);
 
     public List<CommentElement> getComments() {
@@ -59,6 +60,4 @@ public abstract class CommentExtractor {
         return count;
     }
 
-
-    
 }

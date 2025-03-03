@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
-public class JavaModelMapper implements ModelMapper{
+public class JavaModelMapper implements ModelMapper {
     private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.JAVA;
     private List<VariableElement> variables;
     private List<ControlElement> controls;
@@ -36,10 +36,11 @@ public class JavaModelMapper implements ModelMapper{
     private CodeModel codeModel;
     private final CodeItemRepository codeItemRepository;
 
-
-    public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables, List<ControlElement> controls, 
-    List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CompilationUnitElement> compilationUnits, List<PackageElement> packages,
-    List<CommentElement> comments) {
+    public JavaModelMapper(CodeItemRepository codeItemRepository, List<VariableElement> variables,
+            List<ControlElement> controls,
+            List<JavaClassElement> classes, List<InterfaceElement> interfaces,
+            List<CompilationUnitElement> compilationUnits, List<PackageElement> packages,
+            List<CommentElement> comments) {
         this.codeItemRepository = codeItemRepository;
 
         JavaCommentMapper javaCommentMapper = new JavaCommentMapper(variables, controls, classes, interfaces, comments);
@@ -48,11 +49,10 @@ public class JavaModelMapper implements ModelMapper{
         this.controls = javaCommentMapper.getControls();
         this.classes = javaCommentMapper.getClasses();
         this.interfaces = javaCommentMapper.getInterfaces();
-        
+
         this.compilationUnits = compilationUnits;
         this.packages = packages;
     }
-    
 
     public CodeModel getCodeModel() {
         return codeModel;
@@ -76,14 +76,15 @@ public class JavaModelMapper implements ModelMapper{
     private CodePackage buildCodePackage(PackageElement packageElement) {
         List<CompilationUnitElement> compilationUnitsOfPackage = getAllCompilationUnitElementsWith(packageElement);
         SortedSet<CodeItem> content = new TreeSet<>();
-        
+
         for (CompilationUnitElement compilationUnitElement : compilationUnitsOfPackage) {
             content.add(buildCodeCompilationUnit(compilationUnitElement));
         }
 
         for (PackageElement innerPackage : packages) {
             if (innerPackage.extendsPackage(packageElement)) {
-                innerPackage.updateShortName(innerPackage.getShortName().substring(packageElement.getName().length() + 1));
+                innerPackage
+                        .updateShortName(innerPackage.getShortName().substring(packageElement.getName().length() + 1));
                 content.add(buildCodePackage(innerPackage));
             }
         }
@@ -105,9 +106,9 @@ public class JavaModelMapper implements ModelMapper{
             content.add(buildInterfaceUnit(interfaceElement));
         }
         List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
-        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, compilationUnit.getPackage().getName(), programmingLanguage);
+        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements,
+                compilationUnit.getPackage().getName(), programmingLanguage);
     }
-
 
     private ClassUnit buildClassUnit(JavaClassElement classElement) {
         String name = classElement.getName();
@@ -129,7 +130,7 @@ public class JavaModelMapper implements ModelMapper{
         if (comment != null) {
             classUnit.setComment(comment);
         }
-        return classUnit;      
+        return classUnit;
     }
 
     private InterfaceUnit buildInterfaceUnit(InterfaceElement interfaceElement) {
@@ -150,7 +151,8 @@ public class JavaModelMapper implements ModelMapper{
         return interfaceUnit;
     }
 
-    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement controlElement) {
+    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(
+            ControlElement controlElement) {
         String name = controlElement.getName();
         String path = controlElement.getPath();
         String comment = controlElement.getComment();
@@ -163,7 +165,8 @@ public class JavaModelMapper implements ModelMapper{
                 // variables not implemented yet
             }
         }
-        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement control = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement control = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(
+                codeItemRepository, name);
         if (comment != null) {
             control.setComment(comment);
         }

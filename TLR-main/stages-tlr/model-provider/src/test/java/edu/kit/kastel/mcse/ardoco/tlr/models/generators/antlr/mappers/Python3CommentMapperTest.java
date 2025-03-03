@@ -19,27 +19,29 @@ public class Python3CommentMapperTest {
         // Assertions
         Assertions.assertEquals("AClass", commentMapper.getClasses().get(0).getName());
         Assertions.assertEquals("This is a Comment for AClass", commentMapper.getClasses().get(0).getComment());
-        
+
         Assertions.assertEquals("class_variable", commentMapper.getVariables().get(0).getName());
-        Assertions.assertEquals("This is an inline comment for class_variable of AClass", commentMapper.getVariables().get(0).getComment());
-        
+        Assertions.assertEquals("This is an inline comment for class_variable of AClass",
+                commentMapper.getVariables().get(0).getComment());
+
         Assertions.assertEquals("InnerClass1", commentMapper.getClasses().get(1).getName());
-        Assertions.assertEquals("This is a multiple line comment for InnerClass1", commentMapper.getClasses().get(1).getComment());
+        Assertions.assertEquals("This is a multiple line comment for InnerClass1",
+                commentMapper.getClasses().get(1).getComment());
 
         Assertions.assertEquals("InnerClass2", commentMapper.getClasses().get(2).getName());
-        Assertions.assertEquals("This is a multiple line comment for InnerClass2", commentMapper.getClasses().get(2).getComment());
+        Assertions.assertEquals("This is a multiple line comment for InnerClass2",
+                commentMapper.getClasses().get(2).getComment());
     }
-
-
 
     private Python3CommentMapper testPython3CommentMapper(String path) throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, path);
         extractor.extractElements();
 
-        Python3CommentMapper commentMapper = new Python3CommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getComments());
+        Python3CommentMapper commentMapper = new Python3CommentMapper(extractor.getVariables(), extractor.getControls(),
+                extractor.getClasses(), extractor.getComments());
         commentMapper.mapComments();
         return commentMapper;
     }
-    
+
 }

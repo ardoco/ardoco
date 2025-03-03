@@ -18,5 +18,4 @@ public class VariableElement extends BasicElement {
         return parent;
     }
 
-    
 }

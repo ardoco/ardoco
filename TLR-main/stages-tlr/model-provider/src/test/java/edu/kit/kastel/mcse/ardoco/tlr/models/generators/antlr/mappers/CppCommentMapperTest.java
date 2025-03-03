@@ -19,8 +19,10 @@ public class CppCommentMapperTest {
 
         // Assertions
         Assertions.assertEquals("main()", commentMapper.getControls().get(0).getName());
-        Assertions.assertEquals("Simple C++ Project Author: Your Name Description: A basic C++ project with a simple structure.\nmain.cpp", commentMapper.getControls().get(0).getComment());
-    }    
+        Assertions.assertEquals(
+                "Simple C++ Project Author: Your Name Description: A basic C++ project with a simple structure.\nmain.cpp",
+                commentMapper.getControls().get(0).getComment());
+    }
 
     @Test
     void testCppCommentMapperEntitiesCPP() throws IOException {
@@ -47,7 +49,8 @@ public class CppCommentMapperTest {
         CppExtractor extractor = new CppExtractor(repository, path);
         extractor.extractElements();
 
-        CppCommentMapper commentMapper = new CppCommentMapper(extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
+        CppCommentMapper commentMapper = new CppCommentMapper(extractor.getVariables(), extractor.getControls(),
+                extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
         commentMapper.mapComments();
         return commentMapper;
     }

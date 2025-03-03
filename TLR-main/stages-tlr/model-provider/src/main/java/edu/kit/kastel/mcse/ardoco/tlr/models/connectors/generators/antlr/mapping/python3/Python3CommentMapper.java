@@ -1,4 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,16 +15,19 @@ public class Python3CommentMapper extends CommentMapper {
     private List<ControlElement> controls;
     private List<ClassElement> classes;
 
-    public Python3CommentMapper(List<Python3VariableElement> variables, List<ControlElement> controls, List<ClassElement> classes, List<CommentElement> comments) {
+    public Python3CommentMapper(List<Python3VariableElement> variables, List<ControlElement> controls,
+            List<ClassElement> classes, List<CommentElement> comments) {
         super(comments);
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
-        this.allElements = new ArrayList<>() {{
-            addAll(variables);
-            addAll(controls);
-            addAll(classes);
-        }};
+        this.allElements = new ArrayList<>() {
+            {
+                addAll(variables);
+                addAll(controls);
+                addAll(classes);
+            }
+        };
     }
 
     public List<Python3VariableElement> getVariables() {
@@ -36,7 +40,7 @@ public class Python3CommentMapper extends CommentMapper {
 
     public List<ClassElement> getClasses() {
         return classes;
-    } 
+    }
 
     @Override
     protected int calculateDistance(CommentElement comment, BasicElement element) {
@@ -49,7 +53,7 @@ public class Python3CommentMapper extends CommentMapper {
         return lineDifference;
     }
 
-    @Override 
+    @Override
     protected void setCommentToElement(BasicElement element, CommentElement comment) {
         String text = comment.getText();
         boolean commentAdded = false;

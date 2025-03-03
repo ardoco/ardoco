@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import generated.antlr.java.JavaParser;
 
 public final class JavaParentExtractor extends ParentExtractor {
-    
+
     @Override
     protected boolean isValidParent(ParserRuleContext parentCtx, String path) {
         return parentCtx instanceof JavaParser.ClassDeclarationContext
@@ -22,17 +22,22 @@ public final class JavaParentExtractor extends ParentExtractor {
         if (parentCtx instanceof JavaParser.ClassDeclarationContext) {
             return buildParentFromClassContext((JavaParser.ClassDeclarationContext) parentCtx, path, BasicType.CLASS);
         } else if (parentCtx instanceof JavaParser.InterfaceDeclarationContext) {
-            return buildParentFromInterfaceContext((JavaParser.InterfaceDeclarationContext) parentCtx, path, BasicType.INTERFACE);
+            return buildParentFromInterfaceContext((JavaParser.InterfaceDeclarationContext) parentCtx, path,
+                    BasicType.INTERFACE);
         } else if (parentCtx instanceof JavaParser.MethodDeclarationContext) {
-            return buildParentFromControlContext((JavaParser.MethodDeclarationContext) parentCtx, path, BasicType.CONTROL);
+            return buildParentFromControlContext((JavaParser.MethodDeclarationContext) parentCtx, path,
+                    BasicType.CONTROL);
         } else if (parentCtx instanceof JavaParser.CompilationUnitContext) {
-            return buildParentFromCompilationUnitContext((JavaParser.CompilationUnitContext) parentCtx, path, BasicType.COMPILATIONUNIT);
+            return buildParentFromCompilationUnitContext((JavaParser.CompilationUnitContext) parentCtx, path,
+                    BasicType.COMPILATIONUNIT);
         }
         return null;
     }
 
-    private static Parent buildParentFromCompilationUnitContext(JavaParser.CompilationUnitContext ctx, String path, BasicType type) {
-        // Find the Name of the CompilationUnit/File through the first typeDeclaration's name
+    private static Parent buildParentFromCompilationUnitContext(JavaParser.CompilationUnitContext ctx, String path,
+            BasicType type) {
+        // Find the Name of the CompilationUnit/File through the first typeDeclaration's
+        // name
         for (JavaParser.TypeDeclarationContext typeDeclaration : ctx.typeDeclaration()) {
             if (typeDeclaration.classDeclaration() != null) {
                 return buildParentFromClassContext(typeDeclaration.classDeclaration(), path, type);
@@ -45,24 +50,27 @@ public final class JavaParentExtractor extends ParentExtractor {
         return null;
     }
 
-
-    private static Parent buildParentFromClassContext(JavaParser.ClassDeclarationContext ctx, String path, BasicType type) {
+    private static Parent buildParentFromClassContext(JavaParser.ClassDeclarationContext ctx, String path,
+            BasicType type) {
         String parentName = ctx.identifier().getText();
         return new Parent(parentName, path, type);
     }
 
-    private static Parent buildParentFromInterfaceContext(JavaParser.InterfaceDeclarationContext ctx, String path, BasicType type) {
+    private static Parent buildParentFromInterfaceContext(JavaParser.InterfaceDeclarationContext ctx, String path,
+            BasicType type) {
         String parentName = ctx.identifier().getText();
         return new Parent(parentName, path, type);
     }
 
-    private static Parent buildParentFromControlContext(JavaParser.MethodDeclarationContext ctx, String path, BasicType type) {
+    private static Parent buildParentFromControlContext(JavaParser.MethodDeclarationContext ctx, String path,
+            BasicType type) {
         String parentName = ctx.identifier().getText();
         return new Parent(parentName, path, type);
     }
 
-    private static Parent buildParentFromEnumContext(JavaParser.EnumDeclarationContext ctx, String path, BasicType type) {
+    private static Parent buildParentFromEnumContext(JavaParser.EnumDeclarationContext ctx, String path,
+            BasicType type) {
         String parentName = ctx.identifier().getText();
         return new Parent(parentName, path, type);
-    }    
+    }
 }

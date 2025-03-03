@@ -18,7 +18,6 @@ public class JavaInterfaceExtractor extends JavaParserBaseVisitor<List<Interface
         return interfaces;
     }
 
-
     @Override
     public List<InterfaceElement> visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         String name = ctx.identifier().getText();
@@ -32,5 +31,5 @@ public class JavaInterfaceExtractor extends JavaParserBaseVisitor<List<Interface
         interfaceElement.setEndLine(endLine);
         interfaces.add(interfaceElement);
         return interfaces;
-    }    
+    }
 }

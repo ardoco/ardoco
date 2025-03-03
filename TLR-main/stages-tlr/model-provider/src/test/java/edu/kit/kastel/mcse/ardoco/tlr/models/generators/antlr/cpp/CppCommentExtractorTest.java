@@ -14,7 +14,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppCommentExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
-import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppCommentExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
@@ -27,7 +26,9 @@ public class CppCommentExtractorTest {
         Assertions.assertEquals(4, comments.size());
         Assertions.assertEquals(1, comments.get(0).getStartLine());
         Assertions.assertEquals(5, comments.get(0).getEndLine());
-        Assertions.assertEquals("Simple C++ Project Author: Your Name Description: A basic C++ project with a simple structure.", comments.get(0).getText());
+        Assertions.assertEquals(
+                "Simple C++ Project Author: Your Name Description: A basic C++ project with a simple structure.",
+                comments.get(0).getText());
 
         Assertions.assertEquals(7, comments.get(1).getStartLine());
         Assertions.assertEquals(7, comments.get(1).getEndLine());
@@ -70,20 +71,15 @@ public class CppCommentExtractorTest {
         Assertions.assertEquals("ENTITIES_H", comments.get(1).getText());
     }
 
-
-
-
     private List<CommentElement> extractCommentsFromFile(String filePath) throws IOException {
         CharStream charStream = CharStreams.fromFileName(filePath);
         CPP14Lexer lexer = new CPP14Lexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CPP14Parser parser = new CPP14Parser(tokens);
-        TranslationUnitContext ctx = parser.translationUnit();
+        parser.translationUnit();
 
         CppCommentExtractor extractor = new CppCommentExtractor(tokens, filePath);
         extractor.extract();
         return extractor.getComments();
     }
-
-    
 }

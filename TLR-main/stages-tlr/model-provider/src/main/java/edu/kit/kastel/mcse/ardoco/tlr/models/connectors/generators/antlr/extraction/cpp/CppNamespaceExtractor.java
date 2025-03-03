@@ -12,9 +12,9 @@ import generated.antlr.cpp.CPP14ParserBaseVisitor;
 public class CppNamespaceExtractor extends CPP14ParserBaseVisitor<List<NamespaceElement>> {
     List<NamespaceElement> namespaces = new ArrayList<>();
 
-    @Override 
+    @Override
     public List<NamespaceElement> visitTranslationUnit(CPP14Parser.TranslationUnitContext ctx) {
-        if (ctx.declarationseq()!= null) {
+        if (ctx.declarationseq() != null) {
             for (CPP14Parser.DeclarationContext declaration : ctx.declarationseq().declaration()) {
                 visitDeclaration(declaration);
             }
@@ -52,5 +52,5 @@ public class CppNamespaceExtractor extends CPP14ParserBaseVisitor<List<Namespace
             }
         }
         return namespaces;
-    }    
+    }
 }

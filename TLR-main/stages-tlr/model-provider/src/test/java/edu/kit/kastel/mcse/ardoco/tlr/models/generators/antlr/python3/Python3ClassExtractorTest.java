@@ -31,7 +31,6 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals("APyClass", classes.get(0).getParent().getName());
         Assertions.assertEquals(BasicType.MODULE, classes.get(0).getParent().getType());
 
-
         // Test the second class
         Assertions.assertEquals("InnerClass1", classes.get(1).getName());
         Assertions.assertEquals(0, classes.get(1).getInherits().size());
@@ -103,8 +102,6 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals(0, classes.size());
     }
 
-
-
     private List<ClassElement> extractClassElementsFromFile(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromFileName(filePath));
@@ -115,5 +112,5 @@ public class Python3ClassExtractorTest {
         // Create a ClassExtractor and visit the File_inputContext
         Python3ClassExtractor extractor = new Python3ClassExtractor();
         return extractor.visitFile_input(ctx);
-    }    
+    }
 }

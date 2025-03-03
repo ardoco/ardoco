@@ -39,7 +39,8 @@ public final class Python3ParentExtractor extends ParentExtractor {
         return new Parent(name, path, type);
     }
 
-    private static Parent buildParentFromModuleContext(Python3Parser.File_inputContext ctx, String path, BasicType type) {
+    private static Parent buildParentFromModuleContext(Python3Parser.File_inputContext ctx, String path,
+            BasicType type) {
         String name = PathExtractor.extractNameFromPath(ctx);
         return new Parent(name, path, type);
     }

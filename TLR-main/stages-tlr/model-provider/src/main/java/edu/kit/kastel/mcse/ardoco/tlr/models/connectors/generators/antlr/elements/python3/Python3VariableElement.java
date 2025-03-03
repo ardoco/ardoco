@@ -9,7 +9,6 @@ public class Python3VariableElement extends BasicElement {
     private final String value;
     private boolean typeHasBeenSet = false;
 
-
     public Python3VariableElement(String name, String path, String type, Parent parent, String value) {
         super(name, path);
         this.type = type;
@@ -38,5 +37,4 @@ public class Python3VariableElement extends BasicElement {
         return false;
     }
 
-    
 }

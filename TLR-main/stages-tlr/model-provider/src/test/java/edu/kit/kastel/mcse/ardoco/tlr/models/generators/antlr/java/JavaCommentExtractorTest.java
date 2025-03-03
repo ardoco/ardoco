@@ -35,7 +35,7 @@ public class JavaCommentExtractorTest {
         Assertions.assertEquals("This is a Test Block Comment", comments.get(2).getText());
     }
 
-    @Test   
+    @Test
     void commentExtractorSuperclassTest() throws IOException {
         String filePath = sourcePath + "Superclass.java";
         List<CommentElement> comments = extractCommentsFromFile(filePath);
@@ -94,5 +94,4 @@ public class JavaCommentExtractorTest {
         return extractor.getComments();
     }
 
-    
 }

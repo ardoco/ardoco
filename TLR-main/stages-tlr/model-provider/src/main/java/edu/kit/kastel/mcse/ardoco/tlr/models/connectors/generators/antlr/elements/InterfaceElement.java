@@ -10,5 +10,5 @@ public class InterfaceElement extends BasicElement {
 
     public Parent getParent() {
         return parent;
-    } 
+    }
 }

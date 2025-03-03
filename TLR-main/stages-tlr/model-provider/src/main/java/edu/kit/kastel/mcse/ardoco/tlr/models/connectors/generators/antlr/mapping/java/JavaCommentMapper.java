@@ -17,19 +17,21 @@ public class JavaCommentMapper extends CommentMapper {
     private List<JavaClassElement> classes;
     private List<InterfaceElement> interfaces;
 
-
-    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls, List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
+    public JavaCommentMapper(List<VariableElement> variables, List<ControlElement> controls,
+            List<JavaClassElement> classes, List<InterfaceElement> interfaces, List<CommentElement> comments) {
         super(comments);
         this.variables = variables;
         this.controls = controls;
         this.classes = classes;
         this.interfaces = interfaces;
-        this.allElements = new ArrayList<>() {{
-            addAll(variables);
-            addAll(controls);
-            addAll(classes);
-            addAll(interfaces);
-        }};
+        this.allElements = new ArrayList<>() {
+            {
+                addAll(variables);
+                addAll(controls);
+                addAll(classes);
+                addAll(interfaces);
+            }
+        };
     }
 
     public List<VariableElement> getVariables() {
@@ -46,7 +48,7 @@ public class JavaCommentMapper extends CommentMapper {
 
     public List<InterfaceElement> getInterfaces() {
         return interfaces;
-    } 
+    }
 
     @Override
     protected int calculateDistance(CommentElement comment, BasicElement element) {

@@ -11,7 +11,6 @@ public class JavaClassElement extends BasicElement {
     private String extendsClass;
     private final List<String> implementedInterfaces;
 
-
     public JavaClassElement(String name, String path, Parent parent) {
         super(name, path);
         this.parent = parent;
@@ -19,7 +18,8 @@ public class JavaClassElement extends BasicElement {
         this.implementedInterfaces = new ArrayList<String>();
     }
 
-   public JavaClassElement(String name, String path, Parent parent, String extendsClass, List<String> implementedInterfaces) {
+    public JavaClassElement(String name, String path, Parent parent, String extendsClass,
+            List<String> implementedInterfaces) {
         super(name, path);
         this.parent = parent;
         this.extendsClass = extendsClass;
@@ -42,6 +42,4 @@ public class JavaClassElement extends BasicElement {
         return implementedInterfaces;
     }
 
-
-    
 }

@@ -22,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
-public class Python3ModelMapper implements ModelMapper{
+public class Python3ModelMapper implements ModelMapper {
     private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;
     private List<Python3VariableElement> variables = new ArrayList<>();
     private List<ControlElement> controls = new ArrayList<>();
@@ -32,9 +32,10 @@ public class Python3ModelMapper implements ModelMapper{
     private CodeModel codeModel;
     private final CodeItemRepository codeItemRepository;
 
-
-    public Python3ModelMapper(CodeItemRepository codeItemRepository, List<Python3VariableElement> variables, List<ControlElement> controls, 
-    List<ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages, List<CommentElement> comments) {
+    public Python3ModelMapper(CodeItemRepository codeItemRepository, List<Python3VariableElement> variables,
+            List<ControlElement> controls,
+            List<ClassElement> classes, List<Python3ModuleElement> modules, List<PackageElement> packages,
+            List<CommentElement> comments) {
         Python3CommentMapper commentMapper = new Python3CommentMapper(variables, controls, classes, comments);
         commentMapper.mapComments();
         this.variables = commentMapper.getVariables();
@@ -81,7 +82,8 @@ public class Python3ModelMapper implements ModelMapper{
 
         for (PackageElement innerPackage : packages) {
             if (innerPackage.extendsPackage(packageElement)) {
-                innerPackage.updateShortName(innerPackage.getShortName().substring(packageElement.getName().length() + 1));
+                innerPackage
+                        .updateShortName(innerPackage.getShortName().substring(packageElement.getName().length() + 1));
                 content.add(buildCodePackage(innerPackage));
             }
         }
@@ -162,7 +164,8 @@ public class Python3ModelMapper implements ModelMapper{
         return classUnit;
     }
 
-    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(ControlElement control) {
+    private edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement buildControlElement(
+            ControlElement control) {
         String name = control.getName();
         String path = control.getPath();
         String comment = control.getComment();
@@ -174,14 +177,12 @@ public class Python3ModelMapper implements ModelMapper{
                 // variables not implemented yet
             }
         }
-        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(codeItemRepository, name);
+        edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement controlElement = new edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement(
+                codeItemRepository, name);
         if (comment != null) {
             control.setComment(comment);
         }
         return controlElement;
     }
-
-
-
 
 }

@@ -33,8 +33,9 @@ public class CommentElement {
     public boolean equals(Object obj) {
         if (obj instanceof CommentElement) {
             CommentElement commentElement = (CommentElement) obj;
-            return commentElement.getText().equals(this.getText()) 
-                    && commentElement.getStartLine() == this.getStartLine() && commentElement.getEndLine() == this.getEndLine() 
+            return commentElement.getText().equals(this.getText())
+                    && commentElement.getStartLine() == this.getStartLine()
+                    && commentElement.getEndLine() == this.getEndLine()
                     && commentElement.getPath().equals(this.getPath());
         }
         return false;

@@ -52,7 +52,7 @@ public class Python3ControlExtractorTest {
         // Test the sixth control
         Assertions.assertEquals("display_value", controls.get(5).getName());
         Assertions.assertEquals("InnerClass2", controls.get(5).getParent().getName());
-        Assertions.assertEquals(BasicType.CLASS, controls.get(5).getParent().getType());     
+        Assertions.assertEquals(BasicType.CLASS, controls.get(5).getParent().getType());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class Python3ControlExtractorTest {
         List<ControlElement> controls = extractControlElementsFromFile(filePath);
         Assertions.assertEquals(0, controls.size());
     }
-    
+
     private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromFileName(filePath));

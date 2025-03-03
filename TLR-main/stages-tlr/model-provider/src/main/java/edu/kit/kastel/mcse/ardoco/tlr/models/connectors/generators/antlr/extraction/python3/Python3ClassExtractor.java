@@ -60,7 +60,8 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<ClassEl
     public List<ClassElement> visitBlock(Python3Parser.BlockContext ctx) {
         if (ctx.children != null) {
             for (var child : ctx.children) {
-                if (child instanceof Python3Parser.StmtContext && ((Python3Parser.StmtContext) child).compound_stmt() != null) {
+                if (child instanceof Python3Parser.StmtContext
+                        && ((Python3Parser.StmtContext) child).compound_stmt() != null) {
                     visitCompound_stmt(((Python3Parser.StmtContext) child).compound_stmt());
 
                 }
@@ -94,5 +95,5 @@ public class Python3ClassExtractor extends Python3ParserBaseVisitor<List<ClassEl
         }
         return classes;
     }
-    
+
 }

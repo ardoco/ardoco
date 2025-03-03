@@ -26,7 +26,6 @@ import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParser.CompilationUnitContext;
 
-
 public class JavaExtractor extends ANTLRExtractor {
     private final ProgrammingLanguage language = ProgrammingLanguage.JAVA;
     private List<VariableElement> variables = new ArrayList<>();
@@ -35,7 +34,6 @@ public class JavaExtractor extends ANTLRExtractor {
     private List<InterfaceElement> interfaces = new ArrayList<>();
     private List<CompilationUnitElement> compilationUnits = new ArrayList<>();
     private List<PackageElement> packages = new ArrayList<>();
-
 
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
@@ -47,16 +45,16 @@ public class JavaExtractor extends ANTLRExtractor {
         List<Path> javaFiles = new ArrayList<>();
         try {
             Files.walk(dir)
-                 .filter(Files::isRegularFile)
-                 .filter(f -> f.toString().endsWith(".java"))
-                 .forEach(javaFiles::add);
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".java"))
+                    .forEach(javaFiles::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return javaFiles;
     }
 
-    @Override 
+    @Override
     protected void extractFileContents(Path file) {
         try {
             CompilationUnitContext ctx = buildCompilationCtxForFile(file);
@@ -71,7 +69,8 @@ public class JavaExtractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new JavaModelMapper(codeItemRepository, variables, controls, classes, interfaces, compilationUnits, packages, comments);
+        this.mapper = new JavaModelMapper(codeItemRepository, variables, controls, classes, interfaces,
+                compilationUnits, packages, comments);
     }
 
     @Override
@@ -158,5 +157,3 @@ public class JavaExtractor extends ANTLRExtractor {
         packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts(".").length));
     }
 }
-    
-

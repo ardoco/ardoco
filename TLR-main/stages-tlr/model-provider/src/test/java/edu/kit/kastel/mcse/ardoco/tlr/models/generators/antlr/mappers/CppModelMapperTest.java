@@ -18,7 +18,8 @@ public class CppModelMapperTest {
         CppExtractor extractor = new CppExtractor(repository, "src/test/resources/cpp/interface/edu/");
         extractor.extractModel();
 
-        CppModelMapper mapper = new CppModelMapper(repository, extractor.getVariables(), extractor.getControls(), extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
+        CppModelMapper mapper = new CppModelMapper(repository, extractor.getVariables(), extractor.getControls(),
+                extractor.getClasses(), extractor.getNamespaces(), extractor.getComments());
         mapper.mapToCodeModel();
         CodeModel codeModel = mapper.getCodeModel();
 
@@ -27,5 +28,5 @@ public class CppModelMapperTest {
         Assertions.assertNotNull(codeModel);
         Assertions.assertEquals(3, codeModel.getEndpoints().size());
     }
-    
+
 }

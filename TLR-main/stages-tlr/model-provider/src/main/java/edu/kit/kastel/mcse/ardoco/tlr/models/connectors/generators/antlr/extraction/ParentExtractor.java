@@ -23,7 +23,7 @@ public abstract class ParentExtractor {
     }
 
     protected abstract boolean isValidParent(ParserRuleContext parentCtx, String path);
+
     protected abstract Parent buildParent(ParserRuleContext parentCtx, String path);
 
-    
 }

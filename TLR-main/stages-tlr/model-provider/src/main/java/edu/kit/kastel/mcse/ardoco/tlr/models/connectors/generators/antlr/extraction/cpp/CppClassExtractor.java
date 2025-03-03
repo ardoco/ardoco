@@ -82,7 +82,8 @@ public class CppClassExtractor extends CPP14ParserBaseVisitor<List<ClassElement>
     private List<String> getInherits(CPP14Parser.ClassSpecifierContext ctx) {
         List<String> inherits = new ArrayList<>();
         if (ctx.classHead().baseClause() != null) {
-            for (CPP14Parser.BaseSpecifierContext baseSpecifier : ctx.classHead().baseClause().baseSpecifierList().baseSpecifier()) {
+            for (CPP14Parser.BaseSpecifierContext baseSpecifier : ctx.classHead().baseClause().baseSpecifierList()
+                    .baseSpecifier()) {
                 String baseClass = baseSpecifier.getText();
 
                 if (baseSpecifier.accessSpecifier() != null) {
@@ -94,7 +95,5 @@ public class CppClassExtractor extends CPP14ParserBaseVisitor<List<ClassElement>
         }
         return inherits;
     }
-
-
 
 }

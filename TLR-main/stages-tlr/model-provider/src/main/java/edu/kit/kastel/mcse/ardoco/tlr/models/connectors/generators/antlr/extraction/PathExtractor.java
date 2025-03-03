@@ -15,6 +15,4 @@ public final class PathExtractor {
         return name;
     }
 
-
-    
 }

@@ -14,10 +14,9 @@ import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
 import generated.antlr.python3.Python3Parser.File_inputContext;
 
-
 public class Python3ModuleExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
-    
+
     @Test
     void testPyClassModuleExtraction() throws IOException {
         String filePath = sourcePath + "APyClass.py";
@@ -36,7 +35,8 @@ public class Python3ModuleExtractorTest {
         // Assertions
         Assertions.assertEquals(1, modules.size());
         Assertions.assertEquals("OtherPyAbstractBaseClass", modules.get(0).getName());
-        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/OtherPyAbstractBaseClass.py", modules.get(0).getPath());
+        Assertions.assertEquals("src/test/resources/python/interface/edu/drei/OtherPyAbstractBaseClass.py",
+                modules.get(0).getPath());
         Assertions.assertEquals("edu/drei", modules.get(0).getPackage().getName());
     }
 

@@ -41,7 +41,7 @@ public class Python3CommentExtractorTest {
         Assertions.assertEquals("This is a multiple line comment for InnerClass2", comments.get(3).getText());
     }
 
-    private List<CommentElement> extractCommentsFromFile(String filePath) throws IOException{
+    private List<CommentElement> extractCommentsFromFile(String filePath) throws IOException {
         CharStream input = CharStreams.fromFileName(filePath);
         Python3Lexer lexer = new Python3Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -53,5 +53,4 @@ public class Python3CommentExtractorTest {
         return extractor.getComments();
     }
 
-    
 }

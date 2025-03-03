@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3VariableExtractor;
@@ -78,7 +77,7 @@ public class Python3VariableExtractorTest {
         Assertions.assertEquals("str", variables.get(8).getType());
         Assertions.assertEquals("__init__", variables.get(8).getParent().getName());
         Assertions.assertEquals(BasicType.CONTROL, variables.get(8).getParent().getType());
-        
+
         // Test the tenth variable
         Assertions.assertEquals("class_variable", variables.get(9).getName());
         Assertions.assertEquals("str", variables.get(9).getType());
@@ -98,6 +97,4 @@ public class Python3VariableExtractorTest {
         return extractor.visitFile_input(ctx);
     }
 
-    
-    
 }

@@ -32,5 +32,5 @@ public class Python3ControlExtractor extends Python3ParserBaseVisitor<List<Contr
         controls.add(controlElement);
         return controls;
     }
-    
+
 }

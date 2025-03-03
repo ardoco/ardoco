@@ -1,7 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.cpp;
 
-
-
 import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,9 +16,9 @@ public class CppExtractorTest {
         cppExtractor.extractModel();
 
         // Assertions
-        Assertions.assertEquals(9 , cppExtractor.getVariables().size());
-        Assertions.assertEquals(10 , cppExtractor.getControls().size());
-        Assertions.assertEquals(2 , cppExtractor.getNamespaces().size());
+        Assertions.assertEquals(9, cppExtractor.getVariables().size());
+        Assertions.assertEquals(10, cppExtractor.getControls().size());
+        Assertions.assertEquals(2, cppExtractor.getNamespaces().size());
         Assertions.assertEquals(4, cppExtractor.getClasses().size());
         Assertions.assertEquals(7, cppExtractor.getComments().size());
     }
@@ -29,5 +27,5 @@ public class CppExtractorTest {
         CodeItemRepository repository = new CodeItemRepository();
         return new CppExtractor(repository, sourcePath);
     }
-    
+
 }

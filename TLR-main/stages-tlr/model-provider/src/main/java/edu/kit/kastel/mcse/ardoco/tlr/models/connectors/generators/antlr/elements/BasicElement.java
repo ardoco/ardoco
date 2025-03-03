@@ -48,7 +48,7 @@ public class BasicElement {
         if (this.comment != "") {
             this.comment += "\n";
         }
-        
+
         this.comment += comment;
     }
 
@@ -61,7 +61,7 @@ public class BasicElement {
         return false;
     }
 
-    @Override 
+    @Override
     public int hashCode() {
         return Objects.hash(name, path);
     }

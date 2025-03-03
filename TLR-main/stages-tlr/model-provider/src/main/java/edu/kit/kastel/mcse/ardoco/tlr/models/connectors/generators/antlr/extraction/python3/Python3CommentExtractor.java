@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.Token;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import generated.antlr.python3.Python3Lexer;
 
-public class Python3CommentExtractor extends CommentExtractor{
+public class Python3CommentExtractor extends CommentExtractor {
 
     public Python3CommentExtractor(CommonTokenStream tokens, String path) {
         super(tokens, path);
@@ -26,13 +26,13 @@ public class Python3CommentExtractor extends CommentExtractor{
     protected String cleanseComment(String comment) {
         // Remove single-line comment marker (#)
         comment = comment.replaceAll("^# ?", "").trim();
-    
+
         // Remove multi-line comment markers (triple quotes """ or ''')
         comment = comment.replaceAll("^(['\"]{3})|(['\"]{3})$", "").trim();
-    
+
         // Replace multiple newlines with a single space
         comment = comment.replaceAll("\\s*\\n\\s*", " "); // Removes line breaks while keeping words separated
-    
+
         return comment;
     }
 }

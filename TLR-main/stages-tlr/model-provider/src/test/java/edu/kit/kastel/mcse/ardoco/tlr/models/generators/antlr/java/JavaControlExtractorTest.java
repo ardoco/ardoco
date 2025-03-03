@@ -1,7 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.java;
 
-
-
 import java.io.IOException;
 import java.util.List;
 
@@ -9,7 +7,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaControlExtractor;
@@ -19,7 +16,7 @@ import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 class JavaControlExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
-    
+
     @Test
     void controlExtractorAClassTest() throws IOException {
         String filePath = sourcePath + "AClass.java";
@@ -71,13 +68,12 @@ class JavaControlExtractorTest {
         Assertions.assertTrue(controls.isEmpty());
     }
 
-
     private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
         CompilationUnitContext ctx = parser.compilationUnit();
-        
+
         JavaControlExtractor extractor = new JavaControlExtractor();
         return extractor.visitCompilationUnit(ctx);
 

@@ -17,5 +17,5 @@ public class JavaCompilationUnitExtractor extends JavaParserBaseVisitor<Compilat
         String name = PathExtractor.extractNameFromPath(ctx);
         return new CompilationUnitElement(name, path, packageName);
     }
-    
+
 }

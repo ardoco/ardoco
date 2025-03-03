@@ -37,5 +37,5 @@ public class PackageElement extends BasicElement {
     public int hashCode() {
         return this.getName().hashCode();
     }
-    
+
 }

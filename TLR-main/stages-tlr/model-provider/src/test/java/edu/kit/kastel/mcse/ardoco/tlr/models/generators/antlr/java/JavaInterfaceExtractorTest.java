@@ -87,8 +87,7 @@ public class JavaInterfaceExtractorTest {
 
         JavaInterfaceExtractor extractor = new JavaInterfaceExtractor();
         return extractor.visit(ctx);
-        
+
     }
-    
-    
+
 }

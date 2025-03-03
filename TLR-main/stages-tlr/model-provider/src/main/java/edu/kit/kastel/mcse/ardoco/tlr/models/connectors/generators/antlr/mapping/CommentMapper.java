@@ -30,7 +30,7 @@ public abstract class CommentMapper {
         for (BasicElement element : allElements) {
             if (hasSamePath(comment, element)) {
                 int calculatedLineDifference = calculateDistance(comment, element);
-                
+
                 if (calculatedLineDifference < closestLineDifferenceSoFar) {
                     closestLineDifferenceSoFar = calculatedLineDifference;
                     closestElement = element;
@@ -45,6 +45,7 @@ public abstract class CommentMapper {
     }
 
     protected abstract int calculateDistance(CommentElement comment, BasicElement element);
+
     protected abstract void setCommentToElement(BasicElement element, CommentElement comment);
-    
+
 }

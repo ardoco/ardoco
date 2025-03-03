@@ -37,7 +37,8 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getPath());
         Assertions.assertEquals("Entities", namespaces.get(0).getParent().getName());
         Assertions.assertEquals(BasicType.FILE, namespaces.get(0).getParent().getType());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getParent().getPath());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp",
+                namespaces.get(0).getParent().getPath());
     }
 
     @Test
@@ -50,10 +51,9 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getPath());
         Assertions.assertEquals("Entities", namespaces.get(0).getParent().getName());
         Assertions.assertEquals(BasicType.FILE, namespaces.get(0).getParent().getType());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getParent().getPath());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h",
+                namespaces.get(0).getParent().getPath());
     }
-
-
 
     private List<NamespaceElement> extractNamespaceFromFile(String filePath) throws IOException {
         CharStream charStream = CharStreams.fromFileName(filePath);
@@ -65,5 +65,5 @@ public class CppNamespaceExtractorTest {
         CppNamespaceExtractor extractor = new CppNamespaceExtractor();
         return extractor.visitTranslationUnit(ctx);
     }
-    
+
 }

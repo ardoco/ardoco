@@ -30,11 +30,10 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
             }
         }
 
-
         if (ctx.initDeclaratorList() != null) {
             return extractNormalVariableElement(ctx);
         }
-        
+
         return variables;
     }
 
@@ -55,7 +54,7 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
                     }
                 }
             }
-    
+
             if (memberCtx.memberDeclaratorList() != null && memberCtx.declSpecifierSeq() != null) {
                 String variableType = memberCtx.declSpecifierSeq().getText();
                 Parent parent = new CppParentExtractor().getParent(memberCtx);
@@ -69,6 +68,7 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
         }
         return variables;
     }
+
     private List<VariableElement> extractNormalVariableElement(CPP14Parser.SimpleDeclarationContext ctx) {
         String variableType = ctx.declSpecifierSeq().getText();
         Parent parent = new CppParentExtractor().getParent(ctx);
@@ -84,7 +84,8 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.InitDeclaratorContext initDec : ctx.initDeclarator()) {
             // Skip if it is a function or Constructor
-            if (initDec.declarator().pointerDeclarator().noPointerDeclarator() != null && initDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (initDec.declarator().pointerDeclarator().noPointerDeclarator() != null && initDec.declarator()
+                    .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(initDec.declarator().getText());
@@ -96,7 +97,8 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.MemberDeclaratorContext memberDec : ctx.memberDeclarator()) {
             // Skip if it is a function or Constructor
-            if (memberDec.declarator().pointerDeclarator().noPointerDeclarator() != null && memberDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (memberDec.declarator().pointerDeclarator().noPointerDeclarator() != null && memberDec.declarator()
+                    .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(memberDec.declarator().getText());
@@ -104,14 +106,16 @@ public class CppVariableExtractor extends CPP14ParserBaseVisitor<List<VariableEl
         return varNames;
     }
 
-    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent, int startLine, int endLine) {
+    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent,
+            int startLine, int endLine) {
         for (String varName : varNames) {
             VariableElement variable = createVariableElement(varName, path, variableType, parent, startLine, endLine);
             variables.add(variable);
         }
     }
 
-    private VariableElement createVariableElement(String varName, String path, String variableType, Parent parent, int startLine, int endLine) {
+    private VariableElement createVariableElement(String varName, String path, String variableType, Parent parent,
+            int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, variableType, parent);
         variable.setStartLine(startLine);
         variable.setEndLine(endLine);

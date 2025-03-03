@@ -26,5 +26,5 @@ public class ClassElement extends BasicElement {
     public List<String> getInherits() {
         return this.inherits;
     }
-    
+
 }

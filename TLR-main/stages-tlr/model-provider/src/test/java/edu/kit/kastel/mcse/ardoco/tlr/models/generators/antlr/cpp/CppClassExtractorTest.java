@@ -66,9 +66,8 @@ public class CppClassExtractorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CPP14Parser parser = new CPP14Parser(tokens);
         TranslationUnitContext ctx = parser.translationUnit();
-        
+
         CppClassExtractor extractor = new CppClassExtractor();
         return extractor.visitTranslationUnit(ctx);
     }
-    
 }

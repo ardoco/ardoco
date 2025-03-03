@@ -17,7 +17,7 @@ public class CppCommentExtractor extends CommentExtractor {
         return token.getType() == CPP14Lexer.LineComment || token.getType() == CPP14Lexer.BlockComment;
     }
 
-    @Override 
+    @Override
     protected boolean isValidComment(String comment) {
         return !comment.isEmpty() && (comment.startsWith("//") || comment.startsWith("/*"));
     }
@@ -26,19 +26,18 @@ public class CppCommentExtractor extends CommentExtractor {
     protected String cleanseComment(String text) {
         // Remove block comment delimiters (/* and */)
         text = text.replaceAll("^/\\*+|\\*+/$", "").trim();
-    
+
         // Remove leading '*' characters from each line while keeping line breaks
         text = text.replaceAll("(?m)^\\s*\\* ?", "");
-    
+
         // Remove '//' from the start of each line
         text = text.replaceAll("(?m)^\\s*// ?", "");
-    
-        // Normalize multiple newlines and spaces → Collapse multiple newlines into a single space
+
+        // Normalize multiple newlines and spaces → Collapse multiple newlines into a
+        // single space
         text = text.replaceAll("\\s*[\r\n]+\\s*", " ");
-    
+
         return text.trim();
     }
-    
-    
-    
+
 }

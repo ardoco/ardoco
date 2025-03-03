@@ -28,7 +28,6 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         return variables;
     }
 
-
     @Override
     public List<Python3VariableElement> visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
         // Expression statment with assignment
@@ -54,7 +53,8 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
         }
 
         for (int i = 0; i < varNames.size(); i++) {
-            Python3VariableElement variable = new Python3VariableElement(varNames.get(i), path, types.get(i), parent, values.get(i));
+            Python3VariableElement variable = new Python3VariableElement(varNames.get(i), path, types.get(i), parent,
+                    values.get(i));
             variable.setStartLine(startLine);
             variable.setEndLine(endLine);
             variables.add(variable);
@@ -88,13 +88,13 @@ public class Python3VariableExtractor extends Python3ParserBaseVisitor<List<Pyth
             return "float";
         } else if (value.matches("^\".*\"$")) {
             return "str";
-        } else if (value.equals("True")|| value.equals("False")) {
+        } else if (value.equals("True") || value.equals("False")) {
             return "bool";
         } else {
             /*
-            Later need to check if it is a Class Object cannot be done here 
-            as it requires all classes to be parsed already
-             */ 
+             * Later need to check if it is a Class Object cannot be done here
+             * as it requires all classes to be parsed already
+             */
             return "any";
         }
     }

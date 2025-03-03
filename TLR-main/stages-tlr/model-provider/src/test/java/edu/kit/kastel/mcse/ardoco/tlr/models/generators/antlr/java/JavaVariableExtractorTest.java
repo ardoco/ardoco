@@ -84,7 +84,6 @@ class JavaVariableExtractorTest {
         Assert.assertTrue(variables.isEmpty());
     }
 
-
     private List<VariableElement> extractVariablesFromFile(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));

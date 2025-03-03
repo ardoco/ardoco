@@ -36,9 +36,9 @@ public abstract class ANTLRExtractor extends CodeExtractor {
     // public for Test purposes
     public void extractElements() {
         List<Path> files = getFiles();
-            for (Path file : files) {
-                extractFileContents(file);
-            }
+        for (Path file : files) {
+            extractFileContents(file);
+        }
         this.elementsExtracted = true;
     }
 
@@ -58,7 +58,10 @@ public abstract class ANTLRExtractor extends CodeExtractor {
     }
 
     protected abstract List<Path> getFiles();
+
     protected abstract void extractFileContents(Path file);
+
     protected abstract void mapToCodeModel();
+
     protected abstract CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path);
 }

@@ -12,13 +12,13 @@ import generated.antlr.java.JavaParserBaseVisitor;
 public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableElement>> {
     private final List<VariableElement> variables = new ArrayList<>();
 
-    @Override 
+    @Override
     public List<VariableElement> visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
         super.visitCompilationUnit(ctx);
         return variables;
     }
 
-    @Override 
+    @Override
     public List<VariableElement> visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
         String variableType = ctx.typeType().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
@@ -30,7 +30,7 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         return variables;
     }
 
-    @Override 
+    @Override
     public List<VariableElement> visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
         String variableType = ctx.typeType().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
@@ -38,7 +38,7 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
-        
+
         parseToVariablesList(varNames, path, variableType, parent, startLine, endLine);
         return variables;
     }
@@ -52,7 +52,8 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
         return variableNames;
     }
 
-    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent, int startLine, int endLine) {
+    private void parseToVariablesList(List<String> varNames, String path, String variableType, Parent parent,
+            int startLine, int endLine) {
         for (String variableName : varNames) {
             VariableElement variable = new VariableElement(variableName, path, variableType, parent);
             variable.setStartLine(startLine);
@@ -60,8 +61,5 @@ public class JavaVariableExtractor extends JavaParserBaseVisitor<List<VariableEl
             variables.add(variable);
         }
     }
-
-
-
 
 }
