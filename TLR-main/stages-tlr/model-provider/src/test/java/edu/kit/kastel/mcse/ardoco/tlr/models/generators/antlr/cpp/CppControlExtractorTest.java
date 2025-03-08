@@ -9,8 +9,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppControlExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
@@ -22,7 +22,7 @@ public class CppControlExtractorTest {
     @Test
     void controlExtractorMainCPPTest() throws IOException {
         String filePath = sourcePath + "src/main.cpp";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
 
         Assertions.assertEquals(1, controls.size());
         Assertions.assertEquals("main()", controls.get(0).getName());
@@ -34,7 +34,7 @@ public class CppControlExtractorTest {
     @Test
     void controlExtractorEntitiesCPPTest() throws IOException {
         String filePath = sourcePath + "src/Entities.cpp";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
 
         Assertions.assertEquals(9, controls.size());
 
@@ -43,12 +43,12 @@ public class CppControlExtractorTest {
     @Test
     void controlExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
 
         Assertions.assertEquals(0, controls.size());
     }
 
-    private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
+    private List<BasicElement> extractBasicElementsFromFile(String filePath) throws IOException {
         CharStream charStream = CharStreams.fromFileName(filePath);
         CPP14Lexer lexer = new CPP14Lexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

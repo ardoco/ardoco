@@ -1,17 +1,19 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CommentMatcher;
 
-public class CppCommentMapper extends CommentMatcher {
+public class JavaCommentMatcher extends CommentMatcher {
 
-    public CppCommentMapper() {
+
+    public JavaCommentMatcher() {
         super();
     }
 
@@ -28,7 +30,7 @@ public class CppCommentMapper extends CommentMatcher {
 
     private int calculateDifference(int elementStartLine, int commentStartLine, int commentEndLine) {
         int lineDifference = Integer.MAX_VALUE;
-
+        // comment just before element
         if (elementStartLine == commentEndLine + 1) {
             lineDifference = 0;
         } else if (commentStartLine <= elementStartLine) {
@@ -36,5 +38,4 @@ public class CppCommentMapper extends CommentMatcher {
         }
         return lineDifference;
     }
-
 }

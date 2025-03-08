@@ -12,9 +12,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ModuleElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
@@ -25,15 +27,12 @@ import generated.antlr.python3.Python3Parser;
 import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3Extractor extends ANTLRExtractor {
-    private ProgrammingLanguage language = ProgrammingLanguage.PYTHON3;
-    private List<Python3VariableElement> variables = new ArrayList<>();
-    private List<ControlElement> controls = new ArrayList<>();
-    private List<ClassElement> classes = new ArrayList<>();
-    private List<Python3ModuleElement> modules = new ArrayList<>();
-    private List<PackageElement> packages = new ArrayList<>();
+    private static final ProgrammingLanguage LANGUAGE = ProgrammingLanguage.PYTHON3;
+    private final Python3ElementManager elementManager;
 
     public Python3Extractor(CodeItemRepository repository, String path) {
         super(repository, path);
+        this.elementManager = new Python3ElementManager();
     }
 
     @Override
@@ -66,8 +65,8 @@ public class Python3Extractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new Python3ModelMapper(this.codeItemRepository, variables, controls, classes, modules, packages,
-                comments);
+        this.elementManager.addComments(comments);
+        this.mapper = new Python3ModelMapper(this.codeItemRepository, elementManager);
     }
 
     @Override
@@ -75,24 +74,9 @@ public class Python3Extractor extends ANTLRExtractor {
         return new Python3CommentExtractor(tokens, path);
     }
 
-    public List<Python3VariableElement> getVariables() {
-        return variables;
-    }
-
-    public List<ControlElement> getControls() {
-        return controls;
-    }
-
-    public List<ClassElement> getClasses() {
-        return classes;
-    }
-
-    public List<Python3ModuleElement> getModules() {
-        return modules;
-    }
-
-    public List<PackageElement> getPackages() {
-        return packages;
+    // Visibility for Testing
+    public Python3ElementManager getElementManager() {
+        return elementManager;
     }
 
     private File_inputContext buildFileInputContext(Path file) throws IOException {
@@ -105,41 +89,39 @@ public class Python3Extractor extends ANTLRExtractor {
     private void extractElementsFromFile(File_inputContext ctx, Path file) {
         if (ctx != null) {
             extractVariables(ctx);
-            extractControls(ctx);
+            extractFunctions(ctx);
             extractClasses(ctx);
-            extractModules(ctx);
-            extractPackages();
+            List<Python3ModuleElement> modules = extractModules(ctx);
+            elementManager.addModules(modules);
+            extractPackages(modules);
             extractComments(file);
         }
     }
 
     private void extractVariables(File_inputContext ctx) {
         Python3VariableExtractor extractor = new Python3VariableExtractor();
-        this.variables.addAll(extractor.visitFile_input(ctx));
+        elementManager.addVariables(extractor.visitFile_input(ctx));
     }
 
-    private void extractControls(File_inputContext ctx) {
+    private void extractFunctions(File_inputContext ctx) {
         Python3ControlExtractor extractor = new Python3ControlExtractor();
-        this.controls.addAll(extractor.visitFile_input(ctx));
+        elementManager.addFunctions(extractor.visitFile_input(ctx));
     }
 
     private void extractClasses(File_inputContext ctx) {
         Python3ClassExtractor extractor = new Python3ClassExtractor();
-        this.classes.addAll(extractor.visitFile_input(ctx));
+        elementManager.addClasses(extractor.visitFile_input(ctx));
     }
 
-    private void extractModules(File_inputContext ctx) {
+    private List<Python3ModuleElement> extractModules(File_inputContext ctx) {
         Python3ModuleExtractor extractor = new Python3ModuleExtractor(path);
-        this.modules.addAll(extractor.visitFile_input(ctx));
+        return extractor.visitFile_input(ctx);
     }
 
-    private void extractPackages() {
+    private void extractPackages(List<Python3ModuleElement> modules) {
         for (Python3ModuleElement module : modules) {
             PackageElement packageElement = module.getPackage();
-            if (!packages.contains(packageElement)) {
-                packages.add(packageElement);
-            }
+            elementManager.addPackage(packageElement);
         }
-        packages.sort(Comparator.comparingInt(p -> p.getPackageNameParts("/").length));
     }
 }

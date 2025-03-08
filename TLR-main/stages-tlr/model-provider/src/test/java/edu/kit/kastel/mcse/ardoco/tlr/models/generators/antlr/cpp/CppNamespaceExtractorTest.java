@@ -9,8 +9,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.NamespaceElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppNamespaceExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
@@ -22,7 +22,7 @@ public class CppNamespaceExtractorTest {
     @Test
     void namespaceExtractorMainCPPTest() throws IOException {
         String filePath = sourcePath + "src/main.cpp";
-        List<NamespaceElement> namespaces = extractNamespaceFromFile(filePath);
+        List<BasicElement> namespaces = extractNamespaceFromFile(filePath);
 
         Assertions.assertEquals(0, namespaces.size());
     }
@@ -30,7 +30,7 @@ public class CppNamespaceExtractorTest {
     @Test
     void namespaceExtractorEntitiesCPPTest() throws IOException {
         String filePath = sourcePath + "src/Entities.cpp";
-        List<NamespaceElement> namespaces = extractNamespaceFromFile(filePath);
+        List<BasicElement> namespaces = extractNamespaceFromFile(filePath);
 
         Assertions.assertEquals(1, namespaces.size());
         Assertions.assertEquals("Entities", namespaces.get(0).getName());
@@ -44,7 +44,7 @@ public class CppNamespaceExtractorTest {
     @Test
     void namespaceExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
-        List<NamespaceElement> namespaces = extractNamespaceFromFile(filePath);
+        List<BasicElement> namespaces = extractNamespaceFromFile(filePath);
 
         Assertions.assertEquals(1, namespaces.size());
         Assertions.assertEquals("Entities", namespaces.get(0).getName());
@@ -55,7 +55,7 @@ public class CppNamespaceExtractorTest {
                 namespaces.get(0).getParent().getPath());
     }
 
-    private List<NamespaceElement> extractNamespaceFromFile(String filePath) throws IOException {
+    private List<BasicElement> extractNamespaceFromFile(String filePath) throws IOException {
         CharStream charStream = CharStreams.fromFileName(filePath);
         CPP14Lexer lexer = new CPP14Lexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

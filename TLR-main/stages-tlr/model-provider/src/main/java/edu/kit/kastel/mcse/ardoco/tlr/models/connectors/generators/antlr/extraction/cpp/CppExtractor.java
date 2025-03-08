@@ -11,10 +11,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.NamespaceElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
@@ -24,13 +22,11 @@ import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppExtractor extends ANTLRExtractor {
     private final ProgrammingLanguage language = ProgrammingLanguage.CPP;
-    private List<VariableElement> variables = new ArrayList<>();
-    private List<ControlElement> controls = new ArrayList<>();
-    private List<ClassElement> classes = new ArrayList<>();
-    private List<NamespaceElement> namespaces = new ArrayList<>();
+    private final CppElementManager elementManager;
 
     public CppExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
+        this.elementManager = new CppElementManager();
     }
 
     @Override
@@ -63,7 +59,8 @@ public class CppExtractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.mapper = new CppModelMapper(this.codeItemRepository, variables, controls, classes, namespaces, comments);
+        this.elementManager.addComments(comments);
+        this.mapper = new CppModelMapper(this.codeItemRepository, elementManager);
     }
 
     @Override
@@ -71,20 +68,8 @@ public class CppExtractor extends ANTLRExtractor {
         return new CppCommentExtractor(tokens, path);
     }
 
-    public List<VariableElement> getVariables() {
-        return variables;
-    }
-
-    public List<ControlElement> getControls() {
-        return controls;
-    }
-
-    public List<ClassElement> getClasses() {
-        return classes;
-    }
-
-    public List<NamespaceElement> getNamespaces() {
-        return namespaces;
+    public CppElementManager getElementManager() {
+        return elementManager;
     }
 
     private TranslationUnitContext buildTranslationUnitContext(Path file) throws IOException {
@@ -99,7 +84,7 @@ public class CppExtractor extends ANTLRExtractor {
             return;
         }
         extractVariables(ctx);
-        extractControls(ctx);
+        extractFunctions(ctx);
         extractClasses(ctx);
         extractNamespaces(ctx);
         extractComments(file);
@@ -107,21 +92,22 @@ public class CppExtractor extends ANTLRExtractor {
 
     private void extractVariables(TranslationUnitContext ctx) {
         CppVariableExtractor extractor = new CppVariableExtractor();
-        this.variables.addAll(extractor.visitTranslationUnit(ctx));
+        List<VariableElement> variables = extractor.visitTranslationUnit(ctx);
+        this.elementManager.addVariables(variables);
     }
 
-    private void extractControls(TranslationUnitContext ctx) {
+    private void extractFunctions(TranslationUnitContext ctx) {
         CppControlExtractor extractor = new CppControlExtractor();
-        this.controls.addAll(extractor.visitTranslationUnit(ctx));
+        this.elementManager.addFunctions(extractor.visitTranslationUnit(ctx));
     }
 
     private void extractClasses(TranslationUnitContext ctx) {
         CppClassExtractor extractor = new CppClassExtractor();
-        this.classes.addAll(extractor.visitTranslationUnit(ctx));
+        this.elementManager.addClasses(extractor.visitTranslationUnit(ctx));
     }
 
     private void extractNamespaces(TranslationUnitContext ctx) {
         CppNamespaceExtractor extractor = new CppNamespaceExtractor();
-        this.namespaces.addAll(extractor.visitTranslationUnit(ctx));
+        this.elementManager.addNamespaces(extractor.visitTranslationUnit(ctx));
     }
 }

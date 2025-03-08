@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CompilationUnitElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaCompilationUnitExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
@@ -19,61 +19,61 @@ class JavaCompilationUnitExtractorTest {
 
     @Test
     void compilationUnitAClassTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AClass.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "AClass.java");
         Assertions.assertEquals("AClass", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/AClass.java", element.getPath());
-        Assertions.assertEquals("edu", element.getPackage().getName());
+        Assertions.assertEquals("edu", element.getParent().getName());
     }
 
     @Test
     void compilationUnitAnEnumTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnEnum.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "AnEnum.java");
         Assertions.assertEquals("AnEnum", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/AnEnum.java", element.getPath());
-        Assertions.assertEquals("edu", element.getPackage().getName());
+        Assertions.assertEquals("edu", element.getParent().getName());
     }
 
     @Test
     void compilationUnitAnInterfaceTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "AnInterface.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "AnInterface.java");
         Assertions.assertEquals("AnInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/AnInterface.java", element.getPath());
-        Assertions.assertEquals("edu", element.getPackage().getName());
+        Assertions.assertEquals("edu", element.getParent().getName());
     }
 
     @Test
     void compilationUnitExtendedInterfaceTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "ExtendedInterface.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "ExtendedInterface.java");
         Assertions.assertEquals("ExtendedInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/ExtendedInterface.java", element.getPath());
-        Assertions.assertEquals("edu", element.getPackage().getName());
+        Assertions.assertEquals("edu", element.getParent().getName());
     }
 
     @Test
     void compilationUnitSuperclassTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "Superclass.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "Superclass.java");
         Assertions.assertEquals("Superclass", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/Superclass.java", element.getPath());
-        Assertions.assertEquals("edu", element.getPackage().getName());
+        Assertions.assertEquals("edu", element.getParent().getName());
     }
 
     @Test
     void compilationUnitOtherInterfaceZweiTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "zwei/OtherInterface.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "zwei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/zwei/OtherInterface.java", element.getPath());
-        Assertions.assertEquals("edu.zwei", element.getPackage().getName());
+        Assertions.assertEquals("edu.zwei", element.getParent().getName());
     }
 
     @Test
     void compilationUnitOtherInterfaceDreiTest() throws IOException {
-        CompilationUnitElement element = compilationUnitExtractorTest(sourcePath + "drei/OtherInterface.java");
+        BasicElement element = compilationUnitExtractorTest(sourcePath + "drei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/drei/OtherInterface.java", element.getPath());
-        Assertions.assertEquals("edu.drei", element.getPackage().getName());
+        Assertions.assertEquals("edu.drei", element.getParent().getName());
     }
 
-    private CompilationUnitElement compilationUnitExtractorTest(String filePath) throws IOException {
+    private BasicElement compilationUnitExtractorTest(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexer);

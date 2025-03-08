@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.python3.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 
 public class Python3ExtractorTest {
@@ -15,12 +16,13 @@ public class Python3ExtractorTest {
         String sourcePath = "src/test/resources/python/interface/edu/";
         Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
         python3Extractor.extractModel();
+        Python3ElementManager manager = python3Extractor.getElementManager();
 
         // Assertions
-        Assertions.assertEquals(13, python3Extractor.getVariables().size());
-        Assertions.assertEquals(17, python3Extractor.getControls().size());
-        Assertions.assertEquals(10, python3Extractor.getClasses().size());
-        Assertions.assertEquals(8, python3Extractor.getModules().size());
+        Assertions.assertEquals(13, manager.getVariables().size());
+        Assertions.assertEquals(17, manager.getFunctions().size());
+        Assertions.assertEquals(10, manager.getClasses().size());
+        Assertions.assertEquals(8, manager.getModules().size());
     }
 
     private Python3Extractor buildPython3Extractor(String sourcePath) {

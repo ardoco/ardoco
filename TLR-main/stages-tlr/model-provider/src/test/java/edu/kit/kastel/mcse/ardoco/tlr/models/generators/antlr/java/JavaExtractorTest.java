@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
 
 public class JavaExtractorTest {
@@ -15,13 +16,15 @@ public class JavaExtractorTest {
         String sourcePath = "src/test/resources/interface/edu/";
         JavaExtractor javaExtractor = buildJavaExtractor(sourcePath);
         javaExtractor.extractModel();
+        JavaElementManager manager = javaExtractor.getElementManager();
 
         // Assertions
-        Assertions.assertEquals(3, javaExtractor.getVariables().size());
-        Assertions.assertEquals(1, javaExtractor.getControls().size());
-        Assertions.assertEquals(6, javaExtractor.getClasses().size());
-        Assertions.assertEquals(4, javaExtractor.getInterfaces().size());
-        Assertions.assertEquals(7, javaExtractor.getCompilationUnits().size());
+        Assertions.assertEquals(3, manager.getVariables().size());
+        Assertions.assertEquals(1, manager.getFunctions().size());
+        Assertions.assertEquals(6, manager.getClasses().size());
+        Assertions.assertEquals(4, manager.getInterfaces().size());
+        Assertions.assertEquals(7, manager.getCompilationUnits().size());
+        Assertions.assertEquals(3, manager.getPackages().size());
     }
 
     private JavaExtractor buildJavaExtractor(String sourcePath) {

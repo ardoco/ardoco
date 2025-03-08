@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 import java.util.Objects;
 
 public class BasicElement {
+    private Parent parent;
     private final String path;
     private final String name;
     private int startLine;
@@ -14,6 +15,19 @@ public class BasicElement {
         this.path = path;
         this.comment = "";
 
+    }
+
+    public BasicElement(String name, String path, Parent parent) {
+        this(name, path);
+        this.parent = parent;
+    }
+
+    protected void setParent(Parent parent) {
+        this.parent = parent;
+    }
+
+    public Parent getParent() {
+        return parent;
     }
 
     public String getName() {
@@ -56,7 +70,11 @@ public class BasicElement {
     public boolean equals(Object obj) {
         if (obj instanceof BasicElement) {
             BasicElement basicElement = (BasicElement) obj;
-            return basicElement.getName().equals(this.getName()) && basicElement.getPath().equals(this.getPath());
+            return basicElement.getName().equals(this.getName()) 
+            && basicElement.getPath().equals(this.getPath()) 
+            && basicElement.getParent().equals(this.getParent())
+            && basicElement.getStartLine() == this.getStartLine()
+            && basicElement.getEndLine() == this.getEndLine();
         }
         return false;
     }

@@ -7,13 +7,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 
 public class JavaClassElement extends BasicElement {
-    private final Parent parent;
     private String extendsClass;
     private final List<String> implementedInterfaces;
 
     public JavaClassElement(String name, String path, Parent parent) {
         super(name, path);
-        this.parent = parent;
+        setParent(parent);
         this.extendsClass = "";
         this.implementedInterfaces = new ArrayList<String>();
     }
@@ -21,13 +20,9 @@ public class JavaClassElement extends BasicElement {
     public JavaClassElement(String name, String path, Parent parent, String extendsClass,
             List<String> implementedInterfaces) {
         super(name, path);
-        this.parent = parent;
+        setParent(parent);
         this.extendsClass = extendsClass;
         this.implementedInterfaces = implementedInterfaces;
-    }
-
-    public Parent getParent() {
-        return parent;
     }
 
     public String getExtendsClass() {

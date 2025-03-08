@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ControlElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ControlExtractor;
 import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
@@ -21,7 +21,7 @@ public class Python3ControlExtractorTest {
     @Test
     void testPyAClassControlExtractor() throws IOException {
         String filePath = sourcePath + "APyClass.py";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertEquals(6, controls.size());
 
         // Test the first control
@@ -58,7 +58,7 @@ public class Python3ControlExtractorTest {
     @Test
     void testPyModuleControlExtractor() throws IOException {
         String filePath = sourcePath + "APyModule.py";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertEquals(3, controls.size());
 
         // Test the first control
@@ -80,7 +80,7 @@ public class Python3ControlExtractorTest {
     @Test
     void testPyMetaclassExtractor() throws IOException {
         String filePath = sourcePath + "APyMetaclass.py";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertEquals(2, controls.size());
 
         // Test the first control
@@ -97,11 +97,11 @@ public class Python3ControlExtractorTest {
     @Test
     void testPyEnumControlExtractor() throws IOException {
         String filePath = sourcePath + "APyEnum.py";
-        List<ControlElement> controls = extractControlElementsFromFile(filePath);
+        List<BasicElement> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertEquals(0, controls.size());
     }
 
-    private List<ControlElement> extractControlElementsFromFile(String filePath) throws IOException {
+    private List<BasicElement> extractBasicElementsFromFile(String filePath) throws IOException {
         // Create a CompilationUnitContext from the source file
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromFileName(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexer);

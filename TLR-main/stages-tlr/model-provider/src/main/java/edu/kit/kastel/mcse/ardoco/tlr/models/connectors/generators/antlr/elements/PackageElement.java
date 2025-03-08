@@ -20,15 +20,19 @@ public class PackageElement extends BasicElement {
         return shortName;
     }
 
+    public void updateParent(Parent parent) {
+        this.setParent(parent);
+    }
+
     public boolean extendsPackage(PackageElement packageElement) {
-        return this.getName().startsWith(packageElement.getName()) && !this.equals(packageElement);
+        return this.getName().startsWith(packageElement.getPath()) && !this.equals(packageElement);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PackageElement) {
             PackageElement packageElement = (PackageElement) obj;
-            return packageElement.getName().equals(this.getName());
+            return packageElement.getPath().equals(this.getPath());
         }
         return false;
     }

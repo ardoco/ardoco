@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaModelMapper;
 
@@ -17,10 +18,10 @@ public class JavaModelMapperTest {
         CodeItemRepository repository = new CodeItemRepository();
         JavaExtractor extractor = new JavaExtractor(repository, "src/test/resources/interface/edu/");
         extractor.extractModel();
+        JavaElementManager manager = extractor.getElementManager();
+        manager.addComments(extractor.getComments());
 
-        JavaModelMapper mapper = new JavaModelMapper(repository, extractor.getVariables(), extractor.getControls(),
-                extractor.getClasses(), extractor.getInterfaces(), extractor.getCompilationUnits(),
-                extractor.getPackages(), extractor.getComments());
+        JavaModelMapper mapper = new JavaModelMapper(repository, manager);
         mapper.mapToCodeModel();
         CodeModel codeModel = mapper.getCodeModel();
         // Assertions
