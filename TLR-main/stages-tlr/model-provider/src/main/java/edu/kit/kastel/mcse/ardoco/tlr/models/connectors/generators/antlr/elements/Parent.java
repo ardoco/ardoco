@@ -2,16 +2,27 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 
 import java.util.Objects;
 
-public class Parent extends BasicElement {
-    private final BasicType type;
+public class Parent {
+    private final String name;
+    private final String path;
+    private final Type type;
 
-    public Parent(String name, String path, BasicType parentType) {
-        super(name, path);
-        this.type = parentType;
+    public Parent(String name, String path, Type type) {
+        this.name = name;
+        this.path = path;
+        this.type = type;
     }
 
-    public BasicType getType() {
+    public Type getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     @Override

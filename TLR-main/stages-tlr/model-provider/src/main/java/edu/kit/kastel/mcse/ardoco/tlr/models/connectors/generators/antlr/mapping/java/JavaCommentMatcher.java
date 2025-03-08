@@ -1,24 +1,17 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CommentMatcher;
 
 public class JavaCommentMatcher extends CommentMatcher {
-
 
     public JavaCommentMatcher() {
         super();
     }
 
     @Override
-    protected int calculateDistance(CommentElement comment, BasicElement element) {
+    protected int calculateDistance(Comment comment, Element element) {
         int elementStartLine = element.getStartLine();
         int commentStartLine = comment.getStartLine();
         int commentEndLine = comment.getEndLine();

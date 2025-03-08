@@ -9,14 +9,14 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
 public abstract class ANTLRExtractor extends CodeExtractor {
     protected ModelMapper mapper;
     protected CommonTokenStream tokens;
     protected boolean elementsExtracted;
-    protected final List<CommentElement> comments;
+    protected final List<Comment> comments;
 
     protected ANTLRExtractor(CodeItemRepository codeItemRepository, String path) {
         super(codeItemRepository, path);
@@ -37,7 +37,7 @@ public abstract class ANTLRExtractor extends CodeExtractor {
     public void extractElements() {
         List<Path> files = getFiles();
         for (Path file : files) {
-            extractFileContents(file);
+            extractContentFromFile(file);
         }
         this.elementsExtracted = true;
     }
@@ -46,7 +46,7 @@ public abstract class ANTLRExtractor extends CodeExtractor {
         return mapper;
     }
 
-    public List<CommentElement> getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
@@ -57,9 +57,14 @@ public abstract class ANTLRExtractor extends CodeExtractor {
         comments.addAll(commentExtractor.getComments());
     }
 
+    protected void extractContentFromFile(Path file) {
+        extractElementsFromFile(file);
+        extractComments(file);
+    }
+
     protected abstract List<Path> getFiles();
 
-    protected abstract void extractFileContents(Path file);
+    protected abstract void extractElementsFromFile(Path file);
 
     protected abstract void mapToCodeModel();
 

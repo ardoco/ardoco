@@ -6,10 +6,10 @@ import java.util.List;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.CommentElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 
 public abstract class CommentExtractor {
-    private final List<CommentElement> comments;
+    private final List<Comment> comments;
     private final String path;
     protected final CommonTokenStream tokens;
 
@@ -29,7 +29,7 @@ public abstract class CommentExtractor {
                     int startLine = token.getLine();
                     int endLine = token.getLine() + countCommentLines(text);
                     String cleansedText = cleanseComment(text);
-                    CommentElement comment = createCommentElement(cleansedText, startLine, endLine);
+                    Comment comment = createCommentElement(cleansedText, startLine, endLine);
                     comments.add(comment);
                 }
             }
@@ -42,12 +42,12 @@ public abstract class CommentExtractor {
 
     protected abstract String cleanseComment(String comment);
 
-    public List<CommentElement> getComments() {
+    public List<Comment> getComments() {
         return this.comments;
     }
 
-    protected CommentElement createCommentElement(String text, int startLine, int endLine) {
-        return new CommentElement(text, startLine, endLine, path);
+    protected Comment createCommentElement(String text, int startLine, int endLine) {
+        return new Comment(text, startLine, endLine, path);
     }
 
     protected int countCommentLines(String text) {

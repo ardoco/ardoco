@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
 
 public class JavaElementManagerTest {
@@ -20,8 +20,8 @@ public class JavaElementManagerTest {
         Assertions.assertEquals("s", manager.getVariables().get(0).getName());
         Assertions.assertEquals("This is a Test Line Comment", manager.getVariables().get(0).getComment());
 
-        Assertions.assertEquals("AClass", manager.getClasses().get(0).getName());
-        Assertions.assertEquals("This is a Test Java Doc Comment", manager.getClasses().get(0).getComment());
+        Assertions.assertEquals("AClass", manager.getClasses().get(2).getName());
+        Assertions.assertEquals("This is a Test Java Doc Comment", manager.getClasses().get(2).getComment());
         Assertions.assertEquals("aMethod", manager.getFunctions().get(0).getName());
         Assertions.assertEquals("This is a Test Block Comment", manager.getFunctions().get(0).getComment());
     }

@@ -9,11 +9,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
 public class CppModelMapper extends ModelMapper {
@@ -39,21 +39,21 @@ public class CppModelMapper extends ModelMapper {
     }
 
     @Override
-    protected List<BasicElement> getElementsWithParent(Parent parent) {
+    protected List<Element> getElementsWithParent(Parent parent) {
         return elementManager.getElementsWithParent(parent);
     }
 
     @Override
-    protected CodeItem buildCodeItem(BasicElement element) {
+    protected CodeItem buildCodeItem(Element element) {
         Parent comparable;
         if (elementManager.isNamespaceElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.NAMESPACE);
+            comparable = new Parent(element.getName(), element.getPath(), Type.NAMESPACE);
             return buildCodeAssembly(comparable);
         } else if (elementManager.isClassElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.CLASS);
+            comparable = new Parent(element.getName(), element.getPath(), Type.CLASS);
             return buildClassUnit(comparable);
         } else if (elementManager.isFunctionElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.CONTROL);
+            comparable = new Parent(element.getName(), element.getPath(), Type.FUNCTION);
             return buildControlElement(comparable);
         } else {
             return null;
@@ -61,7 +61,7 @@ public class CppModelMapper extends ModelMapper {
     }
 
     private CodeAssembly buildCodeAssembly(Parent parent) {
-        BasicElement namespace = elementManager.getNamespace(parent);
+        Element namespace = elementManager.getNamespace(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 
         CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, namespace.getName(), content);
@@ -79,7 +79,7 @@ public class CppModelMapper extends ModelMapper {
     }
 
     private ControlElement buildControlElement(Parent parent) {
-        BasicElement function = elementManager.getFunction(parent);
+        Element function = elementManager.getFunction(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());

@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 
 public abstract class ModelMapper {
@@ -24,7 +24,7 @@ public abstract class ModelMapper {
     public CodeModel getCodeModel() {
         return codeModel;
     }
-    
+
     public void mapToCodeModel() {
         List<Parent> rootParents = getRootParents();
         SortedSet<CodeItem> content = buildContentFromRoot(rootParents);
@@ -41,9 +41,9 @@ public abstract class ModelMapper {
     }
 
     protected SortedSet<CodeItem> buildContent(Parent parent) {
-        List<BasicElement> items = getElementsWithParent(parent);
+        List<Element> items = getElementsWithParent(parent);
         SortedSet<CodeItem> content = new TreeSet<>();
-        for (BasicElement item : items) {
+        for (Element item : items) {
             CodeItem codeItem = buildCodeItem(item);
             if (codeItem != null) {
                 content.add(codeItem);
@@ -52,9 +52,11 @@ public abstract class ModelMapper {
         return content;
     }
 
-
     protected abstract List<Parent> getRootParents();
+
     protected abstract CodeItem buildSubtree(Parent parent);
-    protected abstract List<BasicElement> getElementsWithParent(Parent parent);
-    protected abstract CodeItem buildCodeItem(BasicElement element);
+
+    protected abstract List<Element> getElementsWithParent(Parent parent);
+
+    protected abstract CodeItem buildCodeItem(Element element);
 }

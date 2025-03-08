@@ -1,10 +1,15 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
-public class PackageElement extends BasicElement {
+public class PackageElement extends Element {
     private String shortName;
 
     public PackageElement(String name, String path) {
         super(name, path);
+        this.shortName = name;
+    }
+
+    public PackageElement(String name, String path, Parent parent) {
+        super(name, path, parent);
         this.shortName = name;
     }
 

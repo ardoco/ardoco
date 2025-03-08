@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassElement extends BasicElement {
+public class ClassElement extends Element {
     private final List<String> inherits;
 
     public ClassElement(String name, String path, Parent parent) {

@@ -10,11 +10,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaModelMapper;
@@ -24,11 +22,11 @@ import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 public class JavaExtractor extends ANTLRExtractor {
     private final ProgrammingLanguage language = ProgrammingLanguage.JAVA;
-    private final JavaElementManager elementManager;
+    private final JavaElementExtractor elementExtractor;
 
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
-        this.elementManager = new JavaElementManager();
+        this.elementExtractor = new JavaElementExtractor();
     }
 
     @Override
@@ -47,10 +45,10 @@ public class JavaExtractor extends ANTLRExtractor {
     }
 
     @Override
-    protected void extractFileContents(Path file) {
+    protected void extractElementsFromFile(Path file) {
         try {
             CompilationUnitContext ctx = buildCompilationCtxForFile(file);
-            extractElementsFromFile(ctx, file);
+            extractElements(ctx);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,7 +59,8 @@ public class JavaExtractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.elementManager.addComments(comments);
+        JavaElementManager elementManager = elementExtractor.getElementManager();
+        elementManager.addComments(comments);
         this.mapper = new JavaModelMapper(codeItemRepository, elementManager);
     }
 
@@ -71,7 +70,7 @@ public class JavaExtractor extends ANTLRExtractor {
     }
 
     public JavaElementManager getElementManager() {
-        return elementManager;
+        return this.elementExtractor.getElementManager();
     }
 
     private CompilationUnitContext buildCompilationCtxForFile(Path file) throws IOException {
@@ -82,44 +81,10 @@ public class JavaExtractor extends ANTLRExtractor {
         return parser.compilationUnit();
     }
 
-    private void extractElementsFromFile(CompilationUnitContext ctx, Path file) {
-        if (ctx != null) {
-            extractVariables(ctx);
-            extractFunctions(ctx);
-            extractClasses(ctx);
-            extractInterfaces(ctx);
-            extractCompilationUnit(ctx, file);
-            extractComments(file);
+    private void extractElements(CompilationUnitContext ctx) {
+        if (ctx == null) {
+            return;
         }
-    }
-
-    private void extractVariables(CompilationUnitContext ctx) {
-        JavaVariableExtractor variableExtractor = new JavaVariableExtractor();
-        elementManager.addVariables(variableExtractor.visitCompilationUnit(ctx));
-    }
-
-    private void extractFunctions(CompilationUnitContext ctx) {
-        JavaControlExtractor functionExtractor = new JavaControlExtractor();
-        elementManager.addFunctions(functionExtractor.visitCompilationUnit(ctx));
-    }
-
-    private void extractClasses(CompilationUnitContext ctx) {
-        JavaClassExtractor classExtractor = new JavaClassExtractor();
-        elementManager.addClasses(classExtractor.visitCompilationUnit(ctx));
-    }
-
-    private void extractInterfaces(CompilationUnitContext ctx) {
-        JavaInterfaceExtractor interfaceExtractor = new JavaInterfaceExtractor();
-        elementManager.addInterfaces(interfaceExtractor.visitCompilationUnit(ctx));
-    }
-
-    private void extractCompilationUnit(CompilationUnitContext ctx, Path file) {
-        JavaCompilationUnitExtractor compilationUnitExtractor = new JavaCompilationUnitExtractor();
-        BasicElement compilationUnit = compilationUnitExtractor.visitCompilationUnit(ctx);
-        if (compilationUnit.getParent() != null) {
-            PackageElement packageElement = new PackageElement(compilationUnit.getParent().getName(), compilationUnit.getParent().getPath());
-            elementManager.addPackage(packageElement);
-        }
-        elementManager.addCompilationUnit(compilationUnitExtractor.visitCompilationUnit(ctx));
+        this.elementExtractor.extract(ctx);
     }
 }

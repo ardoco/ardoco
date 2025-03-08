@@ -11,8 +11,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
@@ -22,11 +21,11 @@ import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppExtractor extends ANTLRExtractor {
     private final ProgrammingLanguage language = ProgrammingLanguage.CPP;
-    private final CppElementManager elementManager;
+    private final CppElementExtractor elementExtractor;
 
     public CppExtractor(CodeItemRepository repository, String path) {
         super(repository, path);
-        this.elementManager = new CppElementManager();
+        this.elementExtractor = new CppElementExtractor();
     }
 
     @Override
@@ -45,10 +44,10 @@ public class CppExtractor extends ANTLRExtractor {
     }
 
     @Override
-    protected void extractFileContents(Path file) {
+    protected void extractElementsFromFile(Path file) {
         try {
             TranslationUnitContext ctx = buildTranslationUnitContext(file);
-            extractElementsFromFile(ctx, file);
+            extractElementsFromContext(ctx);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,7 +58,8 @@ public class CppExtractor extends ANTLRExtractor {
         if (!elementsExtracted) {
             throw new IllegalStateException("Elements have not been extracted yet.");
         }
-        this.elementManager.addComments(comments);
+        CppElementManager elementManager = elementExtractor.getElementManager();
+        elementManager.addComments(comments);
         this.mapper = new CppModelMapper(this.codeItemRepository, elementManager);
     }
 
@@ -69,7 +69,7 @@ public class CppExtractor extends ANTLRExtractor {
     }
 
     public CppElementManager getElementManager() {
-        return elementManager;
+        return this.elementExtractor.getElementManager();
     }
 
     private TranslationUnitContext buildTranslationUnitContext(Path file) throws IOException {
@@ -79,35 +79,10 @@ public class CppExtractor extends ANTLRExtractor {
         return parser.translationUnit();
     }
 
-    private void extractElementsFromFile(TranslationUnitContext ctx, Path file) {
+    private void extractElementsFromContext(TranslationUnitContext ctx) {
         if (ctx == null) {
             return;
         }
-        extractVariables(ctx);
-        extractFunctions(ctx);
-        extractClasses(ctx);
-        extractNamespaces(ctx);
-        extractComments(file);
-    }
-
-    private void extractVariables(TranslationUnitContext ctx) {
-        CppVariableExtractor extractor = new CppVariableExtractor();
-        List<VariableElement> variables = extractor.visitTranslationUnit(ctx);
-        this.elementManager.addVariables(variables);
-    }
-
-    private void extractFunctions(TranslationUnitContext ctx) {
-        CppControlExtractor extractor = new CppControlExtractor();
-        this.elementManager.addFunctions(extractor.visitTranslationUnit(ctx));
-    }
-
-    private void extractClasses(TranslationUnitContext ctx) {
-        CppClassExtractor extractor = new CppClassExtractor();
-        this.elementManager.addClasses(extractor.visitTranslationUnit(ctx));
-    }
-
-    private void extractNamespaces(TranslationUnitContext ctx) {
-        CppNamespaceExtractor extractor = new CppNamespaceExtractor();
-        this.elementManager.addNamespaces(extractor.visitTranslationUnit(ctx));
+        this.elementExtractor.extract(ctx);
     }
 }

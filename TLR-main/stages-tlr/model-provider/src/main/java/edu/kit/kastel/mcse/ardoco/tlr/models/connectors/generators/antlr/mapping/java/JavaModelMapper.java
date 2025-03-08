@@ -12,13 +12,12 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicType;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.BasicElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.InterfaceElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
 public class JavaModelMapper extends ModelMapper {
@@ -41,28 +40,28 @@ public class JavaModelMapper extends ModelMapper {
     }
 
     @Override
-    protected List<BasicElement> getElementsWithParent(Parent parent) {
+    protected List<Element> getElementsWithParent(Parent parent) {
         return elementManager.getElementsWithParent(parent);
     }
 
     @Override
-    protected CodeItem buildCodeItem(BasicElement element) {
+    protected CodeItem buildCodeItem(Element element) {
         Parent comparable;
 
         if (elementManager.isPackageElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.PACKAGE);
+            comparable = new Parent(element.getName(), element.getPath(), Type.PACKAGE);
             return buildCodePackage(comparable);
         } else if (elementManager.isCompilationUnitElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.MODULE);
+            comparable = new Parent(element.getName(), element.getPath(), Type.MODULE);
             return buildCodeCompilationUnit(comparable);
         } else if (elementManager.isClassElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.CLASS);
+            comparable = new Parent(element.getName(), element.getPath(), Type.CLASS);
             return buildClassUnit(comparable);
         } else if (elementManager.isInterfaceElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.INTERFACE);
+            comparable = new Parent(element.getName(), element.getPath(), Type.INTERFACE);
             return buildInterfaceUnit(comparable);
         } else if (elementManager.isFunctionElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), BasicType.CONTROL);
+            comparable = new Parent(element.getName(), element.getPath(), Type.FUNCTION);
             return buildControlElement(comparable);
         } else {
             return null;
@@ -79,12 +78,13 @@ public class JavaModelMapper extends ModelMapper {
     }
 
     private CodeCompilationUnit buildCodeCompilationUnit(Parent parent) {
-        BasicElement compilationUnit = elementManager.getCompilationUnitElement(parent);
+        Element compilationUnit = elementManager.getCompilationUnitElement(parent);
         List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
         SortedSet<CodeItem> content = buildContent(parent);
-        
+
         PackageElement pack = elementManager.getPackage(compilationUnit.getParent());
-        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(), content, pathElements, pack.getName(), language);
+        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(),
+                content, pathElements, pack.getName(), language);
         codeCompilationUnit.setComment(compilationUnit.getComment());
         return codeCompilationUnit;
     }
@@ -99,7 +99,7 @@ public class JavaModelMapper extends ModelMapper {
     }
 
     private InterfaceUnit buildInterfaceUnit(Parent parent) {
-        InterfaceElement interfaceElement = elementManager.getInterface(parent);
+        Element interfaceElement = elementManager.getInterface(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 
         InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, interfaceElement.getName(), content);
@@ -108,7 +108,7 @@ public class JavaModelMapper extends ModelMapper {
     }
 
     private ControlElement buildControlElement(Parent parent) {
-        BasicElement function = elementManager.getFunction(parent);
+        Element function = elementManager.getFunction(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());
