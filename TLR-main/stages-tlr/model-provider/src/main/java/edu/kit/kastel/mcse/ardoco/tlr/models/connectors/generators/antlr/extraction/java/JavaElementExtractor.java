@@ -1,12 +1,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -15,12 +11,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
-import generated.antlr.java.JavaLexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.JavaElementManager;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParserBaseVisitor;
 import generated.antlr.java.JavaParser.CompilationUnitContext;
@@ -44,7 +37,6 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements
     @Override
     public void extract(CommonTokenStream tokens) {
         CompilationUnitContext ctx = buildContext(tokens);
-
         visitCompilationUnit(ctx);
 
     }

@@ -1,12 +1,12 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CommentMatcher;
 
 public abstract class ElementManager {
 
@@ -58,9 +58,9 @@ public abstract class ElementManager {
         return element != null && element.getParent() == null;
     }
 
-    protected abstract Element getElement(Parent parent);
+    public abstract Element getElement(Parent parent);
 
-    public abstract List<Element> getElementsWithParent(Parent parent);
+    public abstract List<Element> getContentOfParent(Parent parent);
 
     protected abstract List<Element> getAllElements();
 

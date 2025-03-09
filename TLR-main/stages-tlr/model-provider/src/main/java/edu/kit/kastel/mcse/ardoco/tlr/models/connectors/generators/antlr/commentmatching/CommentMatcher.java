@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching;
 
 import java.util.List;
 

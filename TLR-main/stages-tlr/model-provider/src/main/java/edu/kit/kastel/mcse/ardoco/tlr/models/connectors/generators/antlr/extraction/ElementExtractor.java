@@ -1,7 +1,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
 import org.antlr.v4.runtime.CommonTokenStream;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.ElementManager;
+
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
 
 public interface ElementExtractor {
 

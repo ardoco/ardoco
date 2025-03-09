@@ -1,12 +1,11 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CommentMatcher;
 
-public class JavaCommentMatcher extends CommentMatcher {
+public class Python3CommentMatcher extends CommentMatcher {
 
-    public JavaCommentMatcher() {
+    public Python3CommentMatcher() {
         super();
     }
 
@@ -22,13 +21,16 @@ public class JavaCommentMatcher extends CommentMatcher {
     }
 
     private int calculateDifference(int elementStartLine, int commentStartLine, int commentEndLine) {
-        int lineDifference = Integer.MAX_VALUE;
-        // comment just before element
-        if (elementStartLine == commentEndLine + 1) {
-            lineDifference = 0;
-        } else if (commentStartLine <= elementStartLine) {
-            lineDifference = Math.abs(elementStartLine - commentEndLine);
+        // Comments Ideally just after Element
+        if (commentStartLine == elementStartLine + 1) {
+            return 0;
         }
-        return lineDifference;
+
+        // Comment before element
+        if (commentEndLine < elementStartLine) {
+            return Integer.MAX_VALUE;
+        }
+
+        return Math.abs(elementStartLine - commentEndLine);
     }
 }

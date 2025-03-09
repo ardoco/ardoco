@@ -1,15 +1,15 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.Python3CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3CommentMapper;
 
 public class Python3ElementManager extends ElementManager {
     private final List<VariableElement> variables;
@@ -36,7 +36,7 @@ public class Python3ElementManager extends ElementManager {
     }
 
     @Override
-    public List<Element> getElementsWithParent(Parent parent) {
+    public List<Element> getContentOfParent(Parent parent) {
         return getBasicElementsWithParent(getAllElements(), parent);
     }
 
@@ -121,7 +121,7 @@ public class Python3ElementManager extends ElementManager {
         return null;
     }
 
-    public Element getControl(Parent parent) {
+    public Element getFunction(Parent parent) {
         for (Element control : functions) {
             if (elementIsParent(control, parent)) {
                 return control;
@@ -171,7 +171,7 @@ public class Python3ElementManager extends ElementManager {
         return classes.contains(element);
     }
 
-    public boolean isControlElement(Element element) {
+    public boolean isFunctionElement(Element element) {
         return functions.contains(element);
     }
 
@@ -239,16 +239,16 @@ public class Python3ElementManager extends ElementManager {
     }
 
     @Override
-    protected Python3CommentMapper buildCommentMatcher() {
-        return new Python3CommentMapper();
+    protected Python3CommentMatcher buildCommentMatcher() {
+        return new Python3CommentMatcher();
     }
 
     @Override
-    protected Element getElement(Parent parent) {
+    public Element getElement(Parent parent) {
         if (parent.getType() == Type.VARIABLE) {
             return getVariable(parent);
         } else if (parent.getType() == Type.FUNCTION) {
-            return getControl(parent);
+            return getFunction(parent);
         } else if (parent.getType() == Type.CLASS) {
             return getClass(parent);
         } else if (parent.getType() == Type.MODULE) {

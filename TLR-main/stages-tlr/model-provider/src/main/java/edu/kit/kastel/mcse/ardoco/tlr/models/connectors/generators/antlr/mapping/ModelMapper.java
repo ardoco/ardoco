@@ -7,18 +7,20 @@ import java.util.TreeSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
 
-public abstract class ModelMapper {
-    public final ProgrammingLanguage language;
+public class ModelMapper {
     protected final CodeItemRepository codeItemRepository;
+    protected final ElementManager elementManager;
+    protected final CodeItemBuilder codeItemBuilder;
     private CodeModel codeModel;
 
-    protected ModelMapper(CodeItemRepository codeItemRepository, ProgrammingLanguage language) {
+    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemBuilder codeItemBuilder, ElementManager elementManager) {
         this.codeItemRepository = codeItemRepository;
-        this.language = language;
+        this.elementManager = elementManager;
+        this.codeItemBuilder = codeItemBuilder;
     }
 
     public CodeModel getCodeModel() {
@@ -26,7 +28,7 @@ public abstract class ModelMapper {
     }
 
     public void mapToCodeModel() {
-        List<Parent> rootParents = getRootParents();
+        List<Parent> rootParents = elementManager.getRootParents();
         SortedSet<CodeItem> content = buildContentFromRoot(rootParents);
         codeModel = new CodeModel(codeItemRepository, content);
     }
@@ -40,23 +42,12 @@ public abstract class ModelMapper {
         return content;
     }
 
-    protected SortedSet<CodeItem> buildContent(Parent parent) {
-        List<Element> items = getElementsWithParent(parent);
-        SortedSet<CodeItem> content = new TreeSet<>();
-        for (Element item : items) {
-            CodeItem codeItem = buildCodeItem(item);
-            if (codeItem != null) {
-                content.add(codeItem);
-            }
-        }
-        return content;
+    protected CodeItem buildSubtree(Parent parent) {
+        Element element = elementManager.getElement(parent);
+        return buildCodeItem(element);
     }
 
-    protected abstract List<Parent> getRootParents();
-
-    protected abstract CodeItem buildSubtree(Parent parent);
-
-    protected abstract List<Element> getElementsWithParent(Parent parent);
-
-    protected abstract CodeItem buildCodeItem(Element element);
+    private CodeItem buildCodeItem(Element element) {
+        return this.codeItemBuilder.buildCodeItem(element);
+    }
 }

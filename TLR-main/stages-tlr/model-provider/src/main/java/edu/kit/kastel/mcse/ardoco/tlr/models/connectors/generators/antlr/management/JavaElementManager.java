@@ -1,15 +1,15 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.JavaCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCommentMatcher;
 
 public class JavaElementManager extends ElementManager {
     private final List<VariableElement> variables;
@@ -39,7 +39,7 @@ public class JavaElementManager extends ElementManager {
     }
 
     @Override
-    public List<Element> getElementsWithParent(Parent parent) {
+    public List<Element> getContentOfParent(Parent parent) {
         return getBasicElementsWithParent(getAllElements(), parent);
     }
 
@@ -285,7 +285,7 @@ public class JavaElementManager extends ElementManager {
     }
 
     @Override
-    protected Element getElement(Parent parent) {
+    public Element getElement(Parent parent) {
         if (parent.getType() == Type.VARIABLE) {
             return getVariable(parent);
         } else if (parent.getType() == Type.FUNCTION) {

@@ -1,0 +1,47 @@
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.strategies;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.SortedSet;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
+
+public class CompilationUnitStrategy extends AbstractJavaCodeItemStrategy {
+
+    public CompilationUnitStrategy(CodeItemRepository codeItemRepository, JavaCodeItemBuilder javaCodeItemBuilder, JavaElementManager elementManager) {
+        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    }
+
+    @Override
+    public boolean supports(Element element) {
+        return this.elementManager.isCompilationUnitElement(element);
+    }
+
+    @Override
+    public CodeItem buildCodeItem(Element element) {
+        Parent comparable = new Parent(element.getName(), element.getPath(), Type.COMPILATIONUNIT);
+        return buildCodeCompilationUnit(comparable);
+    }
+
+    private CodeCompilationUnit buildCodeCompilationUnit(Parent parent) {
+        Element compilationUnit = elementManager.getCompilationUnitElement(parent);
+        List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
+        SortedSet<CodeItem> content = buildContent(parent);
+
+        PackageElement pack = elementManager.getPackage(compilationUnit.getParent());
+        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(),
+                content, pathElements, pack.getName(), ProgrammingLanguage.JAVA);
+        codeCompilationUnit.setComment(compilationUnit.getComment());
+        return codeCompilationUnit;
+    }
+    
+}

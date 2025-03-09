@@ -1,102 +1,12 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3;
 
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ClassUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeAssembly;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
-public class Python3ModelMapper extends ModelMapper {
-    private static final ProgrammingLanguage LANGUAGE = ProgrammingLanguage.PYTHON3;
-    private final Python3ElementManager elementManager;
+public class Python3ModelMapper extends ModelMapper{
 
     public Python3ModelMapper(CodeItemRepository codeItemRepository, Python3ElementManager elementManager) {
-        super(codeItemRepository, LANGUAGE);
-        this.elementManager = elementManager;
+        super(codeItemRepository, new Python3CodeItemBuilder(codeItemRepository, elementManager), elementManager);
     }
-
-    @Override
-    protected List<Parent> getRootParents() {
-        return elementManager.getRootParents();
-    }
-
-    @Override
-    protected CodeItem buildSubtree(Parent parent) {
-        return buildCodePackage(parent);
-    }
-
-    @Override
-    protected List<Element> getElementsWithParent(Parent parent) {
-        return elementManager.getElementsWithParent(parent);
-    }
-
-    @Override
-    protected CodeItem buildCodeItem(Element element) {
-        Parent comparable;
-        if (elementManager.isPackageElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), Type.PACKAGE);
-            return buildCodePackage(comparable);
-        } else if (elementManager.isModuleElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), Type.MODULE);
-            return buildCodeAssembly(comparable);
-        } else if (elementManager.isClassElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), Type.CLASS);
-            return buildClassUnit(comparable);
-        } else if (elementManager.isControlElement(element)) {
-            comparable = new Parent(element.getName(), element.getPath(), Type.FUNCTION);
-            return buildControlElement(comparable);
-        } else {
-            return null;
-        }
-    }
-
-    private CodePackage buildCodePackage(Parent parent) {
-        PackageElement packageElement = elementManager.getPackage(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
-
-        CodePackage codePackage = new CodePackage(codeItemRepository, packageElement.getShortName(), content);
-        codePackage.setComment(packageElement.getComment());
-        return codePackage;
-    }
-
-    private CodeAssembly buildCodeAssembly(Parent parent) {
-        Element module = elementManager.getModule(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content);
-        codeAssembly.setComment(module.getComment());
-        return codeAssembly;
-    }
-
-    private ClassUnit buildClassUnit(Parent parent) {
-        ClassElement classElement = elementManager.getClass(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
-
-        ClassUnit classUnit = new ClassUnit(codeItemRepository, classElement.getName(), content);
-        classUnit.setComment(classElement.getComment());
-        return classUnit;
-    }
-
-    private ControlElement buildControlElement(Parent parent) {
-        Element controlElement = elementManager.getControl(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
-
-        ControlElement control = new ControlElement(codeItemRepository, controlElement.getName());
-        control.setComment(controlElement.getComment());
-        return control;
-    }
-
 }

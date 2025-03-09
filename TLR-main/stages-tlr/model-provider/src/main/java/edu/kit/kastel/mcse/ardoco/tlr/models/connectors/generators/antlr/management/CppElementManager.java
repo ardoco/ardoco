@@ -1,14 +1,14 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CppCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCommentMapper;
 
 public class CppElementManager extends ElementManager {
     private List<VariableElement> variables;
@@ -34,7 +34,7 @@ public class CppElementManager extends ElementManager {
     }
 
     @Override
-    public List<Element> getElementsWithParent(Parent parent) {
+    public List<Element> getContentOfParent(Parent parent) {
         return getBasicElementsWithParent(getAllElements(), parent);
     }
 
@@ -179,6 +179,10 @@ public class CppElementManager extends ElementManager {
         return functions.contains(element);
     }
 
+    public boolean isFileElement(Element element) {
+        return files.contains(element);
+    }
+
     public List<VariableElement> getVariablesWithParent(Parent parent) {
         List<VariableElement> variablesWithMatchingParent = new ArrayList<>();
 
@@ -220,12 +224,12 @@ public class CppElementManager extends ElementManager {
     }
 
     @Override
-    protected CppCommentMapper buildCommentMatcher() {
-        return new CppCommentMapper();
+    protected CppCommentMatcher buildCommentMatcher() {
+        return new CppCommentMatcher();
     }
 
     @Override
-    protected Element getElement(Parent parent) {
+    public Element getElement(Parent parent) {
         if (parent.getType() == Type.VARIABLE) {
             return getVariable(parent);
         } else if (parent.getType() == Type.FUNCTION) {

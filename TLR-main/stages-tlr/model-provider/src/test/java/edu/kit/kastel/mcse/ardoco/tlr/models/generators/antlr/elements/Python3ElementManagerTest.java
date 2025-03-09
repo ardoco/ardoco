@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.Python3ElementManager;
 
 public class Python3ElementManagerTest {
     private Python3ElementManager elementManager;
@@ -153,7 +153,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getElementsWithParent(parent);
+        List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.containsAll(functions);
     }
 
@@ -163,7 +163,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
         Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getElementsWithParent(parent);
+        List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.isEmpty();
     }
 
@@ -203,7 +203,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         Parent parent = new Parent("parentOfFc", "path", Type.FUNCTION);
-        List<Element> funcs = elementManager.getElementsWithParent(parent);
+        List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.isEmpty();
     }
 
@@ -246,8 +246,8 @@ public class Python3ElementManagerTest {
         elementManager.addFunctions(functions);
         Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
         Parent parent2 = new Parent("diffFcParent", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getElementsWithParent(parent);
-        List<Element> funcs2 = elementManager.getElementsWithParent(parent2);
+        List<Element> funcs = elementManager.getContentOfParent(parent);
+        List<Element> funcs2 = elementManager.getContentOfParent(parent2);
 
         Assertions.assertEquals(3, funcs.size());
         Assertions.assertEquals(1, funcs2.size());
