@@ -16,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import generated.antlr.python3.Python3Lexer;
@@ -25,7 +26,6 @@ import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> implements ElementExtractor {
     private final Python3ElementManager elementManager;
-    private CommonTokenStream tokens;
 
     public Python3ElementExtractor() {
         this.elementManager = new Python3ElementManager();
@@ -41,32 +41,16 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
     }
 
     @Override
-    public CommonTokenStream getTokens() {
-        return this.tokens;
-    }
-
-    @Override
-    public void extract(Path file) {
-        File_inputContext ctx;
-        try {
-            ctx = buildContext(file);
-        } catch (IOException e) {
-            this.tokens = null;
-            return;
-        }          
-
+    public void extract(CommonTokenStream tokens) {
+        File_inputContext ctx = buildContext(tokens);
         visitFile_input(ctx);
         addModules(ctx);
     }
 
-    private File_inputContext buildContext(Path file) throws IOException {
-        CharStream charStream = CharStreams.fromPath(file);
-        Python3Lexer lexer = new Python3Lexer(charStream);
-        this.tokens = new CommonTokenStream(lexer);
-        Python3Parser parser = new Python3Parser(tokens);
+    private File_inputContext buildContext(CommonTokenStream tokenStream) {
+        Python3Parser parser = new Python3Parser(tokenStream);
         return parser.file_input();
-    }
-        
+    }        
 
     @Override
     public Void visitFile_input(Python3Parser.File_inputContext ctx) {
@@ -185,24 +169,18 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
 
     private void addVariableElement(String varName, String path, String type, Parent parent, String value,
             int startLine, int endLine) {
-        VariableElement variable = new VariableElement(varName, path, type, parent);
-        variable.setStartLine(startLine);
-        variable.setEndLine(endLine);
+        VariableElement variable = new VariableElement(varName, path, type, parent, startLine, endLine);
         elementManager.addVariable(variable);
     }
 
     private void addFunctionElement(String name, String path, Parent parent, int startLine, int endLine) {
-        Element function = new Element(name, path, parent);
-        function.setStartLine(startLine);
-        function.setEndLine(endLine);
+        Element function = new Element(name, path, parent, startLine, endLine);
         elementManager.addFunction(function);
     }
 
     private void addClassElement(String name, String path, Parent parent, List<String> childClassOf, int startLine,
             int endLine) {
-        ClassElement python3ClassElement = new ClassElement(name, path, parent, childClassOf);
-        python3ClassElement.setStartLine(startLine);
-        python3ClassElement.setEndLine(endLine);
+        ClassElement python3ClassElement = new ClassElement(name, path, parent, startLine, endLine, childClassOf);
         elementManager.addClass(python3ClassElement);
     }
 

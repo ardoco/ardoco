@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
+import generated.antlr.java.JavaLexer;
 
 
 public class JavaInterfaceExtractorTest {
@@ -79,7 +82,9 @@ public class JavaInterfaceExtractorTest {
     private List<Element> extractInterfacesFromFile(String filePath) throws IOException {
         JavaElementExtractor extractor = new JavaElementExtractor();
         Path path = Path.of(filePath);
-        extractor.extract(path);
+        JavaLexer lexer = new JavaLexer(CharStreams.fromPath(path));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        extractor.extract(tokenStream);
         return extractor.getElements().getInterfaces();
 
     }

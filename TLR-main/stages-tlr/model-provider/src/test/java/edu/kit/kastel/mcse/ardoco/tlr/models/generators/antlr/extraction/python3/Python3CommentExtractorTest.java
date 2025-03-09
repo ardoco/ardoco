@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
 import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
@@ -47,10 +48,11 @@ public class Python3CommentExtractorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
         parser.file_input();
+        Python3ElementManager manager = new Python3ElementManager();
 
-        Python3CommentExtractor extractor = new Python3CommentExtractor(tokens, filePath);
-        extractor.extract();
-        return extractor.getComments();
+        Python3CommentExtractor extractor = new Python3CommentExtractor(manager);
+        extractor.extract(filePath, tokens);
+        return extractor.getCurrentComments();
     }
 
 }

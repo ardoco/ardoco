@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ElementExtractor;
+import generated.antlr.python3.Python3Lexer;
 
 public class Python3ControlExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
@@ -100,7 +103,9 @@ public class Python3ControlExtractorTest {
     private List<Element> extractBasicElementsFromFile(String filePath) throws IOException {
         Python3ElementExtractor extractor = new Python3ElementExtractor();
         Path path = Path.of(filePath);
-        extractor.extract(path);
+        Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(path));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        extractor.extract(tokenStream);
         return extractor.getElements().getFunctions();
     }
 }

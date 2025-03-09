@@ -17,15 +17,9 @@ public class Pyhton3ModelMapperTest {
     void testPython3ModelMapper() throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
-        extractor.extractModel();
-        Python3ElementManager manager = extractor.getElementManager();
-        manager.addComments(extractor.getComments());
-
-        Python3ModelMapper mapper = new Python3ModelMapper(repository, manager);
-        mapper.mapToCodeModel();
-        CodeModel codeModel = mapper.getCodeModel();
+        CodeModel codeModel = extractor.extractModel();
+        
         // Assertions
-        Assertions.assertNotNull(mapper);
         Assertions.assertNotNull(codeModel);
         Assertions.assertEquals(8, codeModel.getEndpoints().size());
 

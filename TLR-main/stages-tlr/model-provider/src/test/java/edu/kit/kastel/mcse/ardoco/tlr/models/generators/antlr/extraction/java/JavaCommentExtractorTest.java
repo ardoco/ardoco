@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaCommentExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
@@ -89,9 +90,10 @@ public class JavaCommentExtractorTest {
         JavaParser parser = new JavaParser(tokens);
         parser.compilationUnit();
 
-        JavaCommentExtractor extractor = new JavaCommentExtractor(tokens, filePath);
-        extractor.extract();
-        return extractor.getComments();
+        JavaElementManager manager = new JavaElementManager();
+        JavaCommentExtractor extractor = new JavaCommentExtractor(manager);
+        extractor.extract(filePath, tokens);
+        return extractor.getCurrentComments();
     }
 
 }

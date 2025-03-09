@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -14,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaModelMapper;
+import generated.antlr.java.JavaLexer;
 
 public class JavaExtractor extends ANTLRExtractor {
 
@@ -23,6 +26,7 @@ public class JavaExtractor extends ANTLRExtractor {
         this.elementManager = elementManager;
         this.mapper = new JavaModelMapper(repository, elementManager);
         this.elementExtractor = new JavaElementExtractor(elementManager);
+        this.commentExtractor = new JavaCommentExtractor(elementManager);
     }
 
     @Override
@@ -41,8 +45,10 @@ public class JavaExtractor extends ANTLRExtractor {
     }
 
     @Override
-    protected CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path) {
-        return new JavaCommentExtractor(tokens, path);
+    protected CommonTokenStream buildTokens(Path file) throws IOException {
+        CharStream stream = CharStreams.fromPath(file);
+        JavaLexer lexer = new JavaLexer(stream);
+        return new CommonTokenStream(lexer);
     }
 
     // For testing purposes

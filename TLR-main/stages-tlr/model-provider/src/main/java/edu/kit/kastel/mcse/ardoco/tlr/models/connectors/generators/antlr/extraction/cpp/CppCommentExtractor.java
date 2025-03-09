@@ -3,13 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import generated.antlr.cpp.CPP14Lexer;
 
 public class CppCommentExtractor extends CommentExtractor {
 
-    public CppCommentExtractor(CommonTokenStream tokens, String path) {
-        super(tokens, path);
+    public CppCommentExtractor(CppElementManager elementManager) {
+        super(elementManager);
     }
 
     @Override

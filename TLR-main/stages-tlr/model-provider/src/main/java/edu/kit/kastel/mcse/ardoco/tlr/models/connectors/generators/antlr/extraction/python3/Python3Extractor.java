@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -14,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3ModelMapper;
+import generated.antlr.python3.Python3Lexer;
 
 public class Python3Extractor extends ANTLRExtractor {
 
@@ -23,6 +26,7 @@ public class Python3Extractor extends ANTLRExtractor {
         this.elementManager = elementManager;
         this.mapper = new Python3ModelMapper(repository, elementManager);
         this.elementExtractor = new Python3ElementExtractor(elementManager);
+        this.commentExtractor = new Python3CommentExtractor(elementManager);
     }
 
     @Override
@@ -40,9 +44,11 @@ public class Python3Extractor extends ANTLRExtractor {
         return pythonFiles;
     }
 
-    @Override
-    protected CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path) {
-        return new Python3CommentExtractor(tokens, path);
+    @Override 
+    protected CommonTokenStream buildTokens(Path file) throws IOException{
+        CharStream stream = CharStreams.fromPath(file);
+        Python3Lexer lexer = new Python3Lexer(stream);
+        return new CommonTokenStream(lexer);
     }
 
     // For testing purposes

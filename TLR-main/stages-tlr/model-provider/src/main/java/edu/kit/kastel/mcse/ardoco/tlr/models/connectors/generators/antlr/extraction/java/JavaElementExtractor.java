@@ -16,8 +16,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParserBaseVisitor;
@@ -25,7 +27,6 @@ import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements ElementExtractor {
     private final JavaElementManager elementManager;
-    private CommonTokenStream tokens;
 
     public JavaElementExtractor() {
         this.elementManager = new JavaElementManager();
@@ -41,27 +42,15 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements
     }
 
     @Override
-    public CommonTokenStream getTokens() {
-        return this.tokens;
-    }
+    public void extract(CommonTokenStream tokens) {
+        CompilationUnitContext ctx = buildContext(tokens);
 
-    @Override
-    public void extract(Path file) {
-        CompilationUnitContext ctx;
-        try {
-            ctx = buildContext(file);
-        } catch (IOException e) {
-            this.tokens = null;
-            return;
-        }
         visitCompilationUnit(ctx);
+
     }
 
-    private CompilationUnitContext buildContext(Path file) throws IOException {
-        CharStream input = CharStreams.fromFileName(file.toString());
-        JavaLexer lexer = new JavaLexer(input);
-        this.tokens = new CommonTokenStream(lexer);
-        JavaParser parser = new JavaParser(tokens);
+    private CompilationUnitContext buildContext(CommonTokenStream tokenStream) {
+        JavaParser parser = new JavaParser(tokenStream);
         return parser.compilationUnit();
     }
 
@@ -204,6 +193,9 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements
     private void addClass(String name, String path, Parent parent, String extendsClass,
             List<String> implementedInterfaces,
             int startLine, int endLine) {
+        JavaClassElement classElement = new JavaClassElement(name, path, parent, extendsClass,
+                implementedInterfaces, startLine, endLine);
+        elementManager.addClass(classElement);
 
     }
 

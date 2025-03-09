@@ -7,20 +7,19 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.ElementManager;
 
 public abstract class CommentExtractor {
-    private final List<Comment> comments;
-    private final String path;
-    protected final CommonTokenStream tokens;
+    private final ElementManager elementManager;
+    private List<Comment> currentComments;
 
-    protected CommentExtractor(CommonTokenStream tokens, String path) {
-        this.tokens = tokens;
-        this.path = path;
-        this.comments = new ArrayList<>();
+    protected CommentExtractor(ElementManager elementManager) {
+        this.elementManager = elementManager;
     }
 
-    public void extract() {
+    public void extract(String path, CommonTokenStream tokens) {
         List<Token> allTokens = tokens.getTokens();
+        this.currentComments = new ArrayList<>();
 
         for (Token token : allTokens) {
             if (isComment(token)) {
@@ -29,11 +28,16 @@ public abstract class CommentExtractor {
                     int startLine = token.getLine();
                     int endLine = token.getLine() + countCommentLines(text);
                     String cleansedText = cleanseComment(text);
-                    Comment comment = createCommentElement(cleansedText, startLine, endLine);
-                    comments.add(comment);
+                    Comment comment = createCommentElement(cleansedText, startLine, endLine, path);
+                    this.currentComments.add(comment);
                 }
             }
         }
+        elementManager.addComments(currentComments);
+    }
+
+    public List<Comment> getCurrentComments() {
+        return this.currentComments;
     }
 
     protected abstract boolean isComment(Token token);
@@ -42,11 +46,7 @@ public abstract class CommentExtractor {
 
     protected abstract String cleanseComment(String comment);
 
-    public List<Comment> getComments() {
-        return this.comments;
-    }
-
-    protected Comment createCommentElement(String text, int startLine, int endLine) {
+    protected Comment createCommentElement(String text, int startLine, int endLine, String path) {
         return new Comment(text, startLine, endLine, path);
     }
 

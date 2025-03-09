@@ -77,9 +77,9 @@ public class ElementManagerTest {
         List<JavaClassElement> classes = new ArrayList<>();
         String path = "path";
         Parent parent = new Parent("a", path, Type.COMPILATIONUNIT);
-        classes.add(new JavaClassElement("a", path, parent));
-        classes.add(new JavaClassElement("b", path, parent));
-        classes.add(new JavaClassElement("c", path, parent));
+        classes.add(new JavaClassElement("a", path, parent, 0, 0));
+        classes.add(new JavaClassElement("b", path, parent, 0, 0));
+        classes.add(new JavaClassElement("c", path, parent, 0, 0));
         return classes;
     }
 

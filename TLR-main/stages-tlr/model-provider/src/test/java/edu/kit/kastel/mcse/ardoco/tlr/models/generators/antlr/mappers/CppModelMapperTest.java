@@ -17,18 +17,11 @@ public class CppModelMapperTest {
     void testCppModelMapper() throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         CppExtractor extractor = new CppExtractor(repository, "src/test/resources/cpp/interface/edu/");
-        extractor.extractModel();
-        CppElementManager manager = extractor.getElementManager();
-        manager.addComments(extractor.getComments());
-
-        CppModelMapper mapper = new CppModelMapper(repository, manager);
-        mapper.mapToCodeModel();
-        CodeModel codeModel = mapper.getCodeModel();
-
+        CodeModel model = extractor.extractModel();
+        
         // Assertions
-        Assertions.assertNotNull(mapper);
-        Assertions.assertNotNull(codeModel);
-        Assertions.assertEquals(3, codeModel.getEndpoints().size());
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(3, model.getEndpoints().size());
     }
 
 }

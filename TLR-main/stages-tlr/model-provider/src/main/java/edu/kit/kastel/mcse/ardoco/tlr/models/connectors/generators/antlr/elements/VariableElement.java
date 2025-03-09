@@ -8,6 +8,11 @@ public class VariableElement extends Element {
         this.dataType = dataType;
     }
 
+    public VariableElement(String name, String path, String dataType, Parent parent, int startLine, int endLine) {
+        super(name, path, parent, startLine, endLine);
+        this.dataType = dataType;
+    }
+
     public String getDataType() {
         return dataType;
     }

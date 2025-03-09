@@ -17,15 +17,9 @@ public class JavaModelMapperTest {
     void testJavaModelMapper() throws IOException {
         CodeItemRepository repository = new CodeItemRepository();
         JavaExtractor extractor = new JavaExtractor(repository, "src/test/resources/interface/edu/");
-        extractor.extractModel();
-        JavaElementManager manager = extractor.getElementManager();
-        manager.addComments(extractor.getComments());
-
-        JavaModelMapper mapper = new JavaModelMapper(repository, manager);
-        mapper.mapToCodeModel();
-        CodeModel codeModel = mapper.getCodeModel();
+        CodeModel codeModel = extractor.extractModel();
+        
         // Assertions
-        Assertions.assertNotNull(mapper);
         Assertions.assertNotNull(codeModel);
         Assertions.assertEquals(7, codeModel.getEndpoints().size());
 

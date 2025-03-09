@@ -1,11 +1,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
@@ -15,7 +12,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
 import generated.antlr.cpp.CPP14ParserBaseVisitor;
 import generated.antlr.cpp.CPP14Parser.FunctionBodyContext;
@@ -23,7 +19,6 @@ import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements ElementExtractor {
     private final CppElementManager elementManager;
-    private CommonTokenStream tokens;
 
     public CppElementExtractor() {
         this.elementManager = new CppElementManager();
@@ -39,28 +34,15 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
     }
 
     @Override
-    public CommonTokenStream getTokens() {
-        return this.tokens;
-    }
-
-    @Override
-    public void extract(Path file) {
-        TranslationUnitContext ctx;
-        try {
-            ctx = buildContext(file);
-        } catch (IOException e) {
-            this.tokens = null;
-            return;
-        }
+    public void extract(CommonTokenStream tokens) {
+        TranslationUnitContext ctx = buildContext(tokens);
 
         visitTranslationUnit(ctx);
         addFile(ctx);
     }
 
-    private TranslationUnitContext buildContext(Path file) throws IOException {
-        CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromPath(file));
-        this.tokens = new CommonTokenStream(lexer);
-        CPP14Parser parser = new CPP14Parser(tokens);
+    private TranslationUnitContext buildContext(CommonTokenStream tokenStream) {
+        CPP14Parser parser = new CPP14Parser(tokenStream);
         return parser.translationUnit();
     }
 
@@ -289,30 +271,22 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
 
     private void addVariableElement(String varName, String path, String variableType, Parent parent,
             int startLine, int endLine) {
-        VariableElement variable = new VariableElement(varName, path, variableType, parent);
-        variable.setStartLine(startLine);
-        variable.setEndLine(endLine);
+        VariableElement variable = new VariableElement(varName, path, variableType, parent, startLine, endLine);
         elementManager.addVariable(variable);
     }
 
     private void addFunction(String name, String path, Parent parent, int startLine, int endLine) {
-        Element function = new Element(name, path, parent);
-        function.setStartLine(startLine);
-        function.setEndLine(endLine);
+        Element function = new Element(name, path, parent, startLine, endLine);
         elementManager.addFunction(function);
     }
 
     private void addClass(String name, String path, Parent parent, List<String> inherits, int startLine, int endLine) {
-        ClassElement cppClassElement = new ClassElement(name, path, parent, inherits);
-        cppClassElement.setStartLine(startLine);
-        cppClassElement.setEndLine(endLine);
+        ClassElement cppClassElement = new ClassElement(name, path, parent, startLine, endLine, inherits);
         elementManager.addClass(cppClassElement);
     }
 
     private void addNamespace(String name, String path, Parent parent, int startLine, int endLine) {
-        Element namespace = new Element(name, path, parent);
-        namespace.setStartLine(startLine);
-        namespace.setEndLine(endLine);
+        Element namespace = new Element(name, path, parent, startLine, endLine);
         elementManager.addNamespace(namespace);
     }
 

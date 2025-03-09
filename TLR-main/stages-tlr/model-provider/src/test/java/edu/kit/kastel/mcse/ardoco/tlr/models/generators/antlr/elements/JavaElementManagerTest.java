@@ -320,17 +320,17 @@ public class JavaElementManagerTest {
         List<JavaClassElement> classes = new ArrayList<>();
         String path = "path";
         Parent parent = new Parent("parentOfCl", path, Type.COMPILATIONUNIT);
-        classes.add(new JavaClassElement("a", path, parent));
-        classes.add(new JavaClassElement("b", path, parent));
-        classes.add(new JavaClassElement("c", path, parent));
+        classes.add(new JavaClassElement("a", path, parent, 0, 0));
+        classes.add(new JavaClassElement("b", path, parent, 0, 0));
+        classes.add(new JavaClassElement("c", path, parent, 0, 0));
         return classes;
     }
 
     private List<JavaClassElement> getIncorrectClassList() {
         List<JavaClassElement> classes = new ArrayList<>();
-        classes.add(new JavaClassElement("a", "path", null));
+        classes.add(new JavaClassElement("a", "path", null, 0, 0));
         classes.add(null);
-        classes.add(new JavaClassElement("c", "path", null));
+        classes.add(new JavaClassElement("c", "path", null, 0, 0));
         return classes;
     }
 

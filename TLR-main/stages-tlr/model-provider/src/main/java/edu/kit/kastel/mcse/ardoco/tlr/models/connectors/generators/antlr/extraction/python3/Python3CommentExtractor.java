@@ -3,13 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import generated.antlr.python3.Python3Lexer;
 
 public class Python3CommentExtractor extends CommentExtractor {
 
-    public Python3CommentExtractor(CommonTokenStream tokens, String path) {
-        super(tokens, path);
+    public Python3CommentExtractor(Python3ElementManager elementManager) {
+        super(elementManager);
     }
 
     @Override

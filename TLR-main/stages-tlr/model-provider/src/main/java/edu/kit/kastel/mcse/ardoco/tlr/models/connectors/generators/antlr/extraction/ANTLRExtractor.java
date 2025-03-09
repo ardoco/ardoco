@@ -1,7 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -10,7 +10,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
@@ -19,14 +18,13 @@ public abstract class ANTLRExtractor extends CodeExtractor {
     protected ModelMapper mapper;
     protected ElementExtractor elementExtractor;
     protected ElementManager elementManager;
+    protected CommentExtractor commentExtractor;
     protected boolean contentExtracted;
-    protected final List<Comment> comments;
 
     protected ANTLRExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
         super(codeItemRepository, path);
         this.LANGUAGE = language;
         contentExtracted = false;
-        this.comments = new ArrayList<>();
     }
 
     @Override
@@ -47,13 +45,9 @@ public abstract class ANTLRExtractor extends CodeExtractor {
         return mapper;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
     protected abstract List<Path> getFiles();
 
-    protected abstract CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path);
+    protected abstract CommonTokenStream buildTokens(Path file) throws IOException;
 
     private void mapToCodeModel() {
         if (contentExtracted) {
@@ -64,30 +58,29 @@ public abstract class ANTLRExtractor extends CodeExtractor {
     private void extractContent() {
         List<Path> files = getFiles();
         for (Path file : files) {
-            extractContentFromFile(file);
+            CommonTokenStream tokens;
+            try {
+                tokens = buildTokens(file);
+                
+            } catch (IOException e) {
+                continue;
+            }
+            extractContentFromTokens(file, tokens);
         }
-        addCommentsToExtractedElements();
     }
 
-    private void extractContentFromFile(Path file) {
-        extractElementsFromFile(file);
-        extractComments(file);
+    private void extractContentFromTokens(Path file, CommonTokenStream tokenStream) {
+        extractElementsFromFile(tokenStream);
+        extractComments(file, tokenStream);
     }
 
-    private void extractElementsFromFile(Path file) {
-        this.elementExtractor.extract(file);
+    private void extractElementsFromFile(CommonTokenStream tokenStream) {
+        this.elementExtractor.extract(tokenStream);
     }
 
-    private void extractComments(Path file) {
+    private void extractComments(Path file, CommonTokenStream tokens) {
         String path = file.toString();
-        CommonTokenStream tokens = elementExtractor.getTokens();
-        CommentExtractor commentExtractor = createCommentExtractor(tokens, path);
-        commentExtractor.extract();
-        comments.addAll(commentExtractor.getComments());
-    }
-
-    private void addCommentsToExtractedElements() {
-        this.elementManager.addComments(comments);
+        commentExtractor.extract(path, tokens);
     }
 
 }

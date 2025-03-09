@@ -22,7 +22,6 @@ public class CppExtractorTest {
         Assertions.assertEquals(10, manager.getFunctions().size());
         Assertions.assertEquals(2, manager.getNamespaces().size());
         Assertions.assertEquals(4, manager.getClasses().size());
-        Assertions.assertEquals(7, cppExtractor.getComments().size());
     }
 
     private CppExtractor buildCppExtractor(String sourcePath) {
