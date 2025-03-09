@@ -24,6 +24,12 @@ public class Element {
         this.parent = parent;
     }
 
+    public Element(String name, String path, Parent parent, int startLine, int endLine) {
+        this(name, path, parent);
+        this.startLine = startLine;
+        this.endLine = endLine;
+    }
+
     protected void setParent(Parent parent) {
         this.parent = parent;
     }

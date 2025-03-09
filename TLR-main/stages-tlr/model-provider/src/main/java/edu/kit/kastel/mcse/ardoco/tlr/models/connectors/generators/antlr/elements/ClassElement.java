@@ -9,13 +9,17 @@ public class ClassElement extends Element {
     public ClassElement(String name, String path, Parent parent) {
         super(name, path);
         setParent(parent);
-        this.inherits = new ArrayList<String>();
+        this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(String name, String path, Parent parent, List<String> inherits) {
-        super(name, path);
-        setParent(parent);
+    public ClassElement(String name, String path, Parent parent, int startLine, int endLine, List<String> inherits) {
+        super(name, path, parent, startLine, endLine);
         this.inherits = inherits;
+    }
+
+    public ClassElement(String name, String path, Parent parent, int startLine, int endLine) {
+        super(name, path, parent, startLine, endLine);
+        this.inherits = new ArrayList<>();
     }
 
     public List<String> getInherits() {

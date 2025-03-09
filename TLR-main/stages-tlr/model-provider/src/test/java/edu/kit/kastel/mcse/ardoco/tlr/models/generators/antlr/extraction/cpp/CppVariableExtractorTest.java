@@ -1,20 +1,16 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.cpp;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppElementExtractor;
-import generated.antlr.cpp.CPP14Lexer;
-import generated.antlr.cpp.CPP14Parser;
-import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
+
 
 public class CppVariableExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
@@ -80,16 +76,10 @@ public class CppVariableExtractorTest {
     }
 
     private List<VariableElement> extractVariablesFromFile(String filePath) throws IOException {
-        CharStream charStream = CharStreams.fromFileName(filePath);
-        CPP14Lexer lexer = new CPP14Lexer(charStream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        CPP14Parser parser = new CPP14Parser(tokens);
-        TranslationUnitContext translationUnit = parser.translationUnit();
-        
-
         CppElementExtractor extractor = new CppElementExtractor();
-        extractor.extract(translationUnit);
-        return extractor.getElementManager().getVariables();
+        Path path = Path.of(filePath);
+        extractor.extract(path);
+        return extractor.getElements().getVariables();
     }
 
 }

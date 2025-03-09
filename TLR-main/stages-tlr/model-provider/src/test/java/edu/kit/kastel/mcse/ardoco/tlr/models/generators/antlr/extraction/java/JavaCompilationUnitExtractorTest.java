@@ -3,17 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
-import generated.antlr.java.JavaLexer;
-import generated.antlr.java.JavaParser;
-import generated.antlr.java.JavaParser.CompilationUnitContext;
+
 
 class JavaCompilationUnitExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
@@ -75,16 +72,10 @@ class JavaCompilationUnitExtractorTest {
     }
 
     private Element compilationUnitExtractorTest(String filePath) throws IOException {
-        // Create a CompilationUnitContext from the source file
-        JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        JavaParser parser = new JavaParser(tokens);
-        CompilationUnitContext ctx = parser.compilationUnit();
-
-        // Create a JavaCompilationUnitExtractor and visit the CompilationUnitContext
         JavaElementExtractor extractor = new JavaElementExtractor();
-        extractor.extract(ctx);
-        List<Element> compilationUnits = extractor.getElementManager().getCompilationUnits();
+        Path path = Path.of(filePath);
+        extractor.extract(path);
+        List<Element> compilationUnits = extractor.getElements().getCompilationUnits();
         Assertions.assertEquals(1, compilationUnits.size());
         return compilationUnits.get(0);
     }

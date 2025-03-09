@@ -1,7 +1,13 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -10,25 +16,57 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
+import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
 import generated.antlr.python3.Python3ParserBaseVisitor;
+import generated.antlr.python3.Python3Parser.File_inputContext;
 
-public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> {
+public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> implements ElementExtractor {
     private final Python3ElementManager elementManager;
+    private CommonTokenStream tokens;
 
     public Python3ElementExtractor() {
         this.elementManager = new Python3ElementManager();
     }
 
-    public Python3ElementManager getElementManager() {
+    public Python3ElementExtractor(Python3ElementManager elementManager) {
+        this.elementManager = elementManager;
+    }
+
+    @Override
+    public Python3ElementManager getElements() {
         return elementManager;
     }
 
-    public void extract(Python3Parser.File_inputContext ctx) {
+    @Override
+    public CommonTokenStream getTokens() {
+        return this.tokens;
+    }
+
+    @Override
+    public void extract(Path file) {
+        File_inputContext ctx;
+        try {
+            ctx = buildContext(file);
+        } catch (IOException e) {
+            this.tokens = null;
+            return;
+        }          
+
         visitFile_input(ctx);
         addModules(ctx);
     }
+
+    private File_inputContext buildContext(Path file) throws IOException {
+        CharStream charStream = CharStreams.fromPath(file);
+        Python3Lexer lexer = new Python3Lexer(charStream);
+        this.tokens = new CommonTokenStream(lexer);
+        Python3Parser parser = new Python3Parser(tokens);
+        return parser.file_input();
+    }
+        
 
     @Override
     public Void visitFile_input(Python3Parser.File_inputContext ctx) {

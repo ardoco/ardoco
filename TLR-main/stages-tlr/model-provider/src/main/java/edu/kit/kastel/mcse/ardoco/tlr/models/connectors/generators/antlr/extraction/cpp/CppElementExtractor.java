@@ -1,33 +1,67 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
+import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
 import generated.antlr.cpp.CPP14ParserBaseVisitor;
 import generated.antlr.cpp.CPP14Parser.FunctionBodyContext;
 import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
-public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> {
+public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements ElementExtractor {
     private final CppElementManager elementManager;
+    private CommonTokenStream tokens;
 
     public CppElementExtractor() {
         this.elementManager = new CppElementManager();
     }
 
-    public CppElementManager getElementManager() {
+    public CppElementExtractor(CppElementManager elementManager) {
+        this.elementManager = elementManager;
+    }
+
+    @Override
+    public CppElementManager getElements() {
         return elementManager;
     }
 
-    public void extract(CPP14Parser.TranslationUnitContext ctx) {
+    @Override
+    public CommonTokenStream getTokens() {
+        return this.tokens;
+    }
+
+    @Override
+    public void extract(Path file) {
+        TranslationUnitContext ctx;
+        try {
+            ctx = buildContext(file);
+        } catch (IOException e) {
+            this.tokens = null;
+            return;
+        }
+
         visitTranslationUnit(ctx);
         addFile(ctx);
+    }
+
+    private TranslationUnitContext buildContext(Path file) throws IOException {
+        CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromPath(file));
+        this.tokens = new CommonTokenStream(lexer);
+        CPP14Parser parser = new CPP14Parser(tokens);
+        return parser.translationUnit();
     }
 
     @Override

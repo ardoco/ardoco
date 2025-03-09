@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -15,17 +13,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
-import generated.antlr.cpp.CPP14Lexer;
-import generated.antlr.cpp.CPP14Parser;
-import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppExtractor extends ANTLRExtractor {
-    private final ProgrammingLanguage language = ProgrammingLanguage.CPP;
-    private final CppElementExtractor elementExtractor;
 
     public CppExtractor(CodeItemRepository repository, String path) {
-        super(repository, path);
-        this.elementExtractor = new CppElementExtractor();
+        super(repository, path, ProgrammingLanguage.CPP);
+        CppElementManager elementManager = new CppElementManager();
+        this.elementManager = elementManager;
+        this.mapper = new CppModelMapper(repository, elementManager);
+        this.elementExtractor = new CppElementExtractor(elementManager);
     }
 
     @Override
@@ -44,45 +40,13 @@ public class CppExtractor extends ANTLRExtractor {
     }
 
     @Override
-    protected void extractElementsFromFile(Path file) {
-        try {
-            TranslationUnitContext ctx = buildTranslationUnitContext(file);
-            extractElementsFromContext(ctx);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void mapToCodeModel() {
-        if (!elementsExtracted) {
-            throw new IllegalStateException("Elements have not been extracted yet.");
-        }
-        CppElementManager elementManager = elementExtractor.getElementManager();
-        elementManager.addComments(comments);
-        this.mapper = new CppModelMapper(this.codeItemRepository, elementManager);
-    }
-
-    @Override
     protected CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path) {
         return new CppCommentExtractor(tokens, path);
     }
 
+    // For testing purposes
     public CppElementManager getElementManager() {
-        return this.elementExtractor.getElementManager();
+        return (CppElementManager) elementExtractor.getElements();
     }
 
-    private TranslationUnitContext buildTranslationUnitContext(Path file) throws IOException {
-        CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromPath(file));
-        this.tokens = new CommonTokenStream(lexer);
-        CPP14Parser parser = new CPP14Parser(tokens);
-        return parser.translationUnit();
-    }
-
-    private void extractElementsFromContext(TranslationUnitContext ctx) {
-        if (ctx == null) {
-            return;
-        }
-        this.elementExtractor.extract(ctx);
-    }
 }

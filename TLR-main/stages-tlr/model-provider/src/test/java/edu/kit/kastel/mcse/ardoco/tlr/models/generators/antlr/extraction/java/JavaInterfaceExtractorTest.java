@@ -1,19 +1,16 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
-import generated.antlr.java.JavaLexer;
-import generated.antlr.java.JavaParser;
-import generated.antlr.java.JavaParser.CompilationUnitContext;
+
 
 public class JavaInterfaceExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
@@ -80,14 +77,10 @@ public class JavaInterfaceExtractorTest {
     }
 
     private List<Element> extractInterfacesFromFile(String filePath) throws IOException {
-        JavaLexer lexer = new JavaLexer(CharStreams.fromFileName(filePath));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        JavaParser parser = new JavaParser(tokens);
-        CompilationUnitContext ctx = parser.compilationUnit();
-
         JavaElementExtractor extractor = new JavaElementExtractor();
-        extractor.extract(ctx);
-        return extractor.getElementManager().getInterfaces();
+        Path path = Path.of(filePath);
+        extractor.extract(path);
+        return extractor.getElements().getInterfaces();
 
     }
 

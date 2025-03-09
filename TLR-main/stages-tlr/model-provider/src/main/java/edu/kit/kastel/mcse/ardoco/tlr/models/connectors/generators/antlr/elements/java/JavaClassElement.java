@@ -10,17 +10,15 @@ public class JavaClassElement extends Element {
     private String extendsClass;
     private final List<String> implementedInterfaces;
 
-    public JavaClassElement(String name, String path, Parent parent) {
-        super(name, path);
-        setParent(parent);
+    public JavaClassElement(String name, String path, Parent parent, int startLine, int endLine) {
+        super(name, path, parent, startLine, endLine);
         this.extendsClass = "";
         this.implementedInterfaces = new ArrayList<String>();
     }
 
     public JavaClassElement(String name, String path, Parent parent, String extendsClass,
-            List<String> implementedInterfaces) {
-        super(name, path);
-        setParent(parent);
+            List<String> implementedInterfaces, int startLine, int endLine) {
+        super(name, path, parent, startLine, endLine);
         this.extendsClass = extendsClass;
         this.implementedInterfaces = implementedInterfaces;
     }

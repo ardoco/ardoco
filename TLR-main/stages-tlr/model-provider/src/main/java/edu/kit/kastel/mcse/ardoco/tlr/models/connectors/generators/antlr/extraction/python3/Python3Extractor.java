@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -15,17 +14,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3ModelMapper;
-import generated.antlr.python3.Python3Lexer;
-import generated.antlr.python3.Python3Parser;
-import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3Extractor extends ANTLRExtractor {
-    private static final ProgrammingLanguage LANGUAGE = ProgrammingLanguage.PYTHON3;
-    private final Python3ElementExtractor elementExtractor;
 
     public Python3Extractor(CodeItemRepository repository, String path) {
-        super(repository, path);
-        this.elementExtractor = new Python3ElementExtractor();
+        super(repository, path, ProgrammingLanguage.PYTHON3);
+        Python3ElementManager elementManager = new Python3ElementManager();
+        this.elementManager = elementManager;
+        this.mapper = new Python3ModelMapper(repository, elementManager);
+        this.elementExtractor = new Python3ElementExtractor(elementManager);
     }
 
     @Override
@@ -44,46 +41,13 @@ public class Python3Extractor extends ANTLRExtractor {
     }
 
     @Override
-    protected void extractElementsFromFile(Path file) {
-        try {
-            File_inputContext ctx = buildFileInputContext(file);
-            extractElements(ctx);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void mapToCodeModel() {
-        if (!elementsExtracted) {
-            throw new IllegalStateException("Elements have not been extracted yet.");
-        }
-        Python3ElementManager elementManager = elementExtractor.getElementManager();
-        elementManager.addComments(comments);
-        this.mapper = new Python3ModelMapper(this.codeItemRepository, elementManager);
-    }
-
-    @Override
     protected CommentExtractor createCommentExtractor(CommonTokenStream tokens, String path) {
         return new Python3CommentExtractor(tokens, path);
     }
 
-    // Visibility for Testing
+    // For testing purposes
     public Python3ElementManager getElementManager() {
-        return this.elementExtractor.getElementManager();
+        return (Python3ElementManager) elementExtractor.getElements();
     }
 
-    private File_inputContext buildFileInputContext(Path file) throws IOException {
-        Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(file));
-        super.tokens = new CommonTokenStream(lexer);
-        Python3Parser parser = new Python3Parser(tokens);
-        return parser.file_input();
-    }
-
-    private void extractElements(File_inputContext ctx) {
-        if (ctx == null) {
-            return;
-        }
-        this.elementExtractor.extract(ctx);
-    }
 }

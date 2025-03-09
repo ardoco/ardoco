@@ -1,7 +1,13 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
@@ -10,27 +16,58 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.management.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
+import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParserBaseVisitor;
+import generated.antlr.java.JavaParser.CompilationUnitContext;
 
-public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
+public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements ElementExtractor {
     private final JavaElementManager elementManager;
+    private CommonTokenStream tokens;
 
     public JavaElementExtractor() {
         this.elementManager = new JavaElementManager();
     }
 
-    public JavaElementManager getElementManager() {
+    public JavaElementExtractor(JavaElementManager elementManager) {
+        this.elementManager = elementManager;
+    }
+
+    @Override
+    public JavaElementManager getElements() {
         return elementManager;
     }
 
-    public void extract(JavaParser.CompilationUnitContext ctx) {
+    @Override
+    public CommonTokenStream getTokens() {
+        return this.tokens;
+    }
+
+    @Override
+    public void extract(Path file) {
+        CompilationUnitContext ctx;
+        try {
+            ctx = buildContext(file);
+        } catch (IOException e) {
+            this.tokens = null;
+            return;
+        }
         visitCompilationUnit(ctx);
+    }
+
+    private CompilationUnitContext buildContext(Path file) throws IOException {
+        CharStream input = CharStreams.fromFileName(file.toString());
+        JavaLexer lexer = new JavaLexer(input);
+        this.tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+        return parser.compilationUnit();
     }
 
     @Override
     public Void visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+        super.visitCompilationUnit(ctx);
         for (JavaParser.TypeDeclarationContext typeDeclarationContext : ctx.typeDeclaration()) {
             if (typeDeclarationContext.classDeclaration() != null) {
                 visitClassDeclaration(typeDeclarationContext.classDeclaration());
@@ -40,7 +77,6 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
                 visitRecordDeclaration(typeDeclarationContext.recordDeclaration());
             }
         }
-        super.visitCompilationUnit(ctx);
         addCompilationUnit(ctx);
         return null;
     }
@@ -62,6 +98,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
+        super.visitEnumDeclaration(ctx);
         String name = ctx.identifier().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
@@ -74,6 +111,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx) {
+        super.visitRecordDeclaration(ctx);
         String name = ctx.identifier().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
@@ -88,6 +126,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
+        super.visitInterfaceDeclaration(ctx);
         String name = ctx.identifier().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
@@ -100,9 +139,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
-        if (ctx.methodBody() != null) {
-            extractVarsFromMethodBody(ctx.methodBody());
-        }
+        super.visitMethodDeclaration(ctx);
         String name = ctx.identifier().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
@@ -115,6 +152,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+        super.visitFieldDeclaration(ctx);
         String variableType = ctx.typeType().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
@@ -127,6 +165,7 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
     @Override
     public Void visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
+        super.visitLocalVariableDeclaration(ctx);
         String variableType = ctx.typeType().getText();
         Parent parent = new JavaParentExtractor().getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
@@ -136,17 +175,6 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
 
         addVariables(varNames, path, variableType, parent, startLine, endLine);
         return null;
-    }
-
-    private void extractVarsFromMethodBody(JavaParser.MethodBodyContext ctx) {
-        if (ctx.block() == null) {
-            return;
-        }
-        for (JavaParser.BlockStatementContext blockStatement : ctx.block().blockStatement()) {
-            if (blockStatement.localVariableDeclaration() != null) {
-                visitLocalVariableDeclaration(blockStatement.localVariableDeclaration());
-            }
-        }
     }
 
     private List<String> extractVariableNames(List<JavaParser.VariableDeclaratorContext> variableDeclarators) {
@@ -176,31 +204,22 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
     private void addClass(String name, String path, Parent parent, String extendsClass,
             List<String> implementedInterfaces,
             int startLine, int endLine) {
-        JavaClassElement classElement = new JavaClassElement(name, path, parent, extendsClass, implementedInterfaces);
-        classElement.setStartLine(startLine);
-        classElement.setEndLine(endLine);
-        elementManager.addClass(classElement);
+
     }
 
     private void addClass(String name, String path, Parent parent, int startLine, int endLine) {
-        JavaClassElement classElement = new JavaClassElement(name, path, parent);
-        classElement.setStartLine(startLine);
-        classElement.setEndLine(endLine);
+        JavaClassElement classElement = new JavaClassElement(name, path, parent, startLine, endLine);
         elementManager.addClass(classElement);
     }
 
     private void addFunction(String name, String path, Parent parent, int startLine, int endLine) {
-        Element method = new Element(name, path, parent);
-        method.setStartLine(startLine);
-        method.setEndLine(endLine);
+        Element method = new Element(name, path, parent, startLine, endLine);
         elementManager.addFunction(method);
     }
 
     private void addInterface(String name, String path, Parent parent,
             int startLine, int endLine) {
-        Element interfaceElement = new Element(name, path, parent);
-        interfaceElement.setStartLine(startLine);
-        interfaceElement.setEndLine(endLine);
+        Element interfaceElement = new Element(name, path, parent, startLine, endLine);
         elementManager.addInterface(interfaceElement);
     }
 
@@ -286,12 +305,13 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> {
     private void updatePackageParents(String packageName, String packagePath) {
         List<PackageElement> packageElements = elementManager.getPackages();
         for (PackageElement packageElement : packageElements) {
-            if (packageElement.getPath().startsWith(packagePath)
-                    && packageElement.getPath().length() > packagePath.length()) {
+            String otherPath = packageElement.getPath();
+            if (otherPath.startsWith(packagePath)
+                    && otherPath.length() > packagePath.length()) {
                 Parent parent = new Parent(packageName, packagePath, Type.PACKAGE);
                 packageElement.updateParent(parent);
-                packageElement.updateShortName(packageElement.getPath().substring(packagePath.length(),
-                        packageElement.getPath().length() - 1));
+                packageElement.updateShortName(otherPath.substring(packagePath.length(),
+                        otherPath.length() - 1));
             }
         }
     }
