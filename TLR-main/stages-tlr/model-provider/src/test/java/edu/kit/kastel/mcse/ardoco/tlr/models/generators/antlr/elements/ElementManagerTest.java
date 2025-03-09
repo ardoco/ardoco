@@ -32,7 +32,7 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsCppTest() {
-        elementManager = new CppElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList());
+        elementManager = new CppElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
 
         List<Parent> rootParents = elementManager.getRootParents();
 

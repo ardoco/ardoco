@@ -11,156 +11,118 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 
 public class CppElementManager extends ElementManager {
-    private List<VariableElement> variables;
-    private List<Element> functions;
-    private List<ClassElement> classes;
-    private List<Element> namespaces;
-    private List<Element> files;
+    private ElementStorage<VariableElement> variables;
+    private ElementStorage<Element> functions;
+    private ElementStorage<ClassElement> classes;
+    private ElementStorage<Element> namespaces;
+    private ElementStorage<Element> files;
 
     public CppElementManager() {
-        this.variables = new ArrayList<>();
-        this.functions = new ArrayList<>();
-        this.classes = new ArrayList<>();
-        this.namespaces = new ArrayList<>();
-        this.files = new ArrayList<>();
+        this.variables = new ElementStorage<>();
+        this.functions = new ElementStorage<>();
+        this.classes = new ElementStorage<>();
+        this.namespaces = new ElementStorage<>();
+        this.files = new ElementStorage<>();
     }
 
     public CppElementManager(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes,
-            List<Element> namespaces) {
-        this.variables = variables;
-        this.functions = functions;
-        this.classes = classes;
-        this.namespaces = namespaces;
+            List<Element> namespaces, List<Element> files) {
+        this();
+        addVariables(variables);
+        addFunctions(functions);
+        addClasses(classes);
+        addNamespaces(namespaces);
+        addFiles(files);
     }
 
     @Override
     public List<Element> getContentOfParent(Parent parent) {
-        return getBasicElementsWithParent(getAllElements(), parent);
+        List<Element> elements = new ArrayList<>();
+        elements.addAll(getVariablesWithParent(parent));
+        elements.addAll(getFunctionsWithParent(parent));
+        elements.addAll(getClassesWithParent(parent));
+        elements.addAll(getNamespacesWithParent(parent));
+        return elements;
     }
 
     public void addVariable(VariableElement variable) {
-        if (variable != null && !this.variables.contains(variable)) {
-            this.variables.add(variable);
-        }
+        variables.addElement(variable);
     }
 
     public void addFunction(Element function) {
-        if (function != null && !this.functions.contains(function)) {
-            this.functions.add(function);
-        }
+        functions.addElement(function);
     }
 
     public void addClass(ClassElement clazz) {
-        if (clazz != null && !this.classes.contains(clazz)) {
-            this.classes.add(clazz);
-        }
+        classes.addElement(clazz);
     }
 
     public void addNamespace(Element namespace) {
-        if (namespace != null && !this.namespaces.contains(namespace)) {
-            this.namespaces.add(namespace);
-        }
+        namespaces.addElement(namespace);
     }
 
     public void addFile(Element file) {
-        if (file != null && !this.files.contains(file)) {
-            this.files.add(file);
-        }
+        files.addElement(file);
     }
 
     public void addVariables(List<VariableElement> variables) {
-        for (VariableElement variable : variables) {
-            addVariable(variable);
-        }
+        this.variables.addElements(variables);
     }
 
     public void addFunctions(List<Element> functions) {
-        for (Element function : functions) {
-            addFunction(function);
-        }
+        this.functions.addElements(functions);
     }
 
     public void addClasses(List<ClassElement> classes) {
-        for (ClassElement clazz : classes) {
-            addClass(clazz);
-        }
+        this.classes.addElements(classes);
     }
 
     public void addNamespaces(List<Element> namespaces) {
-        for (Element namespace : namespaces) {
-            addNamespace(namespace);
-        }
+        this.namespaces.addElements(namespaces);
     }
 
     public void addFiles(List<Element> files) {
-        for (Element file : files) {
-            addFile(file);
-        }
+        this.files.addElements(files);
     }
 
     public Element getFile(Parent parent) {
-        for (Element file : files) {
-            if (elementIsParent(file, parent)) {
-                return file;
-            }
-        }
-        return null;
+        return this.files.getElement(parent);
     }
 
     public Element getNamespace(Parent parent) {
-        for (Element namespace : namespaces) {
-            if (elementIsParent(namespace, parent)) {
-                return namespace;
-            }
-        }
-        return null;
+        return this.namespaces.getElement(parent);
     }
 
     public VariableElement getVariable(Parent parent) {
-        for (VariableElement variable : variables) {
-            if (elementIsParent(variable, parent)) {
-                return variable;
-            }
-        }
-        return null;
+        return this.variables.getElement(parent);
     }
 
     public ClassElement getClass(Parent parent) {
-        for (ClassElement clazz : classes) {
-            if (elementIsParent(clazz, parent)) {
-                return clazz;
-            }
-        }
-        return null;
+        return this.classes.getElement(parent);
     }
 
     public Element getFunction(Parent parent) {
-        for (Element function : functions) {
-            if (elementIsParent(function, parent)) {
-                return function;
-            }
-        }
-        return null;
+        return this.functions.getElement(parent);
     }
 
     public List<Element> getFunctions() {
-        return functions;
+        return functions.getElements();
     }
 
     public List<Element> getNamespaces() {
-        return namespaces;
+        return namespaces.getElements();
     }
 
     public List<VariableElement> getVariables() {
-        return variables;
+        return variables.getElements();
     }
 
     public List<ClassElement> getClasses() {
-        return classes;
+        return classes.getElements();
     }
 
     public List<Element> getFiles() {
-        return files;
+        return files.getElements();
     }
 
     public boolean isNamespaceElement(Element element) {
@@ -184,42 +146,28 @@ public class CppElementManager extends ElementManager {
     }
 
     public List<VariableElement> getVariablesWithParent(Parent parent) {
-        List<VariableElement> variablesWithMatchingParent = new ArrayList<>();
-
-        for (VariableElement variable : variables) {
-            if (elementParentMatchesParent(variable, parent)) {
-                variablesWithMatchingParent.add(variable);
-            }
-        }
-        return variablesWithMatchingParent;
+        return variables.getContentOfParent(parent);
     }
 
     public List<Element> getFunctionsWithParent(Parent parent) {
-        return getBasicElementsWithParent(functions, parent);
+        return functions.getContentOfParent(parent);
     }
 
     public List<ClassElement> getClassesWithParent(Parent parent) {
-        List<ClassElement> classesWithMatchingParent = new ArrayList<>();
-
-        for (ClassElement clazz : classes) {
-            if (elementParentMatchesParent(clazz, parent)) {
-                classesWithMatchingParent.add(clazz);
-            }
-        }
-        return classesWithMatchingParent;
+        return classes.getContentOfParent(parent);
     }
 
     public List<Element> getNamespacesWithParent(Parent parent) {
-        return getBasicElementsWithParent(namespaces, parent);
+        return namespaces.getContentOfParent(parent);
     }
 
     @Override
     protected List<Element> getAllElements() {
         List<Element> elements = new ArrayList<>();
-        elements.addAll(variables);
-        elements.addAll(functions);
-        elements.addAll(classes);
-        elements.addAll(namespaces);
+        elements.addAll(variables.getElements());
+        elements.addAll(functions.getElements());
+        elements.addAll(classes.getElements());
+        elements.addAll(namespaces.getElements());
         return elements;
     }
 

@@ -12,173 +12,139 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 
 public class JavaElementManager extends ElementManager {
-    private final List<VariableElement> variables;
-    private final List<Element> functions;
-    private final List<JavaClassElement> classes;
-    private final List<Element> interfaces;
-    private final List<Element> compilationUnits;
-    private final List<PackageElement> packages;
+    private final ElementStorage<VariableElement> variables;
+    private final ElementStorage<Element> functions;
+    private final ElementStorage<JavaClassElement> classes;
+    private final ElementStorage<Element> interfaces;
+    private final ElementStorage<Element> compilationUnits;
+    private final ElementStorage<PackageElement> packages;
 
     public JavaElementManager() {
-        this.variables = new ArrayList<>();
-        this.functions = new ArrayList<>();
-        this.classes = new ArrayList<>();
-        this.interfaces = new ArrayList<>();
-        this.compilationUnits = new ArrayList<>();
-        this.packages = new ArrayList<>();
+        this.variables = new ElementStorage<>();
+        this.functions = new ElementStorage<>();
+        this.classes = new ElementStorage<>();
+        this.interfaces = new ElementStorage<>();
+        this.compilationUnits = new ElementStorage<>();
+        this.packages = new ElementStorage<>();
     }
 
     public JavaElementManager(List<VariableElement> variables, List<Element> functions, List<JavaClassElement> classes,
             List<Element> interfaces, List<Element> compilationUnits, List<PackageElement> packages) {
-        this.variables = variables;
-        this.functions = functions;
-        this.classes = classes;
-        this.interfaces = interfaces;
-        this.compilationUnits = compilationUnits;
-        this.packages = packages;
+        this();
+        addVariables(variables);
+        addFunctions(functions);
+        addClasses(classes);
+        addInterfaces(interfaces);
+        addCompilationUnits(compilationUnits);
+        addPackages(packages);
     }
 
     @Override
     public List<Element> getContentOfParent(Parent parent) {
-        return getBasicElementsWithParent(getAllElements(), parent);
+        List<Element> elements = new ArrayList<>();
+        elements.addAll(getVariablesWithParent(parent));
+        elements.addAll(getFunctionsWithParent(parent));
+        elements.addAll(getClassesWithParent(parent));
+        elements.addAll(getInterfacesWithParent(parent));
+        elements.addAll(getCompilationUnitsWithParent(parent));
+        elements.addAll(getPackagesWithParent(parent));
+        return elements;
     }
 
     public void addVariable(VariableElement variable) {
-        if (variable != null && !this.variables.contains(variable)) {
-            this.variables.add(variable);
-        }
+        variables.addElement(variable);
     }
 
     public void addFunction(Element function) {
-        if (function != null && !this.functions.contains(function)) {
-            this.functions.add(function);
-        }
+        functions.addElement(function);
     }
 
     public void addClass(JavaClassElement clazz) {
-        if (clazz != null && !this.classes.contains(clazz)) {
-            this.classes.add(clazz);
-        }
+        classes.addElement(clazz);
     }
 
     public void addInterface(Element interf) {
-        if (interf != null && !this.interfaces.contains(interf)) {
-            this.interfaces.add(interf);
-        }
+        interfaces.addElement(interf);
     }
 
     public void addCompilationUnit(Element compilationUnit) {
-        if (compilationUnit != null && !this.compilationUnits.contains(compilationUnit)) {
-            this.compilationUnits.add(compilationUnit);
-        }
+        compilationUnits.addElement(compilationUnit);
     }
 
     public void addPackage(PackageElement pack) {
-        if (pack != null && !packages.contains(pack)) {
-            packages.add(pack);
-        }
+        packages.addElement(pack);
     }
 
     public void addVariables(List<VariableElement> variables) {
-        for (VariableElement variable : variables) {
-            addVariable(variable);
-        }
+        this.variables.addElements(variables);
     }
 
     public void addFunctions(List<Element> functions) {
-        for (Element function : functions) {
-            addFunction(function);
-        }
+        this.functions.addElements(functions);
     }
 
     public void addClasses(List<JavaClassElement> classes) {
-        for (JavaClassElement clazz : classes) {
-            addClass(clazz);
-        }
+        this.classes.addElements(classes);
     }
 
     public void addInterfaces(List<Element> interfaces) {
-        for (Element interf : interfaces) {
-            addInterface(interf);
-        }
+        this.interfaces.addElements(interfaces);
+    }
+
+    public void addCompilationUnits(List<Element> compilationUnits) {
+        this.compilationUnits.addElements(compilationUnits);
+    }
+
+    public void addPackages(List<PackageElement> packages) {
+        this.packages.addElements(packages);
     }
 
     public PackageElement getPackage(Parent parent) {
-        for (PackageElement pack : packages) {
-            if (elementIsParent(pack, parent)) {
-                return pack;
-            }
-        }
-        return null;
+        return this.packages.getElement(parent);
     }
 
     public Element getCompilationUnitElement(Parent parent) {
-        for (Element compilationUnit : compilationUnits) {
-            if (elementIsParent(compilationUnit, parent)) {
-                return compilationUnit;
-            }
-        }
-        return null;
+        return this.compilationUnits.getElement(parent);
     }
 
     public JavaClassElement getClass(Parent parent) {
-        for (JavaClassElement clazz : classes) {
-            if (elementIsParent(clazz, parent)) {
-                return clazz;
-            }
-        }
-        return null;
+        return this.classes.getElement(parent);
     }
 
     public Element getInterface(Parent parent) {
-        for (Element interf : interfaces) {
-            if (elementIsParent(interf, parent)) {
-                return interf;
-            }
-        }
-        return null;
+        return this.interfaces.getElement(parent);
     }
 
     public Element getFunction(Parent parent) {
-        for (Element control : functions) {
-            if (elementIsParent(control, parent)) {
-                return control;
-            }
-        }
-        return null;
+        return this.functions.getElement(parent);
     }
 
     public VariableElement getVariable(Parent parent) {
-        for (VariableElement variable : variables) {
-            if (elementIsParent(variable, parent)) {
-                return variable;
-            }
-        }
-        return null;
+        return this.variables.getElement(parent);
     }
 
     public List<Element> getFunctions() {
-        return functions;
+        return this.functions.getElements();
     }
 
     public List<VariableElement> getVariables() {
-        return variables;
+        return this.variables.getElements();
     }
 
     public List<JavaClassElement> getClasses() {
-        return classes;
+        return this.classes.getElements();
     }
 
     public List<Element> getInterfaces() {
-        return interfaces;
+        return this.interfaces.getElements();
     }
 
     public List<Element> getCompilationUnits() {
-        return compilationUnits;
+        return this.compilationUnits.getElements();
     }
 
     public List<PackageElement> getPackages() {
-        return packages;
+        return this.packages.getElements();
     }
 
     public boolean isPackageElement(Element element) {
@@ -210,72 +176,38 @@ public class JavaElementManager extends ElementManager {
     }
 
     public List<VariableElement> getVariablesWithParent(Parent parent) {
-        List<VariableElement> variablesWithMatchingParent = new ArrayList<>();
-
-        for (VariableElement variable : variables) {
-            if (elementParentMatchesParent(variable, parent)) {
-                variablesWithMatchingParent.add(variable);
-            }
-        }
-        return variablesWithMatchingParent;
+        return this.variables.getContentOfParent(parent);
     }
 
     public List<Element> getFunctionsWithParent(Parent parent) {
-        return getBasicElementsWithParent(functions, parent);
+        return this.functions.getContentOfParent(parent);
     }
 
     public List<JavaClassElement> getClassesWithParent(Parent parent) {
-        List<JavaClassElement> classesWithMatchingParent = new ArrayList<>();
-
-        for (JavaClassElement clazz : classes) {
-            if (elementParentMatchesParent(clazz, parent)) {
-                classesWithMatchingParent.add(clazz);
-            }
-        }
-        return classesWithMatchingParent;
+        return this.classes.getContentOfParent(parent);
     }
 
     public List<Element> getInterfacesWithParent(Parent parent) {
-        List<Element> interfacesWithMatchingParent = new ArrayList<>();
-        for (Element interf : interfaces) {
-            if (elementParentMatchesParent(interf, parent)) {
-                interfacesWithMatchingParent.add(interf);
-            }
-        }
-        return interfacesWithMatchingParent;
+        return this.interfaces.getContentOfParent(parent);
     }
 
     public List<Element> getCompilationUnitsWithParent(Parent parent) {
-        List<Element> compilationUnitsWithMatchingParent = new ArrayList<>();
-
-        for (Element compilationUnit : compilationUnits) {
-            if (elementParentMatchesParent(compilationUnit, parent)) {
-                compilationUnitsWithMatchingParent.add(compilationUnit);
-            }
-        }
-        return compilationUnitsWithMatchingParent;
+        return this.compilationUnits.getContentOfParent(parent);
     }
 
     public List<PackageElement> getPackagesWithParent(Parent parent) {
-        List<PackageElement> packagesWithMatchingParent = new ArrayList<>();
-
-        for (PackageElement pack : packages) {
-            if (elementParentMatchesParent(pack, parent)) {
-                packagesWithMatchingParent.add(pack);
-            }
-        }
-        return packagesWithMatchingParent;
+        return this.packages.getContentOfParent(parent);
     }
 
     @Override
     protected List<Element> getAllElements() {
         List<Element> elements = new ArrayList<>();
-        elements.addAll(variables);
-        elements.addAll(functions);
-        elements.addAll(classes);
-        elements.addAll(interfaces);
-        elements.addAll(compilationUnits);
-        elements.addAll(packages);
+        elements.addAll(variables.getElements());
+        elements.addAll(functions.getElements());
+        elements.addAll(classes.getElements());
+        elements.addAll(interfaces.getElements());
+        elements.addAll(compilationUnits.getElements());
+        elements.addAll(packages.getElements());
         return elements;
     }
 

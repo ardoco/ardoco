@@ -10,8 +10,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 
 public abstract class ElementManager {
 
-    protected ElementManager() {
-    }
+    protected ElementManager() {}
 
     public void addComments(List<Comment> comments) {
         CommentMatcher commentMatcher = buildCommentMatcher();
@@ -30,27 +29,6 @@ public abstract class ElementManager {
             }
         }
         return parents;
-    }
-
-    protected List<Element> getBasicElementsWithParent(List<Element> basicElements, Parent parent) {
-        List<Element> elementsWithMatchingParent = new ArrayList<>();
-
-        for (Element element : basicElements) {
-            if (elementParentMatchesParent(element, parent)) {
-                elementsWithMatchingParent.add(element);
-            }
-        }
-        return elementsWithMatchingParent;
-    }
-
-    protected boolean elementParentMatchesParent(Element element, Parent parent) {
-        return (parent == null && element.getParent() == null)
-                || (element.getParent() != null && element.getParent().equals(parent));
-    }
-
-    protected boolean elementIsParent(Element element, Parent parent) {
-        return parent != null && element.getName().equals(parent.getName())
-                && element.getPath().equals(parent.getPath());
     }
 
     private boolean isRootParent(Parent parent) {

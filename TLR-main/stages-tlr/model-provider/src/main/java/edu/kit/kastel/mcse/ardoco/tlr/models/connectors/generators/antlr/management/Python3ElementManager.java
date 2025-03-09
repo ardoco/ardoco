@@ -12,151 +12,119 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 
 public class Python3ElementManager extends ElementManager {
-    private final List<VariableElement> variables;
-    private final List<Element> functions;
-    private final List<ClassElement> classes;
-    private final List<Element> modules;
-    private final List<PackageElement> packages;
+    private final ElementStorage<VariableElement> variables;
+    private final ElementStorage<Element> functions;
+    private final ElementStorage<ClassElement> classes;
+    private final ElementStorage<Element> modules;
+    private final ElementStorage<PackageElement> packages;
 
     public Python3ElementManager() {
-        this.variables = new ArrayList<>();
-        this.functions = new ArrayList<>();
-        this.classes = new ArrayList<>();
-        this.modules = new ArrayList<>();
-        this.packages = new ArrayList<>();
+        this.variables = new ElementStorage<>();
+        this.functions = new ElementStorage<>();
+        this.classes = new ElementStorage<>();
+        this.modules = new ElementStorage<>();
+        this.packages = new ElementStorage<>();
     }
 
     public Python3ElementManager(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes,
             List<Element> modules, List<PackageElement> packages) {
-        this.variables = variables;
-        this.functions = functions;
-        this.classes = classes;
-        this.modules = modules;
-        this.packages = packages;
+        this();
+        addVariables(variables);
+        addFunctions(functions);
+        addClasses(classes);
+        addModules(modules);
+        addPackages(packages);
     }
 
     @Override
     public List<Element> getContentOfParent(Parent parent) {
-        return getBasicElementsWithParent(getAllElements(), parent);
+        List<Element> elements = new ArrayList<>();
+        elements.addAll(getVariablesWithParent(parent));
+        elements.addAll(getFunctionsWithParent(parent));
+        elements.addAll(getClassesWithParent(parent));
+        elements.addAll(getModulesWithParent(parent));
+        elements.addAll(getPackagesWithParent(parent));
+        return elements;
     }
 
     public void addVariable(VariableElement variable) {
-        if (variable != null && !this.variables.contains(variable)) {
-            this.variables.add(variable);
-        }
+        this.variables.addElement(variable);
     }
 
     public void addVariables(List<VariableElement> variables) {
-        for (VariableElement variable : variables) {
-            addVariable(variable);
-        }
+        this.variables.addElements(variables);
     }
 
     public void addFunction(Element function) {
-        if (function != null && !this.functions.contains(function)) {
-            this.functions.add(function);
-        }
+        this.functions.addElement(function);
     }
 
     public void addClass(ClassElement clazz) {
-        if (clazz != null && !this.classes.contains(clazz)) {
-            this.classes.add(clazz);
-        }
+        this.classes.addElement(clazz);
     }
 
     public void addModule(Element module) {
-        if (module != null && !this.modules.contains(module)) {
-            this.modules.add(module);
-        }
+        this.modules.addElement(module);
     }
 
     public void addPackage(PackageElement pack) {
-        if (pack != null && !this.packages.contains(pack)) {
-            this.packages.add(pack);
-        }
+        this.packages.addElement(pack);
     }
 
     public void addFunctions(List<Element> functions) {
-        for (Element function : functions) {
-            addFunction(function);
-        }
+        this.functions.addElements(functions);
     }
 
     public void addClasses(List<ClassElement> classes) {
-        for (ClassElement clazz : classes) {
-            addClass(clazz);
-        }
+        this.classes.addElements(classes);
     }
 
     public void addModules(List<Element> modules) {
-        for (Element module : modules) {
-            addModule(module);
-        }
+        this.modules.addElements(modules);
+    }
+
+    public void addPackages(List<PackageElement> packages) {
+        this.packages.addElements(packages);
     }
 
     public PackageElement getPackage(Parent parent) {
-        for (PackageElement pack : packages) {
-            if (elementIsParent(pack, parent)) {
-                return pack;
-            }
-        }
-        return null;
+        return this.packages.getElement(parent);
     }
 
     public Element getModule(Parent parent) {
-        for (Element module : modules) {
-            if (elementIsParent(module, parent)) {
-                return module;
-            }
-        }
-        return null;
+        return this.modules.getElement(parent);
     }
 
     public ClassElement getClass(Parent parent) {
-        for (ClassElement clazz : classes) {
-            if (elementIsParent(clazz, parent)) {
-                return clazz;
-            }
-        }
-        return null;
+        return this.classes.getElement(parent);
     }
 
     public Element getFunction(Parent parent) {
-        for (Element control : functions) {
-            if (elementIsParent(control, parent)) {
-                return control;
-            }
-        }
-        return null;
+        return this.functions.getElement(parent);
     }
 
     public VariableElement getVariable(Parent parent) {
-        for (VariableElement variable : variables) {
-            if (elementIsParent(variable, parent)) {
-                return variable;
-            }
-        }
-        return null;
+        return this.variables.getElement(parent);
     }
 
     public List<VariableElement> getVariables() {
-        return variables;
+        return variables.getElements();
     }
 
     public List<Element> getFunctions() {
-        return functions;
+        return functions.getElements();
     }
 
     public List<ClassElement> getClasses() {
-        return classes;
+        return classes.getElements();
     }
 
     public List<Element> getModules() {
-        return modules;
+        return modules.getElements();
     }
 
     public List<PackageElement> getPackages() {
-        return packages;
+        return packages.getElements();
     }
 
     public boolean isModuleElement(Element element) {
@@ -180,61 +148,33 @@ public class Python3ElementManager extends ElementManager {
     }
 
     public List<VariableElement> getVariablesWithParent(Parent parent) {
-        List<VariableElement> variablesWithMatchingParent = new ArrayList<>();
-
-        for (VariableElement variable : variables) {
-            if (elementParentMatchesParent(variable, parent)) {
-                variablesWithMatchingParent.add(variable);
-            }
-        }
-        return variablesWithMatchingParent;
+        return this.variables.getContentOfParent(parent);
     }
 
-    public List<Element> getControlsWithParent(Parent parent) {
-        return getBasicElementsWithParent(functions, parent);
+    public List<Element> getFunctionsWithParent(Parent parent) {
+        return this.functions.getContentOfParent(parent);
     }
 
     public List<ClassElement> getClassesWithParent(Parent parent) {
-        List<ClassElement> classesWithMatchingParent = new ArrayList<>();
-
-        for (ClassElement clazz : classes) {
-            if (elementParentMatchesParent(clazz, parent)) {
-                classesWithMatchingParent.add(clazz);
-            }
-        }
-        return classesWithMatchingParent;
+        return this.classes.getContentOfParent(parent);
     }
 
     public List<Element> getModulesWithParent(Parent parent) {
-        List<Element> modulesWithMatchingParent = new ArrayList<>();
-
-        for (Element module : modules) {
-            if (elementParentMatchesParent(module, parent)) {
-                modulesWithMatchingParent.add(module);
-            }
-        }
-        return modulesWithMatchingParent;
+        return this.modules.getContentOfParent(parent);
     }
 
     public List<PackageElement> getPackagesWithParent(Parent parent) {
-        List<PackageElement> packagesWithMatchingParent = new ArrayList<>();
-
-        for (PackageElement pack : packages) {
-            if (elementParentMatchesParent(pack, parent)) {
-                packagesWithMatchingParent.add(pack);
-            }
-        }
-        return packagesWithMatchingParent;
+        return this.packages.getContentOfParent(parent);
     }
 
     @Override
     protected List<Element> getAllElements() {
         List<Element> elements = new ArrayList<>();
-        elements.addAll(variables);
-        elements.addAll(functions);
-        elements.addAll(classes);
-        elements.addAll(modules);
-        elements.addAll(packages);
+        elements.addAll(variables.getElements());
+        elements.addAll(functions.getElements());
+        elements.addAll(classes.getElements());
+        elements.addAll(modules.getElements());
+        elements.addAll(packages.getElements());
         return elements;
     }
 
