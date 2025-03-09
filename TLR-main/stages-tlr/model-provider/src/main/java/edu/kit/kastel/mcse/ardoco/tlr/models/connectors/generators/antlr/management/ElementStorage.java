@@ -7,15 +7,21 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 
 public class ElementStorage<T extends Element> {
+    private final Class<T> type;	
     private List<T> elements;
 
-    public ElementStorage(List<T> elements) {
-        this();
+    public ElementStorage(List<T> elements, Class<T> type) {
+        this.type = type;
         this.elements.addAll(elements);
     }
 
-    public ElementStorage() {
+    public ElementStorage(Class<T> type) {
+        this.type = type;
         elements = new ArrayList<>();
+    }
+
+    public Class<T> getType() {
+        return type;
     }
 
     public void addElement(T element) {

@@ -7,13 +7,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.comment
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 
 public abstract class ElementManager {
+    protected final ElementStorageRegistry elementStorageRegistry;
+    private final CommentMatcher commentMatcher;
 
-    protected ElementManager() {}
+    protected ElementManager(ElementStorageRegistry elementStorageRegistry, CommentMatcher commentMatcher) {
+        this.elementStorageRegistry = elementStorageRegistry;
+        this.commentMatcher = commentMatcher;
+    }
 
     public void addComments(List<Comment> comments) {
-        CommentMatcher commentMatcher = buildCommentMatcher();
         commentMatcher.matchComments(comments, getAllElements());
     }
 
@@ -22,26 +27,43 @@ public abstract class ElementManager {
         List<Element> elements = getAllElements();
 
         for (Element element : elements) {
-
-            if (element.getParent() != null && !parents.contains(element.getParent()) &&
-                    isRootParent(element.getParent())) {
-                parents.add(element.getParent());
+            Parent parent = element.getParent();
+            if (hasNotBeenAdded(parent, parents) && this.elementStorageRegistry.isRootParent(parent)) {
+                parents.add(parent);
             }
         }
         return parents;
     }
 
-    private boolean isRootParent(Parent parent) {
-        Element element = getElement(parent);
-        return element != null && element.getParent() == null;
+    public Element getElement(Parent parent) {
+        return elementStorageRegistry.getElement(parent);
     }
 
-    public abstract Element getElement(Parent parent);
+    protected <T extends Element> T getElement(Parent parent, Class<T> clazz) {
+        return elementStorageRegistry.getElement(parent, clazz);
+    }
 
-    public abstract List<Element> getContentOfParent(Parent parent);
+    public List<Element> getContentOfParent(Parent parent) {
+        return elementStorageRegistry.getContentOfParent(parent);
+    }
 
-    protected abstract List<Element> getAllElements();
+    public List<Element> getAllElements() {
+        return elementStorageRegistry.getAllElements();
+    }
 
-    protected abstract CommentMatcher buildCommentMatcher();
+    protected <T extends Element> void addElement(Type type, T element) {
+        elementStorageRegistry.addElement(type, element);
+    }
 
+    protected <T extends Element> void addElements(Type type, List<T> elements) {
+        elementStorageRegistry.addElements(type, elements);
+    }
+
+    protected boolean isElement(Type type, Element element) {
+        return elementStorageRegistry.containsElement(type, element);
+    }
+
+    private boolean hasNotBeenAdded(Parent parent, List<Parent> parents) {
+        return parent != null && !parents.contains(parent);
+    }
 }

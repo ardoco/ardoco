@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public final class PathExtractor {
 
     public static String extractPath(ParserRuleContext ctx) {
-        return ctx.getStart().getInputStream().getSourceName();
+        String path = ctx.getStart().getInputStream().getSourceName();
+        String normalizedPath = path.replace("\\", "/");
+        return normalizedPath;
     }
 
     public static String extractNameFromPath(ParserRuleContext ctx) {

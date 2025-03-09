@@ -1,4 +1,4 @@
-// Generated from CPP14Parser.g4 by ANTLR 4.13.2
+/* Generated from CPP14Parser.g4 by ANTLR 4.13.2 */
 
 package generated.antlr.cpp;
 
