@@ -130,6 +130,9 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         }
 
         for (CPP14Parser.DeclSpecifierContext declSeq : ctx.declSpecifierSeq().declSpecifier()) {
+            if (declSeq == null || declSeq.typeSpecifier() == null) {
+                continue;
+            }
             if (declSeq != null && declSeq.typeSpecifier().classSpecifier() != null) {
                 visitClassSpecifier(declSeq.typeSpecifier().classSpecifier());
             }
@@ -162,7 +165,12 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
     }
 
     private void extractClass(CPP14Parser.ClassSpecifierContext ctx) {
-        String name = ctx.classHead().classHeadName().getText();
+        String name = "anonymous";
+        if (ctx.classHead().classHeadName() != null) {
+            name = ctx.classHead().classHeadName().getText();
+        } else if (ctx.classHead().classVirtSpecifier() != null) {
+            name = ctx.classHead().classVirtSpecifier().getText();
+        }
         String path = PathExtractor.extractPath(ctx);
         Parent parent = new CppParentExtractor().getParent(ctx);
         List<String> inherits = getInherits(ctx);
