@@ -22,10 +22,9 @@ public class CppExtractor extends ANTLRExtractor {
     public CppExtractor(CodeItemRepository repository, String path) {
         super(repository, path, ProgrammingLanguage.CPP);
         CppElementManager elementManager = new CppElementManager();
-        this.elementManager = elementManager;
-        this.mapper = new CppModelMapper(repository, elementManager);
-        this.elementExtractor = new CppElementExtractor(elementManager);
-        this.commentExtractor = new CppCommentExtractor(elementManager);
+        setMapper(new CppModelMapper(repository, elementManager));
+        setElementExtractor(new CppElementExtractor(elementManager));
+        setCommentExtractor(new CppCommentExtractor(elementManager));
     }
 
     @Override
@@ -49,10 +48,4 @@ public class CppExtractor extends ANTLRExtractor {
         CPP14Lexer lexer = new CPP14Lexer(stream);
         return new CommonTokenStream(lexer);
     }
-
-    // For testing purposes
-    public CppElementManager getElementManager() {
-        return (CppElementManager) elementExtractor.getElements();
-    }
-
 }

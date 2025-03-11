@@ -9,7 +9,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 
-public abstract class ElementManager {
+public class ElementManager {
     protected final ElementStorageRegistry elementStorageRegistry;
     private final CommentMatcher commentMatcher;
 

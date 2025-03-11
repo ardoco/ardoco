@@ -152,7 +152,7 @@ In a Bottom-Up approach, extraction starts from low-level constructs (e.g., toke
 - **More flexibility** in structuring persistence models.
 - **Better resilience** to parsing errors, preventing the loss of entire structures due to a single failure.
 
-Thus, the Bottom-Up approach was implemented, ensuring a scalable, modular, and language-agnostic extraction process.
+Thus, the **Bottom-Up** approach was implemented, ensuring a scalable, modular, and language-agnostic extraction process.
 
 
 ### ANTLR Listener vs. ANTLR Visitor
@@ -217,10 +217,83 @@ While a standardized mapping approach is beneficial, it was recognized that **di
 - **A flexible mechanism to incorporate language-specific mapping strategies** when needed.
 - **Scalability**, making it easier to extend the framework for future languages without requiring major structural changes.
 
-By employing the Strategy Pattern, the system balances the uniformity of generic mapping with the adaptability of language-specific processing, ensuring both consistency and flexibility in the extraction pipeline.
+By employing the **Strategy Pattern**, the system balances the uniformity of generic mapping with the adaptability of language-specific processing, ensuring both consistency and flexibility in the extraction pipeline.
 
 ## Class Diagrams & Components Breakdown
-<!--TODO: Explicit Class Diagram by sections-->
+1️⃣ ANTLRExtractor
+![ANTLR Extractor Class Diagram](doc/antlr_extractor_diagram.png)
+This diagram provides an overview of the entry point to the code extraction process.
+
+The classes Extractor and CodeExtractor already existed in the previous approach. With the integration of ANTLR, the extraction process now begins in ANTLRExtractor, which manages the process of extraction 
+when using ANTLR.
+
+| Class Name | Purpose |
+|------------|---------|
+| **`ANTLR Extractor`** | Defines the overall extraction process. Responsible for setting up extraction, managing, and mapping elements. |
+| **`JavaExtractor`** | Sets up elements used specific to **JAVA**. Determines which Java files in the target directory should be processed.|
+| **`Python3Extractor`** | Sets up elements used specific to **Python3**. Determines which Python files in the target directory should be processed. |
+| **`CppExtractor`** | Sets up elements used specific to **C++**. Determines which C++ files in the target directory should be processed.|
+
+2️⃣ Extraction
+![Extraction Process Class Diagram](doc/extraction_diagram.png)
+Here’s a **refined version** of your **Extraction** section with **improved clarity, structure, and consistency** while keeping the technical depth intact.
+
+---
+
+## **Class Diagram & Component Breakdown: Extraction**  
+
+This diagram provides an **overview of the extraction** for **structural elements and comments** from source code. The **extraction** ensures that relevant code constructs are **identified, and extracted** for further processing.
+
+### **Class Overview**  
+
+| **Class Name** | **Purpose** |
+|---------------|------------|
+| **`ElementExtractor`** | **Interface**: Defines the **core functions** for extracting **structural elements** from source code. |
+| **`JavaElementExtractor`** | Implements **extraction logic** for structural elements in **Java**. |
+| **`Python3ElementExtractor`** | Implements **extraction logic** for structural elements in **Python3**. |
+| **`CppElementExtractor`** | Implements **extraction logic** for structural elements in **C++**. |
+| **`CommentExtractor`** | Defines the **process of extracting comments** from source code. |
+| **`JavaCommentExtractor`** | Implements **rules for recognizing valid comments** in **Java**. |
+| **`Python3CommentExtractor`** | Implements **rules for recognizing valid comments** in **Python3**. |
+| **`CppCommentExtractor`** | Implements **rules for recognizing valid comments** in **C++**. |
+| **`ParentExtractor`** | Defines the **logic for determining parent-child relationships** within the extracted elements. |
+| **`JavaParentExtractor`** | Specifies **valid parent relationships** for **Java** elements. |
+| **`Python3ParentExtractor`** | Specifies **valid parent relationships** for **Python3** elements. |
+| **`CppParentExtractor`** | Specifies **valid parent relationships** for **C++** elements. |
+| **`PathExtractor`** | Defines the logic for **extracting and processing file paths** within a project structure. |
+
+3️⃣ Management
+![Management Process Class Diagram](doc/management_diagram.png)
+This diagram provides an **overview of how extracted structural elements** from source code are **managed, stored, and retrieved**. It ensures that extracted elements are **persisted efficiently** and can be **retrieved when needed for further processing**.  
+
+| **Class Name** | **Purpose** |
+|---------------|------------|
+| **`ElementManager`** | Defines the **core logic** for **persisting and retrieving extracted elements**. |
+| **`ElementStorageRepository`** | Manages the **composition of ElementStorages**, acting as a central access point for stored elements. |
+| **`ElementStorage`** | Responsible for **persisting and retrieving extracted elements**, ensuring structured storage. |
+| **`JavaElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **Java** code. |
+| **`Python3ElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **Python3** code. |
+| **`CppElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **C++** code. |
+| **`JavaElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **Java**. |
+| **`Python3ElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **Python3**. |
+| **`CppElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **C++**. |
+
+
+4️⃣ Mapping
+![Mapping Process Class Diagram](doc/mapping_diagram.png)
+This diagram provides an overview of the mapping process, where extracted elements are converted into CodeItems that the ArDoCo Framework defines. The mapping ensures that extracted code structures are correctly interpreted and integrated into the framework.
+
+| **Class Name** | **Purpose** |
+|---------------|------------|
+| **`ModelMapper`** | Defines the **core mapping logic**, converting extracted elements into **CodeItems**. |
+| **`CodeItemBuilder`** | Establishes the **set of valid mappings**, ensuring correct **associations between extracted elements and CodeItems**. |
+| **`AbstractCodeItemBuilderStrategy`** | Represents the **base class for mapping strategies**, defining how an element type is mapped to a specific **CodeItem type**. |
+| **`JavaModelMapper`** | Implements the **mapping logic specific to Java**, ensuring correct **Java element-to-CodeItem transformation**. |
+| **`Python3ModelMapper`** | Implements the **mapping logic specific to Python3**, ensuring correct **Python element-to-CodeItem transformation**. |
+| **`CppModelMapper`** | Implements the **mapping logic specific to C++**, ensuring correct **C++ element-to-CodeItem transformation**. |
+| **`JavaCodeItemBuilder`** | Defines the **valid set of mapping strategies** for **Java** elements. |
+| **`Python3CodeItemBuilder`** | Defines the **valid set of mapping strategies** for **Python3** elements. |
+| **`CppCodeItemBuilder`** | Defines the **valid set of mapping strategies** for **C++** elements. |
 
 ## Testing
 To ensure the **accuracy and reliability** of the extraction process, a combination of **minimal test cases** and **real-world projects** was used for validation:  

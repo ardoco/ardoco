@@ -22,10 +22,9 @@ public class Python3Extractor extends ANTLRExtractor {
     public Python3Extractor(CodeItemRepository repository, String path) {
         super(repository, path, ProgrammingLanguage.PYTHON3);
         Python3ElementManager elementManager = new Python3ElementManager();
-        this.elementManager = elementManager;
-        this.mapper = new Python3ModelMapper(repository, elementManager);
-        this.elementExtractor = new Python3ElementExtractor(elementManager);
-        this.commentExtractor = new Python3CommentExtractor(elementManager);
+        setMapper(new Python3ModelMapper(repository, elementManager));
+        setElementExtractor(new Python3ElementExtractor(elementManager));
+        setCommentExtractor(new Python3CommentExtractor(elementManager));
     }
 
     @Override
@@ -48,11 +47,6 @@ public class Python3Extractor extends ANTLRExtractor {
         CharStream stream = CharStreams.fromPath(file);
         Python3Lexer lexer = new Python3Lexer(stream);
         return new CommonTokenStream(lexer);
-    }
-
-    // For testing purposes
-    public Python3ElementManager getElementManager() {
-        return (Python3ElementManager) elementExtractor.getElements();
     }
 
 }

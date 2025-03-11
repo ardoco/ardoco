@@ -22,10 +22,9 @@ public class JavaExtractor extends ANTLRExtractor {
     public JavaExtractor(CodeItemRepository repository, String path) {
         super(repository, path, ProgrammingLanguage.JAVA);
         JavaElementManager elementManager = new JavaElementManager();
-        this.elementManager = elementManager;
-        this.mapper = new JavaModelMapper(repository, elementManager);
-        this.elementExtractor = new JavaElementExtractor(elementManager);
-        this.commentExtractor = new JavaCommentExtractor(elementManager);
+        setMapper(new JavaModelMapper(repository, elementManager));
+        setElementExtractor(new JavaElementExtractor(elementManager));
+        setCommentExtractor(new JavaCommentExtractor(elementManager));
     }
 
     @Override
@@ -48,10 +47,5 @@ public class JavaExtractor extends ANTLRExtractor {
         CharStream stream = CharStreams.fromPath(file);
         JavaLexer lexer = new JavaLexer(stream);
         return new CommonTokenStream(lexer);
-    }
-
-    // For testing purposes
-    public JavaElementManager getElementManager() {
-        return (JavaElementManager) elementExtractor.getElements();
     }
 }

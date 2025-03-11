@@ -46,11 +46,11 @@ public abstract class CommentExtractor {
 
     protected abstract String cleanseComment(String comment);
 
-    protected Comment createCommentElement(String text, int startLine, int endLine, String path) {
+    private Comment createCommentElement(String text, int startLine, int endLine, String path) {
         return new Comment(text, startLine, endLine, path);
     }
 
-    protected int countCommentLines(String text) {
+    private int countCommentLines(String text) {
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '\n') {

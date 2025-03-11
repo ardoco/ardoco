@@ -16,7 +16,7 @@ public class JavaExtractorTest {
         String sourcePath = "src/test/resources/interface/edu/";
         JavaExtractor javaExtractor = buildJavaExtractor(sourcePath);
         javaExtractor.extractModel();
-        JavaElementManager manager = javaExtractor.getElementManager();
+        JavaElementManager manager = (JavaElementManager) javaExtractor.getElementExtractor().getElements();
 
         // Assertions
         Assertions.assertEquals(3, manager.getVariables().size());

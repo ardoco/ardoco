@@ -16,7 +16,7 @@ public class Python3ExtractorTest {
         String sourcePath = "src/test/resources/python/interface/edu/";
         Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
         python3Extractor.extractModel();
-        Python3ElementManager manager = python3Extractor.getElementManager();
+        Python3ElementManager manager = (Python3ElementManager) python3Extractor.getElementExtractor().getElements();
 
         // Assertions
         Assertions.assertEquals(13, manager.getVariables().size());

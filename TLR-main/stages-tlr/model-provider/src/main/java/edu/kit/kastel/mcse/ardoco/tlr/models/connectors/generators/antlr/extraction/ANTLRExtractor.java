@@ -10,30 +10,28 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
 public abstract class ANTLRExtractor extends CodeExtractor {
     public final ProgrammingLanguage LANGUAGE;
-    protected ModelMapper mapper;
-    protected ElementExtractor elementExtractor;
-    protected ElementManager elementManager;
-    protected CommentExtractor commentExtractor;
-    protected boolean contentExtracted;
+    private ModelMapper mapper;
+    private ElementExtractor elementExtractor;
+    private CommentExtractor commentExtractor;
+    private boolean contentExtracted;
 
     protected ANTLRExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
         super(codeItemRepository, path);
         this.LANGUAGE = language;
-        contentExtracted = false;
+        this.contentExtracted = false;
     }
 
     @Override
     public synchronized CodeModel extractModel() {
         if (!contentExtracted) {
             extractContent();
+            mapToCodeModel();
             contentExtracted = true;
         }
-        mapToCodeModel();
         return this.mapper.getCodeModel();
     }
 
@@ -45,14 +43,24 @@ public abstract class ANTLRExtractor extends CodeExtractor {
         return mapper;
     }
 
+    protected void setMapper(ModelMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    protected void setElementExtractor(ElementExtractor elementExtractor) {
+        this.elementExtractor = elementExtractor;
+    }
+
+    protected void setCommentExtractor(CommentExtractor commentExtractor) {
+        this.commentExtractor = commentExtractor;
+    }
+
     protected abstract List<Path> getFiles();
 
     protected abstract CommonTokenStream buildTokens(Path file) throws IOException;
 
     private void mapToCodeModel() {
-        if (contentExtracted) {
-            this.mapper.mapToCodeModel();
-        }
+        this.mapper.mapToCodeModel();
     }
 
     private void extractContent() {

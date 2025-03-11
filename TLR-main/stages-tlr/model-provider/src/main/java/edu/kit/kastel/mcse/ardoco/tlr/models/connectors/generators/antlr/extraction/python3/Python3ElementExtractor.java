@@ -108,8 +108,8 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
     }
 
     private void extractVariablesFromExprStmt(Python3Parser.Expr_stmtContext ctx) {
-        List<String> varNames = extract(ctx.testlist_star_expr(0));
-        List<String> values = extract(ctx.testlist_star_expr(1));
+        List<String> varNames = extractVariableNames(ctx.testlist_star_expr(0));
+        List<String> values = extractVariableNames(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
         Parent parent = new Python3ParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
@@ -125,7 +125,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         }
     }
 
-    private List<String> extract(Python3Parser.Testlist_star_exprContext variableDeclarators) {
+    private List<String> extractVariableNames(Python3Parser.Testlist_star_exprContext variableDeclarators) {
         List<String> variableNames = new ArrayList<>();
         for (Python3Parser.TestContext testCtx : variableDeclarators.test()) {
             String name = testCtx.getText();

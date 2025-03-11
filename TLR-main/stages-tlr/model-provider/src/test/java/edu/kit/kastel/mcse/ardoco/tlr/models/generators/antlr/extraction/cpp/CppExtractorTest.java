@@ -15,7 +15,7 @@ public class CppExtractorTest {
         String sourcePath = "src/test/resources/cpp/interface/edu/";
         CppExtractor cppExtractor = buildCppExtractor(sourcePath);
         cppExtractor.extractModel();
-        CppElementManager manager = cppExtractor.getElementManager();
+        CppElementManager manager = (CppElementManager) cppExtractor.getElementExtractor().getElements();
 
         // Assertions
         Assertions.assertEquals(9, manager.getVariables().size());
