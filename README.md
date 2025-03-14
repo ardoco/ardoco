@@ -304,6 +304,9 @@ To ensure the **accuracy and reliability** of the extraction process, a combinat
 
 2️⃣ **Real-World Project Testing**  
 - Small projects were **downloaded from [GitHub](https://github.com/)** to evaluate the **scalability and robustness** of the extraction process.  
+- For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management)
+- For **PYTHON3**: [Simple Django Project](https://github.com/Manisha-Bayya/simple-django-project)
+- For **C++**: [Simple Render Engine](https://github.com/mortennobel/SimpleRenderEngineProject) (except thirdparty)
 - These projects helped assess **runtime performance**, identify **potential edge cases**, and detect **unexpected extraction errors**.  
 
 By combining **synthetic test cases** with **real-world datasets**, the testing approach ensured that the extraction process remains **accurate, efficient, and extensible** for multiple programming languages.  

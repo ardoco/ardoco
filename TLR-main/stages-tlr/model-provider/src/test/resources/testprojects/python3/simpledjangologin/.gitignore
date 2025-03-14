@@ -1,0 +1,12 @@
+.vscode/
+.venv/
+
+__pycache__/
+
+source/content/media/
+source/content/static/
+
+env/
+tmp/
+
+db.sqlite3

@@ -44,14 +44,24 @@ public final class CppParentExtractor extends ParentExtractor {
 
     private static ElementIdentifier buildParentFromClassContext(CPP14Parser.ClassSpecifierContext ctx, String path,
             Type type) {
-        String parentName = ctx.classHead().classHeadName().getText();
-        return new ElementIdentifier(parentName, path, type);
+        String parentName = "anonymous";
+        if (ctx.classHead().classHeadName() != null) {
+            parentName = ctx.classHead().classHeadName().getText();
+        } else if (ctx.classHead().classVirtSpecifier() != null) {
+            parentName = ctx.classHead().classVirtSpecifier().getText();
+        }
+        return new Parent(parentName, path, type);
     }
 
     private static ElementIdentifier buildParentFromNamespaceContext(CPP14Parser.NamespaceDefinitionContext ctx, String path,
             Type type) {
-        String parentName = ctx.Identifier().getText();
-        return new ElementIdentifier(parentName, path, type);
+        String parentName = "anonymous";
+        if (ctx.Identifier() != null) {
+            parentName = ctx.Identifier().getText();
+        } else if (ctx.originalNamespaceName() != null) {
+            parentName = ctx.originalNamespaceName().getText();
+        }
+        return new Parent(parentName, path, type);
     }
 
     private static ElementIdentifier buildParentFromFunctionContext(CPP14Parser.FunctionDefinitionContext ctx, String path,

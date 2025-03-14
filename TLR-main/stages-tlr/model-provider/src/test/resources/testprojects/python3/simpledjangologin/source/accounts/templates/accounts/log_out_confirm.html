@@ -1,0 +1,18 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% translate 'Log out' %}</h4>
+
+    <p>
+        {% translate 'Confirm this action:' %}
+    </p>
+
+    <form action="{% url 'accounts:log_out' %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-success">{% translate 'Log out' %}</button>
+    </form>
+
+{% endblock content %}
