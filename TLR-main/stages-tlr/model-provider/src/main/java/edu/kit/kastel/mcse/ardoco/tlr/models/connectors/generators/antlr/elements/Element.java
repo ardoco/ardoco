@@ -3,47 +3,38 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 import java.util.Objects;
 
 public class Element {
-    private Parent parent;
-    private final String path;
-    private final String name;
+    protected ElementIdentifier identifierOfParent;
+    protected final ElementIdentifier identifier;
     private int startLine;
     private int endLine;
     private String comment;
 
-    public Element(String name, String path) {
-        this.name = name;
-        this.path = path;
+    public Element(String name, String path, Type type) {
+        this.identifier = new ElementIdentifier(name, path, type);
         this.comment = "";
         this.startLine = -1;
         this.endLine = -1;
 
     }
 
-    public Element(String name, String path, Parent parent) {
-        this(name, path);
-        this.parent = parent;
+    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent) {
+        this(name, path, type);
+        this.identifierOfParent = identifierOfParent;
     }
 
-    public Element(String name, String path, Parent parent, int startLine, int endLine) {
-        this(name, path, parent);
+    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent, int startLine, int endLine) {
+        this(name, path, type);
+        this.identifierOfParent = identifierOfParent;
         this.startLine = startLine;
         this.endLine = endLine;
     }
 
-    protected void setParent(Parent parent) {
-        this.parent = parent;
+    public ElementIdentifier getParentIdentifier() {
+        return this.identifierOfParent;
     }
 
-    public Parent getParent() {
-        return parent;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPath() {
-        return path;
+    public ElementIdentifier getIdentifier() {
+        return identifier;
     }
 
     public int getStartLine() {
@@ -56,6 +47,14 @@ public class Element {
 
     public String getComment() {
         return comment;
+    }
+
+    public String getPath() {
+        return identifier.path();
+    }
+
+    public String getName() {
+        return identifier.name();
     }
 
     public void setStartLine(int fromLine) {
@@ -78,9 +77,8 @@ public class Element {
     public boolean equals(Object obj) {
         if (obj instanceof Element) {
             Element basicElement = (Element) obj;
-            return Objects.equals(basicElement.getName(), this.getName())
-                    && Objects.equals(basicElement.getPath(), this.getPath())
-                    && Objects.equals(basicElement.getParent(), this.getParent())
+            return Objects.equals(identifier, basicElement.getIdentifier())
+                    && Objects.equals(basicElement.getParentIdentifier(), this.getParentIdentifier())
                     && basicElement.getStartLine() == this.getStartLine()
                     && basicElement.getEndLine() == this.getEndLine();
         }
@@ -89,6 +87,6 @@ public class Element {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, path);
+        return Objects.hash(identifier, identifierOfParent);
     }
 }

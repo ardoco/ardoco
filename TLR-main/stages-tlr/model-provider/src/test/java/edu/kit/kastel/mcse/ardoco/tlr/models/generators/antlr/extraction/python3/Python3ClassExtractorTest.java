@@ -27,19 +27,19 @@ public class Python3ClassExtractorTest {
                 Assertions.assertEquals("InnerClass1", classes.get(0).getName());
                 Assertions.assertEquals(0, classes.get(0).getInherits().size());
                 Assertions.assertEquals(0, classes.get(0).getInherits().size());
-                Assertions.assertEquals("AClass", classes.get(0).getParent().getName());
-                Assertions.assertEquals(Type.CLASS, classes.get(0).getParent().getType());
+                Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
+                Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
 
 
         Assertions.assertEquals("InnerClass2", classes.get(1).getName());
         Assertions.assertEquals(0, classes.get(1).getInherits().size());
-        Assertions.assertEquals("AClass", classes.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, classes.get(1).getParent().getType());
+        Assertions.assertEquals("AClass", classes.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, classes.get(1).getParentIdentifier().type());
 
         Assertions.assertEquals("AClass", classes.get(2).getName());
         Assertions.assertEquals(0, classes.get(2).getInherits().size());
-        Assertions.assertEquals("APyClass", classes.get(2).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, classes.get(2).getParent().getType());
+        Assertions.assertEquals("APyClass", classes.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, classes.get(2).getParentIdentifier().type());
 
 
 
@@ -47,8 +47,8 @@ public class Python3ClassExtractorTest {
         // Test the fourth class
         Assertions.assertEquals("BClass", classes.get(3).getName());
         Assertions.assertEquals(0, classes.get(1).getInherits().size());
-        Assertions.assertEquals("APyClass", classes.get(3).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, classes.get(3).getParent().getType());
+        Assertions.assertEquals("APyClass", classes.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, classes.get(3).getParentIdentifier().type());
     }
 
     @Test
@@ -62,8 +62,8 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals("APyEnum", classes.get(0).getName());
         Assertions.assertEquals(1, classes.get(0).getInherits().size());
         Assertions.assertEquals("Enum", classes.get(0).getInherits().get(0));
-        Assertions.assertEquals("APyEnum", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, classes.get(0).getParent().getType());
+        Assertions.assertEquals("APyEnum", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, classes.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -77,8 +77,8 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals("APyMetaclass", classes.get(0).getName());
         Assertions.assertEquals(1, classes.get(0).getInherits().size());
         Assertions.assertEquals("type", classes.get(0).getInherits().get(0));
-        Assertions.assertEquals("APyMetaclass", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, classes.get(0).getParent().getType());
+        Assertions.assertEquals("APyMetaclass", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, classes.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -91,8 +91,8 @@ public class Python3ClassExtractorTest {
         // Test the first class
         Assertions.assertEquals("APyDataclass", classes.get(0).getName());
         Assertions.assertEquals(0, classes.get(0).getInherits().size());
-        Assertions.assertEquals("APyDataClass", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, classes.get(0).getParent().getType());
+        Assertions.assertEquals("APyDataClass", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, classes.get(0).getParentIdentifier().type());
     }
 
     @Test

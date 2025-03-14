@@ -6,7 +6,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.Python3CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
@@ -67,23 +67,23 @@ public class Python3ElementManager extends ElementManager {
         this.elementStorageRegistry.addElements(Type.PACKAGE, packages);
     }
 
-    public VariableElement getVariable(Parent parent) {
+    public VariableElement getVariable(ElementIdentifier parent) {
         return this.elementStorageRegistry.getElement(parent, VariableElement.class);
     }
 
-    public Element getFunction(Parent parent) {
+    public Element getFunction(ElementIdentifier parent) {
         return this.elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public ClassElement getClass(Parent parent) {
+    public ClassElement getClass(ElementIdentifier parent) {
         return this.elementStorageRegistry.getElement(parent, ClassElement.class);
     }
 
-    public Element getModule(Parent parent) {
+    public Element getModule(ElementIdentifier parent) {
         return this.elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public PackageElement getPackage(Parent parent) {
+    public PackageElement getPackage(ElementIdentifier parent) {
         return this.elementStorageRegistry.getElement(parent, PackageElement.class);
     }
 
@@ -127,23 +127,23 @@ public class Python3ElementManager extends ElementManager {
         return isElement(Type.PACKAGE, element);
     }
 
-    public List<VariableElement> getVariablesWithParent(Parent parent) {
+    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
         return this.elementStorageRegistry.getContentOfParent(Type.VARIABLE, parent);
     }
 
-    public List<Element> getFunctionsWithParent(Parent parent) {
+    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
         return this.elementStorageRegistry.getContentOfParent(Type.FUNCTION, parent);
     }
 
-    public List<ClassElement> getClassesWithParent(Parent parent) {
+    public List<ClassElement> getClassesWithParent(ElementIdentifier parent) {
         return this.elementStorageRegistry.getContentOfParent(Type.CLASS, parent);
     }
 
-    public List<Element> getModulesWithParent(Parent parent) {
+    public List<Element> getModulesWithParent(ElementIdentifier parent) {
         return this.elementStorageRegistry.getContentOfParent(Type.MODULE, parent);
     }
 
-    public List<PackageElement> getPackagesWithParent(Parent parent) {
+    public List<PackageElement> getPackagesWithParent(ElementIdentifier parent) {
         return this.elementStorageRegistry.getContentOfParent(Type.PACKAGE, parent);
     }
 

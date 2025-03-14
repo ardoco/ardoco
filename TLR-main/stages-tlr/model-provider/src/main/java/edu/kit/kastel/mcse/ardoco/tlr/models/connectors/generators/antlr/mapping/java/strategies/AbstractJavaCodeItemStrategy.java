@@ -4,7 +4,7 @@ import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.AbstractCodeItemStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
@@ -18,7 +18,7 @@ public abstract class AbstractJavaCodeItemStrategy extends AbstractCodeItemStrat
     }
 
     @Override 
-    protected List<Element> getContentOfParent(Parent parent) {
+    protected List<Element> getContentOfParent(ElementIdentifier parent) {
         return elementManager.getContentOfParent(parent);
     }
     

@@ -5,20 +5,20 @@ import java.util.List;
 
 public class ClassElement extends Element {
     private final List<String> inherits;
+    private static final Type type = Type.CLASS;
 
-    public ClassElement(String name, String path, Parent parent) {
-        super(name, path);
-        setParent(parent);
+    public ClassElement(String name, String path, ElementIdentifier parentIdentifier) {
+        super(name, path, type, parentIdentifier);
         this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(String name, String path, Parent parent, int startLine, int endLine, List<String> inherits) {
-        super(name, path, parent, startLine, endLine);
+    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> inherits) {
+        super(name, path, type, parentIdentifier, startLine, endLine);
         this.inherits = inherits;
     }
 
-    public ClassElement(String name, String path, Parent parent, int startLine, int endLine) {
-        super(name, path, parent, startLine, endLine);
+    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
+        super(name, path, type, parentIdentifier, startLine, endLine);
         this.inherits = new ArrayList<>();
     }
 

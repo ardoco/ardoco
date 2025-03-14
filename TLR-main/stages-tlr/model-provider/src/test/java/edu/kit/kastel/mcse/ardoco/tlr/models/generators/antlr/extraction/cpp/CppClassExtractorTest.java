@@ -43,17 +43,17 @@ public class CppClassExtractorTest {
         // Test the first class
         Assertions.assertEquals(4, classes.size());
         Assertions.assertEquals("Car", classes.get(0).getName());
-        Assertions.assertEquals("Entities", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.NAMESPACE, classes.get(0).getParent().getType());
+        Assertions.assertEquals("Entities", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.NAMESPACE, classes.get(0).getParentIdentifier().type());
         Assertions.assertEquals("Person", classes.get(1).getName());
-        Assertions.assertEquals("Entities", classes.get(1).getParent().getName());
-        Assertions.assertEquals(Type.NAMESPACE, classes.get(1).getParent().getType());
+        Assertions.assertEquals("Entities", classes.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.NAMESPACE, classes.get(1).getParentIdentifier().type());
         Assertions.assertEquals("Garage", classes.get(2).getName());
-        Assertions.assertEquals("Entities", classes.get(2).getParent().getName());
-        Assertions.assertEquals(Type.NAMESPACE, classes.get(2).getParent().getType());
+        Assertions.assertEquals("Entities", classes.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.NAMESPACE, classes.get(2).getParentIdentifier().type());
         Assertions.assertEquals("Child", classes.get(3).getName());
-        Assertions.assertEquals("Entities", classes.get(3).getParent().getName());
-        Assertions.assertEquals(Type.NAMESPACE, classes.get(3).getParent().getType());
+        Assertions.assertEquals("Entities", classes.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.NAMESPACE, classes.get(3).getParentIdentifier().type());
         Assertions.assertEquals(1, classes.get(3).getInherits().size());
         Assertions.assertEquals("Person", classes.get(3).getInherits().get(0));
     }

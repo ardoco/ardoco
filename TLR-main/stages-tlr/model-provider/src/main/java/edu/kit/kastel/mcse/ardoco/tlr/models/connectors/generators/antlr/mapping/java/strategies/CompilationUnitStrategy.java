@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
@@ -28,16 +28,16 @@ public class CompilationUnitStrategy extends AbstractJavaCodeItemStrategy {
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.COMPILATIONUNIT);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.COMPILATIONUNIT);
         return buildCodeCompilationUnit(comparable);
     }
 
-    private CodeCompilationUnit buildCodeCompilationUnit(Parent parent) {
+    private CodeCompilationUnit buildCodeCompilationUnit(ElementIdentifier parent) {
         Element compilationUnit = elementManager.getCompilationUnitElement(parent);
         List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
         SortedSet<CodeItem> content = buildContent(parent);
 
-        PackageElement pack = elementManager.getPackage(compilationUnit.getParent());
+        PackageElement pack = elementManager.getPackage(compilationUnit.getParentIdentifier());
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(),
                 content, pathElements, pack.getName(), ProgrammingLanguage.JAVA);
         codeCompilationUnit.setComment(compilationUnit.getComment());

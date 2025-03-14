@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -280,7 +280,7 @@ public class JavaElementManagerTest {
         List<VariableElement> variables = new ArrayList<>();
         String path = "path";
         String dataType = "int";
-        Parent parent = new Parent("parentOfVars", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         variables.add(new VariableElement("a", path, dataType, parent));
         variables.add(new VariableElement("b", path, dataType, parent));
         variables.add(new VariableElement("c", path, dataType, parent));
@@ -298,11 +298,12 @@ public class JavaElementManagerTest {
     private List<Element> getCorrectFunctionsList() {
         List<Element> functions = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfFc", path, Type.CLASS);
+        Type type = Type.FUNCTION;
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", path, Type.CLASS);
         
-        functions.add(new Element("a", path, parent));
-        functions.add(new Element("b", path, parent));
-        functions.add(new Element("c", path, parent));
+        functions.add(new Element("a", path, type, parent));
+        functions.add(new Element("b", path, type, parent));
+        functions.add(new Element("c", path, type, parent));
         return functions;
     }
 
@@ -319,7 +320,7 @@ public class JavaElementManagerTest {
     private List<JavaClassElement> getCorrectClassList() {
         List<JavaClassElement> classes = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfCl", path, Type.COMPILATIONUNIT);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", path, Type.COMPILATIONUNIT);
         classes.add(new JavaClassElement("a", path, parent, 0, 0));
         classes.add(new JavaClassElement("b", path, parent, 0, 0));
         classes.add(new JavaClassElement("c", path, parent, 0, 0));
@@ -337,10 +338,11 @@ public class JavaElementManagerTest {
     private List<Element> getCorrectInterfaceList() {
         List<Element> interfaces = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfIn", path, Type.COMPILATIONUNIT);
-        interfaces.add(new Element("a", path, parent));
-        interfaces.add(new Element("b", path, parent));
-        interfaces.add(new Element("c", path, parent));
+        Type type = Type.INTERFACE;
+        ElementIdentifier parent = new ElementIdentifier("parentOfIn", path, Type.COMPILATIONUNIT);
+        interfaces.add(new Element("a", path, type, parent));
+        interfaces.add(new Element("b", path, type, parent));
+        interfaces.add(new Element("c", path, type, parent));
         return interfaces;
     }
 
@@ -355,10 +357,11 @@ public class JavaElementManagerTest {
     private List<Element> getCorrectCompilationUnitList() {
         List<Element> compilationUnits = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfCu", path, Type.PACKAGE);
-        compilationUnits.add(new Element("a", path, parent));
-        compilationUnits.add(new Element("b", path, parent));
-        compilationUnits.add(new Element("c", path, parent));
+        Type type = Type.COMPILATIONUNIT;
+        ElementIdentifier parent = new ElementIdentifier("parentOfCu", path, Type.PACKAGE);
+        compilationUnits.add(new Element("a", path, type, parent));
+        compilationUnits.add(new Element("b", path, type, parent));
+        compilationUnits.add(new Element("c", path, type, parent));
         return compilationUnits;
     }
 

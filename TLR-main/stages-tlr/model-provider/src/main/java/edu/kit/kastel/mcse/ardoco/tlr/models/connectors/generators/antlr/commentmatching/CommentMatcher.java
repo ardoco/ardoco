@@ -38,7 +38,7 @@ public abstract class CommentMatcher {
     }
 
     private boolean hasSamePath(Comment comment, Element element) {
-        return element.getPath().equals(comment.getPath());
+        return element.getIdentifier().path().equals(comment.getPath());
     }
 
     private void setCommentToElement(Element element, Comment comment) {

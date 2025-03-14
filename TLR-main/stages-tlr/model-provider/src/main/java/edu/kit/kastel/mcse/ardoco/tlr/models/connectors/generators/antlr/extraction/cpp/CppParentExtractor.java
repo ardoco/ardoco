@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ParentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import generated.antlr.cpp.CPP14Parser;
@@ -19,7 +19,7 @@ public final class CppParentExtractor extends ParentExtractor {
     }
 
     @Override
-    protected Parent buildParent(ParserRuleContext parentCtx, String path) {
+    protected ElementIdentifier buildParent(ParserRuleContext parentCtx, String path) {
         if (parentCtx instanceof CPP14Parser.ClassSpecifierContext) {
             return buildParentFromClassContext((CPP14Parser.ClassSpecifierContext) parentCtx, path, Type.CLASS);
         } else if (parentCtx instanceof CPP14Parser.NamespaceDefinitionContext) {
@@ -35,28 +35,28 @@ public final class CppParentExtractor extends ParentExtractor {
         return null;
     }
 
-    private static Parent buildParentFromTranslationUnitContext(CPP14Parser.TranslationUnitContext ctx, String path,
+    private static ElementIdentifier buildParentFromTranslationUnitContext(CPP14Parser.TranslationUnitContext ctx, String path,
             Type type) {
         // Use file name as parent name
         String parentName = PathExtractor.extractNameFromPath(ctx);
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromClassContext(CPP14Parser.ClassSpecifierContext ctx, String path,
+    private static ElementIdentifier buildParentFromClassContext(CPP14Parser.ClassSpecifierContext ctx, String path,
             Type type) {
         String parentName = ctx.classHead().classHeadName().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromNamespaceContext(CPP14Parser.NamespaceDefinitionContext ctx, String path,
+    private static ElementIdentifier buildParentFromNamespaceContext(CPP14Parser.NamespaceDefinitionContext ctx, String path,
             Type type) {
         String parentName = ctx.Identifier().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromFunctionContext(CPP14Parser.FunctionDefinitionContext ctx, String path,
+    private static ElementIdentifier buildParentFromFunctionContext(CPP14Parser.FunctionDefinitionContext ctx, String path,
             Type type) {
         String parentName = ctx.declarator().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 }

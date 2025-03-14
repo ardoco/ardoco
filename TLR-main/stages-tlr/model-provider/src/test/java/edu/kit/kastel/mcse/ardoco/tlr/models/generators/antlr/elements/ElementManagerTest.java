@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -25,7 +25,7 @@ public class ElementManagerTest {
     void getRootParentsJavaTest() {
         elementManager = new JavaElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(), getCorrectCompilationUnitList(), getCorrectPackageList());
         
-        List<Parent> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootParents();
 
         Assertions.assertEquals(1, rootParents.size());
     }
@@ -34,7 +34,7 @@ public class ElementManagerTest {
     void getRootParentsCppTest() {
         elementManager = new CppElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
 
-        List<Parent> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootParents();
 
         Assertions.assertEquals(1, rootParents.size());
     }
@@ -43,7 +43,7 @@ public class ElementManagerTest {
     void getRootParentsPythonTest() {
         elementManager = new Python3ElementManager(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(), new ArrayList<>(), getCorrectPackageList());
 
-        List<Parent> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootParents();
 
         Assertions.assertEquals(1, rootParents.size());
     }
@@ -55,7 +55,7 @@ public class ElementManagerTest {
         List<VariableElement> variables = new ArrayList<>();
         String path = "path";
         String dataType = "int";
-        Parent parent = new Parent("a", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("a", "path", Type.FUNCTION);
         variables.add(new VariableElement("a", path, dataType, parent));
         variables.add(new VariableElement("b", path, dataType, parent));
         variables.add(new VariableElement("c", path, dataType, parent));
@@ -65,18 +65,19 @@ public class ElementManagerTest {
     private List<Element> getCorrectFunctionsList() {
         List<Element> functions = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.CLASS);
+        Type type = Type.FUNCTION;
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.CLASS);
         
-        functions.add(new Element("a", path, parent));
-        functions.add(new Element("b", path, parent));
-        functions.add(new Element("c", path, parent));
+        functions.add(new Element("a", path, type, parent));
+        functions.add(new Element("b", path, type, parent));
+        functions.add(new Element("c", path, type, parent));
         return functions;
     }
 
     private List<JavaClassElement> getCorrectClassList() {
         List<JavaClassElement> classes = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.COMPILATIONUNIT);
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.COMPILATIONUNIT);
         classes.add(new JavaClassElement("a", path, parent, 0, 0));
         classes.add(new JavaClassElement("b", path, parent, 0, 0));
         classes.add(new JavaClassElement("c", path, parent, 0, 0));
@@ -86,20 +87,22 @@ public class ElementManagerTest {
     private List<Element> getCorrectInterfaceList() {
         List<Element> interfaces = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.COMPILATIONUNIT);
-        interfaces.add(new Element("a", path, parent));
-        interfaces.add(new Element("b", path, parent));
-        interfaces.add(new Element("c", path, parent));
+        Type type = Type.INTERFACE;
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.COMPILATIONUNIT);
+        interfaces.add(new Element("a", path, type, parent));
+        interfaces.add(new Element("b", path, type, parent));
+        interfaces.add(new Element("c", path, type, parent));
         return interfaces;
     }
 
     private List<Element> getCorrectCompilationUnitList() {
         List<Element> compilationUnits = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.PACKAGE);
-        compilationUnits.add(new Element("a", path, parent));
-        compilationUnits.add(new Element("b", path, parent));
-        compilationUnits.add(new Element("c", path, parent));
+        Type type = Type.COMPILATIONUNIT;
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.PACKAGE);
+        compilationUnits.add(new Element("a", path, type, parent));
+        compilationUnits.add(new Element("b", path, type, parent));
+        compilationUnits.add(new Element("c", path, type, parent));
         return compilationUnits;
     }
 
@@ -116,7 +119,7 @@ public class ElementManagerTest {
         List<VariableElement> variables = new ArrayList<>();
         String path = "path";
         String dataType = "string";
-        Parent parent = new Parent("a", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("a", "path", Type.FUNCTION);
 
         variables.add(new VariableElement("var1", path, dataType, parent));
         variables.add(new VariableElement("var2", path, dataType, parent));
@@ -127,7 +130,7 @@ public class ElementManagerTest {
     private List<ClassElement> getCorrectClassesList() {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.PACKAGE);
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.PACKAGE);
         
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
@@ -138,7 +141,7 @@ public class ElementManagerTest {
     private List<ClassElement> getCorrectClassesCppList() {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("a", path, Type.NAMESPACE);
+        ElementIdentifier parent = new ElementIdentifier("a", path, Type.NAMESPACE);
         
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
@@ -149,11 +152,12 @@ public class ElementManagerTest {
     private List<Element> getCorrectNamespacesList() {
         List<Element> namespaces = new ArrayList<>();
         String path = "path";
-        Parent parent = null;
+        Type type = Type.NAMESPACE;
+        ElementIdentifier parent = null;
         
-        namespaces.add(new Element("a", path, parent));
-        namespaces.add(new Element("b", path, parent));
-        namespaces.add(new Element("c", path, parent));
+        namespaces.add(new Element("a", path, type, parent));
+        namespaces.add(new Element("b", path, type, parent));
+        namespaces.add(new Element("c", path, type, parent));
         return namespaces;
     }
 }

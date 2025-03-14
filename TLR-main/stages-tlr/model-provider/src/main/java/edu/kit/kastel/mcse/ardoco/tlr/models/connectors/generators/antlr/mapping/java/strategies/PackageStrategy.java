@@ -7,7 +7,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
@@ -25,11 +25,11 @@ public class PackageStrategy extends AbstractJavaCodeItemStrategy {
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.PACKAGE);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.PACKAGE);
         return buildCodePackage(comparable);
     }
     
-    private CodePackage buildCodePackage(Parent parent) {
+    private CodePackage buildCodePackage(ElementIdentifier parent) {
         PackageElement packageElement = elementManager.getPackage(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 

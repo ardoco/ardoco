@@ -23,7 +23,7 @@ class JavaControlExtractorTest {
         List<Element> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertEquals(1, controls.size());
         Assertions.assertEquals("aMethod", controls.get(0).getName());
-        Assertions.assertEquals("AClass", controls.get(0).getParent().getName());
+        Assertions.assertEquals("AClass", controls.get(0).getParentIdentifier().name());
     }
 
     @Test

@@ -24,8 +24,8 @@ public class JavaInterfaceExtractorTest {
         List<Element> interfaces = extractInterfacesFromFile(filePath);
         Assertions.assertEquals(1, interfaces.size());
         Assertions.assertEquals("AnInterface", interfaces.get(0).getName());
-        Assertions.assertEquals("AnInterface", interfaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParent().getType());
+        Assertions.assertEquals("AnInterface", interfaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -34,8 +34,8 @@ public class JavaInterfaceExtractorTest {
         List<Element> interfaces = extractInterfacesFromFile(filePath);
         Assertions.assertEquals(1, interfaces.size());
         Assertions.assertEquals("ExtendedInterface", interfaces.get(0).getName());
-        Assertions.assertEquals("ExtendedInterface", interfaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParent().getType());
+        Assertions.assertEquals("ExtendedInterface", interfaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -44,8 +44,8 @@ public class JavaInterfaceExtractorTest {
         List<Element> interfaces = extractInterfacesFromFile(filePath);
         Assertions.assertEquals(1, interfaces.size());
         Assertions.assertEquals("OtherInterface", interfaces.get(0).getName());
-        Assertions.assertEquals("OtherInterface", interfaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParent().getType());
+        Assertions.assertEquals("OtherInterface", interfaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -54,8 +54,8 @@ public class JavaInterfaceExtractorTest {
         List<Element> interfaces = extractInterfacesFromFile(filePath);
         Assertions.assertEquals(1, interfaces.size());
         Assertions.assertEquals("OtherInterface", interfaces.get(0).getName());
-        Assertions.assertEquals("OtherInterface", interfaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParent().getType());
+        Assertions.assertEquals("OtherInterface", interfaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, interfaces.get(0).getParentIdentifier().type());
     }
 
     @Test

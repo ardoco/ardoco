@@ -25,33 +25,33 @@ public class Python3ControlExtractorTest {
 
         // Test the first control
         Assertions.assertEquals("__init__", controls.get(0).getName());
-        Assertions.assertEquals("AClass", controls.get(0).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(0).getParent().getType());
+        Assertions.assertEquals("AClass", controls.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(0).getParentIdentifier().type());
 
         // Test the second control
         Assertions.assertEquals("display_name", controls.get(1).getName());
-        Assertions.assertEquals("AClass", controls.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(1).getParent().getType());
+        Assertions.assertEquals("AClass", controls.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(1).getParentIdentifier().type());
 
         // Test the third control
         Assertions.assertEquals("__init__", controls.get(2).getName());
-        Assertions.assertEquals("InnerClass1", controls.get(2).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(2).getParent().getType());
+        Assertions.assertEquals("InnerClass1", controls.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(2).getParentIdentifier().type());
 
         // Test the fourth control
         Assertions.assertEquals("display_value", controls.get(3).getName());
-        Assertions.assertEquals("InnerClass1", controls.get(3).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(3).getParent().getType());
+        Assertions.assertEquals("InnerClass1", controls.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(3).getParentIdentifier().type());
 
         // Test the fifth control
         Assertions.assertEquals("__init__", controls.get(4).getName());
-        Assertions.assertEquals("InnerClass2", controls.get(4).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(4).getParent().getType());
+        Assertions.assertEquals("InnerClass2", controls.get(4).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(4).getParentIdentifier().type());
 
         // Test the sixth control
         Assertions.assertEquals("display_value", controls.get(5).getName());
-        Assertions.assertEquals("InnerClass2", controls.get(5).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(5).getParent().getType());
+        Assertions.assertEquals("InnerClass2", controls.get(5).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(5).getParentIdentifier().type());
     }
 
     @Test
@@ -62,18 +62,18 @@ public class Python3ControlExtractorTest {
 
         // Test the first control
         Assertions.assertEquals("greet", controls.get(0).getName());
-        Assertions.assertEquals("APyModule", controls.get(0).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, controls.get(0).getParent().getType());
+        Assertions.assertEquals("APyModule", controls.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, controls.get(0).getParentIdentifier().type());
 
         // Test the second control
         Assertions.assertEquals("add", controls.get(1).getName());
-        Assertions.assertEquals("APyModule", controls.get(1).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, controls.get(1).getParent().getType());
+        Assertions.assertEquals("APyModule", controls.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, controls.get(1).getParentIdentifier().type());
 
         // Test the third control
         Assertions.assertEquals("subtract", controls.get(2).getName());
-        Assertions.assertEquals("APyModule", controls.get(2).getParent().getName());
-        Assertions.assertEquals(Type.MODULE, controls.get(2).getParent().getType());
+        Assertions.assertEquals("APyModule", controls.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.MODULE, controls.get(2).getParentIdentifier().type());
     }
 
     @Test
@@ -84,13 +84,13 @@ public class Python3ControlExtractorTest {
 
         // Test the first control
         Assertions.assertEquals("__new__", controls.get(0).getName());
-        Assertions.assertEquals("APyMetaclass", controls.get(0).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(0).getParent().getType());
+        Assertions.assertEquals("APyMetaclass", controls.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(0).getParentIdentifier().type());
 
         // Test the second control
         Assertions.assertEquals("__init__", controls.get(1).getName());
-        Assertions.assertEquals("APyMetaclass", controls.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, controls.get(1).getParent().getType());
+        Assertions.assertEquals("APyMetaclass", controls.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, controls.get(1).getParentIdentifier().type());
     }
 
     @Test

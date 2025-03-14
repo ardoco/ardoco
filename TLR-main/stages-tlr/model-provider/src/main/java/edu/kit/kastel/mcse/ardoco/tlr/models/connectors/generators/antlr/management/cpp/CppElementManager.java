@@ -6,7 +6,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CppCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
 
@@ -67,23 +67,23 @@ public class CppElementManager extends ElementManager {
         elementStorageRegistry.addElements(Type.FILE, files);
     }
 
-    public VariableElement getVariable(Parent parent) {
+    public VariableElement getVariable(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, VariableElement.class);
     }
 
-    public Element getFunction(Parent parent) {
+    public Element getFunction(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public ClassElement getClass(Parent parent) {
+    public ClassElement getClass(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, ClassElement.class);
     }
 
-    public Element getNamespace(Parent parent) {
+    public Element getNamespace(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public Element getFile(Parent parent) {
+    public Element getFile(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
@@ -127,19 +127,19 @@ public class CppElementManager extends ElementManager {
         return isElement(Type.FILE, element);
     }
 
-    public List<VariableElement> getVariablesWithParent(Parent parent) {
+    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.VARIABLE, parent);
     }
 
-    public List<Element> getFunctionsWithParent(Parent parent) {
+    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.FUNCTION, parent);
     }
 
-    public List<ClassElement> getClassesWithParent(Parent parent) {
+    public List<ClassElement> getClassesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.CLASS, parent);
     }
 
-    public List<Element> getNamespacesWithParent(Parent parent) {
+    public List<Element> getNamespacesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.NAMESPACE, parent);
     }
 }

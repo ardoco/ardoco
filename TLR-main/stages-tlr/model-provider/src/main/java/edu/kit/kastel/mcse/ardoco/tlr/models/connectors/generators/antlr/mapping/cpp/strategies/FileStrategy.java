@@ -6,7 +6,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeAssembly;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemBuilder;
@@ -19,7 +19,7 @@ public class FileStrategy extends AbstractCppCodeItemStrategy {
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.FILE);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.FILE);
         return buildFileCodeAssembly(comparable);
     }
 
@@ -28,7 +28,7 @@ public class FileStrategy extends AbstractCppCodeItemStrategy {
         return this.elementManager.isFileElement(element);
     }
 
-    private CodeItem buildFileCodeAssembly(Parent parent) {
+    private CodeItem buildFileCodeAssembly(ElementIdentifier parent) {
         Element file = this.elementManager.getFile(parent);
         SortedSet<CodeItem> content = buildContent(parent);
         CodeAssembly codeAssembly = new CodeAssembly(this.codeItemRepository, file.getName(), content);

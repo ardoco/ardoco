@@ -6,7 +6,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeAssembly;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
@@ -24,12 +24,12 @@ public class ModuleStrategy extends AbstractPython3CodeItemStrategy{
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.MODULE);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.MODULE);
         return buildCodeAssembly(comparable);
     }
 
 
-    private CodeAssembly buildCodeAssembly(Parent parent) {
+    private CodeAssembly buildCodeAssembly(ElementIdentifier parent) {
         Element module = elementManager.getModule(parent);
         SortedSet<CodeItem> content = buildContent(parent);
         CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content);

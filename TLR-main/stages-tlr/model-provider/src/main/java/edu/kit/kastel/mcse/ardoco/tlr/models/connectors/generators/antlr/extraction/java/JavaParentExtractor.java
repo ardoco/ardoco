@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ParentExtractor;
 import generated.antlr.java.JavaParser;
 
@@ -18,7 +18,7 @@ public final class JavaParentExtractor extends ParentExtractor {
     }
 
     @Override
-    protected Parent buildParent(ParserRuleContext parentCtx, String path) {
+    protected ElementIdentifier buildParent(ParserRuleContext parentCtx, String path) {
         if (parentCtx instanceof JavaParser.ClassDeclarationContext) {
             return buildParentFromClassContext((JavaParser.ClassDeclarationContext) parentCtx, path, Type.CLASS);
         } else if (parentCtx instanceof JavaParser.InterfaceDeclarationContext) {
@@ -34,7 +34,7 @@ public final class JavaParentExtractor extends ParentExtractor {
         return null;
     }
 
-    private static Parent buildParentFromCompilationUnitContext(JavaParser.CompilationUnitContext ctx, String path,
+    private static ElementIdentifier buildParentFromCompilationUnitContext(JavaParser.CompilationUnitContext ctx, String path,
             Type type) {
         // Find the Name of the CompilationUnit/File through the first typeDeclaration's
         // name
@@ -50,27 +50,27 @@ public final class JavaParentExtractor extends ParentExtractor {
         return null;
     }
 
-    private static Parent buildParentFromClassContext(JavaParser.ClassDeclarationContext ctx, String path,
+    private static ElementIdentifier buildParentFromClassContext(JavaParser.ClassDeclarationContext ctx, String path,
             Type type) {
         String parentName = ctx.identifier().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromInterfaceContext(JavaParser.InterfaceDeclarationContext ctx, String path,
+    private static ElementIdentifier buildParentFromInterfaceContext(JavaParser.InterfaceDeclarationContext ctx, String path,
             Type type) {
         String parentName = ctx.identifier().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromControlContext(JavaParser.MethodDeclarationContext ctx, String path,
+    private static ElementIdentifier buildParentFromControlContext(JavaParser.MethodDeclarationContext ctx, String path,
             Type type) {
         String parentName = ctx.identifier().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 
-    private static Parent buildParentFromEnumContext(JavaParser.EnumDeclarationContext ctx, String path,
+    private static ElementIdentifier buildParentFromEnumContext(JavaParser.EnumDeclarationContext ctx, String path,
             Type type) {
         String parentName = ctx.identifier().getText();
-        return new Parent(parentName, path, type);
+        return new ElementIdentifier(parentName, path, type);
     }
 }

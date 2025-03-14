@@ -4,7 +4,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
@@ -22,11 +22,11 @@ public class FunctionStrategy extends AbstractJavaCodeItemStrategy {
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.FUNCTION);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.FUNCTION);
         return buildControlElement(comparable);
     }
 
-    private CodeItem buildControlElement(Parent parent) {
+    private CodeItem buildControlElement(ElementIdentifier parent) {
         Element function = this.elementManager.getFunction(parent);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());

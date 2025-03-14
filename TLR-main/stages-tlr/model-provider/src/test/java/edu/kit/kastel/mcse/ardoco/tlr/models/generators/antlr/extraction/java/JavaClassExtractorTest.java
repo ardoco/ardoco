@@ -26,26 +26,26 @@ class JavaClassExtractorTest {
 
                 // Assertions Class AnInnerClass
                 Assertions.assertEquals("AnInnerClass", classes.get(0).getName());
-                Assertions.assertEquals("AClass", classes.get(0).getParent().getName());
-                Assertions.assertEquals(Type.CLASS, classes.get(0).getParent().getType());
+                Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
+                Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
 
         // Assertions Class AnotherClass (InnerClass)
         Assertions.assertEquals("AnotherClass", classes.get(1).getName());
-        Assertions.assertEquals("AClass", classes.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, classes.get(1).getParent().getType());
+        Assertions.assertEquals("AClass", classes.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, classes.get(1).getParentIdentifier().type());
 
         // Assertions Class AClass
         Assertions.assertEquals("AClass", classes.get(2).getName());
-        Assertions.assertEquals("AClass", classes.get(2).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(2).getParent().getType());
+        Assertions.assertEquals("AClass", classes.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(2).getParentIdentifier().type());
         Assertions.assertEquals("Superclass", classes.get(2).getExtendsClass());
         Assertions.assertEquals("AnInterface", classes.get(2).getImplementedInterfaces().get(0));
         Assertions.assertEquals("OtherInterface", classes.get(2).getImplementedInterfaces().get(1));
 
         // Assertions Class AnotherClass
         Assertions.assertEquals("AnotherClass", classes.get(3).getName());
-        Assertions.assertEquals("AClass", classes.get(3).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(3).getParent().getType());
+        Assertions.assertEquals("AClass", classes.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(3).getParentIdentifier().type());
     }
 
     @Test
@@ -54,8 +54,8 @@ class JavaClassExtractorTest {
         List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(1, classes.size());
         Assertions.assertEquals("Superclass", classes.get(0).getName());
-        Assertions.assertEquals("Superclass", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(0).getParent().getType());
+        Assertions.assertEquals("Superclass", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(0).getParentIdentifier().type());
     }
 
     @Test
@@ -64,8 +64,8 @@ class JavaClassExtractorTest {
         List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(1, classes.size());
         Assertions.assertEquals("AnEnum", classes.get(0).getName());
-        Assertions.assertEquals("AnEnum", classes.get(0).getParent().getName());
-        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(0).getParent().getType());
+        Assertions.assertEquals("AnEnum", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.COMPILATIONUNIT, classes.get(0).getParentIdentifier().type());
     }
 
     @Test

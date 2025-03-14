@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 
 public abstract class ElementStorageRegistry {
@@ -48,11 +48,11 @@ public abstract class ElementStorageRegistry {
         }
     }
 
-    public <T extends Element> T getElement(Parent parent, Class<T> clazz) {
-        if (parent.getType() == null || !verifyAllowed(parent.getType(), clazz)) {
+    public <T extends Element> T getElement(ElementIdentifier parent, Class<T> clazz) {
+        if (parent.type() == null || !verifyAllowed(parent.type(), clazz)) {
             return null;
         } 
-        ElementStorage<T> storage = getTypedStorage(parent.getType());
+        ElementStorage<T> storage = getTypedStorage(parent.type());
         return storage.getElement(parent);
     }
 
@@ -72,7 +72,7 @@ public abstract class ElementStorageRegistry {
         return false;
     }
 
-    public List<Element> getContentOfParent(Parent parent) {
+    public List<Element> getContentOfParent(ElementIdentifier parent) {
         List<Element> elements = new ArrayList<>();
         for (ElementStorage<?> storage : storages.values()) {
             elements.addAll(storage.getContentOfParent(parent));
@@ -80,7 +80,7 @@ public abstract class ElementStorageRegistry {
         return elements;
     }
 
-    public <T extends Element> List<T> getContentOfParent(Type type, Parent parent) {
+    public <T extends Element> List<T> getContentOfParent(Type type, ElementIdentifier parent) {
         if (hasStorage(type)) {
             ElementStorage<T> storage = getTypedStorage(type);
             return storage.getContentOfParent(parent);
@@ -104,16 +104,16 @@ public abstract class ElementStorageRegistry {
         return roots;
     }
 
-    public boolean isRootParent(Parent parent) {
-        ElementStorage<?> storage = getTypedStorage(parent.getType());
+    public boolean isRootParent(ElementIdentifier parent) {
+        ElementStorage<?> storage = getTypedStorage(parent.type());
         if (storage != null) {
 
-            return storage.getElement(parent) != null && storage.getElement(parent).getParent() == null;
+            return storage.getElement(parent) != null && storage.getElement(parent).getParentIdentifier() == null;
         }
         return false;
     }
 
-    public Element getElement(Parent parent) {
+    public Element getElement(ElementIdentifier parent) {
         for (ElementStorage<?> storage : storages.values()) {
             Element element = storage.getElement(parent);
             if (element != null) {

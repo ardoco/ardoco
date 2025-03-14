@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
 public class ElementStorage<T extends Element> {
     private final Class<T> type;	
@@ -37,7 +37,7 @@ public class ElementStorage<T extends Element> {
         }
     }
 
-    public T getElement(Parent parent) {
+    public T getElement(ElementIdentifier parent) {
         for (T element : elements) {
             if (elementIsParent(element, parent)) {
                 return element;
@@ -54,7 +54,7 @@ public class ElementStorage<T extends Element> {
         return elements.contains(element);
     }
 
-    public List<T> getContentOfParent(Parent parent) {
+    public List<T> getContentOfParent(ElementIdentifier parent) {
         List<T> elementsWithMatchingParent = new ArrayList<>();
 
         for (T element : elements) {
@@ -69,19 +69,19 @@ public class ElementStorage<T extends Element> {
         List<T> elementsWithoutParent = new ArrayList<>();
 
         for (T element : elements) {
-            if (element.getParent() == null) {
+            if (element.getParentIdentifier() == null) {
                 elementsWithoutParent.add(element);
             }
         }
         return elementsWithoutParent;
     }
 
-    private boolean elementIsParent(T element, Parent parent) {
-        return parent != null && element.getName().equals(parent.getName()) && element.getPath().equals(parent.getPath());
+    private boolean elementIsParent(T element, ElementIdentifier parent) {
+        return parent != null && element.getName().equals(parent.name()) && element.getPath().equals(parent.path());
     }
 
-    private boolean elementParentMatchesParent(T element, Parent parent) {
-        return (parent == null && element.getParent() == null) || (element.getParent() != null && element.getParent().equals(parent));
+    private boolean elementParentMatchesParent(T element, ElementIdentifier parent) {
+        return (parent == null && element.getParentIdentifier() == null) || (element.getParentIdentifier() != null && element.getParentIdentifier().equals(parent));
     }
 
 

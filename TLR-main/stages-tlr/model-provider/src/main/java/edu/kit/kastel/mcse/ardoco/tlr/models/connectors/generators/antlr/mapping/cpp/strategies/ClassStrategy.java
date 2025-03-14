@@ -7,7 +7,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemBuilder;
@@ -20,7 +20,7 @@ public class ClassStrategy extends AbstractCppCodeItemStrategy {
 
     @Override
     public CodeItem buildCodeItem(Element element) {
-        Parent comparable = new Parent(element.getName(), element.getPath(), Type.CLASS);
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.CLASS);
         return buildClassUnit(comparable);
     }
 
@@ -30,7 +30,7 @@ public class ClassStrategy extends AbstractCppCodeItemStrategy {
     }
 
 
-    private CodeItem buildClassUnit(Parent parent) {
+    private CodeItem buildClassUnit(ElementIdentifier parent) {
         ClassElement classElement = this.elementManager.getClass(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 

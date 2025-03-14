@@ -33,12 +33,12 @@ class JavaVariableExtractorTest {
         Assertions.assertEquals("AnEnum", variables.get(2).getDataType());
 
         // Parent Test for sake of completeness
-        Assertions.assertEquals("AClass", variables.get(0).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(0).getParent().getType());
-        Assertions.assertEquals("AClass", variables.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(1).getParent().getType());
-        Assertions.assertEquals("aMethod", variables.get(2).getParent().getName());
-        Assertions.assertEquals(Type.FUNCTION, variables.get(2).getParent().getType());
+        Assertions.assertEquals("AClass", variables.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(0).getParentIdentifier().type());
+        Assertions.assertEquals("AClass", variables.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(1).getParentIdentifier().type());
+        Assertions.assertEquals("aMethod", variables.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FUNCTION, variables.get(2).getParentIdentifier().type());
 
     }
 

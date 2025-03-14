@@ -34,10 +34,10 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals(1, namespaces.size());
         Assertions.assertEquals("Entities", namespaces.get(0).getName());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getPath());
-        Assertions.assertEquals("Entities", namespaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParent().getType());
+        Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp",
-                namespaces.get(0).getParent().getPath());
+                namespaces.get(0).getParentIdentifier().path());
     }
 
     @Test
@@ -48,10 +48,10 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals(1, namespaces.size());
         Assertions.assertEquals("Entities", namespaces.get(0).getName());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getPath());
-        Assertions.assertEquals("Entities", namespaces.get(0).getParent().getName());
-        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParent().getType());
+        Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h",
-                namespaces.get(0).getParent().getPath());
+                namespaces.get(0).getParentIdentifier().path());
     }
 
     private List<Element> extractNamespaceFromFile(String filePath) throws IOException {

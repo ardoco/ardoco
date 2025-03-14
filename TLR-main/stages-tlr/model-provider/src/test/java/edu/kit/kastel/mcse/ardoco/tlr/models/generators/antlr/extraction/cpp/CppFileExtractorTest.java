@@ -24,7 +24,7 @@ public class CppFileExtractorTest {
         Assertions.assertEquals(1, files.size());
         Assertions.assertEquals("main", files.get(0).getName());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/main.cpp", files.get(0).getPath());
-        Assertions.assertNull(files.get(0).getParent());
+        Assertions.assertNull(files.get(0).getParentIdentifier());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CppFileExtractorTest {
         Assertions.assertEquals(1, files.size());
         Assertions.assertEquals("Entities", files.get(0).getName());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", files.get(0).getPath());
-        Assertions.assertNull(files.get(0).getParent());
+        Assertions.assertNull(files.get(0).getParentIdentifier());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CppFileExtractorTest {
         Assertions.assertEquals(1, files.size());
         Assertions.assertEquals("Entities", files.get(0).getName());
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", files.get(0).getPath());
-        Assertions.assertNull(files.get(0).getParent());
+        Assertions.assertNull(files.get(0).getParentIdentifier());
     }
 
     private List<Element> extractFileFromFile(String filePath) throws IOException {

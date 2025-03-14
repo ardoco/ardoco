@@ -1,20 +1,21 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 public class PackageElement extends Element {
+    private static final Type type = Type.PACKAGE;
     private String shortName;
 
     public PackageElement(String name, String path) {
-        super(name, path);
+        super(name, path, type);
         this.shortName = name;
     }
 
-    public PackageElement(String name, String path, Parent parent) {
-        super(name, path, parent);
+    public PackageElement(String name, String path, ElementIdentifier parentIdentifier) {
+        super(name, path, type, parentIdentifier);
         this.shortName = name;
     }
 
     public String[] getPackageNameParts(String regex) {
-        return this.getName().split(regex);
+        return this.identifier.name().split(regex);
     }
 
     public void updateShortName(String shortName) {
@@ -25,26 +26,26 @@ public class PackageElement extends Element {
         return shortName;
     }
 
-    public void updateParent(Parent parent) {
-        this.setParent(parent);
+    public void updateParent(ElementIdentifier parent) {
+        this.identifierOfParent = parent;
     }
 
     public boolean extendsPackage(PackageElement packageElement) {
-        return this.getName().startsWith(packageElement.getPath()) && !this.equals(packageElement);
+        return this.identifier.path().startsWith(packageElement.identifier.path()) && !this.equals(packageElement);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PackageElement) {
             PackageElement packageElement = (PackageElement) obj;
-            return packageElement.getPath().equals(this.getPath());
+            return packageElement.identifier.path().equals(this.identifier.path());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return this.getName().hashCode();
+        return this.identifier.hashCode();
     }
 
 }

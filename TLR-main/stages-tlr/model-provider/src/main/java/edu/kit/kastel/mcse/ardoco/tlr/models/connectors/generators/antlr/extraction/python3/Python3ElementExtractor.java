@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
@@ -58,7 +58,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
         List<String> childClassOf = getParentClasses(ctx);
-        Parent parent = new Python3ParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
@@ -71,7 +71,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         super.visitFuncdef(ctx);
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
-        Parent parent = new Python3ParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
@@ -111,7 +111,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         List<String> varNames = extractVariableNames(ctx.testlist_star_expr(0));
         List<String> values = extractVariableNames(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
-        Parent parent = new Python3ParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
@@ -161,30 +161,32 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         }
     }
 
-    private void addVariableElement(String varName, String path, String type, Parent parent, String value,
+    private void addVariableElement(String varName, String path, String type, ElementIdentifier parent, String value,
             int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, type, parent, startLine, endLine);
         elementManager.addVariable(variable);
     }
 
-    private void addFunctionElement(String name, String path, Parent parent, int startLine, int endLine) {
-        Element function = new Element(name, path, parent, startLine, endLine);
+    private void addFunctionElement(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
+        Type type = Type.FUNCTION;
+        Element function = new Element(name, path, type, parent, startLine, endLine);
         elementManager.addFunction(function);
     }
 
-    private void addClassElement(String name, String path, Parent parent, List<String> childClassOf, int startLine,
+    private void addClassElement(String name, String path, ElementIdentifier parent, List<String> childClassOf, int startLine,
             int endLine) {
         ClassElement python3ClassElement = new ClassElement(name, path, parent, startLine, endLine, childClassOf);
         elementManager.addClass(python3ClassElement);
     }
 
     private void addModules(Python3Parser.File_inputContext ctx) {
+        Type type = Type.MODULE;
         String name = PathExtractor.extractNameFromPath(ctx);
         String path = PathExtractor.extractPath(ctx);
         String packagePath = path.substring(0, path.lastIndexOf("/") + 1);
         String packageName = addPackage(packagePath);
-        Parent parent = new Parent(packageName, packagePath, Type.PACKAGE);
-        Element module = new Element(name, path, parent);
+        ElementIdentifier parent = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
+        Element module = new Element(name, path, type, parent);
         elementManager.addModule(module);
     }
 
@@ -206,7 +208,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         }
 
         if (!closestParentPath.isEmpty()) {
-            Parent parent = new Parent(closestParentName, closestParentPath, Type.PACKAGE);
+            ElementIdentifier parent = new ElementIdentifier(closestParentName, closestParentPath, Type.PACKAGE);
             packageName = packagePath.substring(closestParentPath.length(), packagePath.length() - 1);
             PackageElement packageElement = new PackageElement(packageName, packagePath, parent);
             elementManager.addPackage(packageElement);
@@ -226,7 +228,7 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         for (PackageElement packageElement : packageElements) {
             if (packageElement.getPath().startsWith(packagePath)
                     && packageElement.getPath().length() > packagePath.length()) {
-                Parent parent = new Parent(packageName, packagePath, Type.PACKAGE);
+                ElementIdentifier parent = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
                 packageElement.updateParent(parent);
                 packageElement.updateShortName(packageElement.getPath().substring(packagePath.length(),
                         packageElement.getPath().length() - 1));

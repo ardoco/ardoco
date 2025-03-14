@@ -24,8 +24,8 @@ public class CppControlExtractorTest {
 
         Assertions.assertEquals(1, controls.size());
         Assertions.assertEquals("main()", controls.get(0).getName());
-        Assertions.assertEquals("main", controls.get(0).getParent().getName());
-        Assertions.assertEquals(Type.FILE, controls.get(0).getParent().getType());
+        Assertions.assertEquals("main", controls.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FILE, controls.get(0).getParentIdentifier().type());
 
     }
 

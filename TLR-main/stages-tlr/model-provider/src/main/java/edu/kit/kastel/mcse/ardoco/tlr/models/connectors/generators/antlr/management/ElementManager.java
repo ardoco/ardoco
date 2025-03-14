@@ -6,7 +6,7 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 
 public class ElementManager {
@@ -22,12 +22,12 @@ public class ElementManager {
         commentMatcher.matchComments(comments, getAllElements());
     }
 
-    public List<Parent> getRootParents() {
-        List<Parent> parents = new ArrayList<>();
+    public List<ElementIdentifier> getRootParents() {
+        List<ElementIdentifier> parents = new ArrayList<>();
         List<Element> elements = getAllElements();
 
         for (Element element : elements) {
-            Parent parent = element.getParent();
+            ElementIdentifier parent = element.getParentIdentifier();
             if (hasNotBeenAdded(parent, parents) && this.elementStorageRegistry.isRootParent(parent)) {
                 parents.add(parent);
             }
@@ -35,15 +35,15 @@ public class ElementManager {
         return parents;
     }
 
-    public Element getElement(Parent parent) {
+    public Element getElement(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent);
     }
 
-    protected <T extends Element> T getElement(Parent parent, Class<T> clazz) {
+    protected <T extends Element> T getElement(ElementIdentifier parent, Class<T> clazz) {
         return elementStorageRegistry.getElement(parent, clazz);
     }
 
-    public List<Element> getContentOfParent(Parent parent) {
+    public List<Element> getContentOfParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(parent);
     }
 
@@ -63,7 +63,7 @@ public class ElementManager {
         return elementStorageRegistry.containsElement(type, element);
     }
 
-    private boolean hasNotBeenAdded(Parent parent, List<Parent> parents) {
+    private boolean hasNotBeenAdded(ElementIdentifier parent, List<ElementIdentifier> parents) {
         return parent != null && !parents.contains(parent);
     }
 }

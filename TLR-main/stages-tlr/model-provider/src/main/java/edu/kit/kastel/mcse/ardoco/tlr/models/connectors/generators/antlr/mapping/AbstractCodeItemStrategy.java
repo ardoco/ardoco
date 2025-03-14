@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
 public abstract class AbstractCodeItemStrategy implements CodeItemBuilderStrategy {
     protected final CodeItemRepository codeItemRepository;
@@ -24,7 +24,7 @@ public abstract class AbstractCodeItemStrategy implements CodeItemBuilderStrateg
     @Override
     public abstract boolean supports(Element element);
 
-    protected SortedSet<CodeItem> buildContent(Parent parent) {
+    protected SortedSet<CodeItem> buildContent(ElementIdentifier parent) {
         SortedSet<CodeItem> content = new TreeSet<>();
         List<Element> elements = getContentOfParent(parent);
         for (Element element : elements) {
@@ -36,7 +36,7 @@ public abstract class AbstractCodeItemStrategy implements CodeItemBuilderStrateg
         return content;
     }
 
-    protected abstract List<Element> getContentOfParent(Parent parent);
+    protected abstract List<Element> getContentOfParent(ElementIdentifier parent);
 
     protected CodeItem buildCodeItemFromStrategy(Element element) {
         return builder.buildCodeItem(element);

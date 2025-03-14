@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
 
 public class ModelMapper {
@@ -28,21 +28,21 @@ public class ModelMapper {
     }
 
     public void mapToCodeModel() {
-        List<Parent> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootParents();
         SortedSet<CodeItem> content = buildContentFromRoot(rootParents);
         codeModel = new CodeModel(codeItemRepository, content);
     }
 
-    protected SortedSet<CodeItem> buildContentFromRoot(List<Parent> parents) {
+    protected SortedSet<CodeItem> buildContentFromRoot(List<ElementIdentifier> parents) {
         SortedSet<CodeItem> content = new TreeSet<>();
 
-        for (Parent parent : parents) {
+        for (ElementIdentifier parent : parents) {
             content.add(buildSubtree(parent));
         }
         return content;
     }
 
-    protected CodeItem buildSubtree(Parent parent) {
+    protected CodeItem buildSubtree(ElementIdentifier parent) {
         Element element = elementManager.getElement(parent);
         return buildCodeItem(element);
     }

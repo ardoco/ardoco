@@ -2,11 +2,11 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
 public abstract class ParentExtractor {
 
-    public Parent getParent(ParserRuleContext ctx) {
+    public ElementIdentifier getParent(ParserRuleContext ctx) {
         ParserRuleContext parentCtx = ctx.getParent();
         boolean foundValidParent = false;
         while (parentCtx != null && !foundValidParent) {
@@ -24,6 +24,6 @@ public abstract class ParentExtractor {
 
     protected abstract boolean isValidParent(ParserRuleContext parentCtx, String path);
 
-    protected abstract Parent buildParent(ParserRuleContext parentCtx, String path);
+    protected abstract ElementIdentifier buildParent(ParserRuleContext parentCtx, String path);
 
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
@@ -132,7 +132,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
-        Parent parent = new Parent("parentOfVars", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
         assert vars.containsAll(variables);
     }
@@ -142,7 +142,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
-        Parent parent = new Parent("parentOfVars", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
         assert vars.isEmpty();
     }
@@ -152,7 +152,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
-        Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.containsAll(functions);
     }
@@ -162,7 +162,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
-        Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.isEmpty();
     }
@@ -172,7 +172,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
-        Parent parent = new Parent("parentOfCl", "path", Type.MODULE);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
         List<ClassElement> clss = elementManager.getClassesWithParent(parent);
         assert clss.containsAll(classes);
     }
@@ -182,7 +182,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
-        Parent parent = new Parent("parentOfCl", "path", Type.MODULE);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
         List<ClassElement> clss = elementManager.getClassesWithParent(parent);
         assert clss.isEmpty();
     }
@@ -192,7 +192,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
-        Parent parent = new Parent("parentOfVars", "path", Type.CLASS);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.CLASS);
         List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
         assert vars.isEmpty();
     }
@@ -202,7 +202,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
-        Parent parent = new Parent("parentOfFc", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.FUNCTION);
         List<Element> funcs = elementManager.getContentOfParent(parent);
         assert funcs.isEmpty();
     }
@@ -212,7 +212,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementManager();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
-        Parent parent = new Parent("parentOfCl", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.FUNCTION);
         List<ClassElement> clss = elementManager.getClassesWithParent(parent);
         assert clss.isEmpty();
     }
@@ -221,11 +221,11 @@ public class Python3ElementManagerTest {
     void getVariableWithDifferentParentTest() {
         elementManager = new Python3ElementManager();
         List<VariableElement> variables = getCorrectVariablesList();
-        VariableElement var = new VariableElement("var4", "path", "string", new Parent("diffVarParent", "path", Type.FUNCTION));
+        VariableElement var = new VariableElement("var4", "path", "string", new ElementIdentifier("diffVarParent", "path", Type.FUNCTION));
         variables.add(var);
         elementManager.addVariables(variables);
-        Parent parent = new Parent("parentOfVars", "path", Type.FUNCTION);
-        Parent parent2 = new Parent("diffVarParent", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
+        ElementIdentifier parent2 = new ElementIdentifier("diffVarParent", "path", Type.FUNCTION);
         List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
         List<VariableElement> vars2 = elementManager.getVariablesWithParent(parent2);
 
@@ -241,11 +241,12 @@ public class Python3ElementManagerTest {
     void getFunctionWithDifferentParentTest() {
         elementManager = new Python3ElementManager();
         List<Element> functions = getCorrectFunctionsList();
-        Element func = new Element("d", "path", new Parent("diffFcParent", "path", Type.CLASS));
+        Type type = Type.FUNCTION;
+        Element func = new Element("d", "path", type, new ElementIdentifier("diffFcParent", "path", Type.CLASS));
         functions.add(func);
         elementManager.addFunctions(functions);
-        Parent parent = new Parent("parentOfFc", "path", Type.CLASS);
-        Parent parent2 = new Parent("diffFcParent", "path", Type.CLASS);
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
+        ElementIdentifier parent2 = new ElementIdentifier("diffFcParent", "path", Type.CLASS);
         List<Element> funcs = elementManager.getContentOfParent(parent);
         List<Element> funcs2 = elementManager.getContentOfParent(parent2);
 
@@ -261,11 +262,11 @@ public class Python3ElementManagerTest {
     void getClassWithDifferentParentTest() {
         elementManager = new Python3ElementManager();
         List<ClassElement> classes = getCorrectClassesList();
-        ClassElement cl = new ClassElement("d", "path", new Parent("diffClParent", "path", Type.MODULE));
+        ClassElement cl = new ClassElement("d", "path", new ElementIdentifier("diffClParent", "path", Type.MODULE));
         classes.add(cl);
         elementManager.addClasses(classes);
-        Parent parent = new Parent("parentOfCl", "path", Type.MODULE);
-        Parent parent2 = new Parent("diffClParent", "path", Type.MODULE);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
+        ElementIdentifier parent2 = new ElementIdentifier("diffClParent", "path", Type.MODULE);
         List<ClassElement> clss = elementManager.getClassesWithParent(parent);
         List<ClassElement> clss2 = elementManager.getClassesWithParent(parent2);
 
@@ -282,7 +283,7 @@ public class Python3ElementManagerTest {
         List<VariableElement> variables = new ArrayList<>();
         String path = "path";
         String dataType = "string";
-        Parent parent = new Parent("parentOfVars", "path", Type.FUNCTION);
+        ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
 
         variables.add(new VariableElement("var1", path, dataType, parent));
         variables.add(new VariableElement("var2", path, dataType, parent));
@@ -304,11 +305,12 @@ public class Python3ElementManagerTest {
     private List<Element> getCorrectFunctionsList() {
         List<Element> functions = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfFc", path, Type.CLASS);
+        Type type = Type.FUNCTION;
+        ElementIdentifier parent = new ElementIdentifier("parentOfFc", path, Type.CLASS);
         
-        functions.add(new Element("a", path, parent));
-        functions.add(new Element("b", path, parent));
-        functions.add(new Element("c", path, parent));
+        functions.add(new Element("a", path, type, parent));
+        functions.add(new Element("b", path, type, parent));
+        functions.add(new Element("c", path, type, parent));
         return functions;
     }
 
@@ -323,7 +325,7 @@ public class Python3ElementManagerTest {
     private List<ClassElement> getCorrectClassesList() {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
-        Parent parent = new Parent("parentOfCl", path, Type.MODULE);
+        ElementIdentifier parent = new ElementIdentifier("parentOfCl", path, Type.MODULE);
         
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));

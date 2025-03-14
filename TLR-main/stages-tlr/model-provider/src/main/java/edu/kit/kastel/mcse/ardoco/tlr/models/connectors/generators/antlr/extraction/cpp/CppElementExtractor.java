@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
@@ -101,7 +102,7 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
             visitFunctionBody(ctx.functionBody());
         }
         String name = ctx.declarator().getText();
-        Parent parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
@@ -155,7 +156,7 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
             name = ctx.Identifier().getText();
         }
         String path = PathExtractor.extractPath(ctx);
-        Parent parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
         addNamespace(name, path, parent, startLine, endLine);
@@ -164,7 +165,7 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
     private void extractClass(CPP14Parser.ClassSpecifierContext ctx) {
         String name = ctx.classHead().classHeadName().getText();
         String path = PathExtractor.extractPath(ctx);
-        Parent parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
         List<String> inherits = getInherits(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
@@ -199,7 +200,7 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
 
     private void extractVariableElement(CPP14Parser.MemberdeclarationContext ctx) {
         String variableType = ctx.declSpecifierSeq().getText();
-        Parent parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.memberDeclaratorList());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
@@ -210,7 +211,7 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
 
     private void extractVariableElement(CPP14Parser.SimpleDeclarationContext ctx) {
         String variableType = ctx.declSpecifierSeq().getText();
-        Parent parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
         List<String> varNames = extractVariableNames(ctx.initDeclaratorList());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
@@ -262,38 +263,41 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         return inherits;
     }
 
-    private void addVariables(List<String> varNames, String path, String variableType, Parent parent,
+    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parent,
             int startLine, int endLine) {
         for (String varName : varNames) {
             addVariableElement(varName, path, variableType, parent, startLine, endLine);
         }
     }
 
-    private void addVariableElement(String varName, String path, String variableType, Parent parent,
+    private void addVariableElement(String varName, String path, String variableType, ElementIdentifier parent,
             int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, variableType, parent, startLine, endLine);
         elementManager.addVariable(variable);
     }
 
-    private void addFunction(String name, String path, Parent parent, int startLine, int endLine) {
-        Element function = new Element(name, path, parent, startLine, endLine);
+    private void addFunction(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
+        Type type = Type.FUNCTION;
+        Element function = new Element(name, path, type, parent, startLine, endLine);
         elementManager.addFunction(function);
     }
 
-    private void addClass(String name, String path, Parent parent, List<String> inherits, int startLine, int endLine) {
+    private void addClass(String name, String path, ElementIdentifier parent, List<String> inherits, int startLine, int endLine) {
         ClassElement cppClassElement = new ClassElement(name, path, parent, startLine, endLine, inherits);
         elementManager.addClass(cppClassElement);
     }
 
-    private void addNamespace(String name, String path, Parent parent, int startLine, int endLine) {
-        Element namespace = new Element(name, path, parent, startLine, endLine);
+    private void addNamespace(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
+        Type type = Type.NAMESPACE;
+        Element namespace = new Element(name, path, type, parent, startLine, endLine);
         elementManager.addNamespace(namespace);
     }
 
     private void addFile(TranslationUnitContext ctx) {
         String name = PathExtractor.extractNameFromPath(ctx);
         String path = PathExtractor.extractPath(ctx);
-        Element file = new Element(name, path);
+        Type type = Type.FILE;
+        Element file = new Element(name, path, type);
         elementManager.addFile(file);
     }
 }

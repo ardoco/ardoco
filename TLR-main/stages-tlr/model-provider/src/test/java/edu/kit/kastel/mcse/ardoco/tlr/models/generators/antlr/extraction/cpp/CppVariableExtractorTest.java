@@ -26,12 +26,12 @@ public class CppVariableExtractorTest {
         Assertions.assertEquals(2, variables.size());
         Assertions.assertEquals("myCar", variables.get(0).getName());
         Assertions.assertEquals("Entities::Car", variables.get(0).getDataType());
-        Assertions.assertEquals("main()", variables.get(0).getParent().getName());
-        Assertions.assertEquals(Type.FUNCTION, variables.get(0).getParent().getType());
+        Assertions.assertEquals("main()", variables.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FUNCTION, variables.get(0).getParentIdentifier().type());
         Assertions.assertEquals("person", variables.get(1).getName());
         Assertions.assertEquals("Entities::Person", variables.get(1).getDataType());
-        Assertions.assertEquals("main()", variables.get(1).getParent().getName());
-        Assertions.assertEquals(Type.FUNCTION, variables.get(1).getParent().getType());
+        Assertions.assertEquals("main()", variables.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.FUNCTION, variables.get(1).getParentIdentifier().type());
     }
 
     @Test
@@ -50,32 +50,32 @@ public class CppVariableExtractorTest {
         Assertions.assertEquals(7, variables.size());
         Assertions.assertEquals("make", variables.get(0).getName());
         Assertions.assertEquals("std::string", variables.get(0).getDataType());
-        Assertions.assertEquals("Car", variables.get(0).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(0).getParent().getType());
+        Assertions.assertEquals("Car", variables.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(0).getParentIdentifier().type());
         Assertions.assertEquals("model", variables.get(1).getName());
         Assertions.assertEquals("std::string", variables.get(1).getDataType());
-        Assertions.assertEquals("Car", variables.get(1).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(1).getParent().getType());
+        Assertions.assertEquals("Car", variables.get(1).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(1).getParentIdentifier().type());
         Assertions.assertEquals("year", variables.get(2).getName());
         Assertions.assertEquals("int", variables.get(2).getDataType());
-        Assertions.assertEquals("Car", variables.get(2).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(2).getParent().getType());
+        Assertions.assertEquals("Car", variables.get(2).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(2).getParentIdentifier().type());
         Assertions.assertEquals("name", variables.get(3).getName());
         Assertions.assertEquals("std::string", variables.get(3).getDataType());
-        Assertions.assertEquals("Person", variables.get(3).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(3).getParent().getType());
+        Assertions.assertEquals("Person", variables.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(3).getParentIdentifier().type());
         Assertions.assertEquals("age", variables.get(4).getName());
         Assertions.assertEquals("int", variables.get(4).getDataType());
-        Assertions.assertEquals("Person", variables.get(4).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(4).getParent().getType());
+        Assertions.assertEquals("Person", variables.get(4).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(4).getParentIdentifier().type());
         Assertions.assertEquals("*ownedCar", variables.get(5).getName());
         Assertions.assertEquals("Car", variables.get(5).getDataType());
-        Assertions.assertEquals("Person", variables.get(5).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(5).getParent().getType());
+        Assertions.assertEquals("Person", variables.get(5).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(5).getParentIdentifier().type());
         Assertions.assertEquals("mechanicName", variables.get(6).getName());
         Assertions.assertEquals("std::string", variables.get(6).getDataType());
-        Assertions.assertEquals("Mechanic", variables.get(6).getParent().getName());
-        Assertions.assertEquals(Type.CLASS, variables.get(6).getParent().getType());
+        Assertions.assertEquals("Mechanic", variables.get(6).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.get(6).getParentIdentifier().type());
     }
 
     private List<VariableElement> extractVariablesFromFile(String filePath) throws IOException {

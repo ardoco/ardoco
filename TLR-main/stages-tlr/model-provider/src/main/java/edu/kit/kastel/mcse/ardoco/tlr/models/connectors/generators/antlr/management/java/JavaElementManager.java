@@ -5,7 +5,7 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.JavaCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Parent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -77,27 +77,27 @@ public class JavaElementManager extends ElementManager {
         elementStorageRegistry.addElements(Type.PACKAGE, packages);
     }
 
-    public VariableElement getVariable(Parent parent) {
+    public VariableElement getVariable(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, VariableElement.class);
     }
 
-    public Element getFunction(Parent parent) {
+    public Element getFunction(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public JavaClassElement getClass(Parent parent) {
+    public JavaClassElement getClass(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, JavaClassElement.class);
     }
 
-    public Element getInterface(Parent parent) {
+    public Element getInterface(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public Element getCompilationUnitElement(Parent parent) {
+    public Element getCompilationUnitElement(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, Element.class);
     }
 
-    public PackageElement getPackage(Parent parent) {
+    public PackageElement getPackage(ElementIdentifier parent) {
         return elementStorageRegistry.getElement(parent, PackageElement.class);
     }
 
@@ -149,27 +149,27 @@ public class JavaElementManager extends ElementManager {
         return isElement(Type.PACKAGE, element);
     }
 
-    public List<VariableElement> getVariablesWithParent(Parent parent) {
+    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.VARIABLE, parent);
     }
 
-    public List<Element> getFunctionsWithParent(Parent parent) {
+    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.FUNCTION, parent);
     }
 
-    public List<JavaClassElement> getClassesWithParent(Parent parent) {
+    public List<JavaClassElement> getClassesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.CLASS, parent);
     }
 
-    public List<Element> getInterfacesWithParent(Parent parent) {
+    public List<Element> getInterfacesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.INTERFACE, parent);
     }
 
-    public List<Element> getCompilationUnitsWithParent(Parent parent) {
+    public List<Element> getCompilationUnitsWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.COMPILATIONUNIT, parent);
     }
 
-    public List<PackageElement> getPackagesWithParent(Parent parent) {
+    public List<PackageElement> getPackagesWithParent(ElementIdentifier parent) {
         return elementStorageRegistry.getContentOfParent(Type.PACKAGE, parent);
     }
 }
