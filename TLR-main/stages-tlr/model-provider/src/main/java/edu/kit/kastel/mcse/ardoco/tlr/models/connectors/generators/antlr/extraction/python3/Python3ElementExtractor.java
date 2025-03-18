@@ -48,51 +48,92 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
 
     @Override
     public Void visitFile_input(Python3Parser.File_inputContext ctx) {
-        super.visitFile_input(ctx);
-        return null;
-    }
-
-    @Override
-    public Void visitClassdef(Python3Parser.ClassdefContext ctx) {
-        super.visitClassdef(ctx);
-        String name = ctx.name().getText();
-        String path = PathExtractor.extractPath(ctx);
-        List<String> childClassOf = getParentClasses(ctx);
-        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
-        int startLine = ctx.getStart().getLine();
-        int endLine = ctx.getStop().getLine();
-
-        addClassElement(name, path, parent, childClassOf, startLine, endLine);
-        return null;
-    }
-
-    @Override
-    public Void visitFuncdef(Python3Parser.FuncdefContext ctx) {
-        super.visitFuncdef(ctx);
-        String name = ctx.name().getText();
-        String path = PathExtractor.extractPath(ctx);
-        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
-        int startLine = ctx.getStart().getLine();
-        int endLine = ctx.getStop().getLine();
-
-        addFunctionElement(name, path, parent, startLine, endLine);
-        return null;
-    }
-
-    @Override
-    public Void visitSimple_stmt(Python3Parser.Simple_stmtContext ctx) {
-        if (ctx.expr_stmt() != null) {
-            visitExpr_stmt(ctx.expr_stmt());
-        } else {
-            super.visitSimple_stmt(ctx);
+        ElementIdentifier parentIdentifier  = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx), PathExtractor.extractPath(ctx), Type.MODULE);
+        if (ctx.stmt() != null) {
+            for (Python3Parser.StmtContext stmt : ctx.stmt()) {
+                visitStmt(stmt, parentIdentifier);
+            }
         }
         return null;
     }
 
-    @Override
-    public Void visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
+    public Void visitStmt(Python3Parser.StmtContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.simple_stmts() != null) {
+            visitSimple_stmts(ctx.simple_stmts(), parentIdentifier);
+        } else if (ctx.compound_stmt() != null) {
+            visitCompound_stmt(ctx.compound_stmt(), parentIdentifier);
+        } 
+        return null;
+    }
+
+    public Void visitSimple_stmts(Python3Parser.Simple_stmtsContext ctx, ElementIdentifier parentIdentifier) {
+        for (Python3Parser.Simple_stmtContext simpleStmt : ctx.simple_stmt()) {
+            visitSimple_stmt(simpleStmt, parentIdentifier);
+        }
+        return null;
+    }
+
+    public Void visitCompound_stmt(Python3Parser.Compound_stmtContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.funcdef() != null) {
+            visitFuncdef(ctx.funcdef(), parentIdentifier);
+        } else if (ctx.classdef() != null) {
+            visitClassdef(ctx.classdef(), parentIdentifier);
+        } else if (ctx.decorated() != null) {
+            if (ctx.decorated().classdef() != null) {
+                visitClassdef(ctx.decorated().classdef(), parentIdentifier);
+            } else if (ctx.decorated().funcdef() != null) {
+                visitFuncdef(ctx.decorated().funcdef(), parentIdentifier);
+            }
+        }
+        return null;
+    }
+
+    public ElementIdentifier visitClassdef(Python3Parser.ClassdefContext ctx, ElementIdentifier parentIdentifier) {
+        String name = ctx.name().getText();
+        String path = PathExtractor.extractPath(ctx);
+        List<String> childClassOf = getParentClasses(ctx);
+        ElementIdentifier parent = parentIdentifier;
+        ElementIdentifier identifier = new ElementIdentifier(name, path, Type.CLASS);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
+
+        if (ctx.block().stmt() != null) {
+            for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
+                visitStmt(stmt, identifier);
+            }
+        }
+
+        addClassElement(name, path, parent, childClassOf, startLine, endLine);
+        return identifier;
+    }
+
+    public ElementIdentifier visitFuncdef(Python3Parser.FuncdefContext ctx, ElementIdentifier parentIdentifier) {
+        String name = ctx.name().getText();
+        String path = PathExtractor.extractPath(ctx);
+        ElementIdentifier parent = parentIdentifier;
+        ElementIdentifier identifier = new ElementIdentifier(name, path, Type.FUNCTION);
+        int startLine = ctx.getStart().getLine();
+        int endLine = ctx.getStop().getLine();
+
+        if (ctx.block().stmt() != null) {
+            for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
+                visitStmt(stmt, identifier);
+            }
+        }
+        addFunctionElement(name, path, parent, startLine, endLine);
+        return identifier;
+    }
+
+    public Void visitSimple_stmt(Python3Parser.Simple_stmtContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.expr_stmt() != null) {
+            visitExpr_stmt(ctx.expr_stmt(), parentIdentifier);
+        }
+        return null;
+    }
+
+    public Void visitExpr_stmt(Python3Parser.Expr_stmtContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.ASSIGN() != null && ctx.testlist_star_expr().size() > 1) {
-            extractVariablesFromExprStmt(ctx);
+            extractVariablesFromExprStmt(ctx, parentIdentifier);
         }
         return null;
     }
@@ -107,11 +148,11 @@ public class Python3ElementExtractor extends Python3ParserBaseVisitor<Void> impl
         return parentClasses;
     }
 
-    private void extractVariablesFromExprStmt(Python3Parser.Expr_stmtContext ctx) {
+    private void extractVariablesFromExprStmt(Python3Parser.Expr_stmtContext ctx, ElementIdentifier parentIdentifier) {
         List<String> varNames = extractVariableNames(ctx.testlist_star_expr(0));
         List<String> values = extractVariableNames(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);
-        ElementIdentifier parent = new Python3ParentExtractor().getParent(ctx);
+        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();

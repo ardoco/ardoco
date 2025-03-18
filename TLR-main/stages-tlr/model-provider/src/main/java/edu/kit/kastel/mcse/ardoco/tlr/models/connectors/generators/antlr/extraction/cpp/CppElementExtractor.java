@@ -51,81 +51,78 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
     public Void visitTranslationUnit(CPP14Parser.TranslationUnitContext ctx) {
         if (ctx.declarationseq() != null) {
             for (CPP14Parser.DeclarationContext declaration : ctx.declarationseq().declaration()) {
-                visitDeclaration(declaration);
+                visitDeclaration(declaration, null);
             }
         }
-        super.visitTranslationUnit(ctx);
         return null;
     }
 
-    @Override
-    public Void visitDeclaration(CPP14Parser.DeclarationContext ctx) {
+    public Void visitDeclaration(CPP14Parser.DeclarationContext ctx, ElementIdentifier parentIdentifier) {
+        if (parentIdentifier == null) {
+            parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx), PathExtractor.extractPath(ctx), Type.FILE);
+        }
         if (ctx.functionDefinition() != null) {
-            visitFunctionDefinition(ctx.functionDefinition());
+            visitFunctionDefinition(ctx.functionDefinition(), parentIdentifier);
         }
         if (ctx.namespaceDefinition() != null) {
-            visitNamespaceDefinition(ctx.namespaceDefinition());
+            visitNamespaceDefinition(ctx.namespaceDefinition(), parentIdentifier);
         }
         if (ctx.blockDeclaration() != null) {
-            visitBlockDeclaration(ctx.blockDeclaration());
+            visitBlockDeclaration(ctx.blockDeclaration(), parentIdentifier);
         }
 
         return null;
     }
 
-    @Override
-    public Void visitNamespaceDefinition(CPP14Parser.NamespaceDefinitionContext ctx) {
+    public Void visitNamespaceDefinition(CPP14Parser.NamespaceDefinitionContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.declarationseq() != null) {
-            extractNamespace(ctx);
+            ElementIdentifier nameSpaceIdentifier = extractNamespace(ctx, parentIdentifier);
 
             for (CPP14Parser.DeclarationContext declaration : ctx.declarationseq().declaration()) {
-                visitDeclaration(declaration);
+                visitDeclaration(declaration, nameSpaceIdentifier);
             }
         }
         return null;
     }
 
-    @Override
-    public Void visitBlockDeclaration(CPP14Parser.BlockDeclarationContext ctx) {
+    public Void visitBlockDeclaration(CPP14Parser.BlockDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.simpleDeclaration() != null) {
-            visitSimpleDeclaration(ctx.simpleDeclaration());
+            visitSimpleDeclaration(ctx.simpleDeclaration(), parentIdentifier);
         }
         return null;
     }
 
-    @Override
-    public Void visitFunctionDefinition(CPP14Parser.FunctionDefinitionContext ctx) {
+    public Void visitFunctionDefinition(CPP14Parser.FunctionDefinitionContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.declarator() == null) {
             return null;
         }
-        if (ctx.functionBody() != null) {
-            visitFunctionBody(ctx.functionBody());
-        }
         String name = ctx.declarator().getText();
-        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
+        ElementIdentifier functionIdentifier = new ElementIdentifier(name, path, Type.FUNCTION);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
+        addFunction(functionIdentifier, parent, startLine, endLine);
 
-        addFunction(name, path, parent, startLine, endLine);
+        if (ctx.functionBody() != null) {
+            visitFunctionBody(ctx.functionBody(), functionIdentifier);
+        }
         return null;
     }
 
-    @Override
-    public Void visitFunctionBody(FunctionBodyContext ctx) {
+    public Void visitFunctionBody(FunctionBodyContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.compoundStatement() != null && ctx.compoundStatement().statementSeq() != null
                 && ctx.compoundStatement().statementSeq().statement() != null) {
             for (CPP14Parser.StatementContext statement : ctx.compoundStatement().statementSeq().statement()) {
                 if (statement.declarationStatement() != null) {
-                    visitBlockDeclaration(statement.declarationStatement().blockDeclaration());
+                    visitBlockDeclaration(statement.declarationStatement().blockDeclaration(), parentIdentifier);
                 }
             }
         }
         return null;
     }
 
-    @Override
-    public Void visitSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx) {
+    public Void visitSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.declSpecifierSeq() == null) {
             return null;
         }
@@ -135,59 +132,55 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
                 continue;
             }
             if (declSeq != null && declSeq.typeSpecifier().classSpecifier() != null) {
-                visitClassSpecifier(declSeq.typeSpecifier().classSpecifier());
+                visitClassSpecifier(declSeq.typeSpecifier().classSpecifier(), parentIdentifier);
             }
             // extractVariablesFromClass(declSeq.typeSpecifier().classSpecifier());
         }
 
         if (ctx.initDeclaratorList() != null) {
-            extractVariableElement(ctx);
+            extractVariableElement(ctx, parentIdentifier);
         }
         return null;
     }
 
-    @Override
-    public Void visitClassSpecifier(CPP14Parser.ClassSpecifierContext ctx) {
-        extractClass(ctx);
-        extractVariablesFromClass(ctx);
+    public Void visitClassSpecifier(CPP14Parser.ClassSpecifierContext ctx, ElementIdentifier parentIdentifier) {
+        ElementIdentifier classIdentifier = extractClass(ctx, parentIdentifier);
+        extractVariablesFromClass(ctx, classIdentifier);
         return null;
     }
 
-    private void extractNamespace(CPP14Parser.NamespaceDefinitionContext ctx) {
+    private ElementIdentifier extractNamespace(CPP14Parser.NamespaceDefinitionContext ctx, ElementIdentifier parentIdentifier) {
         String name = "anonymous";
         if (ctx.Identifier() != null) {
             name = ctx.Identifier().getText();
         }
         String path = PathExtractor.extractPath(ctx);
-        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = parentIdentifier;
+        ElementIdentifier namespaceIdentifier = new ElementIdentifier(name, path, Type.NAMESPACE);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
-        addNamespace(name, path, parent, startLine, endLine);
+        addNamespace(namespaceIdentifier, parent, startLine, endLine);
+        return namespaceIdentifier;
     }
 
-    private void extractClass(CPP14Parser.ClassSpecifierContext ctx) {
-        String name = "anonymous";
-        if (ctx.classHead().classHeadName() != null) {
-            name = ctx.classHead().classHeadName().getText();
-        } else if (ctx.classHead().classVirtSpecifier() != null) {
-            name = ctx.classHead().classVirtSpecifier().getText();
-        }
-        String path = PathExtractor.extractPath(ctx);
-        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
+    private ElementIdentifier extractClass(CPP14Parser.ClassSpecifierContext ctx, ElementIdentifier parentIdentifier) {
+        ElementIdentifier identifier = getClassIdentifier(ctx);
+        ElementIdentifier parent = parentIdentifier;
         List<String> inherits = getInherits(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        addClass(name, path, parent, inherits, startLine, endLine);
+        addClass(identifier, parent, inherits, startLine, endLine);
+        return identifier;
     }
 
-    private void extractVariablesFromClass(CPP14Parser.ClassSpecifierContext ctx) {
+    private void extractVariablesFromClass(CPP14Parser.ClassSpecifierContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.memberSpecification() == null) {
             return;
         }
         for (CPP14Parser.MemberdeclarationContext memberCtx : ctx.memberSpecification().memberdeclaration()) {
             if (memberCtx.functionDefinition() != null) {
-                visitFunctionDefinition(memberCtx.functionDefinition());
+                visitFunctionDefinition(memberCtx.functionDefinition(), parentIdentifier);
                 continue;
             }
 
@@ -195,20 +188,20 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
                 for (CPP14Parser.DeclSpecifierContext declSpec : memberCtx.declSpecifierSeq().declSpecifier()) {
                     if (declSpec.typeSpecifier() != null && declSpec.typeSpecifier().classSpecifier() != null) {
                         // Recursive call to extract inner class members**
-                        extractVariablesFromClass(declSpec.typeSpecifier().classSpecifier());
+                        visitClassSpecifier(declSpec.typeSpecifier().classSpecifier(), parentIdentifier);
                     }
                 }
             }
 
             if (memberCtx.memberDeclaratorList() != null && memberCtx.declSpecifierSeq() != null) {
-                extractVariableElement(memberCtx);
+                extractVariableElement(memberCtx, parentIdentifier);
             }
         }
     }
 
-    private void extractVariableElement(CPP14Parser.MemberdeclarationContext ctx) {
+    private void extractVariableElement(CPP14Parser.MemberdeclarationContext ctx, ElementIdentifier parentIdentifier) {
         String variableType = ctx.declSpecifierSeq().getText();
-        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.memberDeclaratorList());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
@@ -217,9 +210,9 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         addVariables(varNames, path, variableType, parent, startLine, endLine);
     }
 
-    private void extractVariableElement(CPP14Parser.SimpleDeclarationContext ctx) {
+    private void extractVariableElement(CPP14Parser.SimpleDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         String variableType = ctx.declSpecifierSeq().getText();
-        ElementIdentifier parent = new CppParentExtractor().getParent(ctx);
+        ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.initDeclaratorList());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
@@ -284,20 +277,18 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         elementManager.addVariable(variable);
     }
 
-    private void addFunction(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
-        Type type = Type.FUNCTION;
-        Element function = new Element(name, path, type, parent, startLine, endLine);
+    private void addFunction(ElementIdentifier identifier, ElementIdentifier parent, int startLine, int endLine) {
+        Element function = new Element(identifier, parent, startLine, endLine);
         elementManager.addFunction(function);
     }
 
-    private void addClass(String name, String path, ElementIdentifier parent, List<String> inherits, int startLine, int endLine) {
-        ClassElement cppClassElement = new ClassElement(name, path, parent, startLine, endLine, inherits);
+    private void addClass(ElementIdentifier identifier, ElementIdentifier parent, List<String> inherits, int startLine, int endLine) {
+        ClassElement cppClassElement = new ClassElement(identifier, parent, startLine, endLine, inherits);
         elementManager.addClass(cppClassElement);
     }
 
-    private void addNamespace(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
-        Type type = Type.NAMESPACE;
-        Element namespace = new Element(name, path, type, parent, startLine, endLine);
+    private void addNamespace(ElementIdentifier identifier, ElementIdentifier parent, int startLine, int endLine) {
+        Element namespace = new Element(identifier, parent, startLine, endLine);
         elementManager.addNamespace(namespace);
     }
 
@@ -307,5 +298,16 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         Type type = Type.FILE;
         Element file = new Element(name, path, type);
         elementManager.addFile(file);
+    }
+
+    private ElementIdentifier getClassIdentifier(CPP14Parser.ClassSpecifierContext ctx) {
+        String name = "anonymous";
+        if (ctx.classHead().classHeadName() != null) {
+            name = ctx.classHead().classHeadName().getText();
+        } else if (ctx.classHead().classVirtSpecifier() != null) {
+            name = ctx.classHead().classVirtSpecifier().getText();
+        }
+        String path = PathExtractor.extractPath(ctx);
+        return new ElementIdentifier(name, path, Type.CLASS);
     }
 }

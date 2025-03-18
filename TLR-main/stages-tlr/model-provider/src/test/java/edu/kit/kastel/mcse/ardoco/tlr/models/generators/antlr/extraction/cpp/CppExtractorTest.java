@@ -21,7 +21,7 @@ public class CppExtractorTest {
         Assertions.assertEquals(9, manager.getVariables().size());
         Assertions.assertEquals(10, manager.getFunctions().size());
         Assertions.assertEquals(2, manager.getNamespaces().size());
-        Assertions.assertEquals(4, manager.getClasses().size());
+        Assertions.assertEquals(5, manager.getClasses().size());
     }
 
     private CppExtractor buildCppExtractor(String sourcePath) {

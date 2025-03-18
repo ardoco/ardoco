@@ -41,7 +41,7 @@ public class CppClassExtractorTest {
         List<ClassElement> classes = extractClassElementsFromFile(filePath);
 
         // Test the first class
-        Assertions.assertEquals(4, classes.size());
+        Assertions.assertEquals(5, classes.size());
         Assertions.assertEquals("Car", classes.get(0).getName());
         Assertions.assertEquals("Entities", classes.get(0).getParentIdentifier().name());
         Assertions.assertEquals(Type.NAMESPACE, classes.get(0).getParentIdentifier().type());
@@ -51,11 +51,14 @@ public class CppClassExtractorTest {
         Assertions.assertEquals("Garage", classes.get(2).getName());
         Assertions.assertEquals("Entities", classes.get(2).getParentIdentifier().name());
         Assertions.assertEquals(Type.NAMESPACE, classes.get(2).getParentIdentifier().type());
-        Assertions.assertEquals("Child", classes.get(3).getName());
-        Assertions.assertEquals("Entities", classes.get(3).getParentIdentifier().name());
-        Assertions.assertEquals(Type.NAMESPACE, classes.get(3).getParentIdentifier().type());
-        Assertions.assertEquals(1, classes.get(3).getInherits().size());
-        Assertions.assertEquals("Person", classes.get(3).getInherits().get(0));
+        Assertions.assertEquals("Mechanic", classes.get(3).getName());
+        Assertions.assertEquals("Garage", classes.get(3).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, classes.get(3).getParentIdentifier().type());
+        Assertions.assertEquals("Child", classes.get(4).getName());
+        Assertions.assertEquals("Entities", classes.get(4).getParentIdentifier().name());
+        Assertions.assertEquals(Type.NAMESPACE, classes.get(4).getParentIdentifier().type());
+        Assertions.assertEquals(1, classes.get(4).getInherits().size());
+        Assertions.assertEquals("Person", classes.get(4).getInherits().get(0));
     }
 
     private List<ClassElement> extractClassElementsFromFile(String filePath) throws IOException {

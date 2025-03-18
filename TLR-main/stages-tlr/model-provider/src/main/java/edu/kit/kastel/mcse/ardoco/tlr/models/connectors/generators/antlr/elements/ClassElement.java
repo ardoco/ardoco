@@ -22,6 +22,11 @@ public class ClassElement extends Element {
         this.inherits = new ArrayList<>();
     }
 
+    public ClassElement(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine, List<String> inherits) {
+        super(identifier, identifierOfParent, startLine, endLine);
+        this.inherits = inherits;
+    }
+
     public List<String> getInherits() {
         return this.inherits;
     }

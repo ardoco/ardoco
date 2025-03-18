@@ -10,11 +10,25 @@ public class Element {
     private String comment;
 
     public Element(String name, String path, Type type) {
-        this.identifier = new ElementIdentifier(name, path, type);
+        this(new ElementIdentifier(name, path, type));
+    }
+
+    public Element(ElementIdentifier identifier) {
+        this.identifier = identifier;
         this.comment = "";
         this.startLine = -1;
         this.endLine = -1;
+    }
 
+    public Element(ElementIdentifier identifier, ElementIdentifier identifierOfParent) {
+        this(identifier);
+        this.identifierOfParent = identifierOfParent;
+    }
+
+    public Element(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine) {
+        this(identifier, identifierOfParent);
+        this.startLine = startLine;
+        this.endLine = endLine;
     }
 
     public Element(String name, String path, Type type, ElementIdentifier identifierOfParent) {
