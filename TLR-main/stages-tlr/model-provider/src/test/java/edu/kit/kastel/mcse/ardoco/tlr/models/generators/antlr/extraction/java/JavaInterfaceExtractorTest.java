@@ -84,7 +84,7 @@ public class JavaInterfaceExtractorTest {
         Path path = Path.of(filePath);
         JavaLexer lexer = new JavaLexer(CharStreams.fromPath(path));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        extractor.extract(tokenStream);
+        extractor.extractElements(tokenStream);
         return extractor.getElements().getInterfaces();
 
     }

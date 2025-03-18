@@ -51,7 +51,7 @@ public class CppControlExtractorTest {
         Path path = Path.of(filePath);
         CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromPath(path));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        extractor.extract(tokenStream);
+        extractor.extractElements(tokenStream);
         return extractor.getElements().getFunctions();
     }
 

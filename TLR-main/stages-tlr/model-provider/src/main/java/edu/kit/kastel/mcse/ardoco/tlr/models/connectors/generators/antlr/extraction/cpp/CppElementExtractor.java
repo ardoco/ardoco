@@ -1,8 +1,13 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -13,20 +18,31 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
+import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
-import generated.antlr.cpp.CPP14ParserBaseVisitor;
 import generated.antlr.cpp.CPP14Parser.FunctionBodyContext;
 import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
-public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements ElementExtractor {
+public class CppElementExtractor extends ElementExtractor {
     private final CppElementManager elementManager;
 
     public CppElementExtractor() {
+        super();
         this.elementManager = new CppElementManager();
+        this.commentExtractor = new CppCommentExtractor(elementManager);
     }
 
     public CppElementExtractor(CppElementManager elementManager) {
+        super();
         this.elementManager = elementManager;
+        this.commentExtractor = new CppCommentExtractor(elementManager);
+    }
+
+    @Override 
+    protected CommonTokenStream buildTokens(Path file) throws IOException {
+        CharStream stream = CharStreams.fromPath(file);
+        CPP14Lexer lexer = new CPP14Lexer(stream);
+        return new CommonTokenStream(lexer);
     }
 
     @Override
@@ -35,7 +51,22 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
     }
 
     @Override
-    public void extract(CommonTokenStream tokens) {
+    protected List<Path> getFiles(String directoryPath) {
+        Path dir = Path.of(directoryPath);
+        List<Path> cppFiles = new ArrayList<>();
+        try {
+            Files.walk(dir)
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h"))
+                    .forEach(cppFiles::add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cppFiles;
+    }
+
+    @Override
+    public void extractElements(CommonTokenStream tokens) {
         TranslationUnitContext ctx = buildContext(tokens);
 
         visitTranslationUnit(ctx);
@@ -47,7 +78,6 @@ public class CppElementExtractor extends CPP14ParserBaseVisitor<Void> implements
         return parser.translationUnit();
     }
 
-    @Override
     public Void visitTranslationUnit(CPP14Parser.TranslationUnitContext ctx) {
         if (ctx.declarationseq() != null) {
             for (CPP14Parser.DeclarationContext declaration : ctx.declarationseq().declaration()) {

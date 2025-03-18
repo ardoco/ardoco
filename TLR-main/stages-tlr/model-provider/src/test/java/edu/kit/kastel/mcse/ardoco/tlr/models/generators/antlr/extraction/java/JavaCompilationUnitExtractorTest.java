@@ -79,7 +79,7 @@ class JavaCompilationUnitExtractorTest {
         Path path = Path.of(filePath);
         JavaLexer lexer = new JavaLexer(CharStreams.fromPath(path));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        extractor.extract(tokenStream);
+        extractor.extractElements(tokenStream);
         List<Element> compilationUnits = extractor.getElements().getCompilationUnits();
         Assertions.assertEquals(1, compilationUnits.size());
         return compilationUnits.get(0);

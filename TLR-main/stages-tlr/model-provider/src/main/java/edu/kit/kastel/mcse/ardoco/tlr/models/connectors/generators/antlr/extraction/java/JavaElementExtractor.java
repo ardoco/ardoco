@@ -1,8 +1,13 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -14,19 +19,23 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
+import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
-import generated.antlr.java.JavaParserBaseVisitor;
 import generated.antlr.java.JavaParser.CompilationUnitContext;
 
-public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements ElementExtractor {
+public class JavaElementExtractor extends ElementExtractor {
     private final JavaElementManager elementManager;
 
     public JavaElementExtractor() {
+        super();
         this.elementManager = new JavaElementManager();
+        this.commentExtractor = new JavaCommentExtractor(elementManager);
     }
 
     public JavaElementExtractor(JavaElementManager elementManager) {
+        super();
         this.elementManager = elementManager;
+        this.commentExtractor = new JavaCommentExtractor(elementManager);
     }
 
     @Override
@@ -34,8 +43,30 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements
         return elementManager;
     }
 
+        @Override
+    protected List<Path> getFiles(String directoryPath) {
+        Path dir = Path.of(directoryPath);
+        List<Path> javaFiles = new ArrayList<>();
+        try {
+            Files.walk(dir)
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".java"))
+                    .forEach(javaFiles::add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return javaFiles;
+    }
+
     @Override
-    public void extract(CommonTokenStream tokens) {
+    protected CommonTokenStream buildTokens(Path file) throws IOException {
+        CharStream stream = CharStreams.fromPath(file);
+        JavaLexer lexer = new JavaLexer(stream);
+        return new CommonTokenStream(lexer);
+    }
+
+    @Override
+    public void extractElements(CommonTokenStream tokens) {
         CompilationUnitContext ctx = buildContext(tokens);
         visitCompilationUnit(ctx);
 
@@ -46,7 +77,6 @@ public class JavaElementExtractor extends JavaParserBaseVisitor<Void> implements
         return parser.compilationUnit();
     }
 
-    @Override
     public Void visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
         ElementIdentifier identifier = addCompilationUnit(ctx);
         for (JavaParser.TypeDeclarationContext typeDeclarationContext : ctx.typeDeclaration()) {

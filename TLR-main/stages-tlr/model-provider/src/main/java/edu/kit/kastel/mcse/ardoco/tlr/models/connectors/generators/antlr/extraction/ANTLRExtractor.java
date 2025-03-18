@@ -1,27 +1,20 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-
-import org.antlr.v4.runtime.CommonTokenStream;
-
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.CodeExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 
-public abstract class ANTLRExtractor extends CodeExtractor {
-    public final ProgrammingLanguage LANGUAGE;
-    private ModelMapper mapper;
-    private ElementExtractor elementExtractor;
-    private CommentExtractor commentExtractor;
+public class ANTLRExtractor extends CodeExtractor {
+    private final ProgrammingLanguage language;
+    protected ModelMapper mapper;
+    protected ElementExtractor elementExtractor;
     private boolean contentExtracted;
 
     protected ANTLRExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
         super(codeItemRepository, path);
-        this.LANGUAGE = language;
+        this.language = language;
         this.contentExtracted = false;
     }
 
@@ -39,56 +32,19 @@ public abstract class ANTLRExtractor extends CodeExtractor {
         return elementExtractor;
     }
 
+    public ProgrammingLanguage getLanguage() {
+        return language;
+    }
+
     public ModelMapper getMapper() {
         return mapper;
     }
-
-    protected void setMapper(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    protected void setElementExtractor(ElementExtractor elementExtractor) {
-        this.elementExtractor = elementExtractor;
-    }
-
-    protected void setCommentExtractor(CommentExtractor commentExtractor) {
-        this.commentExtractor = commentExtractor;
-    }
-
-    protected abstract List<Path> getFiles();
-
-    protected abstract CommonTokenStream buildTokens(Path file) throws IOException;
 
     private void mapToCodeModel() {
         this.mapper.mapToCodeModel();
     }
 
     private void extractContent() {
-        List<Path> files = getFiles();
-        for (Path file : files) {
-            CommonTokenStream tokens;
-            try {
-                tokens = buildTokens(file);
-                
-            } catch (IOException e) {
-                continue;
-            }
-            extractContentFromTokens(file, tokens);
-        }
+        this.elementExtractor.extract(this.path);
     }
-
-    private void extractContentFromTokens(Path file, CommonTokenStream tokenStream) {
-        extractElementsFromFile(tokenStream);
-        extractComments(file, tokenStream);
-    }
-
-    private void extractElementsFromFile(CommonTokenStream tokenStream) {
-        this.elementExtractor.extract(tokenStream);
-    }
-
-    private void extractComments(Path file, CommonTokenStream tokens) {
-        String path = file.toString();
-        commentExtractor.extract(path, tokens);
-    }
-
 }

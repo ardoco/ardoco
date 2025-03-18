@@ -89,7 +89,7 @@ public class Python3VariableExtractorTest {
         Path path = Path.of(filePath);
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(path));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        extractor.extract(tokenStream);
+        extractor.extractElements(tokenStream);
         return extractor.getElements().getVariables();
     }
 
