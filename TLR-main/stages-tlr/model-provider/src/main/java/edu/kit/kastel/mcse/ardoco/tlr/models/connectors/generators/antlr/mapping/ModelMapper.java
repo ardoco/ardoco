@@ -9,15 +9,15 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
 public class ModelMapper {
     protected final CodeItemRepository codeItemRepository;
-    protected final ElementManager elementManager;
+    protected final ElementStorageRegistry elementManager;
     protected final CodeItemBuilder codeItemBuilder;
     private CodeModel codeModel;
 
-    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemBuilder codeItemBuilder, ElementManager elementManager) {
+    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemBuilder codeItemBuilder, ElementStorageRegistry elementManager) {
         this.codeItemRepository = codeItemRepository;
         this.elementManager = elementManager;
         this.codeItemBuilder = codeItemBuilder;

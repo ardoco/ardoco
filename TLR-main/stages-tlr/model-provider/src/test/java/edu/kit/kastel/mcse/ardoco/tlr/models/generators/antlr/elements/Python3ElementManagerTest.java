@@ -11,14 +11,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
 public class Python3ElementManagerTest {
-    private Python3ElementManager elementManager;
+    private Python3ElementStorageRegistry elementManager;
 
     @Test
     void addVariablesTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         assert elementManager.getVariables().containsAll(variables);
@@ -26,7 +26,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void addVariablesTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
         Assertions.assertEquals(2, elementManager.getVariables().size());
@@ -36,7 +36,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void addFunctionsTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         assert elementManager.getFunctions().containsAll(functions);
@@ -44,7 +44,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void addFunctionsTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
         Assertions.assertEquals(2, elementManager.getFunctions().size());
@@ -54,7 +54,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void addClassesTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         assert elementManager.getClasses().containsAll(classes);
@@ -62,7 +62,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void addClassesTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
         Assertions.assertEquals(2, elementManager.getClasses().size());
@@ -72,7 +72,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getVariableTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         assert elementManager.getVariables().containsAll(variables);
@@ -80,7 +80,7 @@ public class Python3ElementManagerTest {
 
     @Test 
     void getVariableTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
         
@@ -91,7 +91,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctionTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         assert elementManager.getFunctions().containsAll(functions);
@@ -99,7 +99,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctionTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
         
@@ -110,7 +110,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         assert elementManager.getClasses().containsAll(classes);
@@ -118,7 +118,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassTestWithNull() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
         
@@ -129,7 +129,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getVariablesWithParentSimpleTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
@@ -139,7 +139,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getVariablesWithNullParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
@@ -149,7 +149,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctionsWithParentSimpleTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
@@ -159,7 +159,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctionsWithNullParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
@@ -169,7 +169,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassWithParentSimpleTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
@@ -179,7 +179,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassWithNullParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
@@ -189,7 +189,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getVariableWrongParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.CLASS);
@@ -199,7 +199,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctioneWithWrongParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.FUNCTION);
@@ -209,7 +209,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassWithWrongParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.FUNCTION);
@@ -219,7 +219,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getVariableWithDifferentParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         VariableElement var = new VariableElement("var4", "path", "string", new ElementIdentifier("diffVarParent", "path", Type.FUNCTION));
         variables.add(var);
@@ -239,7 +239,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getFunctionWithDifferentParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         Type type = Type.FUNCTION;
         Element func = new Element("d", "path", type, new ElementIdentifier("diffFcParent", "path", Type.CLASS));
@@ -260,7 +260,7 @@ public class Python3ElementManagerTest {
 
     @Test
     void getClassWithDifferentParentTest() {
-        elementManager = new Python3ElementManager();
+        elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         ClassElement cl = new ClassElement("d", "path", new ElementIdentifier("diffClParent", "path", Type.MODULE));
         classes.add(cl);

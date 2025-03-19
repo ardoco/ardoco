@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappin
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.strategies.ClassStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.strategies.FileStrategy;
@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 
 public class CppCodeItemBuilder extends CodeItemBuilder{
     
-    public CppCodeItemBuilder(CodeItemRepository repository, CppElementManager elementManager) {
+    public CppCodeItemBuilder(CodeItemRepository repository, CppElementStorageRegistry elementManager) {
         super();
         this.strategies = List.of(
             new FunctionStrategy(repository, this, elementManager), 

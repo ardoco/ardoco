@@ -8,12 +8,12 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
 
 public class ModuleStrategy extends AbstractPython3CodeItemStrategy{
 
-    public ModuleStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementManager elementManager) {
+    public ModuleStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementStorageRegistry elementManager) {
         super(repository, codeItemBuilder, elementManager);
     }
 

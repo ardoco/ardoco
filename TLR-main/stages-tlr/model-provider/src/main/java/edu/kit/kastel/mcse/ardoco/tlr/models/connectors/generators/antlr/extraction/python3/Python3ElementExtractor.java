@@ -18,26 +18,26 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import generated.antlr.python3.Python3Lexer;
 import generated.antlr.python3.Python3Parser;
 import generated.antlr.python3.Python3Parser.File_inputContext;
 
 public class Python3ElementExtractor extends ElementExtractor {
-    private final Python3ElementManager elementManager;
+    private final Python3ElementStorageRegistry elementManager;
 
     public Python3ElementExtractor() {
-        this.elementManager = new Python3ElementManager();
+        this.elementManager = new Python3ElementStorageRegistry();
         this.commentExtractor = new Python3CommentExtractor(elementManager);
     }
 
-    public Python3ElementExtractor(Python3ElementManager elementManager) {
+    public Python3ElementExtractor(Python3ElementStorageRegistry elementManager) {
         this.elementManager = elementManager;
         this.commentExtractor = new Python3CommentExtractor(elementManager);
     }
 
     @Override
-    public Python3ElementManager getElements() {
+    public Python3ElementStorageRegistry getElements() {
         return elementManager;
     }
 

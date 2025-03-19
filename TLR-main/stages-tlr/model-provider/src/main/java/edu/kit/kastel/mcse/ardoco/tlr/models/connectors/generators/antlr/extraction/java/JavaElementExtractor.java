@@ -18,28 +18,28 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 public class JavaElementExtractor extends ElementExtractor {
-    private final JavaElementManager elementManager;
+    private final JavaElementStorageRegistry elementManager;
 
     public JavaElementExtractor() {
         super();
-        this.elementManager = new JavaElementManager();
+        this.elementManager = new JavaElementStorageRegistry();
         this.commentExtractor = new JavaCommentExtractor(elementManager);
     }
 
-    public JavaElementExtractor(JavaElementManager elementManager) {
+    public JavaElementExtractor(JavaElementStorageRegistry elementManager) {
         super();
         this.elementManager = elementManager;
         this.commentExtractor = new JavaCommentExtractor(elementManager);
     }
 
     @Override
-    public JavaElementManager getElements() {
+    public JavaElementStorageRegistry getElements() {
         return elementManager;
     }
 

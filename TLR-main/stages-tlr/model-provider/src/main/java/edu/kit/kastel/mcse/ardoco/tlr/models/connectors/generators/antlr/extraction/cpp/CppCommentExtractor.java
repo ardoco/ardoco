@@ -3,12 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import generated.antlr.cpp.CPP14Lexer;
 
 public class CppCommentExtractor extends CommentExtractor {
 
-    public CppCommentExtractor(CppElementManager elementManager) {
+    public CppCommentExtractor(CppElementStorageRegistry elementManager) {
         super(elementManager);
     }
 

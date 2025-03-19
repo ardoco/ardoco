@@ -1,9 +1,11 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java;
 
-import java.util.EnumMap;
+import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.JavaCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -13,27 +15,172 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 public class JavaElementStorageRegistry extends ElementStorageRegistry {
 
     public JavaElementStorageRegistry() {
-        super(createTypeMap());
+        super(new JavaCommentMatcher());
     }
 
-    private static EnumMap<Type, Class<?>> createTypeMap() {
-        EnumMap<Type, Class<?>> typeOfClass = new EnumMap<>(Type.class);
-        typeOfClass.put(Type.VARIABLE, VariableElement.class);
-        typeOfClass.put(Type.FUNCTION, Element.class);
-        typeOfClass.put(Type.CLASS, JavaClassElement.class);
-        typeOfClass.put(Type.INTERFACE, Element.class);
-        typeOfClass.put(Type.COMPILATIONUNIT, Element.class);
-        typeOfClass.put(Type.PACKAGE, PackageElement.class);
-        return typeOfClass;
+
+    public JavaElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<JavaClassElement> classes,
+            List<Element> interfaces, List<Element> compilationUnits, List<PackageElement> packages) {
+        this();
+        addElements(Type.VARIABLE, variables);
+        addElements(Type.FUNCTION, functions);
+        addElements(Type.CLASS, classes);
+        addElements(Type.INTERFACE, interfaces);
+        addElements(Type.COMPILATIONUNIT, compilationUnits);
+        addElements(Type.PACKAGE, packages);
     }
 
+    @Override
     protected void registerStorage() {
-        registerStorage(Type.VARIABLE, new ElementStorage<VariableElement>(VariableElement.class));
-        registerStorage(Type.FUNCTION, new ElementStorage<Element>(Element.class));
-        registerStorage(Type.CLASS, new ElementStorage<JavaClassElement>(JavaClassElement.class));
-        registerStorage(Type.INTERFACE, new ElementStorage<Element>(Element.class));
-        registerStorage(Type.COMPILATIONUNIT, new ElementStorage<Element>(Element.class));
-        registerStorage(Type.PACKAGE, new ElementStorage<PackageElement>(PackageElement.class));
+        registerStorage(Type.VARIABLE, new ElementStorage<>(VariableElement.class));
+        registerStorage(Type.FUNCTION, new ElementStorage<>(Element.class));
+        registerStorage(Type.CLASS, new ElementStorage<>(JavaClassElement.class));
+        registerStorage(Type.INTERFACE, new ElementStorage<>(Element.class));
+        registerStorage(Type.COMPILATIONUNIT, new ElementStorage<>(Element.class));
+        registerStorage(Type.PACKAGE, new ElementStorage<>(PackageElement.class));
     }
-    
+
+    public void addVariable(VariableElement variable) {
+        addElement(Type.VARIABLE, variable);
+    }
+
+    public void addFunction(Element function) {
+        addElement(Type.FUNCTION, function);
+    }
+
+    public void addClass(JavaClassElement clazz) {
+        addElement(Type.CLASS, clazz);
+    }
+
+    public void addInterface(Element interfaceElement) {
+        addElement(Type.INTERFACE, interfaceElement);
+    }
+
+    public void addCompilationUnit(Element compilationUnit) {
+        addElement(Type.COMPILATIONUNIT, compilationUnit);
+    }
+
+    public void addPackage(PackageElement packageElement) {
+        addElement(Type.PACKAGE, packageElement);
+    }
+
+    public void addVariables(List<VariableElement> variables) {
+        addElements(Type.VARIABLE, variables);
+    }
+
+    public void addFunctions(List<Element> functions) {
+        addElements(Type.FUNCTION, functions);
+    }
+
+    public void addClasses(List<JavaClassElement> classes) {
+        addElements(Type.CLASS, classes);
+    }
+
+    public void addInterfaces(List<Element> interfaces) {
+        addElements(Type.INTERFACE, interfaces);
+    }
+
+    public void addCompilationUnits(List<Element> compilationUnits) {
+        addElements(Type.COMPILATIONUNIT, compilationUnits);
+    }
+
+    public void addPackages(List<PackageElement> packages) {
+        addElements(Type.PACKAGE, packages);
+    }
+
+    public VariableElement getVariable(ElementIdentifier parent) {
+        return getElement(parent, VariableElement.class);
+    }
+
+    public Element getFunction(ElementIdentifier parent) {
+        return getElement(parent, Element.class);
+    }
+
+    public JavaClassElement getClass(ElementIdentifier parent) {
+        return getElement(parent, JavaClassElement.class);
+    }
+
+    public Element getInterface(ElementIdentifier parent) {
+        return getElement(parent, Element.class);
+    }
+
+    public Element getCompilationUnitElement(ElementIdentifier parent) {
+        return getElement(parent, Element.class);
+    }
+
+    public PackageElement getPackage(ElementIdentifier parent) {
+        return getElement(parent, PackageElement.class);
+    }
+
+    public List<VariableElement> getVariables() {
+        return getElements(Type.VARIABLE, VariableElement.class);
+    }
+
+    public List<Element> getFunctions() {
+        return getElements(Type.FUNCTION, Element.class);
+    }
+
+    public List<JavaClassElement> getClasses() {
+        return getElements(Type.CLASS, JavaClassElement.class);
+    }
+
+    public List<Element> getInterfaces() {
+        return getElements(Type.INTERFACE, Element.class);
+    }
+
+    public List<Element> getCompilationUnits() {
+        return getElements(Type.COMPILATIONUNIT, Element.class);
+    }
+
+    public List<PackageElement> getPackages() {
+        return getElements(Type.PACKAGE, PackageElement.class);
+    }
+
+    public boolean isVariableElement(Element element) {
+        return containsElement(Type.VARIABLE, element);
+    }
+
+    public boolean isFunctionElement(Element element) {
+        return containsElement(Type.FUNCTION, element);
+    }
+
+    public boolean isClassElement(Element element) {
+        return containsElement(Type.CLASS, element);
+    }
+
+    public boolean isInterfaceElement(Element element) {
+        return containsElement(Type.INTERFACE, element);
+    }
+
+    public boolean isCompilationUnitElement(Element element) {
+        return containsElement(Type.COMPILATIONUNIT, element);
+    }
+
+    public boolean isPackageElement(Element element) {
+        return containsElement(Type.PACKAGE, element);
+    }
+
+    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.VARIABLE, parent);
+    }
+
+    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.FUNCTION, parent);
+    }
+
+    public List<JavaClassElement> getClassesWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.CLASS, parent);
+    }
+
+    public List<Element> getInterfacesWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.INTERFACE, parent);
+    }
+
+    public List<Element> getCompilationUnitsWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.COMPILATIONUNIT, parent);
+    }
+
+    public List<PackageElement> getPackagesWithParent(ElementIdentifier parent) {
+        return getContentOfParent(Type.PACKAGE, parent);
+    }
 }

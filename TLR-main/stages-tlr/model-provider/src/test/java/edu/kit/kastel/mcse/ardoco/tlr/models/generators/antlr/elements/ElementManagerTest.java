@@ -13,17 +13,17 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
 public class ElementManagerTest {
-    private ElementManager elementManager;
+    private ElementStorageRegistry elementManager;
 
     @Test
     void getRootParentsJavaTest() {
-        elementManager = new JavaElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(), getCorrectCompilationUnitList(), getCorrectPackageList());
+        elementManager = new JavaElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(), getCorrectCompilationUnitList(), getCorrectPackageList());
         
         List<ElementIdentifier> rootParents = elementManager.getRootParents();
 
@@ -32,7 +32,7 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsCppTest() {
-        elementManager = new CppElementManager(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
+        elementManager = new CppElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
 
         List<ElementIdentifier> rootParents = elementManager.getRootParents();
 
@@ -41,7 +41,7 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsPythonTest() {
-        elementManager = new Python3ElementManager(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(), new ArrayList<>(), getCorrectPackageList());
+        elementManager = new Python3ElementStorageRegistry(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(), new ArrayList<>(), getCorrectPackageList());
 
         List<ElementIdentifier> rootParents = elementManager.getRootParents();
 

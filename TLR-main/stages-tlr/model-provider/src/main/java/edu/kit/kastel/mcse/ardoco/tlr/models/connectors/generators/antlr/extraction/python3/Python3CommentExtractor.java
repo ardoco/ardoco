@@ -3,12 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import generated.antlr.python3.Python3Lexer;
 
 public class Python3CommentExtractor extends CommentExtractor {
 
-    public Python3CommentExtractor(Python3ElementManager elementManager) {
+    public Python3CommentExtractor(Python3ElementStorageRegistry elementManager) {
         super(elementManager);
     }
 

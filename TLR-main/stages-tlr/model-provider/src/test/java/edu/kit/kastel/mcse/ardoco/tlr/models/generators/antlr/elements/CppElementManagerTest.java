@@ -11,14 +11,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 
 public class CppElementManagerTest {
-    private CppElementManager elementManager;
+    private CppElementStorageRegistry elementManager;
 
     @Test
     void addVariablesTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -32,7 +32,7 @@ public class CppElementManagerTest {
 
     @Test
     void addVariablesNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getNullVariables();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -45,7 +45,7 @@ public class CppElementManagerTest {
 
     @Test
     void addFunctionsTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -59,7 +59,7 @@ public class CppElementManagerTest {
 
     @Test
     void addFunctionsNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getNullFunctions();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -72,7 +72,7 @@ public class CppElementManagerTest {
 
     @Test
     void addClassesTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -86,7 +86,7 @@ public class CppElementManagerTest {
 
     @Test
     void addClassesNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getNullClasses();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -99,7 +99,7 @@ public class CppElementManagerTest {
 
     @Test
     void addNamespacesTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getCorrectNamespacesList();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -113,7 +113,7 @@ public class CppElementManagerTest {
 
     @Test
     void addNamespacesNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getNullNamespaces();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -126,7 +126,7 @@ public class CppElementManagerTest {
 
     @Test
     void getVariableTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -143,7 +143,7 @@ public class CppElementManagerTest {
 
     @Test
     void getVariableNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getNullVariables();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -158,7 +158,7 @@ public class CppElementManagerTest {
 
     @Test
     void getNamespaceTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getCorrectNamespacesList();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -176,7 +176,7 @@ public class CppElementManagerTest {
 
     @Test
     void getNamespaceNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getNullNamespaces();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -192,7 +192,7 @@ public class CppElementManagerTest {
 
     @Test
     void getClassTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -210,7 +210,7 @@ public class CppElementManagerTest {
 
     @Test
     void getClassNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getNullClasses();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -226,7 +226,7 @@ public class CppElementManagerTest {
 
     @Test
     void getFunctionTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -244,7 +244,7 @@ public class CppElementManagerTest {
 
     @Test
     void getFunctionNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getNullFunctions();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -260,7 +260,7 @@ public class CppElementManagerTest {
 
     @Test
     void getVariablesWithParentSimpleTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -278,7 +278,7 @@ public class CppElementManagerTest {
 
     @Test
     void getVariablesWithParentNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getNullVariables();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -293,7 +293,7 @@ public class CppElementManagerTest {
 
     @Test
     void getVariablesWrongParentTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -308,7 +308,7 @@ public class CppElementManagerTest {
 
     @Test 
     void getVariablesWithDifferentParentsTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         VariableElement diffVar = new VariableElement("diffVar", "path", "int", new ElementIdentifier("diffVarParent", "path", Type.FUNCTION));
         variables.add(diffVar);
@@ -332,7 +332,7 @@ public class CppElementManagerTest {
 
     @Test
     void getFunctionsWithParentSimpleTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -350,7 +350,7 @@ public class CppElementManagerTest {
 
     @Test
     void getFunctionsWithParentNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getNullFunctions();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -365,7 +365,7 @@ public class CppElementManagerTest {
 
     @Test
     void getFunctionsWithDifferentParentsTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         Element diffFc = new Element("diffFc", "path", Type.FUNCTION, new ElementIdentifier("diffFcParent", "path", Type.CLASS));
         functions.add(diffFc);
@@ -389,7 +389,7 @@ public class CppElementManagerTest {
 
     @Test
     void getClassWithParentSimpleTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -407,7 +407,7 @@ public class CppElementManagerTest {
 
     @Test
     void getClassWithParentNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getNullClasses();
         for (ClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -422,7 +422,7 @@ public class CppElementManagerTest {
 
     @Test
     void getClassWithDifferentParentsTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         ClassElement diffCs = new ClassElement("diffCs", "path", new ElementIdentifier("diffCsParent", "path", Type.NAMESPACE));
         classes.add(diffCs);
@@ -446,7 +446,7 @@ public class CppElementManagerTest {
 
     @Test
     void getNamespaceWithParentSimpleTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getCorrectNamespacesList();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -464,7 +464,7 @@ public class CppElementManagerTest {
 
     @Test
     void getNamespaceWithParentNullTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getNullNamespaces();
         for (Element namespace : namespaces) {
             elementManager.addNamespace(namespace);
@@ -479,7 +479,7 @@ public class CppElementManagerTest {
 
     @Test
     void getNamespaceWithDifferentParentsTest() {
-        elementManager = new CppElementManager();
+        elementManager = new CppElementStorageRegistry();
         List<Element> namespaces = getCorrectNamespacesList();
         Element diffNs = new Element("diffNs", "path", Type.NAMESPACE, new ElementIdentifier("diffNsParent", "path", Type.FILE));
         namespaces.add(diffNs);

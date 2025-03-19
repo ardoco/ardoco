@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
 public abstract class ElementExtractor {
     protected CommentExtractor commentExtractor;
@@ -14,7 +14,7 @@ public abstract class ElementExtractor {
     protected ElementExtractor() {
     }
 
-    public abstract ElementManager getElements(); 
+    public abstract ElementStorageRegistry getElements(); 
 
     public void extract(String directoryPath) {
         List<Path> files = getFiles(directoryPath);

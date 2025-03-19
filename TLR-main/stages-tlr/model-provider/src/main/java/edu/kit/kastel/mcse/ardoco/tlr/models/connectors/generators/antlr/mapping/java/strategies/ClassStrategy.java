@@ -9,13 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
 
 public class ClassStrategy extends AbstractJavaCodeItemStrategy {
 
     public ClassStrategy(CodeItemRepository codeItemRepository, JavaCodeItemBuilder javaCodeItemBuilder,
-            JavaElementManager elementManager) {
+            JavaElementStorageRegistry elementManager) {
         super(codeItemRepository, javaCodeItemBuilder, elementManager);
     }
 

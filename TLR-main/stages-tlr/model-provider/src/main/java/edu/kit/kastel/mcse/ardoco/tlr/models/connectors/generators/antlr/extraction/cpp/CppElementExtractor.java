@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import generated.antlr.cpp.CPP14Lexer;
@@ -24,15 +24,15 @@ import generated.antlr.cpp.CPP14Parser.FunctionBodyContext;
 import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 public class CppElementExtractor extends ElementExtractor {
-    private final CppElementManager elementManager;
+    private final CppElementStorageRegistry elementManager;
 
     public CppElementExtractor() {
         super();
-        this.elementManager = new CppElementManager();
+        this.elementManager = new CppElementStorageRegistry();
         this.commentExtractor = new CppCommentExtractor(elementManager);
     }
 
-    public CppElementExtractor(CppElementManager elementManager) {
+    public CppElementExtractor(CppElementStorageRegistry elementManager) {
         super();
         this.elementManager = elementManager;
         this.commentExtractor = new CppCommentExtractor(elementManager);
@@ -46,7 +46,7 @@ public class CppElementExtractor extends ElementExtractor {
     }
 
     @Override
-    public CppElementManager getElements() {
+    public CppElementStorageRegistry getElements() {
         return elementManager;
     }
 

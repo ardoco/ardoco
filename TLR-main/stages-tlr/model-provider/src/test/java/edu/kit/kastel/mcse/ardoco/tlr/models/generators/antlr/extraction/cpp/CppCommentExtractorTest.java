@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppCommentExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import generated.antlr.cpp.CPP14Lexer;
 import generated.antlr.cpp.CPP14Parser;
 
@@ -79,7 +79,7 @@ public class CppCommentExtractorTest {
         CPP14Parser parser = new CPP14Parser(tokens);
         parser.translationUnit();
 
-        CppElementManager manager = new CppElementManager();
+        CppElementStorageRegistry manager = new CppElementStorageRegistry();
         CppCommentExtractor extractor = new CppCommentExtractor(manager);
         extractor.extract(filePath, tokens);
         return extractor.getCurrentComments();

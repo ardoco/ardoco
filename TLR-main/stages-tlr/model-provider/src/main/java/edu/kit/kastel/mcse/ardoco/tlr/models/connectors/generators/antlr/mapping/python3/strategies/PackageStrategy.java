@@ -9,12 +9,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
 
 public class PackageStrategy extends AbstractPython3CodeItemStrategy {
 
-    public PackageStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementManager elementManager) {
+    public PackageStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementStorageRegistry elementManager) {
         super(repository, codeItemBuilder, elementManager);
     }
 

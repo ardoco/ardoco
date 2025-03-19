@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
 public class Python3ExtractorTest {
 
@@ -16,7 +16,7 @@ public class Python3ExtractorTest {
         String sourcePath = "src/test/resources/python/interface/edu/";
         Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
         python3Extractor.extractModel();
-        Python3ElementManager manager = (Python3ElementManager) python3Extractor.getElementExtractor().getElements();
+        Python3ElementStorageRegistry manager = (Python3ElementStorageRegistry) python3Extractor.getElementExtractor().getElements();
 
         // Assertions
         Assertions.assertEquals(13, manager.getVariables().size());

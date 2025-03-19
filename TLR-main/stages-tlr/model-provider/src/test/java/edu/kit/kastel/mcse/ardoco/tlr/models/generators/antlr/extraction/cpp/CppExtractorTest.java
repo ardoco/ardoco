@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 
 public class CppExtractorTest {
     @Test
@@ -15,7 +15,7 @@ public class CppExtractorTest {
         String sourcePath = "src/test/resources/cpp/interface/edu/";
         CppExtractor cppExtractor = buildCppExtractor(sourcePath);
         cppExtractor.extractModel();
-        CppElementManager manager = (CppElementManager) cppExtractor.getElementExtractor().getElements();
+        CppElementStorageRegistry manager = (CppElementStorageRegistry) cppExtractor.getElementExtractor().getElements();
 
         // Assertions
         Assertions.assertEquals(9, manager.getVariables().size());

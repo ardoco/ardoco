@@ -7,13 +7,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
 public abstract class CommentExtractor {
-    private final ElementManager elementManager;
+    private final ElementStorageRegistry elementManager;
     private List<Comment> currentComments;
 
-    protected CommentExtractor(ElementManager elementManager) {
+    protected CommentExtractor(ElementStorageRegistry elementManager) {
         this.elementManager = elementManager;
     }
 

@@ -12,14 +12,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementManager;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 
 public class JavaElementManagerTest {
-    private JavaElementManager elementManager;
+    private JavaElementStorageRegistry elementManager;
 
     @Test
     void addVariableTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -29,7 +29,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addVariablesNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<VariableElement> variables = getIncorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -41,7 +41,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addFunctionTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -51,7 +51,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addFunctionNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -63,7 +63,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addClassTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<JavaClassElement> classes = getCorrectClassList();
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -73,7 +73,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addClassNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<JavaClassElement> classes = getIncorrectClassList();
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -85,7 +85,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addInterfaceTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> interfaces = getCorrectInterfaceList();
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
@@ -95,7 +95,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addInterfaceNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> interfaces = getIncorrectInterfaceList();
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
@@ -107,7 +107,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addCompilationUnitTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> compilationUnits = getCorrectCompilationUnitList();
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
@@ -117,7 +117,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addCompilationUnitNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> compilationUnits = getIncorrectCompilationUnitList();
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
@@ -129,7 +129,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addPackageTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<PackageElement> packages = getCorrectPackageList();
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
@@ -139,7 +139,7 @@ public class JavaElementManagerTest {
 
     @Test
     void addPackageNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<PackageElement> packages = getIncorrectPackageList();
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
@@ -151,7 +151,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getVariableTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -161,7 +161,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getVariableNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<VariableElement> variables = getIncorrectVariablesList();
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
@@ -172,7 +172,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getFunctionTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -182,7 +182,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getFunctionNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         for (Element function : functions) {
             elementManager.addFunction(function);
@@ -193,7 +193,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getClassTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<JavaClassElement> classes = getCorrectClassList();
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -203,7 +203,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getClassNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<JavaClassElement> classes = getIncorrectClassList();
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
@@ -214,7 +214,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getInterfaceTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> interfaces = getCorrectInterfaceList();
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
@@ -224,7 +224,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getInterfaceNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> interfaces = getIncorrectInterfaceList();
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
@@ -235,7 +235,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getCompilationUnitTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> compilationUnits = getCorrectCompilationUnitList();
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
@@ -245,7 +245,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getCompilationUnitNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<Element> compilationUnits = getIncorrectCompilationUnitList();
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
@@ -256,7 +256,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getPackageTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<PackageElement> packages = getCorrectPackageList();
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
@@ -266,7 +266,7 @@ public class JavaElementManagerTest {
 
     @Test
     void getPackageNullTest() {
-        elementManager = new JavaElementManager();
+        elementManager = new JavaElementStorageRegistry();
         List<PackageElement> packages = getIncorrectPackageList();
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
