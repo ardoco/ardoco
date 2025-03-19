@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeAssembly;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -65,14 +64,9 @@ public final class CodeModel extends Model {
     }
 
     @Override
-    public List<? extends CodeItem> getEndpoints() {
+    public List<? extends CodeCompilationUnit> getEndpoints() {
         List<CodeCompilationUnit> compilationUnits = new ArrayList<>();
         getContent().forEach(c -> compilationUnits.addAll(c.getAllCompilationUnits()));
-        if (compilationUnits.isEmpty()) {
-            List<CodeAssembly> codeAssemblies = new ArrayList<>();
-            getContent().forEach(c -> codeAssemblies.addAll(c.getAllCodeAssemblies()));
-            return codeAssemblies;
-        }
         return compilationUnits;
     }
 
