@@ -9,17 +9,20 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.AbstractCodeItemMapper;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
+/**
+ * Defines how a CodeItemMapper for C++ elements should be implemented.
+ */
 public abstract class AbstractCppCodeItemMapper extends AbstractCodeItemMapper {
-    protected final CppElementStorageRegistry elementManager;
+    protected final CppElementStorageRegistry elementRegistry;
 
-    protected AbstractCppCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, CppElementStorageRegistry elementManager) {
-        super(repository, codeItemBuilder);
-        this.elementManager = elementManager;
+    protected AbstractCppCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection cppCodeItemMappers, CppElementStorageRegistry elementRegistry) {
+        super(repository, cppCodeItemMappers);
+        this.elementRegistry = elementRegistry;
     }
 
     @Override
-    protected List<Element> getContentOfParent(ElementIdentifier parent) {
-        return elementManager.getContentOfParent(parent);
+    protected List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
+        return elementRegistry.getContentOfIdentifier(identifier);
     }
     
 }

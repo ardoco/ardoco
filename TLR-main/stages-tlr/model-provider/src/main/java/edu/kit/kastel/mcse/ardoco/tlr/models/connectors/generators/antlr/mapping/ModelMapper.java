@@ -11,16 +11,20 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
+/**
+ * Responsible for mapping extracted elements to the Arcotl model.
+ * Uses a CodeItemMapperCollection to map elements to CodeItems.
+ */
 public class ModelMapper {
     protected final CodeItemRepository codeItemRepository;
-    protected final ElementStorageRegistry elementManager;
-    protected final CodeItemMapperCollection codeItemBuilder;
+    protected final ElementStorageRegistry elementRegistry;
+    protected final CodeItemMapperCollection codeItemMappers;
     private CodeModel codeModel;
 
-    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemMapperCollection codeItemBuilder, ElementStorageRegistry elementManager) {
+    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemMapperCollection codeItemMappers, ElementStorageRegistry elementRegistry) {
         this.codeItemRepository = codeItemRepository;
-        this.elementManager = elementManager;
-        this.codeItemBuilder = codeItemBuilder;
+        this.elementRegistry = elementRegistry;
+        this.codeItemMappers = codeItemMappers;
     }
 
     public CodeModel getCodeModel() {
@@ -28,26 +32,26 @@ public class ModelMapper {
     }
 
     public void mapToCodeModel() {
-        List<ElementIdentifier> rootParents = elementManager.getRootParents();
-        SortedSet<CodeItem> content = buildContentFromRoot(rootParents);
+        List<ElementIdentifier> rootParentIdentifiers = elementRegistry.getRootIdentifiers();
+        SortedSet<CodeItem> content = buildContentFromRoot(rootParentIdentifiers);
         codeModel = new CodeModel(codeItemRepository, content);
     }
 
-    protected SortedSet<CodeItem> buildContentFromRoot(List<ElementIdentifier> parents) {
+    protected SortedSet<CodeItem> buildContentFromRoot(List<ElementIdentifier> identifiers) {
         SortedSet<CodeItem> content = new TreeSet<>();
 
-        for (ElementIdentifier parent : parents) {
-            content.add(buildSubtree(parent));
+        for (ElementIdentifier identifier : identifiers) {
+            content.add(buildSubtree(identifier));
         }
         return content;
     }
 
-    protected CodeItem buildSubtree(ElementIdentifier parent) {
-        Element element = elementManager.getElement(parent);
+    protected CodeItem buildSubtree(ElementIdentifier identifier) {
+        Element element = elementRegistry.getElement(identifier);
         return buildCodeItem(element);
     }
 
     private CodeItem buildCodeItem(Element element) {
-        return this.codeItemBuilder.buildCodeItem(element);
+        return this.codeItemMappers.buildCodeItem(element);
     }
 }

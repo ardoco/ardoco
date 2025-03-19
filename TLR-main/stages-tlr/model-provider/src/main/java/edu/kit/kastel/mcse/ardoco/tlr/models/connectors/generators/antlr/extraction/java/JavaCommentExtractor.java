@@ -6,6 +6,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import generated.antlr.java.JavaLexer;
 
+/**
+ * Responsible for extracting comments from Java code. Defines the rules for
+ * valid comments and how to get only the text of the comment without the
+ * delimiters.
+ */
 public class JavaCommentExtractor extends CommentExtractor {
 
     public JavaCommentExtractor(JavaElementStorageRegistry elementManager) {

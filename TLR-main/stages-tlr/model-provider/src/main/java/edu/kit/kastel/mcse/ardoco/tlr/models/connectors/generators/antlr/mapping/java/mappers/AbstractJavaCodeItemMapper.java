@@ -9,17 +9,20 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.AbstractCodeItemMapper;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Defines how a CodeItemMapper for Java elements should be implemented.
+ */
 public abstract class AbstractJavaCodeItemMapper extends AbstractCodeItemMapper {
-    protected final JavaElementStorageRegistry elementManager;
+    protected final JavaElementStorageRegistry elementRegistry;
 
-    protected AbstractJavaCodeItemMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder);
-        this.elementManager = elementManager;
+    protected AbstractJavaCodeItemMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers);
+        this.elementRegistry = elementRegistry;
     }
 
     @Override 
-    protected List<Element> getContentOfParent(ElementIdentifier parent) {
-        return elementManager.getContentOfParent(parent);
+    protected List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
+        return elementRegistry.getContentOfIdentifier(identifier);
     }
     
 }

@@ -23,27 +23,34 @@ import generated.antlr.java.JavaLexer;
 import generated.antlr.java.JavaParser;
 import generated.antlr.java.JavaParser.CompilationUnitContext;
 
+/**
+ * Responsible for extracting structural elements from Java files. The extracted
+ * elements are then stored in a JavaElementStorageRegistry.
+ * The extraction process is done by building a token stream from a file via
+ * ANTLR and extracting the elements from the token stream.
+ * The files are identified by their file extension in the directory.
+ */
 public class JavaElementExtractor extends ElementExtractor {
-    private final JavaElementStorageRegistry elementManager;
+    private final JavaElementStorageRegistry elementRegistry;
 
     public JavaElementExtractor() {
         super();
-        this.elementManager = new JavaElementStorageRegistry();
-        this.commentExtractor = new JavaCommentExtractor(elementManager);
+        this.elementRegistry = new JavaElementStorageRegistry();
+        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
     }
 
-    public JavaElementExtractor(JavaElementStorageRegistry elementManager) {
+    public JavaElementExtractor(JavaElementStorageRegistry elementRegistry) {
         super();
-        this.elementManager = elementManager;
-        this.commentExtractor = new JavaCommentExtractor(elementManager);
+        this.elementRegistry = elementRegistry;
+        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
     }
 
     @Override
     public JavaElementStorageRegistry getElements() {
-        return elementManager;
+        return elementRegistry;
     }
 
-        @Override
+    @Override
     protected List<Path> getFiles(String directoryPath) {
         Path dir = Path.of(directoryPath);
         List<Path> javaFiles = new ArrayList<>();
@@ -77,7 +84,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return parser.compilationUnit();
     }
 
-    public Void visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+    public void visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
         ElementIdentifier identifier = addCompilationUnit(ctx);
         for (JavaParser.TypeDeclarationContext typeDeclarationContext : ctx.typeDeclaration()) {
             if (typeDeclarationContext.classDeclaration() != null) {
@@ -90,15 +97,14 @@ public class JavaElementExtractor extends ElementExtractor {
                 visitInterfaceDeclaration(typeDeclarationContext.interfaceDeclaration(), identifier);
             }
         }
-        return null;
     }
 
-    public ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx,
+            ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
         String name = ctx.identifier().getText();
-        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, Type.CLASS);
         String extendsClass = getExtendsClass(ctx);
@@ -107,45 +113,50 @@ public class JavaElementExtractor extends ElementExtractor {
         int endLine = ctx.getStop().getLine();
 
         if (ctx.classBody() != null && ctx.classBody().classBodyDeclaration() != null) {
-            for (JavaParser.ClassBodyDeclarationContext classBodyDeclarationContext : ctx.classBody().classBodyDeclaration()) {
+            for (JavaParser.ClassBodyDeclarationContext classBodyDeclarationContext : ctx.classBody()
+                    .classBodyDeclaration()) {
                 if (classBodyDeclarationContext.memberDeclaration() != null) {
                     if (classBodyDeclarationContext.memberDeclaration().methodDeclaration() != null) {
-                        visitMethodDeclaration(classBodyDeclarationContext.memberDeclaration().methodDeclaration(), identifier);
+                        visitMethodDeclaration(classBodyDeclarationContext.memberDeclaration().methodDeclaration(),
+                                identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().fieldDeclaration() != null) {
-                        visitFieldDeclaration(classBodyDeclarationContext.memberDeclaration().fieldDeclaration(), identifier);
+                        visitFieldDeclaration(classBodyDeclarationContext.memberDeclaration().fieldDeclaration(),
+                                identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().classDeclaration() != null) {
-                        visitClassDeclaration(classBodyDeclarationContext.memberDeclaration().classDeclaration(), identifier);
+                        visitClassDeclaration(classBodyDeclarationContext.memberDeclaration().classDeclaration(),
+                                identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().interfaceDeclaration() != null) {
-                        visitInterfaceDeclaration(classBodyDeclarationContext.memberDeclaration().interfaceDeclaration(), identifier);
+                        visitInterfaceDeclaration(
+                                classBodyDeclarationContext.memberDeclaration().interfaceDeclaration(), identifier);
                     }
                 }
             }
         }
-        addClass(identifier, parent, extendsClass, implementedInterfaces, startLine, endLine);
+        addClass(identifier, parentIdentifier, extendsClass, implementedInterfaces, startLine, endLine);
         return identifier;
     }
 
-    public ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx,
+            ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
         String name = ctx.identifier().getText();
-        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, Type.CLASS);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        addClass(identifier, parent, startLine, endLine);
+        addClass(identifier, parentIdentifier, startLine, endLine);
         return identifier;
     }
 
-    public ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx,
+            ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
         String name = ctx.identifier().getText();
-        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, Type.CLASS);
         int startLine = ctx.getStart().getLine();
@@ -153,25 +164,24 @@ public class JavaElementExtractor extends ElementExtractor {
 
         // Records can only implement Interfaces, not extend classes
         List<String> implementedInterfaces = extractImplementedInterfaces(ctx);
-        addClass(identifier, parent, "", implementedInterfaces, startLine, endLine);
+        addClass(identifier, parentIdentifier, "", implementedInterfaces, startLine, endLine);
         return identifier;
     }
 
-    public ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx,
+            ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
         String name = ctx.identifier().getText();
-        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, Type.INTERFACE);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        addInterface(name, path, parent, startLine, endLine);
+        addInterface(name, path, parentIdentifier, startLine, endLine);
         return identifier;
     }
-
 
     public ElementIdentifier visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx,
             ElementIdentifier parentIdentifier) {
@@ -179,7 +189,6 @@ public class JavaElementExtractor extends ElementExtractor {
             return null;
         }
         String name = ctx.identifier().getText();
-        ElementIdentifier parent = parentIdentifier;
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, Type.FUNCTION);
         int startLine = ctx.getStart().getLine();
@@ -195,43 +204,41 @@ public class JavaElementExtractor extends ElementExtractor {
 
         }
 
-        addFunction(name, path, parent, startLine, endLine);
+        addFunction(name, path, parentIdentifier, startLine, endLine);
         return identifier;
     }
 
-    public Void visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public void visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.variableDeclarators() == null || ctx.typeType() == null) {
-            return null;
+            return;
         }
         String variableType = ctx.typeType().getText();
-        ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
-        addVariables(varNames, path, variableType, parent, startLine, endLine);
-        return null;
+        addVariables(varNames, path, variableType, parentIdentifier, startLine, endLine);
     }
 
-    public Void visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public void visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx,
+            ElementIdentifier parentIdentifier) {
         if (ctx.variableDeclarators() == null || ctx.typeType() == null) {
-            return null;
+            return;
         }
         String variableType = ctx.typeType().getText();
-        ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.variableDeclarators().variableDeclarator());
         String path = PathExtractor.extractPath(ctx);
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        addVariables(varNames, path, variableType, parent, startLine, endLine);
-        return null;
+        addVariables(varNames, path, variableType, parentIdentifier, startLine, endLine);
     }
 
     private List<String> extractVariableNames(List<JavaParser.VariableDeclaratorContext> variableDeclarators) {
         List<String> variableNames = new ArrayList<>();
         for (JavaParser.VariableDeclaratorContext variableDeclarator : variableDeclarators) {
-            if (variableDeclarator.variableDeclaratorId() == null || variableDeclarator.variableDeclaratorId().identifier() == null) {
+            if (variableDeclarator.variableDeclaratorId() == null
+                    || variableDeclarator.variableDeclaratorId().identifier() == null) {
                 continue;
             }
             String name = variableDeclarator.variableDeclaratorId().identifier().getText();
@@ -240,50 +247,50 @@ public class JavaElementExtractor extends ElementExtractor {
         return variableNames;
     }
 
-    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parent,
+    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parentIdentifier,
             int startLine, int endLine) {
         for (String variableName : varNames) {
-            addVariable(variableName, path, variableType, parent, startLine, endLine);
+            addVariable(variableName, path, variableType, parentIdentifier, startLine, endLine);
         }
     }
 
-    private void addVariable(String variableName, String path, String variableType, ElementIdentifier parent,
+    private void addVariable(String variableName, String path, String variableType, ElementIdentifier parentIdentifier,
             int startLine, int endLine) {
-        VariableElement variable = new VariableElement(variableName, path, variableType, parent);
+        VariableElement variable = new VariableElement(variableName, path, variableType, parentIdentifier);
         variable.setStartLine(startLine);
         variable.setEndLine(endLine);
-        elementManager.addVariable(variable);
+        elementRegistry.addVariable(variable);
     }
 
-    private void addClass(ElementIdentifier identifier, ElementIdentifier parent, String extendsClass,
+    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, String extendsClass,
             List<String> implementedInterfaces,
             int startLine, int endLine) {
         String name = identifier.name();
         String path = identifier.path();
-        JavaClassElement classElement = new JavaClassElement(name, path, parent, extendsClass,
+        JavaClassElement classElement = new JavaClassElement(name, path, parentIdentifier, extendsClass,
                 implementedInterfaces, startLine, endLine);
-        elementManager.addClass(classElement);
+        elementRegistry.addClass(classElement);
 
     }
 
-    private void addClass(ElementIdentifier identifier, ElementIdentifier parent, int startLine, int endLine) {
+    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         String name = identifier.name();
         String path = identifier.path();
-        JavaClassElement classElement = new JavaClassElement(name, path, parent, startLine, endLine);
-        elementManager.addClass(classElement);
+        JavaClassElement classElement = new JavaClassElement(name, path, parentIdentifier, startLine, endLine);
+        elementRegistry.addClass(classElement);
     }
 
-    private void addFunction(String name, String path, ElementIdentifier parent, int startLine, int endLine) {
+    private void addFunction(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         Type type = Type.FUNCTION;
-        Element method = new Element(name, path, type, parent, startLine, endLine);
-        elementManager.addFunction(method);
+        Element method = new Element(name, path, type, parentIdentifier, startLine, endLine);
+        elementRegistry.addFunction(method);
     }
 
-    private void addInterface(String name, String path, ElementIdentifier parent,
+    private void addInterface(String name, String path, ElementIdentifier parentIdentifier,
             int startLine, int endLine) {
         Type type = Type.INTERFACE;
-        Element interfaceElement = new Element(name, path, type, parent, startLine, endLine);
-        elementManager.addInterface(interfaceElement);
+        Element interfaceElement = new Element(name, path, type, parentIdentifier, startLine, endLine);
+        elementRegistry.addInterface(interfaceElement);
     }
 
     private ElementIdentifier addCompilationUnit(JavaParser.CompilationUnitContext ctx) {
@@ -297,17 +304,16 @@ public class JavaElementExtractor extends ElementExtractor {
             String packagePath = path.substring(0, path.lastIndexOf("/") + 1);
             ElementIdentifier packageIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
             addPackage(packageIdentifier);
-            ElementIdentifier parent = packageIdentifier;
-            compilationUnit = new Element(name, path, type, parent);
+            compilationUnit = new Element(name, path, type, packageIdentifier);
         } else {
             compilationUnit = new Element(name, path, type);
         }
-        elementManager.addCompilationUnit(compilationUnit);
+        elementRegistry.addCompilationUnit(compilationUnit);
         return identifier;
     }
 
     private void addPackage(ElementIdentifier packageIdentifier) {
-        List<PackageElement> packageElements = elementManager.getPackages();
+        List<PackageElement> packageElements = elementRegistry.getPackages();
         String closestParentName = "";
         String closestParentPath = "";
         String packagePath = packageIdentifier.path();
@@ -322,15 +328,15 @@ public class JavaElementExtractor extends ElementExtractor {
         }
 
         if (!closestParentPath.isEmpty()) {
-            ElementIdentifier parent = new ElementIdentifier(closestParentName, closestParentPath, Type.PACKAGE);
-            PackageElement newPackage = new PackageElement(packageName, packagePath, parent);
-            elementManager.addPackage(newPackage);
+            ElementIdentifier parentIdentifier = new ElementIdentifier(closestParentName, closestParentPath, Type.PACKAGE);
+            PackageElement newPackage = new PackageElement(packageName, packagePath, parentIdentifier);
+            elementRegistry.addPackage(newPackage);
         } else {
             PackageElement newPackage = new PackageElement(packageName, packagePath);
-            elementManager.addPackage(newPackage);
+            elementRegistry.addPackage(newPackage);
         }
 
-        updatePackageParents(packageName, packagePath);
+        updatePackageParentIdentifiers(packageName, packagePath);
     }
 
     private String getExtendsClass(JavaParser.ClassDeclarationContext ctx) {
@@ -371,14 +377,14 @@ public class JavaElementExtractor extends ElementExtractor {
         return implementedInterfaces;
     }
 
-    private void updatePackageParents(String packageName, String packagePath) {
-        List<PackageElement> packageElements = elementManager.getPackages();
+    private void updatePackageParentIdentifiers(String packageName, String packagePath) {
+        List<PackageElement> packageElements = elementRegistry.getPackages();
         for (PackageElement packageElement : packageElements) {
             String otherPath = packageElement.getPath();
             if (otherPath.startsWith(packagePath)
                     && otherPath.length() > packagePath.length()) {
-                ElementIdentifier parent = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
-                packageElement.updateParent(parent);
+                ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
+                packageElement.updateParentIdentifier(parentIdentifier);
                 packageElement.updateShortName(otherPath.substring(packagePath.length(),
                         otherPath.length() - 1));
             }

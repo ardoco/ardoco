@@ -2,6 +2,11 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 
 import java.util.Objects;
 
+/**
+ * Represents a structural element in the code. Contains information about the
+ * name, path, parent in the tree, start and end line, and comment.
+ */
+
 public class Element {
     protected ElementIdentifier identifierOfParent;
     protected final ElementIdentifier identifier;
@@ -36,7 +41,8 @@ public class Element {
         this.identifierOfParent = identifierOfParent;
     }
 
-    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent, int startLine, int endLine) {
+    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent, int startLine,
+            int endLine) {
         this(name, path, type);
         this.identifierOfParent = identifierOfParent;
         this.startLine = startLine;

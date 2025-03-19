@@ -3,8 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a class. Contains information about the class name, path, its
+ * parent in the tree, inheritance.
+ */
 public class ClassElement extends Element {
-    private final List<String> inherits;
+    private final List<String> inherits; // Expected to be a list of the names of classes it inherits from
     private static final Type type = Type.CLASS;
 
     public ClassElement(String name, String path, ElementIdentifier parentIdentifier) {
@@ -12,7 +16,8 @@ public class ClassElement extends Element {
         this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> inherits) {
+    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine,
+            List<String> inherits) {
         super(name, path, type, parentIdentifier, startLine, endLine);
         this.inherits = inherits;
     }
@@ -22,7 +27,8 @@ public class ClassElement extends Element {
         this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine, List<String> inherits) {
+    public ClassElement(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine,
+            List<String> inherits) {
         super(identifier, identifierOfParent, startLine, endLine);
         this.inherits = inherits;
     }

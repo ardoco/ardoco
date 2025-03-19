@@ -9,10 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3CodeItemMapperCollection;
 
-public class FunctionMapper extends AbstractPython3CodeItemMapper{
+/**
+ * A mapper for Python3 functions.
+ */
+public class FunctionMapper extends AbstractPython3CodeItemMapper {
 
-    public FunctionMapper(CodeItemRepository codeItemRepository, Python3CodeItemMapperCollection python3CodeItemBuilder, Python3ElementStorageRegistry python3ElementManager) {
-        super(codeItemRepository, python3CodeItemBuilder, python3ElementManager);
+    public FunctionMapper(CodeItemRepository codeItemRepository, Python3CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, pythonCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -23,11 +26,11 @@ public class FunctionMapper extends AbstractPython3CodeItemMapper{
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isFunctionElement(element);
+        return elementRegistry.isFunctionElement(element);
     }
 
-    private CodeItem buildControlElement(ElementIdentifier parent) {
-        Element function = this.elementManager.getFunction(parent);
+    private CodeItem buildControlElement(ElementIdentifier identifier) {
+        Element function = this.elementRegistry.getFunction(identifier);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());
         controlElement.setComment(function.getComment());

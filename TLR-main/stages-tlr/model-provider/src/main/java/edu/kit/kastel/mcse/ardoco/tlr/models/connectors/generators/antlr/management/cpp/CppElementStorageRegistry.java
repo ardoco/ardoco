@@ -4,21 +4,26 @@ import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CppCommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.CppCommentMatcher;
 
+/**
+ * Registry for storing elements of a C++ codebase.
+ * Defines the set of element objects that can be stored and provides methods to
+ * add and retrieve specific elements.
+ */
 public class CppElementStorageRegistry extends ElementStorageRegistry {
-
 
     public CppElementStorageRegistry() {
         super(new CppCommentMatcher());
     }
 
-    public CppElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes,
+    public CppElementStorageRegistry(List<VariableElement> variables, List<Element> functions,
+            List<ClassElement> classes,
             List<Element> namespaces, List<Element> files) {
         this();
         addElements(Type.VARIABLE, variables);
@@ -36,7 +41,6 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
         registerStorage(Type.NAMESPACE, new ElementStorage<Element>(Element.class));
         registerStorage(Type.FILE, new ElementStorage<Element>(Element.class));
     }
-
 
     public void addVariable(VariableElement variable) {
         addElement(Type.VARIABLE, variable);
@@ -78,24 +82,24 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
         addElements(Type.FILE, files);
     }
 
-    public VariableElement getVariable(ElementIdentifier parent) {
-        return getElement(parent, VariableElement.class);
+    public VariableElement getVariable(ElementIdentifier identifier) {
+        return getElement(identifier, VariableElement.class);
     }
 
-    public Element getFunction(ElementIdentifier parent) {
-        return getElement(parent, Element.class);
+    public Element getFunction(ElementIdentifier identifier) {
+        return getElement(identifier, Element.class);
     }
 
-    public ClassElement getClass(ElementIdentifier parent) {
-        return getElement(parent, ClassElement.class);
+    public ClassElement getClass(ElementIdentifier identifier) {
+        return getElement(identifier, ClassElement.class);
     }
 
-    public Element getNamespace(ElementIdentifier parent) {
-        return getElement(parent, Element.class);
+    public Element getNamespace(ElementIdentifier identifier) {
+        return getElement(identifier, Element.class);
     }
 
-    public Element getFile(ElementIdentifier parent) {
-        return getElement(parent, Element.class);
+    public Element getFile(ElementIdentifier identifier) {
+        return getElement(identifier, Element.class);
     }
 
     public List<VariableElement> getVariables() {
@@ -138,19 +142,19 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
         return containsElement(Type.FILE, element);
     }
 
-    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.VARIABLE, parent);
+    public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
     }
 
-    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.FUNCTION, parent);
+    public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
     }
 
-    public List<ClassElement> getClassesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.CLASS, parent);
+    public List<ClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.CLASS, parentIdentifier);
     }
 
-    public List<Element> getNamespacesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.NAMESPACE, parent);
+    public List<Element> getNamespacesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.NAMESPACE, parentIdentifier);
     }
 }

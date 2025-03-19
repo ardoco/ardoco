@@ -6,22 +6,90 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.CommentMatcher;
 
+/**
+ * This class is used to store elements of different types. It is used to store
+ * the specific elements of the same
+ * type in a ElementStorage and retrieve them based on their identifier and/or
+ * parent identifier.
+ * The valid Element types and their corresponding ElementStorage are registered
+ * in the registerStorage method, which
+ * subclasses of this class have to implement.
+ * This class also contains methods to access the elements stored in the
+ * ElementStorages as well as to add elements.
+ * Additionally, it is responsible for adding comments extracted from the source
+ * code to the corresponding elements
+ * via the CommentMatcher.
+ */
 public abstract class ElementStorageRegistry {
     private final CommentMatcher commentMatcher;
     private final Map<Type, ElementStorage<?>> storages = new HashMap<>();
     private final Map<Type, Class<?>> typeOfClass = new EnumMap<>(Type.class);
-    
 
     public ElementStorageRegistry(CommentMatcher commentMatcher) {
         registerStorage();
         createTypeMap();
         this.commentMatcher = commentMatcher;
+    }
+
+    public void addComments(List<Comment> comments) {
+        commentMatcher.matchComments(comments, getAllElements());
+    }
+
+    public List<ElementIdentifier> getRootIdentifiers() {
+        List<ElementIdentifier> identifiers = new ArrayList<>();
+        List<Element> elements = getAllElements();
+
+        for (Element element : elements) {
+            ElementIdentifier identifier = element.getParentIdentifier();
+            if (hasNotBeenAdded(identifier, identifiers) && checkIfElementWithIdentifierIsRoot(identifier)) {
+                identifiers.add(identifier);
+            }
+        }
+        return identifiers;
+    }
+
+    public boolean hasStorage(Type type) {
+        return typeOfClass.containsKey(type) && storages.containsKey(type);
+    }
+
+    public List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
+        List<Element> elements = new ArrayList<>();
+        for (ElementStorage<?> storage : storages.values()) {
+            elements.addAll(storage.getContentOfIdentifier(identifier));
+        }
+        return elements;
+    }
+
+    public boolean checkIfElementWithIdentifierIsRoot(ElementIdentifier identifier) {
+        ElementStorage<?> storage = getTypedStorage(identifier.type());
+        if (storage != null) {
+            return storage.getElement(identifier) != null && storage.getElement(identifier).getParentIdentifier() == null;
+        }
+        return false;
+    }
+
+    public List<Element> getAllElements() {
+        List<Element> elements = new ArrayList<>();
+        for (ElementStorage<?> storage : storages.values()) {
+            elements.addAll(storage.getElements());
+        }
+        return elements;
+    }
+
+    public Element getElement(ElementIdentifier identifier) {
+        for (ElementStorage<?> storage : storages.values()) {
+            Element element = storage.getElement(identifier);
+            if (element != null) {
+                return element;
+            }
+        }
+        return null;
     }
 
     protected abstract void registerStorage();
@@ -31,10 +99,6 @@ public abstract class ElementStorageRegistry {
             return;
         }
         storages.put(type, storage);
-    }
-
-    public boolean hasStorage(Type type) {
-        return typeOfClass.containsKey(type) && storages.containsKey(type);
     }
 
     protected <T extends Element> void addElement(Type type, T element) {
@@ -52,12 +116,12 @@ public abstract class ElementStorageRegistry {
         }
     }
 
-    protected <T extends Element> T getElement(ElementIdentifier parent, Class<T> clazz) {
-        if (parent.type() == null || !verifyAllowed(parent.type(), clazz)) {
+    protected <T extends Element> T getElement(ElementIdentifier identifier, Class<T> clazz) {
+        if (identifier.type() == null || !verifyAllowed(identifier.type(), clazz)) {
             return null;
         }
-        ElementStorage<T> storage = getTypedStorage(parent.type());
-        return storage.getElement(parent);
+        ElementStorage<T> storage = getTypedStorage(identifier.type());
+        return storage.getElement(identifier);
     }
 
     protected <T extends Element> List<T> getElements(Type type, Class<T> clazz) {
@@ -76,55 +140,20 @@ public abstract class ElementStorageRegistry {
         return false;
     }
 
-    public List<Element> getContentOfParent(ElementIdentifier parent) {
-        List<Element> elements = new ArrayList<>();
-        for (ElementStorage<?> storage : storages.values()) {
-            elements.addAll(storage.getContentOfParent(parent));
-        }
-        return elements;
-    }
-
-    protected <T extends Element> List<T> getContentOfParent(Type type, ElementIdentifier parent) {
+    protected <T extends Element> List<T> getContentOfIdentifier(Type type, ElementIdentifier identifier) {
         if (hasStorage(type)) {
             ElementStorage<T> storage = getTypedStorage(type);
-            return storage.getContentOfParent(parent);
+            return storage.getContentOfIdentifier(identifier);
         }
         return new ArrayList<>();
     }
 
-    public List<Element> getAllElements() {
-        List<Element> elements = new ArrayList<>();
-        for (ElementStorage<?> storage : storages.values()) {
-            elements.addAll(storage.getElements());
-        }
-        return elements;
-    }
-
-    protected List<Element> getElementsWithoutParent() {
+    protected List<Element> getElementsWithoutParentidentifier() {
         List<Element> roots = new ArrayList<>();
         for (ElementStorage<?> storage : storages.values()) {
-            roots.addAll(storage.getElementsWithoutParent());
+            roots.addAll(storage.getElementsWithoutParentIdentifier());
         }
         return roots;
-    }
-
-    public boolean isRootParent(ElementIdentifier parent) {
-        ElementStorage<?> storage = getTypedStorage(parent.type());
-        if (storage != null) {
-
-            return storage.getElement(parent) != null && storage.getElement(parent).getParentIdentifier() == null;
-        }
-        return false;
-    }
-
-    public Element getElement(ElementIdentifier parent) {
-        for (ElementStorage<?> storage : storages.values()) {
-            Element element = storage.getElement(parent);
-            if (element != null) {
-                return element;
-            }
-        }
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -134,7 +163,7 @@ public abstract class ElementStorageRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Element> ElementStorage<T> getStorage(Type type, Class<T> clazz) {
+    private <T extends Element> ElementStorage<T> getStorage(Type type, Class<T> clazz) {
         if (hasStorage(type, clazz)) {
             return (ElementStorage<T>) storages.get(type);
         }
@@ -146,37 +175,21 @@ public abstract class ElementStorageRegistry {
     }
 
     private <T extends Element> boolean hasStorage(Type type, T element) {
-        return element != null && storages.containsKey(type) && storages.get(type).getType().equals(element.getClass());
+        return element != null && storages.containsKey(type)
+                && storages.get(type).getClassType().equals(element.getClass());
     }
 
     private <T extends Element> boolean hasStorage(Type type, Class<T> clazz) {
-        return storages.containsKey(type) && storages.get(type).getType().equals(clazz);
+        return storages.containsKey(type) && storages.get(type).getClassType().equals(clazz);
     }
 
     private void createTypeMap() {
         for (Type type : storages.keySet()) {
-            typeOfClass.put(type, storages.get(type).getType());
+            typeOfClass.put(type, storages.get(type).getClassType());
         }
     }
 
-    public void addComments(List<Comment> comments) {
-        commentMatcher.matchComments(comments, getAllElements());
-    }
-
-    public List<ElementIdentifier> getRootParents() {
-        List<ElementIdentifier> parents = new ArrayList<>();
-        List<Element> elements = getAllElements();
-
-        for (Element element : elements) {
-            ElementIdentifier parent = element.getParentIdentifier();
-            if (hasNotBeenAdded(parent, parents) && isRootParent(parent)) {
-                parents.add(parent);
-            }
-        }
-        return parents;
-    }
-
-    private boolean hasNotBeenAdded(ElementIdentifier parent, List<ElementIdentifier> parents) {
-        return parent != null && !parents.contains(parent);
+    private boolean hasNotBeenAdded(ElementIdentifier identifier, List<ElementIdentifier> identifiers) {
+        return identifier != null && !identifiers.contains(identifier);
     }
 }

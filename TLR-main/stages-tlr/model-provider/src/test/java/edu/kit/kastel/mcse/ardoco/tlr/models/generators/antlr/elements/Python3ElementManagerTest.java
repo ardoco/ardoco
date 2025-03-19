@@ -133,7 +133,7 @@ public class Python3ElementManagerTest {
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
-        List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
+        List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
         assert vars.containsAll(variables);
     }
 
@@ -143,7 +143,7 @@ public class Python3ElementManagerTest {
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
-        List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
+        List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
         assert vars.isEmpty();
     }
 
@@ -153,7 +153,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getContentOfParent(parent);
+        List<Element> funcs = elementManager.getContentOfIdentifier(parent);
         assert funcs.containsAll(functions);
     }
 
@@ -163,7 +163,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getContentOfParent(parent);
+        List<Element> funcs = elementManager.getContentOfIdentifier(parent);
         assert funcs.isEmpty();
     }
 
@@ -173,7 +173,7 @@ public class Python3ElementManagerTest {
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
-        List<ClassElement> clss = elementManager.getClassesWithParent(parent);
+        List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
         assert clss.containsAll(classes);
     }
 
@@ -183,7 +183,7 @@ public class Python3ElementManagerTest {
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
-        List<ClassElement> clss = elementManager.getClassesWithParent(parent);
+        List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
         assert clss.isEmpty();
     }
 
@@ -193,7 +193,7 @@ public class Python3ElementManagerTest {
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.CLASS);
-        List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
+        List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
         assert vars.isEmpty();
     }
 
@@ -203,7 +203,7 @@ public class Python3ElementManagerTest {
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.FUNCTION);
-        List<Element> funcs = elementManager.getContentOfParent(parent);
+        List<Element> funcs = elementManager.getContentOfIdentifier(parent);
         assert funcs.isEmpty();
     }
 
@@ -213,7 +213,7 @@ public class Python3ElementManagerTest {
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.FUNCTION);
-        List<ClassElement> clss = elementManager.getClassesWithParent(parent);
+        List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
         assert clss.isEmpty();
     }
 
@@ -226,8 +226,8 @@ public class Python3ElementManagerTest {
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         ElementIdentifier parent2 = new ElementIdentifier("diffVarParent", "path", Type.FUNCTION);
-        List<VariableElement> vars = elementManager.getVariablesWithParent(parent);
-        List<VariableElement> vars2 = elementManager.getVariablesWithParent(parent2);
+        List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
+        List<VariableElement> vars2 = elementManager.getVariablesWithParentIdentifier(parent2);
 
         Assertions.assertEquals(3, vars.size());
         Assertions.assertEquals(1, vars2.size());
@@ -247,8 +247,8 @@ public class Python3ElementManagerTest {
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         ElementIdentifier parent2 = new ElementIdentifier("diffFcParent", "path", Type.CLASS);
-        List<Element> funcs = elementManager.getContentOfParent(parent);
-        List<Element> funcs2 = elementManager.getContentOfParent(parent2);
+        List<Element> funcs = elementManager.getContentOfIdentifier(parent);
+        List<Element> funcs2 = elementManager.getContentOfIdentifier(parent2);
 
         Assertions.assertEquals(3, funcs.size());
         Assertions.assertEquals(1, funcs2.size());
@@ -267,8 +267,8 @@ public class Python3ElementManagerTest {
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
         ElementIdentifier parent2 = new ElementIdentifier("diffClParent", "path", Type.MODULE);
-        List<ClassElement> clss = elementManager.getClassesWithParent(parent);
-        List<ClassElement> clss2 = elementManager.getClassesWithParent(parent2);
+        List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
+        List<ClassElement> clss2 = elementManager.getClassesWithParentIdentifier(parent2);
 
         Assertions.assertEquals(3, clss.size());
         Assertions.assertEquals(1, clss2.size());

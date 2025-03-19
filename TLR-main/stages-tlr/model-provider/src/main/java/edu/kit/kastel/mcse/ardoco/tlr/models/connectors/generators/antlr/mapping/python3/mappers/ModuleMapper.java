@@ -11,15 +11,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Python3 ModuleElement to a CodeAssembly.
+ */
 public class ModuleMapper extends AbstractPython3CodeItemMapper{
 
-    public ModuleMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, Python3ElementStorageRegistry elementManager) {
-        super(repository, codeItemBuilder, elementManager);
+    public ModuleMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+        super(repository, pythonCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isModuleElement(element);
+        return elementRegistry.isModuleElement(element);
     }
 
     @Override
@@ -29,9 +32,9 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper{
     }
 
 
-    private CodeAssembly buildCodeAssembly(ElementIdentifier parent) {
-        Element module = elementManager.getModule(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodeAssembly buildCodeAssembly(ElementIdentifier identifier) {
+        Element module = elementRegistry.getModule(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
         CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content);
         codeAssembly.setComment(module.getComment());
         return codeAssembly;

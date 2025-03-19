@@ -268,7 +268,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfVars = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
 
-        List<VariableElement> elements = elementManager.getVariablesWithParent(parentOfVars);
+        List<VariableElement> elements = elementManager.getVariablesWithParentIdentifier(parentOfVars);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(variables.get(0), elements.get(0));
@@ -286,7 +286,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfVars = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
 
-        List<VariableElement> elements = elementManager.getVariablesWithParent(parentOfVars);
+        List<VariableElement> elements = elementManager.getVariablesWithParentIdentifier(parentOfVars);
 
         Assertions.assertEquals(0, elements.size());
     }
@@ -301,7 +301,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfVars = new ElementIdentifier("wrongParent", "path", Type.FUNCTION);
 
-        List<VariableElement> elements = elementManager.getVariablesWithParent(parentOfVars);
+        List<VariableElement> elements = elementManager.getVariablesWithParentIdentifier(parentOfVars);
 
         Assertions.assertEquals(0, elements.size());
     }
@@ -319,8 +319,8 @@ public class CppElementManagerTest {
         ElementIdentifier parentOfVars = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         ElementIdentifier parentOfVars2 = new ElementIdentifier("diffVarParent", "path", Type.FUNCTION);
 
-        List<VariableElement> elements = elementManager.getVariablesWithParent(parentOfVars);
-        List<VariableElement> elements2 = elementManager.getVariablesWithParent(parentOfVars2);
+        List<VariableElement> elements = elementManager.getVariablesWithParentIdentifier(parentOfVars);
+        List<VariableElement> elements2 = elementManager.getVariablesWithParentIdentifier(parentOfVars2);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(1, elements2.size());
@@ -340,7 +340,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfFc = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
 
-        List<Element> elements = elementManager.getFunctionsWithParent(parentOfFc);
+        List<Element> elements = elementManager.getFunctionsWithParentIdentifier(parentOfFc);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(functions.get(0), elements.get(0));
@@ -358,7 +358,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfFc = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
 
-        List<Element> elements = elementManager.getFunctionsWithParent(parentOfFc);
+        List<Element> elements = elementManager.getFunctionsWithParentIdentifier(parentOfFc);
 
         Assertions.assertEquals(0, elements.size());
     }
@@ -376,8 +376,8 @@ public class CppElementManagerTest {
         ElementIdentifier parentOfFc = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         ElementIdentifier parentOfFc2 = new ElementIdentifier("diffFcParent", "path", Type.CLASS);
 
-        List<Element> elements = elementManager.getFunctionsWithParent(parentOfFc);
-        List<Element> elements2 = elementManager.getFunctionsWithParent(parentOfFc2);
+        List<Element> elements = elementManager.getFunctionsWithParentIdentifier(parentOfFc);
+        List<Element> elements2 = elementManager.getFunctionsWithParentIdentifier(parentOfFc2);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(1, elements2.size());
@@ -397,7 +397,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfCs = new ElementIdentifier("parentOfCs", "path", Type.NAMESPACE);
 
-        List<ClassElement> elements = elementManager.getClassesWithParent(parentOfCs);
+        List<ClassElement> elements = elementManager.getClassesWithParentIdentifier(parentOfCs);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(classes.get(0), elements.get(0));
@@ -415,7 +415,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfCs = new ElementIdentifier("parentOfCs", "path", Type.NAMESPACE);
 
-        List<ClassElement> elements = elementManager.getClassesWithParent(parentOfCs);
+        List<ClassElement> elements = elementManager.getClassesWithParentIdentifier(parentOfCs);
 
         Assertions.assertEquals(0, elements.size());
     }
@@ -433,8 +433,8 @@ public class CppElementManagerTest {
         ElementIdentifier parentOfCs = new ElementIdentifier("parentOfCs", "path", Type.NAMESPACE);
         ElementIdentifier parentOfCs2 = new ElementIdentifier("diffCsParent", "path", Type.NAMESPACE);
 
-        List<ClassElement> elements = elementManager.getClassesWithParent(parentOfCs);
-        List<ClassElement> elements2 = elementManager.getClassesWithParent(parentOfCs2);
+        List<ClassElement> elements = elementManager.getClassesWithParentIdentifier(parentOfCs);
+        List<ClassElement> elements2 = elementManager.getClassesWithParentIdentifier(parentOfCs2);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(1, elements2.size());
@@ -454,7 +454,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfNs = new ElementIdentifier("parentOfNs", "path", Type.FILE);
 
-        List<Element> elements = elementManager.getNamespacesWithParent(parentOfNs);
+        List<Element> elements = elementManager.getNamespacesWithParentIdentifier(parentOfNs);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(namespaces.get(0), elements.get(0));
@@ -472,7 +472,7 @@ public class CppElementManagerTest {
 
         ElementIdentifier parentOfNs = new ElementIdentifier("parentOfNs", "path", Type.FILE);
 
-        List<Element> elements = elementManager.getNamespacesWithParent(parentOfNs);
+        List<Element> elements = elementManager.getNamespacesWithParentIdentifier(parentOfNs);
 
         Assertions.assertEquals(0, elements.size());
     }
@@ -490,8 +490,8 @@ public class CppElementManagerTest {
         ElementIdentifier parentOfNs = new ElementIdentifier("parentOfNs", "path", Type.FILE);
         ElementIdentifier parentOfNs2 = new ElementIdentifier("diffNsParent", "path", Type.FILE);
 
-        List<Element> elements = elementManager.getNamespacesWithParent(parentOfNs);
-        List<Element> elements2 = elementManager.getNamespacesWithParent(parentOfNs2);
+        List<Element> elements = elementManager.getNamespacesWithParentIdentifier(parentOfNs);
+        List<Element> elements2 = elementManager.getNamespacesWithParentIdentifier(parentOfNs2);
 
         Assertions.assertEquals(3, elements.size());
         Assertions.assertEquals(1, elements2.size());

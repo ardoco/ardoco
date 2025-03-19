@@ -7,10 +7,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 
+/**
+ * Represents a Java Class. Contains information about the class name, path, its
+ * parent in the tree, inheritance and implemented interfaces.
+ */
+
 public class JavaClassElement extends Element {
     private static final Type type = Type.CLASS;
-    private String extendsClass;
-    private final List<String> implementedInterfaces;
+    private String extendsClass; // The name of the class it extends
+    private final List<String> implementedInterfaces; // The names of the interfaces it implements
 
     public JavaClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         super(name, path, type, parentIdentifier, startLine, endLine);

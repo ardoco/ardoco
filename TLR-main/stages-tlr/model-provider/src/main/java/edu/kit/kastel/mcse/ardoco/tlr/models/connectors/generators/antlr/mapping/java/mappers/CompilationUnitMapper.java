@@ -15,15 +15,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Java CompilationUnit to a CodeCompilationUnit.
+ */
 public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
 
-    public CompilationUnitMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    public CompilationUnitMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return this.elementManager.isCompilationUnitElement(element);
+        return this.elementRegistry.isCompilationUnitElement(element);
     }
 
     @Override
@@ -32,12 +35,12 @@ public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
         return buildCodeCompilationUnit(comparable);
     }
 
-    private CodeCompilationUnit buildCodeCompilationUnit(ElementIdentifier parent) {
-        Element compilationUnit = elementManager.getCompilationUnitElement(parent);
+    private CodeCompilationUnit buildCodeCompilationUnit(ElementIdentifier identifier) {
+        Element compilationUnit = elementRegistry.getCompilationUnitElement(identifier);
         List<String> pathElements = Arrays.asList(compilationUnit.getPath().split("/"));
-        SortedSet<CodeItem> content = buildContent(parent);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
-        PackageElement pack = elementManager.getPackage(compilationUnit.getParentIdentifier());
+        PackageElement pack = elementRegistry.getPackage(compilationUnit.getParentIdentifier());
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(),
                 content, pathElements, pack.getName(), ProgrammingLanguage.JAVA);
         codeCompilationUnit.setComment(compilationUnit.getComment());

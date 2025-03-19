@@ -11,10 +11,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a C++ Namespace to a CodeAssembly.
+ */
 public class NamespaceMapper extends AbstractCppCodeItemMapper {
 
-    public NamespaceMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
-        super(codeItemRepository, cppCodeItemBuilder, elementManager);
+    public NamespaceMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemMappers, CppElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, cppCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -25,12 +28,12 @@ public class NamespaceMapper extends AbstractCppCodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isNamespaceElement(element);
+        return elementRegistry.isNamespaceElement(element);
     }
 
-    private CodeItem buildNamespaceCodeAssembly(ElementIdentifier parent) {
-        Element namespace = this.elementManager.getNamespace(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodeItem buildNamespaceCodeAssembly(ElementIdentifier identifier) {
+        Element namespace = this.elementRegistry.getNamespace(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, namespace.getName(), content);
         codeAssembly.setComment(namespace.getComment());

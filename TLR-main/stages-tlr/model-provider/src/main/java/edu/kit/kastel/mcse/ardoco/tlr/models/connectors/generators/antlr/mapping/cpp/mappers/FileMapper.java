@@ -11,10 +11,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a C++ File to a CodeAssembly.
+ */
 public class FileMapper extends AbstractCppCodeItemMapper {
 
-    public FileMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
-        super(codeItemRepository, cppCodeItemBuilder, elementManager);
+    public FileMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemMappers, CppElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, cppCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -25,12 +28,12 @@ public class FileMapper extends AbstractCppCodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return this.elementManager.isFileElement(element);
+        return this.elementRegistry.isFileElement(element);
     }
 
-    private CodeItem buildFileCodeAssembly(ElementIdentifier parent) {
-        Element file = this.elementManager.getFile(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodeItem buildFileCodeAssembly(ElementIdentifier identifier) {
+        Element file = this.elementRegistry.getFile(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
         CodeAssembly codeAssembly = new CodeAssembly(this.codeItemRepository, file.getName(), content);
         return codeAssembly;
     }    

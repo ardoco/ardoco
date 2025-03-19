@@ -12,10 +12,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Python3 PackageElement to a CodePackage.
+ */
 public class PackageMapper extends AbstractPython3CodeItemMapper {
 
-    public PackageMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, Python3ElementStorageRegistry elementManager) {
-        super(repository, codeItemBuilder, elementManager);
+    public PackageMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+        super(repository, pythonCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -26,12 +29,12 @@ public class PackageMapper extends AbstractPython3CodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isPackageElement(element);
+        return elementRegistry.isPackageElement(element);
     }
 
-    private CodePackage buildCodePackage(ElementIdentifier parent) {
-        PackageElement packageElement = elementManager.getPackage(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodePackage buildCodePackage(ElementIdentifier identifier) {
+        PackageElement packageElement = elementRegistry.getPackage(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         CodePackage codePackage = new CodePackage(codeItemRepository, packageElement.getShortName(), content);
         codePackage.setComment(packageElement.getComment());

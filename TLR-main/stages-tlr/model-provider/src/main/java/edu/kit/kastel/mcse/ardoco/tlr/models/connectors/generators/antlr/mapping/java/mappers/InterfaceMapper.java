@@ -11,15 +11,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Java InterfaceElement to a InterfaceUnit.
+ */
 public class InterfaceMapper extends AbstractJavaCodeItemMapper {
 
-    public InterfaceMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    public InterfaceMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return this.elementManager.isInterfaceElement(element);
+        return this.elementRegistry.isInterfaceElement(element);
     }
 
     @Override
@@ -28,9 +31,9 @@ public class InterfaceMapper extends AbstractJavaCodeItemMapper {
         return buildInterfaceUnit(comparable);
     }
 
-    private InterfaceUnit buildInterfaceUnit(ElementIdentifier parent) {
-        Element interfaceElement = elementManager.getInterface(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private InterfaceUnit buildInterfaceUnit(ElementIdentifier identifier) {
+        Element interfaceElement = elementRegistry.getInterface(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, interfaceElement.getName(), content);
         interfaceUnit.setComment(interfaceElement.getComment());

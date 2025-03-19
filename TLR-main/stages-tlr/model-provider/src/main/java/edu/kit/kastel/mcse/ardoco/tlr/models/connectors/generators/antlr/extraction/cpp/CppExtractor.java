@@ -6,6 +6,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
 
+/**
+ * Sets up the ElementExtractor and ModelMapper for the C++ language.
+ */
 public class CppExtractor extends ANTLRExtractor {
 
     public CppExtractor(CodeItemRepository repository, String path) {

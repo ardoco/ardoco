@@ -9,12 +9,18 @@ import org.antlr.v4.runtime.Token;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
+/**
+ * Is responsible for extracting comments from an ANTLR token stream. The
+ * comments validity is determined by the
+ * implementing class. The extracted comments are then stored in a List of
+ * Comment objects.
+ */
 public abstract class CommentExtractor {
-    private final ElementStorageRegistry elementManager;
+    private final ElementStorageRegistry elementRegistry;
     private List<Comment> currentComments;
 
-    protected CommentExtractor(ElementStorageRegistry elementManager) {
-        this.elementManager = elementManager;
+    protected CommentExtractor(ElementStorageRegistry elementRegistry) {
+        this.elementRegistry = elementRegistry;
     }
 
     public void extract(String path, CommonTokenStream tokens) {
@@ -33,7 +39,7 @@ public abstract class CommentExtractor {
                 }
             }
         }
-        elementManager.addComments(currentComments);
+        elementRegistry.addComments(currentComments);
     }
 
     public List<Comment> getCurrentComments() {

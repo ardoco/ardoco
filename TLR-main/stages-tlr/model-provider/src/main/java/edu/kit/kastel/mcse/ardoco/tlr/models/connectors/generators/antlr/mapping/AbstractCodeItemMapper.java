@@ -9,13 +9,18 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
+/**
+ * Responsible for mapping extracted elements to the Arcotl model.
+ * Can recursively build a CodeItem from an Element and a
+ * CodeItemMapperCollection.
+ */
 public abstract class AbstractCodeItemMapper implements CodeItemMapper {
     protected final CodeItemRepository codeItemRepository;
-    protected final CodeItemMapperCollection builder;
+    protected final CodeItemMapperCollection collection;
 
-    protected AbstractCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection builder) {
+    protected AbstractCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection mappers) {
         this.codeItemRepository = repository;
-        this.builder = builder;
+        this.collection = mappers;
     }
 
     @Override
@@ -24,9 +29,9 @@ public abstract class AbstractCodeItemMapper implements CodeItemMapper {
     @Override
     public abstract boolean supports(Element element);
 
-    protected SortedSet<CodeItem> buildContent(ElementIdentifier parent) {
+    protected SortedSet<CodeItem> buildContent(ElementIdentifier identifier) {
         SortedSet<CodeItem> content = new TreeSet<>();
-        List<Element> elements = getContentOfParent(parent);
+        List<Element> elements = getContentOfIdentifier(identifier);
         for (Element element : elements) {
             CodeItem codeItem = buildCodeItemFromStrategy(element);
             if (codeItem != null) {
@@ -36,10 +41,10 @@ public abstract class AbstractCodeItemMapper implements CodeItemMapper {
         return content;
     }
 
-    protected abstract List<Element> getContentOfParent(ElementIdentifier parent);
+    protected abstract List<Element> getContentOfIdentifier(ElementIdentifier identifier);
 
     protected CodeItem buildCodeItemFromStrategy(Element element) {
-        return builder.buildCodeItem(element);
+        return collection.buildCodeItem(element);
     }
-    
+
 }

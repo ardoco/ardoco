@@ -9,15 +9,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Java function element to a control element.
+ */
 public class FunctionMapper extends AbstractJavaCodeItemMapper {
 
-    public FunctionMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    public FunctionMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isFunctionElement(element);
+        return elementRegistry.isFunctionElement(element);
     }
 
     @Override
@@ -26,8 +29,8 @@ public class FunctionMapper extends AbstractJavaCodeItemMapper {
         return buildControlElement(comparable);
     }
 
-    private CodeItem buildControlElement(ElementIdentifier parent) {
-        Element function = this.elementManager.getFunction(parent);
+    private CodeItem buildControlElement(ElementIdentifier identifier) {
+        Element function = this.elementRegistry.getFunction(identifier);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());
         controlElement.setComment(function.getComment());

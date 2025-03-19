@@ -25,21 +25,21 @@ public class Python3CommentExtractorTest {
         Assertions.assertEquals(4, comments.size());
 
         // Detailed Assertions
-        Assertions.assertEquals(2, comments.get(0).getStartLine());
-        Assertions.assertEquals(2, comments.get(0).getEndLine());
-        Assertions.assertEquals("This is a Comment for AClass", comments.get(0).getText());
+        Assertions.assertEquals(2, comments.get(0).startLine());
+        Assertions.assertEquals(2, comments.get(0).endLine());
+        Assertions.assertEquals("This is a Comment for AClass", comments.get(0).text());
 
-        Assertions.assertEquals(3, comments.get(1).getStartLine());
-        Assertions.assertEquals(3, comments.get(1).getEndLine());
-        Assertions.assertEquals("This is an inline comment for class_variable of AClass", comments.get(1).getText());
+        Assertions.assertEquals(3, comments.get(1).startLine());
+        Assertions.assertEquals(3, comments.get(1).endLine());
+        Assertions.assertEquals("This is an inline comment for class_variable of AClass", comments.get(1).text());
 
-        Assertions.assertEquals(15, comments.get(2).getStartLine());
-        Assertions.assertEquals(18, comments.get(2).getEndLine());
-        Assertions.assertEquals("This is a multiple line comment for InnerClass1", comments.get(2).getText());
+        Assertions.assertEquals(15, comments.get(2).startLine());
+        Assertions.assertEquals(18, comments.get(2).endLine());
+        Assertions.assertEquals("This is a multiple line comment for InnerClass1", comments.get(2).text());
 
-        Assertions.assertEquals(31, comments.get(3).getStartLine());
-        Assertions.assertEquals(34, comments.get(3).getEndLine());
-        Assertions.assertEquals("This is a multiple line comment for InnerClass2", comments.get(3).getText());
+        Assertions.assertEquals(31, comments.get(3).startLine());
+        Assertions.assertEquals(34, comments.get(3).endLine());
+        Assertions.assertEquals("This is a multiple line comment for InnerClass2", comments.get(3).text());
     }
 
     private List<Comment> extractCommentsFromFile(String filePath) throws IOException {

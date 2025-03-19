@@ -25,23 +25,23 @@ public class CppCommentExtractorTest {
         List<Comment> comments = extractCommentsFromFile(filePath);
 
         Assertions.assertEquals(4, comments.size());
-        Assertions.assertEquals(1, comments.get(0).getStartLine());
-        Assertions.assertEquals(5, comments.get(0).getEndLine());
+        Assertions.assertEquals(1, comments.get(0).startLine());
+        Assertions.assertEquals(5, comments.get(0).endLine());
         Assertions.assertEquals(
                 "Simple C++ Project Author: Your Name Description: A basic C++ project with a simple structure.",
-                comments.get(0).getText());
+                comments.get(0).text());
 
-        Assertions.assertEquals(7, comments.get(1).getStartLine());
-        Assertions.assertEquals(7, comments.get(1).getEndLine());
-        Assertions.assertEquals("main.cpp", comments.get(1).getText());
+        Assertions.assertEquals(7, comments.get(1).startLine());
+        Assertions.assertEquals(7, comments.get(1).endLine());
+        Assertions.assertEquals("main.cpp", comments.get(1).text());
 
-        Assertions.assertEquals(12, comments.get(2).getStartLine());
-        Assertions.assertEquals(12, comments.get(2).getEndLine());
-        Assertions.assertEquals("Create a Car object", comments.get(2).getText());
+        Assertions.assertEquals(12, comments.get(2).startLine());
+        Assertions.assertEquals(12, comments.get(2).endLine());
+        Assertions.assertEquals("Create a Car object", comments.get(2).text());
 
-        Assertions.assertEquals(16, comments.get(3).getStartLine());
-        Assertions.assertEquals(16, comments.get(3).getEndLine());
-        Assertions.assertEquals("Create a Person object", comments.get(3).getText());
+        Assertions.assertEquals(16, comments.get(3).startLine());
+        Assertions.assertEquals(16, comments.get(3).endLine());
+        Assertions.assertEquals("Create a Person object", comments.get(3).text());
     }
 
     @Test
@@ -51,9 +51,9 @@ public class CppCommentExtractorTest {
 
         Assertions.assertEquals(1, comments.size());
 
-        Assertions.assertEquals(2, comments.get(0).getStartLine());
-        Assertions.assertEquals(2, comments.get(0).getEndLine());
-        Assertions.assertEquals("Entities.cpp", comments.get(0).getText());
+        Assertions.assertEquals(2, comments.get(0).startLine());
+        Assertions.assertEquals(2, comments.get(0).endLine());
+        Assertions.assertEquals("Entities.cpp", comments.get(0).text());
     }
 
     @Test
@@ -63,13 +63,13 @@ public class CppCommentExtractorTest {
 
         Assertions.assertEquals(2, comments.size());
 
-        Assertions.assertEquals(1, comments.get(0).getStartLine());
-        Assertions.assertEquals(1, comments.get(0).getEndLine());
-        Assertions.assertEquals("Entities.h", comments.get(0).getText());
+        Assertions.assertEquals(1, comments.get(0).startLine());
+        Assertions.assertEquals(1, comments.get(0).endLine());
+        Assertions.assertEquals("Entities.h", comments.get(0).text());
 
-        Assertions.assertEquals(49, comments.get(1).getStartLine());
-        Assertions.assertEquals(49, comments.get(1).getEndLine());
-        Assertions.assertEquals("ENTITIES_H", comments.get(1).getText());
+        Assertions.assertEquals(49, comments.get(1).startLine());
+        Assertions.assertEquals(49, comments.get(1).endLine());
+        Assertions.assertEquals("ENTITIES_H", comments.get(1).text());
     }
 
     private List<Comment> extractCommentsFromFile(String filePath) throws IOException {

@@ -6,6 +6,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import generated.antlr.python3.Python3Lexer;
 
+/**
+ * Responsible for extracting comments from Python3 code. Defines the rules for
+ * valid comments and how to get only the text of the comment without the
+ * delimiters.
+ */
 public class Python3CommentExtractor extends CommentExtractor {
 
     public Python3CommentExtractor(Python3ElementStorageRegistry elementManager) {

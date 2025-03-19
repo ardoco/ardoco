@@ -23,17 +23,17 @@ public class JavaCommentExtractorTest {
         String filePath = sourcePath + "AClass.java";
         List<Comment> comments = extractCommentsFromFile(filePath);
         Assertions.assertEquals(3, comments.size());
-        Assertions.assertEquals(5, comments.get(0).getStartLine());
-        Assertions.assertEquals(7, comments.get(0).getEndLine());
-        Assertions.assertEquals("This is a Test Java Doc Comment", comments.get(0).getText());
+        Assertions.assertEquals(5, comments.get(0).startLine());
+        Assertions.assertEquals(7, comments.get(0).endLine());
+        Assertions.assertEquals("This is a Test Java Doc Comment", comments.get(0).text());
 
-        Assertions.assertEquals(17, comments.get(1).getStartLine());
-        Assertions.assertEquals(17, comments.get(1).getEndLine());
-        Assertions.assertEquals("This is a Test Line Comment", comments.get(1).getText());
+        Assertions.assertEquals(17, comments.get(1).startLine());
+        Assertions.assertEquals(17, comments.get(1).endLine());
+        Assertions.assertEquals("This is a Test Line Comment", comments.get(1).text());
 
-        Assertions.assertEquals(20, comments.get(2).getStartLine());
-        Assertions.assertEquals(27, comments.get(2).getEndLine());
-        Assertions.assertEquals("This is a Test Block Comment", comments.get(2).getText());
+        Assertions.assertEquals(20, comments.get(2).startLine());
+        Assertions.assertEquals(27, comments.get(2).endLine());
+        Assertions.assertEquals("This is a Test Block Comment", comments.get(2).text());
     }
 
     @Test
@@ -41,9 +41,9 @@ public class JavaCommentExtractorTest {
         String filePath = sourcePath + "Superclass.java";
         List<Comment> comments = extractCommentsFromFile(filePath);
         Assertions.assertEquals(1, comments.size());
-        Assertions.assertEquals(3, comments.get(0).getStartLine());
-        Assertions.assertEquals(6, comments.get(0).getEndLine());
-        Assertions.assertEquals("This is a Test Java Doc Comment over multiple lines", comments.get(0).getText());
+        Assertions.assertEquals(3, comments.get(0).startLine());
+        Assertions.assertEquals(6, comments.get(0).endLine());
+        Assertions.assertEquals("This is a Test Java Doc Comment over multiple lines", comments.get(0).text());
 
     }
 

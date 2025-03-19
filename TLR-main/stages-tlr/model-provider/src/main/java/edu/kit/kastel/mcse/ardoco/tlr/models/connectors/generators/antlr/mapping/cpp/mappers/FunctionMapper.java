@@ -9,10 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
+/**
+ * Maps a C++ function element to a control element.
+ */
 public class FunctionMapper extends AbstractCppCodeItemMapper {
 
-    public FunctionMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
-        super(codeItemRepository, cppCodeItemBuilder, elementManager);
+    public FunctionMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemMappers, CppElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, cppCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -23,11 +26,11 @@ public class FunctionMapper extends AbstractCppCodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isFunctionElement(element);
+        return elementRegistry.isFunctionElement(element);
     }
 
-    private CodeItem buildControlElement(ElementIdentifier parent) {
-        Element function = this.elementManager.getFunction(parent);
+    private CodeItem buildControlElement(ElementIdentifier identifier) {
+        Element function = this.elementRegistry.getFunction(identifier);
 
         ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());
         controlElement.setComment(function.getComment());

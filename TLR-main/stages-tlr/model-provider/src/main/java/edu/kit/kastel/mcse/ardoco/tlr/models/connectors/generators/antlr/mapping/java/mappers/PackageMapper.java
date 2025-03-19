@@ -12,15 +12,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Java PackageElement to a CodePackage.
+ */
 public class PackageMapper extends AbstractJavaCodeItemMapper {
 
-    public PackageMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    public PackageMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isPackageElement(element);
+        return elementRegistry.isPackageElement(element);
     }
 
     @Override
@@ -29,9 +32,9 @@ public class PackageMapper extends AbstractJavaCodeItemMapper {
         return buildCodePackage(comparable);
     }
     
-    private CodePackage buildCodePackage(ElementIdentifier parent) {
-        PackageElement packageElement = elementManager.getPackage(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodePackage buildCodePackage(ElementIdentifier identifier) {
+        PackageElement packageElement = elementRegistry.getPackage(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         CodePackage codePackage = new CodePackage(codeItemRepository, packageElement.getShortName(), content);
         codePackage.setComment(packageElement.getComment());

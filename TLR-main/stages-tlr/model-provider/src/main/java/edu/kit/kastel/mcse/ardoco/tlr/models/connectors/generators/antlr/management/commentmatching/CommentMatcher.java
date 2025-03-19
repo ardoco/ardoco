@@ -1,10 +1,17 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching;
 
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 
+/**
+ * Responsible for matching comments to structural elements.
+ * The matching is based on the line distance between the comment and the
+ * element.
+ * The rules for what is considered the closest elements must be implemented in
+ * the subclasses.
+ */
 public abstract class CommentMatcher {
 
     protected CommentMatcher() {
@@ -38,11 +45,11 @@ public abstract class CommentMatcher {
     }
 
     private boolean hasSamePath(Comment comment, Element element) {
-        return element.getIdentifier().path().equals(comment.getPath());
+        return element.getIdentifier().path().equals(comment.path());
     }
 
     private void setCommentToElement(Element element, Comment comment) {
-        element.setComment(comment.getText());
+        element.setComment(comment.text());
     }
 
     protected abstract int calculateDistance(Comment comment, Element element);

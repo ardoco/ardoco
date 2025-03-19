@@ -6,6 +6,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3ModelMapper;
 
+/**
+ * Sets up the ElementExtractor and ModelMapper for the Python3 language.
+ */
 public class Python3Extractor extends ANTLRExtractor {
 
     public Python3Extractor(CodeItemRepository repository, String path) {

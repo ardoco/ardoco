@@ -8,13 +8,23 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
+/**
+ * Is responsible for extracting elements from an directory. The extracted
+ * elements are then stored in an ElementStorageRegistry.
+ * The extraction process is implemented by the implementing class. The
+ * extraction process is done by building a token stream from
+ * a file via ANTLR and extracting the elements from the token stream.
+ * After the extraction of structural elements, the CommentExtractor is called
+ * to extract comments from the file and added to the
+ * ElementStorageRegistry.
+ */
 public abstract class ElementExtractor {
     protected CommentExtractor commentExtractor;
 
     protected ElementExtractor() {
     }
 
-    public abstract ElementStorageRegistry getElements(); 
+    public abstract ElementStorageRegistry getElements();
 
     public void extract(String directoryPath) {
         List<Path> files = getFiles(directoryPath);
@@ -41,6 +51,8 @@ public abstract class ElementExtractor {
     }
 
     protected abstract List<Path> getFiles(String directoryPath);
+
     protected abstract CommonTokenStream buildTokens(Path file) throws IOException;
+
     protected abstract void extractElements(CommonTokenStream tokens);
 }

@@ -12,16 +12,19 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Java ClassElement to a ClassUnit.
+ */
 public class ClassMapper extends AbstractJavaCodeItemMapper {
 
-    public ClassMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder,
-            JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
+    public ClassMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers,
+            JavaElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
     @Override
     public boolean supports(Element element) {
-        return this.elementManager.isClassElement(element);
+        return this.elementRegistry.isClassElement(element);
     }
 
     @Override
@@ -30,9 +33,9 @@ public class ClassMapper extends AbstractJavaCodeItemMapper {
         return buildClassUnit(comparable);
     }
 
-    private ClassUnit buildClassUnit(ElementIdentifier parent) {
-        JavaClassElement classElement = elementManager.getClass(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private ClassUnit buildClassUnit(ElementIdentifier identifier) {
+        JavaClassElement classElement = elementRegistry.getClass(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         ClassUnit classUnit = new ClassUnit(codeItemRepository, classElement.getName(), content);
         classUnit.setComment(classElement.getComment());

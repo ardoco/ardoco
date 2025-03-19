@@ -12,10 +12,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a Python3 ClassElement to a ClassUnit.
+ */
 public class ClassMapper extends AbstractPython3CodeItemMapper {
 
-    public ClassMapper(CodeItemRepository repository, CodeItemMapperCollection builder, Python3ElementStorageRegistry elementManager) {
-        super(repository, builder, elementManager);
+    public ClassMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+        super(repository, pythonCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -26,12 +29,12 @@ public class ClassMapper extends AbstractPython3CodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isClassElement(element);
+        return elementRegistry.isClassElement(element);
     }
 
-    private ClassUnit buildClassUnit(ElementIdentifier parent) {
-        ClassElement classElement = elementManager.getClass(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private ClassUnit buildClassUnit(ElementIdentifier identifier) {
+        ClassElement classElement = elementRegistry.getClass(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         ClassUnit classUnit = new ClassUnit(codeItemRepository, classElement.getName(), content);
         classUnit.setComment(classElement.getComment());

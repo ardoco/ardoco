@@ -3,7 +3,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.manage
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.commentmatching.Python3CommentMatcher;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -11,14 +10,21 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.Python3CommentMatcher;
 
+/**
+ * Registry for storing elements of a Python3 codebase.
+ * Defines the set of element objects that can be stored and provides methods to
+ * add and retrieve specific elements.
+ */
 public class Python3ElementStorageRegistry extends ElementStorageRegistry {
 
     public Python3ElementStorageRegistry() {
         super(new Python3CommentMatcher());
     }
 
-    public Python3ElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes,
+    public Python3ElementStorageRegistry(List<VariableElement> variables, List<Element> functions,
+            List<ClassElement> classes,
             List<Element> modules, List<PackageElement> packages) {
         this();
         addVariables(variables);
@@ -28,7 +34,7 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
         addPackages(packages);
     }
 
-    @Override 
+    @Override
     protected void registerStorage() {
         registerStorage(Type.VARIABLE, new ElementStorage<VariableElement>(VariableElement.class));
         registerStorage(Type.FUNCTION, new ElementStorage<Element>(Element.class));
@@ -77,24 +83,24 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
         addElements(Type.PACKAGE, packages);
     }
 
-    public VariableElement getVariable(ElementIdentifier parent) {
-        return getElement(parent, VariableElement.class);
+    public VariableElement getVariable(ElementIdentifier identifier) {
+        return getElement(identifier, VariableElement.class);
     }
 
-    public Element getFunction(ElementIdentifier parent) {
-        return getElement(parent, Element.class);
+    public Element getFunction(ElementIdentifier identifier) {
+        return getElement(identifier, Element.class);
     }
 
-    public ClassElement getClass(ElementIdentifier parent) {
-        return getElement(parent, ClassElement.class);
+    public ClassElement getClass(ElementIdentifier identifier) {
+        return getElement(identifier, ClassElement.class);
     }
 
-    public Element getModule(ElementIdentifier parent) {
-        return getElement(parent, Element.class);
+    public Element getModule(ElementIdentifier identifier) {
+        return getElement(identifier, Element.class);
     }
 
-    public PackageElement getPackage(ElementIdentifier parent) {
-        return getElement(parent, PackageElement.class);
+    public PackageElement getPackage(ElementIdentifier identifier) {
+        return getElement(identifier, PackageElement.class);
     }
 
     public List<VariableElement> getVariables() {
@@ -137,24 +143,24 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
         return containsElement(Type.PACKAGE, element);
     }
 
-    public List<VariableElement> getVariablesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.VARIABLE, parent);
+    public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
     }
 
-    public List<Element> getFunctionsWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.FUNCTION, parent);
+    public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
     }
 
-    public List<ClassElement> getClassesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.CLASS, parent);
+    public List<ClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.CLASS, parentIdentifier);
     }
 
-    public List<Element> getModulesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.MODULE, parent);
+    public List<Element> getModulesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.MODULE, parentIdentifier);
     }
 
-    public List<PackageElement> getPackagesWithParent(ElementIdentifier parent) {
-        return getContentOfParent(Type.PACKAGE, parent);
+    public List<PackageElement> getPackagesWithParentIdentifier(ElementIdentifier parentIdentifier) {
+        return getContentOfIdentifier(Type.PACKAGE, parentIdentifier);
     }
 
 }

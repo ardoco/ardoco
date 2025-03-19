@@ -9,17 +9,20 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.AbstractCodeItemMapper;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
+/**
+ * A collection of CodeItem mappers that can be used to build CodeItems from extracted Python 3 Elements.
+ */
 public abstract class AbstractPython3CodeItemMapper extends AbstractCodeItemMapper{
-    protected final Python3ElementStorageRegistry elementManager;
+    protected final Python3ElementStorageRegistry elementRegistry;
 
-    protected AbstractPython3CodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, Python3ElementStorageRegistry elementManager) {
-        super(repository, codeItemBuilder);
-        this.elementManager = elementManager;
+    protected AbstractPython3CodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+        super(repository, pythonCodeItemMappers);
+        this.elementRegistry = elementRegistry;
     }
 
     @Override
-    protected List<Element> getContentOfParent(ElementIdentifier parent) {
-        return elementManager.getContentOfParent(parent);
+    protected List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
+        return elementRegistry.getContentOfIdentifier(identifier);
     }
     
 }

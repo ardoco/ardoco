@@ -6,6 +6,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaModelMapper;
 
+/**
+ * Sets up the ElementExtractor and ModelMapper for the Java language.
+ */
 public class JavaExtractor extends ANTLRExtractor {
 
     public JavaExtractor(CodeItemRepository repository, String path) {

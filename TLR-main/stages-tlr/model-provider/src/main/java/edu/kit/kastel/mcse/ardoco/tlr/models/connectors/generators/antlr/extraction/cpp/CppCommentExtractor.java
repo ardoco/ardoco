@@ -6,6 +6,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import generated.antlr.cpp.CPP14Lexer;
 
+/**
+ * Extracts comments from C++ code. Defines the rules for valid comments and how
+ * to get only the text of the comment without the delimiters.
+ */
 public class CppCommentExtractor extends CommentExtractor {
 
     public CppCommentExtractor(CppElementStorageRegistry elementManager) {

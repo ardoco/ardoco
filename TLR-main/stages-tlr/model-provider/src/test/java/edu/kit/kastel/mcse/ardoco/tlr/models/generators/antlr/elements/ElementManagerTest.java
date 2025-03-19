@@ -25,7 +25,7 @@ public class ElementManagerTest {
     void getRootParentsJavaTest() {
         elementManager = new JavaElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(), getCorrectCompilationUnitList(), getCorrectPackageList());
         
-        List<ElementIdentifier> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
         Assertions.assertEquals(1, rootParents.size());
     }
@@ -34,7 +34,7 @@ public class ElementManagerTest {
     void getRootParentsCppTest() {
         elementManager = new CppElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
 
-        List<ElementIdentifier> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
         Assertions.assertEquals(1, rootParents.size());
     }
@@ -43,7 +43,7 @@ public class ElementManagerTest {
     void getRootParentsPythonTest() {
         elementManager = new Python3ElementStorageRegistry(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(), new ArrayList<>(), getCorrectPackageList());
 
-        List<ElementIdentifier> rootParents = elementManager.getRootParents();
+        List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
         Assertions.assertEquals(1, rootParents.size());
     }

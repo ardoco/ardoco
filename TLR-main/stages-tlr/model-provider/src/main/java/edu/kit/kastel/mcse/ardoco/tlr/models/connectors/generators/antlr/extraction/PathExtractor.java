@@ -2,6 +2,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/**
+ * Extracts the path or last part of the path from a ParserRuleContext ANTLR
+ * node.
+ */
 public final class PathExtractor {
 
     public static String extractPath(ParserRuleContext ctx) {

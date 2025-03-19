@@ -12,10 +12,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
+/**
+ * Responsible for mapping a C++ ClassElement to a ClassUnit.
+ */
 public class ClassMapper extends AbstractCppCodeItemMapper {
 
-    public ClassMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
-        super(codeItemRepository, cppCodeItemBuilder, elementManager);
+    public ClassMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemMappers, CppElementStorageRegistry elementRegistry) {
+        super(codeItemRepository, cppCodeItemMappers, elementRegistry);
     }
 
     @Override
@@ -26,13 +29,13 @@ public class ClassMapper extends AbstractCppCodeItemMapper {
 
     @Override
     public boolean supports(Element element) {
-        return this.elementManager.isClassElement(element);
+        return this.elementRegistry.isClassElement(element);
     }
 
 
-    private CodeItem buildClassUnit(ElementIdentifier parent) {
-        ClassElement classElement = this.elementManager.getClass(parent);
-        SortedSet<CodeItem> content = buildContent(parent);
+    private CodeItem buildClassUnit(ElementIdentifier identifier) {
+        ClassElement classElement = this.elementRegistry.getClass(identifier);
+        SortedSet<CodeItem> content = buildContent(identifier);
 
         ClassUnit classUnit = new ClassUnit(this.codeItemRepository, classElement.getName(), content);
         classUnit.setComment(classElement.getComment());
