@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
 
@@ -10,11 +10,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
-public class ClassStrategy extends AbstractJavaCodeItemStrategy {
+public class ClassMapper extends AbstractJavaCodeItemMapper {
 
-    public ClassStrategy(CodeItemRepository codeItemRepository, JavaCodeItemBuilder javaCodeItemBuilder,
+    public ClassMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder,
             JavaElementStorageRegistry elementManager) {
         super(codeItemRepository, javaCodeItemBuilder, elementManager);
     }

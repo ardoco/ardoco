@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.SortedSet;
 
@@ -9,11 +9,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
-public class ModuleStrategy extends AbstractPython3CodeItemStrategy{
+public class ModuleMapper extends AbstractPython3CodeItemMapper{
 
-    public ModuleStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementStorageRegistry elementManager) {
+    public ModuleMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, Python3ElementStorageRegistry elementManager) {
         super(repository, codeItemBuilder, elementManager);
     }
 

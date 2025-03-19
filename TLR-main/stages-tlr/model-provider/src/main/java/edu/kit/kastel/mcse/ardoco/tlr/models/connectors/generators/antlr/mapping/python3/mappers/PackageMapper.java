@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.SortedSet;
 
@@ -9,18 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemMapperCollection;
 
-public class PackageStrategy extends AbstractJavaCodeItemStrategy {
+public class PackageMapper extends AbstractPython3CodeItemMapper {
 
-    public PackageStrategy(CodeItemRepository codeItemRepository, JavaCodeItemBuilder javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
-    }
-
-    @Override
-    public boolean supports(Element element) {
-        return elementManager.isPackageElement(element);
+    public PackageMapper(CodeItemRepository repository, CodeItemMapperCollection codeItemBuilder, Python3ElementStorageRegistry elementManager) {
+        super(repository, codeItemBuilder, elementManager);
     }
 
     @Override
@@ -28,7 +23,12 @@ public class PackageStrategy extends AbstractJavaCodeItemStrategy {
         ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.PACKAGE);
         return buildCodePackage(comparable);
     }
-    
+
+    @Override
+    public boolean supports(Element element) {
+        return elementManager.isPackageElement(element);
+    }
+
     private CodePackage buildCodePackage(ElementIdentifier parent) {
         PackageElement packageElement = elementManager.getPackage(parent);
         SortedSet<CodeItem> content = buildContent(parent);
@@ -37,4 +37,5 @@ public class PackageStrategy extends AbstractJavaCodeItemStrategy {
         codePackage.setComment(packageElement.getComment());
         return codePackage;
     }
+    
 }

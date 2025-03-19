@@ -7,6 +7,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class Python3ModelMapper extends ModelMapper{
 
     public Python3ModelMapper(CodeItemRepository codeItemRepository, Python3ElementStorageRegistry elementManager) {
-        super(codeItemRepository, new Python3CodeItemBuilder(codeItemRepository, elementManager), elementManager);
+        super(codeItemRepository, new Python3CodeItemMapperCollection(codeItemRepository, elementManager), elementManager);
     }
 }

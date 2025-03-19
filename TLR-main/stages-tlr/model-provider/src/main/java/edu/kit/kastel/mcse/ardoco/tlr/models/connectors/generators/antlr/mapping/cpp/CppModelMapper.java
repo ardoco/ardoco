@@ -7,6 +7,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class CppModelMapper extends ModelMapper {
 
     public CppModelMapper(CodeItemRepository codeItemRepository, CppElementStorageRegistry elementManager) {
-        super(codeItemRepository, new CppCodeItemBuilder(codeItemRepository, elementManager), elementManager);
+        super(codeItemRepository, new CppCodeItemMapperCollection(codeItemRepository, elementManager), elementManager);
     }
 }

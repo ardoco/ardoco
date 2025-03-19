@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
 
@@ -9,19 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemMapperCollection;
 
-public class PackageStrategy extends AbstractPython3CodeItemStrategy {
+public class PackageMapper extends AbstractJavaCodeItemMapper {
 
-    public PackageStrategy(CodeItemRepository repository, CodeItemBuilder codeItemBuilder, Python3ElementStorageRegistry elementManager) {
-        super(repository, codeItemBuilder, elementManager);
-    }
-
-    @Override
-    public CodeItem buildCodeItem(Element element) {
-        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.PACKAGE);
-        return buildCodePackage(comparable);
+    public PackageMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
+        super(codeItemRepository, javaCodeItemBuilder, elementManager);
     }
 
     @Override
@@ -29,6 +23,12 @@ public class PackageStrategy extends AbstractPython3CodeItemStrategy {
         return elementManager.isPackageElement(element);
     }
 
+    @Override
+    public CodeItem buildCodeItem(Element element) {
+        ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.PACKAGE);
+        return buildCodePackage(comparable);
+    }
+    
     private CodePackage buildCodePackage(ElementIdentifier parent) {
         PackageElement packageElement = elementManager.getPackage(parent);
         SortedSet<CodeItem> content = buildContent(parent);
@@ -37,5 +37,4 @@ public class PackageStrategy extends AbstractPython3CodeItemStrategy {
         codePackage.setComment(packageElement.getComment());
         return codePackage;
     }
-    
 }

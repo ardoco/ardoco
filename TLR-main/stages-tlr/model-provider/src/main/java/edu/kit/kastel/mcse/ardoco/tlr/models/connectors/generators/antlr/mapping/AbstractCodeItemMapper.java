@@ -9,11 +9,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
-public abstract class AbstractCodeItemStrategy implements CodeItemBuilderStrategy {
+public abstract class AbstractCodeItemMapper implements CodeItemMapper {
     protected final CodeItemRepository codeItemRepository;
-    protected final CodeItemBuilder builder;
+    protected final CodeItemMapperCollection builder;
 
-    protected AbstractCodeItemStrategy(CodeItemRepository repository, CodeItemBuilder builder) {
+    protected AbstractCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection builder) {
         this.codeItemRepository = repository;
         this.builder = builder;
     }

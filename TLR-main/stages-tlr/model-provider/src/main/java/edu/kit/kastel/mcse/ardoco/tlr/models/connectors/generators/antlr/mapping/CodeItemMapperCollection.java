@@ -5,13 +5,13 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 
-public abstract class CodeItemBuilder {
-    protected List<CodeItemBuilderStrategy> strategies;
+public abstract class CodeItemMapperCollection {
+    protected List<CodeItemMapper> mappers;
     
-    protected CodeItemBuilder() {}
+    protected CodeItemMapperCollection() {}
 
     public CodeItem buildCodeItem(Element element) {
-        return strategies.stream()
+        return mappers.stream()
             .filter(strategy -> strategy.supports(element))
             .findFirst()
             .map(strategy -> strategy.buildCodeItem(element))

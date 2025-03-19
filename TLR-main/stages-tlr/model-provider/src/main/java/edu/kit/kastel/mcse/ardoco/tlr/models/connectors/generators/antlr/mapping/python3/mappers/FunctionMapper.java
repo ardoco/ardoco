@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -6,24 +6,24 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.JavaCodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3CodeItemMapperCollection;
 
-public class FunctionStrategy extends AbstractJavaCodeItemStrategy {
+public class FunctionMapper extends AbstractPython3CodeItemMapper{
 
-    public FunctionStrategy(CodeItemRepository codeItemRepository, JavaCodeItemBuilder javaCodeItemBuilder, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, javaCodeItemBuilder, elementManager);
-    }
-
-    @Override
-    public boolean supports(Element element) {
-        return elementManager.isFunctionElement(element);
+    public FunctionMapper(CodeItemRepository codeItemRepository, Python3CodeItemMapperCollection python3CodeItemBuilder, Python3ElementStorageRegistry python3ElementManager) {
+        super(codeItemRepository, python3CodeItemBuilder, python3ElementManager);
     }
 
     @Override
     public CodeItem buildCodeItem(Element element) {
         ElementIdentifier comparable = new ElementIdentifier(element.getName(), element.getPath(), Type.FUNCTION);
         return buildControlElement(comparable);
+    }
+
+    @Override
+    public boolean supports(Element element) {
+        return elementManager.isFunctionElement(element);
     }
 
     private CodeItem buildControlElement(ElementIdentifier parent) {

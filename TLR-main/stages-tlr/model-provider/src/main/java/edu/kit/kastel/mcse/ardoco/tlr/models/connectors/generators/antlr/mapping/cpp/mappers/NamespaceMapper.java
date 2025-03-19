@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.SortedSet;
 
@@ -9,11 +9,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
-public class NamespaceStrategy extends AbstractCppCodeItemStrategy {
+public class NamespaceMapper extends AbstractCppCodeItemMapper {
 
-    public NamespaceStrategy(CodeItemRepository codeItemRepository, CppCodeItemBuilder cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
+    public NamespaceMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
         super(codeItemRepository, cppCodeItemBuilder, elementManager);
     }
 

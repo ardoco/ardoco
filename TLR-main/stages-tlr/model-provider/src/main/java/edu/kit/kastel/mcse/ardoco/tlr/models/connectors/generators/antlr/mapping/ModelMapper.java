@@ -14,10 +14,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 public class ModelMapper {
     protected final CodeItemRepository codeItemRepository;
     protected final ElementStorageRegistry elementManager;
-    protected final CodeItemBuilder codeItemBuilder;
+    protected final CodeItemMapperCollection codeItemBuilder;
     private CodeModel codeModel;
 
-    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemBuilder codeItemBuilder, ElementStorageRegistry elementManager) {
+    public ModelMapper(CodeItemRepository codeItemRepository, CodeItemMapperCollection codeItemBuilder, ElementStorageRegistry elementManager) {
         this.codeItemRepository = codeItemRepository;
         this.elementManager = elementManager;
         this.codeItemBuilder = codeItemBuilder;

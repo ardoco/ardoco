@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -6,13 +6,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.Python3CodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
-public class FunctionStrategy extends AbstractPython3CodeItemStrategy{
+public class FunctionMapper extends AbstractCppCodeItemMapper {
 
-    public FunctionStrategy(CodeItemRepository codeItemRepository, Python3CodeItemBuilder python3CodeItemBuilder, Python3ElementStorageRegistry python3ElementManager) {
-        super(codeItemRepository, python3CodeItemBuilder, python3ElementManager);
+    public FunctionMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
+        super(codeItemRepository, cppCodeItemBuilder, elementManager);
     }
 
     @Override

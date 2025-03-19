@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.SortedSet;
 
@@ -9,13 +9,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.CodeItemBuilder;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppCodeItemMapperCollection;
 
-public class ClassStrategy extends AbstractPython3CodeItemStrategy {
+public class ClassMapper extends AbstractCppCodeItemMapper {
 
-    public ClassStrategy(CodeItemRepository repository, CodeItemBuilder builder, Python3ElementStorageRegistry elementManager) {
-        super(repository, builder, elementManager);
+    public ClassMapper(CodeItemRepository codeItemRepository, CppCodeItemMapperCollection cppCodeItemBuilder, CppElementStorageRegistry elementManager) {
+        super(codeItemRepository, cppCodeItemBuilder, elementManager);
     }
 
     @Override
@@ -26,16 +26,17 @@ public class ClassStrategy extends AbstractPython3CodeItemStrategy {
 
     @Override
     public boolean supports(Element element) {
-        return elementManager.isClassElement(element);
+        return this.elementManager.isClassElement(element);
     }
 
-    private ClassUnit buildClassUnit(ElementIdentifier parent) {
-        ClassElement classElement = elementManager.getClass(parent);
+
+    private CodeItem buildClassUnit(ElementIdentifier parent) {
+        ClassElement classElement = this.elementManager.getClass(parent);
         SortedSet<CodeItem> content = buildContent(parent);
 
-        ClassUnit classUnit = new ClassUnit(codeItemRepository, classElement.getName(), content);
+        ClassUnit classUnit = new ClassUnit(this.codeItemRepository, classElement.getName(), content);
         classUnit.setComment(classElement.getComment());
         return classUnit;
     }
-
+    
 }

@@ -7,6 +7,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class JavaModelMapper extends ModelMapper {
 
     public JavaModelMapper(CodeItemRepository codeItemRepository, JavaElementStorageRegistry elementManager) {
-        super(codeItemRepository, new JavaCodeItemBuilder(codeItemRepository, elementManager), elementManager);
+        super(codeItemRepository, new JavaCodeItemMapperCollection(codeItemRepository, elementManager), elementManager);
     }
 }
