@@ -116,6 +116,9 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     public ElementIdentifier visitClassdef(Python3Parser.ClassdefContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.name() == null) {
+            return null;
+        }
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
         List<String> childClassOf = getParentClasses(ctx);
@@ -124,7 +127,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        if (ctx.block().stmt() != null) {
+        if (ctx.block() != null && ctx.block().stmt() != null) {
             for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
                 visitStmt(stmt, identifier);
             }
@@ -135,6 +138,9 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     public ElementIdentifier visitFuncdef(Python3Parser.FuncdefContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.name() == null) {
+            return null;
+        }
         String name = ctx.name().getText();
         String path = PathExtractor.extractPath(ctx);
         ElementIdentifier parent = parentIdentifier;
@@ -142,7 +148,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        if (ctx.block().stmt() != null) {
+        if (ctx.block() != null && ctx.block().stmt() != null) {
             for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
                 visitStmt(stmt, identifier);
             }
@@ -176,6 +182,9 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     private void extractVariablesFromExprStmt(Python3Parser.Expr_stmtContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.testlist_star_expr().size() < 2) {
+            return;
+        }
         List<String> varNames = extractVariableNames(ctx.testlist_star_expr(0));
         List<String> values = extractVariableNames(ctx.testlist_star_expr(1));
         List<String> types = inferTypesFromValues(values);

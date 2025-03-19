@@ -1,7 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +40,18 @@ public class GithubProjectTest {
         String directory = "src/test/resources/testprojects/python3/simpledjangologin/";
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, directory);
+        CodeModel codeModel = extractor.extractModel();
+
+        // Assertions
+        Assertions.assertNotNull(extractor.getElementExtractor().getElements());
+        Assertions.assertNotNull(codeModel);
+    }
+
+    @Test
+    public void testJavaArDoCoBenchmarkProject() {
+        String directory = "src/test/resources/testprojects/ardoco_benchmarks/jabref/";
+        CodeItemRepository repository = new CodeItemRepository();
+        JavaExtractor extractor = new JavaExtractor(repository, directory);
         CodeModel codeModel = extractor.extractModel();
 
         // Assertions

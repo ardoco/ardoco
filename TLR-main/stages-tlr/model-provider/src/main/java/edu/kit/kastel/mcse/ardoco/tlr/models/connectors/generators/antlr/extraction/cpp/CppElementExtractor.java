@@ -161,7 +161,7 @@ public class CppElementExtractor extends ElementExtractor {
             if (declSeq == null || declSeq.typeSpecifier() == null) {
                 continue;
             }
-            if (declSeq != null && declSeq.typeSpecifier().classSpecifier() != null) {
+            if (declSeq != null && declSeq.typeSpecifier() != null && declSeq.typeSpecifier().classSpecifier() != null) {
                 visitClassSpecifier(declSeq.typeSpecifier().classSpecifier(), parentIdentifier);
             }
             // extractVariablesFromClass(declSeq.typeSpecifier().classSpecifier());
@@ -230,6 +230,9 @@ public class CppElementExtractor extends ElementExtractor {
     }
 
     private void extractVariableElement(CPP14Parser.MemberdeclarationContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.declSpecifierSeq() == null) {
+            return;
+        }
         String variableType = ctx.declSpecifierSeq().getText();
         ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.memberDeclaratorList());
@@ -241,6 +244,9 @@ public class CppElementExtractor extends ElementExtractor {
     }
 
     private void extractVariableElement(CPP14Parser.SimpleDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+        if (ctx.declSpecifierSeq() == null) {
+            return;
+        }
         String variableType = ctx.declSpecifierSeq().getText();
         ElementIdentifier parent = parentIdentifier;
         List<String> varNames = extractVariableNames(ctx.initDeclaratorList());
@@ -255,8 +261,10 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.MemberDeclaratorContext memberDec : ctx.memberDeclarator()) {
             // Skip if it is a function or Constructor
-            if (memberDec.declarator().pointerDeclarator().noPointerDeclarator() != null && memberDec.declarator()
-                    .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (memberDec.declarator() != null && memberDec.declarator().pointerDeclarator() != null
+                    && memberDec.declarator().pointerDeclarator().noPointerDeclarator() != null
+                    && memberDec.declarator()
+                            .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(memberDec.declarator().getText());
@@ -268,8 +276,9 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.InitDeclaratorContext initDec : ctx.initDeclarator()) {
             // Skip if it is a function or Constructor
-            if (initDec.declarator().pointerDeclarator().noPointerDeclarator() != null && initDec.declarator()
-                    .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (initDec.declarator() != null && initDec.declarator().pointerDeclarator() != null
+                    && initDec.declarator().pointerDeclarator().noPointerDeclarator() != null && initDec.declarator()
+                            .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(initDec.declarator().getText());
@@ -279,7 +288,7 @@ public class CppElementExtractor extends ElementExtractor {
 
     private List<String> getInherits(CPP14Parser.ClassSpecifierContext ctx) {
         List<String> inherits = new ArrayList<>();
-        if (ctx.classHead().baseClause() != null) {
+        if (ctx.classHead() != null && ctx.classHead().baseClause() != null && ctx.classHead().baseClause().baseSpecifierList() != null) {
             for (CPP14Parser.BaseSpecifierContext base : ctx.classHead().baseClause().baseSpecifierList()
                     .baseSpecifier()) {
                 String baseClass = base.getText();
@@ -332,9 +341,9 @@ public class CppElementExtractor extends ElementExtractor {
 
     private ElementIdentifier getClassIdentifier(CPP14Parser.ClassSpecifierContext ctx) {
         String name = "anonymous";
-        if (ctx.classHead().classHeadName() != null) {
+        if (ctx.classHead() != null && ctx.classHead().classHeadName() != null) {
             name = ctx.classHead().classHeadName().getText();
-        } else if (ctx.classHead().classVirtSpecifier() != null) {
+        } else if (ctx.classHead() != null && ctx.classHead().classVirtSpecifier() != null) {
             name = ctx.classHead().classVirtSpecifier().getText();
         }
         String path = PathExtractor.extractPath(ctx);
