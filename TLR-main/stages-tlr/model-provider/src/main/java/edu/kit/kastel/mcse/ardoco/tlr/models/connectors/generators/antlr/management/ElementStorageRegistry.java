@@ -27,12 +27,10 @@ public abstract class ElementStorageRegistry {
     protected abstract void registerStorage();
 
     protected <T extends Element> void registerStorage(Type type, ElementStorage<T> storage) {
-        if (!verifyAllowedType(type) || hasStorage(type)) {
+        if (hasStorage(type)) {
             return;
         }
-        if (verifyAllowed(type, storage)) {
-            storages.put(type, storage);
-        }
+        storages.put(type, storage);
     }
 
     public boolean hasStorage(Type type) {
@@ -143,14 +141,6 @@ public abstract class ElementStorageRegistry {
         return null;
     }
 
-    private boolean verifyAllowedType(Type type) {
-        return typeOfClass.containsKey(type);
-    }
-
-    private boolean verifyAllowed(Type type, ElementStorage<?> storage) {
-        return verifyAllowed(type, storage.getType());
-    }
-
     private <T extends Element> boolean verifyAllowed(Type type, Class<T> clazz) {
         return typeOfClass.get(type) != null && typeOfClass.get(type).equals(clazz);
     }
@@ -165,7 +155,7 @@ public abstract class ElementStorageRegistry {
 
     private void createTypeMap() {
         for (Type type : storages.keySet()) {
-            typeOfClass.put(type, storages.get(type).getClass());
+            typeOfClass.put(type, storages.get(type).getType());
         }
     }
 
