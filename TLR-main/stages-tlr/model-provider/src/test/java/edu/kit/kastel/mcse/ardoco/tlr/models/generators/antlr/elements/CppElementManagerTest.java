@@ -518,9 +518,9 @@ public class CppElementManagerTest {
 
     private List<Element> getNullFunctions() {
         List<Element> functions = new ArrayList<>();
-        functions.add(new Element("a", "path", null));
+        functions.add(new Element("a", "path", Type.FUNCTION));
         functions.add(null);
-        functions.add(new Element("c", "path", null));
+        functions.add(new Element("c", "path", Type.FUNCTION));
         return functions;
     }
 
@@ -557,9 +557,9 @@ public class CppElementManagerTest {
 
     private List<Element> getNullNamespaces() {
         List<Element> namespaces = new ArrayList<>();
-        namespaces.add(new Element("a", "path", null));
+        namespaces.add(new Element("a", "path", Type.NAMESPACE));
         namespaces.add(null);
-        namespaces.add(new Element("c", "path", null));
+        namespaces.add(new Element("c", "path", Type.NAMESPACE));
         return namespaces;
     }
 
