@@ -20,6 +20,11 @@ public class PackageElement extends Element {
         this.shortName = name;
     }
 
+    public PackageElement(PackageElement packageElement) {
+        super(packageElement);
+        this.shortName = packageElement.getShortName();
+    }
+
     public String[] getPackageNameParts(String regex) {
         return this.identifier.name().split(regex);
     }

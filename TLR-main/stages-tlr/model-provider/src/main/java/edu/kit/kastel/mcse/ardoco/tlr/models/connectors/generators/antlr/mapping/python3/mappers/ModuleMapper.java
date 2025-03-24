@@ -35,7 +35,7 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper{
     private CodeAssembly buildCodeAssembly(ElementIdentifier identifier) {
         Element module = elementRegistry.getModule(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content);
+        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language);
         codeAssembly.setComment(module.getComment());
         return codeAssembly;
     }

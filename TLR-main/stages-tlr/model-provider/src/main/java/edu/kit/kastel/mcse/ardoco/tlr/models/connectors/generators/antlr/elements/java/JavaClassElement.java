@@ -30,6 +30,12 @@ public class JavaClassElement extends Element {
         this.implementedInterfaces = implementedInterfaces;
     }
 
+    public JavaClassElement(JavaClassElement classElement) {
+        super(classElement);
+        this.extendsClass = classElement.getExtendsClass();
+        this.implementedInterfaces = new ArrayList<>(classElement.getImplementedInterfaces());
+    }
+
     public String getExtendsClass() {
         return extendsClass;
     }

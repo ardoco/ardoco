@@ -7,7 +7,6 @@ import java.util.SortedSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -42,7 +41,7 @@ public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
 
         PackageElement pack = elementRegistry.getPackage(compilationUnit.getParentIdentifier());
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(),
-                content, pathElements, pack.getName(), ProgrammingLanguage.JAVA);
+                content, pathElements, pack.getName(), this.language);
         codeCompilationUnit.setComment(compilationUnit.getComment());
         return codeCompilationUnit;
     }

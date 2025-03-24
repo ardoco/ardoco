@@ -49,6 +49,17 @@ public class Element {
         this.endLine = endLine;
     }
 
+    public Element(Element elementToCopy) {
+        this.identifier = new ElementIdentifier(elementToCopy.getIdentifier().name(), elementToCopy.getIdentifier().path(), elementToCopy.getIdentifier().type());
+        if (elementToCopy.getParentIdentifier() != null) {
+            this.identifierOfParent = new ElementIdentifier(elementToCopy.getParentIdentifier().name(), elementToCopy.getParentIdentifier().path(), elementToCopy.getParentIdentifier().type());
+        }
+        this.startLine = elementToCopy.getStartLine();
+        this.endLine = elementToCopy.getEndLine();
+        this.comment = elementToCopy.getComment();
+
+    }
+
     public ElementIdentifier getParentIdentifier() {
         return this.identifierOfParent;
     }

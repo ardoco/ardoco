@@ -47,7 +47,7 @@ public class JavaElementExtractor extends ElementExtractor {
 
     @Override
     public JavaElementStorageRegistry getElements() {
-        return elementRegistry;
+        return new JavaElementStorageRegistry(elementRegistry);
     }
 
     @Override

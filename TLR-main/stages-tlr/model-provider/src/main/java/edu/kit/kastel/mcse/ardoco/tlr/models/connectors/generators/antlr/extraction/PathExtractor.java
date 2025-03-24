@@ -8,12 +8,22 @@ import org.antlr.v4.runtime.ParserRuleContext;
  */
 public final class PathExtractor {
 
+    /**
+     * Extracts the path from the given ParserRuleContext
+     * @param ctx, the ANTLR ParserRuleContext 
+     * @return, the path as string
+     */
     public static String extractPath(ParserRuleContext ctx) {
         String path = ctx.getStart().getInputStream().getSourceName();
         String normalizedPath = path.replace("\\", "/");
         return normalizedPath;
     }
 
+    /**
+     * Extracts the name from the path of the given ParserRuleContext
+     * @param ctx, the ANTLR ParserRuleContext
+     * @return, the name as string
+     */
     public static String extractNameFromPath(ParserRuleContext ctx) {
         String path = extractPath(ctx);
         String normalizedPath = path.replace("\\", "/");

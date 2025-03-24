@@ -33,6 +33,11 @@ public class ClassElement extends Element {
         this.inherits = inherits;
     }
 
+    public ClassElement(ClassElement classElement) {
+        super(classElement);
+        this.inherits = new ArrayList<>(classElement.getInherits());
+    }
+
     public List<String> getInherits() {
         return this.inherits;
     }

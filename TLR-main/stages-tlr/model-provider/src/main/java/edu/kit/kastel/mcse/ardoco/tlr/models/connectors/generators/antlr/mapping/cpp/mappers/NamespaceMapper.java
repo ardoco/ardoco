@@ -35,7 +35,7 @@ public class NamespaceMapper extends AbstractCppCodeItemMapper {
         Element namespace = this.elementRegistry.getNamespace(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
 
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, namespace.getName(), content);
+        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, namespace.getName(), content, this.language);
         codeAssembly.setComment(namespace.getComment());
         return codeAssembly;
     }

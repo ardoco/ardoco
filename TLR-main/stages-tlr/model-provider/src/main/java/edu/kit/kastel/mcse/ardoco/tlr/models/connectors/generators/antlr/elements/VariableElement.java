@@ -19,6 +19,11 @@ public class VariableElement extends Element {
         this.dataType = dataType;
     }
 
+    public VariableElement(VariableElement variableElement) {
+        super(variableElement);
+        this.dataType = variableElement.getDataType();
+    }
+
     public String getDataType() {
         return dataType;
     }

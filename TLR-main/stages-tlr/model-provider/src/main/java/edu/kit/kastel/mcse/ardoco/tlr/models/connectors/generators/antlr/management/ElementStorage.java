@@ -24,7 +24,7 @@ public class ElementStorage<T extends Element> {
         this.classType = classType;
         elements = new ArrayList<>();
     }
-
+    
     public Class<T> getClassType() {
         return classType;
     }

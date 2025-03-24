@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
@@ -33,6 +34,16 @@ public class JavaElementStorageRegistry extends ElementStorageRegistry {
         addElements(Type.INTERFACE, interfaces);
         addElements(Type.COMPILATIONUNIT, compilationUnits);
         addElements(Type.PACKAGE, packages);
+    }
+
+    public JavaElementStorageRegistry(JavaElementStorageRegistry registry) {
+        this();
+        addVariables(registry.getVariables());
+        addFunctions(registry.getFunctions());
+        addClasses(registry.getClasses());
+        addInterfaces(registry.getInterfaces());
+        addCompilationUnits(registry.getCompilationUnits());
+        addPackages(registry.getPackages());
     }
 
     @Override
@@ -94,51 +105,51 @@ public class JavaElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public VariableElement getVariable(ElementIdentifier identifier) {
-        return getElement(identifier, VariableElement.class);
+        return new VariableElement(getElement(identifier, VariableElement.class));
     }
 
     public Element getFunction(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public JavaClassElement getClass(ElementIdentifier identifier) {
-        return getElement(identifier, JavaClassElement.class);
+        return new JavaClassElement(getElement(identifier, JavaClassElement.class));
     }
 
     public Element getInterface(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public Element getCompilationUnitElement(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public PackageElement getPackage(ElementIdentifier identifier) {
-        return getElement(identifier, PackageElement.class);
+        return new PackageElement(getElement(identifier, PackageElement.class));
     }
 
     public List<VariableElement> getVariables() {
-        return getElements(Type.VARIABLE, VariableElement.class);
+        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getFunctions() {
-        return getElements(Type.FUNCTION, Element.class);
+        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<JavaClassElement> getClasses() {
-        return getElements(Type.CLASS, JavaClassElement.class);
+        return getElements(Type.CLASS, JavaClassElement.class).stream().map(JavaClassElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getInterfaces() {
-        return getElements(Type.INTERFACE, Element.class);
+        return getElements(Type.INTERFACE, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<Element> getCompilationUnits() {
-        return getElements(Type.COMPILATIONUNIT, Element.class);
+        return getElements(Type.COMPILATIONUNIT, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<PackageElement> getPackages() {
-        return getElements(Type.PACKAGE, PackageElement.class);
+        return getElements(Type.PACKAGE, PackageElement.class).stream().map(PackageElement::new).collect(Collectors.toList());
     }
 
     public boolean isVariableElement(Element element) {
@@ -166,26 +177,32 @@ public class JavaElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
+        List<VariableElement> variables = getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
+        return variables.stream().map(VariableElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
+        List<Element> functions = getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
+        return functions.stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<JavaClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.CLASS, parentIdentifier);
+        List<JavaClassElement> classes = getContentOfIdentifier(Type.CLASS, parentIdentifier);
+        return classes.stream().map(JavaClassElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getInterfacesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.INTERFACE, parentIdentifier);
+        List<Element> interfaces = getContentOfIdentifier(Type.INTERFACE, parentIdentifier);
+        return interfaces.stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<Element> getCompilationUnitsWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.COMPILATIONUNIT, parentIdentifier);
+        List<Element> compilationUnits = getContentOfIdentifier(Type.COMPILATIONUNIT, parentIdentifier);
+        return compilationUnits.stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<PackageElement> getPackagesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.PACKAGE, parentIdentifier);
+        List<PackageElement> packages = getContentOfIdentifier(Type.PACKAGE, parentIdentifier);
+        return packages.stream().map(PackageElement::new).collect(Collectors.toList());
     }
 }

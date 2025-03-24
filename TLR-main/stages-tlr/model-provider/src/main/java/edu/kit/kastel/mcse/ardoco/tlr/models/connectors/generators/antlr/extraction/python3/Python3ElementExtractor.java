@@ -34,18 +34,20 @@ public class Python3ElementExtractor extends ElementExtractor {
     private final Python3ElementStorageRegistry elementRegistry;
 
     public Python3ElementExtractor() {
+        super();
         this.elementRegistry = new Python3ElementStorageRegistry();
         this.commentExtractor = new Python3CommentExtractor(elementRegistry);
     }
 
     public Python3ElementExtractor(Python3ElementStorageRegistry elementRegistry) {
+        super();
         this.elementRegistry = elementRegistry;
         this.commentExtractor = new Python3CommentExtractor(elementRegistry);
     }
 
     @Override
     public Python3ElementStorageRegistry getElements() {
-        return elementRegistry;
+        return new Python3ElementStorageRegistry(elementRegistry);
     }
 
     @Override

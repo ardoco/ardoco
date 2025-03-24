@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 
@@ -17,10 +18,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 public abstract class AbstractCodeItemMapper implements CodeItemMapper {
     protected final CodeItemRepository codeItemRepository;
     protected final CodeItemMapperCollection collection;
+    protected final ProgrammingLanguage language;
 
-    protected AbstractCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection mappers) {
+    protected AbstractCodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection mappers, ProgrammingLanguage language) {
         this.codeItemRepository = repository;
         this.collection = mappers;
+        this.language = language;
     }
 
     @Override

@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappin
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
@@ -14,9 +15,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
  */
 public abstract class AbstractJavaCodeItemMapper extends AbstractCodeItemMapper {
     protected final JavaElementStorageRegistry elementRegistry;
+    private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.JAVA;
 
     protected AbstractJavaCodeItemMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
-        super(codeItemRepository, javaCodeItemMappers);
+        super(codeItemRepository, javaCodeItemMappers, programmingLanguage);
         this.elementRegistry = elementRegistry;
     }
 

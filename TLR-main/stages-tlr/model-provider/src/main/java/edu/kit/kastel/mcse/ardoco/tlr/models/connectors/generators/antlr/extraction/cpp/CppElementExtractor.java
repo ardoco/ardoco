@@ -55,7 +55,7 @@ public class CppElementExtractor extends ElementExtractor {
 
     @Override
     public CppElementStorageRegistry getElements() {
-        return elementRegistry;
+        return new CppElementStorageRegistry(elementRegistry);
     }
 
     @Override

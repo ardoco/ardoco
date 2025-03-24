@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
@@ -31,6 +32,15 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
         addElements(Type.CLASS, classes);
         addElements(Type.NAMESPACE, namespaces);
         addElements(Type.FILE, files);
+    }
+
+    public CppElementStorageRegistry(CppElementStorageRegistry registry) {
+        this();
+        addVariables(registry.getVariables());
+        addFunctions(registry.getFunctions());
+        addClasses(registry.getClasses());
+        addNamespaces(registry.getNamespaces());
+        addFiles(registry.getFiles());
     }
 
     @Override
@@ -83,43 +93,43 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public VariableElement getVariable(ElementIdentifier identifier) {
-        return getElement(identifier, VariableElement.class);
+        return new VariableElement(getElement(identifier, VariableElement.class));
     }
 
     public Element getFunction(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public ClassElement getClass(ElementIdentifier identifier) {
-        return getElement(identifier, ClassElement.class);
+        return new ClassElement(getElement(identifier, ClassElement.class));
     }
 
     public Element getNamespace(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public Element getFile(ElementIdentifier identifier) {
-        return getElement(identifier, Element.class);
+        return new Element(getElement(identifier, Element.class));
     }
 
     public List<VariableElement> getVariables() {
-        return getElements(Type.VARIABLE, VariableElement.class);
+        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getFunctions() {
-        return getElements(Type.FUNCTION, Element.class);
+        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<ClassElement> getClasses() {
-        return getElements(Type.CLASS, ClassElement.class);
+        return getElements(Type.CLASS, ClassElement.class).stream().map(ClassElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getNamespaces() {
-        return getElements(Type.NAMESPACE, Element.class);
+        return getElements(Type.NAMESPACE, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<Element> getFiles() {
-        return getElements(Type.FILE, Element.class);
+        return getElements(Type.FILE, Element.class).stream().map(Element::new).collect(Collectors.toList());
     }
 
     public boolean isNamespaceElement(Element element) {
@@ -143,18 +153,22 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
+        List<VariableElement> variables = getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
+        return variables.stream().map(VariableElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
+        List<Element> functions = getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
+        return functions.stream().map(Element::new).collect(Collectors.toList());
     }
 
     public List<ClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.CLASS, parentIdentifier);
+        List<ClassElement> classes = getContentOfIdentifier(Type.CLASS, parentIdentifier);
+        return classes.stream().map(ClassElement::new).collect(Collectors.toList());
     }
 
     public List<Element> getNamespacesWithParentIdentifier(ElementIdentifier parentIdentifier) {
-        return getContentOfIdentifier(Type.NAMESPACE, parentIdentifier);
+        List<Element> namespaces = getContentOfIdentifier(Type.NAMESPACE, parentIdentifier);
+        return namespaces.stream().map(Element::new).collect(Collectors.toList());
     }
 }

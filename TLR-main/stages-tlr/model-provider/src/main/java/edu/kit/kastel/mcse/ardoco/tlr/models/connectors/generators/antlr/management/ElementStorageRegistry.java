@@ -31,7 +31,7 @@ public abstract class ElementStorageRegistry {
     private final Map<Type, ElementStorage<?>> storages = new HashMap<>();
     private final Map<Type, Class<?>> typeOfClass = new EnumMap<>(Type.class);
 
-    public ElementStorageRegistry(CommentMatcher commentMatcher) {
+    protected ElementStorageRegistry(CommentMatcher commentMatcher) {
         registerStorage();
         createTypeMap();
         this.commentMatcher = commentMatcher;
@@ -48,7 +48,7 @@ public abstract class ElementStorageRegistry {
         for (Element element : elements) {
             ElementIdentifier identifier = element.getParentIdentifier();
             if (hasNotBeenAdded(identifier, identifiers) && checkIfElementWithIdentifierIsRoot(identifier)) {
-                identifiers.add(identifier);
+                identifiers.add(new ElementIdentifier(identifier.name(), identifier.path(), identifier.type()));
             }
         }
         return identifiers;
@@ -61,7 +61,9 @@ public abstract class ElementStorageRegistry {
     public List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
         List<Element> elements = new ArrayList<>();
         for (ElementStorage<?> storage : storages.values()) {
-            elements.addAll(storage.getContentOfIdentifier(identifier));
+            for (Element element : storage.getContentOfIdentifier(identifier)) {
+                elements.add(new Element(element));
+            }
         }
         return elements;
     }
@@ -77,7 +79,9 @@ public abstract class ElementStorageRegistry {
     public List<Element> getAllElements() {
         List<Element> elements = new ArrayList<>();
         for (ElementStorage<?> storage : storages.values()) {
-            elements.addAll(storage.getElements());
+            for (Element element : storage.getElements()) {
+                elements.add(new Element(element));
+            }
         }
         return elements;
     }
@@ -86,7 +90,7 @@ public abstract class ElementStorageRegistry {
         for (ElementStorage<?> storage : storages.values()) {
             Element element = storage.getElement(identifier);
             if (element != null) {
-                return element;
+                return new Element(element);
             }
         }
         return null;

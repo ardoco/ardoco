@@ -13,8 +13,8 @@ import generated.antlr.python3.Python3Lexer;
  */
 public class Python3CommentExtractor extends CommentExtractor {
 
-    public Python3CommentExtractor(Python3ElementStorageRegistry elementManager) {
-        super(elementManager);
+    public Python3CommentExtractor(Python3ElementStorageRegistry elementRegistry) {
+        super(elementRegistry);
     }
 
     @Override
