@@ -4,6 +4,7 @@ Core-main/**
 # Include changed CodeItem.java
 !Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/CodeItem.java
 !Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/ProgrammingLanguage.java
+!Code-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/CodeAssembly.java
 
 # Include directory structure for CodeItem.java
 !Core-main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/arcotl/code/
