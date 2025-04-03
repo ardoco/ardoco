@@ -47,5 +47,74 @@
       <artifactId>xml-object-mapper</artifactId>
       <version>0.7.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+       <version>${antlr.version}</version>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>${antlr.version}</version>
+        <executions>
+            <execution>
+              <!-- Compile Java Grammar -->
+                <id>generate-java-parser</id>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/java</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/java</outputDirectory>
+                    <packageName>generated.antlr.java</packageName>
+                    <visitor>true</visitor>
+                    <clean>true</clean>
+                </configuration>
+            </execution>
+
+            <execution>
+              <!-- Compile Python3 Grammar -->
+                <id>generate-python-parser</id>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/python3</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/python3</outputDirectory>
+                    <packageName>generated.antlr.python3</packageName>
+                    <visitor>true</visitor>
+                    <clean>true</clean>
+                </configuration>
+            </execution>
+
+            <execution>
+              <!-- Compile C++ Grammar -->
+                <id>generate-cpp-parser</id>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/antlr/grammar/cpp</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/generated/antlr/cpp</outputDirectory>
+                    <packageName>generated.antlr.cpp</packageName>
+                    <visitor>true</visitor>
+                    <clean>true</clean>
+                </configuration>
+            </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
