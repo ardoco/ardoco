@@ -1,0 +1,17 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% translate 'Logged out' %}</h4>
+
+    <p>
+        {% translate 'Thanks for spending some quality time with the site today.' %}
+    </p>
+
+    <p>
+        <a href="{% url 'accounts:log_in' %}">{% translate 'Log in again' %}</a>
+    </p>
+
+{% endblock content %}
