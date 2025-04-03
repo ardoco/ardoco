@@ -19,7 +19,7 @@ public class GithubProjectTest {
         CodeModel codeModel = extractor.extractModel();
 
         // Assertions
-        Assertions.assertNotNull(extractor.getElementExtractor().getElements().getAllElements().size() != 0);
+        Assertions.assertTrue(extractor.getElementExtractor().getElements().getAllElements().size() != 0);
         Assertions.assertNotNull(codeModel);
     }
 

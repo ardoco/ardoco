@@ -97,7 +97,7 @@ public class Element {
     }
 
     public void setComment(String comment) {
-        if (this.comment != "") {
+        if (!this.comment.equals("")) {
             this.comment += "\n";
         }
 

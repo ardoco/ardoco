@@ -33,11 +33,12 @@ public class Python3CommentExtractor extends CommentExtractor {
         comment = comment.replaceAll("^# ?", "").trim();
 
         // Remove multi-line comment markers (triple quotes """ or ''')
-        comment = comment.replaceAll("^(['\"]{3})|(['\"]{3})$", "").trim();
+        comment = comment.replaceAll("^(?:['\"]{3})|(?:['\"]{3})$", "").trim();
 
-        // Replace multiple newlines with a single space
-        comment = comment.replaceAll("\\n+", " "); // Removes line breaks while keeping words separated
+        // Replace all newlines and extra spaces between words with a single space
+        comment = comment.replaceAll("\\s*\\n\\s*", " ").trim();
 
         return comment;
+
     }
 }
