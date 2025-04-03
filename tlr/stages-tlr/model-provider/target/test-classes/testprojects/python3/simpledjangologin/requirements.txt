@@ -1,2 +1,0 @@
-Django==5.1.7
-django-bootstrap4==24.4

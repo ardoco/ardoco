@@ -1,8 +1,0 @@
-
-PMID- 27433151
-SO  invalid line
-TI  - This is a test title
-
-PMID- 27394443
-SO- another invalid line
-TI  -This is also a test title

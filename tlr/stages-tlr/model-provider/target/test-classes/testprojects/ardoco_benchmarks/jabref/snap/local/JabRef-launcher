@@ -1,2 +1,0 @@
-#! /bin/sh
-"$SNAP/lib/runtime/bin/JabRef" "$@"
