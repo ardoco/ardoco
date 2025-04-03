@@ -1,9 +1,0 @@
-coverage:
-  ignore:
-  - src/generated/.*
-  status:
-    patch: false
-    project:
-      default:
-        threshold: 0.01
-comment: false

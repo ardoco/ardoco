@@ -29,7 +29,7 @@ public class CppCommentExtractor extends CommentExtractor {
     @Override
     protected String cleanseComment(String text) {
         // Remove block comment delimiters (/* and */)
-        text = text.replaceAll("^/\\*+|\\*/$", "").trim();
+        text = text.replaceAll("^(?:/\\*+)|(?:\\*/)$", "").trim();
 
         // Remove leading '*' characters from each line while keeping line breaks
         text = text.replaceAll("(?m)^\\s*\\* ?", "");

@@ -30,7 +30,7 @@ public class JavaCommentExtractor extends CommentExtractor {
     @Override
     protected String cleanseComment(String text) {
         // Remove block comment delimiters (/** and */)
-        text = text.replaceAll("^/\\*+|\\*/$", "").trim();
+        text = text.replaceAll("^(?:/\\*+)|(?:\\*/)$", "").trim();
 
         // Remove leading '*' characters from each line but keep newlines
         text = text.replaceAll("(?m)^\\s*\\* ?", "").trim();
