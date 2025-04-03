@@ -11,7 +11,7 @@ public final class CodeAssembly extends CodeModule {
 
     private static final long serialVersionUID = 3082912967900986071L;
     @JsonProperty
-    private ProgrammingLanguage language;
+    private String language;
 
     @SuppressWarnings("unused")
     private CodeAssembly() {
@@ -22,7 +22,7 @@ public final class CodeAssembly extends CodeModule {
         super(codeItemRepository, name, content);
     }
 
-    public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, ProgrammingLanguage language) {
+    public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
         super(codeItemRepository, name, content);
         this.language = language;
     }

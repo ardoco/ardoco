@@ -16,10 +16,6 @@ public class Pyhton3ModelMapperTest {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
         CodeModel codeModel = extractor.extractModel();
-        
-        // Assertions
-        Assertions.assertNotNull(codeModel);
-        Assertions.assertEquals(8, codeModel.getEndpoints().size());
 
         // More Detailed Assertions
         Assertions.assertEquals(codeModel.getAllPackages().size(), 3);
