@@ -36,7 +36,7 @@ public class Python3CommentExtractor extends CommentExtractor {
         comment = comment.replaceAll("^(['\"]{3})|(['\"]{3})$", "").trim();
 
         // Replace multiple newlines with a single space
-        comment = comment.replaceAll("\\s*\\n\\s*", " "); // Removes line breaks while keeping words separated
+        comment = comment.replaceAll("\\n+", " "); // Removes line breaks while keeping words separated
 
         return comment;
     }
