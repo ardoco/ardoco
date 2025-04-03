@@ -1,0 +1,17 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+
+{% block content %}
+
+    {% if request.user.is_authenticated %}
+
+        {% translate 'Your username is' %} <b>{{ request.user.username }}</b>.
+
+    {% else %}
+
+        {% translate 'You are a guest.' %}
+
+    {% endif %}
+
+{% endblock content %}

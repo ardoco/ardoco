@@ -28,6 +28,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
 
     @JsonIgnore
     protected CodeItemRepository codeItemRepository;
+    protected String comment;
 
     CodeItem() {
         // Jackson
@@ -84,5 +85,13 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
 
     public SortedSet<CodePackage> getAllPackages() {
         return new TreeSet<>();
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
