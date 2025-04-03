@@ -33,15 +33,9 @@ This project enhances **code extraction** for the **ArDoCo** tool by integrating
 
 
 ### General Description
-The introduced **code extraction process** is divided into three key phases: **extracting** relevant information, **mapping** it to the appropriate constructs provided by the **ArDoCo Framework**, and **managing** the extracted data.
+The introduced **code extraction process** is divided into three key phases: **extracting** relevant information, **mapping** it to the appropriate constructs provided by the **ArDoCo Framework**, and **storing** the extracted data.
 
 The modularity of this approach has been tested by encapsulating the extraction process for different programming languages, **Java**, **Python**, and **C++**. Additionally, its flexibility has been demonstrated by incorporating a new functionality, **CommentExtraction**.
-
-The introduced code extraction process can be seperated in the **extraction** of relevant information and the **mapping** to the 
-matching constructs provided by the **ArDoCo Framework**. 
-Additionally it includes the **management** of the extracted information.
-The modularity of this approach not only been tested through encapsulating the extraction on projects with the programming languages **Java**, **Python**, and **C++**, but also with adding the functionality
-of **CommentExtraction** as example.
 
 ### Extracting Code
 <!--TODO: Compare after testing with "Real World Scenarios"-->
@@ -50,21 +44,21 @@ Code extraction is performed by creating a **JavaExtractor**, **PythonExtractor*
 ### High-Level Architecture 
 As shown in [**Figure 1**](#figure-1-component-diagram-of-code-extraction-within-ardoco), the code extraction process is structured into three core components, each playing a distinct role in processing source code:
 
-1️⃣ **Extraction Component** – Responsible for retrieving relevant information from the source code. This component interacts with ANTLR 
+1️⃣ **(Core) Extraction Component** – Responsible for retrieving relevant information from the source code. This component interacts with ANTLR 
 to extract code information from different programming languages.
 
-2️⃣ **Storage & Management Component** – Once extracted, the information is stored and structured efficiently. This component ensures consistency and enables access to the retrieved data, even programming language specific information.
+2️⃣ **Storage Component** – Once extracted, the information is stored and structured efficiently. This component ensures consistency and enables access to the retrieved data, even programming language specific information.
 
 3️⃣ **Mapping Component** – The extracted and stored information is mapped to the appropriate constructs within the ArDoCo Framework, ensuring compatibility with the overall system for further processing and analysis.
 
-These components work together in a modular fashion, allowing easy extensibility for new programming languages. The **Extraction Module** operates independently for different languages (Java, Python, C++) but **relies on the Storage Module** to persist data. The Mapping Module then transforms the stored data into a format that the ArDoCo Framework can process further.
+These components work together in a modular fashion, allowing easy extensibility for new programming languages. The **Extraction Module** operates independently for different languages (Java, Python, C++) but **relies on the Storage Module** to persist data. The **Mapping Module** then transforms the stored data into a format that the ArDoCo Framework can process further.
 
 For a more detailed breakdown of the system's structure, refer to Section: [Class Diagram & Component Breakdown](#class-diagram--component-breakdown).
 
 ### System Requirements
 * Windows 11
 * MacOS Sequoia
-* (Linux) (has not been tested, but path behavior should be similar to MacOS)
+* (Linux - has not been tested, but path behavior should be similar to MacOS)
 
 ## Architectural Design Decisions
 
@@ -212,20 +206,22 @@ While a standardized mapping approach is beneficial, it was recognized that **di
 - **Requires additional mapping logic** for each supported language.
 - **Slightly increases complexity** in maintaining multiple mapping strategies.
 
-💡 Decision: Since both approaches offer significant advantages, a **hybrid solution** was introduced using the **Strategy Pattern**. This approach enables:
-- **A generic mapping strategy for common elements**, ensuring standardization across languages.
-- **A flexible mechanism to incorporate language-specific mapping strategies** when needed.
+💡 Decision: Since both approaches offer significant advantages, a **hybrid solution** was introduced. This approach enables:
+- **Generic mapping for common elements**, ensuring standardization across languages.
+- **A flexible mechanism to incorporate language-specific mapping** when needed.
 - **Scalability**, making it easier to extend the framework for future languages without requiring major structural changes.
 
-By employing the **Strategy Pattern**, the system balances the uniformity of generic mapping with the adaptability of language-specific processing, ensuring both consistency and flexibility in the extraction pipeline.
-
 ## Class Diagrams & Components Breakdown
+0️⃣ Complete Overview
+
+![Architecture Overview](doc/architecture_overview.png)
+
 1️⃣ ANTLRExtractor
+
 ![ANTLR Extractor Class Diagram](doc/antlr_extractor_diagram.png)
 This diagram provides an overview of the entry point to the code extraction process.
 
-The classes Extractor and CodeExtractor already existed in the previous approach. With the integration of ANTLR, the extraction process now begins in ANTLRExtractor, which manages the process of extraction 
-when using ANTLR.
+The classes Extractor and CodeExtractor already existed in the previous approach. With the integration of ANTLR, the extraction process now begins in ANTLRExtractor, which manages the process of extraction when using ANTLR.
 
 | Class Name | Purpose |
 |------------|---------|
@@ -235,20 +231,14 @@ when using ANTLR.
 | **`CppExtractor`** | Sets up elements used specific to **C++**. Determines which C++ files in the target directory should be processed.|
 
 2️⃣ Extraction
+
 ![Extraction Process Class Diagram](doc/extraction_diagram.png)
-Here’s a **refined version** of your **Extraction** section with **improved clarity, structure, and consistency** while keeping the technical depth intact.
-
----
-
-## **Class Diagram & Component Breakdown: Extraction**  
 
 This diagram provides an **overview of the extraction** for **structural elements and comments** from source code. The **extraction** ensures that relevant code constructs are **identified, and extracted** for further processing.
 
-### **Class Overview**  
-
 | **Class Name** | **Purpose** |
 |---------------|------------|
-| **`ElementExtractor`** | **Interface**: Defines the **core functions** for extracting **structural elements** from source code. |
+| **`ElementExtractor`** | Implements the **core functions** for extracting **structural elements** from source code. |
 | **`JavaElementExtractor`** | Implements **extraction logic** for structural elements in **Java**. |
 | **`Python3ElementExtractor`** | Implements **extraction logic** for structural elements in **Python3**. |
 | **`CppElementExtractor`** | Implements **extraction logic** for structural elements in **C++**. |
@@ -256,44 +246,43 @@ This diagram provides an **overview of the extraction** for **structural element
 | **`JavaCommentExtractor`** | Implements **rules for recognizing valid comments** in **Java**. |
 | **`Python3CommentExtractor`** | Implements **rules for recognizing valid comments** in **Python3**. |
 | **`CppCommentExtractor`** | Implements **rules for recognizing valid comments** in **C++**. |
-| **`ParentExtractor`** | Defines the **logic for determining parent-child relationships** within the extracted elements. |
-| **`JavaParentExtractor`** | Specifies **valid parent relationships** for **Java** elements. |
-| **`Python3ParentExtractor`** | Specifies **valid parent relationships** for **Python3** elements. |
-| **`CppParentExtractor`** | Specifies **valid parent relationships** for **C++** elements. |
 | **`PathExtractor`** | Defines the logic for **extracting and processing file paths** within a project structure. |
 
 3️⃣ Management
+
 ![Management Process Class Diagram](doc/management_diagram.png)
 This diagram provides an **overview of how extracted structural elements** from source code are **managed, stored, and retrieved**. It ensures that extracted elements are **persisted efficiently** and can be **retrieved when needed for further processing**.  
 
 | **Class Name** | **Purpose** |
 |---------------|------------|
-| **`ElementManager`** | Defines the **core logic** for **persisting and retrieving extracted elements**. |
-| **`ElementStorageRepository`** | Manages the **composition of ElementStorages**, acting as a central access point for stored elements. |
+| **`ElementStorageRegistry`** | Defines the **core logic** for **persisting and retrieving extracted elements**. |
 | **`ElementStorage`** | Responsible for **persisting and retrieving extracted elements**, ensuring structured storage. |
-| **`JavaElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **Java** code. |
-| **`Python3ElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **Python3** code. |
-| **`CppElementManager`** | Implements logic for **persisting and retrieving elements** extracted from **C++** code. |
 | **`JavaElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **Java**. |
 | **`Python3ElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **Python3**. |
 | **`CppElementStorageRepository`** | Defines the **composition of ElementStorages** specific to **C++**. |
+| **`CommentMatcher`** | Defines the **core logic** of matching extracted **comments** to **elements** |
+| **`JavaCommentMatcher`** | Defines the **Java** specific rules according to commenting habits for mapping **comments** to **elements** |
+| **`Python3CommentMatcher`** | Defines the **Python 3** specific rules according to commenting habits for mapping **comments** to **elements** |
+| **`CppCommentMatcher`** | Defines the **C++** specific rules according to commenting habits for mapping **comments** to **elements** |
+
 
 
 4️⃣ Mapping
+
 ![Mapping Process Class Diagram](doc/mapping_diagram.png)
 This diagram provides an overview of the mapping process, where extracted elements are converted into CodeItems that the ArDoCo Framework defines. The mapping ensures that extracted code structures are correctly interpreted and integrated into the framework.
 
 | **Class Name** | **Purpose** |
 |---------------|------------|
 | **`ModelMapper`** | Defines the **core mapping logic**, converting extracted elements into **CodeItems**. |
-| **`CodeItemBuilder`** | Establishes the **set of valid mappings**, ensuring correct **associations between extracted elements and CodeItems**. |
-| **`AbstractCodeItemBuilderStrategy`** | Represents the **base class for mapping strategies**, defining how an element type is mapped to a specific **CodeItem type**. |
+| **`CodeItemMapperCollection`** | Establishes the **set of valid mappings**, ensuring correct **associations between extracted elements and CodeItems**. |
+| **`AbstractCodeMapper`** | Represents the **base class for mappers**, defining how an element type is mapped to a specific **CodeItem type**. |
 | **`JavaModelMapper`** | Implements the **mapping logic specific to Java**, ensuring correct **Java element-to-CodeItem transformation**. |
 | **`Python3ModelMapper`** | Implements the **mapping logic specific to Python3**, ensuring correct **Python element-to-CodeItem transformation**. |
 | **`CppModelMapper`** | Implements the **mapping logic specific to C++**, ensuring correct **C++ element-to-CodeItem transformation**. |
-| **`JavaCodeItemBuilder`** | Defines the **valid set of mapping strategies** for **Java** elements. |
-| **`Python3CodeItemBuilder`** | Defines the **valid set of mapping strategies** for **Python3** elements. |
-| **`CppCodeItemBuilder`** | Defines the **valid set of mapping strategies** for **C++** elements. |
+| **`JavaCodeItemMapperCollection`** | Defines the **valid set of mappers** for **Java** elements. |
+| **`Python3CodeItemMapperCollection`** | Defines the **valid set of mappers** for **Python3** elements. |
+| **`CppCodeItemMapperCollection`** | Defines the **valid set of mappers** for **C++** elements. |
 
 ## Testing
 To ensure the **accuracy and reliability** of the extraction process, a combination of **minimal test cases** and **real-world projects** was used for validation:  
@@ -304,7 +293,7 @@ To ensure the **accuracy and reliability** of the extraction process, a combinat
 
 2️⃣ **Real-World Project Testing**  
 - Small projects were **downloaded from [GitHub](https://github.com/)** to evaluate the **scalability and robustness** of the extraction process.  
-- For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management)
+- For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management), [ArDoCo-Benchmark jabref](https://github.com/ArDoCo/jabref)
 - For **PYTHON3**: [Simple Django Project](https://github.com/Manisha-Bayya/simple-django-project)
 - For **C++**: [Simple Render Engine](https://github.com/mortennobel/SimpleRenderEngineProject) (except thirdparty)
 - These projects helped assess **runtime performance**, identify **potential edge cases**, and detect **unexpected extraction errors**.  

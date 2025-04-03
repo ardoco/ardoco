@@ -137,7 +137,7 @@ public abstract class ElementStorageRegistry {
     }
 
     protected <T extends Element> boolean containsElement(Type type, T element) {
-        if (hasStorage(type, element)) {
+        if (hasStorage(type)) {
             ElementStorage<T> storage = getTypedStorage(type);
             return storage.contains(element);
         }
