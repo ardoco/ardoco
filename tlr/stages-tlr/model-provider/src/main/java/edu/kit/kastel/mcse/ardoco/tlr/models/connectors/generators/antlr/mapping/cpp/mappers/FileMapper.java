@@ -34,7 +34,7 @@ public class FileMapper extends AbstractCppCodeItemMapper {
     private CodeItem buildFileCodeAssembly(ElementIdentifier identifier) {
         Element file = this.elementRegistry.getFile(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        CodeAssembly codeAssembly = new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language);
+        CodeAssembly codeAssembly = new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language.name());
         return codeAssembly;
     }    
 }
