@@ -1,1 +1,0 @@
-* \format[RemoveLatexCommands,HTMLChars]{\title}. \begin{journal}\format[RemoveLatexCommands,HTMLChars]{\journal}\end{journal}\begin{year} \format{\year}\end{year}
