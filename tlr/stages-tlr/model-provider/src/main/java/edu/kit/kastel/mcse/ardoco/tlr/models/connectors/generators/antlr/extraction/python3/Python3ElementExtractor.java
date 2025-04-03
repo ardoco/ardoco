@@ -60,7 +60,7 @@ public class Python3ElementExtractor extends ElementExtractor {
                     .filter(f -> f.toString().endsWith(".py"))
                     .forEach(pythonFiles::add);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("I/O operation failed", e);
         }
         return pythonFiles;
     }

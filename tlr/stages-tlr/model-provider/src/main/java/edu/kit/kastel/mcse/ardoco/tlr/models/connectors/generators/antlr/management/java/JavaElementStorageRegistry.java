@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.JavaCommentMatcher;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.CommentMatcher;
 
 /**
  * Registry for storing elements of a Java codebase.
@@ -21,7 +21,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 public class JavaElementStorageRegistry extends ElementStorageRegistry {
 
     public JavaElementStorageRegistry() {
-        super(new JavaCommentMatcher());
+        super(new CommentMatcher());
     }
 
     public JavaElementStorageRegistry(List<VariableElement> variables, List<Element> functions,

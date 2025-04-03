@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.CppCommentMatcher;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching.CommentMatcher;
 
 /**
  * Registry for storing elements of a C++ codebase.
@@ -20,7 +20,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 public class CppElementStorageRegistry extends ElementStorageRegistry {
 
     public CppElementStorageRegistry() {
-        super(new CppCommentMatcher());
+        super(new CommentMatcher());
     }
 
     public CppElementStorageRegistry(List<VariableElement> variables, List<Element> functions,

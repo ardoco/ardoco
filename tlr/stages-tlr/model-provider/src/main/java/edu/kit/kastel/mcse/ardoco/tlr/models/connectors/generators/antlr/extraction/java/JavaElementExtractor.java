@@ -60,7 +60,7 @@ public class JavaElementExtractor extends ElementExtractor {
                     .filter(f -> f.toString().endsWith(".java"))
                     .forEach(javaFiles::add);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("I/O operation failed", e);
         }
         return javaFiles;
     }

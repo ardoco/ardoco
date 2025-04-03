@@ -12,9 +12,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
  * The rules for what is considered the closest elements must be implemented in
  * the subclasses.
  */
-public abstract class CommentMatcher {
+public class CommentMatcher {
 
-    protected CommentMatcher() {
+    public CommentMatcher() {
     }
 
     public void matchComments(List<Comment> comments, List<Element> allElements) {
@@ -52,5 +52,28 @@ public abstract class CommentMatcher {
         element.setComment(comment.text());
     }
 
-    protected abstract int calculateDistance(Comment comment, Element element);
+    private int calculateDistance(Comment comment, Element element) {
+        int elementStartLine = element.getStartLine();
+        int commentStartLine = comment.startLine();
+        int commentEndLine = comment.endLine();
+
+        int lineDifference = calculateDifference(elementStartLine, commentStartLine, commentEndLine);
+
+        return lineDifference;
+    }
+
+    protected int calculateDifference(int elementStartLine, int commentStartLine, int commentEndLine) {
+        // default max value
+        int lineDifference = Integer.MAX_VALUE;
+        // Comments Ideally just before Element
+        if (commentStartLine == elementStartLine + 1) {
+            return 0;
+        }
+
+        // Comment before element
+        if (commentStartLine <= elementStartLine) {
+            lineDifference = Math.abs(elementStartLine - commentEndLine);
+        }
+        return lineDifference;
+    }
 }

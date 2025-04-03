@@ -68,7 +68,7 @@ public class CppElementExtractor extends ElementExtractor {
                     .filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h"))
                     .forEach(cppFiles::add);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("I/O operation failed", e);
         }
         return cppFiles;
     }

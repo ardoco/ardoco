@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
 
@@ -20,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
  */
 public abstract class ElementExtractor {
     protected CommentExtractor commentExtractor;
+    protected final Logger logger = LoggerFactory.getLogger(ElementExtractor.class);
 
     protected ElementExtractor() {
     }
@@ -46,7 +49,7 @@ public abstract class ElementExtractor {
         try {
             tokens = buildTokens(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("I/O operation failed", e);
             return;
         }
         extractElements(tokens);
