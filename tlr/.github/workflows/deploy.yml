@@ -22,7 +22,7 @@ jobs:
       install-self: true
       dependencies: "https://github.com/ArDoCo/InconsistencyDetection.git"
     secrets:
-      OSSRH_USER: ${{secrets.OSSRH_USER}}
-      OSSRH_TOKEN: ${{secrets.OSSRH_TOKEN}}
+      CENTRAL_USER: ${{secrets.OSSRH_USER}}
+      CENTRAL_TOKEN: ${{secrets.OSSRH_TOKEN}}
       GPG_KEY: ${{secrets.GPG_KEY}}
 
