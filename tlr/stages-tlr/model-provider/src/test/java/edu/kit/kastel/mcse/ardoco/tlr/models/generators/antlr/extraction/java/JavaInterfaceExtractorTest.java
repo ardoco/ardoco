@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
 
-public class JavaInterfaceExtractorTest {
+class JavaInterfaceExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
 
     @Test

@@ -10,10 +10,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 
-public class JavaExtractorTest {
+class JavaExtractorTest {
 
     @Test
-    void executeJavaExtractorForMinimalDirectoryTest() throws IOException {
+    void executeJavaExtractorForMinimalDirectoryTest() {
         String sourcePath = "src/test/resources/interface/edu/";
         JavaExtractor javaExtractor = buildJavaExtractor(sourcePath);
         javaExtractor.extractModel();

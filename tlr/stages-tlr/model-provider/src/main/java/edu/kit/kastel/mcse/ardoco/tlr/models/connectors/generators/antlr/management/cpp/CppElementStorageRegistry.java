@@ -2,7 +2,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -113,23 +112,23 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public List<VariableElement> getVariables() {
-        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).collect(Collectors.toList());
+        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).toList();
     }
 
     public List<Element> getFunctions() {
-        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).collect(Collectors.toList());
+        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).toList();
     }
 
     public List<ClassElement> getClasses() {
-        return getElements(Type.CLASS, ClassElement.class).stream().map(ClassElement::new).collect(Collectors.toList());
+        return getElements(Type.CLASS, ClassElement.class).stream().map(ClassElement::new).toList();
     }
 
     public List<Element> getNamespaces() {
-        return getElements(Type.NAMESPACE, Element.class).stream().map(Element::new).collect(Collectors.toList());
+        return getElements(Type.NAMESPACE, Element.class).stream().map(Element::new).toList();
     }
 
     public List<Element> getFiles() {
-        return getElements(Type.FILE, Element.class).stream().map(Element::new).collect(Collectors.toList());
+        return getElements(Type.FILE, Element.class).stream().map(Element::new).toList();
     }
 
     public boolean isNamespaceElement(Element element) {
@@ -154,21 +153,21 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
 
     public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<VariableElement> variables = getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
-        return variables.stream().map(VariableElement::new).collect(Collectors.toList());
+        return variables.stream().map(VariableElement::new).toList();
     }
 
     public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<Element> functions = getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
-        return functions.stream().map(Element::new).collect(Collectors.toList());
+        return functions.stream().map(Element::new).toList();
     }
 
     public List<ClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<ClassElement> classes = getContentOfIdentifier(Type.CLASS, parentIdentifier);
-        return classes.stream().map(ClassElement::new).collect(Collectors.toList());
+        return classes.stream().map(ClassElement::new).toList();
     }
 
     public List<Element> getNamespacesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<Element> namespaces = getContentOfIdentifier(Type.NAMESPACE, parentIdentifier);
-        return namespaces.stream().map(Element::new).collect(Collectors.toList());
+        return namespaces.stream().map(Element::new).toList();
     }
 }

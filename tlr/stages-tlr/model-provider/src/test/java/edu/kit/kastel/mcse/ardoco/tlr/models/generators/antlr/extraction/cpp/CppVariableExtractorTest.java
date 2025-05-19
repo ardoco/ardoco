@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppElementExtractor;
 
-public class CppVariableExtractorTest {
+class CppVariableExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
 
     @Test

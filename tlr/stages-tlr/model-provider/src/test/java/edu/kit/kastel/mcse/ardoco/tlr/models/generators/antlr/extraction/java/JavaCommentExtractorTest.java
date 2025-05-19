@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaCommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 
-public class JavaCommentExtractorTest {
+class JavaCommentExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
 
     @Test

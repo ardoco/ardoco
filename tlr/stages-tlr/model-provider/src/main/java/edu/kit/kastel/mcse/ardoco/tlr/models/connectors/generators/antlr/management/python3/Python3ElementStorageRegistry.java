@@ -2,7 +2,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -114,23 +113,23 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public List<VariableElement> getVariables() {
-        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).collect(Collectors.toList());
+        return getElements(Type.VARIABLE, VariableElement.class).stream().map(VariableElement::new).toList();
     }
 
     public List<Element> getFunctions() {
-        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).collect(Collectors.toList());
+        return getElements(Type.FUNCTION, Element.class).stream().map(Element::new).toList();
     }
 
     public List<ClassElement> getClasses() {
-        return getElements(Type.CLASS, ClassElement.class).stream().map(ClassElement::new).collect(Collectors.toList());
+        return getElements(Type.CLASS, ClassElement.class).stream().map(ClassElement::new).toList();
     }
 
     public List<Element> getModules() {
-        return getElements(Type.MODULE, Element.class).stream().map(Element::new).collect(Collectors.toList());
+        return getElements(Type.MODULE, Element.class).stream().map(Element::new).toList();
     }
 
     public List<PackageElement> getPackages() {
-        return getElements(Type.PACKAGE, PackageElement.class).stream().map(PackageElement::new).collect(Collectors.toList());
+        return getElements(Type.PACKAGE, PackageElement.class).stream().map(PackageElement::new).toList();
     }
 
     public boolean isVariableElement(Element element) {
@@ -155,27 +154,27 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
 
     public List<VariableElement> getVariablesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<VariableElement> variables = getContentOfIdentifier(Type.VARIABLE, parentIdentifier);
-        return variables.stream().map(VariableElement::new).collect(Collectors.toList());
+        return variables.stream().map(VariableElement::new).toList();
     }
 
     public List<Element> getFunctionsWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<Element> functions = getContentOfIdentifier(Type.FUNCTION, parentIdentifier);
-        return functions.stream().map(Element::new).collect(Collectors.toList());
+        return functions.stream().map(Element::new).toList();
     }
 
     public List<ClassElement> getClassesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<ClassElement> classes = getContentOfIdentifier(Type.CLASS, parentIdentifier);
-        return classes.stream().map(ClassElement::new).collect(Collectors.toList());
+        return classes.stream().map(ClassElement::new).toList();
     }
 
     public List<Element> getModulesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<Element> modules = getContentOfIdentifier(Type.MODULE, parentIdentifier);
-        return modules.stream().map(Element::new).collect(Collectors.toList());
+        return modules.stream().map(Element::new).toList();
     }
 
     public List<PackageElement> getPackagesWithParentIdentifier(ElementIdentifier parentIdentifier) {
         List<PackageElement> packages = getContentOfIdentifier(Type.PACKAGE, parentIdentifier);
-        return packages.stream().map(PackageElement::new).collect(Collectors.toList());
+        return packages.stream().map(PackageElement::new).toList();
     }
 
 }

@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 
-public class CppElementManagerTest {
+class CppElementManagerTest {
     private CppElementStorageRegistry elementManager;
 
     @Test

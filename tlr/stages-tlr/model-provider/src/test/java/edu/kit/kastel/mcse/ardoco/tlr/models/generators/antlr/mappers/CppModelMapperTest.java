@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extract
 class CppModelMapperTest {
 
     @Test
-    void testCppModelMapper() throws IOException {
+    void testCppModelMapper() {
         CodeItemRepository repository = new CodeItemRepository();
         CppExtractor extractor = new CppExtractor(repository, "src/test/resources/cpp/interface/edu/");
         CodeModel model = extractor.extractModel();

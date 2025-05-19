@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
-public class Python3ElementManagerTest {
+class Python3ElementManagerTest {
     private Python3ElementStorageRegistry elementManager;
 
     @Test

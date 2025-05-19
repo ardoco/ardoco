@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppElementExtractor;
 
-public class CppNamespaceExtractorTest {
+class CppNamespaceExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
 
     @Test
