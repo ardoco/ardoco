@@ -18,7 +18,7 @@ jobs:
     with:
       deploy: true
       with-submodules: true
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       install-self: false
       dependencies: "https://github.com/ArDoCo/TLR.git"
     secrets:

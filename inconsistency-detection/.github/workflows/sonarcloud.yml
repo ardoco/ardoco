@@ -16,7 +16,7 @@ jobs:
     uses: ardoco/actions/.github/workflows/sonarcloud.yml@main
     with:
       with-submodules: true
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       install-self: false
       dependencies: "https://github.com/ArDoCo/TLR.git"
     secrets:
