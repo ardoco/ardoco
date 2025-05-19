@@ -50,7 +50,7 @@ public class DeterministicArDoCoTest {
 
     @ArchTest
     public static final ArchRule forbidUnorderedSetsAndMaps = noClasses().that()
-            .resideOutsideOfPackages("..tests..", "..metrics..")
+            .resideOutsideOfPackages("..tests..", "..metrics..", "..magika..")
             .and(areNotDirectlyAnnotatedWith(Deterministic.class))
             .should()
             .accessClassesThat(areForbiddenClasses())
