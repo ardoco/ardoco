@@ -3,10 +3,9 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.manage
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -27,10 +26,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
  * code to the corresponding elements
  * via the CommentMatcher.
  */
+@Deterministic
 public abstract class ElementStorageRegistry {
     private final CommentMatcher commentMatcher;
-    private final Map<Type, ElementStorage<?>> storages = new HashMap<>();
-    private final Map<Type, Class<?>> typeOfClass = new EnumMap<>(Type.class);
+    private final EnumMap<Type, ElementStorage<?>> storages = new EnumMap<>(Type.class);
+    private final EnumMap<Type, Class<?>> typeOfClass = new EnumMap<>(Type.class);
 
     protected ElementStorageRegistry(CommentMatcher commentMatcher) {
         registerStorage();
@@ -188,8 +188,8 @@ public abstract class ElementStorageRegistry {
     }
 
     private void createTypeMap() {
-        for (Type type : storages.keySet()) {
-            typeOfClass.put(type, storages.get(type).getClassType());
+        for (var typeXstorage : storages.entrySet()) {
+            typeOfClass.put(typeXstorage.getKey(), typeXstorage.getValue().getClassType());
         }
     }
 
