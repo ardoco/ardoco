@@ -25,7 +25,7 @@ class JavaElementManagerTest {
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
         }
-        assert (elementManager.getVariables().containsAll(variables));
+        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
     }
 
     @Test
@@ -47,7 +47,7 @@ class JavaElementManagerTest {
         for (Element function : functions) {
             elementManager.addFunction(function);
         }
-        assert (elementManager.getFunctions().containsAll(functions));
+        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
     }
 
     @Test
@@ -69,7 +69,7 @@ class JavaElementManagerTest {
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
         }
-        assert (elementManager.getClasses().containsAll(classes));
+        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
     }
 
     @Test
@@ -91,7 +91,7 @@ class JavaElementManagerTest {
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
         }
-        assert (elementManager.getInterfaces().containsAll(interfaces));
+        Assertions.assertTrue(elementManager.getInterfaces().containsAll(interfaces));
     }
 
     @Test
@@ -113,7 +113,7 @@ class JavaElementManagerTest {
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
         }
-        assert (elementManager.getCompilationUnits().containsAll(compilationUnits));
+        Assertions.assertTrue(elementManager.getCompilationUnits().containsAll(compilationUnits));
     }
 
     @Test
@@ -135,7 +135,7 @@ class JavaElementManagerTest {
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
         }
-        assert (elementManager.getPackages().containsAll(packages));
+        Assertions.assertTrue(elementManager.getPackages().containsAll(packages));
     }
 
     @Test
@@ -157,7 +157,7 @@ class JavaElementManagerTest {
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
         }
-        assert elementManager.getVariables().containsAll(variables);
+        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
     }
 
     @Test
@@ -178,7 +178,7 @@ class JavaElementManagerTest {
         for (Element function : functions) {
             elementManager.addFunction(function);
         }
-        assert elementManager.getFunctions().containsAll(functions);
+        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
     }
 
     @Test
@@ -199,7 +199,7 @@ class JavaElementManagerTest {
         for (JavaClassElement clazz : classes) {
             elementManager.addClass(clazz);
         }
-        assert elementManager.getClasses().containsAll(classes);
+        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
     }
 
     @Test
@@ -220,7 +220,7 @@ class JavaElementManagerTest {
         for (Element interf : interfaces) {
             elementManager.addInterface(interf);
         }
-        assert elementManager.getInterfaces().containsAll(interfaces);
+        Assertions.assertTrue(elementManager.getInterfaces().containsAll(interfaces));
     }
 
     @Test
@@ -241,7 +241,7 @@ class JavaElementManagerTest {
         for (Element compilationUnit : compilationUnits) {
             elementManager.addCompilationUnit(compilationUnit);
         }
-        assert elementManager.getCompilationUnits().containsAll(compilationUnits);
+        Assertions.assertTrue(elementManager.getCompilationUnits().containsAll(compilationUnits));
     }
 
     @Test
@@ -262,7 +262,7 @@ class JavaElementManagerTest {
         for (PackageElement pack : packages) {
             elementManager.addPackage(pack);
         }
-        assert elementManager.getPackages().containsAll(packages);
+        Assertions.assertTrue(elementManager.getPackages().containsAll(packages));
     }
 
     @Test

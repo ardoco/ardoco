@@ -22,7 +22,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
-        assert elementManager.getVariables().containsAll(variables);
+        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
     }
 
     @Test
@@ -40,7 +40,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
-        assert elementManager.getFunctions().containsAll(functions);
+        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
     }
 
     @Test
@@ -58,7 +58,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
-        assert elementManager.getClasses().containsAll(classes);
+        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
     }
 
     @Test
@@ -76,7 +76,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
         elementManager.addVariables(variables);
-        assert elementManager.getVariables().containsAll(variables);
+        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
     }
 
     @Test
@@ -95,7 +95,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getCorrectFunctionsList();
         elementManager.addFunctions(functions);
-        assert elementManager.getFunctions().containsAll(functions);
+        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
     }
 
     @Test
@@ -114,7 +114,7 @@ class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getCorrectClassesList();
         elementManager.addClasses(classes);
-        assert elementManager.getClasses().containsAll(classes);
+        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
     }
 
     @Test
@@ -135,7 +135,7 @@ class Python3ElementManagerTest {
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
-        assert vars.containsAll(variables);
+        Assertions.assertTrue(vars.containsAll(variables));
     }
 
     @Test
@@ -145,7 +145,7 @@ class Python3ElementManagerTest {
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
-        assert vars.isEmpty();
+        Assertions.assertTrue(vars.isEmpty());
     }
 
     @Test
@@ -155,7 +155,7 @@ class Python3ElementManagerTest {
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         List<Element> funcs = elementManager.getContentOfIdentifier(parent);
-        assert funcs.containsAll(functions);
+        Assertions.assertTrue(funcs.containsAll(functions));
     }
 
     @Test
@@ -165,7 +165,7 @@ class Python3ElementManagerTest {
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.CLASS);
         List<Element> funcs = elementManager.getContentOfIdentifier(parent);
-        assert funcs.isEmpty();
+        Assertions.assertTrue(funcs.isEmpty());
     }
 
     @Test
@@ -175,7 +175,7 @@ class Python3ElementManagerTest {
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
         List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
-        assert clss.containsAll(classes);
+        Assertions.assertTrue(clss.containsAll(classes));
     }
 
     @Test
@@ -185,7 +185,7 @@ class Python3ElementManagerTest {
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.MODULE);
         List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
-        assert clss.isEmpty();
+        Assertions.assertTrue(clss.isEmpty());
     }
 
     @Test
@@ -195,7 +195,7 @@ class Python3ElementManagerTest {
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.CLASS);
         List<VariableElement> vars = elementManager.getVariablesWithParentIdentifier(parent);
-        assert vars.isEmpty();
+        Assertions.assertTrue(vars.isEmpty());
     }
 
     @Test
@@ -205,7 +205,7 @@ class Python3ElementManagerTest {
         elementManager.addFunctions(functions);
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", "path", Type.FUNCTION);
         List<Element> funcs = elementManager.getContentOfIdentifier(parent);
-        assert funcs.isEmpty();
+        Assertions.assertTrue(funcs.isEmpty());
     }
 
     @Test
@@ -215,7 +215,7 @@ class Python3ElementManagerTest {
         elementManager.addClasses(classes);
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", "path", Type.FUNCTION);
         List<ClassElement> clss = elementManager.getClassesWithParentIdentifier(parent);
-        assert clss.isEmpty();
+        Assertions.assertTrue(clss.isEmpty());
     }
 
     @Test
