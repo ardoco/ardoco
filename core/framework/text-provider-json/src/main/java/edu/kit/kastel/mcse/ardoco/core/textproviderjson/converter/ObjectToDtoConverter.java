@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
@@ -107,7 +108,7 @@ public class ObjectToDtoConverter {
     }
 
     private String convertToSubtree(Phrase phrase) {
-        List<Word> words = phrase.getContainedWords().toList().stream().filter(x -> x.getPhrase().equals(phrase)).toList();
+        List<Word> words = phrase.getContainedWords().toList().stream().filter(x -> x.getPhrase().equals(phrase)).collect(Collectors.toList());
         StringBuilder constituencyTree = new StringBuilder().append(TREE_OPEN_BRACKET);
         constituencyTree.append(phrase.getPhraseType().toString());
         List<Phrase> subphrases = new ArrayList<>(ConverterUtil.getChildPhrases(phrase));
