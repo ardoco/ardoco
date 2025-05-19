@@ -1,10 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
 import org.antlr.v4.runtime.Token;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
-import generated.antlr.cpp.CPP14Lexer;
 
 /**
  * Extracts comments from C++ code. Defines the rules for valid comments and how

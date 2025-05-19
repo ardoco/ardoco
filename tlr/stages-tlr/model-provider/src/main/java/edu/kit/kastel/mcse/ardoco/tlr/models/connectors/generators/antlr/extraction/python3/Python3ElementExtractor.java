@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -10,18 +11,18 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser.File_inputContext;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import generated.antlr.python3.Python3Lexer;
-import generated.antlr.python3.Python3Parser;
-import generated.antlr.python3.Python3Parser.File_inputContext;
 
 /**
  * Responsible for extracting structural elements from Python3 files. The
@@ -55,10 +56,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> pythonFiles = new ArrayList<>();
         try {
-            Files.walk(dir)
-                    .filter(Files::isRegularFile)
-                    .filter(f -> f.toString().endsWith(".py"))
-                    .forEach(pythonFiles::add);
+            Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".py")).forEach(pythonFiles::add);
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
@@ -85,8 +83,7 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     public void visitFile_input(Python3Parser.File_inputContext ctx) {
-        ElementIdentifier parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx),
-                PathExtractor.extractPath(ctx), Type.MODULE);
+        ElementIdentifier parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx), PathExtractor.extractPath(ctx), Type.MODULE);
         if (ctx.stmt() != null) {
             for (Python3Parser.StmtContext stmt : ctx.stmt()) {
                 visitStmt(stmt, parentIdentifier);
@@ -240,8 +237,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
     }
 
-    private void addVariableElement(String varName, String path, String type, ElementIdentifier parentIdentifier, String value,
-            int startLine, int endLine) {
+    private void addVariableElement(String varName, String path, String type, ElementIdentifier parentIdentifier, String value, int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, type, parentIdentifier, startLine, endLine);
         elementRegistry.addVariable(variable);
     }
@@ -252,9 +248,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         elementRegistry.addFunction(function);
     }
 
-    private void addClassElement(String name, String path, ElementIdentifier parentIdentifier, List<String> childClassOf,
-            int startLine,
-            int endLine) {
+    private void addClassElement(String name, String path, ElementIdentifier parentIdentifier, List<String> childClassOf, int startLine, int endLine) {
         ClassElement python3ClassElement = new ClassElement(name, path, parentIdentifier, startLine, endLine, childClassOf);
         elementRegistry.addClass(python3ClassElement);
     }
@@ -280,8 +274,7 @@ public class Python3ElementExtractor extends ElementExtractor {
             if (packageElement.getPath().equals(packagePath)) {
                 return packageElement.getName();
             }
-            if (packagePath.startsWith(packageElement.getPath())
-                    && packageElement.getPath().length() > closestParentPath.length()) {
+            if (packagePath.startsWith(packageElement.getPath()) && packageElement.getPath().length() > closestParentPath.length()) {
                 closestParentName = packageElement.getName();
                 closestParentPath = packageElement.getPath();
             }
@@ -306,12 +299,10 @@ public class Python3ElementExtractor extends ElementExtractor {
     private void updatePackageParentIdentifiers(String packageName, String packagePath) {
         List<PackageElement> packageElements = elementRegistry.getPackages();
         for (PackageElement packageElement : packageElements) {
-            if (packageElement.getPath().startsWith(packagePath)
-                    && packageElement.getPath().length() > packagePath.length()) {
+            if (packageElement.getPath().startsWith(packagePath) && packageElement.getPath().length() > packagePath.length()) {
                 ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
                 packageElement.updateParentIdentifier(parentIdentifier);
-                packageElement.updateShortName(packageElement.getPath().substring(packagePath.length(),
-                        packageElement.getPath().length() - 1));
+                packageElement.updateShortName(packageElement.getPath().substring(packagePath.length(), packageElement.getPath().length() - 1));
             }
         }
     }

@@ -1,10 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import org.antlr.v4.runtime.Token;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import generated.antlr.python3.Python3Lexer;
 
 /**
  * Responsible for extracting comments from Python3 code. Defines the rules for
@@ -37,7 +38,6 @@ public class Python3CommentExtractor extends CommentExtractor {
 
         // Replace all newlines and extra spaces between words with a single space
         comment = comment.replaceAll("\\n+", " ").replaceAll("\\s{2,}", " ").trim();
-
 
         return comment;
 

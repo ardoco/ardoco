@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -9,10 +10,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ElementExtractor;
-import generated.antlr.python3.Python3Lexer;
 
 public class Python3ClassExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
@@ -24,12 +25,11 @@ public class Python3ClassExtractorTest {
 
         Assertions.assertEquals(4, classes.size());
 
-                Assertions.assertEquals("InnerClass1", classes.get(0).getName());
-                Assertions.assertEquals(0, classes.get(0).getInherits().size());
-                Assertions.assertEquals(0, classes.get(0).getInherits().size());
-                Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
-                Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
-
+        Assertions.assertEquals("InnerClass1", classes.get(0).getName());
+        Assertions.assertEquals(0, classes.get(0).getInherits().size());
+        Assertions.assertEquals(0, classes.get(0).getInherits().size());
+        Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
 
         Assertions.assertEquals("InnerClass2", classes.get(1).getName());
         Assertions.assertEquals(0, classes.get(1).getInherits().size());
@@ -40,9 +40,6 @@ public class Python3ClassExtractorTest {
         Assertions.assertEquals(0, classes.get(2).getInherits().size());
         Assertions.assertEquals("APyClass", classes.get(2).getParentIdentifier().name());
         Assertions.assertEquals(Type.MODULE, classes.get(2).getParentIdentifier().type());
-
-
-
 
         // Test the fourth class
         Assertions.assertEquals("BClass", classes.get(3).getName());

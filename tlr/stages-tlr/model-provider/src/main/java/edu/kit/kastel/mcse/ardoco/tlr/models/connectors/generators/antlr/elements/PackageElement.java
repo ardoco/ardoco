@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 /**

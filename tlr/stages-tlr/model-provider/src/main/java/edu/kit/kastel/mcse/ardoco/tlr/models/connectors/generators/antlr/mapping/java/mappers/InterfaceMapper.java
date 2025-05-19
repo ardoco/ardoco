@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
@@ -16,7 +17,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
  */
 public class InterfaceMapper extends AbstractJavaCodeItemMapper {
 
-    public InterfaceMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
+    public InterfaceMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers,
+            JavaElementStorageRegistry elementRegistry) {
         super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 
@@ -39,5 +41,5 @@ public class InterfaceMapper extends AbstractJavaCodeItemMapper {
         interfaceUnit.setComment(interfaceElement.getComment());
         return interfaceUnit;
     }
-    
+
 }

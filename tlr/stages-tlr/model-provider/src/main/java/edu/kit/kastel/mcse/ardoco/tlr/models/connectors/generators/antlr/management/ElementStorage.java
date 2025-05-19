@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ElementStorage<T extends Element> {
         this.classType = classType;
         elements = new ArrayList<>();
     }
-    
+
     public Class<T> getClassType() {
         return classType;
     }
@@ -92,8 +93,8 @@ public class ElementStorage<T extends Element> {
     }
 
     private boolean isElementWithParentIdentifier(T element, ElementIdentifier parentIdentifier) {
-        return (parentIdentifier == null && element.getParentIdentifier() == null)
-                || (element.getParentIdentifier() != null && element.getParentIdentifier().equals(parentIdentifier));
+        return (parentIdentifier == null && element.getParentIdentifier() == null) || (element.getParentIdentifier() != null && element.getParentIdentifier()
+                .equals(parentIdentifier));
     }
 
 }

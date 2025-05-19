@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.cpp;
 
 import java.io.IOException;
@@ -9,11 +10,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppElementExtractor;
-import generated.antlr.cpp.CPP14Lexer;
-
 
 public class CppNamespaceExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
@@ -36,8 +36,7 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getPath());
         Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
         Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp",
-                namespaces.get(0).getParentIdentifier().path());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getParentIdentifier().path());
     }
 
     @Test
@@ -50,8 +49,7 @@ public class CppNamespaceExtractorTest {
         Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getPath());
         Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
         Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h",
-                namespaces.get(0).getParentIdentifier().path());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getParentIdentifier().path());
     }
 
     private List<Element> extractNamespaceFromFile(String filePath) throws IOException {

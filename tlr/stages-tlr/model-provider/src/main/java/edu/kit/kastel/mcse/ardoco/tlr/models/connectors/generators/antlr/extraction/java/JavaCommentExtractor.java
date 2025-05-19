@@ -1,10 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
 import org.antlr.v4.runtime.Token;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
-import generated.antlr.java.JavaLexer;
 
 /**
  * Responsible for extracting comments from Java code. Defines the rules for

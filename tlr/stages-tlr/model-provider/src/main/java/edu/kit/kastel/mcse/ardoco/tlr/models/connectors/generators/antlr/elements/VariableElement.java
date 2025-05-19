@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 /**
@@ -13,8 +14,7 @@ public class VariableElement extends Element {
         this.dataType = dataType;
     }
 
-    public VariableElement(String name, String path, String dataType, ElementIdentifier parentIdentifier, int startLine,
-            int endLine) {
+    public VariableElement(String name, String path, String dataType, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         super(name, path, type, parentIdentifier, startLine, endLine);
         this.dataType = dataType;
     }

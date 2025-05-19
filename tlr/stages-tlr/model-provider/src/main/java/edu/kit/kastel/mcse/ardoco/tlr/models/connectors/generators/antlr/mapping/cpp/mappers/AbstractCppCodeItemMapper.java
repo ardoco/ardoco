@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.List;
@@ -26,5 +27,5 @@ public abstract class AbstractCppCodeItemMapper extends AbstractCodeItemMapper {
     protected List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
         return elementRegistry.getContentOfIdentifier(identifier);
     }
-    
+
 }

@@ -1,11 +1,12 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -24,9 +25,8 @@ public class JavaElementStorageRegistry extends ElementStorageRegistry {
         super(new CommentMatcher());
     }
 
-    public JavaElementStorageRegistry(List<VariableElement> variables, List<Element> functions,
-            List<JavaClassElement> classes,
-            List<Element> interfaces, List<Element> compilationUnits, List<PackageElement> packages) {
+    public JavaElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<JavaClassElement> classes, List<Element> interfaces,
+            List<Element> compilationUnits, List<PackageElement> packages) {
         this();
         addElements(Type.VARIABLE, variables);
         addElements(Type.FUNCTION, functions);

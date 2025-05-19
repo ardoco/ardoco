@@ -1,9 +1,10 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching;
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 
 /**
  * Responsible for matching comments to structural elements.

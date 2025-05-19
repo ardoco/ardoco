@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java;
 
 import java.util.List;
@@ -18,13 +19,9 @@ public class JavaCodeItemMapperCollection extends CodeItemMapperCollection {
 
     public JavaCodeItemMapperCollection(CodeItemRepository repository, JavaElementStorageRegistry elementRegistry) {
         super();
-        this.mappers = List.of(
-            new FunctionMapper(repository, this, elementRegistry), 
-            new ClassMapper(repository, this, elementRegistry),
-            new InterfaceMapper(repository, this, elementRegistry),
-            new CompilationUnitMapper(repository, this, elementRegistry),
-            new PackageMapper(repository, this, elementRegistry)
-        );
+        this.mappers = List.of(new FunctionMapper(repository, this, elementRegistry), new ClassMapper(repository, this, elementRegistry), new InterfaceMapper(
+                repository, this, elementRegistry), new CompilationUnitMapper(repository, this, elementRegistry), new PackageMapper(repository, this,
+                        elementRegistry));
     }
-    
+
 }

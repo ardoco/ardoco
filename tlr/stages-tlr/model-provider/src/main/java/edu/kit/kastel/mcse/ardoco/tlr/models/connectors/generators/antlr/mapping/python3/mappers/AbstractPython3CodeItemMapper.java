@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.List;
@@ -13,11 +14,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 /**
  * A collection of CodeItem mappers that can be used to build CodeItems from extracted Python 3 Elements.
  */
-public abstract class AbstractPython3CodeItemMapper extends AbstractCodeItemMapper{
+public abstract class AbstractPython3CodeItemMapper extends AbstractCodeItemMapper {
     protected final Python3ElementStorageRegistry elementRegistry;
     private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.PYTHON3;
 
-    protected AbstractPython3CodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+    protected AbstractPython3CodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers,
+            Python3ElementStorageRegistry elementRegistry) {
         super(repository, pythonCodeItemMappers, programmingLanguage);
         this.elementRegistry = elementRegistry;
     }
@@ -26,5 +28,5 @@ public abstract class AbstractPython3CodeItemMapper extends AbstractCodeItemMapp
     protected List<Element> getContentOfIdentifier(ElementIdentifier identifier) {
         return elementRegistry.getContentOfIdentifier(identifier);
     }
-    
+
 }

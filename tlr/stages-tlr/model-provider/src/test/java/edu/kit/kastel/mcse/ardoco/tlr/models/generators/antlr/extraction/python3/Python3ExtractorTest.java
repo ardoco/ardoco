@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
 import java.io.IOException;

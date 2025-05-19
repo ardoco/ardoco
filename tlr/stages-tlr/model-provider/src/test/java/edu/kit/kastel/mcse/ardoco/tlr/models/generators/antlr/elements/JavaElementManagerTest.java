@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.elements;
 
 import java.util.ArrayList;
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -275,7 +276,6 @@ public class JavaElementManagerTest {
         Assertions.assertEquals(packages.get(2), elementManager.getPackages().get(1));
     }
 
-
     private List<VariableElement> getCorrectVariablesList() {
         List<VariableElement> variables = new ArrayList<>();
         String path = "path";
@@ -287,7 +287,7 @@ public class JavaElementManagerTest {
         return variables;
     }
 
-    private List<VariableElement>  getIncorrectVariablesList() {
+    private List<VariableElement> getIncorrectVariablesList() {
         List<VariableElement> variables = new ArrayList<>();
         variables.add(new VariableElement("a", "path", "string", null));
         variables.add(null);
@@ -300,14 +300,12 @@ public class JavaElementManagerTest {
         String path = "path";
         Type type = Type.FUNCTION;
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", path, Type.CLASS);
-        
+
         functions.add(new Element("a", path, type, parent));
         functions.add(new Element("b", path, type, parent));
         functions.add(new Element("c", path, type, parent));
         return functions;
     }
-
-
 
     private List<Element> getIncorrectFunctionsList() {
         List<Element> functions = new ArrayList<>();
@@ -389,11 +387,5 @@ public class JavaElementManagerTest {
         packages.add(new PackageElement("c", "path/c"));
         return packages;
     }
-
-
-
-
-
-    
 
 }

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ public class ClassElement extends Element {
         this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine,
-            List<String> inherits) {
+    public ClassElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> inherits) {
         super(name, path, type, parentIdentifier, startLine, endLine);
         this.inherits = inherits;
     }
@@ -27,8 +27,7 @@ public class ClassElement extends Element {
         this.inherits = new ArrayList<>();
     }
 
-    public ClassElement(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine,
-            List<String> inherits) {
+    public ClassElement(ElementIdentifier identifier, ElementIdentifier identifierOfParent, int startLine, int endLine, List<String> inherits) {
         super(identifier, identifierOfParent, startLine, endLine);
         this.inherits = inherits;
     }

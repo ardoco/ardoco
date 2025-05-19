@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;

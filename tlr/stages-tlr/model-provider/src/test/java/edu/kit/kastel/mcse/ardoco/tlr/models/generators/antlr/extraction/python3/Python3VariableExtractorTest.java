@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -9,10 +10,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ElementExtractor;
-import generated.antlr.python3.Python3Lexer;
 
 public class Python3VariableExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";

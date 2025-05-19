@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java;
 
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ public class JavaClassElement extends Element {
         this.implementedInterfaces = new ArrayList<String>();
     }
 
-    public JavaClassElement(String name, String path, ElementIdentifier parentIdentifier, String extendsClass,
-            List<String> implementedInterfaces, int startLine, int endLine) {
+    public JavaClassElement(String name, String path, ElementIdentifier parentIdentifier, String extendsClass, List<String> implementedInterfaces,
+            int startLine, int endLine) {
         super(name, path, type, parentIdentifier, startLine, endLine);
         this.extendsClass = extendsClass;
         this.implementedInterfaces = implementedInterfaces;

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.elements;
 
 import java.util.ArrayList;
@@ -131,9 +132,9 @@ public class CppElementManagerTest {
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
         }
-        ElementIdentifier parent0 = new ElementIdentifier (variables.get(0).getName(), variables.get(0).getPath(), Type.VARIABLE);
-        ElementIdentifier parent1 = new ElementIdentifier (variables.get(1).getName(), variables.get(1).getPath(), Type.VARIABLE);
-        ElementIdentifier parent2 = new ElementIdentifier (variables.get(2).getName(), variables.get(2).getPath(), Type.VARIABLE);
+        ElementIdentifier parent0 = new ElementIdentifier(variables.get(0).getName(), variables.get(0).getPath(), Type.VARIABLE);
+        ElementIdentifier parent1 = new ElementIdentifier(variables.get(1).getName(), variables.get(1).getPath(), Type.VARIABLE);
+        ElementIdentifier parent2 = new ElementIdentifier(variables.get(2).getName(), variables.get(2).getPath(), Type.VARIABLE);
 
         Assertions.assertEquals(3, elementManager.getVariables().size());
         Assertions.assertEquals(variables.get(0), elementManager.getVariable(parent0));
@@ -148,8 +149,8 @@ public class CppElementManagerTest {
         for (VariableElement variable : variables) {
             elementManager.addVariable(variable);
         }
-        ElementIdentifier parent0 = new ElementIdentifier (variables.get(0).getName(), variables.get(0).getPath(), Type.VARIABLE);
-        ElementIdentifier parent2 = new ElementIdentifier (variables.get(2).getName(), variables.get(2).getPath(), Type.VARIABLE);
+        ElementIdentifier parent0 = new ElementIdentifier(variables.get(0).getName(), variables.get(0).getPath(), Type.VARIABLE);
+        ElementIdentifier parent2 = new ElementIdentifier(variables.get(2).getName(), variables.get(2).getPath(), Type.VARIABLE);
 
         Assertions.assertEquals(2, elementManager.getVariables().size());
         Assertions.assertEquals(variables.get(0), elementManager.getVariable(parent0));
@@ -164,9 +165,9 @@ public class CppElementManagerTest {
             elementManager.addNamespace(namespace);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (namespaces.get(0).getName(), namespaces.get(0).getPath(), Type.NAMESPACE);
-        ElementIdentifier parent1 = new ElementIdentifier (namespaces.get(1).getName(), namespaces.get(1).getPath(), Type.NAMESPACE);
-        ElementIdentifier parent2 = new ElementIdentifier (namespaces.get(2).getName(), namespaces.get(2).getPath(), Type.NAMESPACE);
+        ElementIdentifier parent0 = new ElementIdentifier(namespaces.get(0).getName(), namespaces.get(0).getPath(), Type.NAMESPACE);
+        ElementIdentifier parent1 = new ElementIdentifier(namespaces.get(1).getName(), namespaces.get(1).getPath(), Type.NAMESPACE);
+        ElementIdentifier parent2 = new ElementIdentifier(namespaces.get(2).getName(), namespaces.get(2).getPath(), Type.NAMESPACE);
 
         Assertions.assertEquals(3, elementManager.getNamespaces().size());
         Assertions.assertEquals(namespaces.get(0), elementManager.getNamespace(parent0));
@@ -182,8 +183,8 @@ public class CppElementManagerTest {
             elementManager.addNamespace(namespace);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (namespaces.get(0).getName(), namespaces.get(0).getPath(), Type.NAMESPACE);
-        ElementIdentifier parent2 = new ElementIdentifier (namespaces.get(2).getName(), namespaces.get(2).getPath(), Type.NAMESPACE);
+        ElementIdentifier parent0 = new ElementIdentifier(namespaces.get(0).getName(), namespaces.get(0).getPath(), Type.NAMESPACE);
+        ElementIdentifier parent2 = new ElementIdentifier(namespaces.get(2).getName(), namespaces.get(2).getPath(), Type.NAMESPACE);
 
         Assertions.assertEquals(2, elementManager.getNamespaces().size());
         Assertions.assertEquals(namespaces.get(0), elementManager.getNamespace(parent0));
@@ -198,9 +199,9 @@ public class CppElementManagerTest {
             elementManager.addClass(clazz);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (classes.get(0).getName(), classes.get(0).getPath(), Type.CLASS);
-        ElementIdentifier parent1 = new ElementIdentifier (classes.get(1).getName(), classes.get(1).getPath(), Type.CLASS);
-        ElementIdentifier parent2 = new ElementIdentifier (classes.get(2).getName(), classes.get(2).getPath(), Type.CLASS);
+        ElementIdentifier parent0 = new ElementIdentifier(classes.get(0).getName(), classes.get(0).getPath(), Type.CLASS);
+        ElementIdentifier parent1 = new ElementIdentifier(classes.get(1).getName(), classes.get(1).getPath(), Type.CLASS);
+        ElementIdentifier parent2 = new ElementIdentifier(classes.get(2).getName(), classes.get(2).getPath(), Type.CLASS);
 
         Assertions.assertEquals(3, elementManager.getClasses().size());
         Assertions.assertEquals(classes.get(0), elementManager.getClass(parent0));
@@ -216,8 +217,8 @@ public class CppElementManagerTest {
             elementManager.addClass(clazz);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (classes.get(0).getName(), classes.get(0).getPath(), Type.CLASS);
-        ElementIdentifier parent2 = new ElementIdentifier (classes.get(2).getName(), classes.get(2).getPath(), Type.CLASS);
+        ElementIdentifier parent0 = new ElementIdentifier(classes.get(0).getName(), classes.get(0).getPath(), Type.CLASS);
+        ElementIdentifier parent2 = new ElementIdentifier(classes.get(2).getName(), classes.get(2).getPath(), Type.CLASS);
 
         Assertions.assertEquals(2, elementManager.getClasses().size());
         Assertions.assertEquals(classes.get(0), elementManager.getClass(parent0));
@@ -232,9 +233,9 @@ public class CppElementManagerTest {
             elementManager.addFunction(function);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (functions.get(0).getName(), functions.get(0).getPath(), Type.FUNCTION);
-        ElementIdentifier parent1 = new ElementIdentifier (functions.get(1).getName(), functions.get(1).getPath(), Type.FUNCTION);
-        ElementIdentifier parent2 = new ElementIdentifier (functions.get(2).getName(), functions.get(2).getPath(), Type.FUNCTION);
+        ElementIdentifier parent0 = new ElementIdentifier(functions.get(0).getName(), functions.get(0).getPath(), Type.FUNCTION);
+        ElementIdentifier parent1 = new ElementIdentifier(functions.get(1).getName(), functions.get(1).getPath(), Type.FUNCTION);
+        ElementIdentifier parent2 = new ElementIdentifier(functions.get(2).getName(), functions.get(2).getPath(), Type.FUNCTION);
 
         Assertions.assertEquals(3, elementManager.getFunctions().size());
         Assertions.assertEquals(functions.get(0), elementManager.getFunction(parent0));
@@ -250,8 +251,8 @@ public class CppElementManagerTest {
             elementManager.addFunction(function);
         }
 
-        ElementIdentifier parent0 = new ElementIdentifier (functions.get(0).getName(), functions.get(0).getPath(), Type.FUNCTION);
-        ElementIdentifier parent2 = new ElementIdentifier (functions.get(2).getName(), functions.get(2).getPath(), Type.FUNCTION);
+        ElementIdentifier parent0 = new ElementIdentifier(functions.get(0).getName(), functions.get(0).getPath(), Type.FUNCTION);
+        ElementIdentifier parent2 = new ElementIdentifier(functions.get(2).getName(), functions.get(2).getPath(), Type.FUNCTION);
 
         Assertions.assertEquals(2, elementManager.getFunctions().size());
         Assertions.assertEquals(functions.get(0), elementManager.getFunction(parent0));
@@ -306,7 +307,7 @@ public class CppElementManagerTest {
         Assertions.assertEquals(0, elements.size());
     }
 
-    @Test 
+    @Test
     void getVariablesWithDifferentParentsTest() {
         elementManager = new CppElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
@@ -501,20 +502,17 @@ public class CppElementManagerTest {
         Assertions.assertEquals(diffNs, elements2.get(0));
     }
 
-
     private List<Element> getCorrectFunctionsList() {
         List<Element> functions = new ArrayList<>();
         String path = "path";
         Type type = Type.FUNCTION;
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", path, Type.CLASS);
-        
+
         functions.add(new Element("a", path, type, parent));
         functions.add(new Element("b", path, type, parent));
         functions.add(new Element("c", path, type, parent));
         return functions;
     }
-
-
 
     private List<Element> getNullFunctions() {
         List<Element> functions = new ArrayList<>();
@@ -528,7 +526,7 @@ public class CppElementManagerTest {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
         ElementIdentifier parent = new ElementIdentifier("parentOfCs", path, Type.NAMESPACE);
-        
+
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
         classes.add(new ClassElement("c", path, parent));
@@ -548,7 +546,7 @@ public class CppElementManagerTest {
         String path = "path";
         Type type = Type.NAMESPACE;
         ElementIdentifier parent = new ElementIdentifier("parentOfNs", path, Type.FILE);
-        
+
         namespaces.add(new Element("a", path, type, parent));
         namespaces.add(new Element("b", path, type, parent));
         namespaces.add(new Element("c", path, type, parent));
@@ -574,7 +572,7 @@ public class CppElementManagerTest {
         return variables;
     }
 
-    private List<VariableElement>  getNullVariables() {
+    private List<VariableElement> getNullVariables() {
         List<VariableElement> variables = new ArrayList<>();
         variables.add(new VariableElement("a", "path", "string", null));
         variables.add(null);

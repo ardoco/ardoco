@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -9,11 +10,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
-import generated.antlr.java.JavaLexer;
-
 
 class JavaClassExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";
@@ -24,10 +24,10 @@ class JavaClassExtractorTest {
         List<JavaClassElement> classes = extractClassesFromFile(filePath);
         Assertions.assertEquals(4, classes.size());
 
-                // Assertions Class AnInnerClass
-                Assertions.assertEquals("AnInnerClass", classes.get(0).getName());
-                Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
-                Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
+        // Assertions Class AnInnerClass
+        Assertions.assertEquals("AnInnerClass", classes.get(0).getName());
+        Assertions.assertEquals("AClass", classes.get(0).getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, classes.get(0).getParentIdentifier().type());
 
         // Assertions Class AnotherClass (InnerClass)
         Assertions.assertEquals("AnotherClass", classes.get(1).getName());

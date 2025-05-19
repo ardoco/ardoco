@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -9,10 +10,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java.JavaElementExtractor;
-import generated.antlr.java.JavaLexer;
-
 
 class JavaControlExtractorTest {
     private final String sourcePath = "src/test/resources/interface/edu/";

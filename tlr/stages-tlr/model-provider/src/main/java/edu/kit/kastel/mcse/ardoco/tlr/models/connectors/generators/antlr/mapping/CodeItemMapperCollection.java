@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping;
 
 import java.util.List;
@@ -11,14 +12,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
  */
 public abstract class CodeItemMapperCollection {
     protected List<CodeItemMapper> mappers;
-    
-    protected CodeItemMapperCollection() {}
+
+    protected CodeItemMapperCollection() {
+    }
 
     public CodeItem buildCodeItem(Element element) {
-        return mappers.stream()
-            .filter(strategy -> strategy.supports(element))
-            .findFirst()
-            .map(strategy -> strategy.buildCodeItem(element))
-            .orElse(null);
+        return mappers.stream().filter(strategy -> strategy.supports(element)).findFirst().map(strategy -> strategy.buildCodeItem(element)).orElse(null);
     }
 }
