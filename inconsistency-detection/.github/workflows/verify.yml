@@ -18,9 +18,9 @@ jobs:
     with:
       deploy: false
       with-submodules: true
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
     secrets:
-      OSSRH_USER: ""
-      OSSRH_TOKEN: ""
+      CENTRAL_USER: ""
+      CENTRAL_TOKEN: ""
       GPG_KEY: ""
 
