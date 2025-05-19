@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
