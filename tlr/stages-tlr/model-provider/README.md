@@ -1,4 +1,4 @@
-# ArDoCo Code Extraction by Gabriel Gehrig 
+# ArDoCo Code Extraction by Gabriel Gehrig
 in "Praktikum: Werkzeuge für agile Modellierung" - WS 2024-2025
 
 ## Table of Contents
@@ -41,10 +41,10 @@ The modularity of this approach has been tested by encapsulating the extraction 
 <!--TODO: Compare after testing with "Real World Scenarios"-->
 Code extraction is performed by creating a **JavaExtractor**, **PythonExtractor**, or **CppExtractor** object. This process requires specifying a CodeItemRepository along with the system path to the project's root folder, from which the extraction will be conducted.
 
-### High-Level Architecture 
+### High-Level Architecture
 As shown in [**Figure 1**](#figure-1-component-diagram-of-code-extraction-within-ardoco), the code extraction process is structured into three core components, each playing a distinct role in processing source code:
 
-1️⃣ **(Core) Extraction Component** – Responsible for retrieving relevant information from the source code. This component interacts with ANTLR 
+1️⃣ **(Core) Extraction Component** – Responsible for retrieving relevant information from the source code. This component interacts with ANTLR
 to extract code information from different programming languages.
 
 2️⃣ **Storage Component** – Once extracted, the information is stored and structured efficiently. This component ensures consistency and enables access to the retrieved data, even programming language specific information.
@@ -106,7 +106,7 @@ After evaluating several tools, the following candidates were considered:
 - Supports numerous programming languages, making it the best fit for a multi-language extraction approach.
 - Easily integrates with Maven, which aligns with the existing project setup.
 - Well-documented and widely used, ensuring long-term maintainability.
-    Allows flexible grammar definition, making it suitable for structural code extraction.
+	Allows flexible grammar definition, making it suitable for structural code extraction.
 
 💡 Decision: ANTLR was selected as the **best-suited** tool due to its **wide language support**, **ease of integration** via Maven, and **ability to generate structured parse trees**.
 
@@ -193,7 +193,7 @@ The goal of generic mapping is to establish a **unified and standardized** mappi
 - **Limited flexibility** — cannot capture language-specific constructs that hold additional relevant information.
 - **Risk of data loss**, as unique features from certain languages may not be correctly represented.
 
-2️⃣ Specific Mapping Approach 
+2️⃣ Specific Mapping Approach
 
 While a standardized mapping approach is beneficial, it was recognized that **different programming languages contain unique structural elements** that **could provide additional valuable information**. By allowing specific mappings, the system gains flexibility in handling language-specific constructs while still ensuring compatibility with the ArDoCo Framework.
 
@@ -251,7 +251,7 @@ This diagram provides an **overview of the extraction** for **structural element
 3️⃣ Management
 
 ![Management Process Class Diagram](doc/management_diagram.png)
-This diagram provides an **overview of how extracted structural elements** from source code are **managed, stored, and retrieved**. It ensures that extracted elements are **persisted efficiently** and can be **retrieved when needed for further processing**.  
+This diagram provides an **overview of how extracted structural elements** from source code are **managed, stored, and retrieved**. It ensures that extracted elements are **persisted efficiently** and can be **retrieved when needed for further processing**.
 
 | **Class Name** | **Purpose** |
 |---------------|------------|
@@ -285,23 +285,23 @@ This diagram provides an overview of the mapping process, where extracted elemen
 | **`CppCodeItemMapperCollection`** | Defines the **valid set of mappers** for **C++** elements. |
 
 ## Testing
-To ensure the **accuracy and reliability** of the extraction process, a combination of **minimal test cases** and **real-world projects** was used for validation:  
+To ensure the **accuracy and reliability** of the extraction process, a combination of **minimal test cases** and **real-world projects** was used for validation:
 
-1️⃣ **Language-Specific Test Cases**  
-- **Minimal projects** were designed to cover a variety of **language-specific constructs**.  
-- These controlled test cases were used to **verify the correctness of extraction** across different programming languages.  
+1️⃣ **Language-Specific Test Cases**
+- **Minimal projects** were designed to cover a variety of **language-specific constructs**.
+- These controlled test cases were used to **verify the correctness of extraction** across different programming languages.
 
-2️⃣ **Real-World Project Testing**  
-- Small projects were **downloaded from [GitHub](https://github.com/)** to evaluate the **scalability and robustness** of the extraction process.  
+2️⃣ **Real-World Project Testing**
+- Small projects were **downloaded from [GitHub](https://github.com/)** to evaluate the **scalability and robustness** of the extraction process.
 - For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management), [ArDoCo-Benchmark jabref](https://github.com/ArDoCo/jabref)
 - For **PYTHON3**: [Simple Django Project](https://github.com/Manisha-Bayya/simple-django-project)
 - For **C++**: [Simple Render Engine](https://github.com/mortennobel/SimpleRenderEngineProject) (except thirdparty)
-- These projects helped assess **runtime performance**, identify **potential edge cases**, and detect **unexpected extraction errors**.  
+- These projects helped assess **runtime performance**, identify **potential edge cases**, and detect **unexpected extraction errors**.
 
-By combining **synthetic test cases** with **real-world datasets**, the testing approach ensured that the extraction process remains **accurate, efficient, and extensible** for multiple programming languages.  
+By combining **synthetic test cases** with **real-world datasets**, the testing approach ensured that the extraction process remains **accurate, efficient, and extensible** for multiple programming languages.
 
 
-## Guide: Adding a new Language 
+## Guide: Adding a new Language
 
 This guide outlines the **steps required** to integrate a new programming language (**PL**) into the ArDoCo Framework by leveraging **ANTLR Grammars**.
 
@@ -349,17 +349,17 @@ Each new programming language requires the implementation of several **language-
 
 
 #### Handling Language-Specific Elements (If Needed)
-- If existing **generic element classes** **do not** cover necessary information for the new programming language, create additional **`<PL>Elements`** classes to support extraction.  
-  Example: If **Python functions** need special handling, introduce a **`PythonFunctionElement`** class.
+- If existing **generic element classes** **do not** cover necessary information for the new programming language, create additional **`<PL>Elements`** classes to support extraction.
+Example: If **Python functions** need special handling, introduce a **`PythonFunctionElement`** class.
 
 
 ### 5️⃣ Important Notes
-🔹 **Reusing Existing Classes**  
-- Some classes from existing programming languages **may be reusable** for the new language, particularly those related to **mapping, storage, or comment matching**.  
+🔹 **Reusing Existing Classes**
+- Some classes from existing programming languages **may be reusable** for the new language, particularly those related to **mapping, storage, or comment matching**.
 - However, **the ANTLR-based `ElementExtractor` must be newly implemented**, as ANTLR grammars for different languages have **distinct methods and parsing structures**.
 
-🔹 **Ensuring Compatibility with ArDoCo**  
-- Validate that **extracted elements correctly align** with ArDoCo's **expected data structure**.  
+🔹 **Ensuring Compatibility with ArDoCo**
+- Validate that **extracted elements correctly align** with ArDoCo's **expected data structure**.
 - Perform tests to confirm **successful integration** and correct **parent-child relationships** in extracted elements.
 
 
@@ -371,5 +371,3 @@ Further improvements could enhance flexibility by extending the extraction proce
 Additionally, a key focus should be on analyzing the interaction between the **code extraction process** and the overall system. While this internship primarily focused on aligning the extraction process with a predefined interface, **comprehensive testing of its seamless integration with other system components** has yet to be conducted.
 
 Another area for improvement is **testing**. Automatic testing remains challenging due to the case-specific nature of extraction results. Future research could explore **robust quality assurance methods** that ensure extraction reliability while remaining independent of specific cases.
-
-

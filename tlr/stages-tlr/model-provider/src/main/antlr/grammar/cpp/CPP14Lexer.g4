@@ -4,7 +4,7 @@
 
 lexer grammar CPP14Lexer;
 @header {
-package generated.antlr.cpp;
+package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp;
 }
 
 IntegerLiteral:

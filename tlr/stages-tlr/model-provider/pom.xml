@@ -66,7 +66,6 @@
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>${antlr.version}</version>
         <executions>
-
           <execution>
             <!-- Compile C++ Grammar -->
             <id>generate-cpp-parser</id>
@@ -76,8 +75,8 @@
             <phase>generate-sources</phase>
             <configuration>
               <sourceDirectory>${project.basedir}/src/main/antlr/grammar/cpp</sourceDirectory>
-              <outputDirectory>${project.basedir}/src/main/antlr-generated/generated/antlr/cpp</outputDirectory>
-              <packageName>generated.antlr.cpp</packageName>
+              <outputDirectory>${project.basedir}/src/main/antlr-generated/edu/kit/kastel/mcse/ardoco/tlr/models/antlr4/cpp</outputDirectory>
+              <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp</packageName>
               <visitor>true</visitor>
               <clean>true</clean>
             </configuration>
@@ -91,13 +90,12 @@
             <phase>generate-sources</phase>
             <configuration>
               <sourceDirectory>${project.basedir}/src/main/antlr/grammar/java</sourceDirectory>
-              <outputDirectory>${project.basedir}/src/main/antlr-generated/generated/antlr/java</outputDirectory>
-              <packageName>generated.antlr.java</packageName>
+              <outputDirectory>${project.basedir}/src/main/antlr-generated/edu/kit/kastel/mcse/ardoco/tlr/models/antlr4/java</outputDirectory>
+              <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java</packageName>
               <visitor>true</visitor>
               <clean>true</clean>
             </configuration>
           </execution>
-
           <execution>
             <!-- Compile Python3 Grammar -->
             <id>generate-python-parser</id>
@@ -107,8 +105,8 @@
             <phase>generate-sources</phase>
             <configuration>
               <sourceDirectory>${project.basedir}/src/main/antlr/grammar/python3</sourceDirectory>
-              <outputDirectory>${project.basedir}/src/main/antlr-generated/generated/antlr/python3</outputDirectory>
-              <packageName>generated.antlr.python3</packageName>
+              <outputDirectory>${project.basedir}/src/main/antlr-generated/edu/kit/kastel/mcse/ardoco/tlr/models/antlr4/python3</outputDirectory>
+              <packageName>edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3</packageName>
               <visitor>true</visitor>
               <clean>true</clean>
             </configuration>
