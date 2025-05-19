@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
@@ -179,8 +180,7 @@ public abstract class ElementStorageRegistry {
     }
 
     private <T extends Element> boolean hasStorage(Type type, T element) {
-        return element != null && storages.containsKey(type)
-                && storages.get(type).getClassType().equals(element.getClass());
+        return element != null && storages.containsKey(type) && storages.get(type).getClassType().equals(element.getClass());
     }
 
     private <T extends Element> boolean hasStorage(Type type, Class<T> clazz) {

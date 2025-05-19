@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -9,11 +10,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
-import generated.antlr.python3.Python3Lexer;
-import generated.antlr.python3.Python3Parser;
 
 public class Python3CommentExtractorTest {
     private final String sourcePath = "src/test/resources/python/interface/edu/";

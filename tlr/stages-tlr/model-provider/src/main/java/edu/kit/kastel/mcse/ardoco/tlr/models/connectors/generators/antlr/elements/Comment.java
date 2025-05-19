@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 /**
@@ -5,4 +6,5 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elemen
  * line in which the comment starts and ends, and the path of the file the
  * comment is in.
  */
-public record Comment (String text, int startLine, int endLine, String path) { }
+public record Comment(String text, int startLine, int endLine, String path) {
+}

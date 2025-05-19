@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.SortedSet;
@@ -14,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 /**
  * Responsible for mapping a Python3 ModuleElement to a CodeAssembly.
  */
-public class ModuleMapper extends AbstractPython3CodeItemMapper{
+public class ModuleMapper extends AbstractPython3CodeItemMapper {
 
     public ModuleMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
         super(repository, pythonCodeItemMappers, elementRegistry);
@@ -31,7 +32,6 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper{
         return buildCodeAssembly(comparable);
     }
 
-
     private CodeAssembly buildCodeAssembly(ElementIdentifier identifier) {
         Element module = elementRegistry.getModule(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
@@ -39,5 +39,5 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper{
         codeAssembly.setComment(module.getComment());
         return codeAssembly;
     }
-    
+
 }

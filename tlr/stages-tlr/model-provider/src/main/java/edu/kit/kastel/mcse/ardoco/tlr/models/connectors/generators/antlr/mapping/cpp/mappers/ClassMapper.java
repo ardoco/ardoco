@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.SortedSet;
@@ -32,7 +33,6 @@ public class ClassMapper extends AbstractCppCodeItemMapper {
         return this.elementRegistry.isClassElement(element);
     }
 
-
     private CodeItem buildClassUnit(ElementIdentifier identifier) {
         ClassElement classElement = this.elementRegistry.getClass(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
@@ -41,5 +41,5 @@ public class ClassMapper extends AbstractCppCodeItemMapper {
         classUnit.setComment(classElement.getComment());
         return classUnit;
     }
-    
+
 }

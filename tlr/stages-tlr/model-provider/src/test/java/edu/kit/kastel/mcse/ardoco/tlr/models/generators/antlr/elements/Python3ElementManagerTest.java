@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.elements;
 
 import java.util.ArrayList;
@@ -78,12 +79,12 @@ public class Python3ElementManagerTest {
         assert elementManager.getVariables().containsAll(variables);
     }
 
-    @Test 
+    @Test
     void getVariableTestWithNull() {
         elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getInCorrectVariablesList();
         elementManager.addVariables(variables);
-        
+
         Assertions.assertEquals(2, elementManager.getVariables().size());
         Assertions.assertEquals(variables.get(0), elementManager.getVariables().get(0));
         Assertions.assertEquals(variables.get(2), elementManager.getVariables().get(1));
@@ -102,7 +103,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<Element> functions = getIncorrectFunctionsList();
         elementManager.addFunctions(functions);
-        
+
         Assertions.assertEquals(2, elementManager.getFunctions().size());
         Assertions.assertEquals(functions.get(0), elementManager.getFunctions().get(0));
         Assertions.assertEquals(functions.get(2), elementManager.getFunctions().get(1));
@@ -121,7 +122,7 @@ public class Python3ElementManagerTest {
         elementManager = new Python3ElementStorageRegistry();
         List<ClassElement> classes = getIncorrectClassesList();
         elementManager.addClasses(classes);
-        
+
         Assertions.assertEquals(2, elementManager.getClasses().size());
         Assertions.assertEquals(classes.get(0), elementManager.getClasses().get(0));
         Assertions.assertEquals(classes.get(2), elementManager.getClasses().get(1));
@@ -277,7 +278,6 @@ public class Python3ElementManagerTest {
         Assertions.assertEquals(classes.get(2), clss.get(2));
         Assertions.assertEquals(classes.get(3), clss2.get(0));
     }
-    
 
     private List<VariableElement> getCorrectVariablesList() {
         List<VariableElement> variables = new ArrayList<>();
@@ -307,7 +307,7 @@ public class Python3ElementManagerTest {
         String path = "path";
         Type type = Type.FUNCTION;
         ElementIdentifier parent = new ElementIdentifier("parentOfFc", path, Type.CLASS);
-        
+
         functions.add(new Element("a", path, type, parent));
         functions.add(new Element("b", path, type, parent));
         functions.add(new Element("c", path, type, parent));
@@ -326,7 +326,7 @@ public class Python3ElementManagerTest {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
         ElementIdentifier parent = new ElementIdentifier("parentOfCl", path, Type.MODULE);
-        
+
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
         classes.add(new ClassElement("c", path, parent));
@@ -339,5 +339,5 @@ public class Python3ElementManagerTest {
         classes.add(null);
         classes.add(new ClassElement("c", "path", null));
         return classes;
-    }    
+    }
 }

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.SortedSet;
@@ -39,5 +40,5 @@ public class NamespaceMapper extends AbstractCppCodeItemMapper {
         codeAssembly.setComment(namespace.getComment());
         return codeAssembly;
     }
-    
+
 }

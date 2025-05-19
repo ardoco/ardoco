@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
 import java.util.Objects;
@@ -41,8 +42,7 @@ public class Element {
         this.identifierOfParent = identifierOfParent;
     }
 
-    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent, int startLine,
-            int endLine) {
+    public Element(String name, String path, Type type, ElementIdentifier identifierOfParent, int startLine, int endLine) {
         this(name, path, type);
         this.identifierOfParent = identifierOfParent;
         this.startLine = startLine;
@@ -50,9 +50,11 @@ public class Element {
     }
 
     public Element(Element elementToCopy) {
-        this.identifier = new ElementIdentifier(elementToCopy.getIdentifier().name(), elementToCopy.getIdentifier().path(), elementToCopy.getIdentifier().type());
+        this.identifier = new ElementIdentifier(elementToCopy.getIdentifier().name(), elementToCopy.getIdentifier().path(), elementToCopy.getIdentifier()
+                .type());
         if (elementToCopy.getParentIdentifier() != null) {
-            this.identifierOfParent = new ElementIdentifier(elementToCopy.getParentIdentifier().name(), elementToCopy.getParentIdentifier().path(), elementToCopy.getParentIdentifier().type());
+            this.identifierOfParent = new ElementIdentifier(elementToCopy.getParentIdentifier().name(), elementToCopy.getParentIdentifier().path(),
+                    elementToCopy.getParentIdentifier().type());
         }
         this.startLine = elementToCopy.getStartLine();
         this.endLine = elementToCopy.getEndLine();
@@ -108,10 +110,8 @@ public class Element {
     public boolean equals(Object obj) {
         if (obj instanceof Element) {
             Element basicElement = (Element) obj;
-            return Objects.equals(identifier, basicElement.getIdentifier())
-                    && Objects.equals(basicElement.getParentIdentifier(), this.getParentIdentifier())
-                    && basicElement.getStartLine() == this.getStartLine()
-                    && basicElement.getEndLine() == this.getEndLine();
+            return Objects.equals(identifier, basicElement.getIdentifier()) && Objects.equals(basicElement.getParentIdentifier(), this
+                    .getParentIdentifier()) && basicElement.getStartLine() == this.getStartLine() && basicElement.getEndLine() == this.getEndLine();
         }
         return false;
     }

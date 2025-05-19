@@ -1,12 +1,13 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
@@ -23,9 +24,8 @@ public class CppElementStorageRegistry extends ElementStorageRegistry {
         super(new CommentMatcher());
     }
 
-    public CppElementStorageRegistry(List<VariableElement> variables, List<Element> functions,
-            List<ClassElement> classes,
-            List<Element> namespaces, List<Element> files) {
+    public CppElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes, List<Element> namespaces,
+            List<Element> files) {
         this();
         addElements(Type.VARIABLE, variables);
         addElements(Type.FUNCTION, functions);

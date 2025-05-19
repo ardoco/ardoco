@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
@@ -36,5 +37,5 @@ public class FunctionMapper extends AbstractJavaCodeItemMapper {
         controlElement.setComment(function.getComment());
         return controlElement;
     }
-    
+
 }

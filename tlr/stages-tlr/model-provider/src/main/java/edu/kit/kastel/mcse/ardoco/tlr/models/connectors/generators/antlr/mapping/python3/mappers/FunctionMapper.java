@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
@@ -14,7 +15,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
  */
 public class FunctionMapper extends AbstractPython3CodeItemMapper {
 
-    public FunctionMapper(CodeItemRepository codeItemRepository, Python3CodeItemMapperCollection pythonCodeItemMappers, Python3ElementStorageRegistry elementRegistry) {
+    public FunctionMapper(CodeItemRepository codeItemRepository, Python3CodeItemMapperCollection pythonCodeItemMappers,
+            Python3ElementStorageRegistry elementRegistry) {
         super(codeItemRepository, pythonCodeItemMappers, elementRegistry);
     }
 
@@ -36,5 +38,5 @@ public class FunctionMapper extends AbstractPython3CodeItemMapper {
         controlElement.setComment(function.getComment());
         return controlElement;
     }
-    
+
 }

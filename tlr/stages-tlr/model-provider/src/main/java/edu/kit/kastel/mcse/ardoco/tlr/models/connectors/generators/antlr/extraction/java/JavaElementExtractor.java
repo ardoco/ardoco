@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -10,18 +11,18 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaParser;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaParser.CompilationUnitContext;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
-import generated.antlr.java.JavaLexer;
-import generated.antlr.java.JavaParser;
-import generated.antlr.java.JavaParser.CompilationUnitContext;
 
 /**
  * Responsible for extracting structural elements from Java files. The extracted
@@ -55,10 +56,7 @@ public class JavaElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> javaFiles = new ArrayList<>();
         try {
-            Files.walk(dir)
-                    .filter(Files::isRegularFile)
-                    .filter(f -> f.toString().endsWith(".java"))
-                    .forEach(javaFiles::add);
+            Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).forEach(javaFiles::add);
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
@@ -99,8 +97,7 @@ public class JavaElementExtractor extends ElementExtractor {
         }
     }
 
-    public ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -113,21 +110,16 @@ public class JavaElementExtractor extends ElementExtractor {
         int endLine = ctx.getStop().getLine();
 
         if (ctx.classBody() != null && ctx.classBody().classBodyDeclaration() != null) {
-            for (JavaParser.ClassBodyDeclarationContext classBodyDeclarationContext : ctx.classBody()
-                    .classBodyDeclaration()) {
+            for (JavaParser.ClassBodyDeclarationContext classBodyDeclarationContext : ctx.classBody().classBodyDeclaration()) {
                 if (classBodyDeclarationContext.memberDeclaration() != null) {
                     if (classBodyDeclarationContext.memberDeclaration().methodDeclaration() != null) {
-                        visitMethodDeclaration(classBodyDeclarationContext.memberDeclaration().methodDeclaration(),
-                                identifier);
+                        visitMethodDeclaration(classBodyDeclarationContext.memberDeclaration().methodDeclaration(), identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().fieldDeclaration() != null) {
-                        visitFieldDeclaration(classBodyDeclarationContext.memberDeclaration().fieldDeclaration(),
-                                identifier);
+                        visitFieldDeclaration(classBodyDeclarationContext.memberDeclaration().fieldDeclaration(), identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().classDeclaration() != null) {
-                        visitClassDeclaration(classBodyDeclarationContext.memberDeclaration().classDeclaration(),
-                                identifier);
+                        visitClassDeclaration(classBodyDeclarationContext.memberDeclaration().classDeclaration(), identifier);
                     } else if (classBodyDeclarationContext.memberDeclaration().interfaceDeclaration() != null) {
-                        visitInterfaceDeclaration(
-                                classBodyDeclarationContext.memberDeclaration().interfaceDeclaration(), identifier);
+                        visitInterfaceDeclaration(classBodyDeclarationContext.memberDeclaration().interfaceDeclaration(), identifier);
                     }
                 }
             }
@@ -136,8 +128,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -151,8 +142,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -168,8 +158,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -183,8 +172,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public ElementIdentifier visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -194,8 +182,7 @@ public class JavaElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
-        if (ctx.methodBody() != null && ctx.methodBody().block() != null
-                && ctx.methodBody().block().blockStatement() != null) {
+        if (ctx.methodBody() != null && ctx.methodBody().block() != null && ctx.methodBody().block().blockStatement() != null) {
             for (JavaParser.BlockStatementContext blockStatementContext : ctx.methodBody().block().blockStatement()) {
                 if (blockStatementContext.localVariableDeclaration() != null) {
                     visitLocalVariableDeclaration(blockStatementContext.localVariableDeclaration(), identifier);
@@ -220,8 +207,7 @@ public class JavaElementExtractor extends ElementExtractor {
         addVariables(varNames, path, variableType, parentIdentifier, startLine, endLine);
     }
 
-    public void visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public void visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.variableDeclarators() == null || ctx.typeType() == null) {
             return;
         }
@@ -237,8 +223,7 @@ public class JavaElementExtractor extends ElementExtractor {
     private List<String> extractVariableNames(List<JavaParser.VariableDeclaratorContext> variableDeclarators) {
         List<String> variableNames = new ArrayList<>();
         for (JavaParser.VariableDeclaratorContext variableDeclarator : variableDeclarators) {
-            if (variableDeclarator.variableDeclaratorId() == null
-                    || variableDeclarator.variableDeclaratorId().identifier() == null) {
+            if (variableDeclarator.variableDeclaratorId() == null || variableDeclarator.variableDeclaratorId().identifier() == null) {
                 continue;
             }
             String name = variableDeclarator.variableDeclaratorId().identifier().getText();
@@ -247,28 +232,24 @@ public class JavaElementExtractor extends ElementExtractor {
         return variableNames;
     }
 
-    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parentIdentifier,
-            int startLine, int endLine) {
+    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         for (String variableName : varNames) {
             addVariable(variableName, path, variableType, parentIdentifier, startLine, endLine);
         }
     }
 
-    private void addVariable(String variableName, String path, String variableType, ElementIdentifier parentIdentifier,
-            int startLine, int endLine) {
+    private void addVariable(String variableName, String path, String variableType, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         VariableElement variable = new VariableElement(variableName, path, variableType, parentIdentifier);
         variable.setStartLine(startLine);
         variable.setEndLine(endLine);
         elementRegistry.addVariable(variable);
     }
 
-    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, String extendsClass,
-            List<String> implementedInterfaces,
+    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, String extendsClass, List<String> implementedInterfaces,
             int startLine, int endLine) {
         String name = identifier.name();
         String path = identifier.path();
-        JavaClassElement classElement = new JavaClassElement(name, path, parentIdentifier, extendsClass,
-                implementedInterfaces, startLine, endLine);
+        JavaClassElement classElement = new JavaClassElement(name, path, parentIdentifier, extendsClass, implementedInterfaces, startLine, endLine);
         elementRegistry.addClass(classElement);
 
     }
@@ -286,8 +267,7 @@ public class JavaElementExtractor extends ElementExtractor {
         elementRegistry.addFunction(method);
     }
 
-    private void addInterface(String name, String path, ElementIdentifier parentIdentifier,
-            int startLine, int endLine) {
+    private void addInterface(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         Type type = Type.INTERFACE;
         Element interfaceElement = new Element(name, path, type, parentIdentifier, startLine, endLine);
         elementRegistry.addInterface(interfaceElement);
@@ -320,8 +300,7 @@ public class JavaElementExtractor extends ElementExtractor {
         String packageName = packageIdentifier.name();
         for (PackageElement packageElement : packageElements) {
             String existingPackagePath = packageElement.getPath();
-            if (packagePath.startsWith(existingPackagePath)
-                    && existingPackagePath.length() > closestParentPath.length()) {
+            if (packagePath.startsWith(existingPackagePath) && existingPackagePath.length() > closestParentPath.length()) {
                 closestParentPath = existingPackagePath;
                 closestParentName = packageElement.getName();
             }
@@ -381,12 +360,10 @@ public class JavaElementExtractor extends ElementExtractor {
         List<PackageElement> packageElements = elementRegistry.getPackages();
         for (PackageElement packageElement : packageElements) {
             String otherPath = packageElement.getPath();
-            if (otherPath.startsWith(packagePath)
-                    && otherPath.length() > packagePath.length()) {
+            if (otherPath.startsWith(packagePath) && otherPath.length() > packagePath.length()) {
                 ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
                 packageElement.updateParentIdentifier(parentIdentifier);
-                packageElement.updateShortName(otherPath.substring(packagePath.length(),
-                        otherPath.length() - 1));
+                packageElement.updateShortName(otherPath.substring(packagePath.length(), otherPath.length() - 1));
             }
         }
     }

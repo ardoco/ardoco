@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
 import java.io.IOException;
@@ -10,18 +11,18 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Lexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Parser;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Parser.FunctionBodyContext;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Parser.TranslationUnitContext;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ElementExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.PathExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import generated.antlr.cpp.CPP14Lexer;
-import generated.antlr.cpp.CPP14Parser;
-import generated.antlr.cpp.CPP14Parser.FunctionBodyContext;
-import generated.antlr.cpp.CPP14Parser.TranslationUnitContext;
 
 /**
  * Responsible for the selection of C++ files from a given Directory.
@@ -63,10 +64,7 @@ public class CppElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> cppFiles = new ArrayList<>();
         try {
-            Files.walk(dir)
-                    .filter(Files::isRegularFile)
-                    .filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h"))
-                    .forEach(cppFiles::add);
+            Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h")).forEach(cppFiles::add);
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
@@ -96,8 +94,7 @@ public class CppElementExtractor extends ElementExtractor {
 
     public void visitDeclaration(CPP14Parser.DeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (parentIdentifier == null) {
-            parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx),
-                    PathExtractor.extractPath(ctx), Type.FILE);
+            parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx), PathExtractor.extractPath(ctx), Type.FILE);
         }
         if (ctx.functionDefinition() != null) {
             visitFunctionDefinition(ctx.functionDefinition(), parentIdentifier);
@@ -110,8 +107,7 @@ public class CppElementExtractor extends ElementExtractor {
         }
     }
 
-    public void visitNamespaceDefinition(CPP14Parser.NamespaceDefinitionContext ctx,
-            ElementIdentifier parentIdentifier) {
+    public void visitNamespaceDefinition(CPP14Parser.NamespaceDefinitionContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.declarationseq() != null) {
             ElementIdentifier nameSpaceIdentifier = extractNamespace(ctx, parentIdentifier);
 
@@ -144,8 +140,7 @@ public class CppElementExtractor extends ElementExtractor {
     }
 
     public void visitFunctionBody(FunctionBodyContext ctx, ElementIdentifier parentIdentifier) {
-        if (ctx.compoundStatement() != null && ctx.compoundStatement().statementSeq() != null
-                && ctx.compoundStatement().statementSeq().statement() != null) {
+        if (ctx.compoundStatement() != null && ctx.compoundStatement().statementSeq() != null && ctx.compoundStatement().statementSeq().statement() != null) {
             for (CPP14Parser.StatementContext statement : ctx.compoundStatement().statementSeq().statement()) {
                 if (statement.declarationStatement() != null) {
                     visitBlockDeclaration(statement.declarationStatement().blockDeclaration(), parentIdentifier);
@@ -163,8 +158,7 @@ public class CppElementExtractor extends ElementExtractor {
             if (declSeq == null || declSeq.typeSpecifier() == null) {
                 continue;
             }
-            if (declSeq != null && declSeq.typeSpecifier() != null
-                    && declSeq.typeSpecifier().classSpecifier() != null) {
+            if (declSeq != null && declSeq.typeSpecifier() != null && declSeq.typeSpecifier().classSpecifier() != null) {
                 visitClassSpecifier(declSeq.typeSpecifier().classSpecifier(), parentIdentifier);
             }
             // extractVariablesFromClass(declSeq.typeSpecifier().classSpecifier());
@@ -180,8 +174,7 @@ public class CppElementExtractor extends ElementExtractor {
         extractVariablesFromClass(ctx, classIdentifier);
     }
 
-    private ElementIdentifier extractNamespace(CPP14Parser.NamespaceDefinitionContext ctx,
-            ElementIdentifier parentIdentifier) {
+    private ElementIdentifier extractNamespace(CPP14Parser.NamespaceDefinitionContext ctx, ElementIdentifier parentIdentifier) {
         String name = "anonymous";
         if (ctx.Identifier() != null) {
             name = ctx.Identifier().getText();
@@ -259,10 +252,9 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.MemberDeclaratorContext memberDec : ctx.memberDeclarator()) {
             // Skip if it is a function or Constructor
-            if (memberDec.declarator() != null && memberDec.declarator().pointerDeclarator() != null
-                    && memberDec.declarator().pointerDeclarator().noPointerDeclarator() != null
-                    && memberDec.declarator()
-                            .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (memberDec.declarator() != null && memberDec.declarator().pointerDeclarator() != null && memberDec.declarator()
+                    .pointerDeclarator()
+                    .noPointerDeclarator() != null && memberDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(memberDec.declarator().getText());
@@ -274,9 +266,9 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.InitDeclaratorContext initDec : ctx.initDeclarator()) {
             // Skip if it is a function or Constructor
-            if (initDec.declarator() != null && initDec.declarator().pointerDeclarator() != null
-                    && initDec.declarator().pointerDeclarator().noPointerDeclarator() != null && initDec.declarator()
-                            .pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (initDec.declarator() != null && initDec.declarator().pointerDeclarator() != null && initDec.declarator()
+                    .pointerDeclarator()
+                    .noPointerDeclarator() != null && initDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
                 continue;
             }
             varNames.add(initDec.declarator().getText());
@@ -286,10 +278,8 @@ public class CppElementExtractor extends ElementExtractor {
 
     private List<String> getInherits(CPP14Parser.ClassSpecifierContext ctx) {
         List<String> inherits = new ArrayList<>();
-        if (ctx.classHead() != null && ctx.classHead().baseClause() != null
-                && ctx.classHead().baseClause().baseSpecifierList() != null) {
-            for (CPP14Parser.BaseSpecifierContext base : ctx.classHead().baseClause().baseSpecifierList()
-                    .baseSpecifier()) {
+        if (ctx.classHead() != null && ctx.classHead().baseClause() != null && ctx.classHead().baseClause().baseSpecifierList() != null) {
+            for (CPP14Parser.BaseSpecifierContext base : ctx.classHead().baseClause().baseSpecifierList().baseSpecifier()) {
                 String baseClass = base.getText();
 
                 if (base.accessSpecifier() != null) {
@@ -302,15 +292,13 @@ public class CppElementExtractor extends ElementExtractor {
         return inherits;
     }
 
-    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parentIdentifier,
-            int startLine, int endLine) {
+    private void addVariables(List<String> varNames, String path, String variableType, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         for (String varName : varNames) {
             addVariableElement(varName, path, variableType, parentIdentifier, startLine, endLine);
         }
     }
 
-    private void addVariableElement(String varName, String path, String variableType, ElementIdentifier parentIdentifier,
-            int startLine, int endLine) {
+    private void addVariableElement(String varName, String path, String variableType, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, variableType, parentIdentifier, startLine, endLine);
         elementRegistry.addVariable(variable);
     }
@@ -320,8 +308,7 @@ public class CppElementExtractor extends ElementExtractor {
         elementRegistry.addFunction(function);
     }
 
-    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, List<String> inherits, int startLine,
-            int endLine) {
+    private void addClass(ElementIdentifier identifier, ElementIdentifier parentIdentifier, List<String> inherits, int startLine, int endLine) {
         ClassElement cppClassElement = new ClassElement(identifier, parentIdentifier, startLine, endLine, inherits);
         elementRegistry.addClass(cppClassElement);
     }

@@ -1,12 +1,13 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorage;
@@ -24,9 +25,8 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
         super(new Python3CommentMatcher());
     }
 
-    public Python3ElementStorageRegistry(List<VariableElement> variables, List<Element> functions,
-            List<ClassElement> classes,
-            List<Element> modules, List<PackageElement> packages) {
+    public Python3ElementStorageRegistry(List<VariableElement> variables, List<Element> functions, List<ClassElement> classes, List<Element> modules,
+            List<PackageElement> packages) {
         this();
         addVariables(variables);
         addFunctions(functions);

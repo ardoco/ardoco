@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -10,8 +11,9 @@ public final class PathExtractor {
 
     /**
      * Extracts the path from the given ParserRuleContext
-     * @param ctx, the ANTLR ParserRuleContext 
-     * @return, the path as string
+     * 
+     * @param ctx, the ANTLR ParserRuleContext
+     *             @return, the path as string
      */
     public static String extractPath(ParserRuleContext ctx) {
         String path = ctx.getStart().getInputStream().getSourceName();
@@ -21,8 +23,9 @@ public final class PathExtractor {
 
     /**
      * Extracts the name from the path of the given ParserRuleContext
+     * 
      * @param ctx, the ANTLR ParserRuleContext
-     * @return, the name as string
+     *             @return, the name as string
      */
     public static String extractNameFromPath(ParserRuleContext ctx) {
         String path = extractPath(ctx);

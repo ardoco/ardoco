@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
@@ -17,8 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
  */
 public class ClassMapper extends AbstractJavaCodeItemMapper {
 
-    public ClassMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers,
-            JavaElementStorageRegistry elementRegistry) {
+    public ClassMapper(CodeItemRepository codeItemRepository, JavaCodeItemMapperCollection javaCodeItemMappers, JavaElementStorageRegistry elementRegistry) {
         super(codeItemRepository, javaCodeItemMappers, elementRegistry);
     }
 

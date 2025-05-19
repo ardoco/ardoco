@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.elements;
 
 import java.util.ArrayList;
@@ -8,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ClassElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.VariableElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.java.JavaClassElement;
@@ -23,8 +24,9 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsJavaTest() {
-        elementManager = new JavaElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(), getCorrectCompilationUnitList(), getCorrectPackageList());
-        
+        elementManager = new JavaElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassList(), getCorrectInterfaceList(),
+                getCorrectCompilationUnitList(), getCorrectPackageList());
+
         List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
         Assertions.assertEquals(1, rootParents.size());
@@ -32,7 +34,8 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsCppTest() {
-        elementManager = new CppElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(), getCorrectNamespacesList(), new ArrayList<>());
+        elementManager = new CppElementStorageRegistry(getCorrectVariablesList(), getCorrectFunctionsList(), getCorrectClassesCppList(),
+                getCorrectNamespacesList(), new ArrayList<>());
 
         List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
@@ -41,15 +44,13 @@ public class ElementManagerTest {
 
     @Test
     void getRootParentsPythonTest() {
-        elementManager = new Python3ElementStorageRegistry(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(), new ArrayList<>(), getCorrectPackageList());
+        elementManager = new Python3ElementStorageRegistry(getCorrectPythonVariablesList(), getCorrectFunctionsList(), getCorrectClassesList(),
+                new ArrayList<>(), getCorrectPackageList());
 
         List<ElementIdentifier> rootParents = elementManager.getRootIdentifiers();
 
         Assertions.assertEquals(1, rootParents.size());
     }
-
-
-
 
     private List<VariableElement> getCorrectVariablesList() {
         List<VariableElement> variables = new ArrayList<>();
@@ -67,7 +68,7 @@ public class ElementManagerTest {
         String path = "path";
         Type type = Type.FUNCTION;
         ElementIdentifier parent = new ElementIdentifier("a", path, Type.CLASS);
-        
+
         functions.add(new Element("a", path, type, parent));
         functions.add(new Element("b", path, type, parent));
         functions.add(new Element("c", path, type, parent));
@@ -131,18 +132,18 @@ public class ElementManagerTest {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
         ElementIdentifier parent = new ElementIdentifier("a", path, Type.PACKAGE);
-        
+
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
         classes.add(new ClassElement("c", path, parent));
         return classes;
-    }    
+    }
 
     private List<ClassElement> getCorrectClassesCppList() {
         List<ClassElement> classes = new ArrayList<>();
         String path = "path";
         ElementIdentifier parent = new ElementIdentifier("a", path, Type.NAMESPACE);
-        
+
         classes.add(new ClassElement("a", path, parent));
         classes.add(new ClassElement("b", path, parent));
         classes.add(new ClassElement("c", path, parent));
@@ -154,7 +155,7 @@ public class ElementManagerTest {
         String path = "path";
         Type type = Type.NAMESPACE;
         ElementIdentifier parent = null;
-        
+
         namespaces.add(new Element("a", path, type, parent));
         namespaces.add(new Element("b", path, type, parent));
         namespaces.add(new Element("c", path, type, parent));
