@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 
-public class CppExtractorTest {
+class CppExtractorTest {
     @Test
     void executeCppExtractorForMinimalDirectoryTest() throws IOException {
         String sourcePath = "src/test/resources/cpp/interface/edu/";

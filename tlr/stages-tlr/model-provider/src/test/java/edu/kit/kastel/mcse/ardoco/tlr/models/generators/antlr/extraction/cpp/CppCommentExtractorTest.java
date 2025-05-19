@@ -16,11 +16,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppCommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 
-public class CppCommentExtractorTest {
+class CppCommentExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
 
     @Test
-    public void commentExtractorMainCPPTest() throws IOException {
+    void commentExtractorMainCPPTest() throws IOException {
         String filePath = sourcePath + "src/main.cpp";
         List<Comment> comments = extractCommentsFromFile(filePath);
 

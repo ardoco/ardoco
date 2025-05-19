@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppElementExtractor;
 
-public class CppFileExtractorTest {
+class CppFileExtractorTest {
     private final String sourcePath = "src/test/resources/cpp/interface/edu/";
 
     @Test

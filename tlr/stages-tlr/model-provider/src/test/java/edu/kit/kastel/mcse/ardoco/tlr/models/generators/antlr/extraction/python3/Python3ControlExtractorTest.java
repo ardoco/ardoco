@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ElementExtractor;
 
-public class Python3ControlExtractorTest {
+class Python3ControlExtractorTest {
     String sourcePath = "src/test/resources/python/interface/edu/";
 
     @Test

@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
-public class Python3ExtractorTest {
+class Python3ExtractorTest {
 
     @Test
     void executePython3ExtractorForMinimalDirectoryTest() throws IOException {

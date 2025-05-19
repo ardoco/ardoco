@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
-public class Python3CommentExtractorTest {
+class Python3CommentExtractorTest {
     private final String sourcePath = "src/test/resources/python/interface/edu/";
 
     @Test
