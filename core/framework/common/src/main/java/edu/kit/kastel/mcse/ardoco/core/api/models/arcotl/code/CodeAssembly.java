@@ -26,4 +26,8 @@ public final class CodeAssembly extends CodeModule {
         super(codeItemRepository, name, content);
         this.language = language;
     }
+
+    public String getLanguage() {
+        return language;
+    }
 }
