@@ -35,7 +35,7 @@
 
 lexer grammar Python3Lexer;
 @header {
-package generated.antlr.python3;
+package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
 }
 
 // All comments that start with "///" are copy-pasted from

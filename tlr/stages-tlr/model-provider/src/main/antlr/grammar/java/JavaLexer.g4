@@ -36,7 +36,7 @@
 lexer grammar JavaLexer;
 
 @header {
-package generated.antlr.java;
+package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java;
 }
 
 // Keywords

@@ -25,7 +25,7 @@
 
 parser grammar CPP14Parser;
 @header {
-package generated.antlr.cpp;
+package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp;
 }
 
 options {

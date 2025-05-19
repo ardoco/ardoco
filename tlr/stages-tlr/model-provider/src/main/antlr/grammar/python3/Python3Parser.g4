@@ -36,7 +36,7 @@
 
 parser grammar Python3Parser;
 @header {
-package generated.antlr.python3;
+package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
 }
 options {
     superClass = Python3ParserBase;
