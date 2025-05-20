@@ -18,7 +18,7 @@ jobs:
     with:
       deploy: true
       with-submodules: true
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       install-self: true
       dependencies: "https://github.com/ArDoCo/InconsistencyDetection.git"
     secrets:
