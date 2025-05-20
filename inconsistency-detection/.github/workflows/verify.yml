@@ -18,7 +18,7 @@ jobs:
     with:
       deploy: false
       with-submodules: true
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
     secrets:
       CENTRAL_USER: ""
       CENTRAL_TOKEN: ""
