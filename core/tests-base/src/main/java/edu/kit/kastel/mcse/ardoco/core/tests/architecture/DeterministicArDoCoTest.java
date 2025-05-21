@@ -86,7 +86,7 @@ public class DeterministicArDoCoTest {
 
     @ArchTest
     public static final ArchRule forbidHashMapAndHashSetInFavorOfLinkedVersions = noClasses().that()
-            .resideOutsideOfPackages("..tests..")
+            .resideOutsideOfPackages("..tests..", "..magika..")
             .and()
             .doNotHaveFullyQualifiedName(DeterministicArDoCoTest.class.getName())
             .should()
