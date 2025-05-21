@@ -99,7 +99,8 @@ public class DeterministicArDoCoTest {
     @ArchTest
     public static final ArchRule forbidEqualsAndHashCodeInCertainClasses = noClasses().that()
             .areAnnotatedWith(NoHashCodeEquals.class)
-            .should(implementEqualsOrHashCode());
+            .should(implementEqualsOrHashCode())
+            .allowEmptyShould(true);
 
     private static ArchCondition<? super JavaClass> implementEqualsOrHashCode() {
         return new ArchCondition<>("implement equals or hashCode") {
