@@ -1,16 +1,13 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
@@ -18,6 +15,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -29,6 +28,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 @Deterministic
 public final class JavaExtractor extends CodeExtractor {
+
+    private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
     private CodeModel extractedModel = null;
 
@@ -81,15 +82,18 @@ public final class JavaExtractor extends CodeExtractor {
     }
 
     private static String[] getJavaFiles(Path dir) {
-        try (Stream<Path> paths = Files.walk(dir)) {
-            return paths.filter(Files::isRegularFile)
-                    .filter(it -> fileTypePredictor.predictFileType(it).label().equals("java"))
-                    .map(Path::toAbsolutePath)
-                    .map(Path::normalize)
-                    .map(Path::toString)
-                    .toArray(String[]::new);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        var predictions = fileTypePredictor.predictFileTypesFromFolderRecursively(dir);
+
+        var javaFiles = predictions.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().label().equals("java"))
+                .map(Map.Entry::getKey)
+                .map(Path::toAbsolutePath)
+                .map(Path::normalize)
+                .map(Path::toString)
+                .toArray(String[]::new);
+
+        logger.debug("# Java files found: {}", javaFiles.length);
+        return javaFiles;
     }
 }
