@@ -1,0 +1,32 @@
+name: Format
+
+on:
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - uses: joshlong/java-version-export-github-action@v28
+        id: jve
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ steps.jve.outputs.java_major_version }}
+          cache: 'maven'
+      - name: Format with Spotless in Maven
+        run: mvn -B spotless:apply --file pom.xml
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Apply formatting changes
