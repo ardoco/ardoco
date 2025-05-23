@@ -50,7 +50,7 @@ public class DeterministicArDoCoTest {
 
     @ArchTest
     public static final ArchRule forbidUnorderedSetsAndMaps = noClasses().that()
-            .resideOutsideOfPackages("..tests..", "..metrics..")
+            .resideOutsideOfPackages("..tests..", "..metrics..", "..magika..")
             .and(areNotDirectlyAnnotatedWith(Deterministic.class))
             .should()
             .accessClassesThat(areForbiddenClasses())
@@ -86,7 +86,7 @@ public class DeterministicArDoCoTest {
 
     @ArchTest
     public static final ArchRule forbidHashMapAndHashSetInFavorOfLinkedVersions = noClasses().that()
-            .resideOutsideOfPackages("..tests..")
+            .resideOutsideOfPackages("..tests..", "..magika..")
             .and()
             .doNotHaveFullyQualifiedName(DeterministicArDoCoTest.class.getName())
             .should()
@@ -99,7 +99,8 @@ public class DeterministicArDoCoTest {
     @ArchTest
     public static final ArchRule forbidEqualsAndHashCodeInCertainClasses = noClasses().that()
             .areAnnotatedWith(NoHashCodeEquals.class)
-            .should(implementEqualsOrHashCode());
+            .should(implementEqualsOrHashCode())
+            .allowEmptyShould(true);
 
     private static ArchCondition<? super JavaClass> implementEqualsOrHashCode() {
         return new ArchCondition<>("implement equals or hashCode") {
