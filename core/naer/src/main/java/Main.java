@@ -1,18 +1,25 @@
-import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        String apiKey = System.getenv("OPENAI_API_KEY");
+        String host = System.getenv("OLLAMA_HOST");
+        String user = System.getenv("OLLAMA_USER");
+        String password = System.getenv("OLLAMA_PASSWORD");
 
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .modelName("gpt-4.1-nano") //most coste efficient: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
-                .temperature(0.0) //todo fancy als params machen
+        ChatModel model = OllamaChatModel.builder()
+                .baseUrl(host)
+                .customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))))
+                .modelName("llama3.2:1b")
+                .temperature(0.0)
                 .build();
 
-        String answer = model.chat("Say 'Hi'"); //todo prompt (inkl. rolle und output format)
+        String answer = model.chat("hi");
         System.out.println(answer);
 
-        //TODO use https://docs.langchain4j.dev/tutorials/structured-outputs/ to generate Java Class from output
     }
 }
