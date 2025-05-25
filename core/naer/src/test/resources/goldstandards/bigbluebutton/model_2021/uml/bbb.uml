@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_kMF5sFkFEeyewPSmlgszyA" name="New Repository">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_ZADiQFkJEeyewPSmlgszyA" name="Apps"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_xqkJoFkIEeyewPSmlgszyA" name="HTML5 Server"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_IixQcFkJEeyewPSmlgszyA" name="Redis PubSub"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_2I1EsFkIEeyewPSmlgszyA" name="HTML5 Client"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_d9jzgFkIEeyewPSmlgszyA" name="Recording Service"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_qa5z0FwPEeyiuNx_RO7j-Q" name="FreeSWITCH"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_r42CoFkIEeyewPSmlgszyA" name="kurento"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_7b12cFkIEeyewPSmlgszyA" name="Presentation Conversion"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_MUFl8FkJEeyewPSmlgszyA" name="FSESL"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_ur280FkIEeyewPSmlgszyA" name="WebRTC-SFU"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_UV7gwFwPEeyiuNx_RO7j-Q" name="Redis DB"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_FhvIYFkJEeyewPSmlgszyA" name="BBB web"/>
+  <packagedElement xmi:type="uml:Component" xmi:id="_4yx-8FkHEeyewPSmlgszyA" name="BBB web">
+    <interfaceRealization xmi:id="_Yk1Eax8CEe2st8EPFuwF6A" client="_4yx-8FkHEeyewPSmlgszyA" supplier="_FhvIYFkJEeyewPSmlgszyA" contract="_FhvIYFkJEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EbB8CEe2st8EPFuwF6A" client="_4yx-8FkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_XuNf4FkJEeyewPSmlgszyA" name="Apps">
+    <interfaceRealization xmi:id="_Yk1Ebh8CEe2st8EPFuwF6A" client="_XuNf4FkJEeyewPSmlgszyA" supplier="_ZADiQFkJEeyewPSmlgszyA" contract="_ZADiQFkJEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Ebx8CEe2st8EPFuwF6A" client="_XuNf4FkJEeyewPSmlgszyA" supplier="_UV7gwFwPEeyiuNx_RO7j-Q"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EcB8CEe2st8EPFuwF6A" client="_XuNf4FkJEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_s0aIcFkHEeyewPSmlgszyA" name="WebRTC-SFU">
+    <interfaceRealization xmi:id="_Yk1Ech8CEe2st8EPFuwF6A" client="_s0aIcFkHEeyewPSmlgszyA" supplier="_ur280FkIEeyewPSmlgszyA" contract="_ur280FkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Ecx8CEe2st8EPFuwF6A" client="_s0aIcFkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_6sergFkHEeyewPSmlgszyA" name="Redis PubSub">
+    <interfaceRealization xmi:id="_Yk1EdR8CEe2st8EPFuwF6A" client="_6sergFkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA" contract="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_yGgUMFkHEeyewPSmlgszyA" name="HTML5 Server">
+    <interfaceRealization xmi:id="_Yk1Edx8CEe2st8EPFuwF6A" client="_yGgUMFkHEeyewPSmlgszyA" supplier="_xqkJoFkIEeyewPSmlgszyA" contract="_xqkJoFkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EeB8CEe2st8EPFuwF6A" client="_yGgUMFkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_RDHFIFwPEeyiuNx_RO7j-Q" name="Redis DB">
+    <interfaceRealization xmi:id="_Yk1Eeh8CEe2st8EPFuwF6A" client="_RDHFIFwPEeyiuNx_RO7j-Q" supplier="_UV7gwFwPEeyiuNx_RO7j-Q" contract="_UV7gwFwPEeyiuNx_RO7j-Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_nwrCMFwPEeyiuNx_RO7j-Q" name="FreeSWITCH">
+    <interfaceRealization xmi:id="_Yk1EfB8CEe2st8EPFuwF6A" client="_nwrCMFwPEeyiuNx_RO7j-Q" supplier="_qa5z0FwPEeyiuNx_RO7j-Q" contract="_qa5z0FwPEeyiuNx_RO7j-Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_2BgxMFkHEeyewPSmlgszyA" name="Presentation Conversion">
+    <interfaceRealization xmi:id="_Yk1Efh8CEe2st8EPFuwF6A" client="_2BgxMFkHEeyewPSmlgszyA" supplier="_7b12cFkIEeyewPSmlgszyA" contract="_7b12cFkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Efx8CEe2st8EPFuwF6A" client="_2BgxMFkHEeyewPSmlgszyA" supplier="_FhvIYFkJEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EgB8CEe2st8EPFuwF6A" client="_2BgxMFkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_9wZIcFkHEeyewPSmlgszyA" name="FSESL">
+    <interfaceRealization xmi:id="_Yk1Egh8CEe2st8EPFuwF6A" client="_9wZIcFkHEeyewPSmlgszyA" supplier="_MUFl8FkJEeyewPSmlgszyA" contract="_MUFl8FkJEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Egx8CEe2st8EPFuwF6A" client="_9wZIcFkHEeyewPSmlgszyA" supplier="_qa5z0FwPEeyiuNx_RO7j-Q"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EhB8CEe2st8EPFuwF6A" client="_9wZIcFkHEeyewPSmlgszyA" supplier="_IixQcFkJEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_0e5u8FkHEeyewPSmlgszyA" name="HTML5 Client">
+    <interfaceRealization xmi:id="_Yk1Ehh8CEe2st8EPFuwF6A" client="_0e5u8FkHEeyewPSmlgszyA" supplier="_2I1EsFkIEeyewPSmlgszyA" contract="_2I1EsFkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Ehx8CEe2st8EPFuwF6A" client="_0e5u8FkHEeyewPSmlgszyA" supplier="_xqkJoFkIEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_oN4CMFkHEeyewPSmlgszyA" name="kurento">
+    <interfaceRealization xmi:id="_Yk1EiR8CEe2st8EPFuwF6A" client="_oN4CMFkHEeyewPSmlgszyA" supplier="_r42CoFkIEeyewPSmlgszyA" contract="_r42CoFkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1Eih8CEe2st8EPFuwF6A" client="_oN4CMFkHEeyewPSmlgszyA" supplier="_ur280FkIEeyewPSmlgszyA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_kvWs4FkHEeyewPSmlgszyA" name="Recording Service">
+    <interfaceRealization xmi:id="_Yk1EjB8CEe2st8EPFuwF6A" client="_kvWs4FkHEeyewPSmlgszyA" supplier="_d9jzgFkIEeyewPSmlgszyA" contract="_d9jzgFkIEeyewPSmlgszyA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_Yk1EjR8CEe2st8EPFuwF6A" client="_kvWs4FkHEeyewPSmlgszyA" supplier="_UV7gwFwPEeyiuNx_RO7j-Q"/>
+  </packagedElement>
+</uml:Model>

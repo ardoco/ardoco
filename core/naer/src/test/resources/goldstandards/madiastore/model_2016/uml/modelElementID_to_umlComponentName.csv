@@ -1,0 +1,15 @@
+modelElementID,umlComponentName
+_j5vZQLhEEeSNPorBlo7x9g,Cache
+_h_QpkLhEEeSNPorBlo7x9g,TagWatermarking
+_9eK7YHDrEeSqnN80MQ2uGw,MediaAccess
+_5LN7MLg2EeSNPorBlo7x9g,DB
+_qxAiILg7EeSNPorBlo7x9g,FileStorage
+_tBjC0HDpEeSqnN80MQ2uGw,UserDBAdapter
+_S-lawHDqEeSqnN80MQ2uGw2,ParallelWatermarking
+_Fslt8OXSEeSa__lJ2-JCxw,DownloadLoadBalancer
+_p_EeYHDrEeSqnN80MQ2uGw,MediaManagement
+_ahv3gL0YEeSAHuL4ItXOLQ,UserManagement
+_S-lawHDqEeSqnN80MQ2uGw,AudioWatermarking
+_st2Y0HDrEeSqnN80MQ2uGw,Facade
+_B5geQHDsEeSqnN80MQ2uGw,Packaging
+_o10-YHDrEeSqnN80MQ2uGw,Reencoding
