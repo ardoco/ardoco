@@ -61,7 +61,7 @@ public class TestComponentRecognition {
     private static void evaluateSingleInstance(Path dir, ChatModel model, Path sadFilePath, Path goldstandardFilePath) {
         System.out.println("\n" + dir.getFileName() + ":");
         Set<ComponentOccurrence> foundComponentOccurrences = ComponentRecognizer.recognizeComponents(model, sadFilePath);
-        System.out.println(foundComponentOccurrences);
+        //System.out.println(foundComponentOccurrences); todo vllt möglichkeit zum logging in file einbauen
         Set<ComponentOccurrence> groundTruth = assertDoesNotThrow(() -> ComponentOccurrence.parse(Files.readString(goldstandardFilePath), true));
 
         // Use the ArDoCo ClassificationMetricsCalculator to calculate metrics

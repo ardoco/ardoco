@@ -11,16 +11,18 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
-        String sadFilepath = "src/main/resources/goldstandards/jabref/text_2021/jabref_1SentPerLine.txt"; //todo könnte man auch aus args auslesen damit man das programm mit nem scipt starten kann usw
+        System.out.println("Example run for jabref...");
+
+        String sadFilepath = "src/main/resources/goldstandards/jabref/text_2021/jabref_1SentPerLine.txt";
         String goldstandardFilepath = "src/main/resources/goldstandards/jabref/goldstandard_NER.csv";
 
-        ChatModel model = ChatModelBuilder.buildChatModelVDL(); //todo auch als arg möglich
+        ChatModel model = ChatModelBuilder.buildChatModelVDL();
 
         Set<ComponentOccurrence> foundComponentOccurrences = ComponentRecognizer.recognizeComponents(model, Path.of(sadFilepath));
 
         Set<ComponentOccurrence> groundTruth = null;
         try {
-            groundTruth = ComponentOccurrence.parse(Files.readString(Paths.get(goldstandardFilepath)),true);
+            groundTruth = ComponentOccurrence.parse(Files.readString(Paths.get(goldstandardFilepath)), true);
         } catch (IOException e) {
             System.err.println("Error reading goldstandard file: " + goldstandardFilepath);
             System.exit(1);
@@ -32,7 +34,6 @@ public class Main {
         System.out.println("Precision=" + result.getPrecision());
         System.out.println("Recall=" + result.getRecall());
         System.out.println("F1-Score=" + result.getF1());
-
     }
 
 
