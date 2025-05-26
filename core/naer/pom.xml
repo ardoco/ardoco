@@ -33,6 +33,12 @@
             <artifactId>langchain4j-ollama</artifactId>
             <version>1.0.1-beta6</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.ardoco</groupId>
+            <artifactId>metrics</artifactId>
+            <version>0.1.1</version>
+        </dependency>
     </dependencies>
 
 </project>
