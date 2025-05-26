@@ -25,10 +25,15 @@ public class ComponentOccurrence {
     /**
      * Parses a textual representation of a list of component occurrences to the actual list.
      *
-     * @param str format must be "componentName1,sentenceNumber1\n componentName2,sentenceNumber2\n ...", lines not matching this format will be skipped with a warning
+     * @param str           format must be "componentName1,sentenceNumber1\n componentName2,sentenceNumber2\n ...", lines not matching this format will be skipped with a warning
+     * @param skipFirstLine whether to skip the first line of {@code str} or not
      * @return a set of {@link ComponentOccurrence} instances
      */
-    public static Set<ComponentOccurrence> parse(String str) {
+    public static Set<ComponentOccurrence> parse(String str, boolean skipFirstLine) {
+        if (skipFirstLine) {
+            int firstNewline = str.indexOf('\n');
+            str = firstNewline >= 0 ? str.substring(firstNewline + 1) : "";
+        }
         if (str == null || str.trim().isEmpty()) {
             return new HashSet<>();
         }

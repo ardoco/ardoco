@@ -2,6 +2,7 @@ import dev.langchain4j.model.chat.ChatModel;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
@@ -28,15 +29,15 @@ public class ComponentRecognizer {
      * @param sadFilepath file path of the SAD to be analyzed
      * @return a set containing all found occurrences of components (as {@link ComponentOccurrence})
      */
-    public static Set<ComponentOccurrence> recognizeComponents(ChatModel model, String sadFilepath) {
+    public static Set<ComponentOccurrence> recognizeComponents(ChatModel model, Path sadFilepath) {
         String sad = "";
         try {
-            sad = Files.readString(Paths.get(sadFilepath));
+            sad = Files.readString(sadFilepath);
         } catch (IOException e) {
             System.err.println("Error reading software architecture documentation file: " + sadFilepath);
             System.exit(1);
         }
         String answer = model.chat(prompt + "\nText:\n" + sad);
-        return ComponentOccurrence.parse(answer);
+        return ComponentOccurrence.parse(answer,false);
     }
 }
