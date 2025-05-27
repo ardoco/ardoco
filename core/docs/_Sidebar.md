@@ -12,4 +12,4 @@
     1. [SAM-Code](traceability-link-recovery#sam-code)
     1. [SAD-SAM-Code](traceability-link-recovery#sad-sam-code)
 7. [Inconsistency Detection (ID)](Inconsistency-Detection)
-8. [LiSSA](lissa)
+8. [LiSSA-RATLR](lissa)

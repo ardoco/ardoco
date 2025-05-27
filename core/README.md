@@ -52,4 +52,3 @@ For snapshot releases, make sure to add the following repository
 The following is an excerpt of repositories that use this framework and implement the different approaches and pipelines of ArDoCo:
 * [ArDoCo/TLR](https://github.com/ArDoCo/TLR): implementing different traceability link recovery approaches
 * [ArDoCo/InconsistencyDetection](https://github.com/ArDoCo/InconsistencyDetection): implementing inconsistency detection approaches
-* [ArDoCo/LiSSA](https://github.com/ArDoCo/LiSSA): implementing processing of sketches and diagrams for, e.g., TLR
