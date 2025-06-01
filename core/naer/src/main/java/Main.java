@@ -13,8 +13,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Example run for jabref...");
 
-        String sadFilepath = "src/main/resources/goldstandards/jabref/text_2021/jabref_1SentPerLine.txt";
-        String goldstandardFilepath = "src/main/resources/goldstandards/jabref/goldstandard_NER.csv";
+        String sadFilepath = "src/test/resources/goldstandards/jabref/text_2021/jabref_1SentPerLine.txt";
+        String goldstandardFilepath = "src/test/resources/goldstandards/jabref/goldstandard_NER.csv";
 
         ChatModel model = ChatModelBuilder.buildChatModelVDL();
 

@@ -29,7 +29,7 @@ public class TestComponentRecognition {
     }
 
     private static void evaluateAllInstances(ChatModel model) {
-        Stream<Path> dirs = assertDoesNotThrow(() -> Files.list(Paths.get("src/main/resources/goldstandards")));
+        Stream<Path> dirs = assertDoesNotThrow(() -> Files.list(Paths.get("src/test/resources/goldstandards")));
         dirs.filter(Files::isDirectory).forEach(dir -> {
             //search goldstandard
             Path goldstandardFilePath = assertDoesNotThrow(() ->
