@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import util.ChatModelBuilder;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Integration test that evaluates the component recognition using different LLM models, prompts and parameters.
@@ -28,9 +30,13 @@ public class TestComponentRecognition {
         evaluateAllInstances(model);
     }
 
-    private static void evaluateAllInstances(ChatModel model) {
-        Stream<Path> dirs = assertDoesNotThrow(() -> Files.list(Paths.get("src/test/resources/goldstandards")));
-        dirs.filter(Files::isDirectory).forEach(dir -> {
+    private void evaluateAllInstances(ChatModel model) {
+        URL goldstandardsURL = this.getClass().getResource("goldstandards");
+        assertNotNull(goldstandardsURL);
+        Path goldstandardsPath = assertDoesNotThrow(() -> Paths.get(goldstandardsURL.toURI()));
+        Stream<Path> goldstandardsSubPaths = assertDoesNotThrow(() -> Files.list(goldstandardsPath));
+
+        goldstandardsSubPaths.filter(Files::isDirectory).forEach(dir -> {
             //search goldstandard
             Path goldstandardFilePath = assertDoesNotThrow(() ->
                     Files.list(dir)

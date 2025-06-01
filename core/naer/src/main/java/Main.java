@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
+        //TODO depricatedeadcode - wird eh bald überarbeitet wenn neue Architektur steht
         System.out.println("Example run for jabref...");
 
         String sadFilepath = "src/test/resources/goldstandards/jabref/text_2021/jabref_1SentPerLine.txt";
