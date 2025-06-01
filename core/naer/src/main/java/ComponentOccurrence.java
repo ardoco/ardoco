@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
  */
 public class ComponentOccurrence {
     private final String componentName;
+    /**
+     * 1-indexed.
+     */
     private final int sentenceNumber;
 
     /**
