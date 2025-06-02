@@ -1,3 +1,5 @@
+import deprecated.ComponentOccurrence;
+import deprecated.ComponentRecognizer;
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
@@ -67,7 +69,7 @@ public class TestComponentRecognition {
     private static void evaluateSingleInstance(Path dir, ChatModel model, Path sadFilePath, Path goldstandardFilePath) {
         System.out.println("\n" + dir.getFileName() + ":");
         Set<ComponentOccurrence> foundComponentOccurrences = ComponentRecognizer.recognizeComponents(model, sadFilePath);
-        //System.out.println(foundComponentOccurrences); todo vllt möglichkeit zum logging in file einbauen
+        //System.out.println(foundComponentOccurrences);
         Set<ComponentOccurrence> groundTruth = assertDoesNotThrow(() -> ComponentOccurrence.parse(Files.readString(goldstandardFilePath), true));
 
         // Use the ArDoCo ClassificationMetricsCalculator to calculate metrics

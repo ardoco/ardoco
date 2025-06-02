@@ -1,9 +1,10 @@
+package deprecated;
+
 import dev.langchain4j.model.chat.ChatModel;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 public class ComponentRecognizer {
