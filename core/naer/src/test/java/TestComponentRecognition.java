@@ -33,7 +33,7 @@ public class TestComponentRecognition {
     }
 
     private void evaluateAllInstances(ChatModel model) {
-        URL goldstandardsURL = this.getClass().getResource("goldstandards");
+        URL goldstandardsURL = this.getClass().getResource("evaluation_resources");
         assertNotNull(goldstandardsURL);
         Path goldstandardsPath = assertDoesNotThrow(() -> Paths.get(goldstandardsURL.toURI()));
         Stream<Path> goldstandardsSubPaths = assertDoesNotThrow(() -> Files.list(goldstandardsPath));
