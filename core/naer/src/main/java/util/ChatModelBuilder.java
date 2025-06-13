@@ -16,6 +16,8 @@ public class ChatModelBuilder {
         return buildChatModelVDL(0.0, "phi4:latest");//andere models testen evtl.
     }
 
+    //TODO add arg checking and exceptions
+
     /**
      * Builds a langchain4j chat model for the SDQ Virtual Design Lab (VDL) Server, which hosts an ollama instance. (<a href="https://sdq.kastel.kit.edu/wiki/Virtual_Design_Lab_Server">website</a>)
      *
