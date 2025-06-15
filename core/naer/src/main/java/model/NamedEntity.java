@@ -124,7 +124,7 @@ public class NamedEntity {
         @NotNull
         @Override
         public String toString() {
-            return '{' + sentenceNumber + ":" + referenceType;
+            return sentenceNumber + ":" + referenceType;
         }
     }
 }
