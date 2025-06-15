@@ -1,3 +1,5 @@
+package model;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +104,7 @@ public class NamedEntity {
 
     @Override
     public String toString() {
-        return "NamedEntity{" + "name='" + name + '\'' + ", type=" + type + ", alternativeNames=" + alternativeNames + ", occurrences=" + occurrences + "}\n";
+        return "model.NamedEntity{" + "name='" + name + '\'' + ", type=" + type + ", alternativeNames=" + alternativeNames + ", occurrences=" + occurrences + "}\n";
     }
 
     /**

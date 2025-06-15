@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Represents the type of a {@link NamedEntity}.
  */

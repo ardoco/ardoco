@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Indicates how a {@link NamedEntity} is referenced in a sentence.
  */

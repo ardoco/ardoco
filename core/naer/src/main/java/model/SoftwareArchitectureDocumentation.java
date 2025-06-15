@@ -1,3 +1,5 @@
+package model;
+
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import org.eclipse.collections.api.list.ImmutableList;

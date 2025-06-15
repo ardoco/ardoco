@@ -1,9 +1,11 @@
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+package recognizer;
+
 import dev.langchain4j.model.chat.ChatModel;
+import model.NamedEntity;
+import model.SoftwareArchitectureDocumentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import serialization.NamedEntityParser;
 import util.ChatModelBuilder;
 
 import java.io.IOException;
@@ -90,20 +92,11 @@ public class NamedEntityRecognizer {
 
         //parse JSON array to the set of named entities
         try {
-            return parseNamedEntities(answer, softwareArchitectureDocumentation);
+            return NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
         } catch (IOException e) {
             logger.error("error parsing LLM output to named entities");
             throw new RuntimeException(e);
         }
-    }
-
-    public Set<NamedEntity> parseNamedEntities(String json, SoftwareArchitectureDocumentation sad) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Set.class, new NamedEntityDeserializer(sad));
-        mapper.registerModule(module);
-        return mapper.readValue(json, new TypeReference<>() {
-        });
     }
 
     /**
@@ -179,7 +172,7 @@ public class NamedEntityRecognizer {
          * {@link NamedEntityRecognizer#prompt} = {@value #EXAMPLE_PROMPT}
          * </p>
          *
-         * @return a new {@code NamedEntityRecognizer}
+         * @return a new {@code recognizer.NamedEntityRecognizer}
          */
         public NamedEntityRecognizer build() {
             return new NamedEntityRecognizer(this);
