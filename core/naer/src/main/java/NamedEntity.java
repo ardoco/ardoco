@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,11 +26,19 @@ public class NamedEntity {
     private final Set<Occurrence> occurrences;
     /**
      * the software architecture documentation (text) in which the named entity has been recognized
-     * (may be {@code null} if not explicitly set via {@link #setSourceText(SoftwareArchitectureDocumentation)})
      */
+    @Nullable
     private SoftwareArchitectureDocumentation sourceText;
-    //TODO Frage: Auch als Optional machen? Aber eig will ich die Info ja schon immer gesetzt haben... kann es nur nicht direkt initialisieren weil Jackson das wohl nicht direkt kann (siehe code in NamedEntityRecognizer#recognize()...)
 
+    /**
+     * Creates a {@link NamedEntity} with the given name, type, alternative names, and occurrences.
+     * <p>{@link NamedEntity#sourceText} is initially {@code null} and can be set via {@link #setSourceText(SoftwareArchitectureDocumentation)}.</p>
+     *
+     * @param name             the entity name
+     * @param type             the entity type
+     * @param alternativeNames alternative names for the entity
+     * @param occurrences      occurrences of the entity
+     */
     @JsonCreator
     private NamedEntity(@JsonProperty("name") String name, @JsonProperty("type") NamedEntityType type, @JsonProperty("alternativeNames") List<String> alternativeNames, @JsonProperty("occurrences") List<Occurrence> occurrences) {
         this.name = name;
@@ -38,11 +47,12 @@ public class NamedEntity {
         this.occurrences = new HashSet<>(occurrences);
     }
 
+    @Nullable
     public SoftwareArchitectureDocumentation getSourceText() {
         return sourceText;
     }
 
-    public void setSourceText(SoftwareArchitectureDocumentation sourceText) {
+    public void setSourceText(@NotNull SoftwareArchitectureDocumentation sourceText) {
         this.sourceText = sourceText;
     }
 

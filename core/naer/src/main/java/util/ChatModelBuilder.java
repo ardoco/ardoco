@@ -61,5 +61,5 @@ public class ChatModelBuilder {
         return model;
     }
 
-    //TODO + iwan dann evtl local model
+    //possibility to add more models (for example, a local one) here ...
 }

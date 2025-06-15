@@ -12,8 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * todo 1: überall schön javadoc
- * here: main interface of the library!
+ * todo: überall schön javadoc und erklären wie es zu verwenden ist und dass das hier main interface of the library is
  */
 public class NamedEntityRecognizer {
     private static final String EXAMPLE_PROMPT = """
@@ -89,6 +88,7 @@ public class NamedEntityRecognizer {
             throw new RuntimeException("no valid JSON object found in LLM output: " + answer);
         }
 
+        //parse JSON array to the set of named entities
         try {
             return parseNamedEntities(answer, softwareArchitectureDocumentation);
         } catch (IOException e) {
@@ -153,7 +153,7 @@ public class NamedEntityRecognizer {
         /**
          * Sets the prompt that will be provided to the chat model.
          *
-         * @param prompt the prompt text, must not be {@code null} or blank and todo (genaues format spezifizieren)
+         * @param prompt the prompt text, must not be {@code null} or blank and todo (genaues format spezifizieren was im prompt stehen muss und was nicht) -> evtl so bauen, dass es einen festen prompt für den output gibt und man nur den rest ändert(?)
          * @return this builder
          */
         public Builder prompt(String prompt) {
