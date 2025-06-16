@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.FineGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -41,7 +42,7 @@ public class ShellVisitor implements FileVisitor<Path> {
     }
 
     public CodeModel getCodeModel() {
-        return new CodeModel(codeItemRepository, codeEndpoints);
+        return new FineGrainedCodeModel(codeItemRepository, codeEndpoints);
     }
 
     @Override

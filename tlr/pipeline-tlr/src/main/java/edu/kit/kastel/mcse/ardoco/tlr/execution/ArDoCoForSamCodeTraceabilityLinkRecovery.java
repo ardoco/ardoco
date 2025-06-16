@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
@@ -30,7 +31,8 @@ public class ArDoCoForSamCodeTraceabilityLinkRecovery extends ArDoCoRunner {
         var dataRepository = arDoCo.getDataRepository();
 
         var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode);
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType);
+        // TODO: Phi: Right here?
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType, Metamodel.ARCHITECTURE);
 
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
                 architectureConfiguration, codeConfiguration);

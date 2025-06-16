@@ -8,6 +8,7 @@ import java.util.SortedMap;
 
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
@@ -20,8 +21,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ArCoTLModelProviderInfor
 public class ArCoTLModelProviderAgent extends PipelineAgent {
 
     /**
-     * Instantiates a new model provider agent.
-     * The constructor takes a list of ModelConnectors that are executed and used to extract information from models.
+     * Instantiates a new model provider agent. The constructor takes a list of ModelConnectors that are executed and used to extract information from models.
      * You can specify the extractors xor the code model file.
      *
      * @param data                      the DataRepository
@@ -74,7 +74,8 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (inputCode.isFile()) {
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE);
+            //TODO: Phi is this right?
+            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE_AS_ARCHITECTURE);
         }
 
         // Legacy Support for only ACM_FILE in a directory
@@ -82,9 +83,12 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         if (inputCode.isDirectory() && new File(inputCode, "codeModel.acm").exists()) {
             var logger = LoggerFactory.getLogger(ArCoTLModelProviderAgent.class);
             logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
-            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE);
+
+            //TODO: Phi is this right?
+            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE);
         }
 
-        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY);
+        //TODO: Phi is this right?
+        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, Metamodel.CODE);
     }
 }

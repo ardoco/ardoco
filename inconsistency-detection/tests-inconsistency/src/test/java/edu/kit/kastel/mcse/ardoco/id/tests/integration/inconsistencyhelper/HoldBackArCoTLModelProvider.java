@@ -10,6 +10,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
@@ -33,14 +34,12 @@ public class HoldBackArCoTLModelProvider {
         var model = this.getExtractor().extractModel();
         assert model instanceof ArchitectureModel;
         this.initialModel = (ArchitectureModel) model;
-        this.components = Lists.immutable.fromStream(this.initialModel.getContent()
-                .stream()
-                .filter(ArchitectureComponent.class::isInstance)
-                .map(it -> (ArchitectureComponent) it));
+        this.components = Lists.immutable.fromStream(
+                this.initialModel.getContent().stream().filter(ArchitectureComponent.class::isInstance).map(it -> (ArchitectureComponent) it));
     }
 
     private Extractor getExtractor() {
-        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath());
+        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath(), Metamodel.ARCHITECTURE);
     }
 
     /**
@@ -74,7 +73,8 @@ public class HoldBackArCoTLModelProvider {
     }
 
     public PipelineAgent get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
-        PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("") {
+        PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("", Metamodel.CODE_AS_ARCHITECTURE) {
+
             @Override
             public Model extractModel() {
                 var elements = new ArrayList<>(HoldBackArCoTLModelProvider.this.initialModel.getContent());

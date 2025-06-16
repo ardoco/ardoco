@@ -6,10 +6,12 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 
 public abstract class Extractor {
+    protected final Metamodel metamodelToExtract;
     protected String path;
 
-    protected Extractor(String path) {
+    protected Extractor(String path, Metamodel metamodelToExtract) {
         this.path = path;
+        this.metamodelToExtract = metamodelToExtract;
     }
 
     public String getPath() {
