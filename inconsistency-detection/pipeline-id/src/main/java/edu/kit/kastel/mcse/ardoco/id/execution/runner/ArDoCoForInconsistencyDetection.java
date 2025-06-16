@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
@@ -53,7 +54,8 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         DataRepositoryHelper.putInputText(dataRepository, text);
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType);
+        // TODO: Phi: Right here?
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType, Metamodel.ARCHITECTURE);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
                 architectureConfiguration, null);
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);

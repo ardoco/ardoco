@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
@@ -27,8 +28,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 @Deterministic
 public final class PcmExtractor extends ArchitectureExtractor {
 
-    public PcmExtractor(String path) {
-        super(path);
+    public PcmExtractor(String path, Metamodel metamodelToExtract) {
+        super(path, metamodelToExtract);
     }
 
     private static List<ArchitectureInterface> extractInterfaces(PcmModel originalModel) {
@@ -77,12 +78,21 @@ public final class PcmExtractor extends ArchitectureExtractor {
      */
     @Override
     public ArchitectureModel extractModel() {
+
         PcmModel originalModel = new PcmModel(new File(path));
         List<ArchitectureInterface> interfaces = extractInterfaces(originalModel);
         List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
         List<ArchitectureItem> endpoints = new ArrayList<>();
-        endpoints.addAll(interfaces);
-        endpoints.addAll(components);
+
+        switch (metamodelToExtract) {
+        case Metamodel.ARCHITECTURE -> {
+            endpoints.addAll(interfaces);
+            endpoints.addAll(components);
+        }
+        case Metamodel.COMPONENT -> endpoints.addAll(components);
+        default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
+        }
+
         return new ArchitectureModel(endpoints);
     }
 
@@ -90,5 +100,4 @@ public final class PcmExtractor extends ArchitectureExtractor {
     public ModelType getModelType() {
         return ArchitectureModelType.PCM;
     }
-
 }

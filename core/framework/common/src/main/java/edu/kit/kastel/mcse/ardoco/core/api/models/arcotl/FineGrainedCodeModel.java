@@ -6,35 +6,34 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 
-public final class CoarseGrainedCodeModel extends CodeModel {
+public final class FineGrainedCodeModel extends CodeModel {
 
-    private final FineGrainedCodeModel codeModel;
-
-    public CoarseGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+    public FineGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
-        this.codeModel = new FineGrainedCodeModel(codeItemRepository, content);
     }
 
     @Override
-    public List<? extends CodeItem> getContent() {
-        return this.getEndpoints();
-    }
+    public List<CodeCompilationUnit> getEndpoints() {
 
-    @Override
-    public List<? extends CodeItem> getEndpoints() {
-        List<CodeItem> entities = new ArrayList<>();
-        codeModel.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
+        List<CodeCompilationUnit> entities = new ArrayList<>();
+        this.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
 
-        entities.addAll(codeModel.getAllPackages());
         return entities;
     }
 
     @Override
+    public List<? extends CodeItem> getContent() {
+        this.initialize();
+        return this.codeItemRepository.getCodeItemsFromIds(this.content);
+    }
+
+    @Override
     public Metamodel getMetamodel() {
-        return Metamodel.CODE_AS_ARCHITECTURE;
+        return Metamodel.CODE;
     }
 
     @Override

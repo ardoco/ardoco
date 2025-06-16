@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
@@ -64,7 +65,7 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static ComponentModel getComponentModel(GoldStandardProject goldStandardProject) {
-        return new ComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath()).extractModel());
+        return new ComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.COMPONENT).extractModel());
     }
 
     private static void saveOutput(GoldStandardProject goldStandardProject, ArDoCoResult arDoCoResult) {

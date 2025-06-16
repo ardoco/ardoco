@@ -7,10 +7,7 @@ import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -63,22 +60,14 @@ public final class ArCoTLModelProviderInformant extends Informant {
 
         if (this.fromFile != null) {
             extractedModel = CodeExtractor.readInCodeModel(this.fromFile);
-            this.addModelStateToDataRepository(Metamodel.CODE, extractedModel);
-            if (extractedModel instanceof CodeModel codeModel) {
-                this.addModelStateToDataRepository(Metamodel.CODE_AS_ARCHITECTURE, new CoarseGrainedCodeModel(codeModel));
-            }
+            this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
             return;
         }
 
         IdentifierProvider.reset();
         this.getLogger().info("Extracting code model.");
         extractedModel = this.extractor.extractModel();
-        if (extractedModel instanceof CodeModel codeModel) {
-            this.addModelStateToDataRepository(Metamodel.CODE_AS_ARCHITECTURE, new CoarseGrainedCodeModel(codeModel));
-        }
-        if (extractedModel instanceof ArchitectureModel architectureModel) {
-            this.addModelStateToDataRepository(Metamodel.COMPONENT, new ComponentModel(architectureModel));
-        }
+        this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
         if (this.extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
             this.getLogger().info("Writing out code model to file in directory.");
             codeExtractor.writeOutCodeModel(codeModel);
@@ -86,6 +75,7 @@ public final class ArCoTLModelProviderInformant extends Informant {
         this.addModelStateToDataRepository(this.extractor.getMetamodel(), extractedModel);
     }
 
+    //TODO: Remove this method
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
         var dataRepository = this.getDataRepository();
         Optional<ModelStates> modelStatesOptional = dataRepository.getData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);

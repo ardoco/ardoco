@@ -42,7 +42,7 @@ public class HoldBackRunResultsProducer {
      * @param goldStandardProject the project that should be run
      * @param useBaselineApproach set to true if the baseline approach should be used instead of ArDoCo
      * @return a map containing the mapping from ModelElement that was held back to the DataStructure that was produced when running ArDoCo without the
-     *         ModelElement
+     * ModelElement
      */
     public Map<ArchitectureItem, ArDoCoResult> produceHoldBackRunResults(GoldStandardProject goldStandardProject, boolean useBaselineApproach) {
         Map<ArchitectureItem, ArDoCoResult> runs = new LinkedHashMap<>();

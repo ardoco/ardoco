@@ -8,12 +8,13 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
@@ -27,8 +28,8 @@ public abstract class CodeExtractor extends Extractor {
     private static final String CODE_MODEL_FILE_NAME = "codeModel.acm";
     protected final CodeItemRepository codeItemRepository;
 
-    protected CodeExtractor(CodeItemRepository codeItemRepository, String path) {
-        super(path);
+    protected CodeExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
+        super(path, metamodelToExtract);
         this.codeItemRepository = codeItemRepository;
     }
 

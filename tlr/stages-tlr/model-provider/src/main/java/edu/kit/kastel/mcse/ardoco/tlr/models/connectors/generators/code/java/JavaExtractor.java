@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.FileASTRequestor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
@@ -31,10 +32,10 @@ public final class JavaExtractor extends CodeExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    private CodeModel extractedModel = null;
+    private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    public JavaExtractor(CodeItemRepository codeItemRepository, String path) {
-        super(codeItemRepository, path);
+    public JavaExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
+        super(codeItemRepository, path, metamodelToExtract);
     }
 
     /**
@@ -44,13 +45,13 @@ public final class JavaExtractor extends CodeExtractor {
      */
     @Override
     public synchronized CodeModel extractModel() {
-        if (extractedModel == null) {
+        if (codeModel == null) {
             Path directoryPath = Path.of(path);
             SortedMap<String, CompilationUnit> compUnitMap = parseDirectory(directoryPath);
             JavaModel javaModel = new JavaModel(codeItemRepository, compUnitMap);
-            this.extractedModel = javaModel.getCodeModel();
+            this.codeModel = javaModel.getCodeModel(metamodelToExtract);
         }
-        return this.extractedModel;
+        return this.codeModel;
     }
 
     private static SortedMap<String, CompilationUnit> parseDirectory(Path dir) {
@@ -76,8 +77,9 @@ public final class JavaExtractor extends CodeExtractor {
         final ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
         parser.setResolveBindings(true);
         parser.setStatementsRecovery(true);
-        parser.setCompilerOptions(Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion,
-                JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, javaCoreVersion));
+        parser.setCompilerOptions(
+                Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+                        javaCoreVersion));
         return parser;
     }
 

@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.FineGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguages;
@@ -20,17 +23,16 @@ public final class AllLanguagesExtractor extends CodeExtractor {
 
     private final Map<String, CodeExtractor> codeExtractors;
 
-    private CodeModel extractedModel = null;
-
-    public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path) {
-        super(codeItemRepository, path);
-        this.codeExtractors = Map.of(ProgrammingLanguages.JAVA, new JavaExtractor(codeItemRepository, path), ProgrammingLanguages.SHELL, new ShellExtractor(
-                codeItemRepository, path));
+    public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
+        super(codeItemRepository, path, metamodelToExtract);
+        this.codeExtractors = Map.of(ProgrammingLanguages.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguages.SHELL,
+                new ShellExtractor(codeItemRepository, path, metamodelToExtract));
     }
 
     @Override
     public synchronized CodeModel extractModel() {
-        if (this.extractedModel == null) {
+
+        if (this.codeModel == null) {
             List<CodeModel> models = new ArrayList<>();
             for (CodeExtractor extractor : this.codeExtractors.values()) {
                 var model = extractor.extractModel();
@@ -40,9 +42,13 @@ public final class AllLanguagesExtractor extends CodeExtractor {
             for (CodeModel model : models) {
                 codeEndpoints.addAll(model.getContent());
             }
-            this.extractedModel = new CodeModel(this.codeItemRepository, codeEndpoints);
-        }
-        return this.extractedModel;
-    }
 
+            switch (this.metamodelToExtract) {
+            case CODE_AS_ARCHITECTURE -> this.codeModel = new CoarseGrainedCodeModel(this.codeItemRepository, codeEndpoints);
+            case CODE -> this.codeModel = new FineGrainedCodeModel(this.codeItemRepository, codeEndpoints);
+            default -> throw new IllegalStateException("This extractor does not support this metamodel");
+            }
+        }
+        return this.codeModel;
+    }
 }
