@@ -15,17 +15,16 @@ import java.util.Set;
  * Represents a named entity.
  */
 public class NamedEntity {
-    private final String name;
     private final NamedEntityType type;
     /**
      * alternative names of the entity, e.g., if the name is ambiguous
      */
     private final Set<String> alternativeNames;
-
     /**
      * all occurrences of the entity in the {@link #sourceText}
      */
     private final Set<Occurrence> occurrences;
+    private String name;
     /**
      * the software architecture documentation (text) in which the named entity has been recognized
      */
@@ -49,6 +48,20 @@ public class NamedEntity {
         this.occurrences = new HashSet<>(occurrences);
     }
 
+    /**
+     * Creates a {@link NamedEntity} with the given name and type.
+     * <p>{@link NamedEntity#sourceText} is initially {@code null} and can be set via {@link #setSourceText(SoftwareArchitectureDocumentation)}.</p>
+     *
+     * @param name the entity name
+     * @param type the entity type
+     */
+    public NamedEntity(String name, NamedEntityType type) {
+        this.name = name;
+        this.type = type;
+        this.alternativeNames = new HashSet<>();
+        this.occurrences = new HashSet<>();
+    }
+
     @Nullable
     public SoftwareArchitectureDocumentation getSourceText() {
         return sourceText;
@@ -60,6 +73,12 @@ public class NamedEntity {
 
     public String getName() {
         return name;
+    }
+
+    //TODO add javadoc: "the old name is added to the alternative names"
+    public void changeName(String name) {
+        this.alternativeNames.add(this.name);
+        this.name = name;
     }
 
     public NamedEntityType getType() {
@@ -85,21 +104,30 @@ public class NamedEntity {
         return sb.toString();
     }
 
+    //todo javadoc
+    public Set<Integer> getOccurrenceLines() {
+        Set<Integer> result = new HashSet<>();
+        for (Occurrence occurrence : occurrences) {
+            result.add(occurrence.sentenceNumber);
+        }
+        return result;
+    }
+
     public void addOccurrence(int sentenceNumber, NamedEntityReferenceType referenceType) {
         this.occurrences.add(new Occurrence(sentenceNumber, referenceType));
     }
 
+    //TODO add javadoc: "ignoring sourceText"
     @Override
     public boolean equals(Object o) {
-        //Todo 1 evtl anpassen dass man nur checkt: name, type, occurences:sentenceNumbers (wegen goldstandards...) => oder das als weak equals oder so verwenden - dann auch analog für hash machen (& SAD mit rein oder nicht?)
         if (o == null || getClass() != o.getClass()) return false;
-        NamedEntity that = (NamedEntity) o;
-        return Objects.equals(getName(), that.getName()) && getType() == that.getType() && Objects.equals(getAlternativeNames(), that.getAlternativeNames()) && Objects.equals(occurrences, that.occurrences);
+        NamedEntity entity = (NamedEntity) o;
+        return type == entity.type && Objects.equals(alternativeNames, entity.alternativeNames) && Objects.equals(occurrences, entity.occurrences) && Objects.equals(name, entity.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getType(), getAlternativeNames(), occurrences);
+        return Objects.hash(type, alternativeNames, occurrences, name);
     }
 
     @Override
