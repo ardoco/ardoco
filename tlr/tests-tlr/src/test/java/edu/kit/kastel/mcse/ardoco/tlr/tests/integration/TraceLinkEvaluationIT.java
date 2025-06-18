@@ -71,8 +71,6 @@ class TraceLinkEvaluationIT<T extends GoldStandardProject> {
         var evaluation = new SadSamCodeTraceabilityLinkRecoveryEvaluation(true);
         var results = evaluation.runTraceLinkEvaluation(codeProject);
         Assertions.assertNotNull(results);
-
-        TraceabilityLinkRecoveryEvaluation.resultMap.put(codeProject, results);
     }
 
     @DisplayName("Evaluate SAM-Code TLR")
