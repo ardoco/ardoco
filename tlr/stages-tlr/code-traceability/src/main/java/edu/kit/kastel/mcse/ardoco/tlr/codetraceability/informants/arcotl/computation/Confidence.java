@@ -18,13 +18,13 @@ import java.util.Objects;
  */
 public class Confidence implements Comparable<Confidence> {
 
-    private final Double confidence;
+    private final Double confidenceValue;
 
     /**
      * Creates a new confidence that doesn't have a value.
      */
     public Confidence() {
-        confidence = null;
+        confidenceValue = null;
     }
 
     /**
@@ -40,7 +40,7 @@ public class Confidence implements Comparable<Confidence> {
         if (!(confidenceValue >= 0 && confidenceValue <= 1)) {
             throw new IllegalArgumentException("Confidence value must not be smaller than 0 or bigger than 1");
         }
-        this.confidence = confidenceValue;
+        this.confidenceValue = confidenceValue;
     }
 
     /**
@@ -49,10 +49,10 @@ public class Confidence implements Comparable<Confidence> {
      * @return the value of this confidence
      */
     public double getValue() {
-        if (confidence == null) {
+        if (confidenceValue == null) {
             throw new NoSuchElementException("Confidence has no value");
         }
-        return confidence;
+        return confidenceValue;
     }
 
     /**
@@ -61,7 +61,7 @@ public class Confidence implements Comparable<Confidence> {
      * @return true if this confidence has a value; false otherwise
      */
     public boolean hasValue() {
-        return confidence != null;
+        return confidenceValue != null;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Confidence implements Comparable<Confidence> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(confidence);
+        return Objects.hashCode(confidenceValue);
     }
 
     @Override
@@ -94,13 +94,13 @@ public class Confidence implements Comparable<Confidence> {
         if (!(obj instanceof Confidence other)) {
             return false;
         }
-        return Objects.equals(confidence, other.confidence);
+        return Objects.equals(confidenceValue, other.confidenceValue);
     }
 
     @Override
     public String toString() {
-        if (confidence != null) {
-            return Double.toString(confidence);
+        if (confidenceValue != null) {
+            return Double.toString(confidenceValue);
         }
         return "no value";
     }

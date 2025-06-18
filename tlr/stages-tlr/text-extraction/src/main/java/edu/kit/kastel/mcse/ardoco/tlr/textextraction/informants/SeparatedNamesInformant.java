@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
@@ -33,9 +32,8 @@ public class SeparatedNamesInformant extends TextExtractionInformant {
 
     @Override
     public void process() {
-        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
         for (var word : DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words()) {
-            this.exec(textState, word);
+            this.exec(word);
         }
     }
 
@@ -43,15 +41,15 @@ public class SeparatedNamesInformant extends TextExtractionInformant {
      * Checks if Node Value contains separator. If true, it is split and added separately to the names of the text
      * extraction state.
      */
-    private void exec(TextState textState, Word word) {
-        this.checkForSeparatedNode(textState, word);
+    private void exec(Word word) {
+        this.checkForSeparatedNode(word);
     }
 
     /**
      * Checks if Node Value contains separator. If true, it is split and added separately to the names of the text
      * extraction state.
      */
-    private void checkForSeparatedNode(TextState textState, Word word) {
+    private void checkForSeparatedNode(Word word) {
         if (word.getPosTag() != POSTag.FOREIGN_WORD && CommonUtilities.containsSeparator(word.getText())) {
             this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability);
         }

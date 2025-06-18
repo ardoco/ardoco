@@ -1,6 +1,7 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 @Deterministic
 public final class Confidence implements Comparable<Confidence>, ICopyable<Confidence>, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4307327201754195030L;
 
     private final AggregationFunctions confidenceAggregator;

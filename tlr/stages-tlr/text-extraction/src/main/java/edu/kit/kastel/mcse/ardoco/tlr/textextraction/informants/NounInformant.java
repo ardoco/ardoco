@@ -6,7 +6,6 @@ import java.util.SortedMap;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -35,11 +34,10 @@ public class NounInformant extends TextExtractionInformant {
     @Override
     public void process() {
         ImmutableList<Word> words = DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words();
-        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
         for (var word : words) {
             var text = word.getText();
             if (text.length() > 1 && Character.isLetter(text.charAt(0))) {
-                this.findSingleNouns(textState, word);
+                this.findSingleNouns(word);
             }
         }
     }
@@ -47,7 +45,7 @@ public class NounInformant extends TextExtractionInformant {
     /**
      * Finds all nouns and adds them as name-or-type mappings (and types) to the text extraction state.
      */
-    private void findSingleNouns(TextState textState, Word word) {
+    private void findSingleNouns(Word word) {
         var pos = word.getPosTag();
         if (POSTag.NOUN_PROPER_SINGULAR == pos || POSTag.NOUN == pos || POSTag.NOUN_PROPER_PLURAL == pos) {
             this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability * this.nameOrTypeWeight);
