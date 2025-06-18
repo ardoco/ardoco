@@ -28,11 +28,6 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     }
 
     @Override
-    public boolean addSamCodeTraceLink(TraceLink<? extends ArchitectureEntity, ? extends CodeItem> traceLink) {
-        return this.samCodeTraceLinks.add(traceLink);
-    }
-
-    @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> traceLinks) {
         return this.samCodeTraceLinks.addAll(traceLinks);
     }
@@ -40,11 +35,6 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> getSamCodeTraceLinks() {
         return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
-    }
-
-    @Override
-    public boolean addSadCodeTraceLink(TraceLink<SentenceEntity, ? extends CodeItem> traceLink) {
-        return this.transitiveTraceLinks.add(traceLink);
     }
 
     @Override

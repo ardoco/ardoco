@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim;
 
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.equality.EqualityMeasure;
+import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.glove.GloveMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.jarowinkler.JaroWinklerMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein.LevenshteinMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.ngram.NgramMeasure;
@@ -48,6 +49,10 @@ public class WordSimLoader {
 
             if (CommonTextToolsConfig.SEWORDSIM_ENABLED) {
                 list.add(new SEWordSimMeasure());
+            }
+
+            if (CommonTextToolsConfig.GLOVE_ENABLED) {
+                list.add(new GloveMeasure());
             }
 
             return Lists.immutable.withAll(list);

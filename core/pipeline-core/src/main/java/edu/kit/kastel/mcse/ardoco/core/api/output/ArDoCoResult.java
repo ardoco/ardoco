@@ -12,7 +12,6 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,20 +80,6 @@ public record ArDoCoResult(DataRepository dataRepository) {
             return connectionState.getTraceLinks();
         }
         return Sets.immutable.empty();
-    }
-
-    //TODO: Is this method still in use?
-
-    /**
-     * Returns the set of {@link TraceLink}s that were found for the Model with the given ID as strings in the format "ModelElementId,SentenceNo".
-     *
-     * @return Trace links for the model with the given id as Strings
-     */
-    public ImmutableSortedSet<String> getTraceLinksForModelAsStrings(Metamodel metamodel) {
-        var formatString = "%s,%d";
-        return this.getTraceLinksForModel(metamodel)
-                .collect(tl -> String.format(formatString, tl.getSecondEndpoint().getId(), tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1))
-                .toImmutableSortedSet();
     }
 
     /**
@@ -250,7 +235,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
             var connectionStates = DataRepositoryHelper.getConnectionStates(this.dataRepository);
             return connectionStates.getConnectionState(metamodel);
         }
-        ArDoCoResult.logger.warn("No ConnectionState found.");
+        logger.warn("No ConnectionState found.");
         return null;
     }
 
@@ -264,7 +249,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
             var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(this.dataRepository);
             return inconsistencyStates.getInconsistencyState(metamodel);
         }
-        ArDoCoResult.logger.warn("No InconsistencyState found.");
+        logger.warn("No InconsistencyState found.");
         return null;
     }
 
@@ -277,7 +262,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         if (DataRepositoryHelper.hasCodeTraceabilityState(this.dataRepository)) {
             return DataRepositoryHelper.getCodeTraceabilityState(this.dataRepository);
         }
-        ArDoCoResult.logger.warn("No SamCodeTraceabilityState found.");
+        logger.warn("No SamCodeTraceabilityState found.");
         return null;
     }
 

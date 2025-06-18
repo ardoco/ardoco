@@ -20,14 +20,6 @@ public interface CodeTraceabilityState extends PipelineStepData {
     String ID = "CodeTraceabilityState";
 
     /**
-     * Add a {@link SamCodeTraceLink} to this state.
-     *
-     * @param traceLink the trace link to add
-     * @return whether the operation was successful
-     */
-    boolean addSamCodeTraceLink(TraceLink<? extends ArchitectureEntity, ? extends CodeItem> traceLink);
-
-    /**
      * Add a collection of {@link SamCodeTraceLink SamCodeTraceLinks} to this state.
      *
      * @param traceLinks the trace links to add
@@ -41,14 +33,6 @@ public interface CodeTraceabilityState extends PipelineStepData {
      * @return set of stored {@link SamCodeTraceLink SamCodeTraceLinks}
      */
     ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> getSamCodeTraceLinks();
-
-    /**
-     * Add a {@link TransitiveTraceLink} to this state.
-     *
-     * @param traceLink the trace link to add
-     * @return whether the operation was successful
-     */
-    boolean addSadCodeTraceLink(TraceLink<SentenceEntity, ? extends CodeItem> traceLink);
 
     /**
      * Add a collection of {@link SadCodeTraceLink SadCodeTraceLinks} to this state.

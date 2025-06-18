@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval.results;
 
 import java.util.List;
@@ -39,14 +39,6 @@ public record EvaluationResults<T>(SingleClassificationResult<T> classificationR
                 %s""", precision(), recall(), f1(), accuracy(), specificity(), phiCoefficient(), phiOverPhiMax(), phiCoefficientMax(), toRow());
     }
 
-    public String getResultStringWithExpected(ExpectedResults expectedResults) {
-        return String.format(Locale.ENGLISH, """
-                \tPrecision:%8.2f (min. expected: %.2f)
-                \tRecall:%11.2f (min. expected: %.2f)
-                \tF1:%15.2f (min. expected: %.2f)
-                %s""", precision(), expectedResults.precision(), recall(), expectedResults.recall(), f1(), expectedResults.f1(), toRow());
-    }
-
     public String getExtendedResultStringWithExpected(ExpectedResults expectedResults) {
         StringBuilder outputBuilder = new StringBuilder();
         outputBuilder.append(String.format(Locale.ENGLISH, """
@@ -64,17 +56,6 @@ public record EvaluationResults<T>(SingleClassificationResult<T> classificationR
                 \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
                 %s""", phiCoefficient(), expectedResults.phiCoefficient(), phiOverPhiMax(), phiCoefficientMax(), toRow()));
         return outputBuilder.toString();
-    }
-
-    public String getExplicitResultString() {
-        return String.format(Locale.ENGLISH, """
-                \tTP:%15d
-                \tFP:%15d
-                \tTN:%15d
-                \tFN:%15d
-                \tP:%16d
-                \tN:%16d""", truePositives().size(), falsePositives().size(), trueNegatives(), falseNegatives().size(), truePositives()
-                .size() + falseNegatives().size(), trueNegatives() + falsePositives().size());
     }
 
     public ImmutableList<T> getFound() {
@@ -126,9 +107,5 @@ public record EvaluationResults<T>(SingleClassificationResult<T> classificationR
 
     public List<T> falseNegatives() {
         return classificationResult.getFalseNegatives().stream().toList();
-    }
-
-    public int trueNegatives() {
-        return classificationResult.getTrueNegatives();
     }
 }

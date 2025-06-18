@@ -28,39 +28,6 @@ public interface ConnectionState extends IConfigurable {
     ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks();
 
     /**
-     * Returns all instance links with a model instance containing the given name.
-     *
-     * @param name the name of a model instance
-     * @return all instance links with a model instance containing the given name as list
-     */
-    ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinksByName(String name);
-
-    /**
-     * Returns all instance links with a model instance containing the given type.
-     *
-     * @param type the type of a model instance
-     * @return all instance links with a model instance containing the given type as list
-     */
-    ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinksByType(String type);
-
-    /**
-     * Returns all instance links with a model instance containing the given recommended instance.
-     *
-     * @param recommendedInstance the recommended instance to consider
-     * @return all instance links found
-     */
-    ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinksByRecommendedInstance(RecommendedInstance recommendedInstance);
-
-    /**
-     * Returns all instance links with a model instance containing the given name and type.
-     *
-     * @param name the name of a model instance
-     * @param type the type of a model instance
-     * @return all instance links with a model instance containing the given name and type as list
-     */
-    ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks(String name, String type);
-
-    /**
      * Returns a list of tracelinks that are contained within this connection state.
      *
      * @return list of tracelinks within this connection state
@@ -97,26 +64,4 @@ public interface ConnectionState extends IConfigurable {
      * @return true if it is already contained
      */
     boolean isContainedByInstanceLinks(TraceLink<RecommendedInstance, ModelEntity> instanceLink);
-
-    /**
-     * Removes an instance link from the state.
-     *
-     * @param instanceMapping the instance link to remove
-     */
-    void removeFromMappings(TraceLink<RecommendedInstance, ModelEntity> instanceMapping);
-
-    /**
-     * Removes all instance links containing the given instance.
-     *
-     * @param instance the given instance
-     */
-    void removeAllInstanceLinksWith(ModelEntity instance);
-
-    /**
-     * Removes all instance links containing the given recommended instance.
-     *
-     * @param instance the given recommended instance
-     */
-    void removeAllInstanceLinksWith(RecommendedInstance instance);
-
 }
