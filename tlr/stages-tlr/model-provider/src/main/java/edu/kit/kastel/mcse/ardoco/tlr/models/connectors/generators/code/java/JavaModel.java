@@ -26,7 +26,7 @@ public final class JavaModel {
     private final Set<JavaType> javaTypes;
     private final Set<JavaClassifier> javaClassifiers;
     private final Set<JavaInterface> javaInterfaces;
-    private CodeModel codeModel;
+    private FineGrainedCodeModel codeModel;
 
     public JavaModel(CodeItemRepository codeItemRepository, SortedMap<String, CompilationUnit> compUnitMap) {
         this.codeItemRepository = codeItemRepository;
@@ -41,8 +41,8 @@ public final class JavaModel {
         //TODO: Wrap the code model in its representation
 
         return switch (representation) {
-            case Metamodel.CODE -> new CoarseGrainedCodeModel(codeItemRepository, content);
-            case CODE_AS_ARCHITECTURE -> codeModel;
+            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CoarseGrainedCodeModel(codeItemRepository, content);
+            case CODE_ONLY_COMPILATION_UNITS -> codeModel;
 
             default -> throw new IllegalArgumentException("Unsupported representation: " + representation);
         };

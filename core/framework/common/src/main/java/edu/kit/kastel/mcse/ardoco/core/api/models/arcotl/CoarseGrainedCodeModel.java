@@ -39,7 +39,7 @@ public final class CoarseGrainedCodeModel extends CodeModel {
 
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.CODE_AS_ARCHITECTURE;
+        return Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
     }
 
     @Override

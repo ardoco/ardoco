@@ -4,8 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
@@ -43,7 +43,7 @@ public class ArDoCoForSadSamTraceabilityLinkRecovery extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         // TODO: Phi: Right here?
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.COMPONENT);
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = //
                 ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration, null);
         this.getArDoCo().addPipelineStep(arCoTLModelProviderAgent);

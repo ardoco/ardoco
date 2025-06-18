@@ -38,7 +38,7 @@ public class HoldBackArCoTLModelProvider {
     }
 
     private Extractor getExtractor() {
-        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath(), Metamodel.ARCHITECTURE);
+        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath(), Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
     }
 
     /**

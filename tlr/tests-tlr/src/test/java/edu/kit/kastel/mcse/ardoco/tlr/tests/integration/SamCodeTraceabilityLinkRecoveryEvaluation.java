@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
@@ -72,8 +72,8 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
     @Override
     protected int getConfusionMatrixSum(ArDoCoResult arDoCoResult) {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(arDoCoResult.dataRepository());
-        Model codeModel = modelStatesData.getModel(Metamodel.CODE);
-        Model architectureModel = modelStatesData.getModel(Metamodel.ARCHITECTURE);
+        Model codeModel = modelStatesData.getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        Model architectureModel = modelStatesData.getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
         var codeModelEndpoints = codeModel.getEndpoints().size();
         var architectureModelEndpoints = architectureModel.getEndpoints().size();
         return codeModelEndpoints * architectureModelEndpoints;

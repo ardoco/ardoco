@@ -65,7 +65,8 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static ComponentModel getComponentModel(GoldStandardProject goldStandardProject) {
-        return new ComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.COMPONENT).extractModel());
+        return new ComponentModel(
+                new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS).extractModel());
     }
 
     private static void saveOutput(GoldStandardProject goldStandardProject, ArDoCoResult arDoCoResult) {

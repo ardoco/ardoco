@@ -36,7 +36,7 @@ public final class ArchitectureModel extends Model {
 
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.ARCHITECTURE;
+        return Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES;
     }
 
     @Override

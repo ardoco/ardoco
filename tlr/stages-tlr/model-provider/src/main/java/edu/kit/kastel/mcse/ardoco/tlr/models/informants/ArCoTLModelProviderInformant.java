@@ -59,7 +59,7 @@ public final class ArCoTLModelProviderInformant extends Informant {
         Model extractedModel;
 
         if (this.fromFile != null) {
-            extractedModel = CodeExtractor.readInCodeModel(this.fromFile, Metamodel.CODE);
+            extractedModel = CodeExtractor.readInCodeModel(this.fromFile, Metamodel.CODE_ONLY_COMPILATION_UNITS);
             this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
             return;
         }

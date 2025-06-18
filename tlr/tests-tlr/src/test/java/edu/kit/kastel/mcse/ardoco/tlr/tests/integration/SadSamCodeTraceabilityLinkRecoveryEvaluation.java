@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
@@ -80,7 +80,7 @@ class SadSamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecov
         int sentences = text.getSentences().size();
 
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
-        Model codeModel = modelStatesData.getModel(Metamodel.CODE);
+        Model codeModel = modelStatesData.getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
         var codeModelEndpoints = codeModel.getEndpoints().size();
 
         return sentences * codeModelEndpoints;

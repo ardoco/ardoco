@@ -39,7 +39,7 @@ public final class ComponentModel extends Model {
 
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.COMPONENT;
+        return Metamodel.ARCHITECTURE_ONLY_COMPONENTS;
     }
 
     @Override

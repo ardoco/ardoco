@@ -37,7 +37,7 @@ public final class FineGrainedCodeModel extends CodeModel {
 
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.CODE;
+        return Metamodel.CODE_ONLY_COMPILATION_UNITS;
     }
 
     @Override

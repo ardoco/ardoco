@@ -71,8 +71,8 @@ public abstract class CodeExtractor extends Extractor {
                 CodeModelDTO content = objectMapper.readValue(codeModelFile, CodeModelDTO.class);
 
                 return switch (metamodelToExtract) {
-                    case CODE_AS_ARCHITECTURE -> new CoarseGrainedCodeModel(content);
-                    case CODE -> new FineGrainedCodeModel(content);
+                    case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CoarseGrainedCodeModel(content);
+                    case CODE_ONLY_COMPILATION_UNITS -> new FineGrainedCodeModel(content);
                     default -> throw new IllegalStateException("Unexpected value: " + metamodelToExtract);
                 };
 
