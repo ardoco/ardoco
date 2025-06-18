@@ -47,7 +47,7 @@ public final class UmlExtractor extends ArchitectureExtractor {
                 endpoints.addAll(components);
             }
             case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
-            default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
+            default -> throw new IllegalArgumentException("Unsupported metamodel: " + metamodelToExtract);
         }
         return new ArchitectureModel(endpoints);
     }

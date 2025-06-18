@@ -40,7 +40,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.representation()));
+            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {

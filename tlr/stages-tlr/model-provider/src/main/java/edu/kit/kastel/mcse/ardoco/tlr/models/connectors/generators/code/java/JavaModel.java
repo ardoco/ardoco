@@ -38,13 +38,13 @@ public final class JavaModel {
     }
 
     public CodeModel getCodeModel(Metamodel representation) {
-        //TODO: Wrap the code model in its representation
+        //TODO: Wrap the code model in its metamodel
 
         return switch (representation) {
             case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CodeModelWithCompilationUnitsAndPackages(codeItemRepository, content);
             case CODE_ONLY_COMPILATION_UNITS -> codeModel;
 
-            default -> throw new IllegalArgumentException("Unsupported representation: " + representation);
+            default -> throw new IllegalArgumentException("Unsupported metamodel: " + representation);
         };
 
     }

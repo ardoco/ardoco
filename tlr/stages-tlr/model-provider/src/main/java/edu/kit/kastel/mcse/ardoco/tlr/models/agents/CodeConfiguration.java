@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.AllLanguagesExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 
-public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel representation) {
+public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel metamodel) {
 
     public CodeConfiguration {
         if (code == null || type == null) {
@@ -33,7 +33,7 @@ public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel
     public List<Extractor> extractors() {
         if (this.type == CodeConfigurationType.DIRECTORY) {
             CodeItemRepository codeItemRepository = new CodeItemRepository();
-            CodeExtractor codeExtractor = new AllLanguagesExtractor(codeItemRepository, this.code.getAbsolutePath(), this.representation);
+            CodeExtractor codeExtractor = new AllLanguagesExtractor(codeItemRepository, this.code.getAbsolutePath(), this.metamodel);
             return List.of(codeExtractor);
         }
         throw new IllegalStateException("CodeConfigurationType not supported");
