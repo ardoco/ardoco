@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
@@ -43,11 +43,11 @@ public final class UmlExtractor extends ArchitectureExtractor {
         List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
         List<ArchitectureItem> endpoints = new ArrayList<>();
         switch (metamodelToExtract) {
-        case Metamodel.ARCHITECTURE -> {
+        case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
             endpoints.addAll(interfaces);
             endpoints.addAll(components);
         }
-        case Metamodel.COMPONENT -> endpoints.addAll(components);
+        case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
         default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
         }
         return new ArchitectureModel(endpoints);

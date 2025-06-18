@@ -74,7 +74,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (inputCode.isFile()) {
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE);
+            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE_ONLY_COMPILATION_UNITS);
         }
 
         // Legacy Support for only ACM_FILE in a directory
@@ -83,9 +83,10 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
             var logger = LoggerFactory.getLogger(ArCoTLModelProviderAgent.class);
             logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
 
-            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE);
+            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE,
+                    Metamodel.CODE_ONLY_COMPILATION_UNITS);
         }
 
-        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, Metamodel.CODE);
+        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, Metamodel.CODE_ONLY_COMPILATION_UNITS);
     }
 }

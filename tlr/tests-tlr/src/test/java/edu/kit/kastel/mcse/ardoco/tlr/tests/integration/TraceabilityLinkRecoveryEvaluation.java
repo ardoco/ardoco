@@ -95,7 +95,7 @@ public abstract class TraceabilityLinkRecoveryEvaluation<T extends GoldStandardP
 
         Model codeModel;
         try {
-            codeModel = DataRepositoryHelper.getModelStatesData(result.dataRepository()).getModel(Metamodel.CODE);
+            codeModel = DataRepositoryHelper.getModelStatesData(result.dataRepository()).getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
             if (codeModel == null) {
                 TraceabilityLinkRecoveryEvaluation.logger.warn(TraceabilityLinkRecoveryEvaluation.WARNING_NO_CODE_MODEL);
                 return goldStandard;
@@ -136,16 +136,16 @@ public abstract class TraceabilityLinkRecoveryEvaluation<T extends GoldStandardP
 
     protected void compareResults(EvaluationResults<String> results, ExpectedResults expectedResults) {
         Assertions.assertAll(//
-                () -> Assertions.assertTrue(results.precision() >= expectedResults.precision(), "Precision " + results
-                        .precision() + " is below the expected minimum value " + expectedResults.precision()), //
-                () -> Assertions.assertTrue(results.recall() >= expectedResults.recall(), "Recall " + results
-                        .recall() + " is below the expected minimum value " + expectedResults.recall()), //
-                () -> Assertions.assertTrue(results.f1() >= expectedResults.f1(), "F1 " + results
-                        .f1() + " is below the expected minimum value " + expectedResults.f1()), () -> Assertions.assertTrue(results
-                                .accuracy() >= expectedResults.accuracy(), "Accuracy " + results
-                                        .accuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
-                () -> Assertions.assertTrue(results.phiCoefficient() >= expectedResults.phiCoefficient(), "Phi coefficient " + results
-                        .phiCoefficient() + " is below the expected minimum value " + expectedResults.phiCoefficient()));
+                () -> Assertions.assertTrue(results.precision() >= expectedResults.precision(),
+                        "Precision " + results.precision() + " is below the expected minimum value " + expectedResults.precision()), //
+                () -> Assertions.assertTrue(results.recall() >= expectedResults.recall(),
+                        "Recall " + results.recall() + " is below the expected minimum value " + expectedResults.recall()), //
+                () -> Assertions.assertTrue(results.f1() >= expectedResults.f1(),
+                        "F1 " + results.f1() + " is below the expected minimum value " + expectedResults.f1()),
+                () -> Assertions.assertTrue(results.accuracy() >= expectedResults.accuracy(),
+                        "Accuracy " + results.accuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
+                () -> Assertions.assertTrue(results.phiCoefficient() >= expectedResults.phiCoefficient(),
+                        "Phi coefficient " + results.phiCoefficient() + " is below the expected minimum value " + expectedResults.phiCoefficient()));
     }
 
     /**

@@ -84,7 +84,7 @@ class SadCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
         int sentences = text.getSentences().size();
 
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
-        Model codeModel = modelStatesData.getModel(Metamodel.CODE);
+        Model codeModel = modelStatesData.getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
         var codeModelEndpoints = codeModel.getEndpoints().size();
 
         return sentences * codeModelEndpoints;

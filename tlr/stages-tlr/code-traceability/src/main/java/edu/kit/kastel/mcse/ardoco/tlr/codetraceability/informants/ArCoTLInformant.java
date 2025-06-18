@@ -19,15 +19,15 @@ public class ArCoTLInformant extends Informant {
 
     private static boolean isACodeModel(Metamodel metamodel) {
         return switch (metamodel) {
-            case CODE_AS_ARCHITECTURE, CODE -> true;
-            case COMPONENT, ARCHITECTURE -> false;
+            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, CODE_ONLY_COMPILATION_UNITS -> true;
+            case ARCHITECTURE_ONLY_COMPONENTS, ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> false;
         };
     }
 
     private static boolean isAnArchitectureModel(Metamodel metamodel) {
         return switch (metamodel) {
-            case ARCHITECTURE, COMPONENT -> true;
-            case CODE, CODE_AS_ARCHITECTURE -> false;
+            case ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, ARCHITECTURE_ONLY_COMPONENTS -> true;
+            case CODE_ONLY_COMPILATION_UNITS, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> false;
         };
     }
 

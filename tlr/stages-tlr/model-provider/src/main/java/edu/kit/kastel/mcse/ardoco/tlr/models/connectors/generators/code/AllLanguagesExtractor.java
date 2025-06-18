@@ -45,8 +45,8 @@ public final class AllLanguagesExtractor extends CodeExtractor {
             }
 
             switch (this.metamodelToExtract) {
-            case CODE_AS_ARCHITECTURE -> this.codeModel = new CoarseGrainedCodeModel(this.codeItemRepository, codeEndpoints);
-            case CODE -> this.codeModel = new FineGrainedCodeModel(this.codeItemRepository, codeEndpoints);
+            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CoarseGrainedCodeModel(this.codeItemRepository, codeEndpoints);
+            case CODE_ONLY_COMPILATION_UNITS -> this.codeModel = new FineGrainedCodeModel(this.codeItemRepository, codeEndpoints);
             default -> throw new IllegalStateException("This extractor does not support this metamodel");
             }
         }
