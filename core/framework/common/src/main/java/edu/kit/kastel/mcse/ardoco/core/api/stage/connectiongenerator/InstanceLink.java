@@ -1,6 +1,7 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,6 +26,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 @Deterministic
 public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
 
+    @Serial
     private static final long serialVersionUID = -8630933950725516269L;
     private final Confidence confidence;
 

@@ -31,10 +31,10 @@ public class TraceLinkUtilities {
     }
 
     public static ImmutableList<String> getSamCodeTraceLinksAsStringList(
-            ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> samCodeTraceLinks) {
+            ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> samCodeTraceLinks) {
         MutableList<String> resultsMut = Lists.mutable.empty();
         for (var traceLink : samCodeTraceLinks) {
-            Pair<? extends ArchitectureEntity, ? extends CodeItem> endpointTuple = traceLink.asPair();
+            Pair<? extends ArchitectureEntity, ? extends ModelEntity> endpointTuple = traceLink.asPair();
             var modelElement = endpointTuple.first();
             var codeElement = endpointTuple.second();
             String traceLinkString = createTraceLinkString(modelElement.getId(), codeElement.toString());
@@ -43,10 +43,10 @@ public class TraceLinkUtilities {
         return resultsMut.toImmutable();
     }
 
-    public static ImmutableList<String> getSadCodeTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ? extends CodeItem>> sadCodeTraceLinks) {
+    public static ImmutableList<String> getSadCodeTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> sadCodeTraceLinks) {
         MutableList<String> resultsMut = Lists.mutable.empty();
         for (var traceLink : sadCodeTraceLinks) {
-            Pair<SentenceEntity, ? extends CodeItem> endpointTuple = traceLink.asPair();
+            Pair<SentenceEntity, ? extends ModelEntity> endpointTuple = traceLink.asPair();
             var codeElement = endpointTuple.second();
             String sentenceNumber = String.valueOf(endpointTuple.first().getSentence().getSentenceNumber() + 1);
             String traceLinkString = TraceLinkUtilities.createTraceLinkString(sentenceNumber, codeElement.toString());
