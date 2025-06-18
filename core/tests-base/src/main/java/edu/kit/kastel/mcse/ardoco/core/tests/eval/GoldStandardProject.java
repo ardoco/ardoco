@@ -16,7 +16,7 @@ import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 
 /**
@@ -181,11 +181,11 @@ public interface GoldStandardProject {
     /**
      * Returns the {@link GoldStandard} for this project for the given model connector.
      *
-     * @param componentModel the model
+     * @param architectureComponentModel the model
      * @return the {@link GoldStandard} for this project
      */
-    default GoldStandard getTlrGoldStandard(ComponentModel componentModel) {
-        return this.getProjectOrThrow().getTlrGoldStandard(componentModel);
+    default GoldStandard getTlrGoldStandard(ArchitectureComponentModel architectureComponentModel) {
+        return this.getProjectOrThrow().getTlrGoldStandard(architectureComponentModel);
     }
 
     default MutableList<String> getMissingTextForModelElementGoldStandard() {

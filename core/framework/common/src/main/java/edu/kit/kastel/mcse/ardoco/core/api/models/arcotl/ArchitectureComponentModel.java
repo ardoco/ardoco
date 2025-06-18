@@ -12,11 +12,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
-public final class ComponentModel extends Model {
+public final class ArchitectureComponentModel extends Model {
 
     private final ArchitectureModel architectureModel;
 
-    public ComponentModel(ArchitectureModel architectureModel) {
+    public ArchitectureComponentModel(ArchitectureModel architectureModel) {
         this.architectureModel = Objects.requireNonNull(architectureModel);
     }
 
@@ -24,10 +24,8 @@ public final class ComponentModel extends Model {
     public List<ArchitectureComponent> getContent() {
         List<ArchitectureComponent> entities = new ArrayList<>();
         for (ArchitectureItem entity : architectureModel.getContent()) {
-            switch (entity) {
-                case ArchitectureComponent component -> entities.add(component);
-                default -> {
-                }
+            if (entity instanceof ArchitectureComponent component) {
+                entities.add(component);
             }
         }
         return entities;
@@ -45,9 +43,7 @@ public final class ComponentModel extends Model {
 
     @Override
     public SortedSet<String> getTypeIdentifiers() {
-
         SortedSet<String> identifiers = new TreeSet<>();
-
         for (var entity : getContent()) {
             if (entity.getType().isPresent()) {
                 identifiers.add(entity.getType().orElseThrow());

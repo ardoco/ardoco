@@ -8,9 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.*;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.FineGrainedCodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithOnlyCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.*;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.finder.EnumDeclarationFinder;
@@ -26,7 +26,7 @@ public final class JavaModel {
     private final Set<JavaType> javaTypes;
     private final Set<JavaClassifier> javaClassifiers;
     private final Set<JavaInterface> javaInterfaces;
-    private FineGrainedCodeModel codeModel;
+    private CodeModelWithOnlyCompilationUnits codeModel;
 
     public JavaModel(CodeItemRepository codeItemRepository, SortedMap<String, CompilationUnit> compUnitMap) {
         this.codeItemRepository = codeItemRepository;
@@ -41,7 +41,7 @@ public final class JavaModel {
         //TODO: Wrap the code model in its representation
 
         return switch (representation) {
-            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CoarseGrainedCodeModel(codeItemRepository, content);
+            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CodeModelWithCompilationUnitsAndPackages(codeItemRepository, content);
             case CODE_ONLY_COMPILATION_UNITS -> codeModel;
 
             default -> throw new IllegalArgumentException("Unsupported representation: " + representation);
@@ -209,7 +209,7 @@ public final class JavaModel {
 
         content.addAll(mergedCodePackages);
 
-        codeModel = new FineGrainedCodeModel(codeItemRepository, content);
+        codeModel = new CodeModelWithOnlyCompilationUnits(codeItemRepository, content);
     }
 
     private List<Datatype> extractTypes(CompilationUnit compilationUnit) {

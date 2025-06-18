@@ -11,13 +11,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUni
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 
-public final class FineGrainedCodeModel extends CodeModel {
+public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
 
-    public FineGrainedCodeModel(CodeModelDTO codeModelDTO) {
+    public CodeModelWithOnlyCompilationUnits(CodeModelDTO codeModelDTO) {
         super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
     }
 
-    public FineGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+    public CodeModelWithOnlyCompilationUnits(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
     }
 
@@ -47,9 +47,7 @@ public final class FineGrainedCodeModel extends CodeModel {
 
         for (var codeItem : this.getContent()) {
             var type = codeItem.getType();
-            if (type.isPresent()) {
-                identifiers.add(type.get());
-            }
+            type.ifPresent(identifiers::add);
         }
         return identifiers;
     }

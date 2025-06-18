@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 /**
  * A code model that is a CMTL instance.
  */
-public abstract sealed class CodeModel extends Model permits CoarseGrainedCodeModel, FineGrainedCodeModel {
+public abstract sealed class CodeModel extends Model permits CodeModelWithCompilationUnitsAndPackages, CodeModelWithOnlyCompilationUnits {
 
     protected CodeItemRepository codeItemRepository;
 
