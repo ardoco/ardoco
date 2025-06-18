@@ -44,13 +44,13 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * Elsewhere, a new instance link is created
      *
      * @param recommendedModelInstance the recommended instance
-     * @param entity                   the model instance
+     * @param modelEntity                   the model instance
      * @param probability              the probability of the link
      */
     @Override
-    public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity entity, Claimant claimant, double probability) {
+    public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
-        var newInstanceLink = new InstanceLink(recommendedModelInstance, entity, claimant, probability);
+        var newInstanceLink = new InstanceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
         } else {

@@ -51,11 +51,11 @@ public interface ConnectionState extends IConfigurable {
      * Elsewhere a new instance link is created
      *
      * @param recommendedModelInstance the recommended instance
-     * @param ModelEntity              the model instance
+     * @param modelEntity              the model instance
      * @param claimant                 the claimant
      * @param probability              the probability of the link
      */
-    void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity ModelEntity, Claimant claimant, double probability);
+    void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability);
 
     /**
      * Checks if an instance link is already contained by the state.
