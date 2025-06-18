@@ -15,7 +15,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
 
@@ -99,7 +99,7 @@ public interface GoldStandardProject {
      * @param modelType the model type
      * @return the File that represents the model for this project
      */
-    default File getModelFile(ArchitectureModelType modelType) {
+    default File getModelFile(ModelFormat modelType) {
         return this.getProjectOrThrow().getModelFile(modelType);
     }
 
@@ -108,7 +108,7 @@ public interface GoldStandardProject {
      *
      * @param modelType the model type
      */
-    default String getModelResourceName(ArchitectureModelType modelType) {
+    default String getModelResourceName(ModelFormat modelType) {
         return this.getProjectOrThrow().getModelResourceName(modelType);
     }
 

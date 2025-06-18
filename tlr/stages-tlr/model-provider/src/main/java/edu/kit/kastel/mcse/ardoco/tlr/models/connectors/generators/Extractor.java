@@ -2,7 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 
 public abstract class Extractor {
@@ -25,9 +25,11 @@ public abstract class Extractor {
 
     public abstract Model extractModel();
 
-    public Metamodel getMetamodel() {
-        return this.getModelType().getMetamodel();
+    public final Metamodel getMetamodel() {
+        return this.metamodelToExtract;
     }
 
-    public abstract ModelType getModelType();
+    ;
+
+    public abstract ModelFormat getModelFormat();
 }

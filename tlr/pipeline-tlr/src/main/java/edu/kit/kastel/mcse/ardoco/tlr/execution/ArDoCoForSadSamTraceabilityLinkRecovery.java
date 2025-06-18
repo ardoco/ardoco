@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -21,20 +21,18 @@ public class ArDoCoForSadSamTraceabilityLinkRecovery extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputArchitectureModel, ArchitectureModelType architectureModelType, SortedMap<String, String> additionalConfigs,
-            File outputDir) {
-        definePipeline(inputText, inputArchitectureModel, architectureModelType, additionalConfigs);
+    public void setUp(File inputText, File inputArchitectureModel, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs, File outputDir) {
+        definePipeline(inputText, inputArchitectureModel, modelFormat, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ArchitectureModelType architectureModelType,
-            SortedMap<String, String> additionalConfigs, String outputDirectory) {
-        setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), architectureModelType, additionalConfigs, new File(outputDirectory));
+    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs,
+            String outputDirectory) {
+        setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), modelFormat, additionalConfigs, new File(outputDirectory));
     }
 
-    private void definePipeline(File inputText, File inputArchitectureModel, ArchitectureModelType architectureModelType,
-            SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs) {
         var dataRepository = this.getArDoCo().getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
@@ -45,7 +43,7 @@ public class ArDoCoForSadSamTraceabilityLinkRecovery extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         // TODO: Phi: Right here?
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType, Metamodel.COMPONENT);
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.COMPONENT);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = //
                 ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration, null);
         this.getArDoCo().addPipelineStep(arCoTLModelProviderAgent);

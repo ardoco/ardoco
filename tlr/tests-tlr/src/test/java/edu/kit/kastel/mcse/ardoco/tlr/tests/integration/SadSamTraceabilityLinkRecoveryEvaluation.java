@@ -10,7 +10,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.TraceLinkUtilities;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
@@ -41,7 +41,7 @@ public class SadSamTraceabilityLinkRecoveryEvaluation<T extends GoldStandardProj
         File outputDir = new File(OUTPUT);
 
         var runner = new ArDoCoForSadSamTraceabilityLinkRecovery(name);
-        runner.setUp(inputText, inputModel, ArchitectureModelType.PCM, additionalConfigsMap, outputDir);
+        runner.setUp(inputText, inputModel, ModelFormat.PCM, additionalConfigsMap, outputDir);
         return runner;
     }
 
@@ -77,13 +77,12 @@ public class SadSamTraceabilityLinkRecoveryEvaluation<T extends GoldStandardProj
         return sentences * modelElements;
     }
 
-    protected ArDoCoResult getArDoCoResult(String name, File inputText, File inputModel, ArchitectureModelType architectureModelType,
-            File additionalConfigurations) {
+    protected ArDoCoResult getArDoCoResult(String name, File inputText, File inputModel, ModelFormat modelFormat, File additionalConfigurations) {
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(additionalConfigurations);
         File outputDir = new File(OUTPUT);
 
         var runner = new ArDoCoForSadSamTraceabilityLinkRecovery(name);
-        runner.setUp(inputText, inputModel, architectureModelType, additionalConfigsMap, outputDir);
+        runner.setUp(inputText, inputModel, modelFormat, additionalConfigsMap, outputDir);
         return runner.run();
     }
 }

@@ -11,9 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelDTO;
@@ -39,8 +38,8 @@ public abstract class CodeExtractor extends Extractor {
     public abstract CodeModel extractModel();
 
     @Override
-    public final ModelType getModelType() {
-        return CodeModelType.CODE_MODEL;
+    public final ModelFormat getModelFormat() {
+        return ModelFormat.ACM;
     }
 
     public void writeOutCodeModel(CodeModel codeModel, File outputFile) {

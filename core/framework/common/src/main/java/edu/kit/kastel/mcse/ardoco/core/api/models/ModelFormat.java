@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.models;
 /**
  * Enum for the different types of supported architecture (meta-) models
  */
-public enum ArchitectureModelFormat {
+public enum ModelFormat {
     /**
      * Palladio Component Model
      */
@@ -16,6 +16,11 @@ public enum ArchitectureModelFormat {
     /**
      * RAW Model. E.g., text-based models.
      */
-    RAW;
+    RAW,
+
+    /**
+     * Code Model for the ArCoTL framework.
+     */
+    ACM;
 
 }

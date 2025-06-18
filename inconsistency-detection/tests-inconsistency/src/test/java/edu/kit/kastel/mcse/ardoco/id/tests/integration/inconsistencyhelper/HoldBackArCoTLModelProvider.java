@@ -9,9 +9,8 @@ import java.util.SortedMap;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
@@ -84,8 +83,8 @@ public class HoldBackArCoTLModelProvider {
             }
 
             @Override
-            public ModelType getModelType() {
-                return ArchitectureModelType.PCM;
+            public ModelFormat getModelFormat() {
+                return ModelFormat.PCM;
             }
         })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
 
