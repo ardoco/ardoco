@@ -18,7 +18,7 @@ public interface CodeTraceabilityState extends PipelineStepData {
     String ID = "CodeTraceabilityState";
 
     /**
-     * Add a collection of {@link SamCodeTraceLink SamCodeTraceLinks} to this state.
+     * Add a collection of architecture to model links to this state.
      *
      * @param traceLinks the trace links to add
      * @return whether the operation was successful
@@ -26,9 +26,9 @@ public interface CodeTraceabilityState extends PipelineStepData {
     boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks);
 
     /**
-     * Return a set of stored {@link SamCodeTraceLink SamCodeTraceLinks}.
+     * Return a set of stored architecture to model links.
      *
-     * @return set of stored {@link SamCodeTraceLink SamCodeTraceLinks}
+     * @return set of stored architecture to model links
      */
     ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks();
 
