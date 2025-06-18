@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation;
 
 import java.util.NoSuchElementException;
@@ -49,7 +49,7 @@ public class Confidence implements Comparable<Confidence> {
      * @return the value of this confidence
      */
     public double getValue() {
-        if(confidence == null) {
+        if (confidence == null) {
             throw new NoSuchElementException("Confidence has no value");
         }
         return confidence;

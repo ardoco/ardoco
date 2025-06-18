@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.java;
 
 import org.junit.jupiter.api.Assertions;

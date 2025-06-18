@@ -1,7 +1,6 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 public enum Metamodel {
     CODE_ONLY_COMPILATION_UNITS, ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, ARCHITECTURE_ONLY_COMPONENTS
 }
-

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.File;
@@ -87,8 +87,8 @@ public enum HistoricProject implements GoldStandardProject {
         this.goldStandardMissingTextForModelElement = goldStandardMissingTextForModelElement;
         this.expectedTraceLinkResults = expectedTraceLinkResults;
         this.expectedInconsistencyResults = expectedInconsistencyResults;
-        resourceNames = new TreeSet<>(
-                List.of(model, textFile, goldStandardTraceabilityLinkRecovery, configurationsFile, goldStandardMissingTextForModelElement));
+        resourceNames = new TreeSet<>(List.of(model, textFile, goldStandardTraceabilityLinkRecovery, configurationsFile,
+                goldStandardMissingTextForModelElement));
     }
 
     @Override

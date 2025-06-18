@@ -77,9 +77,8 @@ public final class JavaExtractor extends CodeExtractor {
         final ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
         parser.setResolveBindings(true);
         parser.setStatementsRecovery(true);
-        parser.setCompilerOptions(
-                Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
-                        javaCoreVersion));
+        parser.setCompilerOptions(Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion,
+                JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, javaCoreVersion));
         return parser;
     }
 

@@ -21,8 +21,9 @@ public class MissingTextForModelElementInconsistency implements ModelInconsisten
 
     @Override
     public String getReason() {
-        return String.format(Locale.US, "Model contains an Instance \"%s\" (type: \"%s\")  that seems to be undocumented.", modelEntity.getName(),
-                modelEntity.getType().orElseThrow());
+        return String.format(Locale.US, "Model contains an Instance \"%s\" (type: \"%s\")  that seems to be undocumented.", modelEntity.getName(), modelEntity
+                .getType()
+                .orElseThrow());
     }
 
     @Override

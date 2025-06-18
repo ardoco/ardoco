@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval.results.calculator;
 
 import java.util.List;
