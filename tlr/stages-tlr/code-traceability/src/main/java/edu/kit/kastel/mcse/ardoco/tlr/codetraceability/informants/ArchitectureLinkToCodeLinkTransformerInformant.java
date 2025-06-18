@@ -83,8 +83,8 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         List<CodeCompilationUnit> codeCompilationUnits = new ArrayList<>();
         List<CodeCompilationUnit> allCodeCompilationUnits = codeModelWithCompilationUnitsAndPackages.getEndpoints()
                 .stream()
-                .filter(endpoint -> endpoint instanceof CodeCompilationUnit)
-                .map(endpoint -> (CodeCompilationUnit) endpoint)
+                .filter(CodeCompilationUnit.class::isInstance)
+                .map(CodeCompilationUnit.class::cast)
                 .toList();
 
         for (var codeCompilationUnit : allCodeCompilationUnits) {
@@ -102,11 +102,10 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
     private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId,
             CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages) {
         for (var entity : codeModelWithCompilationUnitsAndPackages.getEndpoints()) {
-            if (entity instanceof CodeCompilationUnit codeCompilationUnit) {
-                if (codeCompilationUnit.getId().equals(modelElementId)) {
-                    return List.of(codeCompilationUnit);
-                }
+            if (entity instanceof CodeCompilationUnit codeCompilationUnit && codeCompilationUnit.getId().equals(modelElementId)) {
+                return List.of(codeCompilationUnit);
             }
+
         }
         throw new IllegalStateException("Could not find model element " + modelElementId);
     }

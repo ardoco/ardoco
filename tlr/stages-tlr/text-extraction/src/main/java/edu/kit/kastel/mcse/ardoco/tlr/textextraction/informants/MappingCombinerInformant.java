@@ -66,14 +66,14 @@ public class MappingCombinerInformant extends TextExtractionInformant {
             }
 
             if (nounMappingsOfPhraseMapping.size() == nounMappingsOfSimilarPhraseMapping.size()) {
-                this.processSimilarPhraseMappingWhenEquallySized(textState, similarPhraseMappings, phraseMapping, nounMappingsOfPhraseMapping,
-                        similarPhraseMapping, nounMappingsOfSimilarPhraseMapping);
+                this.processSimilarPhraseMappingWhenEquallySized(similarPhraseMappings, phraseMapping, nounMappingsOfPhraseMapping, similarPhraseMapping,
+                        nounMappingsOfSimilarPhraseMapping);
             }
         }
     }
 
-    private void processSimilarPhraseMappingWhenEquallySized(TextState textState, ImmutableList<PhraseMapping> similarPhraseMappings,
-            PhraseMapping phraseMapping, ImmutableList<NounMapping> nounMappingsOfPhraseMapping, PhraseMapping similarPhraseMapping,
+    private void processSimilarPhraseMappingWhenEquallySized(ImmutableList<PhraseMapping> similarPhraseMappings, PhraseMapping phraseMapping,
+            ImmutableList<NounMapping> nounMappingsOfPhraseMapping, PhraseMapping similarPhraseMapping,
             ImmutableList<NounMapping> nounMappingsOfSimilarPhraseMapping) {
         MutableList<Pair<NounMapping, NounMapping>> similarNounMappings = Lists.mutable.empty();
 

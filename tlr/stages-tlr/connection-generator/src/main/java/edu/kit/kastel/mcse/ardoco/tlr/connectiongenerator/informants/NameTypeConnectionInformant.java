@@ -35,7 +35,7 @@ public class NameTypeConnectionInformant extends Informant {
 
     @Configurable
     private double probability = 1.0;
-    private final TextStateStrategies strategy = TextStateStrategies.DEFAULT;
+    private static final TextStateStrategies STRATEGY = TextStateStrategies.DEFAULT;
 
     public NameTypeConnectionInformant(DataRepository dataRepository) {
         super(NameTypeConnectionInformant.class.getSimpleName(), dataRepository);
@@ -46,7 +46,7 @@ public class NameTypeConnectionInformant extends Informant {
         DataRepository dataRepository = this.getDataRepository();
         var text = DataRepositoryHelper.getAnnotatedText(dataRepository);
         var textState = DataRepositoryHelper.getTextState(dataRepository);
-        var textStateStrategy = this.strategy.apply(this.getDataRepository());
+        var textStateStrategy = STRATEGY.apply(this.getDataRepository());
 
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);

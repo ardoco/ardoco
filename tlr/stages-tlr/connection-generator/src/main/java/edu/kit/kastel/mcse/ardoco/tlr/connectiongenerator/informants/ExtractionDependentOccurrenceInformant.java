@@ -22,7 +22,7 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
 
     @Configurable
     private double probability = 1.0;
-    private final TextStateStrategies strategy = TextStateStrategies.DEFAULT;
+    private static final TextStateStrategies STRATEGY = TextStateStrategies.DEFAULT;
 
     public ExtractionDependentOccurrenceInformant(DataRepository dataRepository) {
         super(ExtractionDependentOccurrenceInformant.class.getSimpleName(), dataRepository);
@@ -32,8 +32,7 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
     public void process() {
         DataRepository dataRepository = this.getDataRepository();
         var text = DataRepositoryHelper.getAnnotatedText(dataRepository);
-        var textState = DataRepositoryHelper.getTextState(dataRepository);
-        var textStateStrategy = this.strategy.apply(this.getDataRepository());
+        var textStateStrategy = STRATEGY.apply(this.getDataRepository());
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         for (var word : text.words()) {
             this.exec(textStateStrategy, modelStates, word);

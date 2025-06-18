@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -35,25 +34,24 @@ public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Override
     public void process() {
-        var textState = DataRepositoryHelper.getTextState(this.getDataRepository());
         for (var word : DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words()) {
-            this.exec(textState, word);
+            this.exec(word);
         }
     }
 
-    private void exec(TextState textState, Word word) {
+    private void exec(Word word) {
 
         var nodeValue = word.getText();
         if (nodeValue.length() == 1 && !Character.isLetter(nodeValue.charAt(0))) {
             return;
         }
-        this.examineOutgoingDepArcs(textState, word);
+        this.examineOutgoingDepArcs(word);
     }
 
     /**
      * Examines the outgoing dependencies of a node.
      */
-    private void examineOutgoingDepArcs(TextState textState, Word word) {
+    private void examineOutgoingDepArcs(Word word) {
 
         var outgoingDepArcs = WordHelper.getOutgoingDependencyTags(word);
 
