@@ -44,7 +44,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      * Elsewhere, a new instance link is created
      *
      * @param recommendedModelInstance the recommended instance
-     * @param modelEntity                   the model instance
+     * @param modelEntity              the model instance
      * @param probability              the probability of the link
      */
     @Override
