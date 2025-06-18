@@ -38,7 +38,7 @@ public class HoldBackArCoTLModelProvider {
     }
 
     private Extractor getExtractor() {
-        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath(), Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+        return new PcmExtractor(this.inputArchitectureModel.getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
     }
 
     /**
@@ -72,7 +72,7 @@ public class HoldBackArCoTLModelProvider {
     }
 
     public PipelineAgent get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
-        PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("", Metamodel.CODE_AS_ARCHITECTURE) {
+        PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("", this.initialModel.getMetamodel()) {
 
             @Override
             public Model extractModel() {
