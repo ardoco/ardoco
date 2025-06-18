@@ -74,8 +74,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (inputCode.isFile()) {
-            //TODO: Phi is this right?
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE_AS_ARCHITECTURE);
+            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE);
         }
 
         // Legacy Support for only ACM_FILE in a directory
@@ -84,11 +83,9 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
             var logger = LoggerFactory.getLogger(ArCoTLModelProviderAgent.class);
             logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
 
-            //TODO: Phi is this right?
             return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE);
         }
 
-        //TODO: Phi is this right?
         return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, Metamodel.CODE);
     }
 }

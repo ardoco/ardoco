@@ -1,13 +1,9 @@
 /* Licensed under MIT 2023. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.SamCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Computation;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
@@ -15,15 +11,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functio
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.aggregation.MatchBest;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.aggregation.MatchSequentially;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.aggregation.Maximum;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.ComponentNameResemblance;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.ComponentNameResemblanceTest;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.InheritLinks;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.MethodResemblance;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.PackageResemblance;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.PathResemblance;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.ProvidedInterfaceCorrespondence;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.Required;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.SubpackageFilter;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Deterministic
 public final class TraceLinkGenerator {
@@ -31,8 +23,8 @@ public final class TraceLinkGenerator {
     private static final Node interfaceName = new ComponentNameResemblance(ComponentNameResemblance.NameConfig.INTERFACE,
             NameComparisonUtils.PreprocessingMethod.NONE).getNode();
     private static final Node interfaceMethod = new MethodResemblance().getNode();
-    private static final Node interfaceBest = MatchBest.getMatchBestCodeNode(MatchBest.getMatchBestArchNode(Maximum.getMaximumNode(interfaceName,
-            interfaceMethod)));
+    private static final Node interfaceBest = MatchBest.getMatchBestCodeNode(
+            MatchBest.getMatchBestArchNode(Maximum.getMaximumNode(interfaceName, interfaceMethod)));
 
     private static final Node packageNodeStem = new PackageResemblance(NameComparisonUtils.PreprocessingMethod.STEMMING).getNode();
     private static final Node packageBest = MatchBest.getMatchBestCodeNode(MatchBest.getMatchBestArchNode(packageNodeStem));
@@ -44,8 +36,8 @@ public final class TraceLinkGenerator {
     private static final Node compNameInherited = Maximum.getMaximumNode(new InheritLinks().getNode(compNameBest), compNameBest);
 
     private static final Node compCombined = Maximum.getMaximumNode(MatchSequentially.getMatchSeqArchNode(packageFiltered, compNameInherited),
-            new ComponentNameResemblance(ComponentNameResemblance.NameConfig.COMPONENT_WITHOUT_PACKAGE, NameComparisonUtils.PreprocessingMethod.NONE)
-                    .getNode());
+            new ComponentNameResemblance(ComponentNameResemblance.NameConfig.COMPONENT_WITHOUT_PACKAGE,
+                    NameComparisonUtils.PreprocessingMethod.NONE).getNode());
 
     private static final Node commonWords = Maximum.getMaximumNode(new ComponentNameResemblanceTest().getNode(compCombined), compCombined);
 
@@ -104,8 +96,9 @@ public final class TraceLinkGenerator {
         Node compNameBest = MatchBest.getMatchBestCodeNode(compName);
         Node compNameInherited = Maximum.getMaximumNode(new InheritLinks().getNode(compNameBest), compNameBest);
 
-        Node compCombined = Maximum.getMaximumNode(MatchSequentially.getMatchSeqArchNode(packageFiltered, compNameInherited), new ComponentNameResemblance(
-                ComponentNameResemblance.NameConfig.COMPONENT_WITHOUT_PACKAGE, NameComparisonUtils.PreprocessingMethod.NONE).getNode());
+        Node compCombined = Maximum.getMaximumNode(MatchSequentially.getMatchSeqArchNode(packageFiltered, compNameInherited),
+                new ComponentNameResemblance(ComponentNameResemblance.NameConfig.COMPONENT_WITHOUT_PACKAGE,
+                        NameComparisonUtils.PreprocessingMethod.NONE).getNode());
 
         Node commonWords = Maximum.getMaximumNode(new ComponentNameResemblanceTest().getNode(compCombined), compCombined);
 
@@ -118,7 +111,7 @@ public final class TraceLinkGenerator {
         return Filter.getFilterArchNode(maxCompInterface, new ProvidedInterfaceCorrespondence().getNode(maxCompInterface));
     }
 
-    public static Set<SamCodeTraceLink> generateTraceLinks(Node root, ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ModelCodeTraceLink> generateTraceLinks(Node root, ArchitectureModel archModel, CodeModel codeModel) {
         if (archModel == null || codeModel == null) {
             return new java.util.LinkedHashSet<>();
         }
@@ -130,7 +123,7 @@ public final class TraceLinkGenerator {
         return computation.getTraceLinks();
     }
 
-    public static Set<SamCodeTraceLink> generateTraceLinks(ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ModelCodeTraceLink> generateTraceLinks(ArchitectureModel archModel, CodeModel codeModel) {
         return generateTraceLinks(getRoot(), archModel, codeModel);
     }
 }

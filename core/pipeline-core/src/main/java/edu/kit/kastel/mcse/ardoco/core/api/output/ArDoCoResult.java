@@ -22,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
@@ -129,7 +129,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink SamCodeTraceLinks}.
      */
-    public List<TraceLink<ArchitectureEntity, CodeCompilationUnit>> getSamCodeTraceLinks() {
+    public List<TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
             return samCodeTraceabilityState.getSamCodeTraceLinks().toList();
@@ -142,7 +142,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TransitiveTraceLink TransitiveTraceLinks}.
      */
-    public List<TraceLink<SentenceEntity, CodeCompilationUnit>> getSadCodeTraceLinks() {
+    public List<TraceLink<SentenceEntity, ? extends CodeItem>> getSadCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
             return samCodeTraceabilityState.getSadCodeTraceLinks().toList();

@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
@@ -21,14 +17,17 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
  */
 public abstract sealed class CodeModel extends Model permits CoarseGrainedCodeModel, FineGrainedCodeModel {
 
-    @JsonProperty
     protected CodeItemRepository codeItemRepository;
 
-    @JsonProperty
     protected List<String> content;
 
-    @JsonIgnore
     private boolean initialized;
+
+    protected CodeModel(CodeItemRepository codeItemRepository, List<String> content) {
+        this.initialized = true;
+        this.codeItemRepository = codeItemRepository;
+        this.content = new ArrayList<>(content);
+    }
 
     /**
      * Creates a new code model that is a CMTL instance. The model has the specified code items as content.
@@ -44,7 +43,10 @@ public abstract sealed class CodeModel extends Model permits CoarseGrainedCodeMo
         }
     }
 
-    @JsonGetter("content")
+    public CodeModelDTO createCodeModelDTO() {
+        return new CodeModelDTO(codeItemRepository, getContentIds());
+    }
+
     private List<String> getContentIds() {
         this.initialize();
         return this.content;
@@ -54,7 +56,7 @@ public abstract sealed class CodeModel extends Model permits CoarseGrainedCodeMo
     public abstract List<? extends CodeItem> getContent();
 
     @Override
-    public abstract List<CodeItem> getEndpoints();
+    public abstract List<? extends CodeItem> getEndpoints();
 
     /**
      * Returns all code packages directly or indirectly owned by this code model.

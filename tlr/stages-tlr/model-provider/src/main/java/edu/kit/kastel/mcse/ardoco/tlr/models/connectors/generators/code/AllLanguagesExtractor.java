@@ -22,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.Sh
 public final class AllLanguagesExtractor extends CodeExtractor {
 
     private final Map<String, CodeExtractor> codeExtractors;
+    private CodeModel codeModel;
 
     public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);

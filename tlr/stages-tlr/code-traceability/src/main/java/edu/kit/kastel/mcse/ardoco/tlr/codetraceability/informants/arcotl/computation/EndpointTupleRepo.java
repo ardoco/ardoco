@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
  * A repository of endpoint tuples. An endpoint tuple consists of an architecture endpoint and a code endpoint. Contains every possible combination of endpoints
  * of an architecture model and a code model.
  */
+//TODO: Phi Rename
 public class EndpointTupleRepo {
 
     private final List<Pair<ArchitectureItem, CodeCompilationUnit>> endpointTuples;
@@ -29,7 +30,10 @@ public class EndpointTupleRepo {
         this.endpointTuples = new ArrayList<>();
         for (var architectureEndpoint : archModel.getEndpoints()) {
             for (var codeEndpoint : codeModel.getEndpoints()) {
-                this.endpointTuples.add(new Pair<>(architectureEndpoint, codeEndpoint));
+                if (codeEndpoint instanceof CodeCompilationUnit codeCompilationUnit) {
+                    // Currently only supported for codeCompilationUnits due to Heuristics
+                    this.endpointTuples.add(new Pair<>(architectureEndpoint, codeCompilationUnit));
+                }
             }
         }
     }

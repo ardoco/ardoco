@@ -12,6 +12,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 
 public final class FineGrainedCodeModel extends CodeModel {
 
+    public FineGrainedCodeModel(CodeModelDTO codeModelDTO) {
+        super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
+    }
+
     public FineGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
     }
