@@ -2,10 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
@@ -39,16 +37,9 @@ public abstract class TraceabilityLinkRecoveryEvaluation<T extends GoldStandardP
     // If the path separator in the gold standards are changed, this needs to update
     public static final String GOLD_STANDARD_PATH_SEPARATOR = "/";
 
-    // This map can contain TLs from all of its subclasses.
-    // Therefore, #resultHasRequiredData can be used to determine whether the result is valid for the specific subclass.
-    protected static Map<GoldStandardProject, ArDoCoResult> resultMap = new LinkedHashMap<>();
-
     protected final ArDoCoResult runTraceLinkEvaluation(T project) {
-        ArDoCoResult result = TraceabilityLinkRecoveryEvaluation.resultMap.get(project);
-        if (result == null || !this.resultHasRequiredData(result)) {
-            ArDoCoRunner runner = this.getAndSetupRunner(project);
-            result = runner.run();
-        }
+        ArDoCoRunner runner = this.getAndSetupRunner(project);
+        ArDoCoResult result = runner.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = this.getGoldStandard(project);
@@ -60,8 +51,6 @@ public abstract class TraceabilityLinkRecoveryEvaluation<T extends GoldStandardP
         this.compareResults(evaluationResults, expectedResults);
         return result;
     }
-
-    protected abstract boolean resultHasRequiredData(ArDoCoResult potentialResults);
 
     protected File getInputCode(CodeProject codeProject, boolean acmFile) {
         File inputCode;
