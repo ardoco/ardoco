@@ -10,9 +10,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
+@Deterministic
 public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
-
     public CodeModelWithOnlyCompilationUnits(CodeModelDTO codeModelDTO) {
         super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
     }
@@ -23,10 +24,8 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
 
     @Override
     public List<CodeCompilationUnit> getEndpoints() {
-
         List<CodeCompilationUnit> entities = new ArrayList<>();
         this.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
-
         return entities;
     }
 
