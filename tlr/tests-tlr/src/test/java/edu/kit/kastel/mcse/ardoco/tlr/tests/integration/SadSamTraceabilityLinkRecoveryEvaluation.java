@@ -26,12 +26,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCoForSadSamTraceabilityLinkR
 public class SadSamTraceabilityLinkRecoveryEvaluation<T extends GoldStandardProject> extends TraceabilityLinkRecoveryEvaluation<T> {
 
     @Override
-    protected boolean resultHasRequiredData(ArDoCoResult arDoCoResult) {
-        var traceLinks = arDoCoResult.getArchitectureTraceLinks();
-        return !traceLinks.isEmpty();
-    }
-
-    @Override
     protected ArDoCoRunner getAndSetupRunner(T project) {
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(project.getAdditionalConfigurationsFile());
 

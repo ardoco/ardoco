@@ -31,12 +31,6 @@ class SadSamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecov
     }
 
     @Override
-    protected boolean resultHasRequiredData(ArDoCoResult arDoCoResult) {
-        var traceLinks = arDoCoResult.getSadCodeTraceLinks();
-        return !traceLinks.isEmpty();
-    }
-
-    @Override
     protected ArDoCoRunner getAndSetupRunner(CodeProject codeProject) {
         String name = codeProject.name().toLowerCase();
         File textInput = codeProject.getTextFile();

@@ -29,12 +29,6 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
     }
 
     @Override
-    protected boolean resultHasRequiredData(ArDoCoResult arDoCoResult) {
-        var traceLinks = arDoCoResult.getSamCodeTraceLinks();
-        return !traceLinks.isEmpty();
-    }
-
-    @Override
     protected ArDoCoForSamCodeTraceabilityLinkRecovery getAndSetupRunner(CodeProject codeProject) {
         String name = codeProject.name().toLowerCase();
         File inputCode = this.getInputCode(codeProject, this.acmFile);
