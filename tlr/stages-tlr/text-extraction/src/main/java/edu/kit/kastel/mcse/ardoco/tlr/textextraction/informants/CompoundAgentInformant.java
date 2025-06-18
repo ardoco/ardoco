@@ -35,7 +35,7 @@ public class CompoundAgentInformant extends TextExtractionInformant {
         var textState = this.getDataRepository().getData(TextState.ID, TextStateImpl.class).orElseThrow();
         for (var word : text.words()) {
             this.createNounMappingIfCompoundWord(word, textState);
-            this.createNounMappingIfSpecialNamedEntity(word, textState);
+            this.createNounMappingIfSpecialNamedEntity(word);
         }
     }
 
@@ -101,7 +101,7 @@ public class CompoundAgentInformant extends TextExtractionInformant {
         return referenceJoiner.toString();
     }
 
-    private void createNounMappingIfSpecialNamedEntity(Word word, TextState textState) {
+    private void createNounMappingIfSpecialNamedEntity(Word word) {
         var text = word.getText();
         if (CommonUtilities.isCamelCasedWord(text) || CommonUtilities.nameIsSnakeCased(text)) {
             this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.specialNamedEntityConfidence);

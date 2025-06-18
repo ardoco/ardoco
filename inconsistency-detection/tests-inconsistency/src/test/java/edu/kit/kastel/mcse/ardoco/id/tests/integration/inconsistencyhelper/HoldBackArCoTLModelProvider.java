@@ -10,7 +10,6 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
@@ -82,11 +81,6 @@ public class HoldBackArCoTLModelProvider {
                 var elementToRemove = HoldBackArCoTLModelProvider.this.getCurrentHoldBack();
                 elements.remove(elementToRemove);
                 return new ArchitectureModel(elements);
-            }
-
-            @Override
-            public ModelFormat getModelFormat() {
-                return ModelFormat.PCM;
             }
         })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
 

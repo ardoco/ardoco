@@ -1,11 +1,8 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.execution.runner;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,30 +18,19 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
 
     protected AnonymousRunner(String projectName) {
         super(projectName);
-        setUp(null);
-    }
-
-    protected AnonymousRunner(String projectName, DataRepository preRunDataRepository) {
-        super(projectName);
-        setUp(preRunDataRepository);
+        setUp();
     }
 
     /**
-     * Sets up the runner using {@link #initializePipelineSteps}. Initializes the new data repository using the preRunDataRepository, if present.
+     * Sets up the runner using {@link #initializePipelineSteps}. Initializes the new data repository.
      * {@link #isSetUp} must return true, if successful.
-     *
-     * @param preRunDataRepository data repository of a previous run used as a base
+     * 
      * @return List of AbstractPipelineSteps this runner consists of
      */
-    private List<AbstractPipelineStep> setUp(@Nullable DataRepository preRunDataRepository) {
+    private List<AbstractPipelineStep> setUp() {
         try {
             var arDoCo = getArDoCo();
             var dataRepository = arDoCo.getDataRepository();
-
-            if (preRunDataRepository != null) {
-                dataRepository.addAllData(preRunDataRepository);
-            }
-
             var pipelineSteps = initializePipelineSteps(dataRepository);
             pipelineSteps.forEach(arDoCo::addPipelineStep);
             isSetUp = true;
@@ -63,9 +49,4 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
      * @throws IOException can occur when loading data
      */
     public abstract List<AbstractPipelineStep> initializePipelineSteps(DataRepository dataRepository) throws IOException;
-
-    @Override
-    public void setOutputDirectory(File outputDirectory) {
-        super.setOutputDirectory(outputDirectory);
-    }
 }

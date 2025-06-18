@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -42,16 +42,6 @@ public final class ArDoCo extends Pipeline {
         super("ArDoCo", new DataRepository());
         this.projectName = projectName;
         this.initDataRepository();
-    }
-
-    /**
-     * Returns a new instance of this class based with the given project name
-     *
-     * @param projectName the project name
-     * @return a new instance of ArDoCo
-     */
-    public static ArDoCo getInstance(String projectName) {
-        return new ArDoCo(projectName);
     }
 
     private void initDataRepository() {

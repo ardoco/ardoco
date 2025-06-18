@@ -17,10 +17,8 @@ public enum ModelFormat {
      * RAW Model. E.g., text-based models.
      */
     RAW,
-
     /**
      * Code Model for the ArCoTL framework.
      */
-    ACM;
-
+    ACM
 }

@@ -8,7 +8,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
@@ -51,11 +50,6 @@ public final class UmlExtractor extends ArchitectureExtractor {
             default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
         }
         return new ArchitectureModel(endpoints);
-    }
-
-    @Override
-    public ModelFormat getModelFormat() {
-        return ModelFormat.UML;
     }
 
     private static List<ArchitectureInterface> extractInterfaces(UmlModel originalModel) {
