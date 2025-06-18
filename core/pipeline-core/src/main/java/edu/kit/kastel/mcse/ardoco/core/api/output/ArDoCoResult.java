@@ -114,7 +114,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink SamCodeTraceLinks}.
      */
-    public List<TraceLink<? extends ArchitectureEntity, ? extends CodeItem>> getSamCodeTraceLinks() {
+    public List<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
             return samCodeTraceabilityState.getSamCodeTraceLinks().toList();
@@ -127,7 +127,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TransitiveTraceLink TransitiveTraceLinks}.
      */
-    public List<TraceLink<SentenceEntity, ? extends CodeItem>> getSadCodeTraceLinks() {
+    public List<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
             return samCodeTraceabilityState.getSadCodeTraceLinks().toList();

@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -49,5 +50,24 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
             type.ifPresent(identifiers::add);
         }
         return identifiers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CodeModelWithOnlyCompilationUnits codeModel) || !super.equals(o) || !Objects.equals(this.codeItemRepository,
+                codeModel.codeItemRepository)) {
+            return false;
+        }
+        return Objects.equals(this.content, codeModel.content);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (this.codeItemRepository != null ? this.codeItemRepository.hashCode() : 0);
+        return 31 * result + (this.content != null ? this.content.hashCode() : 0);
     }
 }
