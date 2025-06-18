@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.text;
 
 import java.io.Serializable;
@@ -15,7 +15,7 @@ public interface Phrase extends Serializable, Comparable<Phrase> {
 
     ImmutableList<Word> getContainedWords();
 
-    ImmutableList<Phrase> getSubPhrases();
+    ImmutableList<Phrase> getSubphrases();
 
     boolean isSuperPhraseOf(Phrase other);
 

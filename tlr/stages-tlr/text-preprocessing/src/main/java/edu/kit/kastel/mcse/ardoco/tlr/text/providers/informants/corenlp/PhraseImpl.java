@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.util.Comparator;
@@ -60,7 +60,7 @@ public class PhraseImpl implements Phrase {
     }
 
     @Override
-    public ImmutableList<Phrase> getSubPhrases() {
+    public ImmutableList<Phrase> getSubphrases() {
         MutableList<Phrase> subPhrases = Lists.mutable.empty();
         for (var subTree : tree) {
             if (subTree.isPhrasal() && tree.dominates(subTree)) {

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson;
 
 import org.junit.jupiter.api.Assertions;
@@ -51,13 +51,13 @@ class PhraseImplTest {
     }
 
     @Test
-    void testGetSubPhrases() {
-        Assertions.assertEquals(baselinePhrase.getSubPhrases().size(), phraseImplInstance.getSubPhrases().size());
+    void testGetSubphrases() {
+        Assertions.assertEquals(baselinePhrase.getSubphrases().size(), phraseImplInstance.getSubphrases().size());
     }
 
     @Test
     void testIsSuperPhraseOf() {
-        Phrase subphrase = phraseImplInstance.getSubPhrases().get(0);
+        Phrase subphrase = phraseImplInstance.getSubphrases().get(0);
         Assertions.assertAll(//
                 () -> Assertions.assertTrue(phraseImplInstance.isSuperPhraseOf(subphrase)), () -> Assertions.assertFalse(phraseImplInstance.isSuperPhraseOf(
                         phraseImplInstance)), () -> Assertions.assertFalse(subphrase.isSuperPhraseOf(phraseImplInstance))//
@@ -66,7 +66,7 @@ class PhraseImplTest {
 
     @Test
     void testIsSubPhraseOf() {
-        Phrase subphrase = phraseImplInstance.getSubPhrases().get(0);
+        Phrase subphrase = phraseImplInstance.getSubphrases().get(0);
         Assertions.assertAll(//
                 () -> Assertions.assertFalse(phraseImplInstance.isSubPhraseOf(subphrase)), () -> Assertions.assertFalse(phraseImplInstance.isSubPhraseOf(
                         phraseImplInstance)), () -> Assertions.assertTrue(subphrase.isSubPhraseOf(phraseImplInstance))//

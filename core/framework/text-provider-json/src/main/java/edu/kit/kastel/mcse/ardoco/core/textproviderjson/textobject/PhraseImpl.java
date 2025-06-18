@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class PhraseImpl implements Phrase {
     private MutableList<Word> nonPhraseWords;
     private MutableList<Word> phraseWords;
     private MutableList<Word> containedWords;
-    private MutableList<Phrase> subPhrases;
+    private MutableList<Phrase> subphrases;
     private MutableSortedMap<Word, Integer> phraseVector;
     private int sentenceNo = -1;
     private String text;
@@ -83,44 +83,44 @@ public class PhraseImpl implements Phrase {
     }
 
     @Override
-    public synchronized ImmutableList<Phrase> getSubPhrases() {
-        if (subPhrases == null) {
-            subPhrases = Lists.mutable.ofAll(childPhrases);
+    public synchronized ImmutableList<Phrase> getSubphrases() {
+        if (subphrases == null) {
+            subphrases = Lists.mutable.ofAll(childPhrases);
             for (Phrase childPhrase : childPhrases) {
-                subPhrases.addAll(childPhrase.getSubPhrases().toList());
+                subphrases.addAll(childPhrase.getSubphrases().toList());
             }
         }
-        return subPhrases.toImmutable();
+        return subphrases.toImmutable();
     }
 
     @Override
     public boolean isSuperPhraseOf(Phrase other) {
-        MutableList<Phrase> subphrases = Lists.mutable.ofAll(this.getSubPhrases());
+        MutableList<Phrase> subphrases = Lists.mutable.ofAll(this.getSubphrases());
         while (!subphrases.isEmpty()) {
             if (subphrases.contains(other)) {
                 return true;
             }
-            subphrases = getSubPhrasesOfPhrases(subphrases);
+            subphrases = getSubphrasesOfPhrases(subphrases);
         }
         return false;
     }
 
-    private static MutableList<Phrase> getSubPhrasesOfPhrases(MutableList<Phrase> subphrases) {
-        MutableList<Phrase> subPhrasesOfPhrases = Lists.mutable.empty();
+    private static MutableList<Phrase> getSubphrasesOfPhrases(MutableList<Phrase> subphrases) {
+        MutableList<Phrase> subphrasesOfPhrases = Lists.mutable.empty();
         for (Phrase subphrase : subphrases) {
-            subPhrasesOfPhrases.addAll(subphrase.getSubPhrases().castToList());
+            subphrasesOfPhrases.addAll(subphrase.getSubphrases().castToList());
         }
-        return subPhrasesOfPhrases;
+        return subphrasesOfPhrases;
     }
 
     @Override
     public boolean isSubPhraseOf(Phrase other) {
-        MutableList<Phrase> subphrases = Lists.mutable.ofAll(other.getSubPhrases());
+        MutableList<Phrase> subphrases = Lists.mutable.ofAll(other.getSubphrases());
         while (!subphrases.isEmpty()) {
             if (subphrases.contains(this)) {
                 return true;
             }
-            subphrases = getSubPhrasesOfPhrases(subphrases);
+            subphrases = getSubphrasesOfPhrases(subphrases);
         }
         return false;
     }
