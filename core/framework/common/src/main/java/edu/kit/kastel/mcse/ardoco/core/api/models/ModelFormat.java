@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.models;
 /**
  * Enum for the different types of supported architecture (meta-) models
  */
-public enum ArchitectureModelType implements ModelType {
+public enum ArchitectureModelFormat {
     /**
      * Palladio Component Model
      */
@@ -18,8 +18,4 @@ public enum ArchitectureModelType implements ModelType {
      */
     RAW;
 
-    @Override
-    public Metamodel getMetamodel() {
-        return Metamodel.ARCHITECTURE;
-    }
 }

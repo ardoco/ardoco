@@ -32,7 +32,7 @@ public final class JavaExtractor extends CodeExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
+    private CodeModel codeModel;
 
     public JavaExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);

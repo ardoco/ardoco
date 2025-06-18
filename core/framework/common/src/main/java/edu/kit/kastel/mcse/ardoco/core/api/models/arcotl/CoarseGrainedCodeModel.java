@@ -13,6 +13,11 @@ public final class CoarseGrainedCodeModel extends CodeModel {
 
     private final FineGrainedCodeModel codeModel;
 
+    public CoarseGrainedCodeModel(CodeModelDTO codeModelDTO) {
+        super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
+        this.codeModel = new FineGrainedCodeModel(codeModelDTO);
+    }
+
     public CoarseGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
         this.codeModel = new FineGrainedCodeModel(codeItemRepository, content);
@@ -24,7 +29,7 @@ public final class CoarseGrainedCodeModel extends CodeModel {
     }
 
     @Override
-    public List<? extends CodeItem> getEndpoints() {
+    public List<CodeItem> getEndpoints() {
         List<CodeItem> entities = new ArrayList<>();
         codeModel.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
 
