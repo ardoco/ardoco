@@ -40,7 +40,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code()));
+            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.representation()));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {
@@ -68,13 +68,17 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         // empty
     }
 
-    public static CodeConfiguration getCodeConfiguration(File inputCode) {
+    public static CodeConfiguration getCodeConfiguration(File inputCode, Metamodel codeMetamodel) {
         if (inputCode == null) {
             throw new IllegalArgumentException("Code file must not be null");
         }
 
+        if (!Metamodel.isACodeModel(codeMetamodel)) {
+            throw new IllegalArgumentException("Code metamodel must be a code model");
+        }
+
         if (inputCode.isFile()) {
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, Metamodel.CODE_ONLY_COMPILATION_UNITS);
+            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, codeMetamodel);
         }
 
         // Legacy Support for only ACM_FILE in a directory
@@ -87,6 +91,6 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
                     Metamodel.CODE_ONLY_COMPILATION_UNITS);
         }
 
-        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, codeMetamodel);
     }
 }

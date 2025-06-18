@@ -1,9 +1,11 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isACodeModel;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isAnArchitectureModel;
+
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -17,20 +19,6 @@ public class ArCoTLInformant extends Informant {
         super(ArCoTLInformant.class.getSimpleName(), dataRepository);
     }
 
-    private static boolean isACodeModel(Metamodel metamodel) {
-        return switch (metamodel) {
-            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, CODE_ONLY_COMPILATION_UNITS -> true;
-            case ARCHITECTURE_ONLY_COMPONENTS, ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> false;
-        };
-    }
-
-    private static boolean isAnArchitectureModel(Metamodel metamodel) {
-        return switch (metamodel) {
-            case ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, ARCHITECTURE_ONLY_COMPONENTS -> true;
-            case CODE_ONLY_COMPILATION_UNITS, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> false;
-        };
-    }
-
     @Override
     public void process() {
         var dataRepository = this.getDataRepository();
@@ -40,9 +28,9 @@ public class ArCoTLInformant extends Informant {
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
         for (var metamodel : modelStates.getMetamodels()) {
-            if (ArCoTLInformant.isAnArchitectureModel(metamodel)) {
+            if (isAnArchitectureModel(metamodel)) {
                 architectureModel = (ArchitectureModel) modelStates.getModel(metamodel);
-            } else if (ArCoTLInformant.isACodeModel(metamodel)) {
+            } else if (isACodeModel(metamodel)) {
                 codeModel = (CodeModel) modelStates.getModel(metamodel);
             }
         }
