@@ -43,7 +43,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
 
         CoarseGrainedCodeModel coarseGrainedCodeModel = this.findCoarseGrainedCodeModel(modelStatesData);
 
-        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_AS_ARCHITECTURE).getTraceLinks()) {
+        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE).getTraceLinks()) {
             var modelElement = traceLink.getSecondEndpoint();
             var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, coarseGrainedCodeModel);
             for (var mid : mentionedCodeModelElements) {

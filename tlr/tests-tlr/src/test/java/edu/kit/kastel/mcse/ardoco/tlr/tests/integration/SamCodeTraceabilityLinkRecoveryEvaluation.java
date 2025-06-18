@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
@@ -43,7 +43,7 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
         File outputDir = new File(TraceLinkEvaluationIT.OUTPUT);
 
         var runner = new ArDoCoForSamCodeTraceabilityLinkRecovery(name);
-        runner.setUp(inputArchitectureModel, ArchitectureModelType.PCM, inputCode, additionalConfigsMap, outputDir);
+        runner.setUp(inputArchitectureModel, ModelFormat.PCM, inputCode, additionalConfigsMap, outputDir);
         return runner;
     }
 
