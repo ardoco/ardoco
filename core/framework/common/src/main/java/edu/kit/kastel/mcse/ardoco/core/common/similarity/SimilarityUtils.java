@@ -129,8 +129,8 @@ public final class SimilarityUtils {
         var nameParts = modelEntity.getNameParts();
         if (nameParts.isEmpty())
             return false;
-        if (this.areWordsOfListsSimilar(nameParts, Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(modelEntity.getName(),
-                nounMapping.getReference())) {
+        if (this.areWordsOfListsSimilar(nameParts, Lists.immutable.with(nounMapping.getReference())) || this.areWordsSimilar(modelEntity.getName(), nounMapping
+                .getReference())) {
             return true;
         }
 
@@ -374,8 +374,8 @@ public final class SimilarityUtils {
                 boolean listOfNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(entityNameParts, surfaceFormWords) / Math.max(entityNameParts.size(),
                         surfaceFormWords.size()) >= similarity;
 
-                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(
-                        longestNameSplit.size(), surfaceFormWords.size()) >= similarity;
+                boolean listOfSplitNamesXSurfaceFormSimilarEnough = 1.0 * similarEntriesOfList(longestNameSplit, surfaceFormWords) / Math.max(longestNameSplit
+                        .size(), surfaceFormWords.size()) >= similarity;
 
                 if (instanceNamesXSurfaceForms || longestNameXSurfaceForms || listOfNamesXSurfaceFormSimilarEnough || listOfSplitNamesXSurfaceFormSimilarEnough) {
                     return true;
@@ -418,9 +418,9 @@ public final class SimilarityUtils {
         }
 
         // Maybe REWORK. Remove NounMappings?
-        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping,
-                firstPhraseMapping)) && this.containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping,
-                secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(textState, secondPhraseMapping, firstPhraseMapping)) {
+        if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping, firstPhraseMapping)) && this
+                .containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping, secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(
+                        textState, secondPhraseMapping, firstPhraseMapping)) {
             // HARD CODED... Change?
             return 1.0;
         }

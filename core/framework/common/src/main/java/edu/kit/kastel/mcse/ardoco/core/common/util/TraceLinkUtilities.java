@@ -25,8 +25,9 @@ public class TraceLinkUtilities {
     }
 
     public static ImmutableList<String> getSadSamTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ModelEntity>> sadSamTraceLinks) {
-        return sadSamTraceLinks.collect(
-                tl -> createTraceLinkString(tl.getSecondEndpoint().getId(), String.valueOf(tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1)));
+        return sadSamTraceLinks.collect(tl -> createTraceLinkString(tl.getSecondEndpoint().getId(), String.valueOf(tl.getFirstEndpoint()
+                .getSentence()
+                .getSentenceNumber() + 1)));
     }
 
     public static ImmutableList<String> getSamCodeTraceLinksAsStringList(

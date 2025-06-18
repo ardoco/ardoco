@@ -84,12 +84,12 @@ public final class PcmExtractor extends ArchitectureExtractor {
         List<ArchitectureItem> endpoints = new ArrayList<>();
 
         switch (metamodelToExtract) {
-        case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
-            endpoints.addAll(interfaces);
-            endpoints.addAll(components);
-        }
-        case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
-        default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
+            case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
+                endpoints.addAll(interfaces);
+                endpoints.addAll(components);
+            }
+            case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
+            default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
         }
 
         return new ArchitectureModel(endpoints);

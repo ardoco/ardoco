@@ -65,8 +65,8 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static ComponentModel getComponentModel(GoldStandardProject goldStandardProject) {
-        return new ComponentModel(
-                new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS).extractModel());
+        return new ComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS)
+                .extractModel());
     }
 
     private static void saveOutput(GoldStandardProject goldStandardProject, ArDoCoResult arDoCoResult) {
@@ -130,8 +130,8 @@ class InconsistencyDetectionEvaluationIT {
                 detailedOutputBuilder.append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR);
                 var result = results.get(counter);
                 counter++;
-                var resultString = String.format(Locale.ENGLISH, "Precision: %.3f, Recall: %.3f, F1: %" + ".3f, Accuracy: %.3f, Phi Coef.: %.3f",
-                        result.precision(), result.recall(), result.f1(), result.accuracy(), result.phiCoefficient());
+                var resultString = String.format(Locale.ENGLISH, "Precision: %.3f, Recall: %.3f, F1: %" + ".3f, Accuracy: %.3f, Phi Coef.: %.3f", result
+                        .precision(), result.recall(), result.f1(), result.accuracy(), result.phiCoefficient());
                 outputBuilder.append(resultString);
                 detailedOutputBuilder.append(resultString);
                 InconsistencyDetectionEvaluationIT.inspectRun(outputBuilder, detailedOutputBuilder, resultsWithWeight, arDoCoResult, result);
@@ -364,16 +364,16 @@ class InconsistencyDetectionEvaluationIT {
 
     private void checkResults(EvaluationResults<String> results, ExpectedResults expectedResults) {
         Assertions.assertAll(//
-                () -> Assertions.assertTrue(results.precision() >= expectedResults.precision(),
-                        "Precision " + results.precision() + " is below the expected minimum value " + expectedResults.precision()), //
-                () -> Assertions.assertTrue(results.recall() >= expectedResults.recall(),
-                        "Recall " + results.recall() + " is below the expected minimum value " + expectedResults.recall()), //
-                () -> Assertions.assertTrue(results.f1() >= expectedResults.f1(),
-                        "F1 " + results.f1() + " is below the expected minimum value " + expectedResults.f1()),
-                () -> Assertions.assertTrue(results.accuracy() >= expectedResults.accuracy(),
-                        "Accuracy " + results.accuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
-                () -> Assertions.assertTrue(results.phiCoefficient() >= expectedResults.phiCoefficient(),
-                        "Phi coefficient " + results.phiCoefficient() + " is below the expected " + "minimum value " + expectedResults.phiCoefficient()));
+                () -> Assertions.assertTrue(results.precision() >= expectedResults.precision(), "Precision " + results
+                        .precision() + " is below the expected minimum value " + expectedResults.precision()), //
+                () -> Assertions.assertTrue(results.recall() >= expectedResults.recall(), "Recall " + results
+                        .recall() + " is below the expected minimum value " + expectedResults.recall()), //
+                () -> Assertions.assertTrue(results.f1() >= expectedResults.f1(), "F1 " + results
+                        .f1() + " is below the expected minimum value " + expectedResults.f1()), () -> Assertions.assertTrue(results
+                                .accuracy() >= expectedResults.accuracy(), "Accuracy " + results
+                                        .accuracy() + " is below the expected minimum value " + expectedResults.accuracy()), //
+                () -> Assertions.assertTrue(results.phiCoefficient() >= expectedResults.phiCoefficient(), "Phi coefficient " + results
+                        .phiCoefficient() + " is below the expected " + "minimum value " + expectedResults.phiCoefficient()));
     }
 
     private void writeOutResults(GoldStandardProject goldStandardProject, List<EvaluationResults<String>> results, Map<ArchitectureItem, ArDoCoResult> runs) {

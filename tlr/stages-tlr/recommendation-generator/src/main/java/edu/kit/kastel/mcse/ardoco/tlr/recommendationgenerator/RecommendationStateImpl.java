@@ -1,6 +1,8 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
+import java.io.Serial;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -13,8 +15,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
-
-import java.io.Serial;
 
 /**
  * The recommendation state encapsulates all recommended instances and relations. These recommendations should be contained by the model by their probability.

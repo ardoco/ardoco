@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml;
 
 import java.io.File;
@@ -43,12 +43,12 @@ public final class UmlExtractor extends ArchitectureExtractor {
         List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
         List<ArchitectureItem> endpoints = new ArrayList<>();
         switch (metamodelToExtract) {
-        case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
-            endpoints.addAll(interfaces);
-            endpoints.addAll(components);
-        }
-        case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
-        default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
+            case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
+                endpoints.addAll(interfaces);
+                endpoints.addAll(components);
+            }
+            case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
+            default -> throw new IllegalArgumentException("Unsupported representation: " + metamodelToExtract);
         }
         return new ArchitectureModel(endpoints);
     }

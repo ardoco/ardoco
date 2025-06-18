@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public final class ComponentModel extends Model {
         List<ArchitectureComponent> entities = new ArrayList<>();
         for (ArchitectureItem entity : architectureModel.getContent()) {
             switch (entity) {
-            case ArchitectureComponent component -> entities.add(component);
-            default -> {
-            }
+                case ArchitectureComponent component -> entities.add(component);
+                default -> {
+                }
             }
         }
         return entities;

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
 
 import java.io.File;
@@ -33,8 +33,10 @@ public class HoldBackArCoTLModelProvider {
         var model = this.getExtractor().extractModel();
         assert model instanceof ArchitectureModel;
         this.initialModel = (ArchitectureModel) model;
-        this.components = Lists.immutable.fromStream(
-                this.initialModel.getContent().stream().filter(ArchitectureComponent.class::isInstance).map(it -> (ArchitectureComponent) it));
+        this.components = Lists.immutable.fromStream(this.initialModel.getContent()
+                .stream()
+                .filter(ArchitectureComponent.class::isInstance)
+                .map(it -> (ArchitectureComponent) it));
     }
 
     private Extractor getExtractor() {

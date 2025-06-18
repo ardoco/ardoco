@@ -103,8 +103,8 @@ public class CompoundRecommendationInformant extends Informant {
                 var wordText = word.getText();
                 if (CommonUtilities.isCamelCasedWord(wordText) || CommonUtilities.nameIsSnakeCased(wordText)) {
                     var localNounMappings = Lists.immutable.of(nounMapping);
-                    recommendationState.addRecommendedInstance(nounMapping.getReference(), "", this, this.confidence, localNounMappings,
-                            Lists.immutable.empty());
+                    recommendationState.addRecommendedInstance(nounMapping.getReference(), "", this, this.confidence, localNounMappings, Lists.immutable
+                            .empty());
                 }
             }
         }
@@ -127,12 +127,12 @@ public class CompoundRecommendationInformant extends Informant {
         MutableSortedSet<String> similarModelTypes = SortedSets.mutable.empty();
         var typeIdentifiers = CommonUtilities.getSplittedTypeIdentifiers(model);
         for (var typeMapping : typeMappings) {
-            var currSimilarTypes = Lists.immutable.fromStream(
-                    typeIdentifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, typeMapping.getReference())));
+            var currSimilarTypes = Lists.immutable.fromStream(typeIdentifiers.stream()
+                    .filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, typeMapping.getReference())));
             similarModelTypes.addAll(currSimilarTypes.toList());
             for (var word : typeMapping.getWords()) {
-                currSimilarTypes = Lists.immutable.fromStream(
-                        typeIdentifiers.stream().filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getLemma())));
+                currSimilarTypes = Lists.immutable.fromStream(typeIdentifiers.stream()
+                        .filter(typeId -> SimilarityUtils.getInstance().areWordsSimilar(typeId, word.getLemma())));
                 similarModelTypes.addAll(currSimilarTypes.toList());
             }
         }

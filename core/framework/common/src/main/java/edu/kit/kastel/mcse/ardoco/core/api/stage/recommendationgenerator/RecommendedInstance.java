@@ -1,14 +1,14 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
+import java.io.Serial;
+
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
-
-import java.io.Serial;
 
 /**
  * The Interface IRecommendedInstance defines the aggregation of noun mappings to one recommendation.

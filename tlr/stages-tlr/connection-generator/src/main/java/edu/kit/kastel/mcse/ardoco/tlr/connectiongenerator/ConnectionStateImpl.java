@@ -75,7 +75,8 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
      */
     @Override
     public ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks(String name, String type) {
-        return Lists.immutable.fromStream(this.instanceLinks.stream().filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name))//
+        return Lists.immutable.fromStream(this.instanceLinks.stream()
+                .filter(imapping -> imapping.getSecondEndpoint().getNameParts().contains(name))//
                 .filter(imapping -> imapping.getSecondEndpoint().getTypeParts().orElseThrow().contains(type)));
     }
 
