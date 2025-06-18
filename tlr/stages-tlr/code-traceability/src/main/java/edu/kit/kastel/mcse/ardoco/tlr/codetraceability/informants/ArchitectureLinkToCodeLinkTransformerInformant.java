@@ -11,7 +11,7 @@ import org.eclipse.collections.api.set.MutableSet;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeModule;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
@@ -41,11 +41,11 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
             return;
         }
 
-        CoarseGrainedCodeModel coarseGrainedCodeModel = this.findCoarseGrainedCodeModel(modelStatesData);
+        CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages = this.findCoarseGrainedCodeModel(modelStatesData);
 
         for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES).getTraceLinks()) {
             var modelElement = traceLink.getSecondEndpoint();
-            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, coarseGrainedCodeModel);
+            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, codeModelWithCompilationUnitsAndPackages);
             for (var mid : mentionedCodeModelElements) {
                 sadCodeTracelinks.add(new SadCodeTraceLink(traceLink.getFirstEndpoint(), mid));
             }
@@ -68,18 +68,20 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         return path.toString();
     }
 
-    private List<CodeCompilationUnit> findMentionedCodeModelElementsById(ModelEntity modelElement, CoarseGrainedCodeModel coarseGrainedCodeModel) {
+    private List<CodeCompilationUnit> findMentionedCodeModelElementsById(ModelEntity modelElement,
+            CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages) {
 
         if (modelElement instanceof CodePackage codePackage) {
             String packagePath = retrievePath(codePackage);
-            return this.findAllClassesInPackage(packagePath, coarseGrainedCodeModel);
+            return this.findAllClassesInPackage(packagePath, codeModelWithCompilationUnitsAndPackages);
         }
-        return this.findCompilationUnitById(modelElement.getId(), coarseGrainedCodeModel);
+        return this.findCompilationUnitById(modelElement.getId(), codeModelWithCompilationUnitsAndPackages);
     }
 
-    private List<CodeCompilationUnit> findAllClassesInPackage(String packagePath, CoarseGrainedCodeModel coarseGrainedCodeModel) {
+    private List<CodeCompilationUnit> findAllClassesInPackage(String packagePath,
+            CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages) {
         List<CodeCompilationUnit> codeCompilationUnits = new ArrayList<>();
-        List<CodeCompilationUnit> allCodeCompilationUnits = coarseGrainedCodeModel.getEndpoints()
+        List<CodeCompilationUnit> allCodeCompilationUnits = codeModelWithCompilationUnitsAndPackages.getEndpoints()
                 .stream()
                 .filter(endpoint -> endpoint instanceof CodeCompilationUnit)
                 .map(endpoint -> (CodeCompilationUnit) endpoint)
@@ -97,8 +99,9 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         return codeCompilationUnits;
     }
 
-    private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId, CoarseGrainedCodeModel coarseGrainedCodeModel) {
-        for (var entity : coarseGrainedCodeModel.getEndpoints()) {
+    private List<CodeCompilationUnit> findCompilationUnitById(String modelElementId,
+            CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages) {
+        for (var entity : codeModelWithCompilationUnitsAndPackages.getEndpoints()) {
             if (entity instanceof CodeCompilationUnit codeCompilationUnit) {
                 if (codeCompilationUnit.getId().equals(modelElementId)) {
                     return List.of(codeCompilationUnit);
@@ -108,10 +111,10 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         throw new IllegalStateException("Could not find model element " + modelElementId);
     }
 
-    private CoarseGrainedCodeModel findCoarseGrainedCodeModel(ModelStates models) {
+    private CodeModelWithCompilationUnitsAndPackages findCoarseGrainedCodeModel(ModelStates models) {
         for (var metamodel : models.getMetamodels()) {
             var model = models.getModel(metamodel);
-            if (model instanceof CoarseGrainedCodeModel codeModel) {
+            if (model instanceof CodeModelWithCompilationUnitsAndPackages codeModel) {
                 return codeModel;
             }
         }

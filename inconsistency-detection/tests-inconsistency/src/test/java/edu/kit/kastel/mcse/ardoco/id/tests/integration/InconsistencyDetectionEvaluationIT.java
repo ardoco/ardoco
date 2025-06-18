@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
@@ -64,8 +64,8 @@ class InconsistencyDetectionEvaluationIT {
         return TestUtil.compareInconsistencies(arDoCoResult, actualSentences, expectedLines);
     }
 
-    private static ComponentModel getComponentModel(GoldStandardProject goldStandardProject) {
-        return new ComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS)
+    private static ArchitectureComponentModel getComponentModel(GoldStandardProject goldStandardProject) {
+        return new ArchitectureComponentModel(new PcmExtractor(goldStandardProject.getModelFile().getAbsolutePath(), Metamodel.ARCHITECTURE_ONLY_COMPONENTS)
                 .extractModel());
     }
 

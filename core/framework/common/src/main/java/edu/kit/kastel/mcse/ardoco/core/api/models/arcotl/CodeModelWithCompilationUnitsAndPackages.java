@@ -10,18 +10,18 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 
-public final class CoarseGrainedCodeModel extends CodeModel {
+public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
 
-    private final FineGrainedCodeModel codeModel;
+    private final CodeModelWithOnlyCompilationUnits codeModel;
 
-    public CoarseGrainedCodeModel(CodeModelDTO codeModelDTO) {
+    public CodeModelWithCompilationUnitsAndPackages(CodeModelDTO codeModelDTO) {
         super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
-        this.codeModel = new FineGrainedCodeModel(codeModelDTO);
+        this.codeModel = new CodeModelWithOnlyCompilationUnits(codeModelDTO);
     }
 
-    public CoarseGrainedCodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+    public CodeModelWithCompilationUnitsAndPackages(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
-        this.codeModel = new FineGrainedCodeModel(codeItemRepository, content);
+        this.codeModel = new CodeModelWithOnlyCompilationUnits(codeItemRepository, content);
     }
 
     @Override

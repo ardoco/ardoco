@@ -8,9 +8,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CoarseGrainedCodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.FineGrainedCodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithOnlyCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguages;
@@ -45,8 +45,9 @@ public final class AllLanguagesExtractor extends CodeExtractor {
             }
 
             switch (this.metamodelToExtract) {
-                case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CoarseGrainedCodeModel(this.codeItemRepository, codeEndpoints);
-                case CODE_ONLY_COMPILATION_UNITS -> this.codeModel = new FineGrainedCodeModel(this.codeItemRepository, codeEndpoints);
+                case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository,
+                        codeEndpoints);
+                case CODE_ONLY_COMPILATION_UNITS -> this.codeModel = new CodeModelWithOnlyCompilationUnits(this.codeItemRepository, codeEndpoints);
                 default -> throw new IllegalStateException("This extractor does not support this metamodel");
             }
         }

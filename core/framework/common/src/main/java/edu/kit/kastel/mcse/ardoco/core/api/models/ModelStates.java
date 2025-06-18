@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
+import java.io.Serial;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -11,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 public class ModelStates implements PipelineStepData {
     public static final String ID = "ModelStatesData";
+    @Serial
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
 
