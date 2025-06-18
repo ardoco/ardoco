@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.util.List;
@@ -65,7 +65,7 @@ class WordImpl implements Word {
         var subPhrases = List.of(currentPhrase);
         while (!subPhrases.isEmpty()) {
             currentPhrase = subPhrases.getFirst();
-            subPhrases = currentPhrase.getSubPhrases().stream().filter(p -> p.getContainedWords().contains(this)).toList();
+            subPhrases = currentPhrase.getSubphrases().stream().filter(p -> p.getContainedWords().contains(this)).toList();
         }
         return currentPhrase;
     }

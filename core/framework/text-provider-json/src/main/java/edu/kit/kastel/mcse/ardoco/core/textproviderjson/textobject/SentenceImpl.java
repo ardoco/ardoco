@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class SentenceImpl implements Sentence {
     public ImmutableList<Phrase> getPhrases() {
         List<Phrase> allPhrases = new ArrayList<>(this.phrases.toList());
         for (Phrase phrase : this.phrases.toList()) {
-            allPhrases.addAll(phrase.getSubPhrases().toList());
+            allPhrases.addAll(phrase.getSubphrases().toList());
         }
         return Lists.immutable.ofAll(allPhrases);
     }

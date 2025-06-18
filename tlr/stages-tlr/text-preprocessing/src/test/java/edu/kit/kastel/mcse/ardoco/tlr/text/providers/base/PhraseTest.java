@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.base;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -105,10 +105,10 @@ public abstract class PhraseTest {
     }
 
     @Test
-    void getSubPhrasesTest() {
-        var sentenceSubPhrases = sentencePhrase.getSubPhrases();
-        var vpSubPhrases = vpPhrase.getSubPhrases();
-        var npSubPhrases = npPhrase.getSubPhrases();
+    void getSubphrasesTest() {
+        var sentenceSubPhrases = sentencePhrase.getSubphrases();
+        var vpSubPhrases = vpPhrase.getSubphrases();
+        var npSubPhrases = npPhrase.getSubphrases();
 
         Assertions.assertAll(//
                 () -> Assertions.assertEquals(3, sentenceSubPhrases.size()), //
