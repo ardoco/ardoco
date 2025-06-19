@@ -24,6 +24,8 @@ import edu.stanford.nlp.trees.Tree;
 
 class SentenceImpl implements Sentence {
     private static final Logger logger = LoggerFactory.getLogger(SentenceImpl.class);
+    @Serial
+    private static final long serialVersionUID = 3807070330613904325L;
 
     private MutableList<Word> words = Lists.mutable.empty();
     private MutableList<Phrase> phrases = Lists.mutable.empty();

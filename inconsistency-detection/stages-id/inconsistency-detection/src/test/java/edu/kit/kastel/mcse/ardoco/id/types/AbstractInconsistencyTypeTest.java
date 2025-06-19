@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
+import java.io.Serial;
 import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -74,6 +75,9 @@ public abstract class AbstractInconsistencyTypeTest {
     }
 
     protected static class DummyWord implements Word {
+
+        @Serial
+        private static final long serialVersionUID = -6565646312942900337L;
 
         @Override
         public int getSentenceNumber() {

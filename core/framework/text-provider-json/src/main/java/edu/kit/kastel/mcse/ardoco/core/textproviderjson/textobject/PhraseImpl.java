@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +23,8 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 public class PhraseImpl implements Phrase {
     private static final String PUNCTUATION_WITH_SPACE = "\\s+([.,;:?!])";
     private static final String BRACKETS_WITH_SPACE = "\\s+([()\\[\\]{}<>])";
+    @Serial
+    private static final long serialVersionUID = 5809331492733614205L;
     private final PhraseType type;
     private MutableList<Phrase> childPhrases;
     private MutableList<Word> nonPhraseWords;

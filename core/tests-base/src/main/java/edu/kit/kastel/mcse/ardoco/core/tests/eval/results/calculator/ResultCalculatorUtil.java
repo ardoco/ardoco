@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.EvaluationResults;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
@@ -18,7 +16,6 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
  * This utility class provides methods to form the average of several {@link EvaluationResults}
  */
 public final class ResultCalculatorUtil {
-    private static final Logger logger = LoggerFactory.getLogger(ResultCalculatorUtil.class);
 
     private ResultCalculatorUtil() {
         throw new IllegalAccessError();

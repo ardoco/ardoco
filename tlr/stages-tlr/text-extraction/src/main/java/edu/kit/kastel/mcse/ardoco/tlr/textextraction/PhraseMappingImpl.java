@@ -1,6 +1,8 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
+import java.io.Serial;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.factory.SortedSets;
@@ -23,6 +25,8 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 @Deterministic
 @NoHashCodeEquals
 public final class PhraseMappingImpl implements PhraseMapping {
+    @Serial
+    private static final long serialVersionUID = -1379930263383418382L;
     /**
      * Phrases encapsulated in the mapping.
      */

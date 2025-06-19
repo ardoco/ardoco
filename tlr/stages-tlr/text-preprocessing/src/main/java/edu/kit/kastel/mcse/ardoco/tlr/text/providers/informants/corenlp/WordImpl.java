@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,8 @@ import edu.stanford.nlp.trees.TypedDependency;
 
 class WordImpl implements Word {
 
+    @Serial
+    private static final long serialVersionUID = 7263616129894582709L;
     private final CoreLabel token;
     private final TextImpl parent;
     private final int index;

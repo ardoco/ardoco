@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -22,6 +23,8 @@ import edu.stanford.nlp.trees.Tree;
 @Deterministic
 public class PhraseImpl implements Phrase {
 
+    @Serial
+    private static final long serialVersionUID = 4504339547271582240L;
     private final Tree tree;
     private final MutableList<Word> words;
 

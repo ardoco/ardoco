@@ -1,6 +1,7 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture;
 
+import java.io.Serial;
 import java.util.Optional;
 import java.util.SortedSet;
 
@@ -14,6 +15,7 @@ import org.eclipse.collections.api.list.MutableList;
  */
 public final class ArchitectureComponent extends ArchitectureItem {
 
+    @Serial
     private static final long serialVersionUID = -7349058662425121364L;
 
     private final SortedSet<ArchitectureComponent> subcomponents;

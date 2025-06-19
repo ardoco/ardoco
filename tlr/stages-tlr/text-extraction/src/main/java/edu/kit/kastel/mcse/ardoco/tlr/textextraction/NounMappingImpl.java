@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
 
+import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,6 +37,10 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 public class NounMappingImpl implements NounMapping {
 
     protected static final AtomicLong CREATION_TIME_COUNTER = new AtomicLong(0);
+
+    @Serial
+    private static final long serialVersionUID = -1848153982944207492L;
+
     private static final AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
     private final Long earliestCreationTime;
     private final MutableSortedSet<Word> words;

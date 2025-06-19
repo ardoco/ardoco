@@ -1,6 +1,7 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
+import java.io.Serial;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -15,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 public class NameInconsistency implements TextInconsistency {
 
     private static final String INCONSISTENCY_TYPE_NAME = "NameInconsistency";
+    @Serial
+    private static final long serialVersionUID = 7248818574943312593L;
 
     private final Entity entity;
     private final Word word;

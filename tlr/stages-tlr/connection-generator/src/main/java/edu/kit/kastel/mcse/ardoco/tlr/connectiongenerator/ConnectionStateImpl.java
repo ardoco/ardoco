@@ -1,6 +1,8 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
+import java.io.Serial;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
@@ -19,6 +21,8 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  */
 public class ConnectionStateImpl extends AbstractState implements ConnectionState {
 
+    @Serial
+    private static final long serialVersionUID = 3340998661239696150L;
     private final MutableList<TraceLink<RecommendedInstance, ModelEntity>> instanceLinks;
 
     /**

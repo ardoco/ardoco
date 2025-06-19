@@ -40,22 +40,19 @@ public record EvaluationResults<T>(SingleClassificationResult<T> classificationR
     }
 
     public String getExtendedResultStringWithExpected(ExpectedResults expectedResults) {
-        StringBuilder outputBuilder = new StringBuilder();
-        outputBuilder.append(String.format(Locale.ENGLISH, """
+        return String.format(Locale.ENGLISH, """
                 \tPrecision:%8.2f (min. expected: %.2f)
                 \tRecall:%11.2f (min. expected: %.2f)
                 \tF1:%15.2f (min. expected: %.2f)""", precision(), expectedResults.precision(), recall(), expectedResults.recall(), f1(), expectedResults
-                .f1()));
-        outputBuilder.append(String.format(Locale.ENGLISH, """
+                .f1()) + String.format(Locale.ENGLISH, """
 
-                \tAccuracy:%9.2f (min. expected: %.2f)
-                \tSpecificity:%6.2f (min. expected: %.2f)""", accuracy(), expectedResults.accuracy(), specificity(), expectedResults.specificity()));
-        outputBuilder.append(String.format(Locale.ENGLISH, """
+                        \tAccuracy:%9.2f (min. expected: %.2f)
+                        \tSpecificity:%6.2f (min. expected: %.2f)""", accuracy(), expectedResults.accuracy(), specificity(), expectedResults
+                        .specificity()) + String.format(Locale.ENGLISH, """
 
-                \tPhi Coef.:%8.2f (min. expected: %.2f)
-                \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
-                %s""", phiCoefficient(), expectedResults.phiCoefficient(), phiOverPhiMax(), phiCoefficientMax(), toRow()));
-        return outputBuilder.toString();
+                                \tPhi Coef.:%8.2f (min. expected: %.2f)
+                                \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
+                                %s""", phiCoefficient(), expectedResults.phiCoefficient(), phiOverPhiMax(), phiCoefficientMax(), toRow());
     }
 
     public ImmutableList<T> getFound() {
