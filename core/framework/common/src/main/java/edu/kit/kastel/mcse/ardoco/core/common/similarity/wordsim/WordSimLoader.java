@@ -17,15 +17,14 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.seword
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 
 /**
- * Responsible for loading the word similarity measures that should be enabled according to the
- * {@link CommonTextToolsConfig}.
+ * Loads the word similarity measures enabled according to {@link CommonTextToolsConfig}.
  */
 public class WordSimLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordSimLoader.class);
 
     /**
-     * Loads and returns the word similarity measures that should be enabled according to {@link CommonTextToolsConfig}.
+     * Loads and returns the word similarity measures enabled according to {@link CommonTextToolsConfig}.
      *
      * @return a list of word similarity measures
      */

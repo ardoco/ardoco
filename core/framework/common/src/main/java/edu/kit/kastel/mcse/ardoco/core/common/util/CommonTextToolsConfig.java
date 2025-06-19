@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.common.util;
 import org.eclipse.collections.api.list.ImmutableList;
 
 /**
- * The Class CommonTextToolsConfig defines the configuration for the common text tools.
+ * Configuration class for the common text tools, providing constants for similarity and text processing settings.
  */
 public final class CommonTextToolsConfig {
 

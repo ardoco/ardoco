@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.EnumMap;
@@ -23,7 +23,7 @@ public class InconsistencyStatesImpl implements InconsistencyStates {
     }
 
     @Override
-    public InconsistencyState getInconsistencyState(Metamodel mm) {
-        return inconsistencyStates.get(mm);
+    public InconsistencyState getInconsistencyState(Metamodel metamodel) {
+        return inconsistencyStates.get(metamodel);
     }
 }

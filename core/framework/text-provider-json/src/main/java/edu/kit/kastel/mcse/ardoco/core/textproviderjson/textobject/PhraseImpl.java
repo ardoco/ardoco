@@ -39,9 +39,9 @@ public class PhraseImpl implements Phrase {
     }
 
     @Override
-    public synchronized int getSentenceNo() {
+    public synchronized int getSentenceNumber() {
         if (sentenceNo < 0) {
-            sentenceNo = getContainedWords().get(0).getSentenceNo();
+            sentenceNo = getContainedWords().get(0).getSentenceNumber();
         }
         return sentenceNo;
     }
@@ -94,7 +94,7 @@ public class PhraseImpl implements Phrase {
     }
 
     @Override
-    public boolean isSuperPhraseOf(Phrase other) {
+    public boolean isSuperphraseOf(Phrase other) {
         MutableList<Phrase> subphrases = Lists.mutable.ofAll(this.getSubphrases());
         while (!subphrases.isEmpty()) {
             if (subphrases.contains(other)) {
@@ -114,7 +114,7 @@ public class PhraseImpl implements Phrase {
     }
 
     @Override
-    public boolean isSubPhraseOf(Phrase other) {
+    public boolean isSubphraseOf(Phrase other) {
         MutableList<Phrase> subphrases = Lists.mutable.ofAll(other.getSubphrases());
         while (!subphrases.isEmpty()) {
             if (subphrases.contains(this)) {
@@ -157,7 +157,7 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public int compareTo(Phrase o) {
-        return Comparator.comparing(Phrase::getSentenceNo)
+        return Comparator.comparing(Phrase::getSentenceNumber)
                 .thenComparing(Phrase::getText)
                 .thenComparing(Phrase::getPhraseType)
                 .thenComparingInt(p -> p.getContainedWords().get(0).getPosition())

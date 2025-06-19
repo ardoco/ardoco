@@ -15,7 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * The Interface IConnectionState.
+ * State interface for connection generation.
+ * Provides access to instance links and trace links.
  */
 @Deterministic
 public interface ConnectionState extends IConfigurable {
@@ -28,9 +29,9 @@ public interface ConnectionState extends IConfigurable {
     ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks();
 
     /**
-     * Returns a list of tracelinks that are contained within this connection state.
+     * Returns a list of trace links that are contained within this connection state.
      *
-     * @return list of tracelinks within this connection state
+     * @return list of trace links within this connection state
      */
     default ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
@@ -47,8 +48,8 @@ public interface ConnectionState extends IConfigurable {
     }
 
     /**
-     * Adds the connection of a recommended instance and a model instance to the state. If the model instance is already contained by the state it is extended.
-     * Elsewhere a new instance link is created
+     * Adds the connection of a recommended instance and a model instance to the state.
+     * If the model instance is already contained by the state it is extended, otherwise a new instance link is created.
      *
      * @param recommendedModelInstance the recommended instance
      * @param modelEntity              the model instance

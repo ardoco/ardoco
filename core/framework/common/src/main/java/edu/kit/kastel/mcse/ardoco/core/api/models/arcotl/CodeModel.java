@@ -13,7 +13,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
 
 /**
- * A code model that is a CMTL instance.
+ * Represents a code model that is a CMTL instance.
+ * Provides access to code items and code packages.
  */
 public abstract sealed class CodeModel extends Model permits CodeModelWithCompilationUnitsAndPackages, CodeModelWithOnlyCompilationUnits {
 
@@ -23,6 +24,12 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
 
     private boolean initialized;
 
+    /**
+     * Creates a new code model with the specified code item repository and content IDs.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            list of code item IDs
+     */
     protected CodeModel(CodeItemRepository codeItemRepository, List<String> content) {
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
@@ -30,9 +37,10 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     }
 
     /**
-     * Creates a new code model that is a CMTL instance. The model has the specified code items as content.
+     * Creates a new code model with the specified code item repository and content.
      *
-     * @param content the content of the code model
+     * @param codeItemRepository the code item repository
+     * @param content            set of code items
      */
     protected CodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         this.initialized = true;
@@ -43,6 +51,11 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         }
     }
 
+    /**
+     * Creates a DTO for this code model.
+     *
+     * @return code model DTO
+     */
     public CodeModelDTO createCodeModelDTO() {
         return new CodeModelDTO(codeItemRepository, getContentIds());
     }
@@ -61,7 +74,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     /**
      * Returns all code packages directly or indirectly owned by this code model.
      *
-     * @return all code packages of this code model
+     * @return list of all code packages
      */
     public List<? extends CodePackage> getAllPackages() {
         List<CodePackage> codePackages = new ArrayList<>();
@@ -78,6 +91,9 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         return codePackages;
     }
 
+    /**
+     * Initializes the code model if not already initialized.
+     */
     protected synchronized void initialize() {
         if (this.initialized) {
             return;
@@ -86,6 +102,12 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         this.initialized = true;
     }
 
+    /**
+     * Checks equality with another object.
+     *
+     * @param o the object to compare
+     * @return true if equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -97,6 +119,11 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         return Objects.equals(this.content, codeModel.content);
     }
 
+    /**
+     * Returns the hash code for this code model.
+     *
+     * @return hash code
+     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

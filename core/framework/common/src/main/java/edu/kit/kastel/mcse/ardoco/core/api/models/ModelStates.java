@@ -10,17 +10,18 @@ import java.util.TreeSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
-public class ModelStates implements PipelineStepData {
+/**
+ * Holds all models for a pipeline step.
+ */
+public final class ModelStates implements PipelineStepData {
+    /**
+     * The ID for this data object.
+     */
     public static final String ID = "ModelStatesData";
+
     @Serial
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
-
-    /**
-     * Constructor to create a {@link ModelStates} object that holds all {@link Model}s
-     */
-    public ModelStates() {
-    }
 
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
@@ -32,7 +33,7 @@ public class ModelStates implements PipelineStepData {
     }
 
     /**
-     * Adds a {@link Model} with the given id to the set of {@link Model Models}
+     * Adds a {@link Model} with the given id to the set of {@link Model Models}.
      *
      * @param id    the id
      * @param model the {@link Model}
@@ -42,7 +43,7 @@ public class ModelStates implements PipelineStepData {
     }
 
     /**
-     * Returns the {@link Model} with the given id
+     * Returns the {@link Model} with the given id.
      *
      * @param id the id
      * @return the corresponding {@link Model}

@@ -45,7 +45,7 @@ public class WordImpl implements Word {
     }
 
     @Override
-    public int getSentenceNo() {
+    public int getSentenceNumber() {
         return sentenceNo;
     }
 
@@ -76,7 +76,7 @@ public class WordImpl implements Word {
     @Override
     public Word getNextWord() {
         int nextWordIndex = indexInText + 1;
-        if (nextWord == null && nextWordIndex < parent.getLength()) {
+        if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {
             nextWord = parent.getWord(nextWordIndex);
         }
         return nextWord;

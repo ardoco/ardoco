@@ -38,7 +38,7 @@ public final class ConverterUtil {
 
     private static boolean isPhraseOnHighestLevel(List<Phrase> subphrases, Phrase childPhrase) {
         for (Phrase subphrase : subphrases) {
-            if (childPhrase.isSubPhraseOf(subphrase)) {
+            if (childPhrase.isSubphraseOf(subphrase)) {
                 return false;
             }
         }

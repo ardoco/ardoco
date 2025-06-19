@@ -12,6 +12,10 @@ import java.util.function.Predicate;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
+/**
+ * Utility class for creating configurable objects through reflection. Provides methods to instantiate {@link AbstractConfigurable} objects with various
+ * constructor signatures.
+ */
 @Deterministic
 public final class ConfigurationInstantiatorUtils {
     private ConfigurationInstantiatorUtils() {
@@ -19,7 +23,7 @@ public final class ConfigurationInstantiatorUtils {
     }
 
     /**
-     * Create an AbstractConfigurable by Reflection.
+     * Creates an {@link AbstractConfigurable} instance by reflection, trying various constructor signatures.
      *
      * @param clazz the class of the AbstractConfigurable
      * @return the abstract configurable

@@ -5,5 +5,8 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
  * The mapping type of mapping state defines whether the mapping is a name or a type.
  */
 public enum MappingKind {
-    NAME, TYPE
+    /** Name mapping kind. */
+    NAME,
+    /** Type mapping kind. */
+    TYPE
 }

@@ -120,7 +120,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
                 RecommendedInstance recommendedInstance = candidate.getRecommendedInstance();
                 double confidence = recommendedInstance.getProbability();
                 for (var word : recommendedInstance.getNameMappings().flatCollect(NounMapping::getWords).distinct()) {
-                    var sentenceNo = word.getSentenceNo() + 1;
+                    var sentenceNo = word.getSentenceNumber() + 1;
                     var wordText = word.getText();
                     inconsistencyState.addInconsistency(new MissingModelInstanceInconsistency(wordText, sentenceNo, confidence, candidate));
                 }

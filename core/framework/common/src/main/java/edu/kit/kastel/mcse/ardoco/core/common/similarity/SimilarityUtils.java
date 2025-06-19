@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.similarity.CosineSimilarity;
@@ -28,7 +29,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 
 /**
- * This class is a utility class.
+ * Utility class for various similarity checks and calculations between entities, words, and phrase mappings.
  */
 @Deterministic
 public final class SimilarityUtils {
@@ -36,10 +37,20 @@ public final class SimilarityUtils {
 
     private final WordSimUtils wordSimUtils;
 
+    /**
+     * Creates a new SimilarityUtils instance with the given WordSimUtils.
+     *
+     * @param wordSimUtils the word similarity utility
+     */
     public SimilarityUtils(WordSimUtils wordSimUtils) {
         this.wordSimUtils = wordSimUtils;
     }
 
+    /**
+     * Returns the singleton instance of SimilarityUtils.
+     *
+     * @return the singleton instance
+     */
     public static SimilarityUtils getInstance() {
         return INSTANCE;
     }
@@ -52,6 +63,13 @@ public final class SimilarityUtils {
         return phraseVector1.keysView().containsAll(phraseVector2.keysView().toSortedSet());
     }
 
+    /**
+     * Calculates the cosine similarity between two phrase vectors.
+     *
+     * @param firstPhraseVector  the first phrase vector
+     * @param secondPhraseVector the second phrase vector
+     * @return the cosine similarity
+     */
     static double cosineSimilarity(Map<Word, Integer> firstPhraseVector, Map<Word, Integer> secondPhraseVector) {
 
         CosineSimilarity cosineSimilarity = new CosineSimilarity();
@@ -66,6 +84,13 @@ public final class SimilarityUtils {
         return cosineSimilarity.cosineSimilarity(firstVector, secondVector);
     }
 
+    /**
+     * Returns all unique pairs from two lists as an immutable list of pairs.
+     *
+     * @param first  the first list
+     * @param second the second list
+     * @return all unique pairs
+     */
     public static <A extends Serializable, B extends Serializable> ImmutableList<Pair<A, B>> uniqueDot(ImmutableList<A> first, ImmutableList<B> second) {
         List<Pair<A, B>> result = new ArrayList<>();
         for (A a : first) {
@@ -93,7 +118,7 @@ public final class SimilarityUtils {
      *
      * @param nm1 the first NounMapping
      * @param nm2 the second NounMapping
-     * @return true, if the {@link NounMapping}s are similar; false if not.
+     * @return true if the NounMappings are similar
      */
     public boolean areNounMappingsSimilar(NounMapping nm1, NounMapping nm2) {
         var nm1Words = nm1.getReferenceWords();
@@ -118,12 +143,11 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Compares a given {@link NounMapping} with a given {@link Entity} for similarity. Checks if all names, the longest name or a single name are similar to
-     * the reference of the NounMapping.
+     * Compares a {@link NounMapping} with a {@link Entity} for similarity.
      *
-     * @param nounMapping the {@link NounMapping}
-     * @param modelEntity the {@link Entity}
-     * @return true, iff the {@link NounMapping} and {@link Entity} are similar.
+     * @param nounMapping the NounMapping
+     * @param modelEntity the Entity
+     * @return true if similar
      */
     public boolean isNounMappingSimilarToModelInstance(NounMapping nounMapping, ModelEntity modelEntity) {
         var nameParts = modelEntity.getNameParts();
@@ -143,11 +167,11 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Compares a given {@link Word} with a given {@link ModelEntity} for similarity.
+     * Compares a {@link Word} with a {@link ModelEntity} for similarity.
      *
-     * @param word        the {@link Word}
-     * @param modelEntity the {@link ModelEntity} of a model
-     * @return true, iff the {@link Word} and {@link ModelEntity} are similar.
+     * @param word        the Word
+     * @param modelEntity the ModelEntity
+     * @return true if similar
      */
     public boolean isWordSimilarToEntity(Word word, ModelEntity modelEntity) {
         if (modelEntity.getNameParts().isEmpty()) {
@@ -156,14 +180,12 @@ public final class SimilarityUtils {
         return this.compareWordWithStringListEntries(word, modelEntity.getNameParts());
     }
 
-    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
-
     /**
-     * Compares a given {@link RecommendedInstance} with a given {@link ModelEntity} for similarity.
+     * Compares a {@link RecommendedInstance} with a {@link ModelEntity} for similarity.
      *
-     * @param ri          the {@link RecommendedInstance}
-     * @param modelEntity the {@link ModelEntity}
-     * @return true, iff the {@link RecommendedInstance} and {@link ModelEntity} are similar.
+     * @param ri          the RecommendedInstance
+     * @param modelEntity the ModelEntity
+     * @return true if similar
      */
     public boolean isRecommendedInstanceSimilarToModelInstance(RecommendedInstance ri, ModelEntity modelEntity) {
         var result = modelEntity.getName().equalsIgnoreCase(ri.getName());
@@ -177,21 +199,20 @@ public final class SimilarityUtils {
         return result || this.areWordsOfListsSimilar(modelEntity.getNameParts(), nameList);
     }
 
-    //FIXME this method is a duplicate of an existing method in WordSimUtils and should be removed
-
     /**
-     * Compares a given {@link Word} with the type of a given {@link ModelEntity} for similarity.
+     * Compares a {@link Word} with the type of a {@link ModelEntity} for similarity.
      *
-     * @param word        the {@link Word}
-     * @param modelEntity the {@link ModelEntity}
-     * @return true, iff the {@link Word} and the type of the {@link ModelEntity} are similar.
+     * @param word        the Word
+     * @param modelEntity the ModelEntity
+     * @return true if similar
      */
     public boolean isWordSimilarToModelInstanceType(Word word, ModelEntity modelEntity) {
 
-        if (modelEntity.getTypeParts().isEmpty()) {
+        Optional<ImmutableList<String>> typeParts = modelEntity.getTypeParts();
+        if (typeParts.isEmpty()) {
             return false;
         }
-        return this.compareWordWithStringListEntries(word, modelEntity.getTypeParts().get());
+        return this.compareWordWithStringListEntries(word, typeParts.get());
     }
 
     private boolean compareWordWithStringListEntries(Word word, ImmutableList<String> names) {
@@ -212,32 +233,30 @@ public final class SimilarityUtils {
      *
      * @param word1 the first word
      * @param word2 the second word
-     * @return true, if the words are similar; false if not.
+     * @return true if the words are similar
      */
     public boolean areWordsSimilar(Word word1, Word word2) {
         return this.wordSimUtils.areWordsSimilar(word1, word2);
     }
 
     /**
-     * Checks the similarity of two string. Uses Jaro-Winkler similarity and Levenshtein to assess the similarity.
+     * Checks the similarity of two strings.
      *
-     * @param word1 String of first word
-     * @param word2 String of second word
-     * @return true, if the test string is similar to the original; false if not.
+     * @param word1 the first string
+     * @param word2 the second string
+     * @return true if the strings are similar
      */
     public boolean areWordsSimilar(String word1, String word2) {
         return this.wordSimUtils.areWordsSimilar(word1, word2);
     }
 
     /**
-     * Checks the similarity of a list with test strings to a list of "original" strings. In this method all test strings are compared to all originals. For
-     * this the method uses the areWordsSimilar method with a given threshold. All matches are counted. If the proportion of similarities between the lists is
-     * greater than the given threshold the method returns true.
+     * Checks the similarity of two lists of strings, using a minimum proportion threshold.
      *
-     * @param originals     list of original strings
-     * @param words2test    list of test strings
-     * @param minProportion threshold for proportional similarity between the lists
-     * @return true if the list are similar, false if not
+     * @param originals     the original strings
+     * @param words2test    the test strings
+     * @param minProportion the minimum proportion threshold
+     * @return true if the lists are similar
      */
     public boolean areWordsOfListsSimilar(ImmutableList<String> originals, ImmutableList<String> words2test, double minProportion) {
 
@@ -269,26 +288,22 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Checks the similarity of a list, containing test strings, and a list of originals. This check is not bidirectional! This method uses the areWordsSimilar
-     * method with a given threshold.
+     * Checks the similarity of two lists of strings using the default threshold.
      *
-     * @param originals  list of original strings
-     * @param words2test list of test strings
-     * @return true if the list are similar, false if not
+     * @param originals  the original strings
+     * @param words2test the test strings
+     * @return true if the lists are similar
      */
     public boolean areWordsOfListsSimilar(ImmutableList<String> originals, ImmutableList<String> words2test) {
         return this.areWordsOfListsSimilar(originals, words2test, CommonTextToolsConfig.JAROWINKLER_SIMILARITY_THRESHOLD);
     }
 
     /**
-     * Extracts most likely matches of a list of recommended instances by similarity to a given instance. For this, the method uses an increasing minimal
-     * proportional threshold with the method areWordsOfListsSimilar method. If all lists are similar to the given instance by a threshold of 1-increase value
-     * the while loop can be left. If the while loop ends with more than one possibility or all remaining lists are sorted out in the same run, all are
-     * returned. Elsewhere only the remaining recommended instance is returned within the list.
+     * Extracts the most likely matches of recommended instances by similarity to a given instance.
      *
-     * @param modelEntity          instance to use as original for compare
-     * @param recommendedInstances recommended instances to check for similarity
-     * @return a list of the most similar recommended instances (to the instance names)
+     * @param modelEntity          the instance to use as original
+     * @param recommendedInstances the recommended instances to check
+     * @return a list of the most similar recommended instances
      */
     public ImmutableList<RecommendedInstance> getMostRecommendedInstancesToInstanceByReferences(ModelEntity modelEntity,
             ImmutableList<RecommendedInstance> recommendedInstances) {
@@ -389,6 +404,15 @@ public final class SimilarityUtils {
         return phraseMapping1.getNounMappings(textState).containsAllIterable(phraseMapping2.getNounMappings(textState));
     }
 
+    /**
+     * Returns the most similar phrase mapping from a list, given a minimum cosine similarity.
+     *
+     * @param textState           the text state
+     * @param phraseMapping       the phrase mapping to compare
+     * @param otherPhraseMappings the other phrase mappings
+     * @param minCosineSimilarity the minimum cosine similarity
+     * @return the most similar phrase mapping, or null if none found
+     */
     public PhraseMapping getMostSimilarPhraseMapping(TextState textState, PhraseMapping phraseMapping, ImmutableList<PhraseMapping> otherPhraseMappings,
             double minCosineSimilarity) {
 
@@ -409,6 +433,15 @@ public final class SimilarityUtils {
         return mostSimilarPhraseMapping;
     }
 
+    /**
+     * Returns the similarity between two phrase mappings using the given strategy.
+     *
+     * @param textState           the text state
+     * @param firstPhraseMapping  the first phrase mapping
+     * @param secondPhraseMapping the second phrase mapping
+     * @param strategy            the aggregation strategy
+     * @return the similarity value
+     */
     public double getPhraseMappingSimilarity(TextState textState, PhraseMapping firstPhraseMapping, PhraseMapping secondPhraseMapping,
             PhraseMappingAggregatorStrategy strategy) {
         PhraseType firstPhraseType = firstPhraseMapping.getPhraseType();
@@ -417,7 +450,7 @@ public final class SimilarityUtils {
             return 0;
         }
 
-        // Maybe REWORK. Remove NounMappings?
+        // TODO Maybe REWORK. Remove NounMappings?
         if ((coversOtherPhraseVector(firstPhraseMapping, secondPhraseMapping) || coversOtherPhraseVector(secondPhraseMapping, firstPhraseMapping)) && this
                 .containsAllNounMappingsOfPhraseMapping(textState, firstPhraseMapping, secondPhraseMapping) && this.containsAllNounMappingsOfPhraseMapping(
                         textState, secondPhraseMapping, firstPhraseMapping)) {

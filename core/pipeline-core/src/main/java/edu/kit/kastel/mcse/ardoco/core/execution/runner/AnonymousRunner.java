@@ -23,9 +23,9 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
 
     /**
      * Sets up the runner using {@link #initializePipelineSteps}. Initializes the new data repository.
-     * {@link #isSetUp} must return true, if successful.
+     * {@link #isSetUp} must return true if successful.
      * 
-     * @return List of AbstractPipelineSteps this runner consists of
+     * @return list of AbstractPipelineSteps this runner consists of
      */
     private List<AbstractPipelineStep> setUp() {
         try {
@@ -43,7 +43,7 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
     }
 
     /**
-     * Initializes and returns the pipeline steps according to the supplied parameters
+     * Initializes and returns the pipeline steps according to the supplied parameters.
      *
      * @param dataRepository the data repository of this runner
      * @throws IOException can occur when loading data

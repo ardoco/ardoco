@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
+/**
+ * Represents a gold standard for evaluation, containing mappings between sentences and architecture elements.
+ */
 public class GoldStandard {
     private final Logger logger = LoggerFactory.getLogger(GoldStandard.class);
 
@@ -23,6 +26,12 @@ public class GoldStandard {
 
     private final MutableList<MutableList<ArchitectureItem>> sentence2instance = Lists.mutable.empty();
 
+    /**
+     * Creates a new gold standard from a file and an architecture component model.
+     *
+     * @param goldStandard the file containing the gold standard data
+     * @param model        the architecture component model
+     */
     public GoldStandard(File goldStandard, ArchitectureComponentModel model) {
         this.goldStandard = goldStandard;
         this.model = model;
@@ -55,11 +64,23 @@ public class GoldStandard {
         }
     }
 
+    /**
+     * Gets the model instances associated with a specific sentence number.
+     *
+     * @param sentenceNo the sentence number (index starts at 1)
+     * @return the list of architecture items associated with the sentence
+     */
     public ImmutableList<ArchitectureItem> getModelInstances(int sentenceNo) {
         // Index starts at 1
         return this.sentence2instance.get(sentenceNo).toImmutable();
     }
 
+    /**
+     * Gets all sentence numbers that contain the specified architecture element.
+     *
+     * @param elem the architecture element to search for
+     * @return the list of sentence numbers containing the element
+     */
     public ImmutableList<Integer> getSentencesWithElement(ArchitectureItem elem) {
         MutableList<Integer> sentences = Lists.mutable.empty();
         for (int i = 0; i < this.sentence2instance.size(); i++) {

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class TextImpl implements Text {
     }
 
     @Override
-    public synchronized int getLength() {
+    public synchronized int getNumberOfWords() {
         if (this.length < 0) {
             int calculatedLength = 0;
             for (Sentence sentence : sentences) {
