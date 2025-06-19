@@ -8,6 +8,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
+/**
+ * Abstract base class for all models.
+ * Provides unique ID and access to content, endpoints, metamodel, and type identifiers.
+ */
 public abstract sealed class Model permits ArchitectureModel, ArchitectureComponentModel, CodeModel {
 
     private final String id = IdentifierProvider.createId();
@@ -24,18 +28,23 @@ public abstract sealed class Model permits ArchitectureModel, ArchitectureCompon
     public abstract List<? extends ModelEntity> getContent();
 
     /**
-     * Returns the endpoints of this model. Contains all targetable elements for trace links, e.g. compilation units in case of CodeModel.
+     * Returns the endpoints of this model. Contains all targetable elements for trace links.
      *
      * @return the endpoints of this model
      */
     public abstract List<? extends ModelEntity> getEndpoints();
 
+    /**
+     * Returns the metamodel type of this model.
+     *
+     * @return the metamodel type
+     */
     public abstract Metamodel getMetamodel();
 
     /**
-     * Returns a set of identifiers for the types in the model state.
+     * Returns a set of identifiers for the types in the model.
      *
-     * @return Set of identifiers for existing types
+     * @return set of identifiers for existing types
      */
     public abstract SortedSet<String> getTypeIdentifiers();
 

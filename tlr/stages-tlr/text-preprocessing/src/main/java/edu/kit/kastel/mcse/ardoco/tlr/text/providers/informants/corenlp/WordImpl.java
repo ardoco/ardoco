@@ -43,7 +43,7 @@ class WordImpl implements Word {
     }
 
     @Override
-    public int getSentenceNo() {
+    public int getSentenceNumber() {
         return sentenceNo;
     }
 
@@ -92,7 +92,7 @@ class WordImpl implements Word {
     @Override
     public Word getNextWord() {
         int nextWordIndex = index + 1;
-        if (nextWord == null && nextWordIndex < parent.getLength()) {
+        if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {
             nextWord = parent.getWord(nextWordIndex);
         }
         return nextWord;
@@ -149,7 +149,7 @@ class WordImpl implements Word {
 
     private List<TypedDependency> getDependenciesOfType(DependencyTag dependencyTag) {
         List<TypedDependency> typedDependencies = Lists.mutable.empty();
-        var sentence = (SentenceImpl) parent.getSentences().get(getSentenceNo());
+        var sentence = (SentenceImpl) parent.getSentences().get(getSentenceNumber());
         SemanticGraph dependencies = sentence.dependencyParse();
         for (var typedDependency : dependencies.typedDependencies()) {
             GrammaticalRelation rel = typedDependency.reln();
@@ -167,13 +167,13 @@ class WordImpl implements Word {
         if (!(o instanceof WordImpl word))
             return false;
 
-        return word.getText().equals(this.getText()) && getPosition() == word.getPosition() && getPosTag() == word.getPosTag() && getSentenceNo() == word
-                .getSentenceNo();
+        return word.getText().equals(this.getText()) && getPosition() == word.getPosition() && getPosTag() == word.getPosTag() && getSentenceNumber() == word
+                .getSentenceNumber();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPosition(), getPosTag(), getText(), getSentenceNo());
+        return Objects.hash(getPosition(), getPosTag(), getText(), getSentenceNumber());
     }
 
     @Override
@@ -181,7 +181,7 @@ class WordImpl implements Word {
         if (this.equals(o))
             return 0;
 
-        int compareSentences = Integer.compare(this.getSentenceNo(), o.getSentenceNo());
+        int compareSentences = Integer.compare(this.getSentenceNumber(), o.getSentenceNumber());
         if (compareSentences != 0) {
             return compareSentences;
         }

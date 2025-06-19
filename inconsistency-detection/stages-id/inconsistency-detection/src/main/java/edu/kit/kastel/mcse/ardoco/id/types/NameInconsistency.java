@@ -23,7 +23,7 @@ public class NameInconsistency implements TextInconsistency {
     public NameInconsistency(Entity entity, Word word) {
         this.entity = entity;
         this.word = word;
-        sentenceNo = word.getSentenceNo() + 1;
+        sentenceNo = word.getSentenceNumber() + 1;
     }
 
     @Override

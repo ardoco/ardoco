@@ -1,10 +1,10 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 
 /**
- * Implementation of {@link ProjectPipelineData} that simply takes the project's name in the constructor to store it.
+ * Implementation of {@link ProjectPipelineData} that stores the project's name provided in the constructor.
  */
 public class ProjectPipelineDataImpl implements ProjectPipelineData {
 
@@ -12,7 +12,7 @@ public class ProjectPipelineDataImpl implements ProjectPipelineData {
     private final String projectName;
 
     /**
-     * Construct this class using the project's name
+     * Constructs this class using the project's name.
      *
      * @param projectName the project's name
      */

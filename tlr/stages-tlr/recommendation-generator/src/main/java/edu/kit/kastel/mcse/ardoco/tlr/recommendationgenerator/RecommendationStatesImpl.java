@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import java.util.EnumMap;
@@ -23,7 +23,7 @@ public class RecommendationStatesImpl implements RecommendationStates {
     }
 
     @Override
-    public RecommendationStateImpl getRecommendationState(Metamodel mm) {
-        return this.recommendationStates.get(mm);
+    public RecommendationStateImpl getRecommendationState(Metamodel metamodel) {
+        return this.recommendationStates.get(metamodel);
     }
 }

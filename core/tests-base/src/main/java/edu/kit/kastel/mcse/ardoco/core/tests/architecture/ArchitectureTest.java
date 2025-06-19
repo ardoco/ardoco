@@ -1,12 +1,19 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.architecture;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
+import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
+import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 
 @AnalyzeClasses(packages = "edu.kit.kastel.mcse.ardoco")
 public class ArchitectureTest {
@@ -111,5 +118,28 @@ public class ArchitectureTest {
             .whereLayer(LAYER_MODEL_EXTRACTOR)
             .mayOnlyBeAccessedByLayers(LAYER_RECOMMENDATION_GENERATOR, LAYER_CONNECTION_GENERATOR, LAYER_CODE_TRACEABILITY, LAYER_INCONSISTENCY_DETECTION,
                     LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION);
+
+    @ArchTest
+    public static final ArchRule configurableFieldsOnlyInConfigurableClasses = fields().that()
+            .areAnnotatedWith(Configurable.class)
+            .should()
+            .beDeclaredInClassesThat()
+            .areAssignableTo(AbstractConfigurable.class);
+
+    @ArchTest
+    public static final ArchRule traceLinksShouldBeFinal = classes().that()
+            .areAssignableTo(TraceLink.class)
+            .and()
+            .doNotHaveFullyQualifiedName(TraceLink.class.getName())
+            .should()
+            .haveModifier(JavaModifier.FINAL);
+
+    @ArchTest
+    public static final ArchRule jacksonIsConfiguredGlobally = noClasses().that()
+            .doNotHaveFullyQualifiedName(JsonHandling.class.getName())
+            .and()
+            .doNotHaveFullyQualifiedName("edu.kit.kastel.mcse.ardoco.magika.Configuration")
+            .should()
+            .callConstructor(ObjectMapper.class);
 
 }

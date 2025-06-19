@@ -1,13 +1,23 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.tracelink;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 
+/**
+ * A trace link that represents a transitive relationship between two entities through an intermediate entity.
+ * This class combines two trace links to create a single trace link from the first endpoint of the first link
+ * to the second endpoint of the second link.
+ *
+ * @param <A> the type of the first entity
+ * @param <B> the type of the second entity
+ */
 public final class TransitiveTraceLink<A extends Entity, B extends Entity> extends TraceLink<A, B> {
 
+    @Serial
     private static final long serialVersionUID = 3781827633038556211L;
 
     private final TraceLink<A, ?> firstTraceLink;

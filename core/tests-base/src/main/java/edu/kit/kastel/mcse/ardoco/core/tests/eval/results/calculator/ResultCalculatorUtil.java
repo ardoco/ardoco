@@ -24,6 +24,12 @@ public final class ResultCalculatorUtil {
         throw new IllegalAccessError();
     }
 
+    /**
+     * Calculates the macro average of multiple evaluation results.
+     *
+     * @param results the list of evaluation results to average
+     * @return the macro average evaluation results
+     */
     public static <T> EvaluationResults<T> calculateMacroAverageResults(ImmutableList<EvaluationResults<T>> results) {
         var averages = getAverages(results);
 
@@ -31,6 +37,12 @@ public final class ResultCalculatorUtil {
         return evaluationResults(macroAverage);
     }
 
+    /**
+     * Calculates the weighted average of multiple evaluation results.
+     *
+     * @param results the list of evaluation results to average
+     * @return the weighted average evaluation results
+     */
     public static <T> EvaluationResults<T> calculateWeightedAverageResults(ImmutableList<EvaluationResults<T>> results) {
         var averages = getAverages(results);
 
@@ -38,6 +50,12 @@ public final class ResultCalculatorUtil {
         return evaluationResults(macroAverage);
     }
 
+    /**
+     * Calculates the micro average of multiple evaluation results.
+     *
+     * @param results the list of evaluation results to average
+     * @return the micro average evaluation results
+     */
     public static EvaluationResults<String> calculateMicroAverageResults(ImmutableList<EvaluationResults<String>> results) {
         var averages = getAverages(results);
 

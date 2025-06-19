@@ -15,10 +15,22 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
+/**
+ * Abstract base class for configurable components. Provides configuration application logic and utility methods for subclasses.
+ */
 @Deterministic
 public abstract class AbstractConfigurable implements IConfigurable {
+    /**
+     * Connector for class attribute keys ("::").
+     */
     public static final String CLASS_ATTRIBUTE_CONNECTOR = "::";
+    /**
+     * Connector for key-value pairs ("=").
+     */
     public static final String KEY_VALUE_CONNECTOR = "=";
+    /**
+     * Separator for list values (",").
+     */
     public static final String LIST_SEPARATOR = ",";
 
     @SuppressWarnings("java:S2065") // The logger is used in the subclasses that are serializable
@@ -127,6 +139,11 @@ public abstract class AbstractConfigurable implements IConfigurable {
         throw new IllegalArgumentException("Could not find a parse method for fields of type: " + fieldsClass);
     }
 
+    /**
+     * Returns the logger for this configurable instance.
+     *
+     * @return the logger
+     */
     protected final Logger getLogger() {
         if (this.logger == null) {
             this.logger = LoggerFactory.getLogger(this.getClass());

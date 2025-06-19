@@ -144,7 +144,7 @@ public class NounMappingImpl implements NounMapping {
     public final ImmutableList<Integer> getMappingSentenceNo() {
         MutableList<Integer> positions = Lists.mutable.empty();
         for (Word word : this.words) {
-            positions.add(word.getSentenceNo() + 1);
+            positions.add(word.getSentenceNumber() + 1);
         }
         return positions.toSortedList().toImmutable();
     }

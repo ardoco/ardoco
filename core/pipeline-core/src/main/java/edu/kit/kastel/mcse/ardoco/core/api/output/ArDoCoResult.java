@@ -34,14 +34,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 /**
- * This record represents the result of running ArDoCo. It is backed by a {@link DataRepository} and grabs data from it. Besides accessing all data from the
- * calculation steps, this record also provides some convenience methods to directly access results such as found trace links and detected inconsistencies.
+ * This record represents the result of running ArDoCo. It is backed by a {@link DataRepository} and provides access to data from it. Besides accessing all data
+ * from the
+ * calculation steps, this record also provides convenience methods to directly access results such as found trace links and detected inconsistencies.
  */
 @Deterministic
 public record ArDoCoResult(DataRepository dataRepository) {
@@ -62,16 +62,17 @@ public record ArDoCoResult(DataRepository dataRepository) {
     /**
      * Returns the name of the project the results are based on.
      *
-     * @return the name of the project the results are based on.
+     * @return the name of the project the results are based on
      */
     public String getProjectName() {
         return DataRepositoryHelper.getProjectPipelineData(this.dataRepository).getProjectName();
     }
 
     /**
-     * Returns the set of {@link TraceLink}s that were found for the Model with the given ID.
+     * Returns the set of {@link TraceLink TraceLinks} that were found for the model with the given metamodel.
      *
-     * @return Trace links for the model with the given id
+     * @param metamodel the metamodel to get trace links for
+     * @return {@link TraceLink TraceLinks} for the model with the given metamodel
      */
     public ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinksForModel(Metamodel metamodel) {
         ConnectionState connectionState = this.getConnectionState(metamodel);
@@ -82,9 +83,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link TraceLink}s
+     * Returns the set of {@link TraceLink TraceLinks} for architecture models.
      *
-     * @return set of Trace links
+     * @return set of {@link TraceLink TraceLinks} for architecture models
      */
     public ImmutableList<TraceLink<SentenceEntity, ModelEntity>> getArchitectureTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
@@ -98,9 +99,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the set of {@link TraceLink SadSamTraceLinks} as strings. The strings are beautified to have a human-readable format
+     * Returns the set of {@link TraceLink TraceLinks} for architecture models as formatted strings. The strings are formatted to be human-readable.
      *
-     * @return Trace links as Strings
+     * @return trace links as formatted strings
      */
     public List<String> getAllTraceLinksAsBeautifiedStrings() {
         return this.getArchitectureTraceLinks()
@@ -109,9 +110,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Return the list of {@link TraceLink SamCodeTraceLinks}. If there are none, it will return an empty list.
+     * Returns the list of {@link TraceLink TraceLinks} between architecture entities and code entities. If there are none, it returns an empty list.
      *
-     * @return the list of {@link TraceLink SamCodeTraceLinks}.
+     * @return the list of {@link TraceLink TraceLinks} between architecture and code entities
      */
     public List<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
@@ -122,9 +123,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Return the list of {@link TransitiveTraceLink TransitiveTraceLinks}. If there are none, it will return an empty list.
+     * Returns the list of {@link TraceLink TraceLinks} between sentences and code entities. If there are none, it returns an empty list.
      *
-     * @return the list of {@link TransitiveTraceLink TransitiveTraceLinks}.
+     * @return the list of {@link TraceLink TraceLinks} between sentences and code entities
      */
     public List<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
@@ -135,9 +136,10 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns all {@link Inconsistency inconsistencies} that were found for the model with the given ID.
+     * Returns all {@link Inconsistency inconsistencies} that were found for the model with the given metamodel.
      *
-     * @return Inconsistencies for the model
+     * @param metamodel the metamodel to get inconsistencies for
+     * @return inconsistencies for the model
      */
     public ImmutableList<Inconsistency> getAllInconsistenciesForModel(Metamodel metamodel) {
         InconsistencyState inconsistencyState = this.getInconsistencyState(metamodel);
@@ -148,9 +150,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns a list of {@link Inconsistency inconsistencies} that were found for the model with the given ID and that are of the given Inconsistency class.
+     * Returns a list of {@link Inconsistency inconsistencies} that were found for the model with the given metamodel and that are of the specified
+     * inconsistency class.
      *
-     * @return Inconsistencies for the model with the given type
+     * @param metamodel         the metamodel to get inconsistencies for
+     * @param inconsistencyType the type of inconsistency to filter for
+     * @return inconsistencies for the model with the given type
      */
     public <T extends Inconsistency> ImmutableList<T> getInconsistenciesOfTypeForModel(Metamodel metamodel, Class<T> inconsistencyType) {
         return this.getAllInconsistenciesForModel(metamodel).select(i -> inconsistencyType.isAssignableFrom(i.getClass())).collect(inconsistencyType::cast);
@@ -218,16 +223,17 @@ public record ArDoCoResult(DataRepository dataRepository) {
      * Returns the {@link Sentence} with the given sentence number.
      *
      * @param sentenceNo the sentence number
-     * @return Sentence with the given number
+     * @return sentence with the given number
      */
     public Sentence getSentence(int sentenceNo) {
         return this.getText().getSentences().detect(s -> s.getSentenceNumberForOutput() == sentenceNo);
     }
 
     /**
-     * Returns the internal {@link ConnectionState} for the modelId with the given ID or null, if there is none.
+     * Returns the internal {@link ConnectionState} for the model with the given metamodel or null if there is none.
      *
-     * @return the connection state or null, if there is no {@link ConnectionState} for the given model ID
+     * @param metamodel the metamodel to get the connection state for
+     * @return the connection state or null if there is no {@link ConnectionState} for the given metamodel
      */
     public ConnectionState getConnectionState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasConnectionStates(this.dataRepository)) {
@@ -239,9 +245,10 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link InconsistencyState} for the modelId with the given ID or null, if there is none.
+     * Returns the internal {@link InconsistencyState} for the model with the given metamodel or null if there is none.
      *
-     * @return the inconsistency state or null, if there is no {@link InconsistencyState} for the given model ID
+     * @param metamodel the metamodel to get the inconsistency state for
+     * @return the inconsistency state or null if there is no {@link InconsistencyState} for the given metamodel
      */
     public InconsistencyState getInconsistencyState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasInconsistencyStates(this.dataRepository)) {
@@ -253,9 +260,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link CodeTraceabilityState} or null, if there is none.
+     * Returns the internal {@link CodeTraceabilityState} or null if there is none.
      *
-     * @return the {@link CodeTraceabilityState} state or null, if there is no {@link CodeTraceabilityState} for the given model ID
+     * @return the {@link CodeTraceabilityState} or null if there is no {@link CodeTraceabilityState}
      */
     public CodeTraceabilityState getCodeTraceabilityState() {
         if (DataRepositoryHelper.hasCodeTraceabilityState(this.dataRepository)) {
@@ -266,7 +273,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link ModelStates}
+     * Returns the internal {@link ModelStates}.
      *
      * @return the ModelStates
      */
@@ -275,9 +282,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns a list of all IDs for all the models that were loaded in.
+     * Returns a list of all metamodels for all the models that were loaded.
      *
-     * @return list of all model IDs
+     * @return list of all metamodels
      */
     public List<Metamodel> getMetamodels() {
         ModelStates modelStates = this.getModelStates();
@@ -285,8 +292,9 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link Model} for the modelId with the given ID.
+     * Returns the internal {@link Model} for the model with the given metamodel.
      *
+     * @param metamodel the metamodel to get the model for
      * @return the Model
      */
     public Model getModelState(Metamodel metamodel) {
@@ -304,10 +312,10 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link RecommendationState} for the given {@link Metamodel} or null, if there is none.
+     * Returns the internal {@link RecommendationState} for the given {@link Metamodel} or null if there is none.
      *
      * @param metamodel the metamodel
-     * @return the recommendation state or null, if there is none
+     * @return the recommendation state or null if there is none
      */
     public RecommendationState getRecommendationState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasRecommendationStates(this.dataRepository)) {
@@ -318,12 +326,17 @@ public record ArDoCoResult(DataRepository dataRepository) {
         return null;
     }
 
+    /**
+     * Returns the internal {@link PreprocessingData}.
+     *
+     * @return the preprocessing data
+     */
     public PreprocessingData getPreprocessingData() {
         return this.dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow();
     }
 
     /**
-     * Returns the {@link Text}
+     * Returns the {@link Text}.
      *
      * @return the Text
      */

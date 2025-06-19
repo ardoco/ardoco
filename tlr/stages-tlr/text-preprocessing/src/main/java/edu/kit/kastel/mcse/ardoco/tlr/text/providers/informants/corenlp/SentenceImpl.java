@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ class SentenceImpl implements Sentence {
     @Override
     public ImmutableList<Word> getWords() {
         if (words.isEmpty()) {
-            this.words = Lists.mutable.ofAll(parent.words().select(w -> w.getSentenceNo() == sentenceNumber));
+            this.words = Lists.mutable.ofAll(parent.words().select(w -> w.getSentenceNumber() == sentenceNumber));
         }
         return words.toImmutable();
     }

@@ -211,7 +211,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
 
     @Override
     public ImmutableSortedSet<Integer> getSentenceNumbers() {
-        MutableSortedSet<Integer> sentenceNos = this.getNameMappings().flatCollect(nm -> nm.getWords().collect(Word::getSentenceNo)).toSortedSet();
+        MutableSortedSet<Integer> sentenceNos = this.getNameMappings().flatCollect(nm -> nm.getWords().collect(Word::getSentenceNumber)).toSortedSet();
         return sentenceNos.toImmutableSortedSet();
     }
 

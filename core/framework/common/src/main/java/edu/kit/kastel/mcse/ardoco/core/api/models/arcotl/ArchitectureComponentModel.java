@@ -12,14 +12,28 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
+/**
+ * Represents a model containing only architecture components.
+ * Provides access to architecture components and their type identifiers.
+ */
 public final class ArchitectureComponentModel extends Model {
 
     private final ArchitectureModel architectureModel;
 
+    /**
+     * Creates a new ArchitectureComponentModel.
+     *
+     * @param architectureModel the architecture model
+     */
     public ArchitectureComponentModel(ArchitectureModel architectureModel) {
         this.architectureModel = Objects.requireNonNull(architectureModel);
     }
 
+    /**
+     * Returns the architecture components in this model.
+     *
+     * @return list of architecture components
+     */
     @Override
     public List<ArchitectureComponent> getContent() {
         List<ArchitectureComponent> entities = new ArrayList<>();
@@ -31,16 +45,31 @@ public final class ArchitectureComponentModel extends Model {
         return entities;
     }
 
+    /**
+     * Returns the endpoints of this model.
+     *
+     * @return list of model entities
+     */
     @Override
     public List<? extends ModelEntity> getEndpoints() {
         return this.getContent();
     }
 
+    /**
+     * Returns the metamodel of this model.
+     *
+     * @return the metamodel
+     */
     @Override
     public Metamodel getMetamodel() {
         return Metamodel.ARCHITECTURE_ONLY_COMPONENTS;
     }
 
+    /**
+     * Returns the type identifiers of the architecture components in this model.
+     *
+     * @return sorted set of type identifiers
+     */
     @Override
     public SortedSet<String> getTypeIdentifiers() {
         SortedSet<String> identifiers = new TreeSet<>();

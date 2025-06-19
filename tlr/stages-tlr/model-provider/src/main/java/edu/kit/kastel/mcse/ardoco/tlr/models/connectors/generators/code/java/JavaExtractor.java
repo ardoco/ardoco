@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 
 /**
- * An extractor for Java. Extracts a CMTL instance.
+ * Extractor for Java code. Extracts a CMTL instance.
  */
 @Deterministic
 public final class JavaExtractor extends CodeExtractor {
@@ -34,12 +34,19 @@ public final class JavaExtractor extends CodeExtractor {
 
     private CodeModel codeModel;
 
+    /**
+     * Creates a new JavaExtractor instance.
+     *
+     * @param codeItemRepository the code item repository
+     * @param path               the path to the code
+     * @param metamodelToExtract the metamodel to extract
+     */
     public JavaExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
     }
 
     /**
-     * Extracts a code model, i.e. an CMTL instance, from Java code.
+     * Extracts a code model, i.e. a CMTL instance, from Java code.
      *
      * @return the extracted code model
      */

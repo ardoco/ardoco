@@ -94,6 +94,14 @@ public class TestUtil {
         return String.format(Locale.ENGLISH, "%n%s:%n%s", name, results);
     }
 
+    /**
+     * Logs extended results as a row format using the provided logger.
+     *
+     * @param logger    the logger to use
+     * @param headerVal the header value
+     * @param headerKey the header key
+     * @param results   the results to log
+     */
     public static void logExtendedResultsAsRow(Logger logger, String headerVal, String headerKey, EvaluationResults<?> results) {
         var txt = String.format("%n%s", results.toRow(headerVal, headerKey));
         logger.info(txt);
@@ -117,6 +125,15 @@ public class TestUtil {
         logger.info(logString);
     }
 
+    /**
+     * Logs extended results with expected results comparison using the provided logger.
+     *
+     * @param logger          the logger to use
+     * @param testClass       the test class object
+     * @param name            the name to show in the output
+     * @param results         the results to log
+     * @param expectedResults the expected results for comparison
+     */
     public static void logExtendedResultsWithExpected(Logger logger, Object testClass, String name, EvaluationResults<?> results,
             ExpectedResults expectedResults) {
         var infoString = String.format(Locale.ENGLISH, """

@@ -1,6 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -10,8 +11,12 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 
+/**
+ * Implementation of an architecture entity, representing a concrete instance in the architecture model.
+ */
 public class ArchitectureEntityImpl extends ArchitectureEntity {
 
+    @Serial
     private static final long serialVersionUID = 9185325416212743266L;
 
     private final String fullName;
@@ -23,9 +28,9 @@ public class ArchitectureEntityImpl extends ArchitectureEntity {
     /**
      * Creates a new instance.
      *
-     * @param name name of the instance.
-     * @param type type of the instance.
-     * @param uid  unique identifier of the instance needed for trace linking.
+     * @param name name of the instance
+     * @param type type of the instance
+     * @param uid  unique identifier of the instance needed for trace linking
      */
     public ArchitectureEntityImpl(String name, String type, String uid) {
         super(name, uid);
@@ -46,41 +51,21 @@ public class ArchitectureEntityImpl extends ArchitectureEntity {
         this.fullType = type;
     }
 
-    /**
-     * Returns the longest name of the instance.
-     *
-     * @return the original name of the instance
-     */
     @Override
     public String getName() {
         return this.fullName;
     }
 
-    /**
-     * Returns the longest type of the instance.
-     *
-     * @return the original type of the instance
-     */
     @Override
     public Optional<String> getType() {
         return Optional.of(this.fullType);
     }
 
-    /**
-     * Returns all type parts of the instance.
-     *
-     * @return all type parts of the instance as list
-     */
     @Override
     public Optional<ImmutableList<String>> getTypeParts() {
         return Optional.of(this.types.toImmutable());
     }
 
-    /**
-     * Returns the unique identifier of the instance.
-     *
-     * @return the unique identifier of the instance
-     */
     @Override
     public String getId() {
         return this.uid;

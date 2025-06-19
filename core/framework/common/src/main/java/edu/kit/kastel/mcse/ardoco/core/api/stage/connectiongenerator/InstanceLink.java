@@ -21,17 +21,17 @@ import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * An InstanceLink defines a link between an {@link RecommendedInstance} and an {@link ModelEntity}.
+ * Defines a link between a {@link RecommendedInstance} and a {@link ModelEntity}.
  */
 @Deterministic
-public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
+public final class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
 
     @Serial
     private static final long serialVersionUID = -8630933950725516269L;
     private final Confidence confidence;
 
     /**
-     * Create a new instance link
+     * Create a new instance link.
      *
      * @param textualInstance the recommended instance
      * @param entity          the model instance
@@ -42,7 +42,7 @@ public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
     }
 
     /**
-     * Creates a new instance link.
+     * Creates a new instance link with a claimant and probability.
      *
      * @param textualInstance the recommended instance
      * @param entity          the model instance
@@ -57,7 +57,7 @@ public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
     /**
      * Add confidence to this link.
      *
-     * @param claimant   the claimant that wants to change the confidence
+     * @param claimant   the claimant
      * @param confidence the confidence value to add
      */
     public final void addConfidence(Claimant claimant, double confidence) {
@@ -73,6 +73,11 @@ public class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
         return this.confidence.getConfidence();
     }
 
+    /**
+     * Returns a string representation of this instance link.
+     *
+     * @return string representation
+     */
     @Override
     public String toString() {
         Set<String> names = new LinkedHashSet<>();

@@ -16,12 +16,12 @@ import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * The Interface for strategies for the text state. Responsible for creating {@link NounMapping NounMappings} from their constituent parts in a variety of
+ * Interface for strategies for the text state. Responsible for creating {@link NounMapping NounMappings} from their constituent parts in a variety of
  * situations.
  */
 public interface TextStateStrategy {
     /**
-     * Aggregation function used to aggregate multiple confidences into a single value
+     * Aggregation function used to aggregate multiple confidences into a single value.
      */
     AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
 
@@ -30,7 +30,9 @@ public interface TextStateStrategy {
      *
      * @param word        word of the mapping
      * @param kind        the kind of the mapping
+     * @param claimant    the claimant of the mapping
      * @param probability probability to be a name mapping
+     * @return the resulting noun mapping
      */
     default NounMapping addNounMapping(Word word, MappingKind kind, Claimant claimant, double probability) {
         return this.addNounMapping(word, kind, claimant, probability, Lists.immutable.with(word.getText()));
@@ -46,7 +48,6 @@ public interface TextStateStrategy {
      * @param surfaceForms the surface forms
      * @return the resulting noun mapping, either new or merged
      */
-
     NounMapping addNounMapping(Word word, MappingKind kind, Claimant claimant, double probability, ImmutableList<String> surfaceForms);
 
     /**
@@ -59,7 +60,6 @@ public interface TextStateStrategy {
      * @param reference      a joined reference string
      * @return the new or merged mapping
      */
-
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms, String reference);
 
@@ -75,7 +75,6 @@ public interface TextStateStrategy {
      * @param reference      a joined reference string
      * @return the new or merged mapping
      */
-
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms, String reference);
 
@@ -91,7 +90,6 @@ public interface TextStateStrategy {
      * @param probability       the probability
      * @return the merged noun mapping
      */
-
     NounMapping mergeNounMappingsStateless(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords, String reference,
             MappingKind mappingKind, Claimant claimant, double probability);
 
@@ -107,7 +105,6 @@ public interface TextStateStrategy {
      * @param probability       the probability
      * @return the merged noun mapping
      */
-
     NounMapping mergeNounMappings(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords, String reference,
             MappingKind mappingKind, Claimant claimant, double probability);
 
@@ -120,7 +117,7 @@ public interface TextStateStrategy {
     default String calculateNounMappingReference(ImmutableList<Word> referenceWords) {
         StringBuilder refBuilder = new StringBuilder();
         referenceWords.toSortedListBy(Word::getPosition);
-        referenceWords.toSortedListBy(Word::getSentenceNo);
+        referenceWords.toSortedListBy(Word::getSentenceNumber);
 
         for (int i = 0; i < referenceWords.size() - 1; i++) {
             refBuilder.append(referenceWords.get(i).getText()).append(" ");
@@ -129,9 +126,24 @@ public interface TextStateStrategy {
         return refBuilder.toString();
     }
 
+    /**
+     * Merges phrase mappings and noun mappings into the state.
+     *
+     * @param phraseMapping        the phrase mapping
+     * @param similarPhraseMapping the similar phrase mapping
+     * @param similarNounMappings  the similar noun mappings
+     * @param claimant             the claimant
+     */
     void mergePhraseMappingsAndNounMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping,
             MutableList<Pair<NounMapping, NounMapping>> similarNounMappings, Claimant claimant);
 
+    /**
+     * Merges two noun mappings into the state.
+     *
+     * @param nounMapping               the noun mapping
+     * @param textuallyEqualNounMapping the textually equal noun mapping
+     * @param claimant                  the claimant
+     */
     void mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant);
 
 }
