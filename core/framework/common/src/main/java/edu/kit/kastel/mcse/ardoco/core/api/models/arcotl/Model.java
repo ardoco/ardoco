@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
  * Abstract base class for all models.
  * Provides unique ID and access to content, endpoints, metamodel, and type identifiers.
  */
-public abstract sealed class Model permits ArchitectureModel, ArchitectureComponentModel, CodeModel {
+public abstract sealed class Model permits ArchitectureModel, CodeModel {
 
     private final String id = IdentifierProvider.createId();
 

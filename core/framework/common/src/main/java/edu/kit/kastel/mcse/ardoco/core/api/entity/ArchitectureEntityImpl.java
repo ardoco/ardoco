@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 /**
  * Implementation of an architecture entity, representing a concrete instance in the architecture model.
  */
-public class ArchitectureEntityImpl extends ArchitectureEntity {
+public final class ArchitectureEntityImpl extends ArchitectureEntity {
 
     @Serial
     private static final long serialVersionUID = 9185325416212743266L;

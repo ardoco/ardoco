@@ -10,7 +10,8 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModelWithComponentsAndInterfaces;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -24,18 +25,16 @@ public class HoldBackArCoTLModelProvider {
 
     private final File inputArchitectureModel;
     private int currentHoldBackIndex = -1;
-    private final ArchitectureModel initialModel;
+    private final ArchitectureComponentModel initialModel;
     private final ImmutableList<ArchitectureComponent> components;
 
     public HoldBackArCoTLModelProvider(File inputArchitectureModel) {
         this.inputArchitectureModel = inputArchitectureModel;
         var model = this.getExtractor().extractModel();
-        assert model instanceof ArchitectureModel;
-        this.initialModel = (ArchitectureModel) model;
-        this.components = Lists.immutable.fromStream(this.initialModel.getContent()
-                .stream()
-                .filter(ArchitectureComponent.class::isInstance)
-                .map(it -> (ArchitectureComponent) it));
+        assert model instanceof ArchitectureComponentModel;
+        this.initialModel = (ArchitectureComponentModel) model;
+        this.components = Lists.immutable.ofAll(this.initialModel.getContent());
+
     }
 
     private Extractor getExtractor() {
@@ -80,7 +79,7 @@ public class HoldBackArCoTLModelProvider {
                 var elements = new ArrayList<>(HoldBackArCoTLModelProvider.this.initialModel.getContent());
                 var elementToRemove = HoldBackArCoTLModelProvider.this.getCurrentHoldBack();
                 elements.remove(elementToRemove);
-                return new ArchitectureModel(elements);
+                return new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>(elements)));
             }
         })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
 

@@ -8,7 +8,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModelWithComponentsAndInterfaces;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
@@ -41,15 +43,17 @@ public final class UmlExtractor extends ArchitectureExtractor {
         List<ArchitectureInterface> interfaces = extractInterfaces(originalModel);
         List<ArchitectureComponent> components = extractComponents(originalModel, interfaces);
         List<ArchitectureItem> endpoints = new ArrayList<>();
-        switch (metamodelToExtract) {
-            case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> {
-                endpoints.addAll(interfaces);
-                endpoints.addAll(components);
-            }
-            case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> endpoints.addAll(components);
+        endpoints.addAll(interfaces);
+        endpoints.addAll(components);
+
+        ArchitectureModel architectureModelWithComponentsAndInterfaces = new ArchitectureModelWithComponentsAndInterfaces(endpoints);
+        ArchitectureModel architectureComponentModel = new ArchitectureComponentModel(architectureModelWithComponentsAndInterfaces);
+
+        return switch (metamodelToExtract) {
+            case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> architectureModelWithComponentsAndInterfaces;
+            case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> architectureComponentModel;
             default -> throw new IllegalArgumentException("Unsupported metamodel: " + metamodelToExtract);
-        }
-        return new ArchitectureModel(endpoints);
+        };
     }
 
     private static List<ArchitectureInterface> extractInterfaces(UmlModel originalModel) {
