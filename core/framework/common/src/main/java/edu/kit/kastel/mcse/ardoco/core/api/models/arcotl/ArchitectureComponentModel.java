@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
@@ -16,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.Architectu
  * Represents a model containing only architecture components.
  * Provides access to architecture components and their type identifiers.
  */
-public final class ArchitectureComponentModel extends Model {
+public final class ArchitectureComponentModel extends ArchitectureModel {
 
     private final ArchitectureModel architectureModel;
 
@@ -51,7 +50,7 @@ public final class ArchitectureComponentModel extends Model {
      * @return list of model entities
      */
     @Override
-    public List<? extends ModelEntity> getEndpoints() {
+    public List<? extends ArchitectureItem> getEndpoints() {
         return this.getContent();
     }
 
