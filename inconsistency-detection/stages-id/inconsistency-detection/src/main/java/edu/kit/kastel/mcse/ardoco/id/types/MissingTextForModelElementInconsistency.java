@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
+import java.io.Serial;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -12,6 +13,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistenc
 
 public class MissingTextForModelElementInconsistency implements ModelInconsistency {
     private static final String INCONSISTENCY_TYPE_NAME = "MissingTextForModelElement";
+    @Serial
+    private static final long serialVersionUID = 2376071657979892661L;
 
     private final ModelEntity modelEntity;
 

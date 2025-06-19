@@ -81,9 +81,7 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
         SortedSet<String> identifiers = new TreeSet<>();
         for (var codeItem : this.getContent()) {
             var type = codeItem.getType();
-            if (type.isPresent()) {
-                identifiers.add(type.get());
-            }
+            type.ifPresent(identifiers::add);
         }
         return identifiers;
     }

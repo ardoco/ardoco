@@ -53,8 +53,8 @@ public final class InterfaceUnit extends Datatype {
      * @return list of content IDs
      */
     @JsonGetter("content")
-    protected List<String> getContentIds() {
-        return this.content;
+    public List<String> getContentIds() {
+        return new ArrayList<>(this.content);
     }
 
     /**

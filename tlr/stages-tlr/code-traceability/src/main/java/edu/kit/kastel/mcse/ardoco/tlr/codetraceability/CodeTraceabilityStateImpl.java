@@ -1,6 +1,7 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -20,6 +21,8 @@ import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 @Deterministic
 public class CodeTraceabilityStateImpl extends AbstractState implements CodeTraceabilityState {
 
+    @Serial
+    private static final long serialVersionUID = 8036723521626754832L;
     private MutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> samCodeTraceLinks = Lists.mutable.empty();
     private MutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveTraceLinks = Lists.mutable.empty();
 

@@ -1,6 +1,7 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -14,6 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 public class TextImpl implements Text {
+    @Serial
+    private static final long serialVersionUID = 9154125201453994969L;
     private MutableList<Sentence> sentences;
 
     private MutableList<Word> words;

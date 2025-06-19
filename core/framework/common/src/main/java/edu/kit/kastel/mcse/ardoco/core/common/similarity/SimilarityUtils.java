@@ -209,10 +209,7 @@ public final class SimilarityUtils {
     public boolean isWordSimilarToModelInstanceType(Word word, ModelEntity modelEntity) {
 
         Optional<ImmutableList<String>> typeParts = modelEntity.getTypeParts();
-        if (typeParts.isEmpty()) {
-            return false;
-        }
-        return this.compareWordWithStringListEntries(word, typeParts.get());
+        return typeParts.filter(strings -> this.compareWordWithStringListEntries(word, strings)).isPresent();
     }
 
     private boolean compareWordWithStringListEntries(Word word, ImmutableList<String> names) {

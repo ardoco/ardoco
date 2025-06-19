@@ -1,6 +1,7 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,8 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 public final class RecommendedInstanceImpl extends RecommendedInstance implements Claimant {
 
     private static final AggregationFunctions GLOBAL_AGGREGATOR = AggregationFunctions.AVERAGE;
+    @Serial
+    private static final long serialVersionUID = -8664363203506956742L;
     /**
      * Meaning (Weights): <br/> 0,-1,1 => Balanced <br/> 2 => InternalConfidence: 2 / mappingConfidence: 1<br/> -2 => InternalConfidence: 1 / mappingConfidence:
      * 2<br/> ...

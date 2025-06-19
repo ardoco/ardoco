@@ -1,6 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
+import java.io.Serial;
 import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
@@ -13,6 +14,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
  */
 public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEntity> {
 
+    @Serial
+    private static final long serialVersionUID = 8946290400185965394L;
     private final Sentence sentence;
     private final ModelEntity modelEntity;
 
