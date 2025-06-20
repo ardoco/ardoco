@@ -9,11 +9,13 @@ import java.util.TreeSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
  * Code model with compilation units and packages.
  * Provides endpoints and type identifiers for code items.
  */
+@Deterministic
 public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
     private final CodeModelWithOnlyCompilationUnits codeModel;
 
