@@ -1,6 +1,8 @@
 [
   {
     "modelProvider": "VDL",
-    "modelTemperature": 0.3
+    "model": "phi-4 oder so",
+    "modelTemperature": 0.3,
+    "testProject": "ALL"
   }
 ]

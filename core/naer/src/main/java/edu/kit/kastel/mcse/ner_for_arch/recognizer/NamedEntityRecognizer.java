@@ -1,16 +1,16 @@
-package recognizer;
+package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 
 import dev.langchain4j.model.chat.ChatModel;
-import model.NamedEntity;
-import model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ner_for_arch.serialization.NamedEntityParser;
+import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import serialization.NamedEntityParser;
-import util.ChatModelBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -106,7 +106,7 @@ public class NamedEntityRecognizer {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
         private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
-        private ChatModel chatModel = ChatModelBuilder.buildChatModelVDL(); // default value
+        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.VDL).build(); // default value
         private String prompt = EXAMPLE_PROMPT;                             // default value
 
         /**
@@ -122,7 +122,7 @@ public class NamedEntityRecognizer {
          * Creates a builder using a provided text as the SAD.
          *
          * <p>
-         * Note: If this constructor is used, {@link SoftwareArchitectureDocumentation#getFilePath()}{@code == }{@link Optional#empty()}
+         * Note: If this constructor is used, {@link SoftwareArchitectureDocumentation#getFilePath()}{@code == null}
          * </p>
          *
          * @param sadText the SAD as plain text
@@ -168,7 +168,7 @@ public class NamedEntityRecognizer {
          *
          * <p>
          * default values (if not explicitly configured differently): <br>
-         * {@link NamedEntityRecognizer#chatModel} = {@link ChatModelBuilder#buildChatModelVDL()} <br>
+         * {@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel} <br>
          * {@link NamedEntityRecognizer#prompt} = {@value #EXAMPLE_PROMPT}
          * </p>
          *

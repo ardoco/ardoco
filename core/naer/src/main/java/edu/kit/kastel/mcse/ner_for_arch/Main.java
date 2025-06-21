@@ -1,7 +1,9 @@
-import model.NamedEntity;
+package edu.kit.kastel.mcse.ner_for_arch;
+
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import recognizer.NamedEntityRecognizer;
+import edu.kit.kastel.mcse.ner_for_arch.recognizer.NamedEntityRecognizer;
 
 import java.nio.file.Path;
 import java.util.Set;

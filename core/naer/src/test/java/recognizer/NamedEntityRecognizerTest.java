@@ -3,12 +3,14 @@ package recognizer;
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.recognizer.NamedEntityRecognizer;
+import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ChatModelBuilder;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -29,7 +31,7 @@ class NamedEntityRecognizerTest {
     void evaluateComponentRecognitionVDL() {
         logger.info("Evaluating component recognition (using VDL model) ...");
 
-        ChatModel model = ChatModelBuilder.buildChatModelVDL();
+        ChatModel model = ChatModelFactory.withProvider(ModelProvider.VDL).build();
 
         evaluateAllTestProjects(model);
     }
@@ -88,7 +90,9 @@ class NamedEntityRecognizerTest {
         //use ArDoCo ClassificationMetricsCalculator to calculate metrics
         ClassificationMetricsCalculator calculator = ClassificationMetricsCalculator.getInstance();
         SingleClassificationResult<SimpleComponentOccurrence> result = calculator.calculateMetrics(componentsOccurrences, groundTruthOccurrences, null);
-        logger.info("Precision= {}; Recall={}; F1-Score={}", result.getPrecision(), result.getRecall(), result.getF1());
+        result.prettyPrint();
+        logger.info("Recognized Components: {}", components);
+        logger.info("--------------------------------------------------------------------------------------------------");
     }
 
     //todo javadoc Erklärung: "findet matching components und changed bei beiden den name auf den matchingName (damit metric calc es checkt)"
@@ -124,7 +128,7 @@ class NamedEntityRecognizerTest {
     public void evaluateComponentRecognitionOpenAI() {
         logger.info("Evaluating component recognition with OpenAI model...");
 
-        ChatModel model = ChatModelBuilder.buildChatModelOpenAI();
+        ChatModel model = ChatModelFactory.withProvider(ModelProvider.OPEN_AI).modelName("todo").build();
 
         evaluateAllTestProjects(model);
     }

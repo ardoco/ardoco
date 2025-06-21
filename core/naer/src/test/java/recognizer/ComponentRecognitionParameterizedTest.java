@@ -8,8 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ChatModelFactory;
-import util.ModelProvider;
+import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 
 import java.io.InputStream;
 import java.util.List;

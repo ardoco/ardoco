@@ -1,12 +1,12 @@
-package serialization;
+package edu.kit.kastel.mcse.ner_for_arch.serialization;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.NamedEntity;
-import model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
 
 import java.io.IOException;
 import java.util.HashSet;

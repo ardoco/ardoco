@@ -1,4 +1,4 @@
-package model;
+package edu.kit.kastel.mcse.ner_for_arch.model;
 
 /**
  * Indicates how a {@link NamedEntity} is referenced in a sentence.

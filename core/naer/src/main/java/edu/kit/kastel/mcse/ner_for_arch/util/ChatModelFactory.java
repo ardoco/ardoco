@@ -1,4 +1,4 @@
-package util;
+package edu.kit.kastel.mcse.ner_for_arch.util;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
@@ -8,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
-//TODO das benutzen (ChatModelBuilder ist dann deprecated)) + javadoc
+//TODO javadoc + args checken und exceptions
 public class ChatModelFactory {
     private ModelProvider provider;
-    private double temperature = 0.0;
-    private String modelName = "phi4:latest";
+    private double temperature = 0.0; //default
+    private String modelName = null;
 
     public static ChatModelFactory withProvider(ModelProvider provider) {
         ChatModelFactory factory = new ChatModelFactory();
@@ -34,9 +34,18 @@ public class ChatModelFactory {
 
     public ChatModel build() {
         return switch (provider) {
-            case OPEN_AI -> buildOpenAiModel();
-            case LOCAL -> buildLocalModel();
-            case VDL -> buildVdlModel();
+            case OPEN_AI -> {
+                //most coste efficient models: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
+                if (modelName == null) modelName = "gpt-4.1-nano"; //default
+                yield buildOpenAiModel();
+            }
+            case LOCAL -> {
+                yield buildLocalModel();
+            }
+            case VDL -> {
+                if (modelName == null) modelName = "phi4:latest"; //default
+                yield buildVdlModel();
+            }
         };
     }
 

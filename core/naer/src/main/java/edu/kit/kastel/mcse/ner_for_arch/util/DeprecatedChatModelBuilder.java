@@ -1,22 +1,22 @@
-package util;
+package edu.kit.kastel.mcse.ner_for_arch.util;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 
 /**
  * Utility class for building ChatModel instances using different backends and configurations.
  */
-public class ChatModelBuilder {
+public class DeprecatedChatModelBuilder { //TODO delete (after writing javadoc for the factory) because its depricated
     public static ChatModel buildChatModelVDL() {
         return buildChatModelVDL(0.0, "phi4:latest");//andere models testen evtl.
     }
 
-    //TODO add arg checking and exceptions
 
     /**
      * Builds a langchain4j chat model for the SDQ Virtual Design Lab (VDL) Server, which hosts an ollama instance. (<a href="https://sdq.kastel.kit.edu/wiki/Virtual_Design_Lab_Server">website</a>)
@@ -57,6 +57,7 @@ public class ChatModelBuilder {
                 .apiKey(apiKey)
                 .modelName(modelName)
                 .temperature(temperature)
+                .timeout(Duration.ofSeconds(120))
                 .build();
         return model;
     }

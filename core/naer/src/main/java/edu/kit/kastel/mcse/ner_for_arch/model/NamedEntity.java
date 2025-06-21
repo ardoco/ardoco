@@ -1,4 +1,4 @@
-package model;
+package edu.kit.kastel.mcse.ner_for_arch.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
+//TODO package struktur mit edu.kit...
 
 /**
  * Represents a named entity.

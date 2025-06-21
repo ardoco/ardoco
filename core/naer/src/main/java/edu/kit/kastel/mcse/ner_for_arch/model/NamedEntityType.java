@@ -1,4 +1,4 @@
-package model;
+package edu.kit.kastel.mcse.ner_for_arch.model;
 
 /**
  * Represents the type of a {@link NamedEntity}.

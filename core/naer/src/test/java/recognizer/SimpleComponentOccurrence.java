@@ -1,6 +1,6 @@
 package recognizer;
 
-import model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -4,7 +4,8 @@ package recognizer;
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.recognizer.NamedEntityRecognizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

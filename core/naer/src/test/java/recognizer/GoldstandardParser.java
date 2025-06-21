@@ -1,9 +1,8 @@
 package recognizer;
 
-import model.NamedEntity;
-import model.NamedEntityReferenceType;
-import model.NamedEntityType;
-import org.apache.jena.base.Sys;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
