@@ -10,74 +10,66 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * todo: überall schön javadoc und erklären wie es zu verwenden ist und dass das hier main interface of the library is
+ * The main interface of the library for recognizing named entities in software architecture documentations.
+ * <p>The recognizer uses a default prompt and VDL {@link ModelProvider} if not specified otherwise.</p>
  */
 public class NamedEntityRecognizer {
-    private static final String EXAMPLE_PROMPT = """
-            You are an experienced software engineer with expertise in software architecture analysis.
-            Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.
-            
-            For each component, output a JSON object containing:
-            - "name": the primary name of the component (use the most descriptive name).
-            - "type": "COMPONENT"
-            - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-            - "occurrences": a list of objects each with:
-                - "line": the line number of the occurrence (starting from 1),
-                - "referenceType": "DIRECT" or "INDIRECT".
-            
-            Instructions:
-            - Use the exact casing of the component as it appears in the text.
-            - Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).
-            - Only include components that are relevant architectural elements.
-            - If a component appears in multiple lines, list all occurrences.
-            - A reference where the name or one of the alternative names is in the sentence is called DIRECT. Otherwise it is called INDIRECT.
-            - Only return a JSON array of component objects, nothing else.
-            
-            Example (for a single component):
-            {
-                "name": "Database",
-                "type": "COMPONENT"
-                "alternativeNames": ["UserDatabase", "DB"],
-                "occurrences": [
-                    {"line": 1, "referenceType": "DIRECT"},
-                    {"line": 3, "referenceType": "INDIRECT"},
-                    {"line": 8, "referenceType": "DIRECT"},
-                    {"line": 11, "referenceType": "INDIRECT"}
-                ]
-            }
-            
-            Output should be a JSON array, like:
-            [
-                {
-                    "name": "...",
-                    "type": "COMPONENT",
-                    "alternativeNames": [...],
-                    "occurrences": [
-                        {"line": ..., "referenceType": "..."},
-                        ...
-                    ]
-                },
-                ...
-            ]
-            
-            """;
-    private final Logger logger = LoggerFactory.getLogger(NamedEntityRecognizer.class);
+    private static final Logger logger = LoggerFactory.getLogger(NamedEntityRecognizer.class);
+    private static final String EXAMPLE_PROMPT = loadPromptFromResources("component_recognition_prompt.txt");
+    /**
+     * The chat model used to process the SAD
+     */
     private final ChatModel chatModel;
+    /**
+     * The prompt that instructs the chat model on how to identify named entities
+     */
     private final String prompt;
+    /**
+     * The software architecture documentation (SAD) to analyze
+     */
     private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
 
+    /**
+     * Private constructor used by the Builder to create a NamedEntityRecognizer instance.
+     *
+     * @param builder the Builder instance containing the configured parameters
+     */
     private NamedEntityRecognizer(Builder builder) {
         this.chatModel = builder.chatModel;
         this.prompt = builder.prompt;
         this.softwareArchitectureDocumentation = builder.softwareArchitectureDocumentation;
     }
 
+    private static String loadPromptFromResources(String path) {
+        try (InputStream is = NamedEntityRecognizer.class.getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                logger.error("could not load resource '{}'", path);
+                throw new IllegalStateException("Could not find resource: " + path);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            logger.error("could not load prompt from resources '{}'", path);
+            throw new IllegalStateException("Could not load prompt from resources", e);
+        }
+    }
+
+    /**
+     * Recognizes {@link NamedEntity} instances in the given {@link NamedEntityRecognizer#softwareArchitectureDocumentation}.
+     * <p>
+     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
+     * </p>
+     *
+     * @return a set of recognized named entities
+     */
     public Set<NamedEntity> recognize() {
         //call LLM
+        logger.info("calling LLM...");
         String answer = chatModel.chat(prompt + "\nText:\n" + softwareArchitectureDocumentation.getText());
 
         //remove text before and after JSON array (some LLMs create this text)
@@ -91,8 +83,11 @@ public class NamedEntityRecognizer {
         }
 
         //parse JSON array to the set of named entities
+        logger.info("parsing LLM response to Java objects...");
         try {
-            return NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
+            Set<NamedEntity> result = NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
+            logger.info("successfully finished and found {} named entities", result.size());
+            return result;
         } catch (IOException e) {
             logger.error("error parsing LLM output to named entities");
             throw new RuntimeException(e);
@@ -145,8 +140,14 @@ public class NamedEntityRecognizer {
 
         /**
          * Sets the prompt that will be provided to the chat model.
+         * <p>
+         *     todo details for what needs to be in the prompt
+         * </p>
+         * <p>
+         * If not specified, a default prompt will be used.
+         * </p>
          *
-         * @param prompt the prompt text, must not be {@code null} or blank and todo (genaues format spezifizieren was im prompt stehen muss und was nicht) -> evtl so bauen, dass es einen festen prompt für den output gibt und man nur den rest ändert(?)
+         * @param prompt the prompt text
          * @return this builder
          */
         public Builder prompt(String prompt) {
@@ -167,16 +168,17 @@ public class NamedEntityRecognizer {
          * Builds the {@link NamedEntityRecognizer} with the configured settings.
          *
          * <p>
-         * default values (if not explicitly configured differently): <br>
-         * {@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel} <br>
-         * {@link NamedEntityRecognizer#prompt} = {@value #EXAMPLE_PROMPT}
+         * default values (if not explicitly configured differently):
+         * <ul>
+         *     <li>{@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel}</li>
+         *     <li>{@link NamedEntityRecognizer#prompt} = {@link #EXAMPLE_PROMPT}</li>
+         * </ul>
          * </p>
          *
-         * @return a new {@code recognizer.NamedEntityRecognizer}
+         * @return a new {@link NamedEntityRecognizer}
          */
         public NamedEntityRecognizer build() {
             return new NamedEntityRecognizer(this);
         }
     }
-
 }
