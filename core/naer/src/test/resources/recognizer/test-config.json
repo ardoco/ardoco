@@ -1,8 +1,12 @@
 [
   {
-    "modelProvider": "VDL",
-    "model": "phi-4 oder so",
-    "modelTemperature": 0.3,
-    "testProject": "ALL"
+    "modelProvider": "OPEN_AI",
+    "modelTemperature": 0.5,
+    "testProject": "jabref",
+    "promptType": "TWO_PART_PROMPT",
+    "prompt": {
+      "first": "In the following text, which architecturally relevant components are directly named?\nFor each component, provide its name and all alternative names and the line numbers where it appears.\nAlso disclose for each line number of an appearance if the appearance is a direct or an indirect appearance.\nDIRECT -> The name or any alternative name of the component appears in the text (case-insensitive).\nINDIRECT -> The component is referenced indirectly (e.g., via pronouns like \"it\", or via \"this component\").\nBe careful to only name real components and no interfaces or external libraries etc.",
+      "second": "Given the last answer (see below), for each component, output a JSON object containing:\n- \"name\": the primary name of the component.\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative names.\n- \"occurrences\": a list of objects each with:\n    - \"line\": the line number of the occurrence (starting from 1),\n    - \"referenceType\": \"DIRECT\" or \"INDIRECT\".\n\nExample (for a single component):\n{\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\"\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [\n        {\"line\": 1, \"referenceType\": \"DIRECT\"},\n        {\"line\": 3, \"referenceType\": \"INDIRECT\"},\n        {\"line\": 8, \"referenceType\": \"DIRECT\"},\n        {\"line\": 11, \"referenceType\": \"INDIRECT\"}\n    ]\n}\n\nOutput should be a JSON array, like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [\n            {\"line\": ..., \"referenceType\": \"...\"},\n            ...\n        ]\n    },\n    ...\n]"
+    }
   }
 ]

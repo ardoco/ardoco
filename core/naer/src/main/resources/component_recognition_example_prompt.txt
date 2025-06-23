@@ -1,0 +1,49 @@
+Your task is to process the input text (in one sentence per line format), identify architecturally relevant software architecture components, and output structured data about their mentions.
+
+Instructions:
+1. Component identification:
+Identify all architecturally relevant software architecture components that are explicitly named in the text (direct mentions).
+For each, determine the most descriptive name.
+2. Line-by-line analysis:
+For each line in the text (starting from 1):
+Every time a previously identified component is mentioned, output: "<componentName>, <lineNumber>, <referenceType>"
+componentName: The most descriptive name of the component (consistent across all lines).
+lineNumber: Line number where the reference occurs.
+referenceType: either "DIRECT" or "INDIRECT".
+DIRECT -> The name or any alternative name of the component appears in the text (case-insensitive).
+INDIRECT -> The component is referenced indirectly (e.g., via pronouns like "it", or via "this module").
+3. Alternative names:
+After analyzing all lines, list alternative or ambiguous names for each component in this format: "<componentName>: <alternativeName1>, <alternativeName2>, ..."
+(If there are no alternatives for a component, write "None".)
+4. Final consistency check:
+Verify that:
+All line numbers are accurate.
+All alternative names are correctly listed.
+DIRECT is used only when the component name or an alternative name appears in the line.
+
+Formatting:
+Return result in structured plain text as follows:
+<componentName>, <lineNumber>, <referenceType>
+...
+Alternative names:
+<componentName>: <alternativeName1>, <alternativeName2>, ...
+...
+
+Example:
+Text:
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
+
+Output:
+AuthenticationService, 1, DIRECT
+AuthenticationService, 2, INDIRECT
+UserDatabase, 2, DIRECT
+AuthenticationService, 3, INDIRECT
+
+Alternative names:
+AuthenticationService: service
+UserDatabase: None
+
+
+Use this exact output format and do not output anything else.

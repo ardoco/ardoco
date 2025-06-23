@@ -6,6 +6,8 @@ import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ner_for_arch.recognizer.NamedEntityRecognizer;
+import edu.kit.kastel.mcse.ner_for_arch.recognizer.PromptType;
+import kotlin.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
     private final ChatModel model;
+    private final Pair<String, String> prompt;
+    private final PromptType promptType;
 
-    public TestProjectEvaluator(ChatModel model) {
+    public TestProjectEvaluator(ChatModel model, Pair<String, String> prompt, PromptType promptType) {
         this.model = model;
+        this.prompt = prompt;
+        this.promptType = promptType;
     }
 
     public void evaluate(ComponentRecognitionParameterizedTest.TestProject project) {
@@ -41,7 +47,7 @@ public class TestProjectEvaluator {
         Stream<Path> testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
 
         testProjectDirs.filter(Files::isDirectory)
-                .forEach(dir -> evaluateProjectInDirectory(dir));
+                .forEach(dir -> assertDoesNotThrow(() -> evaluateProjectInDirectory(dir)));
     }
 
     private void evaluateSingle(ComponentRecognitionParameterizedTest.TestProject project) {
@@ -49,7 +55,7 @@ public class TestProjectEvaluator {
         Path projectDir = evalResourcesPath.resolve(project.name().toLowerCase());
         assertTrue(Files.exists(projectDir), "Test project directory does not exist: " + projectDir);
 
-        evaluateProjectInDirectory(projectDir);
+        assertDoesNotThrow(() -> evaluateProjectInDirectory(projectDir));
     }
 
     private Path getEvaluationResourcesPath() {
@@ -64,7 +70,7 @@ public class TestProjectEvaluator {
         Path goldstandardFile = findGoldstandardFile(dir);
         Path sadFile = findSadFile(dir);
 
-        NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(sadFile).chatModel(model).build();
+        NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(sadFile).chatModel(model).prompt(prompt).promptType(promptType).build();
 
         Set<NamedEntity> components = recognizer.recognize();
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));
@@ -107,7 +113,8 @@ public class TestProjectEvaluator {
         ClassificationMetricsCalculator calculator = ClassificationMetricsCalculator.getInstance();
         SingleClassificationResult<SimpleComponentOccurrence> result = calculator.calculateMetrics(componentsOccurrences, groundTruthOccurrences, null);
 
-        logger.info("Precision = {}; Recall = {}; F1-Score = {}", result.getPrecision(), result.getRecall(), result.getF1());
+        //logger.info("Precision = {}; Recall = {}; F1-Score = {}", result.getPrecision(), result.getRecall(), result.getF1());
+        result.prettyPrint();
     }
 
     //todo javadoc Erklärung: "findet matching components und changed bei beiden den name auf den matchingName (damit metric calc es checkt)"

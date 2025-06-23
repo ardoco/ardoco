@@ -43,30 +43,32 @@ class NamedEntityRecognizerTest {
         Stream<Path> testProjectPaths = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
 
         testProjectPaths.filter(Files::isDirectory).forEach(dir -> {
-            //search goldstandard file
-            Path goldstandardFilePath = assertDoesNotThrow(() ->
-                    Files.list(dir.resolve("goldstandards"))
-                            .filter(p -> p.getFileName().toString().contains("goldstandard_NER.csv"))
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("No goldstandard file"))
-            );
+            assertDoesNotThrow(() -> {
+                //search goldstandard file
+                Path goldstandardFilePath = assertDoesNotThrow(() ->
+                        Files.list(dir.resolve("goldstandards"))
+                                .filter(p -> p.getFileName().toString().contains("goldstandard_NER.csv"))
+                                .findFirst()
+                                .orElseThrow(() -> new RuntimeException("No goldstandard file"))
+                );
 
-            //search SAD file
-            Path sadDirPath = assertDoesNotThrow(() ->
-                    Files.list(dir)
-                            .filter(Files::isDirectory)
-                            .filter(p -> p.getFileName().toString().contains("text_"))
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("No SAD subdir in " + dir))
-            );
-            Path sadFilePath = assertDoesNotThrow(() ->
-                    Files.list(sadDirPath)
-                            .filter(p -> p.getFileName().toString().endsWith("_1SentPerLine.txt"))
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("No SAD file in " + sadDirPath))
-            );
+                //search SAD file
+                Path sadDirPath = assertDoesNotThrow(() ->
+                        Files.list(dir)
+                                .filter(Files::isDirectory)
+                                .filter(p -> p.getFileName().toString().contains("text_"))
+                                .findFirst()
+                                .orElseThrow(() -> new RuntimeException("No SAD subdir in " + dir))
+                );
+                Path sadFilePath = assertDoesNotThrow(() ->
+                        Files.list(sadDirPath)
+                                .filter(p -> p.getFileName().toString().endsWith("_1SentPerLine.txt"))
+                                .findFirst()
+                                .orElseThrow(() -> new RuntimeException("No SAD file in " + sadDirPath))
+                );
 
-            evaluateSingleTestProject(dir, model, sadFilePath, goldstandardFilePath);
+                evaluateSingleTestProject(dir, model, sadFilePath, goldstandardFilePath);
+            });
         });
     }
 
@@ -128,7 +130,7 @@ class NamedEntityRecognizerTest {
     public void evaluateComponentRecognitionOpenAI() {
         logger.info("Evaluating component recognition with OpenAI model...");
 
-        ChatModel model = ChatModelFactory.withProvider(ModelProvider.OPEN_AI).modelName("todo").build();
+        ChatModel model = ChatModelFactory.withProvider(ModelProvider.OPEN_AI).build();
 
         evaluateAllTestProjects(model);
     }

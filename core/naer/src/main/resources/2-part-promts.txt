@@ -1,0 +1,124 @@
+1:------------
+In the following text, which architecturally relevant components are directly named?
+For each component, provide its name and all alternative names and the line numbers where it appears.
+Also disclose for each line number of an appearance if the appearance is a direct or an indirect appearance.
+DIRECT -> The name or any alternative name of the component appears in the text (case-insensitive).
+INDIRECT -> The component is referenced indirectly (e.g., via pronouns like "it", or via "this component").
+
+1:------------
+In the following text, which architecturally relevant components are directly named?
+For each component, provide its name and all alternative names and the line numbers where it appears.
+Also disclose for each line number of an appearance if the appearance is a direct or an indirect appearance.
+DIRECT -> The name or any alternative name of the component appears in the text (case-insensitive).
+INDIRECT -> The component is referenced indirectly (e.g., via pronouns like "it", or via "this component").
+Be careful to only name real components and no interfaces or external libraries etc.
+
+1:------------
+In the following text, identify all architecturally relevant components that are explicitly named.
+
+For each such component:
+1. Provide:
+- The primary name (as it appears in the text)
+- All alternative names or abbreviations found in the text (case-insensitive match)
+
+2. For each appearance:
+- The line number (start counting from 1)
+- Whether the appearance is:
+    DIRECT = The name or any alternative name of the component appears literally in the text (case-insensitive)
+    or
+    INDIRECT = The component is referred to indirectly, e.g., by pronouns ("it", "this component", "such module")
+
+Rules:
+- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+
+1:------------
+In the following text, identify all architecturally relevant components that are explicitly named.
+
+For each such component:
+1. Provide:
+- The primary name (as it appears in the text)
+- All alternative names or abbreviations found in the text (case-insensitive match)
+
+2. For each appearance:
+- The line number (start counting from 1)
+- Whether the appearance is:
+    DIRECT = The name or any alternative name of the component appears literally in the text (case-insensitive)
+    or
+    INDIRECT = The component is referred to indirectly, e.g., by pronouns ("it", "this component", "such module")
+
+Rules:
+- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+
+Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
+
+2:------------
+Given the last answer (see below), for each component, output a JSON object containing:
+- "name": the primary name of the component.
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative names.
+- "occurrences": a list of objects each with:
+    - "line": the line number of the occurrence (starting from 1),
+    - "referenceType": "DIRECT" or "INDIRECT".
+
+Example (for a single component):
+{
+    "name": "Database",
+    "type": "COMPONENT"
+    "alternativeNames": ["UserDatabase", "DB"],
+    "occurrences": [
+        {"line": 1, "referenceType": "DIRECT"},
+        {"line": 3, "referenceType": "INDIRECT"},
+        {"line": 8, "referenceType": "DIRECT"},
+        {"line": 11, "referenceType": "INDIRECT"}
+    ]
+}
+
+Output should be a JSON array, like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [
+            {"line": ..., "referenceType": "..."},
+            ...
+        ]
+    },
+    ...
+]
+
+2:------------
+Given the last answer (see below), transform it into a valid JSON array.
+For each component, output a JSON object containing:
+{
+  "name": "<primary name>",
+  "type": "COMPONENT",
+  "alternativeNames": ["<alt1>", "<alt2>", ...],
+  "occurrences": [
+    { "line": <line number>, "referenceType": "<DIRECT|INDIRECT>" },
+    ...
+  ]
+}
+
+Make sure:
+- The JSON array is syntactically correct.
+- All alternative names are inside an array (even if empty).
+- All occurrences are listed with correct line numbers and "DIRECT" or "INDIRECT" as "referenceType".
+- No extra text - output only the JSON array.
+
+Example for a single component:
+[
+  {
+    "name": "Database",
+    "type": "COMPONENT",
+    "alternativeNames": ["UserDatabase", "DB"],
+    "occurrences": [
+      { "line": 1, "referenceType": "DIRECT" },
+      { "line": 3, "referenceType": "INDIRECT" },
+      { "line": 8, "referenceType": "DIRECT" },
+      { "line": 11, "referenceType": "INDIRECT" }
+    ]
+  }
+]
