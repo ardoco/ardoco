@@ -1,10 +1,9 @@
-package recognizer;
+package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ner_for_arch.recognizer.NamedEntityRecognizer;
 import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 import org.junit.jupiter.api.Disabled;

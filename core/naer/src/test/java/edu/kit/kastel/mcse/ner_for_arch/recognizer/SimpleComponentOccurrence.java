@@ -1,4 +1,4 @@
-package recognizer;
+package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 

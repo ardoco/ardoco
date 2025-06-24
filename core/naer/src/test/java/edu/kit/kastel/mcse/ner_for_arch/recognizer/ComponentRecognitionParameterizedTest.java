@@ -1,10 +1,9 @@
-package recognizer;
+package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatModel;
-import edu.kit.kastel.mcse.ner_for_arch.recognizer.PromptType;
 import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 import kotlin.Pair;
