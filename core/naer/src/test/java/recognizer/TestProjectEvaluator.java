@@ -74,8 +74,12 @@ public class TestProjectEvaluator {
 
         Set<NamedEntity> components = recognizer.recognize();
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));
+        //System.out.println("recognized:\n" + components);
+        //System.out.println("-----------------------------------------------");
+        //System.out.println("groundTruth:\n" + groundTruth);
 
         matchAndLogResults(components, groundTruth);
+        logger.info("-----------------------------------------------");
     }
 
     private Path findGoldstandardFile(Path dir) {
@@ -119,6 +123,13 @@ public class TestProjectEvaluator {
 
     //todo javadoc Erklärung: "findet matching components und changed bei beiden den name auf den matchingName (damit metric calc es checkt)"
     private void matchComponentNames(Set<NamedEntity> groundTruth, Set<NamedEntity> recognizedComponents) {
+        for (NamedEntity component : groundTruth) {
+            component.makeAllNamesLowerCase();
+        }
+        for (NamedEntity component : recognizedComponents) {
+            component.makeAllNamesLowerCase();
+        }
+
         for (NamedEntity component : recognizedComponents) {
             //one of the possible names of the recognized component needs to match one of the possible names of a ground-truth-component for them to be "equivalent":
             boolean foundEquivalentComponent = false;

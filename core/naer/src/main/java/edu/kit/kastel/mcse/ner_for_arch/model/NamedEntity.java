@@ -92,6 +92,22 @@ public class NamedEntity {
         this.alternativeNames.add(alternativeName);
     }
 
+    public void makeAllNamesLowerCase() {
+        if (this.name != null) {
+            this.name = this.name.toLowerCase();
+        }
+
+        Set<String> lowercasedAlternativeNames = new HashSet<>();
+        for (String alternativeName : this.alternativeNames) {
+            if (alternativeName != null) {
+                lowercasedAlternativeNames.add(alternativeName.toLowerCase());
+            }
+        }
+
+        this.alternativeNames.clear();
+        this.alternativeNames.addAll(lowercasedAlternativeNames);
+    }
+
     public String getOccurrencesAsString() {
         StringBuilder sb = new StringBuilder();
         for (Occurrence occurrence : occurrences) {

@@ -98,7 +98,7 @@ public class NamedEntityRecognizer {
 
                 ChatResponse chatResponse1 = chatModel.chat(chatRequest1);
                 String part1Answer = chatResponse1.aiMessage().text();
-                System.out.println("part1Answer: \n" + part1Answer + "\n-----------------");
+                //System.out.println("part1Answer: \n" + part1Answer + "\n-----------------");
 
                 //part two: "transform to structured JSON output"
                 UserMessage userMessage2 = new UserMessage(prompt.getSecond() + "\nLast answer:\n" + part1Answer);
