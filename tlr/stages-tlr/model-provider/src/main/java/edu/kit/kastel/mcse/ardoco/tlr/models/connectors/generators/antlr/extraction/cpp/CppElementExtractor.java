@@ -36,13 +36,11 @@ public class CppElementExtractor extends ElementExtractor {
     private final CppElementStorageRegistry elementRegistry;
 
     public CppElementExtractor() {
-        super();
         this.elementRegistry = new CppElementStorageRegistry();
         this.commentExtractor = new CppCommentExtractor(elementRegistry);
     }
 
     public CppElementExtractor(CppElementStorageRegistry elementRegistry) {
-        super();
         this.elementRegistry = elementRegistry;
         this.commentExtractor = new CppCommentExtractor(elementRegistry);
     }
@@ -158,10 +156,9 @@ public class CppElementExtractor extends ElementExtractor {
             if (declSeq == null || declSeq.typeSpecifier() == null) {
                 continue;
             }
-            if (declSeq != null && declSeq.typeSpecifier() != null && declSeq.typeSpecifier().classSpecifier() != null) {
+            if (declSeq.typeSpecifier() != null && declSeq.typeSpecifier().classSpecifier() != null) {
                 visitClassSpecifier(declSeq.typeSpecifier().classSpecifier(), parentIdentifier);
             }
-            // extractVariablesFromClass(declSeq.typeSpecifier().classSpecifier());
         }
 
         if (ctx.initDeclaratorList() != null) {
@@ -252,9 +249,7 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.MemberDeclaratorContext memberDec : ctx.memberDeclarator()) {
             // Skip if it is a function or Constructor
-            if (memberDec.declarator() != null && memberDec.declarator().pointerDeclarator() != null && memberDec.declarator()
-                    .pointerDeclarator()
-                    .noPointerDeclarator() != null && memberDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (isMemberDeclaratorAFunction(memberDec)) {
                 continue;
             }
             varNames.add(memberDec.declarator().getText());
@@ -266,14 +261,24 @@ public class CppElementExtractor extends ElementExtractor {
         List<String> varNames = new ArrayList<>();
         for (CPP14Parser.InitDeclaratorContext initDec : ctx.initDeclarator()) {
             // Skip if it is a function or Constructor
-            if (initDec.declarator() != null && initDec.declarator().pointerDeclarator() != null && initDec.declarator()
-                    .pointerDeclarator()
-                    .noPointerDeclarator() != null && initDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null) {
+            if (isMemberDeclaratorAConstructor(initDec)) {
                 continue;
             }
             varNames.add(initDec.declarator().getText());
         }
         return varNames;
+    }
+
+    private boolean isMemberDeclaratorAFunction(CPP14Parser.MemberDeclaratorContext memberDec) {
+        return memberDec.declarator() != null && memberDec.declarator().pointerDeclarator() != null && memberDec.declarator()
+                .pointerDeclarator()
+                .noPointerDeclarator() != null && memberDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null;
+    }
+
+    private boolean isMemberDeclaratorAConstructor(CPP14Parser.InitDeclaratorContext initDec) {
+        return initDec.declarator() != null && initDec.declarator().pointerDeclarator() != null && initDec.declarator()
+                .pointerDeclarator()
+                .noPointerDeclarator() != null && initDec.declarator().pointerDeclarator().noPointerDeclarator().parametersAndQualifiers() != null;
     }
 
     private List<String> getInherits(CPP14Parser.ClassSpecifierContext ctx) {

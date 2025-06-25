@@ -15,13 +15,13 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  * The extraction process is done by the ElementExtractor and the mapping
  * process is done by the ModelMapper.
  */
-public class ANTLRExtractor extends CodeExtractor {
+public class AntlrExtractor extends CodeExtractor {
     private final ProgrammingLanguage language;
     protected ModelMapper mapper; // Needs to be initialized in the constructor of implementing subclasses
     protected ElementExtractor elementExtractor; // Needs to be initialized in the constructor of implementing subclasses
     private boolean contentExtracted;
 
-    protected ANTLRExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
+    protected AntlrExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
         super(codeItemRepository, path);
         this.language = language;
         this.contentExtracted = false;

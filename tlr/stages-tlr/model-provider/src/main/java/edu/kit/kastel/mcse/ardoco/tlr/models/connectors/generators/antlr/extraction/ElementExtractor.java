@@ -25,9 +25,6 @@ public abstract class ElementExtractor {
     protected CommentExtractor commentExtractor;
     protected final Logger logger = LoggerFactory.getLogger(ElementExtractor.class);
 
-    protected ElementExtractor() {
-    }
-
     public abstract ElementStorageRegistry getElements();
 
     /**
