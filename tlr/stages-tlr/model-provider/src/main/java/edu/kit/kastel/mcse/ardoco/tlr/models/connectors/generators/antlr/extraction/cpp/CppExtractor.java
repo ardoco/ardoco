@@ -3,14 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.ANTLRExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.AntlrExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.cpp.CppElementStorageRegistry;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.CppModelMapper;
 
 /**
  * Sets up the ElementExtractor and ModelMapper for the C++ language.
  */
-public class CppExtractor extends ANTLRExtractor {
+public class CppExtractor extends AntlrExtractor {
 
     public CppExtractor(CodeItemRepository repository, String path) {
         super(repository, path, ProgrammingLanguage.CPP);

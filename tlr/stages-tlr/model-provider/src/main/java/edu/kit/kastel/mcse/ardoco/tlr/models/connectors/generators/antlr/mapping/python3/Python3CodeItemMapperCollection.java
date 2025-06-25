@@ -14,9 +14,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class Python3CodeItemMapperCollection extends CodeItemMapperCollection {
 
     public Python3CodeItemMapperCollection(CodeItemRepository repository, Python3ElementStorageRegistry elementRegistry) {
-        super();
-        this.mappers = List.of(new FunctionMapper(repository, this, elementRegistry), new ClassMapper(repository, this, elementRegistry), new ModuleMapper(
-                repository, this, elementRegistry), new PackageMapper(repository, this, elementRegistry));
+        this.mappers = List.of(//
+                new FunctionMapper(repository, this, elementRegistry),//
+                new ClassMapper(repository, this, elementRegistry),//
+                new ModuleMapper(repository, this, elementRegistry),//
+                new PackageMapper(repository, this, elementRegistry)//
+        );
     }
 
 }

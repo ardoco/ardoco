@@ -13,10 +13,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
 public abstract class CodeItemMapperCollection {
     protected List<CodeItemMapper> mappers;
 
-    protected CodeItemMapperCollection() {
-    }
-
     public CodeItem buildCodeItem(Element element) {
-        return mappers.stream().filter(strategy -> strategy.supports(element)).findFirst().map(strategy -> strategy.buildCodeItem(element)).orElse(null);
+        var mapper = mappers.stream().filter(strategy -> strategy.supports(element)).findFirst();
+        if (mapper.isEmpty()) {
+            return null;
+        }
+        return mapper.get().buildCodeItem(element);
     }
 }

@@ -92,6 +92,7 @@ public abstract class CommentExtractor {
      * @return the number of lines in the text, default is 0;
      */
     private int countCommentLines(String text) {
+        // TODO Refactor code.
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '\n') {

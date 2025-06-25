@@ -10,8 +10,8 @@ public abstract class CPP14ParserBase extends Parser {
 
     protected boolean IsPureSpecifierAllowed() {
         try {
-            var x = this._ctx; // memberDeclarator
-            var c = x.getChild(0).getChild(0);
+            var context = this._ctx; // memberDeclarator
+            var c = context.getChild(0).getChild(0);
             var c2 = c.getChild(0);
             var p = c2.getChild(1);
             if (p == null)
