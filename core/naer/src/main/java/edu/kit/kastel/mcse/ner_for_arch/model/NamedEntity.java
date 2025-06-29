@@ -74,7 +74,11 @@ public class NamedEntity {
         return name;
     }
 
-    //TODO add javadoc: "the old name is added to the alternative names"
+    /**
+     * Changes the name of this {@link NamedEntity} and adds the previous name to the list of alternative names.
+     *
+     * @param name the new name
+     */
     public void changeName(String name) {
         this.alternativeNames.add(this.name);
         this.name = name;
@@ -92,6 +96,9 @@ public class NamedEntity {
         this.alternativeNames.add(alternativeName);
     }
 
+    /**
+     * Converts the name and all alternative names of this {@link NamedEntity} to lowercase.
+     */
     public void makeAllNamesLowerCase() {
         if (this.name != null) {
             this.name = this.name.toLowerCase();
@@ -108,18 +115,11 @@ public class NamedEntity {
         this.alternativeNames.addAll(lowercasedAlternativeNames);
     }
 
-    public String getOccurrencesAsString() {
-        StringBuilder sb = new StringBuilder();
-        for (Occurrence occurrence : occurrences) {
-            if (!sb.isEmpty()) {
-                sb.append(", ");
-            }
-            sb.append(occurrence.toString());
-        }
-        return sb.toString();
-    }
-
-    //todo javadoc
+    /**
+     * Retrieves the line/sentence numbers where the {@link NamedEntity} occurs.
+     *
+     * @return a set of unique integers representing the line/sentence numbers in which the entity is mentioned (line numbers are 1-indexed).
+     */
     public Set<Integer> getOccurrenceLines() {
         Set<Integer> result = new HashSet<>();
         for (Occurrence occurrence : occurrences) {
@@ -132,9 +132,9 @@ public class NamedEntity {
         this.occurrences.add(new Occurrence(sentenceNumber, referenceType));
     }
 
-    //TODO add javadoc: "ignoring sourceText"
     @Override
     public boolean equals(Object o) {
+        // sourceText is ignored here
         if (o == null || getClass() != o.getClass()) return false;
         NamedEntity entity = (NamedEntity) o;
         return type == entity.type && Objects.equals(alternativeNames, entity.alternativeNames) && Objects.equals(occurrences, entity.occurrences) && Objects.equals(name, entity.name);
@@ -142,6 +142,7 @@ public class NamedEntity {
 
     @Override
     public int hashCode() {
+        // sourceText is ignored here
         return Objects.hash(type, alternativeNames, occurrences, name);
     }
 

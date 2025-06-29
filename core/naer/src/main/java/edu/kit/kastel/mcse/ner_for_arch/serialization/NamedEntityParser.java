@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utility class for converting JSON representations of named entities into Java objects.
+ * Utility class for parsing named entities from various input formats.
  */
 public class NamedEntityParser {
 
@@ -24,11 +24,11 @@ public class NamedEntityParser {
     }
 
     /**
-     * Deserializes a JSON array representing named entities into a set of {@link NamedEntity} objects.
+     * Deserializes a JSON array representing named entities into a set of {@link NamedEntity} instances.
      *
-     * @param json the JSON string to deserialize; must represent a JSON array of named entity objects
+     * @param json the JSON string to deserialize; must represent a JSON array of named entity instances
      * @param sad  the software architecture documentation associated with the entities
-     * @return a set of deserialized {@link NamedEntity} objects
+     * @return a set of deserialized {@link NamedEntity} instances
      * @throws IOException if deserialization fails (e.g. malformed JSON)
      */
     public static Set<NamedEntity> fromJson(String json, SoftwareArchitectureDocumentation sad) throws IOException {
@@ -40,7 +40,15 @@ public class NamedEntityParser {
         });
     }
 
-    //TODO add javadoc
+    /**
+     * Parses a string representation of named entities into a set of {@link NamedEntity} instances.
+     * The input string must follow the specific format created by prompts using the type {@link edu.kit.kastel.mcse.ner_for_arch.recognizer.PromptType#STRUCTURED_TEXT_OUTPUT_PROMPT}.
+     *
+     * @param str                               the string (structured text format of named entities)
+     * @param softwareArchitectureDocumentation the software architecture documentation associated with the named entities
+     * @return a set of parsed {@link NamedEntity} instances
+     * @throws IOException if the input string is invalid or cannot be parsed
+     */
     public static Set<NamedEntity> fromString(String str, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) throws IOException {
         System.out.println("Parsing: \n" + str);
         Map<String, NamedEntity> entityMap = new HashMap<>();
@@ -72,7 +80,7 @@ public class NamedEntityParser {
 
                 NamedEntity entity = entityMap.get(name);
                 if (entity == null) {
-                    entity = new NamedEntity(name, NamedEntityType.COMPONENT);
+                    entity = new NamedEntity(name, NamedEntityType.COMPONENT); //TODO das dann auch anpassen
                     entity.setSourceText(softwareArchitectureDocumentation);
                     entityMap.put(name, entity);
                 }

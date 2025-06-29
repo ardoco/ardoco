@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 
@@ -106,6 +107,7 @@ public class ChatModelFactory {
         String apiKey = System.getenv("OPENAI_API_KEY");
         return OpenAiChatModel.builder()
                 .apiKey(apiKey)
+                .timeout(Duration.ofSeconds(250)) //TODO timeout exception fangen und warning loggen + timeout als param mitgeben + bei 2 Step loggen wenn er nen step fertig hat
                 .modelName(modelName)
                 .temperature(temperature)
                 .build();

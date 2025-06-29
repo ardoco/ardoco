@@ -5,7 +5,6 @@ import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
-import kotlin.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
     private final ChatModel model;
-    private final Pair<String, String> prompt;
-    private final PromptType promptType;
+    private final Prompt prompt;
 
-    public TestProjectEvaluator(ChatModel model, Pair<String, String> prompt, PromptType promptType) {
+    public TestProjectEvaluator(ChatModel model, Prompt prompt) {
         this.model = model;
         this.prompt = prompt;
-        this.promptType = promptType;
     }
 
     public void evaluate(ComponentRecognitionParameterizedTest.TestProject project) {
@@ -68,7 +65,7 @@ public class TestProjectEvaluator {
         Path goldstandardFile = findGoldstandardFile(dir);
         Path sadFile = findSadFile(dir);
 
-        NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(sadFile).chatModel(model).prompt(prompt).promptType(promptType).build();
+        NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(sadFile).chatModel(model).prompt(prompt).build();
 
         Set<NamedEntity> components = recognizer.recognize();
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));

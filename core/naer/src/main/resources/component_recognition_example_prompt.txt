@@ -22,12 +22,14 @@ All alternative names are correctly listed.
 DIRECT is used only when the component name or an alternative name appears in the line.
 
 Formatting:
-Return result in structured plain text as follows:
+Return results in structured plain text as follows:
+BEGIN-OUTPUT
 <componentName>, <lineNumber>, <referenceType>
 ...
 Alternative names:
 <componentName>: <alternativeName1>, <alternativeName2>, ...
 ...
+END-OUTPUT
 
 Example:
 Text:
@@ -36,6 +38,7 @@ It forwards valid credentials to the UserDatabase.
 The service logs each attempt.
 
 Output:
+BEGIN-OUTPUT
 AuthenticationService, 1, DIRECT
 AuthenticationService, 2, INDIRECT
 UserDatabase, 2, DIRECT
@@ -44,6 +47,7 @@ AuthenticationService, 3, INDIRECT
 Alternative names:
 AuthenticationService: service
 UserDatabase: None
+END-OUTPUT
 
 
-Use this exact output format and do not output anything else.
+Use this exact output format and do not add anything else!

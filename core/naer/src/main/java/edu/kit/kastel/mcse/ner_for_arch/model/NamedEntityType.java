@@ -6,4 +6,5 @@ package edu.kit.kastel.mcse.ner_for_arch.model;
 public enum NamedEntityType {
     COMPONENT,
     INTERFACE;
+    // additional types can be added here...
 }

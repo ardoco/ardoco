@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Custom deserializer for converting a JSON array into a set of {@link NamedEntity} objects.
+ * Custom deserializer for converting a JSON array into a set of {@link NamedEntity} instances.
  * <p>
- * This deserializer ensures that each {@code NamedEntity} is linked to the provided {@link SoftwareArchitectureDocumentation} as its source text.
+ * This deserializer ensures that each {@link NamedEntity} instance is linked to the provided {@link SoftwareArchitectureDocumentation} as its source text.
  * </p>
  */
 public class NamedEntityDeserializer extends JsonDeserializer<Set<NamedEntity>> {
@@ -24,7 +24,7 @@ public class NamedEntityDeserializer extends JsonDeserializer<Set<NamedEntity>> 
     private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
 
     /**
-     * Creates a deserializer that associates deserialized {@link NamedEntity} objects with the given software architecture documentation (SAD).
+     * Creates a deserializer that associates deserialized {@link NamedEntity} instances with the given software architecture documentation (SAD).
      *
      * @param softwareArchitectureDocumentation the SAD which is to be linked to each deserialized entity
      */
@@ -37,7 +37,7 @@ public class NamedEntityDeserializer extends JsonDeserializer<Set<NamedEntity>> 
      *
      * @param p    the JSON parser
      * @param ctxt the deserialization context
-     * @return a set of {@link NamedEntity} objects with source text set
+     * @return a set of {@link NamedEntity} instances with source text set
      * @throws IOException if an error occurs during deserialization
      */
     @Override

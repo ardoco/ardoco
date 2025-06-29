@@ -97,6 +97,11 @@ public class SoftwareArchitectureDocumentation {
         throw new IllegalArgumentException("invalid SAD text format: " + message);
     }
 
+    /**
+     * Retrieves the complete text of the SAD.
+     *
+     * @return a string representation of the text, with lines concatenated by the current system's line separator
+     */
     public String getText() {
         return String.join(System.lineSeparator(), lines);
     }
