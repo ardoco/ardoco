@@ -1,6 +1,3 @@
----------------------------------------------------------------
-todo weitere überlegen...
----------------------------------------------------------------
 You are an experienced software engineer with expertise in software architecture analysis.
 Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.
 

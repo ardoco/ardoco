@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityReferenceType;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,8 +13,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class GoldstandardParser {
-    private static final Logger logger = LoggerFactory.getLogger(NamedEntityRecognizerTest.class);
-
 
     /**
      * Parses the goldstandards in the given path to {@link NamedEntity} objects.

@@ -34,7 +34,14 @@ public class ComponentRecognitionParameterizedTest {
         logger.info("Evaluation with this configuration: \n{}", testConfig);
 
         //create the chat model (VDL is the default)
-        ChatModel chatModel = ChatModelFactory.withProvider(testConfig.modelProvider != null ? testConfig.modelProvider : ModelProvider.VDL).modelName(testConfig.model()).temperature(testConfig.modelTemperature()).build();
+        ChatModelFactory chatModelFactory = ChatModelFactory.withProvider(testConfig.modelProvider != null ? testConfig.modelProvider : ModelProvider.VDL);
+        if (testConfig.model() != null) {
+            chatModelFactory = chatModelFactory.modelName(testConfig.model());
+        }
+        if (testConfig.modelTimeoutSeconds > 0) {
+            chatModelFactory = chatModelFactory.timeout(testConfig.modelTimeoutSeconds);
+        }
+        ChatModel chatModel = chatModelFactory.temperature(testConfig.modelTemperature()).build();
 
         //get the test project from the config (jabref is the default)
         TestProject project = testConfig.testProject() != null ? testConfig.testProject() : TestProject.JABREF;
@@ -49,9 +56,8 @@ public class ComponentRecognitionParameterizedTest {
 
     //Config holder record matching the JSON structure:
     public record TestConfig(ModelProvider modelProvider, String model, double modelTemperature,
-                             TestProject testProject, Prompt prompt, PromptType promptType) {
+                             int modelTimeoutSeconds, TestProject testProject, Prompt prompt, PromptType promptType) {
         // more parameters can be added above (if a param is not set in the config its simply null)
-
 
         @NotNull
         @Override
@@ -60,6 +66,7 @@ public class ComponentRecognitionParameterizedTest {
                     "modelProvider=" + modelProvider +
                     ", model='" + model + "'" +
                     ", modelTemperature=" + modelTemperature +
+                    ", modelTimeoutSeconds=" + modelTimeoutSeconds +
                     ",\ntestProject=" + testProject +
                     ",\ntype=" + promptType +
                     ", prompt=" + prompt +
@@ -68,5 +75,4 @@ public class ComponentRecognitionParameterizedTest {
 
 
     }
-
 }

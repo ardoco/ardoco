@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO javadoc überall
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
     private final ChatModel model;
@@ -65,7 +64,11 @@ public class TestProjectEvaluator {
         Path goldstandardFile = findGoldstandardFile(dir);
         Path sadFile = findSadFile(dir);
 
-        NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(sadFile).chatModel(model).prompt(prompt).build();
+        NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder(sadFile).chatModel(model);
+        if (prompt != null) {
+            builder = builder.prompt(prompt);
+        }
+        NamedEntityRecognizer recognizer = builder.build();
 
         Set<NamedEntity> components = recognizer.recognize();
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));
@@ -116,7 +119,14 @@ public class TestProjectEvaluator {
         result.prettyPrint();
     }
 
-    //todo javadoc Erklärung: "findet matching components und changed bei beiden den name auf den matchingName (damit metric calc es checkt)"
+    /**
+     * Matches components between the ground truth and recognized components based on their names.
+     * If a name match is found, the names of both components are unified to the matching name.
+     * This alignment facilitates metrics calculation by the {@link ClassificationMetricsCalculator} treating them as equivalent.
+     *
+     * @param groundTruth          the set of goldstandard components
+     * @param recognizedComponents the set of recognized components
+     */
     private void matchComponentNames(Set<NamedEntity> groundTruth, Set<NamedEntity> recognizedComponents) {
         for (NamedEntity component : groundTruth) {
             component.makeAllNamesLowerCase();
@@ -143,7 +153,7 @@ public class TestProjectEvaluator {
                         component.changeName(componentName);
                         groundTruthComponent.changeName(componentName);
                         //System.out.println("MATCH: " + componentName);
-                        break; //because we assume that there is only one possible match to be found //todo what if not? => vllt wenn ein parameter aktiviert ist weiter laufen lassen und bei multiple matches ein warning ausgeben
+                        break; //because we assume that there is only one possible match to be found
                     }
                 }
             }

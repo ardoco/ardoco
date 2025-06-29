@@ -20,6 +20,7 @@ public class ChatModelFactory {
 
     private ModelProvider provider;
     private double temperature = 0.0; //default
+    private int timeoutSeconds = 60;  //default
     private String modelName = null;
 
     /**
@@ -46,7 +47,27 @@ public class ChatModelFactory {
      * @return this factory instance for method chaining
      */
     public ChatModelFactory temperature(double temperature) {
+        if (temperature < 0.0) {
+            logger.error("temperature must be >= 0.0");
+            throw new IllegalArgumentException("Temperature must be >= 0.0");
+        }
+
         this.temperature = temperature;
+        return this;
+    }
+
+    /**
+     * Sets the timeout duration for the chat model operations.
+     *
+     * @param timeoutSeconds the timeout value in seconds
+     * @return this factory instance for method chaining
+     */
+    public ChatModelFactory timeout(int timeoutSeconds) {
+        if (timeoutSeconds < 1) {
+            logger.error("timeout must be >= 1");
+            throw new IllegalArgumentException("Timeout must be >= 1");
+        }
+        this.timeoutSeconds = timeoutSeconds;
         return this;
     }
 
@@ -66,9 +87,7 @@ public class ChatModelFactory {
      * @return this factory instance for method chaining
      */
     public ChatModelFactory modelName(String modelName) {
-        if (modelName != null && !modelName.isBlank()) {
-            this.modelName = modelName;
-        }
+        this.modelName = modelName;
         return this;
     }
 
@@ -107,7 +126,7 @@ public class ChatModelFactory {
         String apiKey = System.getenv("OPENAI_API_KEY");
         return OpenAiChatModel.builder()
                 .apiKey(apiKey)
-                .timeout(Duration.ofSeconds(250)) //TODO timeout exception fangen und warning loggen + timeout als param mitgeben + bei 2 Step loggen wenn er nen step fertig hat
+                .timeout(Duration.ofSeconds(timeoutSeconds))
                 .modelName(modelName)
                 .temperature(temperature)
                 .build();
@@ -138,6 +157,7 @@ public class ChatModelFactory {
                 .customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))))
                 .modelName(modelName)
                 .temperature(temperature)
+                .timeout(Duration.ofSeconds(timeoutSeconds))
                 .build();
     }
 

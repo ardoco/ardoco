@@ -53,7 +53,7 @@ public class NamedEntityParser {
      * @throws IOException if the input string is invalid or cannot be parsed
      */
     public static Set<NamedEntity> fromString(String str, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) throws IOException {
-        System.out.println("Parsing: \n" + str);
+        //System.out.println("Parsing: \n" + str);
         Map<String, NamedEntity> entityMap = new HashMap<>();
         String[] lines = str.split("\\R");
 

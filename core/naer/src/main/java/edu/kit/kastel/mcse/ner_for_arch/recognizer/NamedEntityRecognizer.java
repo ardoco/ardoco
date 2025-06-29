@@ -105,14 +105,14 @@ public class NamedEntityRecognizer {
 
 
         logger.info("parsing LLM response to Java objects...");
+        // all text before the start tag and after the end tag of the result is ignored (because some LLMs tend to create additional text)
         try {
             Set<NamedEntity> result = switch (prompt.type()) {
                 case STRUCTURED_TEXT_OUTPUT_PROMPT -> {
-                    //todo add to javadoc: mit start und end wie der prompt aufgebaut sein muss
                     int start = answer.indexOf("BEGIN-OUTPUT");
                     int end = answer.lastIndexOf("END-OUTPUT");
                     if (start != -1 && end != -1 && end > start) {
-                        start += "START-OUTPUT".length();
+                        start += "BEGIN-OUTPUT".length();
                         answer = answer.substring(start, end);
                     } else {
                         logger.error("no valid structured text output found in LLM output: {}", answer);
@@ -122,7 +122,6 @@ public class NamedEntityRecognizer {
                     yield NamedEntityParser.fromString(answer, softwareArchitectureDocumentation);
                 }
                 case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> {
-                    //remove text before and after JSON array (some LLMs create this text) todo add to javadoc: "everything before first [ and after last ] is ignored"
                     int start = answer.indexOf('[');
                     int end = answer.lastIndexOf(']');
                     if (start != -1 && end != -1 && end > start) {
@@ -183,6 +182,10 @@ public class NamedEntityRecognizer {
          * @return this builder
          */
         public Builder chatModel(ChatModel chatModel) {
+            if (chatModel == null) {
+                logger.error("chat model must not be null");
+                throw new IllegalArgumentException("chat model must not be null");
+            }
             this.chatModel = chatModel;
             return this;
         }
@@ -200,9 +203,9 @@ public class NamedEntityRecognizer {
          */
         public Builder prompt(Prompt prompt) {
             if (prompt == null) {
-                return this; //TODO [Frage] warum dieses return?->"damit man das mit den parameterized tests ohne probleme benutzen kann" - oder ist das zu schlechter stil wegen unerwartetem verhalten und ich muss das halt in der parameterized test klasse handlen?
+                logger.error("prompt must not be null");
+                throw new IllegalArgumentException("prompt must not be null");
             }
-
             this.prompt = prompt;
             return this;
         }
