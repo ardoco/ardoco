@@ -7,6 +7,8 @@ import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityReferenceType;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
 import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.Set;
  * Utility class for parsing named entities from various input formats.
  */
 public class NamedEntityParser {
+    private static final Logger logger = LoggerFactory.getLogger(NamedEntityParser.class);
 
     private NamedEntityParser() {
         // utility class -> prevent instantiation
@@ -55,10 +58,24 @@ public class NamedEntityParser {
         String[] lines = str.split("\\R");
 
         boolean parsingAlternativeNames = false;
+        NamedEntityType currentEntityType = null;
 
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty()) {
+                continue;
+            }
+
+            // Check for section header: "<currentEntityType> entities recognized:"
+            if (line.endsWith("entities recognized:")) {
+                parsingAlternativeNames = false;
+                String typeString = line.substring(0, line.indexOf(" entities recognized:")).trim().toUpperCase();
+                try {
+                    currentEntityType = NamedEntityType.valueOf(typeString);
+                } catch (IllegalArgumentException e) {
+                    logger.error("Unknown entity type: {}", typeString);
+                    throw new IOException("Unknown entity type: " + typeString);
+                }
                 continue;
             }
 
@@ -67,10 +84,16 @@ public class NamedEntityParser {
                 continue;
             }
 
+            if (currentEntityType == null) {
+                logger.error("Entity type not specified before entries: {}", line);
+                throw new IOException("Entity type not specified before entries: " + line);
+            }
+
             if (!parsingAlternativeNames) {
                 // Parse entity occurrence: <name>, <lineNumber>, <referenceType>
                 String[] parts = line.split(",");
                 if (parts.length != 3) {
+                    logger.error("Invalid entity occurrence format: {}", line);
                     throw new IOException("Invalid entity occurrence format: " + line);
                 }
 
@@ -80,7 +103,7 @@ public class NamedEntityParser {
 
                 NamedEntity entity = entityMap.get(name);
                 if (entity == null) {
-                    entity = new NamedEntity(name, NamedEntityType.COMPONENT); //TODO das dann auch anpassen
+                    entity = new NamedEntity(name, currentEntityType);
                     entity.setSourceText(softwareArchitectureDocumentation);
                     entityMap.put(name, entity);
                 }
@@ -90,6 +113,7 @@ public class NamedEntityParser {
                 // Parse alternative names: <componentName>: <alt1>, <alt2>, ...
                 String[] parts = line.split(":");
                 if (parts.length != 2) {
+                    logger.error("Invalid alternative names format: {}", line);
                     throw new IOException("Invalid alternative names format: " + line);
                 }
 
@@ -106,7 +130,8 @@ public class NamedEntityParser {
                         entity.addAlternativeName(alt.trim());
                     }
                 } else {
-                    throw new IOException("Alternative names for unknown component: " + name);
+                    logger.error("Alternative names for unknown entity: {}", name);
+                    throw new IOException("Alternative names for unknown entity: " + name);
                 }
 
 

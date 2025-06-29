@@ -1,5 +1,0 @@
----------provide goldstandard names:----------------------------------------------------------- todo hardcoded an den prompt anhängen
-As support, here is a complete list of the names of all components that occur in the text.
-Components: ...
---------------------------------------------------------------------
-

@@ -24,6 +24,7 @@ DIRECT is used only when the component name or an alternative name appears in th
 Formatting:
 Return results in structured plain text as follows:
 BEGIN-OUTPUT
+COMPONENT entities recognized:
 <componentName>, <lineNumber>, <referenceType>
 ...
 Alternative names:
@@ -39,6 +40,7 @@ The service logs each attempt.
 
 Output:
 BEGIN-OUTPUT
+COMPONENT entities recognized:
 AuthenticationService, 1, DIRECT
 AuthenticationService, 2, INDIRECT
 UserDatabase, 2, DIRECT

@@ -8,11 +8,15 @@ public enum PromptType {
      * Represents a prompt type designed to generate a structured text output using only one prompt.
      * This type indicates that the prompt output format must adhere to the following structure:
      * <pre>
-     * BEGIN-OUTPUT todo
-     * &lt;componentName&gt;, &lt;lineNumber&gt;, &lt;referenceType&gt;
+     * BEGIN-OUTPUT
+     * &lt;entityType1&gt; entities recognized:
+     * &lt;entityName&gt;, &lt;lineNumber&gt;, &lt;referenceType&gt;
      * ...
      * Alternative names:
-     * &lt;componentName&gt;: &lt;alternativeName1&gt;, &lt;alternativeName2&gt;, ...
+     * &lt;entityName&gt;: &lt;alternativeName1&gt;, &lt;alternativeName2&gt;, ...
+     * ...
+     *
+     * &lt;entityType2&gt; entities recognized:
      * ...
      * END-OUTPUT
      * </pre>
