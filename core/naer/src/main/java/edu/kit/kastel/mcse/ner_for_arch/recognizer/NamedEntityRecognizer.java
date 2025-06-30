@@ -102,7 +102,7 @@ public class NamedEntityRecognizer {
                 yield chatResponse2.aiMessage().text();
             }
         };
-
+        //System.out.println("LLM response: " + answer);
 
         logger.info("parsing LLM response to Java objects...");
         // all text before the start tag and after the end tag of the result is ignored (because some LLMs tend to create additional text)

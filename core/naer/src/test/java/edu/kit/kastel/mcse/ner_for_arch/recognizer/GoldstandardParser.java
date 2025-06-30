@@ -7,10 +7,9 @@ import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class GoldstandardParser {
 
@@ -50,4 +49,62 @@ public class GoldstandardParser {
         }
         return new HashSet<>(entitiesMap.values());
     }
+
+    /**
+     * Retrieves a comma-separated string of the goldstandard component names from the test project in the given path.
+     *
+     * @param projectDir the path to the project directory
+     * @return a comma-separated string of component names, or an empty string if no component names are found
+     */
+    public static String getComponentNames(Path projectDir) {
+        Path componentNameFile = findComponentNameFile(projectDir);
+
+        return parseComponentNames(componentNameFile);
+    }
+
+
+    private static Path findComponentNameFile(Path projectDir) {
+        Path modelDir = assertDoesNotThrow(() ->
+                Files.list(projectDir)
+                        .filter(Files::isDirectory)
+                        .filter(p -> p.getFileName().toString().startsWith("model_"))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No model_ directory in " + projectDir))
+        );
+
+        Path umlDir = modelDir.resolve("uml");
+
+        return assertDoesNotThrow(() ->
+                Files.list(umlDir)
+                        .filter(p -> p.getFileName().toString().equals("modelElementID_to_ComponentName.csv"))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No modelElementID_to_ComponentName.csv in " + umlDir))
+        );
+    }
+
+
+    private static String parseComponentNames(Path componentNameFile) {
+        String csvContent = assertDoesNotThrow(() -> Files.readString(componentNameFile));
+
+        if (csvContent.isBlank()) {
+            return "";
+        }
+
+        List<String> lines = csvContent.lines().toList();
+        List<String> componentNames = new ArrayList<>();
+
+        for (int i = 1; i < lines.size(); i++) { // Skip header
+            String[] parts = lines.get(i).split(",");
+            if (parts.length >= 2) {
+                String componentName = parts[1].trim();
+                if (!componentName.isEmpty()) {
+                    componentNames.add(componentName);
+                }
+            }
+        }
+
+        return String.join(", ", componentNames);
+    }
+
+
 }

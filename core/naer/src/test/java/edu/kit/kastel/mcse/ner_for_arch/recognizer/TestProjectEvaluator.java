@@ -21,11 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
     private final ChatModel model;
-    private final Prompt prompt;
+    private final boolean useGoldstandardComponentNames;
+    private Prompt prompt;
 
-    public TestProjectEvaluator(ChatModel model, Prompt prompt) {
+    public TestProjectEvaluator(ChatModel model, Prompt prompt, boolean useGoldstandardComponentNames) {
         this.model = model;
         this.prompt = prompt;
+        this.useGoldstandardComponentNames = useGoldstandardComponentNames;
     }
 
     public void evaluate(ComponentRecognitionParameterizedTest.TestProject project) {
@@ -39,10 +41,23 @@ public class TestProjectEvaluator {
     private void evaluateAll() {
         Path evalResourcesPath = getEvaluationResourcesPath();
         Stream<Path> testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
+        int[] errorCounter = {0};
 
-        testProjectDirs.filter(Files::isDirectory)
-                .forEach(dir -> assertDoesNotThrow(() -> evaluateProjectInDirectory(dir)));
+        testProjectDirs
+                .filter(Files::isDirectory)
+                .forEach(dir -> {
+                    try {
+                        evaluateProjectInDirectory(dir);
+                    } catch (Exception e) {
+                        errorCounter[0]++;
+                        logger.error("Evaluation failed for project: {}", dir.getFileName());
+                        logger.info("-----------------------------------------------");
+                    }
+                });
+
+        assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
     }
+
 
     private void evaluateSingle(ComponentRecognitionParameterizedTest.TestProject project) {
         Path evalResourcesPath = getEvaluationResourcesPath();
@@ -66,6 +81,12 @@ public class TestProjectEvaluator {
 
         NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder(sadFile).chatModel(model);
         if (prompt != null) {
+            if (useGoldstandardComponentNames) { //add goldstandard component names if wanted:
+                //TODO: probably add sth like: + ".\nUse the names of this list as main name of the recognized components." (to improve effect of this information)
+                String componentSupportList = "\nAs support, here is the complete list of all architecturally relevant components mentioned in the text:\n" + GoldstandardParser.getComponentNames(dir);
+                prompt = new Prompt(prompt.first() + componentSupportList, prompt.second(), prompt.type());
+            }
+
             builder = builder.prompt(prompt);
         }
         NamedEntityRecognizer recognizer = builder.build();

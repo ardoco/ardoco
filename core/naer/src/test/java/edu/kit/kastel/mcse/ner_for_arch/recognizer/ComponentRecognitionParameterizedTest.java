@@ -46,7 +46,7 @@ public class ComponentRecognitionParameterizedTest {
         //get the test project from the config (jabref is the default)
         TestProject project = testConfig.testProject() != null ? testConfig.testProject() : TestProject.JABREF;
 
-        TestProjectEvaluator evaluator = new TestProjectEvaluator(chatModel, testConfig.prompt);
+        TestProjectEvaluator evaluator = new TestProjectEvaluator(chatModel, testConfig.prompt, testConfig.useGoldstandardComponentNames);
         evaluator.evaluate(project);
     }
 
@@ -56,7 +56,8 @@ public class ComponentRecognitionParameterizedTest {
 
     //Config holder record matching the JSON structure:
     public record TestConfig(ModelProvider modelProvider, String model, double modelTemperature,
-                             int modelTimeoutSeconds, TestProject testProject, Prompt prompt, PromptType promptType) {
+                             int modelTimeoutSeconds, TestProject testProject, Prompt prompt,
+                             boolean useGoldstandardComponentNames) {
         // more parameters can be added above (if a param is not set in the config its simply null)
 
         @NotNull
@@ -68,8 +69,8 @@ public class ComponentRecognitionParameterizedTest {
                     ", modelTemperature=" + modelTemperature +
                     ", modelTimeoutSeconds=" + modelTimeoutSeconds +
                     ",\ntestProject=" + testProject +
-                    ",\ntype=" + promptType +
                     ", prompt=" + prompt +
+                    ", useGoldstandardComponentNames=" + useGoldstandardComponentNames +
                     "}";
         }
 
