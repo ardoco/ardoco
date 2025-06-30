@@ -105,7 +105,7 @@ public class NamedEntityRecognizer {
                 case STRUCTURED_TEXT_OUTPUT_PROMPT -> """ 
                         BEGIN-OUTPUT
                         COMPONENT entities recognized:
-                        <componentName>, <lineNumber>, <referenceType>
+                        <componentName>, <lineNumber>
                         ...
                         Alternative names:
                         <componentName>: <alternativeName1>, <alternativeName2>, ...
@@ -118,10 +118,7 @@ public class NamedEntityRecognizer {
                                 "name": "...",
                                 "type": "COMPONENT",
                                 "alternativeNames": [...],
-                                "occurrences": [
-                                    {"line": ..., "referenceType": "..."},
-                                    ...
-                                ]
+                                "occurrences": [...]
                             },
                             ...
                         ]

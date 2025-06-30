@@ -1,4 +1,4 @@
-Your task is to process the input text (in one sentence per line format), identify architecturally relevant software architecture components, and output structured data about their mentions.
+Your task is to process the input text (in one sentence per line format), identify all architecturally relevant software architecture components, and output structured data about their mentions.
 
 Instructions:
 1. Component identification:
@@ -6,12 +6,9 @@ Identify all architecturally relevant software architecture components that are 
 For each, determine the most descriptive name.
 2. Line-by-line analysis:
 For each line in the text (starting from 1):
-Every time a previously identified component is mentioned, output: "<componentName>, <lineNumber>, <referenceType>"
+Every time a component is mentioned, output: "<componentName>, <lineNumber>"
 componentName: The most descriptive name of the component (consistent across all lines).
 lineNumber: Line number where the reference occurs.
-referenceType: either "DIRECT" or "INDIRECT".
-DIRECT -> The name or any alternative name of the component appears in the text (case-insensitive).
-INDIRECT -> The component is referenced indirectly (e.g., via pronouns like "it", or via "this module").
 3. Alternative names:
 After analyzing all lines, list alternative or ambiguous names for each component in this format: "<componentName>: <alternativeName1>, <alternativeName2>, ..."
 (If there are no alternatives for a component, write "None".)
@@ -19,13 +16,12 @@ After analyzing all lines, list alternative or ambiguous names for each componen
 Verify that:
 All line numbers are accurate.
 All alternative names are correctly listed.
-DIRECT is used only when the component name or an alternative name appears in the line.
 
 Formatting:
 Return results in structured plain text as follows:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-<componentName>, <lineNumber>, <referenceType>
+<componentName>, <lineNumber>
 ...
 Alternative names:
 <componentName>: <alternativeName1>, <alternativeName2>, ...
@@ -41,10 +37,10 @@ The service logs each attempt.
 Output:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-AuthenticationService, 1, DIRECT
-AuthenticationService, 2, INDIRECT
-UserDatabase, 2, DIRECT
-AuthenticationService, 3, INDIRECT
+AuthenticationService, 1
+AuthenticationService, 2
+UserDatabase, 2
+AuthenticationService, 3
 
 Alternative names:
 AuthenticationService: service

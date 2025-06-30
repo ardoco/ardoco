@@ -10,7 +10,7 @@ public enum PromptType {
      * <pre>
      * BEGIN-OUTPUT
      * &lt;entityType1&gt; entities recognized:
-     * &lt;entityName&gt;, &lt;lineNumber&gt;, &lt;referenceType&gt;
+     * &lt;entityName&gt;, &lt;lineNumber&gt;
      * ...
      * Alternative names:
      * &lt;entityName&gt;: &lt;alternativeName1&gt;, &lt;alternativeName2&gt;, ...
@@ -24,7 +24,7 @@ public enum PromptType {
      * This prompt type does not support a second part of the prompt and expects the {@link Prompt} object configuration to conform to this single-part structure.
      * </p>
      */
-    STRUCTURED_TEXT_OUTPUT_PROMPT,
+    STRUCTURED_TEXT_OUTPUT_PROMPT, //TODO add examples for better understanding
     /**
      * Represents a prompt type designed to generate JSON-formatted output using only one prompt.
      * This type indicates that the prompt output format must adhere to the following structure:
@@ -34,10 +34,7 @@ public enum PromptType {
      *     "name": "...",
      *     "type": "...",
      *     "alternativeNames": [...],
-     *     "occurrences": [
-     *       { "line": ..., "referenceType": "..." },
-     *       ...
-     *     ]
+     *     "occurrences": [...]
      *   },
      *   ...
      * ]
@@ -46,7 +43,7 @@ public enum PromptType {
      * This prompt type does not support a second part of the prompt and expects the {@link Prompt} object configuration to conform to this single-part structure.
      * </p>
      */
-    JSON_OUTPUT_PROMPT,
+    JSON_OUTPUT_PROMPT, //TODO add examples for better understanding
     /**
      * Represents a prompt type that consists of two distinct parts.
      * <p>

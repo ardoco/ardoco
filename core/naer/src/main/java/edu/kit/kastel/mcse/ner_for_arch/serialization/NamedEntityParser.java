@@ -1,8 +1,7 @@
 package edu.kit.kastel.mcse.ner_for_arch.serialization;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityReferenceType;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
@@ -35,12 +34,35 @@ public class NamedEntityParser {
      * @throws IOException if deserialization fails (e.g. malformed JSON)
      */
     public static Set<NamedEntity> fromJson(String json, SoftwareArchitectureDocumentation sad) throws IOException {
+        //System.out.println("Parsing: \n" + json);
         ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Set.class, new NamedEntityDeserializer(sad));
-        mapper.registerModule(module);
-        return mapper.readValue(json, new TypeReference<>() {
-        });
+        JsonNode rootNode = mapper.readTree(json);
+        Set<NamedEntity> entities = new HashSet<>();
+
+        for (JsonNode entityNode : rootNode) {
+            String name = entityNode.get("name").asText();
+            NamedEntityType type = NamedEntityType.valueOf(entityNode.get("type").asText());
+            NamedEntity entity = new NamedEntity(name, type);
+            entity.setSourceText(sad);
+
+            // Handle alternative names
+            JsonNode alternativeNamesNode = entityNode.get("alternativeNames");
+            for (JsonNode altName : alternativeNamesNode) {
+                entity.addAlternativeName(altName.asText());
+            }
+
+            // Handle occurrences
+            JsonNode occurrencesNode = entityNode.get("occurrences");
+            for (JsonNode occurrence : occurrencesNode) {
+                // New format: occurrences is a list of integers
+                int lineNumber = occurrence.asInt();
+                addOccurrenceWithDeductedReferenceType(entity, lineNumber, sad);
+            }
+
+            entities.add(entity);
+        }
+
+        return entities;
     }
 
     /**
@@ -55,6 +77,7 @@ public class NamedEntityParser {
     public static Set<NamedEntity> fromString(String str, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) throws IOException {
         //System.out.println("Parsing: \n" + str);
         Map<String, NamedEntity> entityMap = new HashMap<>();
+        Map<String, Set<Integer>> entityOccurencesMap = new HashMap<>(); //needed to determine reference types of the occurrences after information about alternative names is saved
         String[] lines = str.split("\\R");
 
         boolean parsingAlternativeNames = false;
@@ -90,24 +113,24 @@ public class NamedEntityParser {
             }
 
             if (!parsingAlternativeNames) {
-                // Parse entity occurrence: <name>, <lineNumber>, <referenceType>
+                // Parse entity occurrence: <name>, <lineNumber>
                 String[] parts = line.split(",");
-                if (parts.length != 3) {
+                if (parts.length != 2) {
                     logger.error("Invalid entity occurrence format: '{}'", line);
                     throw new IOException("Invalid entity occurrence format: '" + line + "'");
                 }
 
                 String name = parts[0].trim();
                 int lineNumber = Integer.parseInt(parts[1].trim());
-                NamedEntityReferenceType referenceType = NamedEntityReferenceType.valueOf(parts[2].trim());
 
                 NamedEntity entity = entityMap.get(name);
                 if (entity == null) {
                     entity = new NamedEntity(name, currentEntityType);
                     entity.setSourceText(softwareArchitectureDocumentation);
                     entityMap.put(name, entity);
+                    entityOccurencesMap.put(name, new HashSet<>());
                 }
-                entity.addOccurrence(lineNumber, referenceType);
+                entityOccurencesMap.get(name).add(lineNumber);
 
             } else {
                 // Parse alternative names: <componentName>: <alt1>, <alt2>, ...
@@ -138,6 +161,25 @@ public class NamedEntityParser {
             }
         }
 
+        //add occurrences with correct reference types
+        for (NamedEntity entity : entityMap.values()) {
+            for (int lineNumber : entityOccurencesMap.get(entity.getName())) {
+                addOccurrenceWithDeductedReferenceType(entity, lineNumber, softwareArchitectureDocumentation);
+            }
+        }
+
         return new HashSet<>(entityMap.values());
+    }
+
+    private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
+        boolean isDirect = softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(entity.getName().toLowerCase());
+        for (String alternativeName : entity.getAlternativeNames()) {
+            if (softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(alternativeName.toLowerCase())) {
+                isDirect = true;
+                break;
+            }
+        }
+        NamedEntityReferenceType referenceType = isDirect ? NamedEntityReferenceType.DIRECT : NamedEntityReferenceType.INDIRECT;
+        entity.addOccurrence(lineNumber, referenceType);
     }
 }

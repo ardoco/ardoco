@@ -115,7 +115,8 @@ public class SoftwareArchitectureDocumentation {
     public String getLine(int lineNumber) {
         lineNumber--; //to keep everything consistent, we start indexing at 1 (so we need to increment the line number to be able to handle it correctly with our internal array)
         if (lineNumber < 0 || lineNumber >= lines.length) {
-            logAndThrow("line number out of range");
+            logger.error("line number {} out of range", lineNumber + 1);
+            throw new IllegalArgumentException("line number " + lineNumber + 1 + " out of range");
         }
         return lines[lineNumber];
     }
