@@ -1,10 +1,10 @@
 1:------------
 In the following text, which architecturally relevant components are directly named?
-For each component, provide its name and all alternative names and the line numbers where it appears.
+For each component, provide its name, all alternative names, and the line numbers where it appears.
 
 1:------------
 In the following text, which architecturally relevant components are directly named?
-For each component, provide its name and all alternative names and the line numbers where it appears.
+For each component, provide its name, all alternative names, and the line numbers where it appears.
 Be careful to only name real components and no interfaces or external libraries etc.
 
 1:------------
@@ -34,7 +34,7 @@ Rules:
 Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
 
 2:------------
-Given the last answer (see below), for each component, output a JSON object containing:
+Given the last answer (see below), for each component, return a JSON object containing:
 - "name": the primary name of the component (use the most descriptive name).
 - "type": "COMPONENT"
 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
