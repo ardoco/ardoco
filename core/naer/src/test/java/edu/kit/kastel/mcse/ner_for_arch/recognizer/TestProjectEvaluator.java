@@ -82,7 +82,7 @@ public class TestProjectEvaluator {
         NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder(sadFile).chatModel(model);
         if (prompt != null) {
             if (useGoldstandardComponentNames) { //add goldstandard component names if wanted:
-                //TODO: probably add sth like: + ".\nUse the names of this list as main name of the recognized components." (to improve effect of this information)
+                //TODO: add sth like: + ".\nUse the names of this list as main name of the recognized components. usw" (to improve the effect of this information)
                 String componentSupportList = "\nAs support, here is the complete list of all architecturally relevant components mentioned in the text:\n" + GoldstandardParser.getComponentNames(dir);
                 prompt = new Prompt(prompt.first() + componentSupportList, prompt.second(), prompt.type());
             }

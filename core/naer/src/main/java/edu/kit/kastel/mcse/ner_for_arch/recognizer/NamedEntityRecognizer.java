@@ -83,65 +83,96 @@ public class NamedEntityRecognizer {
                 yield chatResponse.aiMessage().text();
             }
             case TWO_PART_PROMPT -> {
-                //part one: "get components unstructured"
                 logger.info("send prompt one to get components unstructured...");
                 UserMessage userMessage1 = new UserMessage(prompt.first() + "\nText:\n" + softwareArchitectureDocumentation.getText());
-
                 ChatRequest chatRequest1 = ChatRequest.builder().messages(systemMessage, userMessage1).build();
-
                 ChatResponse chatResponse1 = chatModel.chat(chatRequest1);
                 String part1Answer = chatResponse1.aiMessage().text();
 
-                //part two: "transform to structured JSON output"
                 logger.info("send prompt two to transform answer to structured JSON array...");
                 UserMessage userMessage2 = new UserMessage(prompt.second() + "\nLast answer:\n" + part1Answer);
-
                 ChatRequest chatRequest2 = ChatRequest.builder().messages(systemMessage, userMessage2).build();
-
                 ChatResponse chatResponse2 = chatModel.chat(chatRequest2);
                 yield chatResponse2.aiMessage().text();
             }
         };
-        //System.out.println("LLM response: " + answer);
 
-        logger.info("parsing LLM response to Java objects...");
-        // all text before the start tag and after the end tag of the result is ignored (because some LLMs tend to create additional text)
         try {
-            Set<NamedEntity> result = switch (prompt.type()) {
-                case STRUCTURED_TEXT_OUTPUT_PROMPT -> {
-                    int start = answer.indexOf("BEGIN-OUTPUT");
-                    int end = answer.lastIndexOf("END-OUTPUT");
-                    if (start != -1 && end != -1 && end > start) {
-                        start += "BEGIN-OUTPUT".length();
-                        answer = answer.substring(start, end);
-                    } else {
-                        logger.error("no valid structured text output found in LLM output: {}", answer);
-                        throw new RuntimeException("no valid output found in LLM output: " + answer);
-                    }
-
-                    yield NamedEntityParser.fromString(answer, softwareArchitectureDocumentation);
-                }
-                case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> {
-                    int start = answer.indexOf('[');
-                    int end = answer.lastIndexOf(']');
-                    if (start != -1 && end != -1 && end > start) {
-                        answer = answer.substring(start, end + 1);
-                    } else {
-                        logger.error("no valid JSON object found in LLM output: {}", answer);
-                        throw new RuntimeException("no valid JSON object found in LLM output: " + answer);
-                    }
-
-                    yield NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
-                }
-            };
-            logger.info("successfully finished and found {} named entities", result.size());
-            return result;
+            return parseAnswer(answer); //if everything works as intended, this does not fail
         } catch (IOException e) {
-            logger.error("error parsing LLM output to named entities");
-            throw new RuntimeException(e);
-        }
+            logger.warn("initial parsing failed, attempting to reformat LLM output (via LLM)...");
+            String format = switch (prompt.type()) { //TODO add examples (to make it few shot)
+                case STRUCTURED_TEXT_OUTPUT_PROMPT -> """ 
+                        BEGIN-OUTPUT
+                        COMPONENT entities recognized:
+                        <componentName>, <lineNumber>, <referenceType>
+                        ...
+                        Alternative names:
+                        <componentName>: <alternativeName1>, <alternativeName2>, ...
+                        ...
+                        END-OUTPUT
+                        """;
+                case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> """
+                        [
+                            {
+                                "name": "...",
+                                "type": "COMPONENT",
+                                "alternativeNames": [...],
+                                "occurrences": [
+                                    {"line": ..., "referenceType": "..."},
+                                    ...
+                                ]
+                            },
+                            ...
+                        ]
+                        """;
+            };
+            String repairPrompt = "The following output is invalid. Reformat it so it precisely adheres to the following output format:\n" + format +
+                    "\n\nInvalid output to reformat:\n" + answer + "\nThis error occurred when trying to parse it:\n" + e.getMessage();
+            UserMessage repairMessage = new UserMessage(repairPrompt);
+            ChatRequest repairRequest = ChatRequest.builder().messages(systemMessage, repairMessage).build();
+            ChatResponse repairResponse = chatModel.chat(repairRequest);
+            String repairedAnswer = repairResponse.aiMessage().text();
 
+            logger.info("parsing repaired LLM response...");
+            try {
+                return parseAnswer(repairedAnswer);
+            } catch (IOException e2) {
+                logger.error("repair attempt failed");
+                throw new RuntimeException("Both original and repair attempts failed", e2);
+            }
+        }
     }
+
+    private Set<NamedEntity> parseAnswer(String answer) throws IOException {
+        switch (prompt.type()) {
+            case STRUCTURED_TEXT_OUTPUT_PROMPT -> {
+                int start = answer.indexOf("BEGIN-OUTPUT");
+                int end = answer.lastIndexOf("END-OUTPUT");
+                if (start != -1 && end != -1 && end > start) {
+                    start += "BEGIN-OUTPUT".length();
+                    answer = answer.substring(start, end);
+                } else {
+                    logger.warn("No valid structured text output found. Output must begin with 'BEGIN-OUTPUT' and end with 'END-OUTPUT'.");
+                    throw new IOException("No valid structured text output found. Output must begin with 'BEGIN-OUTPUT' and end with 'END-OUTPUT'.");
+                }
+                return NamedEntityParser.fromString(answer, softwareArchitectureDocumentation);
+            }
+            case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> {
+                int start = answer.indexOf('[');
+                int end = answer.lastIndexOf(']');
+                if (start != -1 && end != -1 && end > start) {
+                    answer = answer.substring(start, end + 1);
+                } else {
+                    logger.warn("No valid JSON array found.");
+                    throw new IOException("No valid JSON array found.");
+                }
+                return NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
+            }
+        }
+        return Set.of(); //not reachable
+    }
+
 
     /**
      * Builder for {@link NamedEntityRecognizer} instances.

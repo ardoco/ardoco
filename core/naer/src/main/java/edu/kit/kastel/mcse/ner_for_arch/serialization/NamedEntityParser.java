@@ -73,8 +73,8 @@ public class NamedEntityParser {
                 try {
                     currentEntityType = NamedEntityType.valueOf(typeString);
                 } catch (IllegalArgumentException e) {
-                    logger.error("Unknown entity type: {}", typeString);
-                    throw new IOException("Unknown entity type: " + typeString);
+                    logger.error("Unknown entity type: '{}'", typeString);
+                    throw new IOException("Unknown entity type: '" + typeString + "'");
                 }
                 continue;
             }
@@ -85,16 +85,16 @@ public class NamedEntityParser {
             }
 
             if (currentEntityType == null) {
-                logger.error("Entity type not specified before entries: {}", line);
-                throw new IOException("Entity type not specified before entries: " + line);
+                logger.error("Entity type not specified before entries: '{}'", line);
+                throw new IOException("Entity type not specified before entries: '" + line + "'");
             }
 
             if (!parsingAlternativeNames) {
                 // Parse entity occurrence: <name>, <lineNumber>, <referenceType>
                 String[] parts = line.split(",");
                 if (parts.length != 3) {
-                    logger.error("Invalid entity occurrence format: {}", line);
-                    throw new IOException("Invalid entity occurrence format: " + line);
+                    logger.error("Invalid entity occurrence format: '{}'", line);
+                    throw new IOException("Invalid entity occurrence format: '" + line + "'");
                 }
 
                 String name = parts[0].trim();
@@ -113,8 +113,8 @@ public class NamedEntityParser {
                 // Parse alternative names: <componentName>: <alt1>, <alt2>, ...
                 String[] parts = line.split(":");
                 if (parts.length != 2) {
-                    logger.error("Invalid alternative names format: {}", line);
-                    throw new IOException("Invalid alternative names format: " + line);
+                    logger.error("Invalid alternative names format: '{}'", line);
+                    throw new IOException("Invalid alternative names format: '" + line + "'");
                 }
 
                 String name = parts[0].trim();
@@ -130,8 +130,8 @@ public class NamedEntityParser {
                         entity.addAlternativeName(alt.trim());
                     }
                 } else {
-                    logger.error("Alternative names for unknown entity: {}", name);
-                    throw new IOException("Alternative names for unknown entity: " + name);
+                    logger.error("Alternative names for unknown entity: '{}'", name);
+                    throw new IOException("Alternative names for unknown entity: '" + name + "'");
                 }
 
 
