@@ -6,6 +6,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
 import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ner_for_arch.serialization.NamedEntityParser;
 import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,13 +33,13 @@ public class NamedEntityRecognizer {
      */
     private final ChatModel chatModel;
     /**
-     * The prompt that instructs the chat model on how to identify named entities
-     */
-    private final Prompt prompt;
-    /**
      * The software architecture documentation (SAD) to analyze
      */
     private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
+    /**
+     * The prompt that instructs the chat model on how to identify named entities
+     */
+    private Prompt prompt;
 
     /**
      * Private constructor used by the Builder to create a NamedEntityRecognizer instance.
@@ -139,6 +141,35 @@ public class NamedEntityRecognizer {
                 throw new RuntimeException("Both original and repair attempts failed", e2);
             }
         }
+    }
+
+    /**
+     * Recognizes {@link NamedEntity} instances in the given {@link NamedEntityRecognizer#softwareArchitectureDocumentation} using a set of entity names (that are suspected to occur in the SAD) as support.
+     * <p>
+     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
+     * </p>
+     *
+     * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that should be recognized with their corresponding types).
+     * @return a set of recognized named entities
+     */
+    public Set<NamedEntity> recognize(Map<NamedEntityType, Set<String>> possibleEntities) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
+            NamedEntityType type = entry.getKey();
+            Set<String> names = entry.getValue();
+
+            sb.append(type.toString()).append(" entities: ");
+            sb.append(String.join(", ", names));
+            sb.append("\n");
+        }
+
+        String possibleEntitiesString = sb.toString();
+
+        String componentSupportList = "\n\nAs support, here is a list of entities that could be mentioned in the text:\n" + possibleEntitiesString + "\n";
+        prompt = new Prompt(prompt.first() + componentSupportList, prompt.second(), prompt.type());
+
+        return recognize();
     }
 
     private Set<NamedEntity> parseAnswer(String answer) throws IOException {

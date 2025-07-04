@@ -50,16 +50,17 @@ public class GoldstandardParser {
         return new HashSet<>(entitiesMap.values());
     }
 
+
     /**
-     * Retrieves a comma-separated string of the goldstandard component names from the test project in the given path.
+     * Retrieves possible component names from the goldstandard.
      *
-     * @param projectDir the path to the project directory
-     * @return a comma-separated string of component names, or an empty string if no component names are found
+     * @param projectDir the root directory of the test project, to locate the component names file
+     * @return a map where the key is a {@link NamedEntityType#COMPONENT} and the value is a set of strings representing possible component names
      */
-    public static String getComponentNames(Path projectDir) {
+    public static Map<NamedEntityType, Set<String>> getPossibleComponents(Path projectDir) {
         Path componentNameFile = findComponentNameFile(projectDir);
 
-        return parseComponentNames(componentNameFile);
+        return parsePossibleComponents(componentNameFile);
     }
 
 
@@ -83,27 +84,28 @@ public class GoldstandardParser {
     }
 
 
-    private static String parseComponentNames(Path componentNameFile) {
+    private static Map<NamedEntityType, Set<String>> parsePossibleComponents(Path componentNameFile) {
         String csvContent = assertDoesNotThrow(() -> Files.readString(componentNameFile));
 
         if (csvContent.isBlank()) {
-            return "";
+            return new HashMap<>();
         }
 
         List<String> lines = csvContent.lines().toList();
-        List<String> componentNames = new ArrayList<>();
+        Map<NamedEntityType, Set<String>> possibleComponents = new HashMap<>();
+        possibleComponents.put(NamedEntityType.COMPONENT, new HashSet<>());
 
         for (int i = 1; i < lines.size(); i++) { // Skip header
             String[] parts = lines.get(i).split(",");
             if (parts.length >= 2) {
                 String componentName = parts[1].trim();
                 if (!componentName.isEmpty()) {
-                    componentNames.add(componentName);
+                    possibleComponents.get(NamedEntityType.COMPONENT).add(componentName);
                 }
             }
         }
 
-        return String.join(", ", componentNames);
+        return possibleComponents;
     }
 
 
