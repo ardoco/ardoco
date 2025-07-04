@@ -125,6 +125,10 @@ public class SoftwareArchitectureDocumentation {
         return lines;
     }
 
+    public int getLineCount() {
+        return lines.length;
+    }
+
     public Path getFilePath() {
         return filePath;
     }
