@@ -139,7 +139,7 @@ public class SoftwareArchitectureDocumentation {
      * The Jaccard similarity metric is used for he comparison.
      *
      * @param textLine the text line to search for; comparison is case-insensitive
-     * @return the line number (1-indexed) with the highest similarity to the provided text, or -1 if no line meets the similarity threshold (0.95 or higher)
+     * @return the line number (1-indexed) with the highest similarity to the provided text, or -1 if no line meets the similarity threshold (0.90 or higher)
      */
     public int getLineNumber(String textLine) {
         JaccardSimilarity jaccard = new JaccardSimilarity();
@@ -156,7 +156,7 @@ public class SoftwareArchitectureDocumentation {
             }
         }
 
-        if (bestScore >= 0.95) {
+        if (bestScore >= 0.90) {
             return bestLineNumber;
         } else {
             logger.warn("could not find similar SAD line for the following output line: '{}'\nBest score: {} best line: '{}'", textLine, bestScore, getLine(bestLineNumber));
