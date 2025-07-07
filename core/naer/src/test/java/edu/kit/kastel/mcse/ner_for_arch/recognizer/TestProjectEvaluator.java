@@ -30,6 +30,12 @@ public class TestProjectEvaluator {
         this.useGoldstandardComponentNames = useGoldstandardComponentNames;
     }
 
+    // We do this because sometimes the LLM returns names like "gui component" but we use names like "gui" in the goldstandards
+    private static String cleanComponentName(String input) {
+        // Remove the word "component" (case-insensitive) and trim extra whitespace
+        return input.replaceAll("(?i)\\bcomponent\\b", "").replaceAll("\\s+", " ").trim();
+    }
+
     public void evaluate(ComponentRecognitionParameterizedTest.TestProject project) {
         if (project == ComponentRecognitionParameterizedTest.TestProject.ALL) {
             evaluateAll();
@@ -57,7 +63,6 @@ public class TestProjectEvaluator {
 
         assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
     }
-
 
     private void evaluateSingle(ComponentRecognitionParameterizedTest.TestProject project) {
         Path evalResourcesPath = getEvaluationResourcesPath();
@@ -154,13 +159,13 @@ public class TestProjectEvaluator {
             //one of the possible names of the recognized component needs to match one of the possible names of a ground-truth-component for them to be "equivalent":
             boolean foundEquivalentComponent = false;
             Set<String> componentNamePool = new HashSet<>(component.getAlternativeNames());
-            componentNamePool.add(component.getName());
+            componentNamePool.add(cleanComponentName(component.getName()));
             for (NamedEntity groundTruthComponent : groundTruth) {
                 if (foundEquivalentComponent) {
                     break; //because we assume that there is only one possible match to be found
                 }
                 Set<String> groundTruthComponentNamePool = new HashSet<>(groundTruthComponent.getAlternativeNames());
-                groundTruthComponentNamePool.add(groundTruthComponent.getName());
+                groundTruthComponentNamePool.add(cleanComponentName(groundTruthComponent.getName()));
                 for (String componentName : componentNamePool) {
                     if (groundTruthComponentNamePool.contains(componentName)) {
                         foundEquivalentComponent = true;
