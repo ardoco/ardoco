@@ -7,7 +7,7 @@ For each component, output a JSON object containing:
 - "name": the primary name of the component (use the most descriptive name).
 - "type": "COMPONENT"
 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-- "occurrences": a list of line numbers where the component appears or is referenced.
+- "occurrences": a list of lines where the component appears or is referenced.
 
 Rules:
 - Use the exact casing of the component as it appears in the text.
@@ -36,7 +36,7 @@ For each component, output a JSON object containing:
 - "name": the primary name of the component (use the most descriptive name).
 - "type": "COMPONENT"
 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-- "occurrences": a list of line numbers where the component appears or is referenced.
+- "occurrences": a list of lines where the component appears or is referenced.
 
 Rules:
 - Use the exact casing of the component as it appears in the text.
@@ -66,15 +66,15 @@ Output:
 [
     {
         "name": "AuthenticationService",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": ["service"],
-        "occurrences": [1, 2, 3]
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
     },
     {
         "name": "UserDatabase",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [2]
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
     }
 ]
 
@@ -87,7 +87,7 @@ For each component, output a JSON object containing:
 - "name": the primary name of the component (use the most descriptive name).
 - "type": "COMPONENT"
 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-- "occurrences": a list of line numbers where the component appears or is referenced.
+- "occurrences": a list of lines where the component appears or is referenced.
 
 Rules:
 - Use the exact casing of the component as it appears in the text.
@@ -117,15 +117,15 @@ Output 1:
 [
     {
         "name": "AuthenticationService",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": ["service"],
-        "occurrences": [1, 2, 3]
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
     },
     {
         "name": "UserDatabase",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [2]
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
     }
 ]
 
@@ -142,33 +142,33 @@ Output 2:
 [
     {
         "name": "OrderService",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [1, 2]
+        "occurrences": ["The OrderService receives new orders from the web application.", "It communicates with the InventoryManager to check stock levels."]
     },
     {
         "name": "InventoryManager",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [2]
+        "occurrences": ["It communicates with the InventoryManager to check stock levels."]
     },
     {
         "name": "PaymentProcessor",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": ["service"],
-        "occurrences": [3]
+        "occurrences": ["If items are available, the PaymentProcessor is triggered to initiate payment."]
     },
     {
         "name": "NotificationDispatcher",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [4]
+        "occurrences": ["The NotificationDispatcher then informs the customer via email."]
     },
     {
         "name": "AuditLogger",
-        "type": "COMPONENT"
+        "type": "COMPONENT",
         "alternativeNames": ["logger"],
-        "occurrences": [5, 6]
+        "occurrences": ["Finally, the AuditLogger records all actions for compliance purposes.", "The logger stores the recordings in a file."]
     }
 ]
 
@@ -190,7 +190,7 @@ Think step-by-step:
    - If a component is referred to by an alias or pronoun (e.g., "the service", "it"), treat it as the same component and note the alias in "alternativeNames".
 
 4. Track all occurrences:
-   - For each component, collect the line numbers where it is mentioned (directly or indirectly).
+   - For each component, collect the complete lines where it is mentioned (directly or indirectly).
 
 5. Normalize component identities:
    - If two terms clearly refer to the same component (e.g., “Database” and “UserDatabase”), unify them under the more descriptive name.
@@ -204,7 +204,7 @@ Output:
     - "name": The component's canonical name.
     - "type": Always "COMPONENT".
     - "alternativeNames": List of ambiguous names, aliases, or pronouns (empty list if none).
-    - "occurrences": List of line numbers where the component appears or is referenced.
+    - "occurrences": a list of lines where the component appears or is referenced.
 
 Example Input:
 The AuthenticationService handles login requests.
@@ -216,14 +216,14 @@ Example Output:
     {
         "name": "AuthenticationService",
         "type": "COMPONENT",
-        "alternativeNames": ["the service"],
-        "occurrences": [1, 2, 3]
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
     },
     {
         "name": "UserDatabase",
         "type": "COMPONENT",
         "alternativeNames": [],
-        "occurrences": [2]
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
     }
 ]
 

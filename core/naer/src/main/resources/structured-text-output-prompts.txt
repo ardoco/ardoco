@@ -37,38 +37,35 @@ Use this exact format. Do not add anything else.
 ---------------------------------
 One-Shot Prompt:
 ---------------------------------
-Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.
+Your task is to process the input text (in one sentence per line format), identify all architecturally relevant software architecture components, and output structured data about their mentions.
 
 Instructions:
-1. Component Identification:
-Identify all explicitly named, architecturally relevant software components.
-For each, choose the most descriptive and consistent name.
-2. Line-by-Line Analysis:
-For each line (starting at line 1):
-Every time a component is mentioned, output:
-"<componentName>, <lineNumber>"
+1. Component identification:
+Identify all architecturally relevant software architecture components that are explicitly named in the text (direct mentions).
+For each, determine the most descriptive name.
+2. Line-by-line analysis:
+For each line in the text (starting from 1):
+Every time a component is mentioned, output: "<componentName>, <line>"
 componentName: The most descriptive name of the component (consistent across all lines).
-lineNumber: The line in which the component is mentioned.
-3. Alternative Names:
-After all lines are processed, list alternative or ambiguous names for each component in the format:
-"<componentName>: <alternativeName1>, <alternativeName2>, ..."
-(If there are no alternative names for a component, write "None".)
-4. Final Consistency Check:
-Ensure:
-All line numbers are correct.
-All alternative names are properly listed.
+line: Text of the full line where the reference occurs.
+3. Alternative names:
+After analyzing all lines, list alternative or ambiguous names for each component in this format: "<componentName>: <alternativeName1>, <alternativeName2>, ..."
+(If there are no alternatives for a component, write "None".)
+4. Final consistency check:
+Verify that:
+All line references are accurate.
+All alternative names are correctly listed.
 
-Output Format:
+Formatting:
+Return results in structured plain text as follows:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-<componentName>, <lineNumber>
+<componentName>, '<line>'
 ...
 Alternative names:
 <componentName>: <alternativeName1>, <alternativeName2>, ...
 ...
 END-OUTPUT
-
-Use this exact format. Do not add anything else.
 
 Example:
 Text:
@@ -79,51 +76,50 @@ The service logs each attempt.
 Output:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-AuthenticationService, 1
-AuthenticationService, 2
-UserDatabase, 2
-AuthenticationService, 3
+AuthenticationService, 'The AuthenticationService handles login requests.'
+AuthenticationService, 'It forwards valid credentials to the UserDatabase.'
+UserDatabase, 'It forwards valid credentials to the UserDatabase.'
+AuthenticationService, 'The service logs each attempt.'
 
 Alternative names:
 AuthenticationService: service
 UserDatabase: None
 END-OUTPUT
 
+
+Use this exact output format and do not add anything else!
 ---------------------------------
 Two-Shot Prompt:
 ---------------------------------
-Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.
+Your task is to process the input text (in one sentence per line format), identify all architecturally relevant software architecture components, and output structured data about their mentions.
 
 Instructions:
-1. Component Identification:
-Identify all explicitly named, architecturally relevant software components.
-For each, choose the most descriptive and consistent name.
-2. Line-by-Line Analysis:
-For each line (starting at line 1):
-Every time a component is mentioned, output:
-"<componentName>, <lineNumber>"
+1. Component identification:
+Identify all architecturally relevant software architecture components that are explicitly named in the text (direct mentions).
+For each, determine the most descriptive name.
+2. Line-by-line analysis:
+For each line in the text (starting from 1):
+Every time a component is mentioned, output: "<componentName>, <line>"
 componentName: The most descriptive name of the component (consistent across all lines).
-lineNumber: The line in which the component is mentioned.
-3. Alternative Names:
-After all lines are processed, list alternative or ambiguous names for each component in the format:
-"<componentName>: <alternativeName1>, <alternativeName2>, ..."
-(If there are no alternative names for a component, write "None".)
-4. Final Consistency Check:
-Ensure:
-All line numbers are correct.
-All alternative names are properly listed.
+line: Text of the full line where the reference occurs.
+3. Alternative names:
+After analyzing all lines, list alternative or ambiguous names for each component in this format: "<componentName>: <alternativeName1>, <alternativeName2>, ..."
+(If there are no alternatives for a component, write "None".)
+4. Final consistency check:
+Verify that:
+All line references are accurate.
+All alternative names are correctly listed.
 
-Output Format:
+Formatting:
+Return results in structured plain text as follows:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-<componentName>, <lineNumber>
+<componentName>, '<line>'
 ...
 Alternative names:
 <componentName>: <alternativeName1>, <alternativeName2>, ...
 ...
 END-OUTPUT
-
-Use this exact format. Do not add anything else.
 
 Example 1:
 Text 1:
@@ -134,10 +130,10 @@ The service logs each attempt.
 Output 1:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-AuthenticationService, 1
-AuthenticationService, 2
-UserDatabase, 2
-AuthenticationService, 3
+AuthenticationService, 'The AuthenticationService handles login requests.'
+AuthenticationService, 'It forwards valid credentials to the UserDatabase.'
+UserDatabase, 'It forwards valid credentials to the UserDatabase.'
+AuthenticationService, 'The service logs each attempt.'
 
 Alternative names:
 AuthenticationService: service
@@ -157,13 +153,13 @@ The logger stores the recordings in a file.
 Output 2:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-OrderService, 1
-OrderService, 2
-InventoryManager, 2
-PaymentProcessor, 3
-NotificationDispatcher, 4
-AuditLogger, 5
-AuditLogger, 6
+OrderService, 'The OrderService receives new orders from the web application.'
+OrderService, 'It communicates with the InventoryManager to check stock levels.'
+InventoryManager, 'It communicates with the InventoryManager to check stock levels.'
+PaymentProcessor, 'If items are available, the PaymentProcessor is triggered to initiate payment.'
+NotificationDispatcher, 'The NotificationDispatcher then informs the customer via email.'
+AuditLogger, 'Finally, the AuditLogger records all actions for compliance purposes.'
+AuditLogger, 'The logger stores the recordings in a file.'
 
 Alternative names:
 OrderService: None
@@ -173,113 +169,13 @@ NotificationDispatcher: None
 AuditLogger: logger
 END-OUTPUT
 
----------------------------------
-Few-Shot Prompt:
----------------------------------
-Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.
 
-Instructions:
-1. Component Identification:
-Identify all explicitly named, architecturally relevant software components.
-For each, choose the most descriptive and consistent name.
-2. Line-by-Line Analysis:
-For each line (starting at line 1):
-Every time a component is mentioned, output:
-"<componentName>, <lineNumber>"
-componentName: The most descriptive name of the component (consistent across all lines).
-lineNumber: The line in which the component is mentioned.
-3. Alternative Names:
-After all lines are processed, list alternative or ambiguous names for each component in the format:
-"<componentName>: <alternativeName1>, <alternativeName2>, ..."
-(If there are no alternative names for a component, write "None".)
-4. Final Consistency Check:
-Ensure:
-All line numbers are correct.
-All alternative names are properly listed.
-
-Output Format:
-BEGIN-OUTPUT
-COMPONENT entities recognized:
-<componentName>, <lineNumber>
-...
-Alternative names:
-<componentName>: <alternativeName1>, <alternativeName2>, ...
-...
-END-OUTPUT
-
-Use this exact format. Do not add anything else.
-
-Example 1:
-Text 1:
-The AuthenticationService handles login requests.
-It forwards valid credentials to the UserDatabase.
-The service logs each attempt.
-
-Output 1:
-BEGIN-OUTPUT
-COMPONENT entities recognized:
-AuthenticationService, 1
-AuthenticationService, 2
-UserDatabase, 2
-AuthenticationService, 3
-
-Alternative names:
-AuthenticationService: service
-UserDatabase: None
-END-OUTPUT
-
-Example 2:
-Text 2:
-The PaymentGateway interfaces with the TransactionManager.
-A failure in the gateway triggers a rollback via the TransactionManager.
-
-Output 2:
-BEGIN-OUTPUT
-COMPONENT entities recognized:
-PaymentGateway, 1
-TransactionManager, 1
-PaymentGateway, 2
-TransactionManager, 2
-
-Alternative names:
-PaymentGateway: gateway
-TransactionManager: None
-END-OUTPUT
-
-Example 3:
-Text 3:
-The OrderService receives new orders from the web application.
-It communicates with the InventoryManager to check stock levels.
-If items are available, the PaymentProcessor is triggered to initiate payment.
-The NotificationDispatcher then informs the customer via email.
-Finally, the AuditLogger records all actions for compliance purposes.
-The logger stores the recordings in a file.
-
-
-Output 3:
-BEGIN-OUTPUT
-COMPONENT entities recognized:
-OrderService, 1
-OrderService, 2
-InventoryManager, 2
-PaymentProcessor, 3
-NotificationDispatcher, 4
-AuditLogger, 5
-AuditLogger, 6
-
-Alternative names:
-OrderService: None
-InventoryManager: None
-PaymentProcessor: None
-NotificationDispatcher: None
-AuditLogger: logger
-END-OUTPUT
-
+Use this exact output format and do not add anything else!
 
 ---------------------------------
 CoT Prompt:
 ---------------------------------
-Your task is to extract architecturally relevant software components from the input text (one sentence per line), and output structured data on their mentions using a step-by-step reasoning process.
+Your task is to process the input text (in one sentence per line format), identify all architecturally relevant software architecture components, and output structured data about their mentions.
 
 Step-by-step Reasoning:
 Component Identification:
@@ -287,21 +183,17 @@ Read through each line.
 Identify all explicitly named software components that serve architectural functions (e.g., services, managers, databases).
 Assign each a descriptive and consistent name.
 Track Mentions by Line:
-For each line (starting at line 1), identify when a component is mentioned.
+For each line, identify when a component is mentioned.
 Include indirect references (e.g., pronouns or aliases) and map them to the canonical component name.
-Log each mention as: <componentName>, <lineNumber>
+Log each mention as: <componentName>, <completeLine>
 Resolve Alternative Names:
 For each component, list aliases or ambiguous terms used to refer to it.
 Use "None" if no alternatives were found.
 
-Verify Consistency:
-Ensure all line numbers are correct.
-Ensure all alternative names are properly listed.
-
 Output Format:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-<componentName>, <lineNumber>
+<componentName>, '<completeLine>'
 ...
 Alternative names:
 <componentName>: <alternativeName1>, <alternativeName2>, ...
@@ -310,21 +202,21 @@ END-OUTPUT
 
 Example:
 Text:
-The SchedulerService queues tasks based on priority.
-It notifies the ExecutionEngine to start jobs.
-The engine logs job completion status.
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
 
-Output (step-by-step analysis happens internally):
+Output:
 BEGIN-OUTPUT
 COMPONENT entities recognized:
-SchedulerService, 1
-SchedulerService, 2
-ExecutionEngine, 2
-ExecutionEngine, 3
+AuthenticationService, 'The AuthenticationService handles login requests.'
+AuthenticationService, 'It forwards valid credentials to the UserDatabase.'
+UserDatabase, 'It forwards valid credentials to the UserDatabase.'
+AuthenticationService, 'The service logs each attempt.'
 
 Alternative names:
-SchedulerService: None
-ExecutionEngine: engine
+AuthenticationService: service
+UserDatabase: None
 END-OUTPUT
 
 Now perform the same analysis on the input text below. Use the same reasoning process and produce the output in the exact format. Do not add anything else.

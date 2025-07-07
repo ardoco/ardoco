@@ -1,5 +1,6 @@
 package edu.kit.kastel.mcse.ner_for_arch.model;
 
+import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,4 +134,28 @@ public class SoftwareArchitectureDocumentation {
         return filePath;
     }
 
+    /**
+     * Determines the line number in the document that most closely matches the specified text line.
+     * The Jaccard similarity metric is used for he comparison.
+     *
+     * @param textLine the text line to search for; comparison is case-insensitive
+     * @return the line number (1-indexed) with the highest similarity to the provided text, or -1 if no line meets the similarity threshold (0.95 or higher)
+     */
+    public int getLineNumber(String textLine) {
+        JaccardSimilarity jaccard = new JaccardSimilarity();
+        int bestLineNumber = -1;
+        double bestScore = 0.0;
+        int currentLine = 0;
+
+        for (String line : lines) {
+            currentLine++;
+            double score = jaccard.apply(line.toLowerCase(), textLine.toLowerCase());
+            if (score > bestScore) {
+                bestScore = score;
+                bestLineNumber = currentLine;
+            }
+        }
+
+        return bestScore >= 0.95 ? bestLineNumber : -1;
+    }
 }

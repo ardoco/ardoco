@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for parsing named entities from various input formats.
@@ -54,9 +56,8 @@ public class NamedEntityParser {
             // Handle occurrences
             JsonNode occurrencesNode = entityNode.get("occurrences");
             for (JsonNode occurrence : occurrencesNode) {
-                // New format: occurrences is a list of integers
-                int lineNumber = occurrence.asInt();
-                addOccurrenceWithDeductedReferenceType(entity, lineNumber, sad);
+                String line = occurrence.asText();
+                addOccurrenceWithDeductedReferenceType(entity, sad.getLineNumber(line), sad);
             }
 
             entities.add(entity);
@@ -113,15 +114,17 @@ public class NamedEntityParser {
             }
 
             if (!parsingAlternativeNames) {
-                // Parse entity occurrence: <name>, <lineNumber>
-                String[] parts = line.split(",");
-                if (parts.length != 2) {
+                // Parse entity occurrence: <name>, '<line>'
+                Pattern pattern = Pattern.compile("^(.*?),\\s*'(.*)'$");
+                Matcher matcher = pattern.matcher(line.trim());
+                if (!matcher.matches()) {
                     logger.error("Invalid entity occurrence format: '{}'", line);
                     throw new IOException("Invalid entity occurrence format: '" + line + "'");
                 }
 
-                String name = parts[0].trim();
-                int lineNumber = Integer.parseInt(parts[1].trim());
+                String name = matcher.group(1).trim();
+                String textLine = matcher.group(2);
+                int lineNumber = softwareArchitectureDocumentation.getLineNumber(textLine);
 
                 NamedEntity entity = entityMap.get(name);
                 if (entity == null) {

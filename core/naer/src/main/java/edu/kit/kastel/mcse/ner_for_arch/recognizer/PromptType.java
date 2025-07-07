@@ -24,7 +24,7 @@ public enum PromptType {
      * This prompt type does not support a second part of the prompt and expects the {@link Prompt} object configuration to conform to this single-part structure.
      * </p>
      */
-    STRUCTURED_TEXT_OUTPUT_PROMPT, //TODO add examples for better understanding
+    STRUCTURED_TEXT_OUTPUT_PROMPT, //TODO add examples for better understanding + change format description to match current format (no more line numbers)
     /**
      * Represents a prompt type designed to generate JSON-formatted output using only one prompt.
      * This type indicates that the prompt output format must adhere to the following structure:

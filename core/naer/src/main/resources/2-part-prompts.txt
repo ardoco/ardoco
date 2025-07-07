@@ -1,10 +1,10 @@
 1:------------
 In the following text, which architecturally relevant components are directly named?
-For each component, provide its name, all alternative names, and the line numbers where it appears.
+For each component, provide its name, all alternative names, and the lines where it appears.
 
 1:------------
 In the following text, which architecturally relevant components are directly named?
-For each component, provide its name, all alternative names, and the line numbers where it appears.
+For each component, provide its name, all alternative names, and the lines where it appears.
 Be careful to only name real components and no interfaces or external libraries etc.
 
 1:------------
@@ -13,7 +13,7 @@ In the following text, identify all architecturally relevant components that are
 For each component, provide:
 - The primary name (as it appears in the text)
 - All alternative names or abbreviations found in the text (case-insensitive match)
-- All line numbers (start counting from 1) where the component is mentioned.
+- All complete lines where the component is mentioned.
 
 Rules:
 - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
@@ -25,7 +25,7 @@ In the following text, identify all architecturally relevant components that are
 For each component, provide:
 - The primary name (as it appears in the text)
 - All alternative names or abbreviations found in the text (case-insensitive match)
-- All line numbers (start counting from 1) where the component is mentioned.
+- All complete lines where the component is mentioned.
 
 Rules:
 - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
@@ -38,16 +38,7 @@ Given the last answer (see below), for each component, return a JSON object cont
 - "name": the primary name of the component (use the most descriptive name).
 - "type": "COMPONENT"
 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-- "occurrences": a list of line numbers where the component appears or is referenced.
-
-
-Example (for a single component):
-{
-    "name": "Database",
-    "type": "COMPONENT"
-    "alternativeNames": ["UserDatabase", "DB"],
-    "occurrences": [1, 3, 7, 12]
-}
+- "occurrences": a list of lines where the component appears or is referenced.
 
 Output should be a JSON array (and nothing else!), like:
 [
@@ -59,3 +50,20 @@ Output should be a JSON array (and nothing else!), like:
     },
     ...
 ]
+
+Example:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": ["DB"],
+        "occurrences": ["It forwards valid credentials to the UserDatabase.", "The DB then validates the credentials."]
+    }
+]
+
