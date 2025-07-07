@@ -175,6 +175,7 @@ public class NamedEntityParser {
     }
 
     private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
+        if (lineNumber == -1) return; //TODO add to javadoc: "to improve resilience, we skip invalid occurrences"
         boolean isDirect = softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(entity.getName().toLowerCase());
         for (String alternativeName : entity.getAlternativeNames()) {
             if (softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(alternativeName.toLowerCase())) {

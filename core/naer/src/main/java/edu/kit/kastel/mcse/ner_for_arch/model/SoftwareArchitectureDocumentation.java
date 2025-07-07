@@ -156,6 +156,11 @@ public class SoftwareArchitectureDocumentation {
             }
         }
 
-        return bestScore >= 0.95 ? bestLineNumber : -1;
+        if (bestScore >= 0.95) {
+            return bestLineNumber;
+        } else {
+            logger.warn("could not find similar SAD line for the following output line: '{}'\nBest score: {} best line: '{}'", textLine, bestScore, getLine(bestLineNumber));
+            return -1;
+        }
     }
 }
