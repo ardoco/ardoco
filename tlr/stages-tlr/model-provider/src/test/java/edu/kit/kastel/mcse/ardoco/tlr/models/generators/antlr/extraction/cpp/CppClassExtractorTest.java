@@ -19,7 +19,7 @@ class CppClassExtractorTest {
     String sourcePath = "src/test/resources/cpp/interface/edu/";
 
     @Test
-    public void testCppClassExtractorMainCPPTest() throws IOException {
+    void testCppClassExtractorMainCPPTest() throws IOException {
         String filePath = sourcePath + "src/main.cpp";
         List<ClassElement> classes = extractClassElementsFromFile(filePath);
 
@@ -28,7 +28,7 @@ class CppClassExtractorTest {
     }
 
     @Test
-    public void testCppClassExtractorEntitiesCPPTest() throws IOException {
+    void testCppClassExtractorEntitiesCPPTest() throws IOException {
         String filePath = sourcePath + "src/Entities.cpp";
         List<ClassElement> classes = extractClassElementsFromFile(filePath);
 
@@ -37,7 +37,7 @@ class CppClassExtractorTest {
     }
 
     @Test
-    public void testCppClassExtractorEntitiesHTest() throws IOException {
+    void testCppClassExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
         List<ClassElement> classes = extractClassElementsFromFile(filePath);
 
