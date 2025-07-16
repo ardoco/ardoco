@@ -31,6 +31,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
  * ANTLR and extracting the elements from the token stream.
  * The files are identified by their suffix in the directory.
  */
+@SuppressWarnings("java:S100")
 public class Python3ElementExtractor extends ElementExtractor {
     private final Python3ElementStorageRegistry elementRegistry;
 
@@ -55,8 +56,8 @@ public class Python3ElementExtractor extends ElementExtractor {
     protected List<Path> getFiles(String directoryPath) {
         Path dir = Path.of(directoryPath);
         List<Path> pythonFiles = new ArrayList<>();
-        try {
-            Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".py")).forEach(pythonFiles::add);
+        try (var files = Files.walk(dir)) {
+            files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".py")).forEach(pythonFiles::add);
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
