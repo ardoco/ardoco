@@ -2,22 +2,28 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CPP14ParserBase extends Parser {
+    private static final Logger logger = LoggerFactory.getLogger(CPP14ParserBase.class);
+
     protected CPP14ParserBase(TokenStream input) {
         super(input);
     }
 
     protected boolean IsPureSpecifierAllowed() {
         try {
-            var context = this._ctx; // memberDeclarator
-            var c = context.getChild(0).getChild(0);
-            var c2 = c.getChild(0);
-            var p = c2.getChild(1);
-            if (p == null)
+            ParserRuleContext memberDeclarator = this._ctx; // memberDeclarator
+            ParseTree declarator = memberDeclarator.getChild(0).getChild(0);
+            ParseTree declaratorChild = declarator.getChild(0);
+            ParseTree parametersAndQualifiers = declaratorChild.getChild(1);
+            if (parametersAndQualifiers == null)
                 return false;
-            return (p instanceof CPP14Parser.ParametersAndQualifiersContext);
+            return (parametersAndQualifiers instanceof CPP14Parser.ParametersAndQualifiersContext);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
         return false;
     }

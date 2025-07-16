@@ -108,8 +108,7 @@ public class Element {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Element) {
-            Element basicElement = (Element) obj;
+        if (obj instanceof Element basicElement) {
             return Objects.equals(identifier, basicElement.getIdentifier()) && Objects.equals(basicElement.getParentIdentifier(), this
                     .getParentIdentifier()) && basicElement.getStartLine() == this.getStartLine() && basicElement.getEndLine() == this.getEndLine();
         }
