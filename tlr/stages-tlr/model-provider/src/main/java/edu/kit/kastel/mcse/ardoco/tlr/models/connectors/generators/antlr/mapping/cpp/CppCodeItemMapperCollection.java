@@ -18,7 +18,11 @@ public class CppCodeItemMapperCollection extends CodeItemMapperCollection {
 
     public CppCodeItemMapperCollection(CodeItemRepository repository, CppElementStorageRegistry elementRegistry) {
         super();
-        this.mappers = List.of(new FunctionMapper(repository, this, elementRegistry), new ClassMapper(repository, this, elementRegistry), new NamespaceMapper(
-                repository, this, elementRegistry), new FileMapper(repository, this, elementRegistry));
+        this.mappers = List.of(//
+                new FunctionMapper(repository, this, elementRegistry),//
+                new ClassMapper(repository, this, elementRegistry),//
+                new NamespaceMapper(repository, this, elementRegistry),//
+                new FileMapper(repository, this, elementRegistry)//
+        );
     }
 }
