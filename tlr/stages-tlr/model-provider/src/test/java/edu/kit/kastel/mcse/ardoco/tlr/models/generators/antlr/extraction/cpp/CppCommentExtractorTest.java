@@ -43,7 +43,7 @@ class CppCommentExtractorTest {
     }
 
     @Test
-    public void commentExtractorEntitiesCPPTest() throws IOException {
+    void commentExtractorEntitiesCPPTest() throws IOException {
         String filePath = sourcePath + "src/Entities.cpp";
         List<Comment> comments = extractCommentsFromFile(filePath);
 
@@ -55,7 +55,7 @@ class CppCommentExtractorTest {
     }
 
     @Test
-    public void commentExtractorEntitiesHTest() throws IOException {
+    void commentExtractorEntitiesHTest() throws IOException {
         String filePath = sourcePath + "include/Entities.h";
         List<Comment> comments = extractCommentsFromFile(filePath);
 
