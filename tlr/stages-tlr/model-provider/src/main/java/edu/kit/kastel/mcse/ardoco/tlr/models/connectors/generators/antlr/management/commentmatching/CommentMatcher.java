@@ -15,9 +15,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
  */
 public class CommentMatcher {
 
-    public CommentMatcher() {
-    }
-
     public void matchComments(List<Comment> comments, List<Element> allElements) {
         for (Comment comment : comments) {
             Element closestElement = findClosestElement(comment, allElements);
@@ -58,9 +55,7 @@ public class CommentMatcher {
         int commentStartLine = comment.startLine();
         int commentEndLine = comment.endLine();
 
-        int lineDifference = calculateDifference(elementStartLine, commentStartLine, commentEndLine);
-
-        return lineDifference;
+        return calculateDifference(elementStartLine, commentStartLine, commentEndLine);
     }
 
     protected int calculateDifference(int elementStartLine, int commentStartLine, int commentEndLine) {
