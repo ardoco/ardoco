@@ -48,8 +48,7 @@ public class PackageElement extends Element {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PackageElement) {
-            PackageElement packageElement = (PackageElement) obj;
+        if (obj instanceof PackageElement packageElement) {
             return packageElement.identifier.path().equals(this.identifier.path());
         }
         return false;

@@ -47,7 +47,7 @@ abstract class Python3LexerBase extends Lexer {
             }
 
             // Put the EOF back on the token stream.
-            this.emit(commonToken(Python3Lexer.EOF, "<EOF>"));
+            this.emit(commonToken(Recognizer.EOF, "<EOF>"));
         }
 
         Token next = super.nextToken();
@@ -83,13 +83,10 @@ abstract class Python3LexerBase extends Lexer {
     static int getIndentationCount(String spaces) {
         int count = 0;
         for (char ch : spaces.toCharArray()) {
-            switch (ch) {
-                case '\t':
-                    count += 8 - (count % 8);
-                    break;
-                default:
-                    // A normal space char.
-                    count++;
+            if (ch == '\t') {
+                count += 8 - (count % 8);
+            } else {// A normal space char.
+                count++;
             }
         }
 
