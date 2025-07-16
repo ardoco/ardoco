@@ -1,8 +1,6 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.cpp;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 
 class CppExtractorTest {
     @Test
-    void executeCppExtractorForMinimalDirectoryTest() throws IOException {
+    void executeCppExtractorForMinimalDirectoryTest() {
         String sourcePath = "src/test/resources/cpp/interface/edu/";
         CppExtractor cppExtractor = buildCppExtractor(sourcePath);
         cppExtractor.extractModel();

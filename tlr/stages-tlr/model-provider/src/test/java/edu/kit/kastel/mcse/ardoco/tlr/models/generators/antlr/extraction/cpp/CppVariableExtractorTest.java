@@ -24,10 +24,10 @@ class CppVariableExtractorTest {
         List<VariableElement> variables = extractVariablesFromFile(filePath);
 
         Assertions.assertEquals(2, variables.size());
-        Assertions.assertEquals("myCar", variables.get(0).getName());
-        Assertions.assertEquals("Entities::Car", variables.get(0).getDataType());
-        Assertions.assertEquals("main()", variables.get(0).getParentIdentifier().name());
-        Assertions.assertEquals(Type.FUNCTION, variables.get(0).getParentIdentifier().type());
+        Assertions.assertEquals("myCar", variables.getFirst().getName());
+        Assertions.assertEquals("Entities::Car", variables.getFirst().getDataType());
+        Assertions.assertEquals("main()", variables.getFirst().getParentIdentifier().name());
+        Assertions.assertEquals(Type.FUNCTION, variables.getFirst().getParentIdentifier().type());
         Assertions.assertEquals("person", variables.get(1).getName());
         Assertions.assertEquals("Entities::Person", variables.get(1).getDataType());
         Assertions.assertEquals("main()", variables.get(1).getParentIdentifier().name());
@@ -48,10 +48,10 @@ class CppVariableExtractorTest {
         List<VariableElement> variables = extractVariablesFromFile(filePath);
 
         Assertions.assertEquals(7, variables.size());
-        Assertions.assertEquals("make", variables.get(0).getName());
-        Assertions.assertEquals("std::string", variables.get(0).getDataType());
-        Assertions.assertEquals("Car", variables.get(0).getParentIdentifier().name());
-        Assertions.assertEquals(Type.CLASS, variables.get(0).getParentIdentifier().type());
+        Assertions.assertEquals("make", variables.getFirst().getName());
+        Assertions.assertEquals("std::string", variables.getFirst().getDataType());
+        Assertions.assertEquals("Car", variables.getFirst().getParentIdentifier().name());
+        Assertions.assertEquals(Type.CLASS, variables.getFirst().getParentIdentifier().type());
         Assertions.assertEquals("model", variables.get(1).getName());
         Assertions.assertEquals("std::string", variables.get(1).getDataType());
         Assertions.assertEquals("Car", variables.get(1).getParentIdentifier().name());

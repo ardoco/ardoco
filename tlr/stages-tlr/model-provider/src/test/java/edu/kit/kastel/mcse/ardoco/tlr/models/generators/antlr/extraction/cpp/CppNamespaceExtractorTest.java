@@ -32,11 +32,11 @@ class CppNamespaceExtractorTest {
         List<Element> namespaces = extractNamespaceFromFile(filePath);
 
         Assertions.assertEquals(1, namespaces.size());
-        Assertions.assertEquals("Entities", namespaces.get(0).getName());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getPath());
-        Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
-        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.get(0).getParentIdentifier().path());
+        Assertions.assertEquals("Entities", namespaces.getFirst().getName());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.getFirst().getPath());
+        Assertions.assertEquals("Entities", namespaces.getFirst().getParentIdentifier().name());
+        Assertions.assertEquals(Type.FILE, namespaces.getFirst().getParentIdentifier().type());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/src/Entities.cpp", namespaces.getFirst().getParentIdentifier().path());
     }
 
     @Test
@@ -45,11 +45,11 @@ class CppNamespaceExtractorTest {
         List<Element> namespaces = extractNamespaceFromFile(filePath);
 
         Assertions.assertEquals(1, namespaces.size());
-        Assertions.assertEquals("Entities", namespaces.get(0).getName());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getPath());
-        Assertions.assertEquals("Entities", namespaces.get(0).getParentIdentifier().name());
-        Assertions.assertEquals(Type.FILE, namespaces.get(0).getParentIdentifier().type());
-        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.get(0).getParentIdentifier().path());
+        Assertions.assertEquals("Entities", namespaces.getFirst().getName());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.getFirst().getPath());
+        Assertions.assertEquals("Entities", namespaces.getFirst().getParentIdentifier().name());
+        Assertions.assertEquals(Type.FILE, namespaces.getFirst().getParentIdentifier().type());
+        Assertions.assertEquals("src/test/resources/cpp/interface/edu/include/Entities.h", namespaces.getFirst().getParentIdentifier().path());
     }
 
     private List<Element> extractNamespaceFromFile(String filePath) throws IOException {
