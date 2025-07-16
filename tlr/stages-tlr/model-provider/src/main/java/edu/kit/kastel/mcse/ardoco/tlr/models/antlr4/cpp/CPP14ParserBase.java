@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("java:S100")
 public abstract class CPP14ParserBase extends Parser {
     private static final Logger logger = LoggerFactory.getLogger(CPP14ParserBase.class);
 
