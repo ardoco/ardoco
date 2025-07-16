@@ -9,6 +9,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
  */
 public final class PathExtractor {
 
+    private PathExtractor() {
+        throw new IllegalAccessError("Utility Class");
+    }
+
     /**
      * Extracts the path from the given ParserRuleContext
      * 
