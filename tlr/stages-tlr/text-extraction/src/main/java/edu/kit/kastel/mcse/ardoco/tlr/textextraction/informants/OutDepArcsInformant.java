@@ -20,10 +20,10 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Configurable
-    private final double nameOrTypeWeight = 0.5;
+    private double nameOrTypeWeight = 0.5;
 
     @Configurable
-    private final double probability = 0.8;
+    private double probability = 0.8;
 
     /**
      * Prototype constructor.
