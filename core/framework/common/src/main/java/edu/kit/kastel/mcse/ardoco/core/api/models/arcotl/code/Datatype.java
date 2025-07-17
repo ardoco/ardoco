@@ -15,8 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Represents a datatype in the code model.
- * Can be a class or interface and serves as a base for {@link ClassUnit} and {@link InterfaceUnit}.
+ * Represents a datatype in the code model. Can be a class or interface and serves as a base for {@link ClassUnit} and {@link InterfaceUnit}.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({ //
@@ -40,9 +39,6 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     @JsonProperty
     private List<String> datatypeReferencesIds;
 
-    /**
-     * Default constructor for Jackson.
-     */
     Datatype() {
         // Jackson
     }
@@ -185,12 +181,6 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         }
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -209,11 +199,6 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         return Objects.equals(this.datatypeReferencesIds, datatype.datatypeReferencesIds);
     }
 
-    /**
-     * Returns the hash code for this datatype.
-     *
-     * @return hash code
-     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

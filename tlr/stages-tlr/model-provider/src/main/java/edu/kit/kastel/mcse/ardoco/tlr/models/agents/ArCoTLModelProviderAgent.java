@@ -73,7 +73,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
             throw new IllegalArgumentException("Code file must not be null");
         }
 
-        if (!Metamodel.isACodeModel(codeMetamodel)) {
+        if (!Metamodel.isCodeModel(codeMetamodel)) {
             throw new IllegalArgumentException("Code metamodel must be a code model");
         }
 
@@ -88,7 +88,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
             logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
 
             return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE,
-                    Metamodel.CODE_ONLY_COMPILATION_UNITS);
+                    Metamodel.CODE_WITH_COMPILATION_UNITS);
         }
 
         return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, codeMetamodel);

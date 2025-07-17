@@ -91,7 +91,7 @@ public final class PcmExtractor extends ArchitectureExtractor {
 
         return switch (metamodelToExtract) {
             case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> architectureModelWithComponentsAndInterfaces;
-            case Metamodel.ARCHITECTURE_ONLY_COMPONENTS -> architectureComponentModel;
+            case Metamodel.ARCHITECTURE_WITH_COMPONENTS -> architectureComponentModel;
             default -> throw new IllegalArgumentException("Unsupported metamodel: " + metamodelToExtract);
         };
     }

@@ -15,8 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Represents a module in the code model.
- * Can contain other code items, such as packages, compilation units, or assemblies.
+ * Represents a module in the code model. Modules contain other code items, such as packages, compilation units, or assemblies.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({ //
@@ -72,7 +71,7 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
      */
     @Override
     public List<CodeItem> getContent() {
-        return this.codeItemRepository.getCodeItemsFromIds(this.content);
+        return this.codeItemRepository.getCodeItemsByIds(this.content);
     }
 
     /**
@@ -147,7 +146,9 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     @Override
     public SortedSet<CodeCompilationUnit> getAllCompilationUnits() {
         SortedSet<CodeCompilationUnit> result = new TreeSet<>();
-        this.getContent().forEach(c -> result.addAll(c.getAllCompilationUnits()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllCompilationUnits());
+        }
         return result;
     }
 
@@ -159,16 +160,12 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     @Override
     public SortedSet<CodePackage> getAllPackages() {
         SortedSet<CodePackage> result = new TreeSet<>();
-        this.getContent().forEach(c -> result.addAll(c.getAllPackages()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllPackages());
+        }
         return result;
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -180,11 +177,6 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
         return Objects.equals(this.content, that.content);
     }
 
-    /**
-     * Returns the hash code for this code module.
-     *
-     * @return hash code
-     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

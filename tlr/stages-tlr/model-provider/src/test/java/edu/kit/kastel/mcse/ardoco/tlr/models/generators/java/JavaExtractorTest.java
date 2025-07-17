@@ -17,7 +17,7 @@ class JavaExtractorTest {
 
     @Test
     void extractorTest() {
-        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/interface", Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/interface", Metamodel.CODE_WITH_COMPILATION_UNITS);
         CodeModel model = extractor.extractModel();
         Assertions.assertNotNull(model);
         for (Entity codePackage : model.getAllPackages()) {

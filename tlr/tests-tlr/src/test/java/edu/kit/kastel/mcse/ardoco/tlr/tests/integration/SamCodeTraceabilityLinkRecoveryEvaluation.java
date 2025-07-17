@@ -55,7 +55,7 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
 
     @Override
     protected ImmutableList<String> enrollGoldStandard(ImmutableList<String> goldStandard, ArDoCoResult result) {
-        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result, Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result, Metamodel.CODE_WITH_COMPILATION_UNITS);
     }
 
     @Override
@@ -66,7 +66,7 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
     @Override
     protected int getConfusionMatrixSum(ArDoCoResult arDoCoResult) {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(arDoCoResult.dataRepository());
-        Model codeModel = modelStatesData.getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        Model codeModel = modelStatesData.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         Model architectureModel = modelStatesData.getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
         var codeModelEndpoints = codeModel.getEndpoints().size();
         var architectureModelEndpoints = architectureModel.getEndpoints().size();

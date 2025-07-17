@@ -58,7 +58,7 @@ class SadSamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecov
 
     @Override
     protected ImmutableList<String> enrollGoldStandard(ImmutableList<String> goldStandard, ArDoCoResult result) {
-        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result, Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result, Metamodel.CODE_WITH_COMPILATION_UNITS);
     }
 
     @Override
@@ -74,7 +74,7 @@ class SadSamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecov
         int sentences = text.getSentences().size();
 
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
-        Model codeModel = modelStatesData.getModel(Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        Model codeModel = modelStatesData.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         var codeModelEndpoints = codeModel.getEndpoints().size();
 
         return sentences * codeModelEndpoints;

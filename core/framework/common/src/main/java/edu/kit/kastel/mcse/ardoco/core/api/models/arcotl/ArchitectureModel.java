@@ -4,10 +4,12 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
- * Represents an architecture model that is an AMTL instance.
+ * Represents an architecture model.
  */
+@NoHashCodeEquals
 public abstract sealed class ArchitectureModel extends Model permits ArchitectureComponentModel, ArchitectureModelWithComponentsAndInterfaces {
 
     /**

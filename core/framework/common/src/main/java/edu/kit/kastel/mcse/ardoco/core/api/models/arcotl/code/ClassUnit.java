@@ -11,8 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Represents a class unit in the code model.
- * Contains code items representing the contents of a class, such as methods and fields.
+ * Represents a class unit in the code model. Contains code items representing the contents of a class, such as methods and fields.
  */
 @JsonTypeName("ClassUnit")
 public final class ClassUnit extends Datatype {
@@ -64,7 +63,7 @@ public final class ClassUnit extends Datatype {
      */
     @Override
     public List<CodeItem> getContent() {
-        return this.codeItemRepository.getCodeItemsFromIds(this.content);
+        return this.codeItemRepository.getCodeItemsByIds(this.content);
     }
 
     /**
@@ -76,16 +75,12 @@ public final class ClassUnit extends Datatype {
     public List<Datatype> getAllDataTypes() {
         List<Datatype> result = new ArrayList<>();
         result.add(this);
-        this.getContent().forEach(c -> result.addAll(c.getAllDataTypes()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllDataTypes());
+        }
         return result;
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -97,11 +92,6 @@ public final class ClassUnit extends Datatype {
         return this.content.equals(classUnit.content);
     }
 
-    /**
-     * Returns the hash code for this class unit.
-     *
-     * @return hash code
-     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

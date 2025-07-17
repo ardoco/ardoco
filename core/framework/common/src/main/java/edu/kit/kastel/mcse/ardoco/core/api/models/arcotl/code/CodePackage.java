@@ -9,8 +9,7 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Represents a package in the code model.
- * Groups related code items and can contain subpackages and compilation units.
+ * Represents a package in the code model. Packages group related code items and can contain subpackages and compilation units.
  */
 @JsonTypeName("CodePackage")
 public final class CodePackage extends CodeModule {
@@ -92,7 +91,9 @@ public final class CodePackage extends CodeModule {
     public SortedSet<CodePackage> getAllPackages() {
         SortedSet<CodePackage> result = new TreeSet<>();
         result.add(this);
-        this.getContent().forEach(c -> result.addAll(c.getAllPackages()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllPackages());
+        }
         return result;
     }
 }

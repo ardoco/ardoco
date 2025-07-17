@@ -28,7 +28,7 @@ public class ArDoCoForSamCodeTraceabilityLinkRecovery extends ArDoCoRunner {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
-        var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode, Metamodel.CODE_ONLY_COMPILATION_UNITS);
+        var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode, Metamodel.CODE_WITH_COMPILATION_UNITS);
         var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat,
                 Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
 

@@ -9,19 +9,19 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
 /**
- * Represents an architecture model that is an AMTL instance.
- * Provides access to architecture items and their type identifiers.
+ * Represents an architecture model. This model contains architecture items, including components and interfaces.
  */
 public final class ArchitectureModelWithComponentsAndInterfaces extends ArchitectureModel {
 
     private final List<ArchitectureItem> content;
 
     /**
-     * Creates a new architecture model that is an AMTL instance.
+     * Creates a new architecture model.
      *
      * @param content the content of the architecture model
      */
     public ArchitectureModelWithComponentsAndInterfaces(List<ArchitectureItem> content) {
+        //TODO: Ensure that only interfaces and components are added to the content
         this.content = content;
     }
 
@@ -36,7 +36,7 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
     }
 
     /**
-     * Returns the endpoints of this model.
+     * Returns the endpoints of this model. This method returns the architecture items as endpoints, which include components and interfaces.
      *
      * @return list of architecture items
      */
@@ -65,10 +65,10 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
 
         SortedSet<String> identifiers = new TreeSet<>();
 
-        for (var entity : getContent()) {
-            if (entity.getType().isPresent()) {
-                identifiers.add(entity.getType().orElseThrow());
-                identifiers.addAll(entity.getTypeParts().orElseThrow().toList());
+        for (var item : getContent()) {
+            if (item.getType().isPresent()) {
+                identifiers.add(item.getType().orElseThrow());
+                identifiers.addAll(item.getTypeParts().orElseThrow().toList());
             }
         }
         return identifiers;
@@ -86,7 +86,7 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ArchitectureModelWithComponentsAndInterfaces that) || !super.equals(o)) {
+        if (!(o instanceof ArchitectureModelWithComponentsAndInterfaces that)) {
             return false;
         }
         return this.content.equals(that.content);

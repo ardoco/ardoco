@@ -40,7 +40,7 @@ public class TraceLinkCombiner extends Informant {
         }
         var samCodeTraceLinks = codeTraceabilityState.getSamCodeTraceLinks();
 
-        var connectionState = connectionStates.getConnectionState(Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
+        var connectionState = connectionStates.getConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         //evtl CodeAsArchitecture, assumed that only one leads to transitive tracelinks
         var sadSamTraceLinks = connectionState.getTraceLinks();
 

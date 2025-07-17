@@ -43,7 +43,7 @@ public class ArDoCoForSadSamTraceabilityLinkRecovery extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         // TODO: Phi: Right here?
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = //
                 ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration, null);
         this.getArDoCo().addPipelineStep(arCoTLModelProviderAgent);

@@ -15,8 +15,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelDTO;
+import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithOnlyCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
@@ -41,7 +41,7 @@ public abstract class CodeExtractor extends Extractor {
         ObjectMapper objectMapper = createObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
         try {
-            objectMapper.writeValue(outputFile, codeModel.createCodeModelDTO());
+            objectMapper.writeValue(outputFile, codeModel.createCodeModelDto());
         } catch (IOException e) {
             logger.warn("An exception occurred when writing the code model.", e);
         }
@@ -67,7 +67,7 @@ public abstract class CodeExtractor extends Extractor {
 
                 return switch (metamodelToExtract) {
                     case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CodeModelWithCompilationUnitsAndPackages(content);
-                    case CODE_ONLY_COMPILATION_UNITS -> new CodeModelWithOnlyCompilationUnits(content);
+                    case CODE_WITH_COMPILATION_UNITS -> new CodeModelWithCompilationUnits(content);
                     default -> throw new IllegalStateException("Unexpected value: " + metamodelToExtract);
                 };
 

@@ -8,7 +8,6 @@ import org.eclipse.collections.api.list.ImmutableList;
 
 /**
  * Represents a method in the architecture model.
- * Used as a signature in interfaces or components.
  */
 public final class ArchitectureMethod extends ArchitectureItem {
 
