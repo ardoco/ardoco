@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.glove;
 
 import java.nio.file.Path;
@@ -46,16 +46,16 @@ public class GloveMeasure extends VectorBasedWordSimMeasure {
     }
 
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
-        return this.getSimilarity(ctx) >= this.similarityThreshold;
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
+        return this.getSimilarity(comparisonContext) >= this.similarityThreshold;
     }
 
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
+    public double getSimilarity(ComparisonContext comparisonContext) {
         try {
-            return this.compareVectors(ctx.firstTerm(), ctx.secondTerm());
+            return this.compareVectors(comparisonContext.firstTerm(), comparisonContext.secondTerm());
         } catch (RetrieveVectorException e) {
-            LOGGER.error("Failed to compare glove vectors: {}", ctx, e);
+            LOGGER.error("Failed to compare glove vectors: {}", comparisonContext, e);
             return Double.NaN;
         }
     }

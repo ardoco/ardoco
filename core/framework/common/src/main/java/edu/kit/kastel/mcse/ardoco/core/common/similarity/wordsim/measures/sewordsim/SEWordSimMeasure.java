@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.sewordsim;
 
 import java.nio.file.Path;
@@ -42,19 +42,19 @@ public class SEWordSimMeasure implements WordSimMeasure {
     }
 
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
-        var similarity = this.getSimilarity(ctx);
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
+        var similarity = this.getSimilarity(comparisonContext);
         return !Double.isNaN(similarity) && similarity >= this.similarityThreshold;
     }
 
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
+    public double getSimilarity(ComparisonContext comparisonContext) {
         double similarity = Double.NaN;
 
         try {
-            similarity = this.getDataSource().getSimilarity(ctx.firstTerm(), ctx.secondTerm()).orElse(Double.NaN);
+            similarity = this.getDataSource().getSimilarity(comparisonContext.firstTerm(), comparisonContext.secondTerm()).orElse(Double.NaN);
         } catch (SQLException e) {
-            LOGGER.error("Failed to query the SEWordSim database for word comparison: {}", ctx, e);
+            LOGGER.error("Failed to query the SEWordSim database for word comparison: {}", comparisonContext, e);
         }
         return similarity; // words are probably missing from the database
     }

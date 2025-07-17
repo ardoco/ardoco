@@ -25,7 +25,7 @@ public class ConnectionStatesImpl implements ConnectionStates {
     }
 
     @Override
-    public ConnectionStateImpl getConnectionState(Metamodel mm) {
-        return connectionStates.get(mm);
+    public ConnectionStateImpl getConnectionState(Metamodel metamodel) {
+        return connectionStates.get(metamodel);
     }
 }

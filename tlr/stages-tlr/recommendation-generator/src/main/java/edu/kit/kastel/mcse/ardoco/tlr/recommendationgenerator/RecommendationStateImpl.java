@@ -6,7 +6,6 @@ import java.io.Serial;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -116,81 +115,6 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
 
     private static boolean recommendedInstancesHasEmptyType(RecommendedInstance ri, RecommendedInstance riWithExactName) {
         return riWithExactName.getType().isBlank() && !ri.getType().isBlank();
-    }
-
-    /**
-     * Returns all recommended instances that contain a given mapping as type.
-     *
-     * @param mapping given mapping to search for in types
-     * @return the list of recommended instances with the mapping as type.
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getRecommendedInstancesByTypeMapping(NounMapping mapping) {
-        return this.recommendedInstances.select(sinstance -> sinstance.getTypeMappings().contains(mapping)).toImmutableList();
-    }
-
-    /**
-     * Returns all recommended instances that contain a given mapping.
-     *
-     * @param mapping given mapping to search for
-     * @return the list of recommended instances with the mapping.
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getAnyRecommendedInstancesByMapping(NounMapping mapping) {
-        return this.recommendedInstances //
-                .select(sinstance -> sinstance.getTypeMappings().contains(mapping) || sinstance.getNameMappings().contains(mapping))
-                .toImmutableList();
-    }
-
-    /**
-     * Returns all recommended instances that contain a given name.
-     *
-     * @param name given name to search for in names
-     * @return the list of recommended instances with that name.
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getRecommendedInstancesByName(String name) {
-        return this.recommendedInstances.select(ri -> ri.getName().toLowerCase().contentEquals(name.toLowerCase())).toImmutableList();
-    }
-
-    /**
-     * Returns all recommended instances that contain a similar name.
-     *
-     * @param name given name to search for in names
-     * @return the list of recommended instances with a similar name.
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarName(String name) {
-        MutableList<RecommendedInstance> ris = Lists.mutable.empty();
-        for (RecommendedInstance ri : this.recommendedInstances) {
-            if (SimilarityUtils.getInstance().areWordsSimilar(ri.getName(), name)) {
-                ris.add(ri);
-            }
-        }
-
-        return ris.toImmutable();
-    }
-
-    /**
-     * Returns all recommended instances that contain a given name and type.
-     *
-     * @param type given type to search for in types
-     * @return the list of recommended instances with that name and type
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getRecommendedInstancesByType(String type) {
-        return this.recommendedInstances.select(ri -> ri.getType().toLowerCase().contentEquals(type.toLowerCase())).toImmutableList();
-    }
-
-    /**
-     * Returns all recommended instances that contain a similar type.
-     *
-     * @param type given type to search for in types
-     * @return the list of recommended instances with a similar type.
-     */
-    @Override
-    public ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarType(String type) {
-        return this.recommendedInstances.select(ri -> SimilarityUtils.getInstance().areWordsSimilar(ri.getType(), type)).toImmutableList();
     }
 
     @Override

@@ -64,16 +64,6 @@ public class MissingTextForModelElementInconsistency implements ModelInconsisten
     }
 
     @Override
-    public String getModelInstanceName() {
-        return modelEntity.getName();
-    }
-
-    @Override
-    public String getModelInstanceType() {
-        return modelEntity.getType().orElseThrow();
-    }
-
-    @Override
     public String getModelInstanceUid() {
         return modelEntity.getId();
     }

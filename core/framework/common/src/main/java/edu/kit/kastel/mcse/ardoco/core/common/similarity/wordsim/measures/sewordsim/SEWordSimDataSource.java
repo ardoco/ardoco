@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.sewordsim;
 
 import java.nio.file.Files;
@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,8 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimUtils;
 import opennlp.tools.stemmer.PorterStemmer;
 
 /**
- * Provides access to the SEWordSim sqlite database. Instances of this class keep an open connection to the sqlite file
- * until {@link #close()} is called.
+ * Provides access to the SEWordSim sqlite database. Instances of this class keep an open connection to the sqlite file until {@link #close()} is called.
  */
 public class SEWordSimDataSource implements AutoCloseable {
 
@@ -31,8 +28,8 @@ public class SEWordSimDataSource implements AutoCloseable {
     private final PorterStemmer stemmer = new PorterStemmer();
 
     /**
-     * Construct a new {@link SEWordSimDataSource}. Once instantiated, a connection to the file will be kept open until
-     * {@link #close()} is called on this instance.
+     * Construct a new {@link SEWordSimDataSource}. Once instantiated, a connection to the file will be kept open until {@link #close()} is called on this
+     * instance.
      *
      * @param sqliteFile the path to the sqlite database file
      * @throws SQLException if connecting to the sqlite database fails
@@ -82,8 +79,7 @@ public class SEWordSimDataSource implements AutoCloseable {
      *
      * @param firstWord  the first word
      * @param secondWord the second word
-     * @return the similarity score, ranging from {@code 0.0} to {@code 1.0}, or {@link Optional#empty()} if the
-     *         database does not contain the given word pair
+     * @return the similarity score, ranging from {@code 0.0} to {@code 1.0}, or {@link Optional#empty()} if the database does not contain the given word pair
      * @throws SQLException if a database access error occurs
      */
     public Optional<Double> getSimilarity(String firstWord, String secondWord) throws SQLException {
@@ -104,27 +100,6 @@ public class SEWordSimDataSource implements AutoCloseable {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * Gets all words stored in the database.
-     *
-     * @return a list of all words stored in the database
-     * @throws SQLException if a database access error occurs
-     */
-    public List<String> getAllWords() throws SQLException {
-        var words = new ArrayList<String>();
-
-        try (var statement = this.connection.createStatement()) {
-            try (var result = statement.executeQuery(SELECT_ALL_QUERY)) {
-                while (result.next()) {
-                    String word = result.getString("term_1");
-                    words.add(word);
-                }
-            }
-        }
-
-        return words;
     }
 
     /**

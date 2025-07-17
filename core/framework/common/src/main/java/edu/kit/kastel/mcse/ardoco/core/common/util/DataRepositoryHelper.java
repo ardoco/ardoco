@@ -87,18 +87,8 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Checks whether there is {@link TextState} stored within the provided {@link DataRepository}
-     *
-     * @param dataRepository the DataRepository to access
-     * @return true, if there is {@link TextState} within the {@link DataRepository}; else, false
-     */
-    public static boolean hasTextState(DataRepository dataRepository) {
-        return dataRepository.getData(TextState.ID, TextState.class).isPresent();
-    }
-
-    /**
      * Returns the {@link TextState} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
-     * {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use {@link #hasTextState(DataRepository)}
+     * {@link java.util.NoSuchElementException} if the state is not present.
      *
      * @param dataRepository the DataRepository to access
      * @return the state
@@ -108,19 +98,8 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Checks whether there is {@link ModelStates} stored within the provided {@link DataRepository}
-     *
-     * @param dataRepository the DataRepository to access
-     * @return true, if there is {@link ModelStates} within the {@link DataRepository}; else, false
-     */
-    public static boolean hasModelStatesData(DataRepository dataRepository) {
-        return dataRepository.getData(ModelStates.ID, ModelStates.class).isPresent();
-    }
-
-    /**
      * Returns the {@link ModelStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw
-     * an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
-     * {@link #hasModelStatesData(DataRepository)}
+     * an {@link java.util.NoSuchElementException} if the state is not present.
      *
      * @param dataRepository the DataRepository to access
      * @return the state

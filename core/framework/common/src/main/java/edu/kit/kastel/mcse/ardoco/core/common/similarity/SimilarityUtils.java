@@ -402,35 +402,6 @@ public final class SimilarityUtils {
     }
 
     /**
-     * Returns the most similar phrase mapping from a list, given a minimum cosine similarity.
-     *
-     * @param textState           the text state
-     * @param phraseMapping       the phrase mapping to compare
-     * @param otherPhraseMappings the other phrase mappings
-     * @param minCosineSimilarity the minimum cosine similarity
-     * @return the most similar phrase mapping, or null if none found
-     */
-    public PhraseMapping getMostSimilarPhraseMapping(TextState textState, PhraseMapping phraseMapping, ImmutableList<PhraseMapping> otherPhraseMappings,
-            double minCosineSimilarity) {
-
-        if (otherPhraseMappings.isEmpty()) {
-            return null;
-        }
-
-        double currentMinSimilarity = minCosineSimilarity;
-        PhraseMapping mostSimilarPhraseMapping = otherPhraseMappings.get(0);
-        for (PhraseMapping otherPhraseMapping : otherPhraseMappings) {
-            double similarity = this.getPhraseMappingSimilarity(textState, phraseMapping, otherPhraseMapping, PhraseMappingAggregatorStrategy.MAX_SIMILARITY);
-            if (similarity > currentMinSimilarity) {
-                currentMinSimilarity = similarity;
-                mostSimilarPhraseMapping = otherPhraseMapping;
-            }
-
-        }
-        return mostSimilarPhraseMapping;
-    }
-
-    /**
      * Returns the similarity between two phrase mappings using the given strategy.
      *
      * @param textState           the text state

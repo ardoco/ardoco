@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.ngram;
 
 import java.util.Objects;
@@ -63,16 +63,16 @@ public class NgramMeasure implements WordSimMeasure {
     }
 
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
-        Objects.requireNonNull(ctx);
-        return this.getSimilarity(ctx) >= this.similarityThreshold;
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
+        Objects.requireNonNull(comparisonContext);
+        return this.getSimilarity(comparisonContext) >= this.similarityThreshold;
     }
 
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
-        double distance = this.calculateDistance(ctx.firstTerm(), ctx.secondTerm());
+    public double getSimilarity(ComparisonContext comparisonContext) {
+        double distance = this.calculateDistance(comparisonContext.firstTerm(), comparisonContext.secondTerm());
 
-        double normalizedDistance = distance / Math.max(ctx.firstTerm().length(), ctx.secondTerm().length());
+        double normalizedDistance = distance / Math.max(comparisonContext.firstTerm().length(), comparisonContext.secondTerm().length());
 
         return 1.0 - normalizedDistance;
     }

@@ -74,8 +74,4 @@ public class SentenceImpl implements Sentence {
         return Objects.hash(words, phrases, sentenceNumber, text);
     }
 
-    @Override
-    public void addPhrase(Phrase phrase) {
-        phrases.add(phrase);
-    }
 }

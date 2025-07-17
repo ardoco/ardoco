@@ -2,8 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency;
 
 /**
- * Extends {@link Inconsistency} for inconsistencies stemming from a concrete textual component (e.g., a sentence).
- * Provides information on the text-side for more details.
+ * Extends {@link Inconsistency} for inconsistencies stemming from a textual component (e.g., a sentence). Provides information on the text-side for more
+ * details.
  */
 public interface TextInconsistency extends Inconsistency {
     /**

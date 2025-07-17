@@ -24,7 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  * Defines a link between a {@link RecommendedInstance} and a {@link ModelEntity}.
  */
 @Deterministic
-public final class InstanceLink extends TraceLink<RecommendedInstance, ModelEntity> {
+public final class RecommendationModelTraceLink extends TraceLink<RecommendedInstance, ModelEntity> {
 
     @Serial
     private static final long serialVersionUID = -8630933950725516269L;
@@ -33,35 +33,25 @@ public final class InstanceLink extends TraceLink<RecommendedInstance, ModelEnti
     /**
      * Create a new instance link.
      *
-     * @param textualInstance the recommended instance
-     * @param entity          the model instance
+     * @param recommendedInstance the recommended instance
+     * @param entity              the model instance
      */
-    public InstanceLink(RecommendedInstance textualInstance, ModelEntity entity) {
-        super(textualInstance, entity);
+    public RecommendationModelTraceLink(RecommendedInstance recommendedInstance, ModelEntity entity) {
+        super(recommendedInstance, entity);
         this.confidence = new Confidence(AggregationFunctions.AVERAGE);
     }
 
     /**
      * Creates a new instance link with a claimant and probability.
      *
-     * @param textualInstance the recommended instance
-     * @param entity          the model instance
-     * @param claimant        the claimant
-     * @param probability     the probability of this link
+     * @param recommendedInstance the recommended instance
+     * @param entity              the model instance
+     * @param claimant            the claimant
+     * @param probability         the probability of this link
      */
-    public InstanceLink(RecommendedInstance textualInstance, ModelEntity entity, Claimant claimant, double probability) {
-        this(textualInstance, entity);
+    public RecommendationModelTraceLink(RecommendedInstance recommendedInstance, ModelEntity entity, Claimant claimant, double probability) {
+        this(recommendedInstance, entity);
         this.confidence.addAgentConfidence(claimant, probability);
-    }
-
-    /**
-     * Add confidence to this link.
-     *
-     * @param claimant   the claimant
-     * @param confidence the confidence value to add
-     */
-    public final void addConfidence(Claimant claimant, double confidence) {
-        this.confidence.addAgentConfidence(claimant, confidence);
     }
 
     /**
@@ -69,15 +59,10 @@ public final class InstanceLink extends TraceLink<RecommendedInstance, ModelEnti
      *
      * @return the probability of this link
      */
-    public final double getConfidence() {
+    public double getConfidence() {
         return this.confidence.getConfidence();
     }
 
-    /**
-     * Returns a string representation of this instance link.
-     *
-     * @return string representation
-     */
     @Override
     public String toString() {
         Set<String> names = new LinkedHashSet<>();

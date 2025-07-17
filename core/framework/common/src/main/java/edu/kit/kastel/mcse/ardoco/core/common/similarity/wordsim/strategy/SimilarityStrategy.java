@@ -13,9 +13,9 @@ public interface SimilarityStrategy {
     /**
      * Evaluates how similar the words from the given {@link ComparisonContext} are by combining the verdicts of the specified word similarity measures.
      *
-     * @param ctx      the context containing the words
-     * @param measures the measures to use
+     * @param comparisonContext the context containing the words
+     * @param measures          the measures to use
      * @return Returns similarity in range [0,1]
      */
-    double getSimilarity(ComparisonContext ctx, List<WordSimMeasure> measures);
+    double getSimilarity(ComparisonContext comparisonContext, List<WordSimMeasure> measures);
 }

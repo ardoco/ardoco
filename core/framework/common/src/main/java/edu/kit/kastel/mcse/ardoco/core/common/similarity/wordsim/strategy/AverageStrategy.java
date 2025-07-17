@@ -11,12 +11,12 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimMeasure;
  */
 public class AverageStrategy implements SimilarityStrategy {
     @Override
-    public double getSimilarity(ComparisonContext ctx, List<WordSimMeasure> measures) {
+    public double getSimilarity(ComparisonContext comparisonContext, List<WordSimMeasure> measures) {
         double sum = 0.0;
         int successful = 0;
 
         for (WordSimMeasure measure : measures) {
-            var similarity = measure.getSimilarity(ctx);
+            var similarity = measure.getSimilarity(comparisonContext);
             if (!Double.isNaN(similarity)) {
                 successful++;
                 sum += similarity;

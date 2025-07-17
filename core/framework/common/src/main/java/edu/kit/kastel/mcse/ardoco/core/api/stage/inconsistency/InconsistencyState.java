@@ -30,14 +30,6 @@ public interface InconsistencyState extends IConfigurable {
     boolean addInconsistency(Inconsistency inconsistency);
 
     /**
-     * Remove an inconsistency from this state.
-     *
-     * @param inconsistency the inconsistency to remove
-     * @return true if removed successfully
-     */
-    boolean removeInconsistency(Inconsistency inconsistency);
-
-    /**
      * Add multiple recommended instances to this state.
      *
      * @param recommendedInstances the recommended instances to add
@@ -58,28 +50,6 @@ public interface InconsistencyState extends IConfigurable {
      * @return true if added successfully
      */
     boolean addRecommendedInstance(RecommendedInstance recommendedInstance);
-
-    /**
-     * Remove multiple recommended instances from this state.
-     *
-     * @param recommendedInstances the recommended instances to remove
-     * @return true if all were removed successfully
-     */
-    default boolean removeRecommendedInstances(List<RecommendedInstance> recommendedInstances) {
-        var success = true;
-        for (var recommendedInstance : recommendedInstances) {
-            success &= removeRecommendedInstance(recommendedInstance);
-        }
-        return success;
-    }
-
-    /**
-     * Remove a single recommended instance from this state.
-     *
-     * @param recommendedInstance the recommended instance to remove
-     * @return true if removed successfully
-     */
-    boolean removeRecommendedInstance(RecommendedInstance recommendedInstance);
 
     /**
      * Sets the recommended instances.

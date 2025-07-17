@@ -18,8 +18,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.strategy.Compar
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.strategy.SimilarityStrategy;
 
 /**
- * Provides utility methods for calculating similarity between objects, with configurable strategies and measures.
- * Not thread-safe.
+ * Provides utility methods for calculating similarity between objects, with configurable strategies and measures. Not thread-safe.
  */
 public class WordSimUtils {
 
@@ -34,16 +33,6 @@ public class WordSimUtils {
      */
     public void setMeasures(Collection<WordSimMeasure> measures) {
         this.measures = Lists.mutable.withAll(measures);
-    }
-
-    /**
-     * Adds the specified measure to the measures used for similarity comparison.
-     *
-     * @param measure the measure to add
-     * @return true if the measure was added successfully
-     */
-    public boolean addMeasure(WordSimMeasure measure) {
-        return this.measures.add(measure);
     }
 
     /**

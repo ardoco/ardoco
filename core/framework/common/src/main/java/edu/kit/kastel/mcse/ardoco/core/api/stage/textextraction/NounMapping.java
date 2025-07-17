@@ -88,13 +88,6 @@ public interface NounMapping extends Serializable {
     ImmutableSortedMap<MappingKind, Confidence> getDistribution();
 
     /**
-     * Returns the claimants for this mapping.
-     *
-     * @return the claimants
-     */
-    ImmutableList<Claimant> getClaimants();
-
-    /**
      * Adds the kind with probability.
      *
      * @param kind        the kind

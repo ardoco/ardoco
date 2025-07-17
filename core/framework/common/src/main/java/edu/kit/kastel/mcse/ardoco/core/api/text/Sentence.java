@@ -57,10 +57,4 @@ public interface Sentence extends Serializable {
      */
     ImmutableList<Phrase> getPhrases();
 
-    /**
-     * Adds a new phrase to the sentence.
-     *
-     * @param phrase the phrase
-     */
-    void addPhrase(Phrase phrase);
 }

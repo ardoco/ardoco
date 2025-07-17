@@ -32,7 +32,7 @@ public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEnti
     }
 
     /**
-     * Create a trace link based on a {@link SentenceEntity} and a concrete {@link ModelEntity}.
+     * Create a trace link based on a {@link SentenceEntity} and a {@link ModelEntity}.
      *
      * @param sentenceEntity the sentence entity
      * @param modelEntity    the model entity
@@ -78,7 +78,6 @@ public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEnti
      */
     @Override
     public boolean equals(Object obj) {
-        // TODO Check whether we really need to override equals and hashCode here.
         if (obj instanceof SadModelTraceLink other) {
             var otherId = other.getEntityId();
             var otherSentenceNo = other.getSentenceNumber();

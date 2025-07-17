@@ -3,11 +3,14 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import java.util.SortedMap;
 
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
+import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.WordHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
@@ -17,10 +20,10 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public class InDepArcsInformant extends TextExtractionInformant {
 
     @Configurable
-    private double nameOrTypeWeight = 0.5;
+    private final double nameOrTypeWeight = 0.5;
 
     @Configurable
-    private double probability = 1.0;
+    private final double probability = 1.0;
 
     /**
      * Prototype constructor.
@@ -51,14 +54,14 @@ public class InDepArcsInformant extends TextExtractionInformant {
      */
     private void examineIncomingDepArcs(Word word) {
 
-        var incomingDepArcs = WordHelper.getIncomingDependencyTags(word);
+        var incomingDepArcs = getIncomingDependencyTags(word);
 
         for (DependencyTag depTag : incomingDepArcs) {
             if (hasNameOrTypeDependencies(depTag)) {
                 this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability * this.nameOrTypeWeight);
                 this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability * this.nameOrTypeWeight);
             } else if (hasTypeOrNameOrTypeDependencies(depTag)) {
-                if (WordHelper.hasIndirectDeterminerAsPreWord(word)) {
+                if (hasIndirectDeterminerAsPreWord(word)) {
                     this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability);
                 }
 
@@ -80,5 +83,43 @@ public class InDepArcsInformant extends TextExtractionInformant {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
         // emtpy
+    }
+
+    /**
+     * Checks for indirect determiner as previous word.
+     *
+     * @param word the word
+     * @return true, if found
+     */
+    private boolean hasIndirectDeterminerAsPreWord(Word word) {
+        return hasDeterminerAsPreWord(word) && ("a".equalsIgnoreCase(word.getText()) || "an".equalsIgnoreCase(word.getText()));
+    }
+
+    /**
+     * Checks for determiner as previous word.
+     *
+     * @param word the word
+     * @return true, if found
+     */
+    private boolean hasDeterminerAsPreWord(Word word) {
+
+        Word preWord = word.getPreWord();
+        if (preWord == null) {
+            return false;
+        }
+
+        var prePosTag = preWord.getPosTag();
+        return POSTag.DETERMINER == prePosTag;
+
+    }
+
+    /**
+     * Gets the incoming dependency tags.
+     *
+     * @param word the word
+     * @return the incoming dependency tags
+     */
+    private ImmutableList<DependencyTag> getIncomingDependencyTags(Word word) {
+        return Lists.immutable.with(DependencyTag.values()).select(d -> !word.getIncomingDependencyWordsWithType(d).isEmpty());
     }
 }

@@ -11,14 +11,11 @@ import java.util.UUID;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
-import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
@@ -37,11 +34,11 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
      * Meaning (Weights): <br/> 0,-1,1 => Balanced <br/> 2 => InternalConfidence: 2 / mappingConfidence: 1<br/> -2 => InternalConfidence: 1 / mappingConfidence:
      * 2<br/> ...
      */
-    private int weightInternalConfidence = 0;
+    private final int weightInternalConfidence = 0;
 
     private final String type;
     private final String name;
-    private Confidence internalConfidence;
+    private final Confidence internalConfidence;
     private final MutableList<NounMapping> typeMappings;
     private final MutableList<NounMapping> nameMappings;
 
@@ -138,18 +135,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     /**
-     * Adds a name and type mapping to this recommended instance.
-     *
-     * @param nameMapping the name mapping to add
-     * @param typeMapping the type mapping to add
-     */
-    @Override
-    public void addMappings(NounMapping nameMapping, NounMapping typeMapping) {
-        this.addName(nameMapping);
-        this.addType(typeMapping);
-    }
-
-    /**
      * Adds name and type mappings to this recommended instance.
      *
      * @param nameMapping the name mappings to add
@@ -213,12 +198,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     @Override
-    public ImmutableSortedSet<Integer> getSentenceNumbers() {
-        MutableSortedSet<Integer> sentenceNos = this.getNameMappings().flatCollect(nm -> nm.getWords().collect(Word::getSentenceNumber)).toSortedSet();
-        return sentenceNos.toImmutableSortedSet();
-    }
-
-    @Override
     public String toString() {
         var separator = "\n\t\t\t\t\t";
         MutableList<String> typeNodeVals = Lists.mutable.empty();
@@ -259,11 +238,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
             return Comparator.comparing(RecommendedInstance::getName).thenComparing(RecommendedInstance::getType).compare(this, ri);
         }
         return super.compareTo(o);
-    }
-
-    @Override
-    public ImmutableList<Claimant> getClaimants() {
-        return Lists.immutable.withAll(this.internalConfidence.getClaimants());
     }
 
 }
