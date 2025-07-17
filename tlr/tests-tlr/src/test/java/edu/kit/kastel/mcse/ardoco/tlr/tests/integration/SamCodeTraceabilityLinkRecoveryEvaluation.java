@@ -55,7 +55,7 @@ class SamCodeTraceabilityLinkRecoveryEvaluation extends TraceabilityLinkRecovery
 
     @Override
     protected ImmutableList<String> enrollGoldStandard(ImmutableList<String> goldStandard, ArDoCoResult result) {
-        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result);
+        return TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result, Metamodel.CODE_ONLY_COMPILATION_UNITS);
     }
 
     @Override
