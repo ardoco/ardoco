@@ -57,7 +57,7 @@ public class SeparatedNamesInformant extends TextExtractionInformant {
 
     @Override
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
-        // emtpy
+        // empty
     }
 
 }
