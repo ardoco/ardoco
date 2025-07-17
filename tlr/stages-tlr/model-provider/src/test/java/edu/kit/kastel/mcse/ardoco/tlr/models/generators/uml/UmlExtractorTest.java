@@ -12,7 +12,7 @@ class UmlExtractorTest extends ArchitectureExtractorTest {
 
     @Test
     void extractorTest() {
-        UmlExtractor umlExtractor = new UmlExtractor("src/test/resources/mediastore/architecture/uml/ms.uml", Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
+        UmlExtractor umlExtractor = new UmlExtractor("src/test/resources/mediastore/architecture/uml/ms.uml", Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel model = umlExtractor.extractModel();
         checkModel(model);
     }

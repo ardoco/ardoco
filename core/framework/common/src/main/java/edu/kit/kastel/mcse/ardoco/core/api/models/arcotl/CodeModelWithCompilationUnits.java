@@ -3,7 +3,6 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -14,19 +13,18 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
- * Code model containing only compilation units.
- * Provides endpoints and type identifiers for compilation units.
+ * Code model containing only compilation units. Provides endpoints and type identifiers for compilation units.
  */
 @Deterministic
-public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
+public final class CodeModelWithCompilationUnits extends CodeModel {
 
     /**
-     * Creates a new code model from a DTO.
+     * Creates a new code model from a Dto.
      *
-     * @param codeModelDTO the code model DTO
+     * @param codeModelDto the code model Dto
      */
-    public CodeModelWithOnlyCompilationUnits(CodeModelDTO codeModelDTO) {
-        super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
+    public CodeModelWithCompilationUnits(CodeModelDTO codeModelDto) {
+        super(codeModelDto.codeItemRepository(), codeModelDto.content());
     }
 
     /**
@@ -35,7 +33,7 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
      * @param codeItemRepository the code item repository
      * @param content            the code items
      */
-    public CodeModelWithOnlyCompilationUnits(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+    public CodeModelWithCompilationUnits(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
     }
 
@@ -59,7 +57,7 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
     @Override
     public List<? extends CodeItem> getContent() {
         this.initialize();
-        return this.codeItemRepository.getCodeItemsFromIds(this.content);
+        return this.codeItemRepository.getCodeItemsByIds(this.content);
     }
 
     /**
@@ -69,7 +67,7 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
      */
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.CODE_ONLY_COMPILATION_UNITS;
+        return Metamodel.CODE_WITH_COMPILATION_UNITS;
     }
 
     /**
@@ -87,33 +85,4 @@ public final class CodeModelWithOnlyCompilationUnits extends CodeModel {
         return identifiers;
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CodeModelWithOnlyCompilationUnits codeModel) || !super.equals(o) || !Objects.equals(this.codeItemRepository,
-                codeModel.codeItemRepository)) {
-            return false;
-        }
-        return Objects.equals(this.content, codeModel.content);
-    }
-
-    /**
-     * Returns the hash code for this code model.
-     *
-     * @return hash code
-     */
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (this.codeItemRepository != null ? this.codeItemRepository.hashCode() : 0);
-        return 31 * result + (this.content != null ? this.content.hashCode() : 0);
-    }
 }

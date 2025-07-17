@@ -39,10 +39,8 @@ public non-sealed class CodeEntity extends ModelEntity {
 
     @Override
     public Optional<ImmutableList<String>> getTypeParts() {
-        if (this.getType().isPresent()) {
-            return Optional.of(splitIdentifierIntoParts(this.getType().get()).toImmutable());
-        }
-        return Optional.empty();
+        Optional<String> type = this.getType();
+        return type.map(s -> splitIdentifierIntoParts(s).toImmutable());
     }
 
 }

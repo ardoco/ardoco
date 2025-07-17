@@ -1,8 +1,8 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isACodeModel;
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isAnArchitectureModel;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isArchitectureModel;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isCodeModel;
 
 import java.util.SortedMap;
 
@@ -28,9 +28,9 @@ public class ArCoTLInformant extends Informant {
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
         for (var metamodel : modelStates.getMetamodels()) {
-            if (isAnArchitectureModel(metamodel)) {
+            if (isArchitectureModel(metamodel)) {
                 architectureModel = (ArchitectureModel) modelStates.getModel(metamodel);
-            } else if (isACodeModel(metamodel)) {
+            } else if (isCodeModel(metamodel)) {
                 codeModel = (CodeModel) modelStates.getModel(metamodel);
             }
         }

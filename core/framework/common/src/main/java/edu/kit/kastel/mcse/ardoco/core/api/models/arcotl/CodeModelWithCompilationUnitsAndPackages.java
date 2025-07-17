@@ -12,21 +12,20 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
- * Code model with compilation units and packages.
- * Provides endpoints and type identifiers for code items.
+ * Code model with compilation units and packages. Provides endpoints and type identifiers for code items.
  */
 @Deterministic
 public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
-    private final CodeModelWithOnlyCompilationUnits codeModel;
+    private final CodeModelWithCompilationUnits codeModel;
 
     /**
-     * Creates a new code model from a DTO.
+     * Creates a new code model from a Dto.
      *
-     * @param codeModelDTO the code model DTO
+     * @param codeModelDto the code model Dto
      */
-    public CodeModelWithCompilationUnitsAndPackages(CodeModelDTO codeModelDTO) {
-        super(codeModelDTO.codeItemRepository(), codeModelDTO.content());
-        this.codeModel = new CodeModelWithOnlyCompilationUnits(codeModelDTO);
+    public CodeModelWithCompilationUnitsAndPackages(CodeModelDTO codeModelDto) {
+        super(codeModelDto.codeItemRepository(), codeModelDto.content());
+        this.codeModel = new CodeModelWithCompilationUnits(codeModelDto);
     }
 
     /**
@@ -37,13 +36,13 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
      */
     public CodeModelWithCompilationUnitsAndPackages(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
-        this.codeModel = new CodeModelWithOnlyCompilationUnits(codeItemRepository, content);
+        this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
     }
 
     /**
      * Returns the content of this code model.
      *
-     * @return list of code items
+     * @return list of compilation units and packages
      */
     @Override
     public List<? extends CodeItem> getContent() {
@@ -53,7 +52,7 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
     /**
      * Returns the endpoints of this code model.
      *
-     * @return list of code items
+     * @return list of code items that are either compilation units or packages
      */
     @Override
     public List<CodeItem> getEndpoints() {

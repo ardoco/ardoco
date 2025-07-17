@@ -23,7 +23,7 @@ public class PathResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        if (!archInterface.getSignatures().isEmpty()) {
+        if (!archInterface.getMethodSignatures().isEmpty()) {
             return new Confidence();
         }
         return calculatePathResemblance(archInterface, compUnit);

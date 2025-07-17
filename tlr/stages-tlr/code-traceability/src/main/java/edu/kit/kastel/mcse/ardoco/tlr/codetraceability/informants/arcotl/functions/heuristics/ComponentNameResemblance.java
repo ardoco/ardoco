@@ -37,7 +37,7 @@ public class ComponentNameResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        if (nameConfig.equals(NameConfig.INTERFACE) == archInterface.getSignatures().isEmpty()) {
+        if (nameConfig.equals(NameConfig.INTERFACE) == archInterface.getMethodSignatures().isEmpty()) {
             return new Confidence();
         }
         return calculateNameResemblance(archInterface, compUnit);

@@ -12,7 +12,7 @@ class PcmExtractorTest extends ArchitectureExtractorTest {
 
     @Test
     void extractorTest() {
-        var pcmExtractor = new PcmExtractor("src/test/resources/mediastore/architecture/pcm/ms.repository", Metamodel.ARCHITECTURE_ONLY_COMPONENTS);
+        var pcmExtractor = new PcmExtractor("src/test/resources/mediastore/architecture/pcm/ms.repository", Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel model = pcmExtractor.extractModel();
         checkModel(model);
     }

@@ -12,8 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Represents an interface unit in the code model.
- * Contains code items representing the contents of an interface, such as method signatures.
+ * Represents an interface unit in the code model. Contains code items representing the contents of an interface, such as method signatures.
  */
 @JsonTypeName("InterfaceUnit")
 public final class InterfaceUnit extends Datatype {
@@ -24,9 +23,6 @@ public final class InterfaceUnit extends Datatype {
     @JsonProperty
     private List<String> content;
 
-    /**
-     * Default constructor for deserialization frameworks.
-     */
     @SuppressWarnings("unused")
     private InterfaceUnit() {
         // Jackson
@@ -64,7 +60,7 @@ public final class InterfaceUnit extends Datatype {
      */
     @Override
     public List<CodeItem> getContent() {
-        return this.codeItemRepository.getCodeItemsFromIds(this.content);
+        return this.codeItemRepository.getCodeItemsByIds(this.content);
     }
 
     /**
@@ -80,12 +76,6 @@ public final class InterfaceUnit extends Datatype {
         return result;
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -98,11 +88,6 @@ public final class InterfaceUnit extends Datatype {
         return Objects.equals(this.content, that.content);
     }
 
-    /**
-     * Returns the hash code for this interface unit.
-     *
-     * @return hash code
-     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

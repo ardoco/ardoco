@@ -7,7 +7,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 /**
- * Container for data after preprocessing, to be stored as {@link PipelineStepData}. Currently holds the preprocessed {@link Text}.
+ * Container for data after preprocessing, to be stored as {@link PipelineStepData}. Currently, holds the preprocessed {@link Text}.
  */
 public class PreprocessingData implements PipelineStepData {
     @Serial

@@ -4,19 +4,19 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
- * Represents a code model that is a CMTL instance.
- * Provides access to code items and code packages.
+ * Represents a code model. This includes compilation units and packages.
  */
-public abstract sealed class CodeModel extends Model permits CodeModelWithCompilationUnitsAndPackages, CodeModelWithOnlyCompilationUnits {
+@NoHashCodeEquals
+public abstract sealed class CodeModel extends Model permits CodeModelWithCompilationUnitsAndPackages, CodeModelWithCompilationUnits {
 
     protected CodeItemRepository codeItemRepository;
 
@@ -56,7 +56,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      *
      * @return code model DTO
      */
-    public CodeModelDTO createCodeModelDTO() {
+    public CodeModelDTO createCodeModelDto() {
         return new CodeModelDTO(codeItemRepository, getContentIds());
     }
 
@@ -76,14 +76,13 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      *
      * @return list of all code packages
      */
-    public List<? extends CodePackage> getAllPackages() {
+    public List<CodePackage> getAllPackages() {
         List<CodePackage> codePackages = new ArrayList<>();
-        var lContent = this.getContent();
-        for (var c : lContent) {
-            var allPackages = c.getAllPackages();
-            for (CodePackage cp : allPackages) {
-                if (!codePackages.contains(cp)) {
-                    codePackages.add(cp);
+        for (var codeItem : this.getContent()) {
+            var allPackages = codeItem.getAllPackages();
+            for (CodePackage codePackage : allPackages) {
+                if (!codePackages.contains(codePackage)) {
+                    codePackages.add(codePackage);
                 }
             }
         }
@@ -100,34 +99,5 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         }
         this.codeItemRepository.init();
         this.initialized = true;
-    }
-
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CodeModel codeModel) || !super.equals(o) || !Objects.equals(this.codeItemRepository, codeModel.codeItemRepository)) {
-            return false;
-        }
-        return Objects.equals(this.content, codeModel.content);
-    }
-
-    /**
-     * Returns the hash code for this code model.
-     *
-     * @return hash code
-     */
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (this.codeItemRepository != null ? this.codeItemRepository.hashCode() : 0);
-        return 31 * result + (this.content != null ? this.content.hashCode() : 0);
     }
 }

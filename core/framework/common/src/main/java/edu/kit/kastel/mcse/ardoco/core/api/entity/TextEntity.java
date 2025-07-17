@@ -11,15 +11,6 @@ public non-sealed class TextEntity extends Entity {
     private static final long serialVersionUID = 7693834560590279832L;
 
     /**
-     * Creates a new text entity with the specified name.
-     *
-     * @param name the name of the text entity
-     */
-    protected TextEntity(String name) {
-        super(name);
-    }
-
-    /**
      * Creates a new text entity with the specified name and id.
      *
      * @param name the name of the text entity

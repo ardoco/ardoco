@@ -40,8 +40,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 /**
  * This record represents the result of running ArDoCo. It is backed by a {@link DataRepository} and provides access to data from it. Besides accessing all data
- * from the
- * calculation steps, this record also provides convenience methods to directly access results such as found trace links and detected inconsistencies.
+ * from the calculation steps, this record also provides convenience methods to directly access results such as found trace links and detected inconsistencies.
  */
 @Deterministic
 public record ArDoCoResult(DataRepository dataRepository) {
@@ -91,7 +90,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
         for (var metamodel : this.getMetamodels()) {
-            if (metamodel == Metamodel.ARCHITECTURE_ONLY_COMPONENTS) {
+            if (metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS) {
                 traceLinks.addAll(this.getTraceLinksForModel(metamodel).castToCollection());
             }
         }

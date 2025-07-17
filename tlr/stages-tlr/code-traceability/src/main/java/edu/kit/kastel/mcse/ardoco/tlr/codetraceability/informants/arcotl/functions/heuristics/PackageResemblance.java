@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
 
 public class PackageResemblance extends StandaloneHeuristic {
 
-    private NameComparisonUtils.PreprocessingMethod config;
+    private final NameComparisonUtils.PreprocessingMethod config;
 
     public PackageResemblance(NameComparisonUtils.PreprocessingMethod config) {
         this.config = config;
@@ -26,7 +26,7 @@ public class PackageResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        if (!archInterface.getSignatures().isEmpty()) {
+        if (!archInterface.getMethodSignatures().isEmpty()) {
             return new Confidence();
         }
         return calculatePackageResemblance(archInterface, compUnit);

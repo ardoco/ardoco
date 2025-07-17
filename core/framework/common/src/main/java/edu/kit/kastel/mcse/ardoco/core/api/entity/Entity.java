@@ -10,8 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
 /**
- * Abstract base class for entities, the smallest unit of a trace link.
- * Provides identity, name, and comparison logic.
+ * Abstract base class for entities, the smallest unit of a trace link. Provides identity, name, and comparison logic.
  */
 public abstract sealed class Entity implements Serializable, Comparable<Entity> permits TextEntity, ModelEntity {
 
@@ -88,6 +87,7 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
         if (!(obj instanceof Entity other)) {
             return false;
         }
+        //TODO: Check whether it's sufficient to compare only id
         return Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name);
     }
 

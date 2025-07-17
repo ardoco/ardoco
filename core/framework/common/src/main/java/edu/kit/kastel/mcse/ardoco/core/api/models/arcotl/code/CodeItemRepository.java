@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Repository for storing and managing {@link CodeItem} instances by their IDs.
+ * Repository for storing and managing {@link CodeItem CodeItems}.
  */
 public class CodeItemRepository implements Serializable {
 
@@ -54,7 +54,7 @@ public class CodeItemRepository implements Serializable {
      * @param codeItemIds list of code item IDs
      * @return list of code items corresponding to the IDs
      */
-    public List<CodeItem> getCodeItemsFromIds(List<String> codeItemIds) {
+    public List<CodeItem> getCodeItemsByIds(List<String> codeItemIds) {
         return codeItemIds.stream().map(this::getCodeItem).filter(Objects::nonNull).toList();
     }
 

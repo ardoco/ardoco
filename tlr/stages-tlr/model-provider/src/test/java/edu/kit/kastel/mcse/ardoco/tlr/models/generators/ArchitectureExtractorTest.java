@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class ArchitectureExtractorTest {
                 Assertions.assertNotNull(anInterface);
                 logger.info(" {} ", anInterface.getName());
                 logger.info("  Methods:");
-                anInterface.getSignatures().forEach(signature -> logger.info("  {}", signature));
+                anInterface.getMethodSignatures().forEach(signature -> logger.info("  {}", signature));
             });
         }
     }

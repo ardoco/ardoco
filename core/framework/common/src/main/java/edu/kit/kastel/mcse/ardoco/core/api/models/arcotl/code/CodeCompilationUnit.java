@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * Represents a compilation unit in the code model.
- * Can serve as the code endpoint of a trace link.
  */
 @JsonTypeName("CodeCompilationUnit")
 public final class CodeCompilationUnit extends CodeModule {
@@ -72,7 +71,9 @@ public final class CodeCompilationUnit extends CodeModule {
     @Override
     public List<Datatype> getAllDataTypes() {
         List<Datatype> result = new ArrayList<>();
-        this.getContent().forEach(c -> result.addAll(c.getAllDataTypes()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllDataTypes());
+        }
         return result;
     }
 
@@ -160,22 +161,11 @@ public final class CodeCompilationUnit extends CodeModule {
         return Optional.empty();
     }
 
-    /**
-     * Returns a string representation of this compilation unit.
-     *
-     * @return string representation
-     */
     @Override
     public String toString() {
         return this.getPath();
     }
 
-    /**
-     * Checks equality with another object.
-     *
-     * @param o the object to compare
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -188,11 +178,6 @@ public final class CodeCompilationUnit extends CodeModule {
         return Objects.equals(this.language, that.language);
     }
 
-    /**
-     * Returns the hash code for this compilation unit.
-     *
-     * @return hash code
-     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

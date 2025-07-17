@@ -16,7 +16,7 @@ public class MethodResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        int numArchMethods = archInterface.getSignatures().size();
+        int numArchMethods = archInterface.getMethodSignatures().size();
         if (0 == numArchMethods) {
             return new Confidence();
         }
@@ -33,7 +33,7 @@ public class MethodResemblance extends StandaloneHeuristic {
         //
 
         double sumConfidenceValue = 0.0;
-        for (ArchitectureMethod archMethod : archInterface.getSignatures()) {
+        for (ArchitectureMethod archMethod : archInterface.getMethodSignatures()) {
             double maxConfidenceValue = 0.0;
             for (ControlElement codeMethod : firstMethods) {
                 double similarity = NameComparisonUtils.areEqual(archMethod, codeMethod) ? 1.0 : 0.0;

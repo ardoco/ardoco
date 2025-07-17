@@ -9,9 +9,9 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 /**
- * A representation of the model object <i>Component</i> from AMTL. Components are building blocks of a software architecture. A component can contain
- * subcomponents but doesn't have to. A component can provide and require interfaces. Provided interfaces are implemented by the component. Required interfaces
- * specify some functionality that is needed by the component.
+ * A representation of the model object <i>Component</i>. Components are building blocks of a software architecture. A component can contain subcomponents but
+ * doesn't have to. A component can provide and require interfaces. Provided interfaces are implemented by the component. Required interfaces specify some
+ * functionality that is needed by the component.
  */
 public final class ArchitectureComponent extends ArchitectureItem {
 
@@ -64,7 +64,7 @@ public final class ArchitectureComponent extends ArchitectureItem {
     }
 
     /**
-     * Returns the type of this component as specified in the meta model.
+     * Returns the type of this component as specified in the metamodel.
      *
      * @return the type of this component
      */

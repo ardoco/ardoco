@@ -12,8 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.Architectu
 import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
 
 /**
- * Represents a model containing only architecture components.
- * Provides access to architecture components and their type identifiers.
+ * Represents a model containing only architecture components. Provides access to architecture components and their type identifiers.
  */
 public final class ArchitectureComponentModel extends ArchitectureModel {
 
@@ -35,17 +34,17 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
      */
     @Override
     public List<ArchitectureComponent> getContent() {
-        List<ArchitectureComponent> entities = new ArrayList<>();
-        for (ArchitectureItem entity : architectureModel.getContent()) {
-            if (entity instanceof ArchitectureComponent component) {
-                entities.add(component);
+        List<ArchitectureComponent> components = new ArrayList<>();
+        for (ArchitectureItem item : architectureModel.getContent()) {
+            if (item instanceof ArchitectureComponent component) {
+                components.add(component);
             }
         }
-        return entities;
+        return components;
     }
 
     /**
-     * Returns the endpoints of this model.
+     * Returns the endpoints of this model. In this case, it returns the architecture components as endpoints.
      *
      * @return list of model entities
      */
@@ -61,7 +60,7 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
      */
     @Override
     public Metamodel getMetamodel() {
-        return Metamodel.ARCHITECTURE_ONLY_COMPONENTS;
+        return Metamodel.ARCHITECTURE_WITH_COMPONENTS;
     }
 
     /**
@@ -72,10 +71,10 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
     @Override
     public SortedSet<String> getTypeIdentifiers() {
         SortedSet<String> identifiers = new TreeSet<>();
-        for (var entity : getContent()) {
-            if (entity.getType().isPresent()) {
-                identifiers.add(entity.getType().orElseThrow());
-                identifiers.addAll(entity.getTypeParts().orElseThrow().toList());
+        for (var component : getContent()) {
+            if (component.getType().isPresent()) {
+                identifiers.add(component.getType().orElseThrow());
+                identifiers.addAll(component.getTypeParts().orElseThrow().toList());
             }
         }
         return identifiers;
