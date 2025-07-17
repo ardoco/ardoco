@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 import java.io.Serial;
 
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -58,14 +57,6 @@ public abstract class RecommendedInstance extends TextEntity {
     public abstract void addProbability(Claimant claimant, double probability);
 
     /**
-     * Adds a name and type mapping to this recommended instance.
-     *
-     * @param nameMapping the name mapping
-     * @param typeMapping the type mapping
-     */
-    public abstract void addMappings(NounMapping nameMapping, NounMapping typeMapping);
-
-    /**
      * Adds name and type mappings to this recommended instance.
      *
      * @param nameMapping the name mappings
@@ -101,20 +92,6 @@ public abstract class RecommendedInstance extends TextEntity {
      */
     @Override
     public abstract String getName();
-
-    /**
-     * Returns the sentence numbers associated with this recommended instance.
-     *
-     * @return the sentence numbers
-     */
-    public abstract ImmutableSortedSet<Integer> getSentenceNumbers();
-
-    /**
-     * Returns the claimants associated with this recommended instance.
-     *
-     * @return the claimants
-     */
-    public abstract ImmutableList<Claimant> getClaimants();
 
     /**
      * Handles the deletion of a noun mapping by replacing it with another.

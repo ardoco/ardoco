@@ -9,16 +9,16 @@ public interface WordSimMeasure {
     /**
      * Evaluates whether the words from the given {@link ComparisonContext} are similar.
      *
-     * @param ctx the context containing the words
+     * @param comparisonContext the context containing the words
      * @return true if the words are similar
      */
-    boolean areWordsSimilar(ComparisonContext ctx);
+    boolean areWordsSimilar(ComparisonContext comparisonContext);
 
     /**
      * Evaluates how similar the words from the given {@link ComparisonContext} are.
      *
-     * @param ctx the context containing the words
+     * @param comparisonContext the context containing the words
      * @return similarity in range [0,1]
      */
-    double getSimilarity(ComparisonContext ctx);
+    double getSimilarity(ComparisonContext comparisonContext);
 }

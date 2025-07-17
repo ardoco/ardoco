@@ -4,9 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
 
 import java.io.Serial;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -219,15 +217,6 @@ public class NounMappingImpl implements NounMapping {
         return this.surfaceForms.toImmutable();
     }
 
-    @Override
-    public ImmutableList<Claimant> getClaimants() {
-        Set<Claimant> identitySet = new LinkedHashSet<>();
-        for (var claimant : this.distribution.valuesView().flatCollect(Confidence::getClaimants)) {
-            identitySet.add(claimant);
-        }
-        return Lists.immutable.withAll(identitySet);
-    }
-
     public static Long earliestCreationTime(NounMapping... nounMappings) {
         Long earliest = Long.MAX_VALUE;
         for (var mapping : nounMappings) {
@@ -244,22 +233,6 @@ public class NounMappingImpl implements NounMapping {
 
     public ImmutableSortedSet<Word> words() {
         return this.words.toImmutable();
-    }
-
-    public MutableSortedMap<MappingKind, Confidence> distribution() {
-        return this.distribution;
-    }
-
-    public ImmutableList<Word> referenceWords() {
-        return this.referenceWords.toImmutable();
-    }
-
-    public ImmutableList<String> surfaceForms() {
-        return this.surfaceForms.toImmutable();
-    }
-
-    public String reference() {
-        return this.reference;
     }
 
     public void setIsDefinedAsCompound(boolean isDefinedAsCompound) {

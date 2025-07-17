@@ -30,10 +30,10 @@ class SentenceImpl implements Sentence {
     private MutableList<Word> words = Lists.mutable.empty();
     private MutableList<Phrase> phrases = Lists.mutable.empty();
 
-    private TextImpl parent;
-    private transient CoreSentence coreSentence;
+    private final TextImpl parent;
+    private final transient CoreSentence coreSentence;
     private SemanticGraph semanticGraph;
-    private int sentenceNumber;
+    private final int sentenceNumber;
 
     private final String text;
 
@@ -78,11 +78,6 @@ class SentenceImpl implements Sentence {
         }
 
         return phrases.toImmutable();
-    }
-
-    @Override
-    public void addPhrase(Phrase phrase) {
-        phrases.add(phrase);
     }
 
     protected List<Word> getWordsForPhrase(Tree phrase) {

@@ -18,7 +18,7 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
     @Serial
     private static final long serialVersionUID = 4970092712795607439L;
     private MutableList<RecommendedInstance> recommendedInstances;
-    private MutableList<Inconsistency> inconsistencies;
+    private final MutableList<Inconsistency> inconsistencies;
 
     public InconsistencyStateImpl() {
         super();
@@ -40,11 +40,6 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
         return false;
     }
 
-    @Override
-    public boolean removeInconsistency(Inconsistency inconsistency) {
-        return inconsistencies.remove(inconsistency);
-    }
-
     /**
      * Returns a list of inconsistencies held by this state
      *
@@ -58,11 +53,6 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
     @Override
     public boolean addRecommendedInstance(RecommendedInstance recommendedInstance) {
         return this.recommendedInstances.add(recommendedInstance);
-    }
-
-    @Override
-    public boolean removeRecommendedInstance(RecommendedInstance recommendedInstance) {
-        return this.recommendedInstances.remove(recommendedInstance);
     }
 
     /**

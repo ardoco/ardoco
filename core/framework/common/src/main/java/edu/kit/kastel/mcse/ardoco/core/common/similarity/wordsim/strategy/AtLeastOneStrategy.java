@@ -14,14 +14,14 @@ public class AtLeastOneStrategy implements ComparisonStrategy {
     /**
      * Returns true if at least one measure considers the words similar.
      *
-     * @param ctx      the comparison context
-     * @param measures the measures to use
+     * @param comparisonContext the comparison context
+     * @param measures          the measures to use
      * @return true if at least one measure returns true
      */
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx, List<WordSimMeasure> measures) {
+    public boolean areWordsSimilar(ComparisonContext comparisonContext, List<WordSimMeasure> measures) {
         for (WordSimMeasure measure : measures) {
-            if (measure.areWordsSimilar(ctx)) {
+            if (measure.areWordsSimilar(comparisonContext)) {
                 return true;
             }
         }

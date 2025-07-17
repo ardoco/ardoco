@@ -9,7 +9,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
@@ -54,7 +54,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Override
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
-        var newInstanceLink = new InstanceLink(recommendedModelInstance, modelEntity, claimant, probability);
+        var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
         } else {

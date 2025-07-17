@@ -132,37 +132,6 @@ public final class Confidence implements Comparable<Confidence>, Serializable {
         return this.confidenceAggregator.applyAsDouble(claimantConfidences);
     }
 
-    /**
-     * Merges two confidences two one w.r.t. the aggregators
-     *
-     * @param a                first confidence
-     * @param b                second confidence
-     * @param globalAggregator aggregator for merging different claimant confidences
-     * @param localAggregator  aggregator for merging confidences of the same claimant
-     * @return the combined confidence
-     */
-    public static Confidence merge(Confidence a, Confidence b, AggregationFunctions globalAggregator, AggregationFunctions localAggregator) {
-        var result = new Confidence(globalAggregator);
-
-        for (var aConf : a.agentConfidences) {
-            var bConf = b.agentConfidences.stream().filter(p -> p.first().equals(aConf.first())).findFirst().orElse(null);
-            if (bConf == null) {
-                result.addAgentConfidence(aConf.first(), aConf.second());
-            } else {
-                result.addAgentConfidence(aConf.first(), localAggregator.applyAsDouble(List.of(aConf.second(), bConf.second())));
-            }
-        }
-
-        for (var bConf : b.agentConfidences) {
-            var aConf = a.agentConfidences.stream().anyMatch(p -> p.first().equals(bConf.first()));
-            if (!aConf) {
-                result.addAgentConfidence(bConf.first(), bConf.second());
-            }
-        }
-
-        return result;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(this.agentConfidences, this.confidenceAggregator);

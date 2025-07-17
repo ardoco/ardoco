@@ -8,8 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * State interface for recommendations.
- * Provides access to recommended instances and related operations.
+ * State interface for recommendations. Provides access to recommended instances and related operations.
  */
 public interface RecommendationState extends IConfigurable {
 
@@ -43,54 +42,6 @@ public interface RecommendationState extends IConfigurable {
      */
     RecommendedInstance addRecommendedInstance(String name, String type, Claimant claimant, double probability, ImmutableList<NounMapping> nameMappings,
             ImmutableList<NounMapping> typeMappings);
-
-    /**
-     * Returns all recommended instances that contain a given mapping as type.
-     *
-     * @param mapping mapping to search for in types
-     * @return list of recommended instances with the mapping as type
-     */
-    ImmutableList<RecommendedInstance> getRecommendedInstancesByTypeMapping(NounMapping mapping);
-
-    /**
-     * Returns all recommended instances that contain a given mapping.
-     *
-     * @param mapping mapping to search for
-     * @return list of recommended instances with the mapping
-     */
-    ImmutableList<RecommendedInstance> getAnyRecommendedInstancesByMapping(NounMapping mapping);
-
-    /**
-     * Returns all recommended instances that contain a given name.
-     *
-     * @param name name to search for in names
-     * @return list of recommended instances with that name
-     */
-    ImmutableList<RecommendedInstance> getRecommendedInstancesByName(String name);
-
-    /**
-     * Returns all recommended instances that contain a similar name.
-     *
-     * @param name name to search for in names
-     * @return list of recommended instances with a similar name
-     */
-    ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarName(String name);
-
-    /**
-     * Returns all recommended instances that contain a given type.
-     *
-     * @param type type to search for in types
-     * @return list of recommended instances with that type
-     */
-    ImmutableList<RecommendedInstance> getRecommendedInstancesByType(String type);
-
-    /**
-     * Returns all recommended instances that contain a similar type.
-     *
-     * @param type type to search for in types
-     * @return list of recommended instances with a similar type
-     */
-    ImmutableList<RecommendedInstance> getRecommendedInstancesBySimilarType(String type);
 
     /**
      * Sync noun mappings. This method will be invoked if a noun mapping gets removed from the text extraction state.

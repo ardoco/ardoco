@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.vector;
 
 import java.io.BufferedReader;
@@ -25,14 +25,12 @@ import org.sqlite.SQLiteOpenMode;
 /**
  * Reads a file containing word vector embeddings and inserts them into a sqlite database.
  * <p>
- * The database must contain a table called {@code words} with two columns: {@code word} and {@code vec}. The
- * {@code word} column must be a {@code TEXT} column while the {@code vec} column must be a {@code BLOB}. Vector
- * representations will be inserted as a consecutive sequence of floats. The amount of floats in a sequence depends on
- * the dimension of the vectors.
+ * The database must contain a table called {@code words} with two columns: {@code word} and {@code vec}. The {@code word} column must be a {@code TEXT} column
+ * while the {@code vec} column must be a {@code BLOB}. Vector representations will be inserted as a consecutive sequence of floats. The amount of floats in a
+ * sequence depends on the dimension of the vectors.
  * <p>
- * This class can be customized by extending it and overriding the {@link #processWord(String)} and
- * {@link #filterWord(String)} methods. Both methods are called for each word and allow filtering/modifying words before
- * they are inserted into the databse.
+ * This class can be customized by extending it and overriding the {@link #processWord(String)} and {@link #filterWord(String)} methods. Both methods are called
+ * for each word and allow filtering/modifying words before they are inserted into the database.
  */
 public class WordVectorSqliteImporter {
 
@@ -40,9 +38,8 @@ public class WordVectorSqliteImporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WordVectorSqliteImporter.class);
 
     /**
-     * Launches an import process. The first string in the args array must be the path to the file containing the vector
-     * representations. The second string in the args array must be the path to the sqlite database file. The third
-     * string in the args array must be the dimension of the vectors.
+     * Launches an import process. The first string in the args array must be the path to the file containing the vector representations. The second string in
+     * the args array must be the path to the sqlite database file. The third string in the args array must be the dimension of the vectors.
      *
      * @param args the args array
      * @throws IOException  if an io error occurs
@@ -80,8 +77,7 @@ public class WordVectorSqliteImporter {
     }
 
     /**
-     * Constructs a new {@link WordVectorSqliteImporter} instance. To start the import process, call
-     * {@link #beginImport()}.
+     * Constructs a new {@link WordVectorSqliteImporter} instance. To start the import process, call {@link #beginImport()}.
      *
      * @param vectorFile    the path ot the file that contains the vector representations for each word
      * @param dbFile        the path to the sqlite database into which the vector representations will be inserted
@@ -89,8 +85,7 @@ public class WordVectorSqliteImporter {
      * @param maxWordLength the maximum length a word is allowed to have to be inserted into the database
      * @param startLine     at which line of the {@code vectorFile} this importer will start inserting
      * @param endLine       at which line of the {@code vectorFile} this importer will stop inserting
-     * @param dryRun        whether this importer should actually insert. Use {@code false} to run this importer without
-     *                      actually inserting anything
+     * @param dryRun        whether this importer should actually insert. Use {@code false} to run this importer without actually inserting anything
      */
     public WordVectorSqliteImporter(String vectorFile, String dbFile, int dimension, int maxWordLength, long startLine, long endLine, boolean dryRun) {
         this.vectorFile = vectorFile;
@@ -195,8 +190,7 @@ public class WordVectorSqliteImporter {
     }
 
     /**
-     * This method is called for each word that is read from the vector file. The string that is returned will then be
-     * used for insertion.
+     * This method is called for each word that is read from the vector file. The string that is returned will then be used for insertion.
      *
      * @param word the word to process
      * @return the processed version of the word
@@ -206,8 +200,8 @@ public class WordVectorSqliteImporter {
     }
 
     /**
-     * This method is called for each word that is read from the vector file. It allows filtering which words are
-     * inserted into database and which words are skipped.
+     * This method is called for each word that is read from the vector file. It allows filtering which words are inserted into database and which words are
+     * skipped.
      *
      * @param word the word
      * @return returns {@code true} if the should should be inserted into the database, {@code false} if not.

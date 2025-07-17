@@ -3,11 +3,13 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import java.util.SortedMap;
 
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.WordHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
@@ -18,10 +20,10 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Configurable
-    private double nameOrTypeWeight = 0.5;
+    private final double nameOrTypeWeight = 0.5;
 
     @Configurable
-    private double probability = 0.8;
+    private final double probability = 0.8;
 
     /**
      * Prototype constructor.
@@ -53,7 +55,7 @@ public class OutDepArcsInformant extends TextExtractionInformant {
      */
     private void examineOutgoingDepArcs(Word word) {
 
-        var outgoingDepArcs = WordHelper.getOutgoingDependencyTags(word);
+        var outgoingDepArcs = getOutgoingDependencyTags(word);
 
         for (DependencyTag shortDepTag : outgoingDepArcs) {
 
@@ -69,6 +71,16 @@ public class OutDepArcsInformant extends TextExtractionInformant {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
         // emtpy
+    }
+
+    /**
+     * Gets the outgoing dependency tags.
+     *
+     * @param word the word
+     * @return the outgoing dependency tags
+     */
+    private ImmutableList<DependencyTag> getOutgoingDependencyTags(Word word) {
+        return Lists.immutable.with(DependencyTag.values()).select(d -> !word.getOutgoingDependencyWordsWithType(d).isEmpty());
     }
 
 }

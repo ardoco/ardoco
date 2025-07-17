@@ -16,8 +16,8 @@ public interface ConnectionStates extends PipelineStepData {
     /**
      * Returns the connection state for the given metamodel.
      *
-     * @param mm the metamodel
+     * @param metamodel the metamodel
      * @return the connection state
      */
-    ConnectionState getConnectionState(Metamodel mm);
+    ConnectionState getConnectionState(Metamodel metamodel);
 }

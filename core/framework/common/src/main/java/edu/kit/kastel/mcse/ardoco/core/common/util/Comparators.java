@@ -39,37 +39,6 @@ public final class Comparators {
     }
 
     /**
-     * Returns whether both sorted iterables consist of equal elements (regardless of order).
-     *
-     * @param first  collection
-     * @param second collection
-     * @param <T>    Type of the collection
-     * @return true if both sorted iterables have equal elements, false otherwise
-     */
-    public static <T> boolean collectionsEqualsAnyOrder(SortedIterable<T> first, SortedIterable<T> second) {
-        var f = first.iterator();
-        var s = second.iterator();
-        while (f.hasNext() || s.hasNext()) {
-            if ((f.hasNext() != s.hasNext()) || !f.next().equals(s.next())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns whether both collections consist of the same references (regardless of order).
-     *
-     * @param first  collection
-     * @param second collection
-     * @param <T>    Type of the collection
-     * @return true if both collections have the same references, false otherwise
-     */
-    public static <T> boolean collectionsIdentityAnyOrder(ImmutableCollection<T> first, ImmutableCollection<T> second) {
-        return collectionsIdentityAnyOrder(first.castToCollection(), second.castToCollection());
-    }
-
-    /**
      * Returns whether both sorted iterables consist of the same references (regardless of order).
      *
      * @param first  collection
@@ -88,15 +57,4 @@ public final class Comparators {
         return true;
     }
 
-    /**
-     * Returns whether both collections consist of the same references (regardless of order).
-     *
-     * @param first  collection
-     * @param second collection
-     * @param <T>    Type of the collection
-     * @return true if both collections have the same references, false otherwise
-     */
-    public static <T> boolean collectionsIdentityAnyOrder(Collection<T> first, Collection<T> second) {
-        return first.size() == second.size() && first.stream().allMatch(f -> second.stream().anyMatch(s -> f == s));
-    }
 }

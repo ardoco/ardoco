@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a data repository for storing and fetching pipeline step data by identifier.
- * Data can be added and fetched using a string identifier and the expected class type.
+ * Represents a data repository for storing and fetching pipeline step data by identifier. Data can be added and fetched using a string identifier and the
+ * expected class type.
  */
 public class DataRepository implements Serializable {
 
@@ -58,14 +58,5 @@ public class DataRepository implements Serializable {
         if (this.data.put(identifier, pipelineStepData) != null) {
             DataRepository.logger.warn("Overriding data with identifier '{}'", identifier);
         }
-    }
-
-    /**
-     * Adds all data to the existing repository using the provided repository.
-     *
-     * @param dataRepository data repository
-     */
-    public void addAllData(DataRepository dataRepository) {
-        this.data.putAll(dataRepository.data);
     }
 }

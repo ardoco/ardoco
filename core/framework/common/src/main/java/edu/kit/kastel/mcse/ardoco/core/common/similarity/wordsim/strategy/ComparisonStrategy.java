@@ -18,10 +18,10 @@ public interface ComparisonStrategy {
     /**
      * Evaluates whether the words from the given context are similar by combining the verdicts of the specified measures.
      *
-     * @param ctx      the context containing the words
-     * @param measures the measures to use
+     * @param comparisonContext the context containing the words
+     * @param measures          the measures to use
      * @return true if the words are similar
      */
-    boolean areWordsSimilar(ComparisonContext ctx, List<WordSimMeasure> measures);
+    boolean areWordsSimilar(ComparisonContext comparisonContext, List<WordSimMeasure> measures);
 
 }

@@ -14,16 +14,16 @@ public class MajorityStrategy implements ComparisonStrategy {
     /**
      * Returns true if the majority of measures consider the words similar.
      *
-     * @param ctx      the comparison context
-     * @param measures the measures to use
+     * @param comparisonContext the comparison context
+     * @param measures          the measures to use
      * @return true if the majority of measures return true
      */
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx, List<WordSimMeasure> measures) {
+    public boolean areWordsSimilar(ComparisonContext comparisonContext, List<WordSimMeasure> measures) {
         int acceptances = 0;
 
         for (WordSimMeasure measure : measures) {
-            if (measure.areWordsSimilar(ctx)) {
+            if (measure.areWordsSimilar(comparisonContext)) {
                 acceptances++;
             }
         }

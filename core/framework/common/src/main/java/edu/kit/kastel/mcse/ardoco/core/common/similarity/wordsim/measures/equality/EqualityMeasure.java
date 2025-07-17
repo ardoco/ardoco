@@ -11,22 +11,22 @@ public class EqualityMeasure implements WordSimMeasure {
     /**
      * Checks if the terms in the given context are similar by comparing their string representations, ignoring case.
      *
-     * @param ctx the comparison context
+     * @param comparisonContext the comparison context
      * @return true if the terms are equal ignoring case, false otherwise
      */
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
-        return ctx.firstTerm().equalsIgnoreCase(ctx.secondTerm());
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
+        return comparisonContext.firstTerm().equalsIgnoreCase(comparisonContext.secondTerm());
     }
 
     /**
      * Returns 1.0 if the terms are similar, 0.0 otherwise.
      *
-     * @param ctx the comparison context
+     * @param comparisonContext the comparison context
      * @return the similarity score (1.0 or 0.0)
      */
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
-        return this.areWordsSimilar(ctx) ? 1 : 0;
+    public double getSimilarity(ComparisonContext comparisonContext) {
+        return this.areWordsSimilar(comparisonContext) ? 1 : 0;
     }
 }
