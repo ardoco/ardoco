@@ -34,7 +34,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
      * Meaning (Weights): <br/> 0,-1,1 => Balanced <br/> 2 => InternalConfidence: 2 / mappingConfidence: 1<br/> -2 => InternalConfidence: 1 / mappingConfidence:
      * 2<br/> ...
      */
-    private final int weightInternalConfidence = 0;
+    private static final int WEIGHT_INTERNAL_CONFIDENCE = 0;
 
     private final String type;
     private final String name;
@@ -124,9 +124,9 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         probabilities.add(mappingProbability);
         probabilities.add(ownProbability);
 
-        if (Math.abs(this.weightInternalConfidence) > 1) {
-            var element = this.weightInternalConfidence > 0 ? ownProbability : mappingProbability;
-            for (int i = 0; i < Math.abs(this.weightInternalConfidence) - 1; i++) {
+        if (Math.abs(WEIGHT_INTERNAL_CONFIDENCE) > 1) {
+            var element = WEIGHT_INTERNAL_CONFIDENCE > 0 ? ownProbability : mappingProbability;
+            for (int i = 0; i < Math.abs(WEIGHT_INTERNAL_CONFIDENCE) - 1; i++) {
                 probabilities.add(element);
             }
         }

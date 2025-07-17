@@ -92,4 +92,15 @@ public final class RecommendationModelTraceLink extends TraceLink<RecommendedIns
                 ", TypeVariants: " + types.size() + ": " + types + "sentences{" + Arrays.toString(typePositions.toArray()) + "}" + "]";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // Confidence is not part of the equals check, as it is not relevant for the identity of the trace link
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        // Confidence is not part of the hash code, as it is not relevant for the identity of the trace link
+        return super.hashCode();
+    }
 }
