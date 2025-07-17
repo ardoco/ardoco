@@ -70,7 +70,7 @@ public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Override
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
-        // emtpy
+        // empty
     }
 
     /**

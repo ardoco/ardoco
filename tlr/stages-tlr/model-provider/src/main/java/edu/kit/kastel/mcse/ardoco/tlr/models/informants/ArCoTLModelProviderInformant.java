@@ -80,7 +80,6 @@ public final class ArCoTLModelProviderInformant extends Informant {
         this.addModelStateToDataRepository(this.extractor.getMetamodel(), extractedModel);
     }
 
-    //TODO: Remove this method
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
         var dataRepository = this.getDataRepository();
         Optional<ModelStates> modelStatesOptional = dataRepository.getData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);
