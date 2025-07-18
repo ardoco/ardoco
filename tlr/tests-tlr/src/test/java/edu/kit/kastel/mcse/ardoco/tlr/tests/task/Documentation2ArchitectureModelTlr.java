@@ -10,8 +10,8 @@ import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
-import edu.kit.kastel.mcse.ardoco.core.tests.evaluation.EvaluationHelper;
-import edu.kit.kastel.mcse.ardoco.core.tests.evaluation.EvaluationProject;
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
 public enum Documentation2ArchitectureModelTlr {
 

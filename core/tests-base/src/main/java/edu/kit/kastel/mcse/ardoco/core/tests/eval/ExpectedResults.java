@@ -1,5 +1,5 @@
-/* Licensed under MIT 2022-2024. */
-package edu.kit.kastel.mcse.ardoco.core.tests.eval.results;
+/* Licensed under MIT 2025. */
+package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.Serializable;
 
