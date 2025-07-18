@@ -41,8 +41,8 @@ public class ArCoTLEvaluation extends AbstractEvaluation {
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-        goldStandard = enrollGoldStandard(goldStandard, result);
-        var evaluationResults = this.calculateEvaluationResults(result, goldStandard);
+        var enrolledGoldStandard = enrollGoldStandard(goldStandard, result);
+        var evaluationResults = this.calculateEvaluationResults(result, enrolledGoldStandard);
         var expectedResults = project.getExpectedResults();
 
         logExtendedResultsWithExpected(project.name(), evaluationResults, expectedResults);
