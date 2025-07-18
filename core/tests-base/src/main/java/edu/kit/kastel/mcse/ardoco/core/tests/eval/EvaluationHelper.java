@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.File;
@@ -7,13 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
-/**
- * Helper class for {@link GoldStandardProject} implementations.
- */
-public class ProjectHelper {
-
-    private ProjectHelper() {
-        throw new IllegalAccessError();
+public final class EvaluationHelper {
+    private EvaluationHelper() {
+        throw new IllegalAccessError("Utility class should not be instantiated");
     }
 
     /**
@@ -23,7 +19,7 @@ public class ProjectHelper {
      * @return the file if loaded or null if not possible
      */
     public static File loadFileFromResources(String resource) {
-        InputStream is = ProjectHelper.class.getResourceAsStream(resource);
+        InputStream is = EvaluationHelper.class.getResourceAsStream(resource);
         if (is == null)
             throw new IllegalArgumentException("Resource not found: " + resource);
         try {

@@ -1,7 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.approach;
 
-import edu.kit.kastel.mcse.ardoco.core.tests.eval.results.ExpectedResults;
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.Documentation2ArchitectureModelTlr;
 
 public enum SwattrEvaluationProject {

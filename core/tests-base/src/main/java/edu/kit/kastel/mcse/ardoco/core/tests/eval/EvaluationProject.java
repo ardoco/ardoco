@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.core.tests.evaluation;
+package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.File;
 import java.util.Objects;
@@ -12,7 +12,6 @@ import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 
 public enum EvaluationProject {
     MEDIASTORE(//
-            "MS", //
             "/benchmark/mediastore/model_2016/pcm/ms.repository", //
             "/benchmark/mediastore/text_2016/mediastore.txt", //
             "https://github.com/ArDoCo/MediaStore3.git", //
@@ -20,7 +19,6 @@ public enum EvaluationProject {
             "/benchmark/mediastore/model_2016/code/codeModel.acm"),//
 
     TEASTORE(//
-            "TS", //
             "/benchmark/teastore/model_2020/pcm/teastore.repository", //
             "/benchmark/teastore/text_2020/teastore.txt", //
             "https://github.com/ArDoCo/TeaStore.git", //
@@ -28,7 +26,6 @@ public enum EvaluationProject {
             "/benchmark/teastore/model_2022/code/codeModel.acm"),//
 
     TEAMMATES(//
-            "TM", //
             "/benchmark/teammates/model_2021/pcm/teammates.repository", //
             "/benchmark/teammates/text_2021/teammates.txt", //
             "https://github.com/ArDoCo/teammates.git", //
@@ -36,7 +33,6 @@ public enum EvaluationProject {
             "/benchmark/teammates/model_2023/code/codeModel.acm"),//
 
     BIGBLUEBUTTON(//
-            "BBB", //
             "/benchmark/bigbluebutton/model_2021/pcm/bbb.repository", //
             "/benchmark/bigbluebutton/text_2021/bigbluebutton.txt", //
             "https://github.com/ArDoCo/bigbluebutton.git", //
@@ -44,7 +40,6 @@ public enum EvaluationProject {
             "/benchmark/bigbluebutton/model_2023/code/codeModel.acm"), //
 
     JABREF(//
-            "JR", //
             "/benchmark/jabref/model_2021/pcm/jabref.repository", //
             "/benchmark/jabref/text_2021/jabref.txt", //
             "https://github.com/ArDoCo/jabref.git", //
@@ -53,24 +48,18 @@ public enum EvaluationProject {
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
-    private final String alias;
     private final String architectureModelResource;
     private final String textResource;
     private final String codeRepository;
     private final String codeCommit;
     private final String codeModelResource;
 
-    EvaluationProject(String alias, String architectureModelResource, String textResource, String codeRepository, String codeCommit, String codeModelResource) {
-        this.alias = alias;
+    EvaluationProject(String architectureModelResource, String textResource, String codeRepository, String codeCommit, String codeModelResource) {
         this.architectureModelResource = architectureModelResource;
         this.textResource = textResource;
         this.codeRepository = codeRepository;
         this.codeCommit = codeCommit;
         this.codeModelResource = codeModelResource;
-    }
-
-    public String getAlias() {
-        return alias;
     }
 
     public File getArchitectureModel(ModelFormat modelFormat) {
@@ -105,8 +94,8 @@ public enum EvaluationProject {
     }
 
     private File getTemporaryCodeLocation() {
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        var temporary = new File(tmpdir + File.separator + "ArDoCo" + File.separator + this.name());
+        String temp = System.getProperty("java.io.tmpdir");
+        var temporary = new File(temp + File.separator + "ArDoCo" + File.separator + this.name());
         logger.debug("Location of Code: {}", temporary.getAbsolutePath());
         temporary.mkdirs();
         return temporary;

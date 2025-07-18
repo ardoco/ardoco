@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
-import edu.kit.kastel.mcse.ardoco.core.tests.evaluation.EvaluationHelper;
-import edu.kit.kastel.mcse.ardoco.core.tests.evaluation.EvaluationProject;
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
+import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
 public enum Documentation2CodeTlr {
     MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-code_2016.csv"),//

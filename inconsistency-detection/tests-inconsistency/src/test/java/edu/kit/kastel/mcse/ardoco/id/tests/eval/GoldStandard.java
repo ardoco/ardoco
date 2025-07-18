@@ -1,5 +1,5 @@
 /* Licensed under MIT 2021-2025. */
-package edu.kit.kastel.mcse.ardoco.core.tests.eval;
+package edu.kit.kastel.mcse.ardoco.id.tests.eval;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +18,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.Architectu
 /**
  * Represents a gold standard for evaluation, containing mappings between sentences and architecture elements.
  */
-public class GoldStandard {
+public final class GoldStandard {
     private final Logger logger = LoggerFactory.getLogger(GoldStandard.class);
 
-    private final File goldStandard;
+    private final File goldStandardFile;
     private final ArchitectureComponentModel model;
 
     private final MutableList<MutableList<ArchitectureItem>> sentence2instance = Lists.mutable.empty();
@@ -29,17 +29,17 @@ public class GoldStandard {
     /**
      * Creates a new gold standard from a file and an architecture component model.
      *
-     * @param goldStandard the file containing the gold standard data
-     * @param model        the architecture component model
+     * @param goldStandardFile the file containing the gold standard data
+     * @param model            the architecture component model
      */
-    public GoldStandard(File goldStandard, ArchitectureComponentModel model) {
-        this.goldStandard = goldStandard;
+    public GoldStandard(File goldStandardFile, ArchitectureComponentModel model) {
+        this.goldStandardFile = goldStandardFile;
         this.model = model;
         this.load();
     }
 
     private void load() {
-        try (Scanner scan = new Scanner(this.goldStandard, StandardCharsets.UTF_8)) {
+        try (Scanner scan = new Scanner(this.goldStandardFile, StandardCharsets.UTF_8)) {
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line == null || line.isBlank() || line.startsWith("modelElement") || line.contains("modelElementID")) {
@@ -50,7 +50,7 @@ public class GoldStandard {
                 String[] idXline = line.strip().split(",", -1);
                 ArchitectureItem instance = Lists.immutable.withAll(this.model.getContent()).select(i -> i.getId().equals(idXline[0])).getFirst();
                 if (instance == null) {
-                    System.err.println("No instance found for id \"" + idXline[0] + "\"");
+                    logger.error("No instance found for id \"{}\"", idXline[0]);
                     continue;
                 }
                 int sentence = Integer.parseInt(idXline[1]);
