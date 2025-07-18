@@ -16,8 +16,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class ArDoCoForSadSamTraceabilityLinkRecovery extends ArDoCoRunner {
-    public ArDoCoForSadSamTraceabilityLinkRecovery(String projectName) {
+/**
+ * The Swattr Runner realizes the Software Architecture Documentation to Architecture Model Traceability Link Recovery (TLR) approach.
+ */
+public class Swattr extends ArDoCoRunner {
+    public Swattr(String projectName) {
         super(projectName);
     }
 

@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCoForSadSamCodeTraceabilityLinkRecovery;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;
 
-class ArDoCoForSadSamCodeTraceabilityLinkRecoveryTest extends CodeRunnerBaseTest {
+class TransArCTest extends CodeRunnerBaseTest {
 
     @Test
     @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (PCM)")
     void testSadSamTlrPcm() {
-        var runner = new ArDoCoForSadSamCodeTraceabilityLinkRecovery(projectName);
+        var runner = new TransArC(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), new File(inputModelArchitecture), ModelFormat.PCM, new File(inputCodeModel), additionalConfigsMap, new File(
                 outputDir));
@@ -31,7 +31,7 @@ class ArDoCoForSadSamCodeTraceabilityLinkRecoveryTest extends CodeRunnerBaseTest
     @Test
     @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (UML)")
     void testSadSamTlrUml() {
-        var runner = new ArDoCoForSadSamCodeTraceabilityLinkRecovery(projectName);
+        var runner = new TransArC(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), new File(inputModelArchitectureUml), ModelFormat.UML, new File(inputCodeModel), additionalConfigsMap, new File(
                 outputDir));

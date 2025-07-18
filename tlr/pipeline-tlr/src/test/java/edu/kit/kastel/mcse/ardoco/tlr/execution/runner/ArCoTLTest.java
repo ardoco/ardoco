@@ -9,19 +9,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCoForSadSamTraceabilityLinkRecovery;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.ArCoTL;
 
-@Disabled("Disabled as other (integration) tests cover the same functionality. Enable for debugging/local development.")
-class ArDoCoForSadSamTraceabilityLinkRecoveryTest extends RunnerBaseTest {
+class ArCoTLTest extends CodeRunnerBaseTest {
 
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-TLR (PCM)")
-    void testSadSamTlrPcm() {
-        var runner = new ArDoCoForSadSamTraceabilityLinkRecovery(projectName);
+    @DisplayName("Test ArDoCo for SAM-Code-TLR (PCM)")
+    void testSamCodeTlrPcm() {
+        var runner = new ArCoTL(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, additionalConfigsMap, outputDir);
+        runner.setUp(new File(inputModelArchitecture), ModelFormat.PCM, new File(inputCodeModel), additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());
@@ -29,11 +28,11 @@ class ArDoCoForSadSamTraceabilityLinkRecoveryTest extends RunnerBaseTest {
 
     @Disabled("Disabled for faster builds. Enable if you need to check UML models.")
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-TLR (UML)")
-    void testSadSamTlrUml() {
-        var runner = new ArDoCoForSadSamTraceabilityLinkRecovery(projectName);
+    @DisplayName("Test ArDoCo for SAM-Code-TLR (UML)")
+    void testSamCodeTlrUml() {
+        var runner = new ArCoTL(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(inputText, inputModelArchitectureUml, ModelFormat.UML, additionalConfigsMap, outputDir);
+        runner.setUp(new File(inputModelArchitectureUml), ModelFormat.UML, new File(inputCodeModel), additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());

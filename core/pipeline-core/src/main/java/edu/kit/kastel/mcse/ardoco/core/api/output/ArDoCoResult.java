@@ -113,12 +113,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink TraceLinks} between architecture and code entities
      */
-    public List<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
+    public ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
-            return samCodeTraceabilityState.getSamCodeTraceLinks().toList();
+            return Lists.immutable.withAll(samCodeTraceabilityState.getSamCodeTraceLinks());
         }
-        return List.of();
+        return Lists.immutable.empty();
     }
 
     /**
@@ -126,12 +126,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink TraceLinks} between sentences and code entities
      */
-    public List<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
+    public ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
-            return samCodeTraceabilityState.getSadCodeTraceLinks().toList();
+            return Lists.immutable.withAll(samCodeTraceabilityState.getSadCodeTraceLinks());
         }
-        return List.of();
+        return Lists.immutable.empty();
     }
 
     /**

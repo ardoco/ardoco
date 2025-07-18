@@ -16,9 +16,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class ArDoCoForSadCodeTraceabilityLinkRecovery extends ArDoCoRunner {
+public class ArDoCode extends ArDoCoRunner {
 
-    public ArDoCoForSadCodeTraceabilityLinkRecovery(String projectName) {
+    public ArDoCode(String projectName) {
         super(projectName);
     }
 
