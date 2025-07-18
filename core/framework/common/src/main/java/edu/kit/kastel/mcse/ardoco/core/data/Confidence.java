@@ -40,18 +40,6 @@ public final class Confidence implements Comparable<Confidence>, Serializable {
         this.agentConfidences = new ArrayList<>();
     }
 
-    /**
-     * Constructor for the confidence with a given aggregator function and an initial claimant with a certain probability (confidence).
-     *
-     * @param claimant             the claimant
-     * @param probability          the probability
-     * @param confidenceAggregator the aggregation function
-     */
-    public Confidence(Claimant claimant, double probability, AggregationFunctions confidenceAggregator) {
-        this(confidenceAggregator);
-        this.addAgentConfidence(claimant, probability);
-    }
-
     private Confidence(AggregationFunctions confidenceAggregator, List<Triple<Claimant, Double, String>> agentConfidence) {
         this(confidenceAggregator);
         this.agentConfidences = new ArrayList<>(agentConfidence);

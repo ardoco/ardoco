@@ -30,7 +30,7 @@ public enum AggregationFunctions implements ToDoubleFunction<Collection<? extend
     }),
 
     /**
-     * Use the root mean square of the scores as final score.
+     * Use the root-mean-square of the scores as final score.
      */
     ROOTMEANSQUARED(s -> {
         var squaredValuesSum = s.stream().mapToDouble(d -> Math.pow(d, 2)).sum();

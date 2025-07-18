@@ -65,17 +65,6 @@ public final class GoldStandard {
     }
 
     /**
-     * Gets the model instances associated with a specific sentence number.
-     *
-     * @param sentenceNo the sentence number (index starts at 1)
-     * @return the list of architecture items associated with the sentence
-     */
-    public ImmutableList<ArchitectureItem> getModelInstances(int sentenceNo) {
-        // Index starts at 1
-        return this.sentence2instance.get(sentenceNo).toImmutable();
-    }
-
-    /**
      * Gets all sentence numbers that contain the specified architecture element.
      *
      * @param elem the architecture element to search for
