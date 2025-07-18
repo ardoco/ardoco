@@ -49,8 +49,8 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 
 /**
- * Integration test that evaluates the inconsistency detection capabilities of ArDoCo. Runs on the projects that are defined in the enum
- * {@link InconsistencyDetection}.
+ * Integration test that evaluates the inconsistency detection capabilities of ArDoCo. Runs on the projects that are defined in the
+ * {@link InconsistencyDetection} enum.
  * <p>
  * Currently, the focus lies on detecting elements that are mentioned in the text but are not represented in the model. For this, we run an evaluation that
  * holds back (removes) one element from the model. This way, we know that there is a missing element and the trace links to this element (in the gold standard)
