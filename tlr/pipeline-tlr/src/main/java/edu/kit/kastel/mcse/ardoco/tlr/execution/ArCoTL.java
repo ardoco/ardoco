@@ -12,9 +12,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRe
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-public class ArDoCoForSamCodeTraceabilityLinkRecovery extends ArDoCoRunner {
+public class ArCoTL extends ArDoCoRunner {
 
-    public ArDoCoForSamCodeTraceabilityLinkRecovery(String projectName) {
+    public ArCoTL(String projectName) {
         super(projectName);
     }
 
