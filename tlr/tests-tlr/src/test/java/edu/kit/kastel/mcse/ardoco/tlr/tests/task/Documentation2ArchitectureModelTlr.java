@@ -15,7 +15,11 @@ import edu.kit.kastel.mcse.ardoco.core.tests.evaluation.EvaluationProject;
 
 public enum Documentation2ArchitectureModelTlr {
 
-    MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv");
+    MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv"),//
+    TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020.csv"),//
+    TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021.csv"),//
+    BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv"),//
+    JABREF(EvaluationProject.JABREF, "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021.csv");
 
     private final EvaluationProject project;
     private final String goldStandardPath;

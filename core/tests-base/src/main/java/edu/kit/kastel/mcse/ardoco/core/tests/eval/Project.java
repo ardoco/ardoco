@@ -74,17 +74,17 @@ public enum Project implements GoldStandardProject {
             new ExpectedResults(1.0, .444, .615, .871, .617, 1.0) //
     );
 
-    private static final Logger logger = LoggerFactory.getLogger(Project.class);
+    public static final Logger logger = LoggerFactory.getLogger(Project.class);
 
-    private final String alias;
-    private final String model;
-    private final String textFile;
-    private final String configurationsFile;
-    private final String goldStandardTraceabilityLinkRecovery;
-    private final String goldStandardMissingTextForModelElement;
-    private final ExpectedResults expectedTraceLinkResults;
-    private final ExpectedResults expectedInconsistencyResults;
-    private final SortedSet<String> resourceNames;
+    public final String alias;
+    public final String model;
+    public final String textFile;
+    public final String configurationsFile;
+    public final String goldStandardTraceabilityLinkRecovery;
+    public final String goldStandardMissingTextForModelElement;
+    public final ExpectedResults expectedTraceLinkResults;
+    public final ExpectedResults expectedInconsistencyResults;
+    public final SortedSet<String> resourceNames;
 
     Project(String alias, String model, String textFile, String goldStandardTraceabilityLinkRecovery, String configurationsFile,
             String goldStandardMissingTextForModelElement, ExpectedResults expectedTraceLinkResults, ExpectedResults expectedInconsistencyResults) {
