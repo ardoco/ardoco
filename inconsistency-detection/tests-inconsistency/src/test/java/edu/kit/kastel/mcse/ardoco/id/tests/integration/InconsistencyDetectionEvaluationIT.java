@@ -220,14 +220,6 @@ class InconsistencyDetectionEvaluationIT {
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
 
-    private void logResultsMissingModelInconsistency(InconsistencyDetection project, SingleClassificationResult<String> weightedAverageResult,
-            ExpectedResults expectedResults) {
-        if (InconsistencyDetectionEvaluationIT.logger.isInfoEnabled()) {
-            String name = project.name() + " missing model inconsistency";
-            logExtendedResultsWithExpected(InconsistencyDetectionEvaluationIT.logger, this, name, weightedAverageResult, expectedResults);
-        }
-    }
-
     private void logResultsMissingModelInconsistency(InconsistencyDetection project, AggregatedClassificationResult weightedAverageResult,
             ExpectedResults expectedResults) {
         if (InconsistencyDetectionEvaluationIT.logger.isInfoEnabled()) {
