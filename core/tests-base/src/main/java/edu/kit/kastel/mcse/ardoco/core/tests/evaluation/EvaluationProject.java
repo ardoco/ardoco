@@ -17,7 +17,39 @@ public enum EvaluationProject {
             "/benchmark/mediastore/text_2016/mediastore.txt", //
             "https://github.com/ArDoCo/MediaStore3.git", //
             "94c398fa02b3d6b8d71517522a7206d37ed3a9af", //
-            "/benchmark/mediastore/model_2016/code/codeModel.acm");
+            "/benchmark/mediastore/model_2016/code/codeModel.acm"),//
+
+    TEASTORE(//
+            "TS", //
+            "/benchmark/teastore/model_2020/pcm/teastore.repository", //
+            "/benchmark/teastore/text_2020/teastore.txt", //
+            "https://github.com/ArDoCo/TeaStore.git", //
+            "bdc49020a55cfa97eaabbb25744fefbc2697defa", //
+            "/benchmark/teastore/model_2022/code/codeModel.acm"),//
+
+    TEAMMATES(//
+            "TM", //
+            "/benchmark/teammates/model_2021/pcm/teammates.repository", //
+            "/benchmark/teammates/text_2021/teammates.txt", //
+            "https://github.com/ArDoCo/teammates.git", //
+            "b24519a2af9e17b2bc9c025e87e4cf60009c425d", //
+            "/benchmark/teammates/model_2023/code/codeModel.acm"),//
+
+    BIGBLUEBUTTON(//
+            "BBB", //
+            "/benchmark/bigbluebutton/model_2021/pcm/bbb.repository", //
+            "/benchmark/bigbluebutton/text_2021/bigbluebutton.txt", //
+            "https://github.com/ArDoCo/bigbluebutton.git", //
+            "8fa2507d6c3865a9850004fd6fefd09738e68406", //
+            "/benchmark/bigbluebutton/model_2023/code/codeModel.acm"), //
+
+    JABREF(//
+            "JR", //
+            "/benchmark/jabref/model_2021/pcm/jabref.repository", //
+            "/benchmark/jabref/text_2021/jabref.txt", //
+            "https://github.com/ArDoCo/jabref.git", //
+            "6269698cae437610ec79c38e6dd611eef7e88afe", //
+            "/benchmark/jabref/model_2023/code/codeModel.acm");
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
