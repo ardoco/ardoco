@@ -28,8 +28,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStat
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
@@ -299,30 +297,6 @@ public record ArDoCoResult(DataRepository dataRepository) {
     public Model getModelState(Metamodel metamodel) {
         ModelStates modelStates = this.getModelStates();
         return modelStates.getModel(metamodel);
-    }
-
-    /**
-     * Returns the internal {@link TextState}.
-     *
-     * @return the TextState
-     */
-    public TextState getTextState() {
-        return DataRepositoryHelper.getTextState(this.dataRepository);
-    }
-
-    /**
-     * Returns the internal {@link RecommendationState} for the given {@link Metamodel} or null if there is none.
-     *
-     * @param metamodel the metamodel
-     * @return the recommendation state or null if there is none
-     */
-    public RecommendationState getRecommendationState(Metamodel metamodel) {
-        if (DataRepositoryHelper.hasRecommendationStates(this.dataRepository)) {
-            var recommendationStates = DataRepositoryHelper.getRecommendationStates(this.dataRepository);
-            return recommendationStates.getRecommendationState(metamodel);
-        }
-        ArDoCoResult.logger.warn("No RecommendationState found");
-        return null;
     }
 
     /**

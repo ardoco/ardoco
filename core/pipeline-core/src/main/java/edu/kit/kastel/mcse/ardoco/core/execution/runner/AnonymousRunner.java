@@ -22,23 +22,18 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
     }
 
     /**
-     * Sets up the runner using {@link #initializePipelineSteps}. Initializes the new data repository.
-     * {@link #isSetUp} must return true if successful.
-     * 
-     * @return list of AbstractPipelineSteps this runner consists of
+     * Sets up the runner using {@link #initializePipelineSteps}. Initializes the new data repository. {@link #isSetUp} must return true if successful.
      */
-    private List<AbstractPipelineStep> setUp() {
+    private void setUp() {
         try {
             var arDoCo = getArDoCo();
             var dataRepository = arDoCo.getDataRepository();
             var pipelineSteps = initializePipelineSteps(dataRepository);
             pipelineSteps.forEach(arDoCo::addPipelineStep);
             isSetUp = true;
-            return pipelineSteps;
         } catch (IOException e) {
             logger.error("Problem in initialising pipeline when loading data (IOException)", e.getCause());
             isSetUp = false;
-            return List.of();
         }
     }
 

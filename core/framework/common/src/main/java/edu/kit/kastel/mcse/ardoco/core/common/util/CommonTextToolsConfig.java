@@ -12,7 +12,7 @@ public final class CommonTextToolsConfig {
         throw new IllegalAccessError();
     }
 
-    private static final ResourceAccessor CONFIG = loadParameters("/configs/CommonTextToolsConfig.properties");
+    private static final ResourceAccessor CONFIG = loadParameters();
 
     /**
      * List of separators used for containing by a word in SimilarityUtils.
@@ -97,8 +97,8 @@ public final class CommonTextToolsConfig {
      */
     public static final String GLOVE_DB_FILE_PATH = CONFIG.getProperty("glove_DatabaseFilePath");
 
-    private static ResourceAccessor loadParameters(String filePath) {
-        return new ResourceAccessor(filePath, true);
+    private static ResourceAccessor loadParameters() {
+        return new ResourceAccessor("/configs/CommonTextToolsConfig.properties", true);
     }
 
 }

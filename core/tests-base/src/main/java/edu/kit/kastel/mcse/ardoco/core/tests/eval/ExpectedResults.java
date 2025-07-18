@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.Serializable;
 
-import com.google.errorprone.annotations.Immutable;
-
 /**
  * This record represents expected results for an evaluation
  *
@@ -15,10 +13,5 @@ import com.google.errorprone.annotations.Immutable;
  * @param phiCoefficient the expected Phi Coefficient
  * @param specificity    the expected specificity
  */
-@Immutable
 public record ExpectedResults(double precision, double recall, double f1, double accuracy, double phiCoefficient, double specificity) implements Serializable {
-
-    public ExpectedResults(double precision, double recall, double f1) {
-        this(precision, recall, f1, .0, .0, .0);
-    }
 }
