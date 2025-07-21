@@ -9,11 +9,11 @@ import java.util.SortedMap;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureComponentModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModelWithComponentsAndInterfaces;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;

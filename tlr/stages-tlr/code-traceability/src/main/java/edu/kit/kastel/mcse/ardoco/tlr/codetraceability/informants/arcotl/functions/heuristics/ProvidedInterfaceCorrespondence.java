@@ -6,12 +6,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeModule;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodePackage;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.Datatype;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeModule;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.NameComparisonUtils;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;

@@ -18,9 +18,9 @@ import org.eclipse.jdt.core.dom.FileASTRequestor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 

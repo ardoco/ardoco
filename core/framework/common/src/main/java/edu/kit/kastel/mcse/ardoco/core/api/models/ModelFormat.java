@@ -1,5 +1,5 @@
 /* Licensed under MIT 2022-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.model;
+package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 /**
  * Enum for the different types of supported architecture (meta-) models.

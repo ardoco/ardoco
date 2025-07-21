@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functi
 
 import java.util.Objects;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.StandaloneHeuristicNode;
 

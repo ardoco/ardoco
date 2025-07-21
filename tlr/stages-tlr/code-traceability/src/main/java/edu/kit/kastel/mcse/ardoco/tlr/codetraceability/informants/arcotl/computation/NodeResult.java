@@ -9,11 +9,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;

@@ -1,7 +1,7 @@
 /* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.core.data;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 

@@ -4,10 +4,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functi
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 

@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.model.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrategy;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;

@@ -18,12 +18,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.ProgrammingLanguages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguages;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 
 public class ShellVisitor implements FileVisitor<Path> {

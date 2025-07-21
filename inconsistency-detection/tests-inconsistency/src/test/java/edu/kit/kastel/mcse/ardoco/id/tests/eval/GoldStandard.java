@@ -12,8 +12,8 @@ import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureComponentModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 
 /**
  * Represents a gold standard for evaluation, containing mappings between sentences and architecture elements.
