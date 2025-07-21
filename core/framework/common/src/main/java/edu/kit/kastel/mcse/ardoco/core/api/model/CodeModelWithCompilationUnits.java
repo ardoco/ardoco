@@ -1,15 +1,14 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
+package edu.kit.kastel.mcse.ardoco.core.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
@@ -23,7 +22,7 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
      *
      * @param codeModelDto the code model Dto
      */
-    public CodeModelWithCompilationUnits(CodeModelDTO codeModelDto) {
+    public CodeModelWithCompilationUnits(CodeModelDto codeModelDto) {
         super(codeModelDto.codeItemRepository(), codeModelDto.content());
     }
 

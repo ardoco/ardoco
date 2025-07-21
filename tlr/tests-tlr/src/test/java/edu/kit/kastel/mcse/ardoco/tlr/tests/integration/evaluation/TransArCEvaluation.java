@@ -1,14 +1,14 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
+import static edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel.CODE_WITH_COMPILATION_UNITS;
 
 import java.io.File;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.Assertions;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;

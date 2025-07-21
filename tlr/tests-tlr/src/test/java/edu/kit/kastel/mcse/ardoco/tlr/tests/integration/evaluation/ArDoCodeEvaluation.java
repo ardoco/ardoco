@@ -1,7 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
+import static edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
 
 import java.io.File;
 import java.util.SortedMap;

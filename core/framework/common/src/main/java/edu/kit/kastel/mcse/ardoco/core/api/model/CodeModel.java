@@ -1,15 +1,17 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
+package edu.kit.kastel.mcse.ardoco.core.api.model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
@@ -56,8 +58,8 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      *
      * @return code model DTO
      */
-    public CodeModelDTO createCodeModelDto() {
-        return new CodeModelDTO(codeItemRepository, getContentIds());
+    public CodeModelDto createCodeModelDto() {
+        return new CodeModelDto(codeItemRepository, getContentIds());
     }
 
     private List<String> getContentIds() {
@@ -99,5 +101,24 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         }
         this.codeItemRepository.init();
         this.initialized = true;
+    }
+
+    /**
+     * Data transfer object for the code model. Contains a {@link CodeItemRepository} and a list of content identifiers.
+     *
+     * @param codeItemRepository the repository of code items
+     * @param content            the list of content identifiers
+     */
+    public record CodeModelDto(@JsonProperty CodeItemRepository codeItemRepository, @JsonProperty List<String> content) {
+        /**
+         * Returns the code item repository, initializing it if necessary.
+         *
+         * @return the code item repository
+         */
+        @Override
+        public CodeItemRepository codeItemRepository() {
+            codeItemRepository.init();
+            return codeItemRepository;
+        }
     }
 }

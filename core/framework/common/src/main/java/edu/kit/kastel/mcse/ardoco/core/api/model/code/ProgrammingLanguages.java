@@ -1,5 +1,5 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code;
+package edu.kit.kastel.mcse.ardoco.core.api.model.code;
 
 /**
  * Utility class providing constants for supported programming languages in the code model.

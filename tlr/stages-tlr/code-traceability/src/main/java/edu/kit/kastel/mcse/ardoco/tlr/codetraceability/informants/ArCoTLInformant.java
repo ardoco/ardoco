@@ -1,13 +1,13 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isArchitectureModel;
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isCodeModel;
+import static edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel.isArchitectureModel;
+import static edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel.isCodeModel;
 
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;

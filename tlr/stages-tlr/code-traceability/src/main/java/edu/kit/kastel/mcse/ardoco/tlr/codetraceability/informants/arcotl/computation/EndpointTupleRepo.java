@@ -4,10 +4,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.comput
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 
 /**

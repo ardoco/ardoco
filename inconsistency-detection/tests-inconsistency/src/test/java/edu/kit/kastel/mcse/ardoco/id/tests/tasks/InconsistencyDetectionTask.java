@@ -7,8 +7,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
