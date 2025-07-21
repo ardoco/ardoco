@@ -97,8 +97,6 @@ class TransArCAiIT {
                 }
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
-                // Just some instance .. parameters do not matter ..
-                var evaluation = new TransArCAiEvaluation(project, llm, LLMArchitecturePrompt.DOCUMENTATION_ONLY_V1, null, null, null);
                 var goldStandard = project.getTlrTask().getExpectedTraceLinks();
                 goldStandard = TransArCAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
                 var evaluationResults = TransArCAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
