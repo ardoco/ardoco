@@ -164,7 +164,7 @@ public abstract class ElementStorageRegistry {
     @SuppressWarnings("unchecked")
     private <T extends Element> ElementStorage<T> getTypedStorage(Type type) {
         Class<T> clazz = (Class<T>) typeOfClass.get(type);
-        return (ElementStorage<T>) getStorage(type, clazz);
+        return getStorage(type, clazz);
     }
 
     @SuppressWarnings("unchecked")

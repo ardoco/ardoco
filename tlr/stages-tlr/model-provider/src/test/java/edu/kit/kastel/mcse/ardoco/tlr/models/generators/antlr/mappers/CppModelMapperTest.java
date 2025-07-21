@@ -18,7 +18,7 @@ class CppModelMapperTest {
 
         // Assertions
         Assertions.assertNotNull(model);
-        Assertions.assertEquals(model.getAllPackages().size(), 0);
+        Assertions.assertEquals(0, model.getAllPackages().size());
     }
 
 }

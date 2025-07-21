@@ -199,23 +199,27 @@ public class CppElementExtractor extends ElementExtractor {
             return;
         }
         for (CPP14Parser.MemberdeclarationContext memberCtx : ctx.memberSpecification().memberdeclaration()) {
-            if (memberCtx.functionDefinition() != null) {
-                visitFunctionDefinition(memberCtx.functionDefinition(), parentIdentifier);
-                continue;
-            }
+            extractMemberVariablesFromMemberContext(parentIdentifier, memberCtx);
+        }
+    }
 
-            if (memberCtx.declSpecifierSeq() != null) {
-                for (CPP14Parser.DeclSpecifierContext declSpec : memberCtx.declSpecifierSeq().declSpecifier()) {
-                    if (declSpec.typeSpecifier() != null && declSpec.typeSpecifier().classSpecifier() != null) {
-                        // Recursive call to extract inner class members**
-                        visitClassSpecifier(declSpec.typeSpecifier().classSpecifier(), parentIdentifier);
-                    }
+    private void extractMemberVariablesFromMemberContext(ElementIdentifier parentIdentifier, CPP14Parser.MemberdeclarationContext memberCtx) {
+        if (memberCtx.functionDefinition() != null) {
+            visitFunctionDefinition(memberCtx.functionDefinition(), parentIdentifier);
+            return;
+        }
+
+        if (memberCtx.declSpecifierSeq() != null) {
+            for (CPP14Parser.DeclSpecifierContext declSpec : memberCtx.declSpecifierSeq().declSpecifier()) {
+                if (declSpec.typeSpecifier() != null && declSpec.typeSpecifier().classSpecifier() != null) {
+                    // Recursive call to extract inner class members**
+                    visitClassSpecifier(declSpec.typeSpecifier().classSpecifier(), parentIdentifier);
                 }
             }
+        }
 
-            if (memberCtx.memberDeclaratorList() != null && memberCtx.declSpecifierSeq() != null) {
-                extractVariableElement(memberCtx, parentIdentifier);
-            }
+        if (memberCtx.memberDeclaratorList() != null && memberCtx.declSpecifierSeq() != null) {
+            extractVariableElement(memberCtx, parentIdentifier);
         }
     }
 

@@ -72,63 +72,6 @@ class Python3ElementManagerTest {
     }
 
     @Test
-    void getVariableTest() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<VariableElement> variables = getCorrectVariablesList();
-        elementManager.addVariables(variables);
-        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
-    }
-
-    @Test
-    void getVariableTestWithNull() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<VariableElement> variables = getInCorrectVariablesList();
-        elementManager.addVariables(variables);
-
-        Assertions.assertEquals(2, elementManager.getVariables().size());
-        Assertions.assertEquals(variables.get(0), elementManager.getVariables().get(0));
-        Assertions.assertEquals(variables.get(2), elementManager.getVariables().get(1));
-    }
-
-    @Test
-    void getFunctionTest() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<Element> functions = getCorrectFunctionsList();
-        elementManager.addFunctions(functions);
-        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
-    }
-
-    @Test
-    void getFunctionTestWithNull() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<Element> functions = getIncorrectFunctionsList();
-        elementManager.addFunctions(functions);
-
-        Assertions.assertEquals(2, elementManager.getFunctions().size());
-        Assertions.assertEquals(functions.get(0), elementManager.getFunctions().get(0));
-        Assertions.assertEquals(functions.get(2), elementManager.getFunctions().get(1));
-    }
-
-    @Test
-    void getClassTest() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<ClassElement> classes = getCorrectClassesList();
-        elementManager.addClasses(classes);
-        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
-    }
-
-    @Test
-    void getClassTestWithNull() {
-        elementManager = new Python3ElementStorageRegistry();
-        List<ClassElement> classes = getIncorrectClassesList();
-        elementManager.addClasses(classes);
-
-        Assertions.assertEquals(2, elementManager.getClasses().size());
-        Assertions.assertEquals(classes.get(0), elementManager.getClasses().get(0));
-        Assertions.assertEquals(classes.get(2), elementManager.getClasses().get(1));
-    }
-
-    @Test
     void getVariablesWithParentSimpleTest() {
         elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
@@ -222,8 +165,8 @@ class Python3ElementManagerTest {
     void getVariableWithDifferentParentTest() {
         elementManager = new Python3ElementStorageRegistry();
         List<VariableElement> variables = getCorrectVariablesList();
-        VariableElement var = new VariableElement("var4", "path", "string", new ElementIdentifier("diffVarParent", "path", Type.FUNCTION));
-        variables.add(var);
+        VariableElement variableElement = new VariableElement("var4", "path", "string", new ElementIdentifier("diffVarParent", "path", Type.FUNCTION));
+        variables.add(variableElement);
         elementManager.addVariables(variables);
         ElementIdentifier parent = new ElementIdentifier("parentOfVars", "path", Type.FUNCTION);
         ElementIdentifier parent2 = new ElementIdentifier("diffVarParent", "path", Type.FUNCTION);

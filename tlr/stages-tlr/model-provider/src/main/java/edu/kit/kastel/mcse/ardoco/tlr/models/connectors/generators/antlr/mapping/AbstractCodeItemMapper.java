@@ -27,12 +27,6 @@ public abstract class AbstractCodeItemMapper implements CodeItemMapper {
         this.language = language;
     }
 
-    @Override
-    public abstract CodeItem buildCodeItem(Element element);
-
-    @Override
-    public abstract boolean supports(Element element);
-
     protected SortedSet<CodeItem> buildContent(ElementIdentifier identifier) {
         SortedSet<CodeItem> content = new TreeSet<>();
         List<Element> elements = getContentOfIdentifier(identifier);
