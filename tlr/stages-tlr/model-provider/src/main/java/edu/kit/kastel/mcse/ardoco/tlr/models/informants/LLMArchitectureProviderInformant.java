@@ -104,7 +104,9 @@ public class LLMArchitectureProviderInformant extends Informant {
                 .distinct()
                 .sorted()
                 .toList();
-        logger.info("Component names:\n{}", String.join("\n", componentNames));
+        if (logger.isInfoEnabled()) {
+            logger.info("Component names:\n{}", String.join("\n", componentNames));
+        }
         buildModel(componentNames);
     }
 
