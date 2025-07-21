@@ -32,7 +32,7 @@ public record ArchitectureConfiguration(File architectureFile, ModelFormat type,
         return switch (this.type) {
             case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
             case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
-            case RAW -> new RawArchitectureExtractor(architectureFile.getAbsolutePath());
+            case RAW -> new RawArchitectureExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
             case ACM -> throw new IllegalArgumentException("ACM model is not supported for this project.");
         };
     }

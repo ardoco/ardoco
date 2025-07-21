@@ -32,8 +32,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 public class RawArchitectureExtractor extends ArchitectureExtractor {
     private static final Logger logger = LoggerFactory.getLogger(RawArchitectureExtractor.class);
 
-    public RawArchitectureExtractor(String modelPath) {
-        super(modelPath, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+    public RawArchitectureExtractor(String modelPath, Metamodel metamodelToExtract) {
+        super(modelPath, metamodelToExtract);
     }
 
     @Override
@@ -55,7 +55,11 @@ public class RawArchitectureExtractor extends ArchitectureExtractor {
                 components.add(new ArchitectureComponent(parts[0].trim(), parts[1].trim(), new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "component"));
             }
 
-            return new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(components));
+            return switch (metamodelToExtract) {
+                case Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES -> new ArchitectureModelWithComponentsAndInterfaces(components);
+                case Metamodel.ARCHITECTURE_WITH_COMPONENTS -> new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(components));
+                default -> throw new IllegalArgumentException("Unsupported metamodel: " + metamodelToExtract);
+            };
 
         } catch (IOException e) {
             throw new UncheckedIOException(e);

@@ -14,7 +14,12 @@ public class LLMArchitectureProviderAgent extends PipelineAgent {
     public LLMArchitectureProviderAgent(DataRepository dataRepository, LargeLanguageModel largeLanguageModel,
             LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt, LLMArchitecturePrompt.Features codeFeatures,
             LLMArchitecturePrompt aggregationPrompt) {
-        super(List.of(new LLMArchitectureProviderInformant(dataRepository, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt,
-                codeFeatures, aggregationPrompt)), LLMArchitectureProviderAgent.class.getSimpleName(), dataRepository);
+        super(List.of(new LLMArchitectureProviderInformant(dataRepository, //
+                largeLanguageModel, //
+                documentationExtractionPrompt, //
+                codeExtractionPrompt, //
+                codeFeatures, //
+                aggregationPrompt //
+        )), LLMArchitectureProviderAgent.class.getSimpleName(), dataRepository);
     }
 }
