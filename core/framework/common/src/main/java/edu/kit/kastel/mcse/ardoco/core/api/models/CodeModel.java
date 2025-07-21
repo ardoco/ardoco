@@ -1,5 +1,5 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.model;
+package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,9 +9,9 @@ import java.util.SortedSet;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**

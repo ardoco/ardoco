@@ -1,5 +1,5 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.model.code;
+package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
 import java.util.ArrayList;

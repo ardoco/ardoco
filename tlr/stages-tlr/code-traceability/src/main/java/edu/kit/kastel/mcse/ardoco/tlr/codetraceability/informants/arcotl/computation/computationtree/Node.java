@@ -4,8 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.comput
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.ComputationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 

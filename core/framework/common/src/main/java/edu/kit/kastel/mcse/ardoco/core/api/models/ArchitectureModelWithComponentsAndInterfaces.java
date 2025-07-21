@@ -1,11 +1,11 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.model;
+package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 
 /**
  * Represents an architecture model. This model contains architecture items, including components and interfaces.

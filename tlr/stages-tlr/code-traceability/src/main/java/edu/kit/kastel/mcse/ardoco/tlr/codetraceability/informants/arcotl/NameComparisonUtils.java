@@ -8,9 +8,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeModule;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeModule;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;

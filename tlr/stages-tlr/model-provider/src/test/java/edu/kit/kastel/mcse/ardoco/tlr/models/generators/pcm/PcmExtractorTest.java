@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.generators.pcm;
 
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.generators.ArchitectureExtractorTest;
 

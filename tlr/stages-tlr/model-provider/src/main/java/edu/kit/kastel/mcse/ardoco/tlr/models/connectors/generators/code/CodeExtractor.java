@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel.CodeModelDto;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnitsAndPackages;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel.CodeModelDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 

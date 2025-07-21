@@ -1,8 +1,8 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 
 public abstract class ArchitectureExtractor extends Extractor {

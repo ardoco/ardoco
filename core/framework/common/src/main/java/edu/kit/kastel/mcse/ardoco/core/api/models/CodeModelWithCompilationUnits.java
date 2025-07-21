@@ -1,14 +1,14 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.model;
+package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
