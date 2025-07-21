@@ -75,25 +75,36 @@ public enum EvaluationProject {
     }
 
     /**
-     * Get the code model for this project. If the code model is stored in an ACM file, it will be loaded from resources. If not, the code will be cloned from
+     * Get the code model for this project. The code will be cloned from
      * the repository and the folder will be returned.
-     * 
-     * @param fromStoredAcmFile whether to load the code model from the stored ACM file or to clone the repository
-     * @return the acm file if fromStoredAcmFile is true, otherwise the folder containing the code
+     *
+     * @return the folder containing the code
+     * @see #getCodeDirectoryWithoutCloning()
      */
-    public File getCodeModel(boolean fromStoredAcmFile) {
-        if (fromStoredAcmFile) {
-            return EvaluationHelper.loadFileFromResources(this.codeModelResource);
-        }
-
-        File codeLocation = getTemporaryCodeLocation();
+    public File getCodeDirectory() {
+        File codeLocation = getCodeDirectoryWithoutCloning();
         if (!codeLocation.exists() || Objects.requireNonNull(codeLocation.listFiles()).length == 0) {
             RepositoryHandler.shallowCloneRepository(codeRepository, codeLocation.getAbsolutePath(), codeCommit);
         }
         return codeLocation;
     }
 
-    private File getTemporaryCodeLocation() {
+    /**
+     * Get the code model for this project. The ACM file will be loaded from resources
+     *
+     * @return the acm file
+     */
+    public File getCodeModelFromResources() {
+        return EvaluationHelper.loadFileFromResources(this.codeModelResource);
+    }
+
+    /**
+     * Get the location where the code for this project will be stored.
+     * 
+     * @return the location of the code
+     * @see #getCodeDirectory()
+     */
+    public File getCodeDirectoryWithoutCloning() {
         String temp = System.getProperty("java.io.tmpdir");
         var temporary = new File(temp + File.separator + "ArDoCo" + File.separator + this.name());
         logger.debug("Location of Code: {}", temporary.getAbsolutePath());

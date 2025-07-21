@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransArCEvaluation;
 
-class TransArCIT extends AbstractIT {
+class TransArCIT extends AbstractArDoCoIT {
 
     @DisplayName("Evaluate TransArC (SAD-SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
@@ -27,7 +27,7 @@ class TransArCIT extends AbstractIT {
     @ParameterizedTest(name = "{0}")
     @EnumSource(TransArCEvaluationProject.class)
     void evaluateSadSamCodeTlrITFull(TransArCEvaluationProject project) {
-        RepositoryHandler.removeRepository(project.getTlrTask().getCodeModelFile(false).getAbsolutePath());
+        RepositoryHandler.removeRepository(project.getTlrTask().getCodeDirectoryWithoutCloning().getAbsolutePath());
 
         var evaluation = new TransArCEvaluation(project, false);
         var results = evaluation.runTraceLinkEvaluation();

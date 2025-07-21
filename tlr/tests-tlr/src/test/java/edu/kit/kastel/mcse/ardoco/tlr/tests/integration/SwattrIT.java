@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.SwattrEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.SwattrEvaluation;
 
-class SwattrIT extends AbstractIT {
+class SwattrIT extends AbstractArDoCoIT {
 
     @DisplayName("Evaluate SWATTR (SAD-SAM TLR)")
     @ParameterizedTest(name = "{0}")

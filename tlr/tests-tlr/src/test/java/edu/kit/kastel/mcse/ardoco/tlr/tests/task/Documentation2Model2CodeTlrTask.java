@@ -8,11 +8,12 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
-public enum Documentation2CodeTlr {
+public enum Documentation2Model2CodeTlrTask {
     MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-code_2016.csv"),//
     TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sad_2020-code_2022.csv"),//
     TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sad_2021-code_2023.csv"),//
@@ -22,7 +23,7 @@ public enum Documentation2CodeTlr {
     private final EvaluationProject project;
     private final String goldStandardPath;
 
-    Documentation2CodeTlr(EvaluationProject project, String goldStandardPath) {
+    Documentation2Model2CodeTlrTask(EvaluationProject project, String goldStandardPath) {
         this.project = project;
         this.goldStandardPath = goldStandardPath;
     }
@@ -31,8 +32,20 @@ public enum Documentation2CodeTlr {
         return project.getTextFile();
     }
 
-    public File getCodeModelFile(boolean fromStoredAcmFile) {
-        return project.getCodeModel(fromStoredAcmFile);
+    public File getArchitectureModelFile(ModelFormat modelFormat) {
+        return project.getArchitectureModel(modelFormat);
+    }
+
+    public File getCodeModelFromResources() {
+        return project.getCodeModelFromResources();
+    }
+
+    public File getCodeDirectory() {
+        return project.getCodeDirectory();
+    }
+
+    public File getCodeDirectoryWithoutCloning() {
+        return project.getCodeDirectoryWithoutCloning();
     }
 
     /**
@@ -42,7 +55,7 @@ public enum Documentation2CodeTlr {
      * If a ID ends with a slash, it is a package, otherwise it is a file.
      * <p>
      * <b>IMPORTANT</b> you may need to unroll the gold standard.
-     *
+     * 
      * @return a list of pairs where each pair contains the sentence number and the code element ID
      */
     public List<Pair<Integer, String>> getExpectedTraceLinks() {

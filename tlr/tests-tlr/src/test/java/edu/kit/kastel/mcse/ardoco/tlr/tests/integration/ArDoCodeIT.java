@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArDoCodeEvaluation;
 
-class ArDoCodeIT extends AbstractIT {
+class ArDoCodeIT extends AbstractArDoCoIT {
     @DisplayName("Evaluate ArDoCode (SAD-Code TLR)")
     @ParameterizedTest(name = "{0}")
     @EnumSource(ArDoCodeEvaluationProject.class)

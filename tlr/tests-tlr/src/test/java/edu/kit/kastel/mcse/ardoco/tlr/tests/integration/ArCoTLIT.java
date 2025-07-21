@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArCoTLEvaluation;
 
-class ArCoTLIT extends AbstractIT {
+class ArCoTLIT extends AbstractArDoCoIT {
 
     @DisplayName("Evaluate ArCoTL (SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
@@ -27,7 +27,7 @@ class ArCoTLIT extends AbstractIT {
     @ParameterizedTest(name = "{0}")
     @EnumSource(ArCoTLEvaluationProject.class)
     void evaluateSamCodeTlrITFull(ArCoTLEvaluationProject project) {
-        RepositoryHandler.removeRepository(project.getTlrTask().getCodeModelFile(false).getAbsolutePath());
+        RepositoryHandler.removeRepository(project.getTlrTask().getCodeDirectoryWithoutCloning().getAbsolutePath());
 
         var evaluation = new ArCoTLEvaluation(project, false);
         var results = evaluation.runTraceLinkEvaluation();
