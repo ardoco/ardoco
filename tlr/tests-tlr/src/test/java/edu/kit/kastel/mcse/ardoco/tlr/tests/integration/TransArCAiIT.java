@@ -58,7 +58,7 @@ class TransArCAiIT {
     void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(System.getenv("CI") == null);
 
-        LLMArchitecturePrompt docPrompt = LLMArchitecturePrompt.DOCUMENTATION_ONLY_V1;
+        LLMArchitecturePrompt docPrompt = LLMArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LLMArchitecturePrompt codePrompt = null;
         LLMArchitecturePrompt aggPrompt = null;
 
