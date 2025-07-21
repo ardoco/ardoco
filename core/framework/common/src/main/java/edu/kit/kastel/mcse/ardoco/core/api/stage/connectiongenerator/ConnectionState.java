@@ -39,7 +39,7 @@ public interface ConnectionState extends IConfigurable {
             var textualInstance = instanceLink.getFirstEndpoint();
             for (var nm : textualInstance.getNameMappings()) {
                 for (var word : nm.getWords()) {
-                    var traceLink = new SadModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
+                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
                     traceLinks.add(traceLink);
                 }
             }

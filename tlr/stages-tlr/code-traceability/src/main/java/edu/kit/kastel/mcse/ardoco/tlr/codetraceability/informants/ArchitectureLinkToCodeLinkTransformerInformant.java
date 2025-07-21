@@ -17,7 +17,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeModule;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SadModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -33,7 +33,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
 
     @Override
     public void process() {
-        MutableSet<SadModelTraceLink> sadCodeTracelinks = Sets.mutable.empty();
+        MutableSet<SentenceModelTraceLink> sadCodeTracelinks = Sets.mutable.empty();
 
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(this.getDataRepository());
         ConnectionStates connectionStates = DataRepositoryHelper.getConnectionStates(this.getDataRepository());
@@ -47,7 +47,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
             var modelElement = traceLink.getSecondEndpoint();
             var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, codeModelWithCompilationUnitsAndPackages);
             for (var mid : mentionedCodeModelElements) {
-                sadCodeTracelinks.add(new SadModelTraceLink(traceLink.getFirstEndpoint(), mid));
+                sadCodeTracelinks.add(new SentenceModelTraceLink(traceLink.getFirstEndpoint(), mid));
             }
         }
 
