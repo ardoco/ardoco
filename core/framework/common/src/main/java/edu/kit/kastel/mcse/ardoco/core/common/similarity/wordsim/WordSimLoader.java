@@ -9,11 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.equality.EqualityMeasure;
-import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.glove.GloveMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.jarowinkler.JaroWinklerMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein.LevenshteinMeasure;
-import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.ngram.NgramMeasure;
-import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.sewordsim.SEWordSimMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 
 /**
@@ -40,18 +37,6 @@ public class WordSimLoader {
 
             if (CommonTextToolsConfig.JAROWINKLER_ENABLED) {
                 list.add(new JaroWinklerMeasure());
-            }
-
-            if (CommonTextToolsConfig.NGRAM_ENABLED) {
-                list.add(new NgramMeasure());
-            }
-
-            if (CommonTextToolsConfig.SEWORDSIM_ENABLED) {
-                list.add(new SEWordSimMeasure());
-            }
-
-            if (CommonTextToolsConfig.GLOVE_ENABLED) {
-                list.add(new GloveMeasure());
             }
 
             return Lists.immutable.withAll(list);
