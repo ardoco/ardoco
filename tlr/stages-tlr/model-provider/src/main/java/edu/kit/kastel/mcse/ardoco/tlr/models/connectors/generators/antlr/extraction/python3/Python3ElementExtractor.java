@@ -198,7 +198,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
 
         for (int i = 0; i < varNames.size(); i++) {
-            addVariableElement(varNames.get(i), path, types.get(i), parentIdentifier, values.get(i), startLine, endLine);
+            addVariableElement(varNames.get(i), path, types.get(i), parentIdentifier, startLine, endLine);
         }
     }
 
@@ -238,7 +238,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
     }
 
-    private void addVariableElement(String varName, String path, String type, ElementIdentifier parentIdentifier, String value, int startLine, int endLine) {
+    private void addVariableElement(String varName, String path, String type, ElementIdentifier parentIdentifier, int startLine, int endLine) {
         VariableElement variable = new VariableElement(varName, path, type, parentIdentifier, startLine, endLine);
         elementRegistry.addVariable(variable);
     }
