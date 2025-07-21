@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
@@ -24,18 +23,21 @@ public class Swattr extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputArchitectureModel, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs, File outputDir) {
-        definePipeline(inputText, inputArchitectureModel, modelFormat, additionalConfigs);
+    public void setUp(File inputText, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs, File outputDir) {
+        if (architectureConfiguration.metamodel() != null) {
+            throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
+        }
+        definePipeline(inputText, architectureConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs,
+    public void setUp(String inputTextLocation, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs,
             String outputDirectory) {
-        setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), modelFormat, additionalConfigs, new File(outputDirectory));
+        setUp(new File(inputTextLocation), architectureConfiguration, additionalConfigs, new File(outputDirectory));
     }
 
-    private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs) {
         var dataRepository = this.getArDoCo().getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
@@ -45,9 +47,9 @@ public class Swattr extends ArDoCoRunner {
 
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = //
-                ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration, null);
+                ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
+                        Metamodel.ARCHITECTURE_WITH_COMPONENTS), null);
         this.getArDoCo().addPipelineStep(arCoTLModelProviderAgent);
 
         this.getArDoCo().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));

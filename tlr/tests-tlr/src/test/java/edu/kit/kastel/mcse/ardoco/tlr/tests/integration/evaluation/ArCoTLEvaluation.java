@@ -23,6 +23,8 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.ArCoTL;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
 
 public class ArCoTLEvaluation extends AbstractEvaluation {
@@ -54,13 +56,15 @@ public class ArCoTLEvaluation extends AbstractEvaluation {
         String projectName = project.name().toLowerCase();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         File inputArchitectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
-        File inputCode = useAcmFile ? project.getTlrTask().getCodeModelFromResources() : project.getTlrTask().getCodeDirectory();
+        CodeConfiguration inputCode = useAcmFile //
+                ? new CodeConfiguration(project.getTlrTask().getCodeModelFromResources(), CodeConfiguration.CodeConfigurationType.ACM_FILE) //
+                : new CodeConfiguration(project.getTlrTask().getCodeDirectory(), CodeConfiguration.CodeConfigurationType.DIRECTORY);
         SortedMap<String, String> additionalConfigsMap = new TreeMap<>();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
         var runner = new ArCoTL(projectName);
-        runner.setUp(inputArchitectureModel, architectureModelFormat, inputCode, additionalConfigsMap, outputDirectory);
+        runner.setUp(new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, additionalConfigsMap, outputDirectory);
         return runner;
     }
 

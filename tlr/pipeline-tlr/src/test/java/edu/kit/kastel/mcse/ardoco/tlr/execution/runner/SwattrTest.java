@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
 @Disabled("Disabled as other (integration) tests cover the same functionality. Enable for debugging/local development.")
 class SwattrTest extends RunnerBaseTest {
@@ -21,7 +22,7 @@ class SwattrTest extends RunnerBaseTest {
     void testSadSamTlrPcm() {
         var runner = new Swattr(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, additionalConfigsMap, outputDir);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), additionalConfigsMap, outputDir);
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());
@@ -33,7 +34,7 @@ class SwattrTest extends RunnerBaseTest {
     void testSadSamTlrUml() {
         var runner = new Swattr(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(inputText, inputModelArchitectureUml, ModelFormat.UML, additionalConfigsMap, outputDir);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitectureUml), ModelFormat.UML), additionalConfigsMap, outputDir);
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());

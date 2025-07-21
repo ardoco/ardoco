@@ -5,12 +5,12 @@ import java.io.File;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 
 public class ArCoTL extends ArDoCoRunner {
 
@@ -18,22 +18,26 @@ public class ArCoTL extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputArchitectureModel, ModelFormat modelFormat, File inputCode, SortedMap<String, String> additionalConfigs, File outputDir) {
-        definePipeline(inputArchitectureModel, modelFormat, inputCode, additionalConfigs);
+    public void setUp(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs,
+            File outputDir) {
+        if (architectureConfiguration.metamodel() != null || codeConfiguration.metamodel() != null) {
+            throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner define the metamodels.");
+        }
+
+        definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    private void definePipeline(File inputArchitectureModel, ModelFormat modelFormat, File inputCode, SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
+            SortedMap<String, String> additionalConfigs) {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
-        var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode, Metamodel.CODE_WITH_COMPILATION_UNITS);
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat,
-                Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
-
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
-                architectureConfiguration, codeConfiguration);
+        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, //
+                architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES), //
+                codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) //
+        );
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
     }

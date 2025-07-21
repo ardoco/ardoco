@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCode;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
 public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
@@ -45,7 +46,7 @@ public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         outputDirectory.mkdirs();
 
         var runner = new ArDoCode(projectName);
-        runner.setUp(textInput, inputCode, additionalConfigsMap, outputDirectory);
+        runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), additionalConfigsMap, outputDirectory);
         return runner;
     }
 }

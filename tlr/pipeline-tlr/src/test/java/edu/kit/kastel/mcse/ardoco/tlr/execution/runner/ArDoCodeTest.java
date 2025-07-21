@@ -18,7 +18,7 @@ class ArDoCodeTest extends CodeRunnerBaseTest {
     void testSadCodeTlr() {
         var runner = new ArDoCode(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new File(inputText), new File(inputCodeModel), additionalConfigsMap, new File(outputDir));
+        runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());

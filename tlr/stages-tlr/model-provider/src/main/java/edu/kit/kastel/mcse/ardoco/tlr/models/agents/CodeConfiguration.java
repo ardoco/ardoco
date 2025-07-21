@@ -12,6 +12,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
 
 public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel metamodel) {
 
+    public CodeConfiguration(File code, CodeConfigurationType type) {
+        this(code, type, null);
+    }
+
     public CodeConfiguration {
         if (code == null || type == null) {
             throw new IllegalArgumentException("Code file and type must not be null");
@@ -28,6 +32,10 @@ public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel
         if (type == CodeConfigurationType.ACM_FILE && !code.isFile()) {
             throw new IllegalArgumentException("Code file must be a file in ACM_FILE mode");
         }
+    }
+
+    public CodeConfiguration withMetamodel(Metamodel metamodel) {
+        return new CodeConfiguration(this.code, this.type, metamodel);
     }
 
     public List<Extractor> extractors() {
