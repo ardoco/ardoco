@@ -5,9 +5,9 @@ import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMa
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class CachedChatLanguageModel implements ChatModel {
     private final ChatModel chatLanguageModel;
     private final String cacheKey;
 
-    private Map<String, String> cache = new LinkedHashMap<>();
+    private SortedMap<String, String> cache = new TreeMap<>();
 
     public CachedChatLanguageModel(ChatModel chatLanguageModel, String cacheKey) {
         this.chatLanguageModel = chatLanguageModel;
