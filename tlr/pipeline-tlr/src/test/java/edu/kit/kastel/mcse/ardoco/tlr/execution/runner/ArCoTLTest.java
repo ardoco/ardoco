@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.ArCoTL;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
 class ArCoTLTest extends CodeRunnerBaseTest {
 
@@ -20,7 +21,8 @@ class ArCoTLTest extends CodeRunnerBaseTest {
     void testSamCodeTlrPcm() {
         var runner = new ArCoTL(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new File(inputModelArchitecture), ModelFormat.PCM, new File(inputCodeModel), additionalConfigsMap, new File(outputDir));
+        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, additionalConfigsMap, new File(
+                outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());
@@ -32,7 +34,8 @@ class ArCoTLTest extends CodeRunnerBaseTest {
     void testSamCodeTlrUml() {
         var runner = new ArCoTL(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new File(inputModelArchitectureUml), ModelFormat.UML, new File(inputCodeModel), additionalConfigsMap, new File(outputDir));
+        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitectureUml), ModelFormat.UML), codeConfiguration, additionalConfigsMap, new File(
+                outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());

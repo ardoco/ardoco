@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
 class TransArCTest extends CodeRunnerBaseTest {
 
@@ -20,8 +21,8 @@ class TransArCTest extends CodeRunnerBaseTest {
     void testSadSamTlrPcm() {
         var runner = new TransArC(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new File(inputText), new File(inputModelArchitecture), ModelFormat.PCM, new File(inputCodeModel), additionalConfigsMap, new File(
-                outputDir));
+        runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
+                additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());
@@ -33,8 +34,8 @@ class TransArCTest extends CodeRunnerBaseTest {
     void testSadSamTlrUml() {
         var runner = new TransArC(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new File(inputText), new File(inputModelArchitectureUml), ModelFormat.UML, new File(inputCodeModel), additionalConfigsMap, new File(
-                outputDir));
+        runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitectureUml), ModelFormat.UML), codeConfiguration,
+                additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());

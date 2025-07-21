@@ -1,14 +1,10 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import org.slf4j.LoggerFactory;
-
-import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
@@ -66,31 +62,5 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
         // empty
-    }
-
-    public static CodeConfiguration getCodeConfiguration(File inputCode, Metamodel codeMetamodel) {
-        if (inputCode == null) {
-            throw new IllegalArgumentException("Code file must not be null");
-        }
-
-        if (!Metamodel.isCodeModel(codeMetamodel)) {
-            throw new IllegalArgumentException("Code metamodel must be a code model");
-        }
-
-        if (inputCode.isFile()) {
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE, codeMetamodel);
-        }
-
-        // Legacy Support for only ACM_FILE in a directory
-        // TODO: Maybe delete in the future
-        if (inputCode.isDirectory() && new File(inputCode, "codeModel.acm").exists()) {
-            var logger = LoggerFactory.getLogger(ArCoTLModelProviderAgent.class);
-            logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
-
-            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE,
-                    Metamodel.CODE_WITH_COMPILATION_UNITS);
-        }
-
-        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY, codeMetamodel);
     }
 }

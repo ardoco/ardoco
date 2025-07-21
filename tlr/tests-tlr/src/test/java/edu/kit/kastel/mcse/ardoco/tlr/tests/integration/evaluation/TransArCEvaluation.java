@@ -12,6 +12,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.model.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
 
 public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
@@ -43,12 +45,14 @@ public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         File textInput = project.getTlrTask().getTextFile();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         File inputArchitectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
-        File inputCode = useAcmFile ? project.getTlrTask().getCodeModelFromResources() : project.getTlrTask().getCodeDirectory();
+        CodeConfiguration inputCode = useAcmFile //
+                ? new CodeConfiguration(project.getTlrTask().getCodeModelFromResources(), CodeConfiguration.CodeConfigurationType.ACM_FILE) //
+                : new CodeConfiguration(project.getTlrTask().getCodeDirectory(), CodeConfiguration.CodeConfigurationType.DIRECTORY);
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
         var runner = new TransArC(projectName);
-        runner.setUp(textInput, inputArchitectureModel, architectureModelFormat, inputCode, new TreeMap<>(), outputDirectory);
+        runner.setUp(textInput, new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, new TreeMap<>(), outputDirectory);
         return runner;
     }
 }

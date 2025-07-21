@@ -19,6 +19,12 @@
       <version>${revision}</version>
     </dependency>
     <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>model-provider</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections-api</artifactId>
     </dependency>

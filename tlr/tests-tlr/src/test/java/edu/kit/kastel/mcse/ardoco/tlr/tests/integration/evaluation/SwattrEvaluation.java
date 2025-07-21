@@ -24,6 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.SwattrEvaluationProject;
 
 public class SwattrEvaluation extends AbstractEvaluation {
@@ -75,13 +76,14 @@ public class SwattrEvaluation extends AbstractEvaluation {
     private ArDoCoRunner createSwattrRunner() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
-        File architectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
+        ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),
+                architectureModelFormat);
         File documentationFile = project.getTlrTask().getTextFile();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
         Swattr swattr = new Swattr(projectName);
-        swattr.setUp(documentationFile, architectureModel, architectureModelFormat, new TreeMap<>(), outputDirectory);
+        swattr.setUp(documentationFile, architectureModel, new TreeMap<>(), outputDirectory);
         return swattr;
     }
 

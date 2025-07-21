@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -22,13 +23,16 @@ public class ArDoCode extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputCode, SortedMap<String, String> additionalConfigs, File outputDir) {
-        definePipeline(inputText, inputCode, additionalConfigs);
+    public void setUp(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs, File outputDir) {
+        if (codeConfiguration.metamodel() != null) {
+            throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
+        }
+        definePipeline(inputText, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    private void definePipeline(File inputText, File inputCode, SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs) {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
@@ -37,9 +41,8 @@ public class ArDoCode extends ArDoCoRunner {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
-        var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode, Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, null,
-                codeConfiguration);
+                codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
