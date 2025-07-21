@@ -23,6 +23,11 @@ public class ComponentRecognitionParameterizedTest {
     static Stream<TestConfig> loadTestConfig() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+        
+        // Register the custom deserializer for the Prompt class
+        mapper.registerModule(new com.fasterxml.jackson.databind.module.SimpleModule()
+                .addDeserializer(Prompt.class, new PromptDeserializer()));
+                
         InputStream is = ComponentRecognitionParameterizedTest.class.getResourceAsStream("test-config.json");
         List<TestConfig> configList = mapper.readValue(is, new TypeReference<>() {
         });

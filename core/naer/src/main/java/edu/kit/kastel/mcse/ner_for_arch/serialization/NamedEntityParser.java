@@ -68,7 +68,7 @@ public class NamedEntityParser {
 
     /**
      * Parses a string representation of named entities into a set of {@link NamedEntity} instances.
-     * The input string must follow the specific format created by prompts using the type {@link edu.kit.kastel.mcse.ner_for_arch.recognizer.PromptType#STRUCTURED_TEXT_OUTPUT_PROMPT}.
+     * The input string must follow the specific format created by {@link edu.kit.kastel.mcse.ner_for_arch.recognizer.StructuredTextOutputPrompt}.
      *
      * @param str                               the string (structured text format of named entities)
      * @param softwareArchitectureDocumentation the software architecture documentation associated with the named entities
@@ -175,7 +175,11 @@ public class NamedEntityParser {
     }
 
     private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
-        if (lineNumber == -1) return; //TODO add to javadoc: "to improve resilience, we skip invalid occurrences"
+        if (lineNumber == -1) {
+            //to improve resilience, we skip invalid occurrences
+            return;
+        }
+
         boolean isDirect = softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(entity.getName().toLowerCase());
         for (String alternativeName : entity.getAlternativeNames()) {
             if (softwareArchitectureDocumentation.getLine(lineNumber).toLowerCase().contains(alternativeName.toLowerCase())) {

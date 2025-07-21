@@ -8,7 +8,6 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
 import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import edu.kit.kastel.mcse.ner_for_arch.serialization.NamedEntityParser;
 import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
 import org.slf4j.Logger;
@@ -39,7 +38,7 @@ public class NamedEntityRecognizer {
     /**
      * The prompt that instructs the chat model on how to identify named entities
      */
-    private Prompt prompt;
+    private final Prompt prompt;
 
     /**
      * Private constructor used by the Builder to create a NamedEntityRecognizer instance.
@@ -75,67 +74,23 @@ public class NamedEntityRecognizer {
      */
     public Set<NamedEntity> recognize() {
         logger.info("calling LLM...");
-        SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
-        String answer = switch (prompt.type()) {
-            case STRUCTURED_TEXT_OUTPUT_PROMPT, JSON_OUTPUT_PROMPT -> {
-                String actualPrompt = prompt.first();
-                UserMessage userMessage = new UserMessage(actualPrompt + "\nText:\n" + softwareArchitectureDocumentation.getText());
-                ChatRequest chatRequest = ChatRequest.builder().messages(systemMessage, userMessage).build();
-                ChatResponse chatResponse = chatModel.chat(chatRequest);
-                yield chatResponse.aiMessage().text();
-            }
-            case TWO_PART_PROMPT -> {
-                logger.info("send prompt one to get components unstructured...");
-                UserMessage userMessage1 = new UserMessage(prompt.first() + "\nText:\n" + softwareArchitectureDocumentation.getText());
-                ChatRequest chatRequest1 = ChatRequest.builder().messages(systemMessage, userMessage1).build();
-                ChatResponse chatResponse1 = chatModel.chat(chatRequest1);
-                String part1Answer = chatResponse1.aiMessage().text();
-
-                logger.info("send prompt two to transform answer to structured JSON array...");
-                UserMessage userMessage2 = new UserMessage(prompt.second() + "\nLast answer:\n" + part1Answer);
-                ChatRequest chatRequest2 = ChatRequest.builder().messages(systemMessage, userMessage2).build();
-                ChatResponse chatResponse2 = chatModel.chat(chatRequest2);
-                yield chatResponse2.aiMessage().text();
-            }
-        };
+        String answer = prompt.process(chatModel, softwareArchitectureDocumentation);
 
         try {
-            return parseAnswer(answer); //if everything works as intended, this does not fail
+            return prompt.parseAnswer(answer, softwareArchitectureDocumentation); //if everything works as intended, this does not fail
         } catch (IOException e) {
             logger.warn("initial parsing failed, attempting to reformat LLM output (via LLM)...");
-            String format = switch (prompt.type()) { //TODO add examples (to make it few shot)
-                case STRUCTURED_TEXT_OUTPUT_PROMPT -> """ 
-                        BEGIN-OUTPUT
-                        COMPONENT entities recognized:
-                        <componentName>, <lineNumber>
-                        ...
-                        Alternative names:
-                        <componentName>: <alternativeName1>, <alternativeName2>, ...
-                        ...
-                        END-OUTPUT
-                        """;
-                case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> """
-                        [
-                            {
-                                "name": "...",
-                                "type": "COMPONENT",
-                                "alternativeNames": [...],
-                                "occurrences": [...]
-                            },
-                            ...
-                        ]
-                        """;
-            };
-            String repairPrompt = "The following output is invalid. Reformat it so it precisely adheres to the following output format:\n" + format +
+            String repairPrompt = "The following output is invalid. Reformat it so it precisely adheres to the following output format:\n" + prompt.getExpectedOutputFormat() +
                     "\n\nInvalid output to reformat:\n" + answer + "\nThis error occurred when trying to parse it:\n" + e.getMessage();
             UserMessage repairMessage = new UserMessage(repairPrompt);
+            SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
             ChatRequest repairRequest = ChatRequest.builder().messages(systemMessage, repairMessage).build();
             ChatResponse repairResponse = chatModel.chat(repairRequest);
             String repairedAnswer = repairResponse.aiMessage().text();
 
             logger.info("parsing repaired LLM response...");
             try {
-                return parseAnswer(repairedAnswer);
+                return prompt.parseAnswer(repairedAnswer, softwareArchitectureDocumentation);
             } catch (IOException e2) {
                 logger.error("repair attempt failed");
                 throw new RuntimeException("Both original and repair attempts failed", e2);
@@ -153,52 +108,8 @@ public class NamedEntityRecognizer {
      * @return a set of recognized named entities
      */
     public Set<NamedEntity> recognize(Map<NamedEntityType, Set<String>> possibleEntities) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
-            NamedEntityType type = entry.getKey();
-            Set<String> names = entry.getValue();
-
-            sb.append(type.toString()).append(" entities: ");
-            sb.append(String.join(", ", names));
-            sb.append("\n");
-        }
-
-        String possibleEntitiesString = sb.toString();
-
-        String componentSupportList = "\n\nAs support, here is a list of entities that could be mentioned in the text:\n" + possibleEntitiesString + "\n";
-        prompt = new Prompt(prompt.first() + componentSupportList, prompt.second(), prompt.type());
-
+        prompt.addPossibleEntities(possibleEntities);
         return recognize();
-    }
-
-    private Set<NamedEntity> parseAnswer(String answer) throws IOException {
-        switch (prompt.type()) {
-            case STRUCTURED_TEXT_OUTPUT_PROMPT -> {
-                int start = answer.indexOf("BEGIN-OUTPUT");
-                int end = answer.lastIndexOf("END-OUTPUT");
-                if (start != -1 && end != -1 && end > start) {
-                    start += "BEGIN-OUTPUT".length();
-                    answer = answer.substring(start, end);
-                } else {
-                    logger.warn("No valid structured text output found. Output must begin with 'BEGIN-OUTPUT' and end with 'END-OUTPUT'.");
-                    throw new IOException("No valid structured text output found. Output must begin with 'BEGIN-OUTPUT' and end with 'END-OUTPUT'.");
-                }
-                return NamedEntityParser.fromString(answer, softwareArchitectureDocumentation);
-            }
-            case JSON_OUTPUT_PROMPT, TWO_PART_PROMPT -> {
-                int start = answer.indexOf('[');
-                int end = answer.lastIndexOf(']');
-                if (start != -1 && end != -1 && end > start) {
-                    answer = answer.substring(start, end + 1);
-                } else {
-                    logger.warn("No valid JSON array found.");
-                    throw new IOException("No valid JSON array found.");
-                }
-                return NamedEntityParser.fromJson(answer, softwareArchitectureDocumentation);
-            }
-        }
-        return Set.of(); //not reachable
     }
 
 
@@ -209,8 +120,8 @@ public class NamedEntityRecognizer {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
         private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
-        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.VDL).build();                    // default value
-        private Prompt prompt = new Prompt(EXAMPLE_PROMPT, null, PromptType.STRUCTURED_TEXT_OUTPUT_PROMPT); // default value
+        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.VDL).build(); // default value
+        private Prompt prompt = new StructuredTextOutputPrompt(EXAMPLE_PROMPT);                 // default value
 
         /**
          * Creates a builder using a path to the file containing the SAD.

@@ -1,58 +1,97 @@
 package edu.kit.kastel.mcse.ner_for_arch.recognizer;
 
-import org.jetbrains.annotations.NotNull;
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.model.chat.ChatModel;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
+import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Represents a prompt that can consist of one or two parts, depending on the {@link PromptType}.
- *
- * @param first  first part of the prompt
- * @param second second part of the prompt
- * @param type   type of the prompt
+ * Abstract base class representing a prompt for named entity recognition.
  */
-public record Prompt(String first, String second, PromptType type) {
+public abstract class Prompt {
     private static final Logger logger = LoggerFactory.getLogger(Prompt.class);
+    protected final SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
+    protected String text;
 
     /**
-     * Constructs a new {@link Prompt} instance ensuring all input parameters meet the required conditions.
+     * Constructs a new {@link Prompt} instance.
      *
-     * @param first  the first part of the prompt
-     * @param second the second part of the prompt
-     * @param type   the type of prompt
-     * @throws IllegalArgumentException if the first part is null or blank, the second part is blank when provided, or if the provided parameters do not form a valid configuration
+     * @param text the text of the prompt
+     * @throws IllegalArgumentException if the text is null or blank
      */
-    public Prompt {
-        if (first == null || first.isBlank()) {
+    protected Prompt(String text) {
+        if (text == null || text.isBlank()) {
             logger.error("First part of prompt cannot be null or blank");
             throw new IllegalArgumentException("First part of prompt cannot be null or blank");
         }
+        this.text = text;
+    }
 
-        if (second != null && second.isBlank()) {
-            logger.error("Second part of prompt cannot be blank if provided");
-            throw new IllegalArgumentException("Second part of prompt cannot be blank if provided");
+    /**
+     * Gets the text of the prompt.
+     *
+     * @return the text of the prompt
+     */
+    public String getText() {
+        return text;
+    }
+
+    /**
+     * Appends a list of possible named entities that could be mentioned in the SAD, grouped by their types, to the existing prompt.
+     *
+     * @param possibleEntities a map containing named entity types as keys and sets of entity names
+     *                         as values. Each type represents a category (e.g., COMPONENT, INTERFACE),
+     *                         and each set contains the names of entities belonging to that type.
+     *                         Must not be null or contain null keys/values.
+     */
+    public void addPossibleEntities(Map<NamedEntityType, Set<String>> possibleEntities) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
+            NamedEntityType type = entry.getKey();
+            Set<String> names = entry.getValue();
+
+            sb.append(type.toString().toLowerCase()).append(" entities: ");
+            sb.append(String.join(", ", names));
+            sb.append("\n");
         }
 
-        if (!promptTypeIsValid(type, second)) {
-            logger.error("Invalid prompt configuration for prompt type: {}", type);
-            throw new IllegalArgumentException("Invalid prompt configuration for prompt type: " + type);
-        }
+        String possibleEntitiesString = sb.toString();
+
+        String componentSupportList = "\n\nAs support, here is a list of entities that could be mentioned in the text:\n" + possibleEntitiesString + "\n";
+        this.text += componentSupportList;
     }
 
-    private static boolean promptTypeIsValid(PromptType type, String second) {
-        return switch (type) {
-            case STRUCTURED_TEXT_OUTPUT_PROMPT, JSON_OUTPUT_PROMPT -> second == null;
-            case TWO_PART_PROMPT -> second != null;
-        };
-    }
+    /**
+     * Processes the prompt using the given chat model and SAD.
+     *
+     * @param chatModel the chat model to use
+     * @param sad       the software architecture documentation to be analyzed
+     * @return the response from the chat model
+     */
+    public abstract String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad);
 
+    /**
+     * Parses the answer from the chat model into a set of named entities.
+     *
+     * @param answer the answer from the chat model
+     * @param sad    the software architecture documentation
+     * @return a set of named entities
+     * @throws IOException if the answer cannot be parsed
+     */
+    public abstract Set<NamedEntity> parseAnswer(String answer, SoftwareArchitectureDocumentation sad) throws IOException;
 
-    @NotNull
-    @Override
-    public String toString() {
-        return "Prompt{" +
-                "first=\n'" + first + "'" +
-                "\n, second=\n'" + second + "'" +
-                "\n, type=" + type + "}";
-    }
+    /**
+     * Returns the expected output format of the prompt.
+     *
+     * @return a string describing the expected format of the output
+     */
+    public abstract String getExpectedOutputFormat();
 }
