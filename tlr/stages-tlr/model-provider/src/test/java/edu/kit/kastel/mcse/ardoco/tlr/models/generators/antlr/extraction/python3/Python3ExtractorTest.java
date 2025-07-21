@@ -1,8 +1,6 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 class Python3ExtractorTest {
 
     @Test
-    void executePython3ExtractorForMinimalDirectoryTest() throws IOException {
+    void executePython3ExtractorForMinimalDirectoryTest() {
         String sourcePath = "src/test/resources/python/interface/edu/";
         Python3Extractor python3Extractor = buildPython3Extractor(sourcePath);
         python3Extractor.extractModel();

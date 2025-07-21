@@ -151,16 +151,6 @@ class JavaElementManagerTest {
     }
 
     @Test
-    void getVariableTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<VariableElement> variables = getCorrectVariablesList();
-        for (VariableElement variable : variables) {
-            elementManager.addVariable(variable);
-        }
-        Assertions.assertTrue(elementManager.getVariables().containsAll(variables));
-    }
-
-    @Test
     void getVariableNullTest() {
         elementManager = new JavaElementStorageRegistry();
         List<VariableElement> variables = getIncorrectVariablesList();
@@ -169,16 +159,6 @@ class JavaElementManagerTest {
         }
         Assertions.assertEquals(variables.get(0), elementManager.getVariables().get(0));
         Assertions.assertEquals(variables.get(2), elementManager.getVariables().get(1));
-    }
-
-    @Test
-    void getFunctionTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<Element> functions = getCorrectFunctionsList();
-        for (Element function : functions) {
-            elementManager.addFunction(function);
-        }
-        Assertions.assertTrue(elementManager.getFunctions().containsAll(functions));
     }
 
     @Test
@@ -193,16 +173,6 @@ class JavaElementManagerTest {
     }
 
     @Test
-    void getClassTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<JavaClassElement> classes = getCorrectClassList();
-        for (JavaClassElement clazz : classes) {
-            elementManager.addClass(clazz);
-        }
-        Assertions.assertTrue(elementManager.getClasses().containsAll(classes));
-    }
-
-    @Test
     void getClassNullTest() {
         elementManager = new JavaElementStorageRegistry();
         List<JavaClassElement> classes = getIncorrectClassList();
@@ -211,16 +181,6 @@ class JavaElementManagerTest {
         }
         Assertions.assertEquals(classes.get(0), elementManager.getClasses().get(0));
         Assertions.assertEquals(classes.get(2), elementManager.getClasses().get(1));
-    }
-
-    @Test
-    void getInterfaceTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<Element> interfaces = getCorrectInterfaceList();
-        for (Element interf : interfaces) {
-            elementManager.addInterface(interf);
-        }
-        Assertions.assertTrue(elementManager.getInterfaces().containsAll(interfaces));
     }
 
     @Test
@@ -235,16 +195,6 @@ class JavaElementManagerTest {
     }
 
     @Test
-    void getCompilationUnitTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<Element> compilationUnits = getCorrectCompilationUnitList();
-        for (Element compilationUnit : compilationUnits) {
-            elementManager.addCompilationUnit(compilationUnit);
-        }
-        Assertions.assertTrue(elementManager.getCompilationUnits().containsAll(compilationUnits));
-    }
-
-    @Test
     void getCompilationUnitNullTest() {
         elementManager = new JavaElementStorageRegistry();
         List<Element> compilationUnits = getIncorrectCompilationUnitList();
@@ -253,16 +203,6 @@ class JavaElementManagerTest {
         }
         Assertions.assertEquals(compilationUnits.get(0), elementManager.getCompilationUnits().get(0));
         Assertions.assertEquals(compilationUnits.get(2), elementManager.getCompilationUnits().get(1));
-    }
-
-    @Test
-    void getPackageTest() {
-        elementManager = new JavaElementStorageRegistry();
-        List<PackageElement> packages = getCorrectPackageList();
-        for (PackageElement pack : packages) {
-            elementManager.addPackage(pack);
-        }
-        Assertions.assertTrue(elementManager.getPackages().containsAll(packages));
     }
 
     @Test

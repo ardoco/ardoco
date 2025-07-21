@@ -21,7 +21,7 @@ class JavaModelMapperTest {
         Assertions.assertEquals(7, codeModel.getEndpoints().size());
 
         // More Detailed Assertions
-        Assertions.assertEquals(codeModel.getAllPackages().size(), 3);
+        Assertions.assertEquals(3, codeModel.getAllPackages().size());
 
     }
 

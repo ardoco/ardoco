@@ -1,9 +1,9 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java.JavaElementStorageRegistry;
 
@@ -20,18 +20,18 @@ public class JavaCommentExtractor extends CommentExtractor {
 
     @Override
     protected boolean isComment(Token token) {
-        return token.getChannel() == JavaLexer.HIDDEN;
+        return token.getChannel() == Lexer.HIDDEN;
     }
 
     @Override
     protected boolean isValidComment(String comment) {
-        return !comment.isEmpty() && ((comment.startsWith("//") || comment.startsWith("/*")));
+        return !comment.isEmpty() && (comment.startsWith("//") || comment.startsWith("/*"));
     }
 
     @Override
     protected String cleanseComment(String text) {
         // Remove block comment delimiters (/** and */)
-        text = text.replaceAll("^(?:/\\*+)|(?:\\*/)$", "").trim();
+        text = text.replaceAll("^/\\*+|\\*/$", "").trim();
 
         // Remove leading '*' characters from each line but keep newlines
         text = text.replaceAll("(?m)^\\s*\\* ?", "").trim();

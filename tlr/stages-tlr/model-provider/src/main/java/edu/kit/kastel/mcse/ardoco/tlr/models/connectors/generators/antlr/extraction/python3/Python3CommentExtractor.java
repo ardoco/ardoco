@@ -25,7 +25,7 @@ public class Python3CommentExtractor extends CommentExtractor {
 
     @Override
     protected boolean isValidComment(String text) {
-        return !text.isEmpty() && ((text.startsWith("#") || text.startsWith("\"\"\"") || text.startsWith("'''")));
+        return !text.isEmpty() && (text.startsWith("#") || text.startsWith("\"\"\"") || text.startsWith("'''"));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class Python3CommentExtractor extends CommentExtractor {
         comment = comment.replaceAll("^# ?", "").trim();
 
         // Remove multi-line comment markers (triple quotes """ or ''')
-        comment = comment.replaceAll("^(?:['\"]{3})|(?:['\"]{3})$", "").trim();
+        comment = comment.replaceAll("^['\"]{3}|['\"]{3}$", "").trim();
 
         // Replace all newlines and extra spaces between words with a single space
         comment = comment.replaceAll("\\n+", " ").replaceAll("\\s{2,}", " ").trim();

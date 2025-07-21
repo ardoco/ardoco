@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,42 +45,42 @@ class JavaVariableExtractorTest {
     void variableExtractorAnEnum() throws IOException {
         String filePath = sourcePath + "AnEnum.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorAnInterface() throws IOException {
         String filePath = sourcePath + "AnInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorExtendedInterface() throws IOException {
         String filePath = sourcePath + "ExtendedInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorSuperclass() throws IOException {
         String filePath = sourcePath + "Superclass.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorOtherInterfaceZwei() throws IOException {
         String filePath = sourcePath + "zwei/OtherInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     @Test
     void variableExtractorOtherInterfaceDrei() throws IOException {
         String filePath = sourcePath + "drei/OtherInterface.java";
         List<VariableElement> variables = extractVariablesFromFile(filePath);
-        Assert.assertTrue(variables.isEmpty());
+        Assertions.assertTrue(variables.isEmpty());
     }
 
     private List<VariableElement> extractVariablesFromFile(String filePath) throws IOException {

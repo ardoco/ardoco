@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extrac
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -92,14 +93,7 @@ public abstract class CommentExtractor {
      * @return the number of lines in the text, default is 0;
      */
     private int countCommentLines(String text) {
-        // TODO Refactor code.
-        int count = 0;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '\n') {
-                count++;
-            }
-        }
-        return count;
+        return (int) IntStream.range(0, text.length()).filter(i -> text.charAt(i) == '\n').count();
     }
 
 }
