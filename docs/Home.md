@@ -22,7 +22,7 @@ To get to know the project, please read the following pages:
 * [Text Preprocessing Microservice](Text-Preprocessing-Microservice)
 * [Traceability Link Recovery (TLR)](traceability-link-recovery)
 * [Inconsistency Detection (ID)](inconsistency-detection)
-* [Linking Sketches and Software Architecture (LiSSA)](LiSSA)
+* [LiSSA Retrieval-Augmented TLR](LiSSA)
 
 ## Project Structure
 
@@ -31,7 +31,7 @@ To get to know the project, please read the following pages:
   * [TLR](https://github.com/ArDoCo/TLR): Traceability Link Recovery (TLR) Modules
   * [StanfordCoreNLP-Provider-Service](https://github.com/ArDoCo/StanfordCoreNLP-Provider-Service): RESTful web service for text preprocessing
   * [InconsistencyDetection](https://github.com/ArDoCo/InconsistencyDetection): Inconsistency Detection (ID) Modules
-  * [LiSSA](https://github.com/ArDoCo/LiSSA): Linking Sketches and Software Architecture Modules
+  * [LiSSA-RATLR](https://github.com/ArDoCo/LiSSA-RATLR): LiSSA - A Framework for Generic Traceability Link Recovery
 * Testing and Evaluation
   * [IntegrationTests](https://github.com/ArDoCo/IntegrationTests): Integration Tests
   * [Benchmark](https://github.com/ArDoCo/Benchmark): Benchmarks
