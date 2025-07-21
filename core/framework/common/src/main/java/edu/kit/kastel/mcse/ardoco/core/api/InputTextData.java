@@ -8,6 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 /**
  * Container for input text data to be used as {@link PipelineStepData} in the pipeline.
  */
+@SuppressWarnings({ "ClassCanBeRecord", "java:S6206" })
 public final class InputTextData implements PipelineStepData {
 
     @Serial

@@ -28,8 +28,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStat
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
@@ -113,12 +111,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink TraceLinks} between architecture and code entities
      */
-    public List<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
+    public ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
-            return samCodeTraceabilityState.getSamCodeTraceLinks().toList();
+            return Lists.immutable.withAll(samCodeTraceabilityState.getSamCodeTraceLinks());
         }
-        return List.of();
+        return Lists.immutable.empty();
     }
 
     /**
@@ -126,12 +124,12 @@ public record ArDoCoResult(DataRepository dataRepository) {
      *
      * @return the list of {@link TraceLink TraceLinks} between sentences and code entities
      */
-    public List<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
+    public ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
         var samCodeTraceabilityState = this.getCodeTraceabilityState();
         if (samCodeTraceabilityState != null) {
-            return samCodeTraceabilityState.getSadCodeTraceLinks().toList();
+            return Lists.immutable.withAll(samCodeTraceabilityState.getSadCodeTraceLinks());
         }
-        return List.of();
+        return Lists.immutable.empty();
     }
 
     /**
@@ -299,30 +297,6 @@ public record ArDoCoResult(DataRepository dataRepository) {
     public Model getModelState(Metamodel metamodel) {
         ModelStates modelStates = this.getModelStates();
         return modelStates.getModel(metamodel);
-    }
-
-    /**
-     * Returns the internal {@link TextState}.
-     *
-     * @return the TextState
-     */
-    public TextState getTextState() {
-        return DataRepositoryHelper.getTextState(this.dataRepository);
-    }
-
-    /**
-     * Returns the internal {@link RecommendationState} for the given {@link Metamodel} or null if there is none.
-     *
-     * @param metamodel the metamodel
-     * @return the recommendation state or null if there is none
-     */
-    public RecommendationState getRecommendationState(Metamodel metamodel) {
-        if (DataRepositoryHelper.hasRecommendationStates(this.dataRepository)) {
-            var recommendationStates = DataRepositoryHelper.getRecommendationStates(this.dataRepository);
-            return recommendationStates.getRecommendationState(metamodel);
-        }
-        ArDoCoResult.logger.warn("No RecommendationState found");
-        return null;
     }
 
     /**
