@@ -100,21 +100,21 @@ public final class CommonUtilities {
     }
 
     /**
-     * Calculates the root-mean-square between two given values.
+     * Calculates the root mean square between two given values.
      *
      * @param first  the first value
      * @param second the second value
-     * @return the root-mean-square of the given values
+     * @return the root mean square of the given values
      */
     public static double rootMeanSquare(double first, double second) {
         return Math.sqrt((Math.pow(first, 2) + Math.pow(second, 2)) / 2);
     }
 
     /**
-     * Calculates the root-mean-square between the given values.
+     * Calculates the root mean square between the given values.
      *
      * @param values List of doubles that should be used to calculate their mean
-     * @return the root-mean-square of the given values
+     * @return the root mean square of the given values
      */
     public static double rootMeanSquare(List<Double> values) {
         var squaredValuesSum = values.stream().mapToDouble(d -> Math.pow(d, 2)).sum();
