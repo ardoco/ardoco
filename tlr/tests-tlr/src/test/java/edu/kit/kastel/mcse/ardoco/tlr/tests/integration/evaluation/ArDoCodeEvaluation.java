@@ -16,11 +16,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
 public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
     private final ArDoCodeEvaluationProject project;
-    private final boolean useAcmFile;
 
     public ArDoCodeEvaluation(ArDoCodeEvaluationProject project) {
         this.project = project;
-        this.useAcmFile = true;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
@@ -41,7 +39,7 @@ public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation
     private ArDoCoRunner createArDoCodeRunner() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
-        File inputCode = project.getTlrTask().getCodeModelFile(useAcmFile);
+        File inputCode = project.getTlrTask().getCodeModelFromResources();
         SortedMap<String, String> additionalConfigsMap = new TreeMap<>();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();

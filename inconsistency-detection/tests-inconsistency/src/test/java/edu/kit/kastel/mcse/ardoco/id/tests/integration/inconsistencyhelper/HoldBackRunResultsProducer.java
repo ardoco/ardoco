@@ -19,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.AnonymousRunner;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractPipelineStep;
 import edu.kit.kastel.mcse.ardoco.id.InconsistencyChecker;
 import edu.kit.kastel.mcse.ardoco.id.tests.eval.baseline.InconsistencyBaseline;
-import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetection;
+import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
@@ -46,7 +46,7 @@ public class HoldBackRunResultsProducer {
      * @return a map containing the mapping from ModelElement that was held back to the DataStructure that was produced when running ArDoCo without the
      *         ModelElement
      */
-    public Map<ArchitectureItem, ArDoCoResult> produceHoldBackRunResults(InconsistencyDetection goldStandardProject, boolean useBaselineApproach) {
+    public Map<ArchitectureItem, ArDoCoResult> produceHoldBackRunResults(InconsistencyDetectionTask goldStandardProject, boolean useBaselineApproach) {
         Map<ArchitectureItem, ArDoCoResult> runs = new LinkedHashMap<>();
         this.inputModel = goldStandardProject.getArchitectureModelFile(ModelFormat.PCM);
         this.inputText = goldStandardProject.getTextFile();
@@ -76,7 +76,7 @@ public class HoldBackRunResultsProducer {
      * @param useInconsistencyBaseline       whether the inconsistency baseline is used or ArDoCo's inconsistency checker
      * @return the data repository that is produced
      */
-    protected DataRepository run(InconsistencyDetection goldStandardProject, HoldBackArCoTLModelProvider holdElementsBackModelConnector,
+    protected DataRepository run(InconsistencyDetectionTask goldStandardProject, HoldBackArCoTLModelProvider holdElementsBackModelConnector,
             boolean useInconsistencyBaseline) {
         return new AnonymousRunner(goldStandardProject.name()) {
             @Override

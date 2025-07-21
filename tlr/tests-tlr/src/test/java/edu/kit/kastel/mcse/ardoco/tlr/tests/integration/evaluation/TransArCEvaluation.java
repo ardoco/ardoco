@@ -43,7 +43,7 @@ public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         File textInput = project.getTlrTask().getTextFile();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         File inputArchitectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
-        File inputCode = project.getTlrTask().getCodeModelFile(useAcmFile);
+        File inputCode = useAcmFile ? project.getTlrTask().getCodeModelFromResources() : project.getTlrTask().getCodeDirectory();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 

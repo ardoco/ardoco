@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.id.tests.eval.GoldStandard;
 
-public enum InconsistencyDetection {
+public enum InconsistencyDetectionTask {
     MEDIASTORE(EvaluationProject.MEDIASTORE, //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016_UME.csv", //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv", //
@@ -56,8 +56,8 @@ public enum InconsistencyDetection {
     private final String filterListPath;
     private final ExpectedResults expectedMissingModelInconsistencyResults;
 
-    InconsistencyDetection(EvaluationProject project, String unmentionedModelElementsGoldStandardPath, String documentation2ArchitectureModelGoldStandardPath,
-            String filterListPath, ExpectedResults expectedMissingModelInconsistencyResults) {
+    InconsistencyDetectionTask(EvaluationProject project, String unmentionedModelElementsGoldStandardPath,
+            String documentation2ArchitectureModelGoldStandardPath, String filterListPath, ExpectedResults expectedMissingModelInconsistencyResults) {
         this.project = project;
         this.unmentionedModelElementsGoldStandardPath = unmentionedModelElementsGoldStandardPath;
         this.documentation2ArchitectureModelGoldStandardPath = documentation2ArchitectureModelGoldStandardPath;

@@ -14,8 +14,8 @@ import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 
-public final class InconsistencyUtil {
-    private InconsistencyUtil() {
+public final class InconsistencyDetectionEvaluationUtil {
+    private InconsistencyDetectionEvaluationUtil() {
         throw new IllegalAccessError("Utility class should not be instantiated");
     }
 
