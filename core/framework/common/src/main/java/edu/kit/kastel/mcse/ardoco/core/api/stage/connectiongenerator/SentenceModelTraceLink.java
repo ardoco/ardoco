@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 /**
  * Trace link between a sentence and a model entity.
  */
-public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEntity> {
+public final class SentenceModelTraceLink extends TraceLink<SentenceEntity, ModelEntity> {
 
     @Serial
     private static final long serialVersionUID = 8946290400185965394L;
@@ -25,7 +25,7 @@ public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEnti
      * @param sentence    the sentence
      * @param modelEntity the model entity
      */
-    public SadModelTraceLink(Sentence sentence, ModelEntity modelEntity) {
+    public SentenceModelTraceLink(Sentence sentence, ModelEntity modelEntity) {
         super(new SentenceEntity(sentence), modelEntity);
         this.sentence = sentence;
         this.modelEntity = modelEntity;
@@ -37,7 +37,7 @@ public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEnti
      * @param sentenceEntity the sentence entity
      * @param modelEntity    the model entity
      */
-    public SadModelTraceLink(SentenceEntity sentenceEntity, ModelEntity modelEntity) {
+    public SentenceModelTraceLink(SentenceEntity sentenceEntity, ModelEntity modelEntity) {
         super(sentenceEntity, modelEntity);
         this.sentence = sentenceEntity.getSentence();
         this.modelEntity = modelEntity;
@@ -78,7 +78,7 @@ public final class SadModelTraceLink extends TraceLink<SentenceEntity, ModelEnti
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof SadModelTraceLink other) {
+        if (obj instanceof SentenceModelTraceLink other) {
             var otherId = other.getEntityId();
             var otherSentenceNo = other.getSentenceNumber();
             return this.getEntityId().equals(otherId) && this.getSentenceNumber() == otherSentenceNo;

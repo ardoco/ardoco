@@ -1,9 +1,6 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isArchitectureModel;
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.isCodeModel;
-
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
@@ -27,11 +24,26 @@ public class ArCoTLInformant extends Informant {
 
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
+
         for (var metamodel : modelStates.getMetamodels()) {
-            if (isArchitectureModel(metamodel)) {
-                architectureModel = (ArchitectureModel) modelStates.getModel(metamodel);
-            } else if (isCodeModel(metamodel)) {
-                codeModel = (CodeModel) modelStates.getModel(metamodel);
+            var model = modelStates.getModel(metamodel);
+            if (model == null) {
+                continue;
+            }
+
+            switch (model) {
+                case ArchitectureModel arch -> {
+                    if (architectureModel != null) {
+                        throw new IllegalStateException("Multiple architecture models found in the data repository.");
+                    }
+                    architectureModel = arch;
+                }
+                case CodeModel code -> {
+                    if (codeModel != null) {
+                        throw new IllegalStateException("Multiple code models found in the data repository.");
+                    }
+                    codeModel = code;
+                }
             }
         }
 
