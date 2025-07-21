@@ -77,7 +77,8 @@ abstract class AbstractEvaluation {
         );
     }
 
-    protected <T extends Serializable> List<Pair<T, String>> enrollGoldStandard(List<Pair<T, String>> goldStandard, ArDoCoResult result, Metamodel metamodel) {
+    public static <T extends Serializable> List<Pair<T, String>> enrollGoldStandard(List<Pair<T, String>> goldStandard, ArDoCoResult result,
+            Metamodel metamodel) {
         MutableList<Pair<T, String>> enrolledGoldStandard = Lists.mutable.empty();
         Model codeModel = DataRepositoryHelper.getModelStatesData(result.dataRepository()).getModel(metamodel);
 

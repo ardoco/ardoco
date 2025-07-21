@@ -14,11 +14,12 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.ArchitectureExtractor;
 
 /**
@@ -32,7 +33,7 @@ public class RawArchitectureExtractor extends ArchitectureExtractor {
     private static final Logger logger = LoggerFactory.getLogger(RawArchitectureExtractor.class);
 
     public RawArchitectureExtractor(String modelPath) {
-        super(modelPath);
+        super(modelPath, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
     }
 
     @Override
@@ -54,15 +55,10 @@ public class RawArchitectureExtractor extends ArchitectureExtractor {
                 components.add(new ArchitectureComponent(parts[0].trim(), parts[1].trim(), new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "component"));
             }
 
-            return new ArchitectureModel(components);
+            return new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(components));
 
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    @Override
-    public ModelType getModelType() {
-        return ArchitectureModelType.RAW;
     }
 }

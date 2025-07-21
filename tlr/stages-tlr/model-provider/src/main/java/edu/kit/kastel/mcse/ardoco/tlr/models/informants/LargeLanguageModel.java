@@ -1,15 +1,16 @@
 /* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
-import okhttp3.Credentials;
 
 @Deterministic
 public enum LargeLanguageModel {
@@ -39,10 +40,10 @@ public enum LargeLanguageModel {
     //
     OLLAMA_GENERIC(System.getenv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(System.getenv("OLLAMA_MODEL_NAME")));
 
-    private final Supplier<ChatLanguageModel> creator;
+    private final Supplier<ChatModel> creator;
     private final String humanReadableName;
 
-    LargeLanguageModel(String humanReadableName, Supplier<ChatLanguageModel> creator) {
+    LargeLanguageModel(String humanReadableName, Supplier<ChatModel> creator) {
         this.humanReadableName = humanReadableName;
         this.creator = creator;
     }
@@ -51,7 +52,7 @@ public enum LargeLanguageModel {
         return humanReadableName;
     }
 
-    public ChatLanguageModel create() {
+    public ChatModel create() {
         return new CachedChatLanguageModel(creator.get(), this.name());
     }
 
@@ -65,38 +66,38 @@ public enum LargeLanguageModel {
 
     private static final int SEED = 422413373;
 
-    private static ChatLanguageModel createOpenAiModel(String model) {
-        String apiKey = System.getenv("OPENAI_API_KEY");
-        String orgId = System.getenv("OPENAI_ORG_ID");
-        if (apiKey == null || orgId == null) {
-            throw new IllegalArgumentException("OPENAI_API_KEY and OPENAI_ORG_ID must be set as environment variables");
+    /**
+     * Creates an OpenAI chat model instance.
+     * Requires OpenAI organization ID and API key to be set in environment variables.
+     *
+     * @param model The name of the model to use
+     * @return A configured OpenAI chat model instance
+     * @throws IllegalStateException If required environment variables are not set
+     */
+    private static OpenAiChatModel createOpenAiModel(String model) {
+        String openAiOrganizationId = System.getenv("OPENAI_ORGANIZATION_ID");
+        String openAiApiKey = System.getenv("OPENAI_API_KEY");
+        if (openAiOrganizationId == null || openAiApiKey == null) {
+            throw new IllegalStateException("OPENAI_ORGANIZATION_ID or OPENAI_API_KEY environment variable not set");
         }
         return new OpenAiChatModel.OpenAiChatModelBuilder().modelName(model)
-                .apiKey(apiKey)
-                .organizationId(orgId)
-                .seed(SEED)
+                .organizationId(openAiOrganizationId)
+                .apiKey(openAiApiKey)
                 .temperature(0.0)
-                .timeout(Duration.ofMinutes(10))
+                .seed(SEED)
                 .build();
     }
 
-    private static ChatLanguageModel createOllamaModel(String model) {
-        String ollamaHost = System.getenv("OLLAMA_HOST");
-        String ollamaUser = System.getenv("OLLAMA_USER");
-        String ollamaPassword = System.getenv("OLLAMA_PASSWORD");
-        if (ollamaHost == null) {
-            throw new IllegalArgumentException("OLLAMA_HOST must be set as environment variable");
-        }
+    private static OllamaChatModel createOllamaModel(String model) {
+        String host = System.getenv("OLLAMA_HOST");
+        String user = System.getenv("OLLAMA_USER");
+        String password = System.getenv("OLLAMA_PASSWORD");
 
-        OllamaChatModel.OllamaChatModelBuilder builder = new OllamaChatModel.OllamaChatModelBuilder().modelName(model)
-                .baseUrl(ollamaHost)
-                .seed(SEED)
-                .timeout(Duration.ofMinutes(30))
-                .temperature(0.0);
-        if (ollamaUser != null && ollamaPassword != null) {
-            builder.customHeaders(Map.of("Authorization", Credentials.basic(ollamaUser, ollamaPassword)));
+        var ollama = OllamaChatModel.builder().baseUrl(host).modelName(model).timeout(Duration.ofMinutes(15)).temperature(0.0).seed(SEED);
+        if (user != null && password != null && !user.isEmpty() && !password.isEmpty()) {
+            ollama.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder()
+                    .encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
         }
-
-        return builder.build();
+        return ollama.build();
     }
 }

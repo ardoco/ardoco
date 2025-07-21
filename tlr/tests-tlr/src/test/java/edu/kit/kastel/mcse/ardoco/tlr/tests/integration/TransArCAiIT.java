@@ -1,5 +1,7 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
+
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,19 +26,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
-import edu.kit.kastel.mcse.ardoco.core.tests.eval.CodeProject;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransArCAiEvaluation;
 
 @Disabled("Only for manual execution")
-class TraceLinkEvaluationSadSamViaLlmCodeIT {
-    private static final Logger logger = LoggerFactory.getLogger(TraceLinkEvaluationSadSamViaLlmCodeIT.class);
+class TransArCAiIT {
+    private static final Logger logger = LoggerFactory.getLogger(TransArCAiIT.class);
     protected static final String LOGGING_ARDOCO_CORE = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.core";
 
-    private static final Map<Pair<CodeProject, LargeLanguageModel>, ArDoCoResult> RESULTS = new HashMap<>();
+    private static final Map<Pair<ArDoCodeEvaluationProject, LargeLanguageModel>, ArDoCoResult> RESULTS = new HashMap<>();
 
     @BeforeAll
     static void beforeAll() {
@@ -52,7 +55,7 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
     @DisplayName("Evaluate SAD-SAM-via-LLM-Code TLR")
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
-    void evaluateSadCodeTlrIT(CodeProject project, LargeLanguageModel llm) {
+    void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(System.getenv("CI") == null);
 
         LLMArchitecturePrompt docPrompt = LLMArchitecturePrompt.DOCUMENTATION_ONLY_V1;
@@ -66,8 +69,8 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
         logger.info("Prompts: {}, {}, {}", docPrompt, codePrompt, aggPrompt);
         logger.info("Features: {}", codeFeatures);
 
-        var evaluation = new SadSamViaLlmCodeTraceabilityLinkRecoveryEvaluation(true, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
-        var result = evaluation.runTraceLinkEvaluation(project);
+        var evaluation = new TransArCAiEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
+        var result = evaluation.runTraceLinkEvaluation();
         if (result != null) {
             RESULTS.put(Tuples.pair(project, llm), result);
         }
@@ -77,8 +80,7 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
 
     @AfterAll
     static void printResults() {
-        logger.info("!!!!!!!!! Results !!!!!!!!!!");
-        System.out.println(Arrays.stream(CodeProject.values())
+        System.out.println(Arrays.stream(ArDoCodeEvaluationProject.values())
                 .map(Enum::name)
                 .collect(Collectors.joining(" & ")) + " & Macro Avg & Weighted Average" + " \\\\");
         for (LargeLanguageModel llm : LargeLanguageModel.values()) {
@@ -88,7 +90,7 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
             StringBuilder llmResult = new StringBuilder(llm.getHumanReadableName() + " ");
 
             List<SingleClassificationResult<String>> classificationResults = new ArrayList<>();
-            for (CodeProject project : CodeProject.values()) {
+            for (ArDoCodeEvaluationProject project : ArDoCodeEvaluationProject.values()) {
                 if (!RESULTS.containsKey(Tuples.pair(project, llm))) {
                     llmResult.append("&--&--&--");
                     continue;
@@ -96,14 +98,13 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
                 // Just some instance .. parameters do not matter ..
-                var evaluation = new SadSamViaLlmCodeTraceabilityLinkRecoveryEvaluation(true, llm, LLMArchitecturePrompt.DOCUMENTATION_ONLY_V1, null, null,
-                        null);
-                var goldStandard = project.getSadCodeGoldStandard();
-                goldStandard = TraceabilityLinkRecoveryEvaluation.enrollGoldStandardForCode(goldStandard, result);
-                var evaluationResults = evaluation.calculateEvaluationResults(result, goldStandard);
-                classificationResults.add(evaluationResults.classificationResult());
-                llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.precision(), evaluationResults.recall(), evaluationResults
-                        .f1()));
+                var evaluation = new TransArCAiEvaluation(project, llm, LLMArchitecturePrompt.DOCUMENTATION_ONLY_V1, null, null, null);
+                var goldStandard = project.getTlrTask().getExpectedTraceLinks();
+                goldStandard = TransArCAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                var evaluationResults = TransArCAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                classificationResults.add(evaluationResults);
+                llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.getPrecision(), evaluationResults.getRecall(),
+                        evaluationResults.getF1()));
             }
             ClassificationMetricsCalculator classificationMetricsCalculator = ClassificationMetricsCalculator.getInstance();
             var averages = classificationMetricsCalculator.calculateAverages(classificationResults, null);
@@ -122,7 +123,7 @@ class TraceLinkEvaluationSadSamViaLlmCodeIT {
         for (LargeLanguageModel llm : LargeLanguageModel.values()) {
             if (llm.isGeneric())
                 continue;
-            for (CodeProject codeProject : CodeProject.values()) {
+            for (ArDoCodeEvaluationProject codeProject : ArDoCodeEvaluationProject.values()) {
                 result.add(Arguments.of(codeProject, llm));
             }
         }

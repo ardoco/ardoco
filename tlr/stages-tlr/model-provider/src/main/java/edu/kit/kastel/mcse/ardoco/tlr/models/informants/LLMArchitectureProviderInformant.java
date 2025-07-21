@@ -12,30 +12,36 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Entity;
+import dev.langchain4j.model.chat.ChatModel;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimUtils;
+import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein.LevenshteinMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.wordsim.WordSimUtils;
-import edu.kit.kastel.mcse.ardoco.core.common.util.wordsim.measures.levenshtein.LevenshteinMeasure;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 public class LLMArchitectureProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
 
-    private final ChatLanguageModel chatLanguageModel;
+    private static final Logger logger = LoggerFactory.getLogger(LLMArchitectureProviderInformant.class);
+
+    private final ChatModel chatLanguageModel;
     private final LLMArchitecturePrompt documentationPrompt;
     private final LLMArchitecturePrompt codePrompt;
     private final LLMArchitecturePrompt aggregationPrompt;
@@ -45,7 +51,7 @@ public class LLMArchitectureProviderInformant extends Informant {
             LLMArchitecturePrompt code, LLMArchitecturePrompt.Features codeFeature, LLMArchitecturePrompt aggregation) {
         super(LLMArchitectureProviderInformant.class.getSimpleName(), dataRepository);
         String apiKey = System.getenv("OPENAI_API_KEY");
-        String orgId = System.getenv("OPENAI_ORG_ID");
+        String orgId = System.getenv("OPENAI_ORGANIZATION_ID");
         if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
             throw new IllegalArgumentException("OpenAI API Key and Organization ID must be set");
         }
@@ -78,7 +84,7 @@ public class LLMArchitectureProviderInformant extends Informant {
 
         if (aggregationPrompt != null) {
             var allComponentNames = Stream.concat(componentNamesDocumentation.stream(), componentNamesCode.stream()).toList();
-            var aggregation = chatLanguageModel.generate(aggregationPrompt.getTemplates().getFirst().formatted(String.join("\n", allComponentNames)));
+            var aggregation = chatLanguageModel.chat(aggregationPrompt.getTemplates().getFirst().formatted(String.join("\n", allComponentNames)));
             logger.info("Response (Aggregation): {}", aggregation);
             parseComponentNames(aggregation, componentNames);
         } else if (documentationPrompt != null && codePrompt != null) {
@@ -124,7 +130,7 @@ public class LLMArchitectureProviderInformant extends Informant {
 
     private void codeToArchitecture(List<String> componentNames) {
         var models = DataRepositoryHelper.getModelStatesData(dataRepository);
-        CodeModel codeModel = (CodeModel) models.getModel(CodeModelType.CODE_MODEL.getModelId());
+        CodeModel codeModel = (CodeModel) models.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         if (codeModel == null) {
             logger.warn("Code model not found");
             return;
@@ -157,13 +163,13 @@ public class LLMArchitectureProviderInformant extends Informant {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(UserMessage.from(startMessage));
 
-        var initialResponse = chatLanguageModel.generate(messages).content();
+        var initialResponse = chatLanguageModel.chat(messages).aiMessage();
         messages.add(initialResponse);
         logger.info("Initial Response: {}", initialResponse.text());
 
         for (String nextMessage : templates.stream().skip(1).toList()) {
             messages.add(UserMessage.from(nextMessage));
-            var response = chatLanguageModel.generate(messages).content();
+            var response = chatLanguageModel.chat(messages).aiMessage();
             logger.info("Response: {}", response.text());
             messages.add(response);
         }
@@ -211,11 +217,11 @@ public class LLMArchitectureProviderInformant extends Informant {
         List<ArchitectureItem> componentList = componentNames.stream()
                 .map(it -> new ArchitectureComponent(it, it, new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "Component"))
                 .collect(Collectors.toList());
-        ArchitectureModel am = new ArchitectureModel(componentList);
+        ArchitectureModel am = new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(componentList));
         Optional<ModelStates> modelStatesOptional = dataRepository.getData(MODEL_STATES_DATA, ModelStates.class);
         var modelStates = modelStatesOptional.orElseGet(ModelStates::new);
 
-        modelStates.addModel(ArchitectureModelType.PCM.getModelId(), am);
+        modelStates.addModel(am.getMetamodel(), am);
 
         if (modelStatesOptional.isEmpty()) {
             dataRepository.addData(MODEL_STATES_DATA, modelStates);
