@@ -19,10 +19,15 @@ import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 
 /**
  * The FilePrinter class contains utility methods for writing output files and statistics.
@@ -33,6 +38,7 @@ public final class FilePrinter {
     private static final Logger logger = LoggerFactory.getLogger(FilePrinter.class);
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final String ENTRY_SEPARATOR = ",";
 
     private FilePrinter() {
         throw new IllegalAccessError();
@@ -117,7 +123,7 @@ public final class FilePrinter {
         if (!sadSamTls.isEmpty()) {
             var sadSamTlr = outputDir.toPath().resolve("sadSamTlr_" + name + ".csv");
             header = "modelElementID,sentence";
-            var traceLinkStrings = TraceLinkUtilities.getSadSamTraceLinksAsStringList(sadSamTls);
+            var traceLinkStrings = getSadSamTraceLinksAsStringList(sadSamTls);
             writeTraceLinksToCsv(sadSamTlr, header, traceLinkStrings);
         }
 
@@ -125,7 +131,7 @@ public final class FilePrinter {
         if (!samCodeTls.isEmpty()) {
             var samCodeTlr = outputDir.toPath().resolve("samCodeTlr_" + name + ".csv");
             header = "sentenceID,codeID";
-            var traceLinkStrings = TraceLinkUtilities.getSamCodeTraceLinksAsStringList(samCodeTls);
+            var traceLinkStrings = getSamCodeTraceLinksAsStringList(samCodeTls);
             writeTraceLinksToCsv(samCodeTlr, header, traceLinkStrings);
         }
 
@@ -133,7 +139,7 @@ public final class FilePrinter {
         if (!sadCodeTls.isEmpty()) {
             var sadCodeTlr = outputDir.toPath().resolve("sadCodeTlr_" + name + ".csv");
             header = "modelElementID,codeId";
-            var traceLinkStrings = TraceLinkUtilities.getSadCodeTraceLinksAsStringList(sadCodeTls);
+            var traceLinkStrings = getSadCodeTraceLinksAsStringList(sadCodeTls);
             writeTraceLinksToCsv(sadCodeTlr, header, traceLinkStrings);
         }
 
@@ -151,6 +157,66 @@ public final class FilePrinter {
         } catch (IOException e) {
             logger.warn("An exception occurred when writing trace links to Comma-Separated Values file.", e);
         }
+    }
+
+    /**
+     * Creates a trace link string from two element IDs.
+     *
+     * @param firstElementId  the first element ID
+     * @param secondElementId the second element ID
+     * @return the trace link string
+     */
+    public static String createTraceLinkString(String firstElementId, String secondElementId) {
+        return firstElementId + ENTRY_SEPARATOR + secondElementId;
+    }
+
+    /**
+     * Converts a list of trace links between sentences and model entities to a list of string representations.
+     *
+     * @param sadSamTraceLinks the list of trace links
+     * @return the list of string representations
+     */
+    private static ImmutableList<String> getSadSamTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ModelEntity>> sadSamTraceLinks) {
+        return sadSamTraceLinks.collect(tl -> createTraceLinkString(tl.getSecondEndpoint().getId(), String.valueOf(tl.getFirstEndpoint()
+                .getSentence()
+                .getSentenceNumber() + 1)));
+    }
+
+    /**
+     * Converts a list of trace links between architecture entities and model entities to a list of string representations.
+     *
+     * @param samCodeTraceLinks the list of trace links
+     * @return the list of string representations
+     */
+    private static ImmutableList<String> getSamCodeTraceLinksAsStringList(
+            ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> samCodeTraceLinks) {
+        MutableList<String> resultsMut = Lists.mutable.empty();
+        for (var traceLink : samCodeTraceLinks) {
+            Pair<? extends ArchitectureEntity, ? extends ModelEntity> endpointTuple = traceLink.asPair();
+            var modelElement = endpointTuple.first();
+            var codeElement = endpointTuple.second();
+            String traceLinkString = createTraceLinkString(modelElement.getId(), codeElement.toString());
+            resultsMut.add(traceLinkString);
+        }
+        return resultsMut.toImmutable();
+    }
+
+    /**
+     * Converts a list of trace links between sentences and model entities to a list of string representations, with sentence number as the first element.
+     *
+     * @param sadCodeTraceLinks the list of trace links
+     * @return the list of string representations
+     */
+    private static ImmutableList<String> getSadCodeTraceLinksAsStringList(ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> sadCodeTraceLinks) {
+        MutableList<String> resultsMut = Lists.mutable.empty();
+        for (var traceLink : sadCodeTraceLinks) {
+            Pair<SentenceEntity, ? extends ModelEntity> endpointTuple = traceLink.asPair();
+            var codeElement = endpointTuple.second();
+            String sentenceNumber = String.valueOf(endpointTuple.first().getSentence().getSentenceNumber() + 1);
+            String traceLinkString = createTraceLinkString(sentenceNumber, codeElement.toString());
+            resultsMut.add(traceLinkString);
+        }
+        return resultsMut.toImmutable();
     }
 
 }
