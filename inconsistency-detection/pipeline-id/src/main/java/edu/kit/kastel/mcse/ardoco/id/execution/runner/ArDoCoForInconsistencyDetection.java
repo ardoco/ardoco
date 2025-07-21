@@ -52,7 +52,6 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         DataRepositoryHelper.putInputText(dataRepository, text);
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
-        // TODO: Phi: Right here?
         var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat,
                 Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
