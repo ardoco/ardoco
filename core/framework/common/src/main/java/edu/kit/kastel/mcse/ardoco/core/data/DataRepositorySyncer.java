@@ -28,7 +28,9 @@ public final class DataRepositorySyncer {
         }
         for (Metamodel mm : Metamodel.values()) {
             var recommendationState = recommendationStates.get().getRecommendationState(mm);
-            recommendationState.onNounMappingDeletion(nounMapping, replacement);
+            if (recommendationState != null) {
+                recommendationState.onNounMappingDeletion(nounMapping, replacement);
+            }
         }
     }
 

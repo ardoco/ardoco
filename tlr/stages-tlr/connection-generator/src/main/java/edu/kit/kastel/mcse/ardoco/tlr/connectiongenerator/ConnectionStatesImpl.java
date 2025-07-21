@@ -16,9 +16,10 @@ public class ConnectionStatesImpl implements ConnectionStates {
         connectionStates = new EnumMap<>(Metamodel.class);
     }
 
-    public static ConnectionStatesImpl build() {
+    public static ConnectionStatesImpl build(Metamodel[] metamodels) {
+        logger.info("Building connection states for {} metamodels", metamodels.length);
         var recStates = new ConnectionStatesImpl();
-        for (Metamodel mm : Metamodel.values()) {
+        for (Metamodel mm : metamodels) {
             recStates.connectionStates.put(mm, new ConnectionStateImpl());
         }
         return recStates;

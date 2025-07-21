@@ -16,9 +16,10 @@ public class RecommendationStatesImpl implements RecommendationStates {
         this.recommendationStates = new EnumMap<>(Metamodel.class);
     }
 
-    public static RecommendationStates build() {
+    public static RecommendationStates build(Metamodel[] metamodels) {
+        logger.info("Building recommendation states for {} metamodels", metamodels.length);
         var recStates = new RecommendationStatesImpl();
-        for (Metamodel mm : Metamodel.values()) {
+        for (Metamodel mm : metamodels) {
             recStates.recommendationStates.put(mm, new RecommendationStateImpl());
         }
         return recStates;
