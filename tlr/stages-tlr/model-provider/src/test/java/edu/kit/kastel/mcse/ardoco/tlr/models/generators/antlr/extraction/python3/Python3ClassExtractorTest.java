@@ -43,7 +43,7 @@ class Python3ClassExtractorTest {
 
         // Test the fourth class
         Assertions.assertEquals("BClass", classes.get(3).getName());
-        Assertions.assertEquals(0, classes.get(1).getInherits().size());
+        Assertions.assertEquals(0, classes.get(3).getInherits().size());
         Assertions.assertEquals("APyClass", classes.get(3).getParentIdentifier().name());
         Assertions.assertEquals(Type.MODULE, classes.get(3).getParentIdentifier().type());
     }
