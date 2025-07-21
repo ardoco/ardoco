@@ -29,8 +29,13 @@ public class CachedChatLanguageModel implements ChatModel {
     private static final Logger logger = LoggerFactory.getLogger(CachedChatLanguageModel.class);
 
     private static final String CACHE_DIR = "cache-llm/";
+
     static {
-        new File(CACHE_DIR).mkdirs();
+        File cache = new File(CACHE_DIR);
+        if (!cache.mkdirs() && !cache.isDirectory()) {
+            logger.error("Failed to create cache directory: {}", CACHE_DIR);
+            throw new IllegalStateException("Could not create cache directory: " + CACHE_DIR);
+        }
     }
 
     private final ChatModel chatLanguageModel;
