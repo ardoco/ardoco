@@ -50,52 +50,13 @@ public final class CommonTextToolsConfig {
     public static final double JAROWINKLER_SIMILARITY_THRESHOLD = CONFIG.getPropertyAsDouble("jaroWinkler_SimilarityThreshold");
 
     /**
-     * The minimal propotion of two lists that need to be similar, that both are similar. Used in SimilarityUtils.
+     * The minimal proportion of two lists that need to be similar, that both are similar. Used in SimilarityUtils.
      */
     public static final double GET_MOST_RECOMMENDED_I_BY_REF_MIN_PROPORTION = CONFIG.getPropertyAsDouble("getMostRecommendedIByRef_MinProportion");
     /**
      * The increase for the method getMostRecommendedInstancesByReference in SimilarityUtils.
      */
     public static final double GET_MOST_RECOMMENDED_I_BY_REF_INCREASE = CONFIG.getPropertyAsDouble("getMostRecommendedIByRef_Increase");
-
-    /**
-     * Decides whether the NGram similarity measure should be used.
-     */
-    public static final boolean NGRAM_ENABLED = CONFIG.isPropertyEnabled("ngram_Enabled");
-    /**
-     * The length of ngrams for the N-gram word similarity measure.
-     */
-    public static final int NGRAM_MEASURE_NGRAM_LENGTH = CONFIG.getPropertyAsInt("ngram_NgramLength");
-    /**
-     * The threshold for the ngram similarity measure above which words are considered similar.
-     */
-    public static final double NGRAM_SIMILARITY_THRESHOLD = CONFIG.getPropertyAsDouble("ngram_SimilarityThreshold");
-
-    /**
-     * Decides whether the SEWordSim similarity measure should be used.
-     */
-    public static final boolean SEWORDSIM_ENABLED = CONFIG.isPropertyEnabled("sewordsim_Enabled");
-    /**
-     * The threshold for the SEWordSim similarity measure above which words are considered similar.
-     */
-    public static final double SEWORDSIM_SIMILARITY_THRESHOLD = CONFIG.getPropertyAsDouble("sewordsim_SimilarityThreshold");
-    /**
-     * The path to the sqlite database file used by the SEWordSim word similarity measure.
-     */
-    public static final String SEWORDSIM_DB_FILE_PATH = CONFIG.getProperty("sewordsim_DatabaseFilePath");
-
-    /**
-     * Decides whether the GloVe similarity measure should be used.
-     */
-    public static final boolean GLOVE_ENABLED = CONFIG.isPropertyEnabled("glove_Enabled");
-    /**
-     * The threshold for the GloVe similarity measure above which words are considered similar.
-     */
-    public static final double GLOVE_SIMILARITY_THRESHOLD = CONFIG.getPropertyAsDouble("glove_SimilarityThreshold");
-    /**
-     * The path to the sqlite database file used by the GloVe word similarity measure.
-     */
-    public static final String GLOVE_DB_FILE_PATH = CONFIG.getProperty("glove_DatabaseFilePath");
 
     private static ResourceAccessor loadParameters() {
         return new ResourceAccessor("/configs/CommonTextToolsConfig.properties", true);

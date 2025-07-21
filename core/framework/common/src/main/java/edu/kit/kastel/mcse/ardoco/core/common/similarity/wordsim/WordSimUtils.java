@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteOpenMode;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.equality.EqualityMeasure;
@@ -198,20 +196,5 @@ public class WordSimUtils {
      */
     public double getSimilarity(String firstWord, String secondWord, boolean ignoreCase) {
         return this.getSimilarity(firstWord, secondWord, this.similarityStrategy, ignoreCase);
-    }
-
-    /**
-     * Configures SQLite settings for read-only, exclusive locking, and no journal mode.
-     *
-     * @return configured SQLiteConfig instance
-     */
-    public static SQLiteConfig getSqLiteConfig() {
-        var cfg = new SQLiteConfig();
-        cfg.setReadOnly(true);
-        cfg.setLockingMode(SQLiteConfig.LockingMode.EXCLUSIVE);
-        cfg.setJournalMode(SQLiteConfig.JournalMode.OFF);
-        cfg.setSynchronous(SQLiteConfig.SynchronousMode.OFF);
-        cfg.setOpenMode(SQLiteOpenMode.NOMUTEX);
-        return cfg;
     }
 }

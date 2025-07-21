@@ -13,8 +13,6 @@ public interface ComparisonStrategy {
 
     ComparisonStrategy AT_LEAST_ONE = new AtLeastOneStrategy();
 
-    ComparisonStrategy MAJORITY = new MajorityStrategy();
-
     /**
      * Evaluates whether the words from the given context are similar by combining the verdicts of the specified measures.
      *
