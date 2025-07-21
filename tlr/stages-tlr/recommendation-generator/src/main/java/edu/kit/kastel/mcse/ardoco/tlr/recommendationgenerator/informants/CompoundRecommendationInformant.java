@@ -76,7 +76,7 @@ public class CompoundRecommendationInformant extends Informant {
 
     /**
      * Find additional compounds and create RecommendedInstances for them. Additional compounds are when a word in a NounMapping has another word in front or
-     * afterwards and that compounds is a TypeMapping
+     * afterward and that compounds is a TypeMapping
      */
     private void findMoreCompoundsForRecommendationInstances(TextState textState, RecommendationState recommendationState, Model model) {
         for (var nounMapping : textState.getNounMappings()) {

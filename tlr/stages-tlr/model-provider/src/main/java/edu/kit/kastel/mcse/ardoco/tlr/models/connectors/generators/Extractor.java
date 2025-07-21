@@ -13,10 +13,6 @@ public abstract class Extractor {
         this.metamodelToExtract = metamodelToExtract;
     }
 
-    public String getPath() {
-        return this.path;
-    }
-
     public abstract Model extractModel();
 
     public final Metamodel getMetamodel() {

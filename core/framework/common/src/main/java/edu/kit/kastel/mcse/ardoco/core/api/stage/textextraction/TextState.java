@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import org.eclipse.collections.api.block.predicate.Predicate;
 import org.eclipse.collections.api.list.ImmutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -15,8 +13,6 @@ import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
  * Represents the state of text extraction, including noun and phrase mappings.
  */
 public interface TextState extends IConfigurable, PipelineStepData {
-    Logger logger = LoggerFactory.getLogger(TextState.class);
-
     String ID = "TextState";
 
     /**
