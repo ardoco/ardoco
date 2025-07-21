@@ -18,13 +18,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 
 @Deterministic
-public class CachedChatLanguageModel implements ChatLanguageModel {
+public class CachedChatLanguageModel implements ChatModel {
 
     private static final Logger logger = LoggerFactory.getLogger(CachedChatLanguageModel.class);
 
@@ -33,12 +33,12 @@ public class CachedChatLanguageModel implements ChatLanguageModel {
         new File(CACHE_DIR).mkdirs();
     }
 
-    private final ChatLanguageModel chatLanguageModel;
+    private final ChatModel chatLanguageModel;
     private final String cacheKey;
 
     private Map<String, String> cache = new LinkedHashMap<>();
 
-    public CachedChatLanguageModel(ChatLanguageModel chatLanguageModel, String cacheKey) {
+    public CachedChatLanguageModel(ChatModel chatLanguageModel, String cacheKey) {
         this.chatLanguageModel = chatLanguageModel;
         this.cacheKey = cacheKey;
         try {
@@ -50,12 +50,12 @@ public class CachedChatLanguageModel implements ChatLanguageModel {
     }
 
     @Override
-    public Response<AiMessage> generate(List<ChatMessage> messages) {
+    public ChatResponse chat(List<ChatMessage> messages) {
         if (cache.containsKey(messages.toString())) {
-            return Response.from(new AiMessage(cache.get(messages.toString())));
+            return ChatResponse.builder().aiMessage(new AiMessage(cache.get(messages.toString()))).build();
         }
-        Response<AiMessage> response = chatLanguageModel.generate(messages);
-        cache.put(messages.toString(), response.content().text());
+        ChatResponse response = chatLanguageModel.chat(messages);
+        cache.put(messages.toString(), response.aiMessage().text());
         try {
             createObjectMapper().writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
         } catch (IOException e) {

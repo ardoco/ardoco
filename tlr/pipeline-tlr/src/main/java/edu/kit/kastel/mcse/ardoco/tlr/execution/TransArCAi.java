@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 import java.util.SortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
@@ -12,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLin
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LLMArchitectureProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -19,24 +21,27 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class ArDoCoForSadSamViaLlmCodeTraceabilityLinkRecovery extends ArDoCoRunner {
+public class TransArCAi extends ArDoCoRunner {
 
-    public ArDoCoForSadSamViaLlmCodeTraceabilityLinkRecovery(String projectName) {
+    public TransArCAi(String projectName) {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputCode, SortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel largeLanguageModel,
-            LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt, LLMArchitecturePrompt.Features codeFeatures,
-            LLMArchitecturePrompt aggregationPrompt) {
-        definePipeline(inputText, inputCode, additionalConfigs, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
+    public void setUp(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs, File outputDir,
+            LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
+            LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
+        if (codeConfiguration.metamodel() != null) {
+            throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
+        }
+        definePipeline(inputText, codeConfiguration, additionalConfigs, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    private void definePipeline(File inputText, File inputCode, SortedMap<String, String> additionalConfigs, LargeLanguageModel largeLanguageModel,
-            LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt, LLMArchitecturePrompt.Features codeFeatures,
-            LLMArchitecturePrompt aggregationPrompt) {
+    private void definePipeline(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs,
+            LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
+            LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
@@ -48,10 +53,8 @@ public class ArDoCoForSadSamViaLlmCodeTraceabilityLinkRecovery extends ArDoCoRun
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        var codeConfiguration = ArCoTLModelProviderAgent.getCodeConfiguration(inputCode);
-
         ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, null,
-                codeConfiguration);
+                codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
         LLMArchitectureProviderAgent llmArchitectureProviderAgent = new LLMArchitectureProviderAgent(dataRepository, largeLanguageModel,
