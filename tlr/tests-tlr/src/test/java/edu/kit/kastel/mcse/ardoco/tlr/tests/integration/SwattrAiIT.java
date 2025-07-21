@@ -35,7 +35,7 @@ class SwattrAiIT {
 
     @DisplayName("Evaluate SAD-SAM-via-LLM TLR (MS)")
     @Test
-    void evaluateSadCodeTlrITMs() throws Exception {
+    void evaluateSadCodeTlrITMs() {
         SwattrEvaluationProject projectToConsider = SwattrEvaluationProject.MEDIASTORE;
         File inputModel = new File("src/test/resources/mediastore/mediastore_gpt4o_from_docs.txt");
 
@@ -63,7 +63,7 @@ class SwattrAiIT {
 
     @DisplayName("Evaluate SAD-SAM-via-LLM TLR (BBB)")
     @Test
-    void evaluateSadCodeTlrITBbb() throws Exception {
+    void evaluateSadCodeTlrITBbb() {
         SwattrEvaluationProject projectToConsider = SwattrEvaluationProject.BIGBLUEBUTTON;
         File inputModel = new File("src/test/resources/bbb/bbb_codellama13b_from_docs.txt");
 

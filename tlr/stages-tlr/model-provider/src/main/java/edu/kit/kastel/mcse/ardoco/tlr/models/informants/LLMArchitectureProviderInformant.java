@@ -200,14 +200,7 @@ public class LLMArchitectureProviderInformant extends Informant {
                 // Defined Format "- Name1"
                 var name = line.substring(1).trim();
                 componentNames.add(name);
-            } /* else if (Character.isDigit(line.charAt(0)) && line.contains(".")) {
-                // Fallback Format: 1. Name
-                var name = line.split("\\.", 2)[1].trim();
-                // We defined camel case ... so all after the space might be additional information
-                if (name.contains(" "))
-                    name = name.split(" ", 2)[0].trim();
-                componentNames.add(name);
-              }*/ else {
+            } else {
                 logger.warn("Could not parse component name: {}", line);
             }
         }
