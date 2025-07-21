@@ -7,11 +7,11 @@ import java.util.*;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.*;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.*;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.*;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.finder.EnumDeclarationFinder;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.finder.MethodDeclarationFinder;

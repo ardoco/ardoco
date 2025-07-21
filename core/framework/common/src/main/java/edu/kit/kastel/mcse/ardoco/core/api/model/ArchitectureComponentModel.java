@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
+package edu.kit.kastel.mcse.ardoco.core.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,8 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureItem;
 
 /**
  * Represents a model containing only architecture components. Provides access to architecture components and their type identifiers.

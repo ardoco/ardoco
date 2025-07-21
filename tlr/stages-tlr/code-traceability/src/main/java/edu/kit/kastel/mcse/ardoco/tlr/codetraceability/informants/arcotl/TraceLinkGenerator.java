@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Computation;

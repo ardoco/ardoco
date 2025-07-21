@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 
 public abstract class Matcher extends Aggregation {

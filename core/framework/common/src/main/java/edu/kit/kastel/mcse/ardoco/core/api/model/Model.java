@@ -1,11 +1,10 @@
 /* Licensed under MIT 2023-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.arcotl;
+package edu.kit.kastel.mcse.ardoco.core.api.model;
 
 import java.util.List;
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
 /**

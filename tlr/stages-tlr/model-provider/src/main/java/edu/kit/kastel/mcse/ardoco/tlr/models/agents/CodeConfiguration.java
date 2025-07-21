@@ -4,8 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 import java.io.File;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.AllLanguagesExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;

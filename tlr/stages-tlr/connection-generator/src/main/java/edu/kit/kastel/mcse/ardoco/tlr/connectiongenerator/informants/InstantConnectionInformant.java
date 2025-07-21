@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 import java.util.SortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;

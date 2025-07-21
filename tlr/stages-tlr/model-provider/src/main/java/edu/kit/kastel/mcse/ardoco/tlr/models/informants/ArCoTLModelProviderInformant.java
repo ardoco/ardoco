@@ -6,10 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;

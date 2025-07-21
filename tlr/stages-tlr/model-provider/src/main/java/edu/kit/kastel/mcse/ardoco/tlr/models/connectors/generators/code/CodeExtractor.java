@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelDTO;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModelWithCompilationUnitsAndPackages;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModel.CodeModelDto;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.model.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 
@@ -63,7 +63,7 @@ public abstract class CodeExtractor extends Extractor {
             ObjectMapper objectMapper = createObjectMapper();
             objectMapper.registerModule(new Jdk8Module());
             try {
-                CodeModelDTO content = objectMapper.readValue(codeModelFile, CodeModelDTO.class);
+                CodeModelDto content = objectMapper.readValue(codeModelFile, CodeModelDto.class);
 
                 return switch (metamodelToExtract) {
                     case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CodeModelWithCompilationUnitsAndPackages(content);

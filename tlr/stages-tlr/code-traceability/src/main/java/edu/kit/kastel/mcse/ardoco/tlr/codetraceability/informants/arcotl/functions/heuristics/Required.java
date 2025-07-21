@@ -1,13 +1,13 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.model.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.model.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 

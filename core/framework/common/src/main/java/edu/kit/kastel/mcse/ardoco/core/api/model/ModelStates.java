@@ -1,5 +1,5 @@
 /* Licensed under MIT 2022-2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.models;
+package edu.kit.kastel.mcse.ardoco.core.api.model;
 
 import java.io.Serial;
 import java.util.SortedMap;
@@ -7,7 +7,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 /**

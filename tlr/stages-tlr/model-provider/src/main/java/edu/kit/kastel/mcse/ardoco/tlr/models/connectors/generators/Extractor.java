@@ -1,8 +1,8 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Model;
 
 public abstract class Extractor {
     protected final Metamodel metamodelToExtract;

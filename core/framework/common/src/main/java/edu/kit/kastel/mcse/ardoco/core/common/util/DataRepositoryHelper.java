@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.model.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;

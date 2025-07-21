@@ -8,7 +8,7 @@ import java.util.SortedMap;
 
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.model.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
