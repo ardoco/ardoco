@@ -33,6 +33,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein.LevenshteinMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
@@ -50,8 +51,8 @@ public class LLMArchitectureProviderInformant extends Informant {
     public LLMArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentation,
             LLMArchitecturePrompt code, LLMArchitecturePrompt.Features codeFeature, LLMArchitecturePrompt aggregation) {
         super(LLMArchitectureProviderInformant.class.getSimpleName(), dataRepository);
-        String apiKey = System.getenv("OPENAI_API_KEY");
-        String orgId = System.getenv("OPENAI_ORGANIZATION_ID");
+        String apiKey = Environment.getenv("OPENAI_API_KEY");
+        String orgId = Environment.getenv("OPENAI_ORGANIZATION_ID");
         if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
             throw new IllegalArgumentException("OpenAI API Key and Organization ID must be set");
         }

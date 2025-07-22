@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.textprocessor;
 
 import java.io.IOException;
@@ -15,14 +15,16 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
+
 public class HttpCommunicator {
 
     public static final String ENV_USERNAME = "SCNLP_SERVICE_USER";
     public static final String ENV_PASSWORD = "SCNLP_SERVICE_PASSWORD";
 
     public String sendAuthenticatedGetRequest(String requestUrl) throws IOException {
-        String username = System.getenv(ENV_USERNAME);
-        String password = System.getenv(ENV_PASSWORD);
+        String username = Environment.getenv(ENV_USERNAME);
+        String password = Environment.getenv(ENV_PASSWORD);
         if (username == null || password == null) {
             throw new IOException("Environment variables " + ENV_USERNAME + " and " + ENV_PASSWORD + " must be set.");
         }
@@ -36,8 +38,8 @@ public class HttpCommunicator {
     }
 
     public String sendAuthenticatedPostRequest(String requestUrl, String body) throws IOException {
-        String username = System.getenv(ENV_USERNAME);
-        String password = System.getenv(ENV_PASSWORD);
+        String username = Environment.getenv(ENV_USERNAME);
+        String password = Environment.getenv(ENV_PASSWORD);
         if (username == null || password == null) {
             throw new IOException("Environment variables " + ENV_USERNAME + " and " + ENV_PASSWORD + " must be set.");
         }

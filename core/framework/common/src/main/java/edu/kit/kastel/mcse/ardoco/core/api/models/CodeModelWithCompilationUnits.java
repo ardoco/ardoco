@@ -44,7 +44,9 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
     @Override
     public List<CodeCompilationUnit> getEndpoints() {
         List<CodeCompilationUnit> entities = new ArrayList<>();
-        this.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
+        for (CodeItem codeItem : this.getContent()) {
+            entities.addAll(codeItem.getAllCompilationUnits());
+        }
         return entities;
     }
 
