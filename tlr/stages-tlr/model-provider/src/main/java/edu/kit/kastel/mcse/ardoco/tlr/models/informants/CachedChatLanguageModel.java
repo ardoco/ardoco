@@ -1,8 +1,6 @@
 /* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
-import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -22,21 +20,14 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 
 @Deterministic
 public class CachedChatLanguageModel implements ChatModel {
 
     private static final Logger logger = LoggerFactory.getLogger(CachedChatLanguageModel.class);
 
-    private static final String CACHE_DIR = "cache-llm/";
-
-    static {
-        File cache = new File(CACHE_DIR);
-        if (!cache.mkdirs() && !cache.isDirectory()) {
-            logger.error("Failed to create cache directory: {}", CACHE_DIR);
-            throw new IllegalStateException("Could not create cache directory: " + CACHE_DIR);
-        }
-    }
+    private static final String CACHE_DIR = loadCacheDir();
 
     private final ChatModel chatLanguageModel;
     private final String cacheKey;
@@ -73,5 +64,22 @@ public class CachedChatLanguageModel implements ChatModel {
         ObjectMapper oom = JsonHandling.createObjectMapper();
         oom.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxNameLength(100000).build());
         return oom;
+    }
+
+    private static synchronized String loadCacheDir() {
+        if (CACHE_DIR != null) {
+            return CACHE_DIR;
+        }
+
+        String cacheDir = Environment.getenv("LLM_CACHE_DIR");
+        if (cacheDir == null) {
+            cacheDir = "cache-llm/";
+        }
+        File cache = new File(cacheDir);
+        if (!cache.mkdirs() && !cache.isDirectory()) {
+            logger.error("Failed to create cache directory: {}", cacheDir);
+            throw new IllegalStateException("Could not create cache directory: " + cacheDir);
+        }
+        return cacheDir;
     }
 }
