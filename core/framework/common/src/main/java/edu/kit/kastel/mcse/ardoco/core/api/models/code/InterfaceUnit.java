@@ -72,7 +72,9 @@ public final class InterfaceUnit extends Datatype {
     public List<Datatype> getAllDataTypes() {
         List<Datatype> result = new ArrayList<>();
         result.add(this);
-        this.getContent().forEach(c -> result.addAll(c.getAllDataTypes()));
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllDataTypes());
+        }
         return result;
     }
 
