@@ -117,3 +117,5 @@ pipeline/src/main/resources/evaluations/
 .idea
 
 *.iml
+
+.env
