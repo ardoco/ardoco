@@ -18,6 +18,10 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The TestProjectEvaluator class is responsible for evaluating component recognition within test projects.
+ * It compares recognized components against ground-truth components to assess matching performance using precision, recall, and F1-score metrics.
+ */
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
     private final ChatModel model;
@@ -36,6 +40,13 @@ public class TestProjectEvaluator {
         return input.replaceAll("(?i)\\bcomponent\\b", "").replaceAll("\\s+", " ").trim();
     }
 
+    /**
+     * Evaluates the specified test project or all test projects depending on the input.
+     * If the provided project is {@code ComponentRecognitionParameterizedTest.TestProject.ALL},
+     * evaluates all test projects. Otherwise, evaluates the specified single test project.
+     *
+     * @param project the test project to evaluate. If {@code ALL}, all test projects will be evaluated.
+     */
     public void evaluate(ComponentRecognitionParameterizedTest.TestProject project) {
         if (project == ComponentRecognitionParameterizedTest.TestProject.ALL) {
             evaluateAll();
@@ -44,6 +55,15 @@ public class TestProjectEvaluator {
         }
     }
 
+    /**
+     * Evaluates all test projects located in the evaluation resources directory.
+     * For each project directory, it invokes the evaluation process and verifies
+     * the outputs against the expected results. The method ensures that all project
+     * evaluations complete without errors, and logs any issues encountered.
+     * <p>
+     * Throws an assertion failure if any test project evaluations fail, providing
+     * the count of failed projects in the error message.
+     */
     private void evaluateAll() {
         Path evalResourcesPath = getEvaluationResourcesPath();
         Stream<Path> testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
@@ -64,6 +84,11 @@ public class TestProjectEvaluator {
         assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
     }
 
+    /**
+     * Evaluates a single test project
+     *
+     * @param project the test project to evaluate, represented as an instance of {@link ComponentRecognitionParameterizedTest.TestProject}.
+     */
     private void evaluateSingle(ComponentRecognitionParameterizedTest.TestProject project) {
         Path evalResourcesPath = getEvaluationResourcesPath();
         Path projectDir = evalResourcesPath.resolve(project.name().toLowerCase());
@@ -72,12 +97,25 @@ public class TestProjectEvaluator {
         assertDoesNotThrow(() -> evaluateProjectInDirectory(projectDir));
     }
 
+    /**
+     * Retrieves the path to the evaluation resources directory.
+     * Ensures that the specified directory exists and can be converted into a {@link Path}.
+     * If the directory is unavailable or inaccessible, an assertion error is thrown.
+     *
+     * @return the {@link Path} to the evaluation resources directory
+     */
     private Path getEvaluationResourcesPath() {
         URL evalResourcesUrl = this.getClass().getClassLoader().getResource("evaluation_resources");
         assertNotNull(evalResourcesUrl, "Evaluation resources not found");
         return assertDoesNotThrow(() -> Paths.get(evalResourcesUrl.toURI()));
     }
 
+    /**
+     * Evaluates the project located in the specified directory by processing the necessary files,
+     * calling the component recognition, and comparing the results with the goldstandard data.
+     *
+     * @param dir the directory containing the project files to be evaluated
+     */
     private void evaluateProjectInDirectory(Path dir) {
         logger.info("Evaluating project: {}", dir.getFileName());
 
@@ -100,6 +138,14 @@ public class TestProjectEvaluator {
         logger.info("-----------------------------------------------");
     }
 
+    /**
+     * Searches for and retrieves the path of a goldstandard file named "goldstandard_NER.csv"
+     * within the "goldstandards" subdirectory of the specified directory.
+     * Throws a runtime exception if no such file is found.
+     *
+     * @param dir the root directory to search for the goldstandard file
+     * @return the {@link Path} to the first matching goldstandard file
+     */
     private Path findGoldstandardFile(Path dir) {
         return assertDoesNotThrow(() ->
                 Files.list(dir.resolve("goldstandards"))
@@ -109,6 +155,16 @@ public class TestProjectEvaluator {
         );
     }
 
+    /**
+     * Searches for and retrieves the path to a specific SAD file within a given directory.
+     * The method first identifies a subdirectory under the specified directory whose name
+     * contains the substring "text_". Then, it looks for a file in that subdirectory
+     * whose name ends with "_1SentPerLine.txt". If no such file or directory is found,
+     * a runtime exception is thrown.
+     *
+     * @param dir the root directory to search for the SAD file
+     * @return the {@link Path} to the found SAD file
+     */
     private Path findSadFile(Path dir) {
         Path sadDir = assertDoesNotThrow(() ->
                 Files.list(dir)
@@ -126,17 +182,31 @@ public class TestProjectEvaluator {
         );
     }
 
+    /**
+     * Matches the given components with the ground truth, evaluates the matching results,
+     * and logs classification metrics such as precision, recall, and F1-score.
+     *
+     * @param components  the set of recognized components to be evaluated
+     * @param groundTruth the set of goldstandard components to compare against
+     */
     private void matchAndLogResults(Set<NamedEntity> components, Set<NamedEntity> groundTruth) {
         matchComponentNames(groundTruth, components);
 
         Set<SimpleComponentOccurrence> componentsOccurrences = SimpleComponentOccurrence.fromComponents(components);
         Set<SimpleComponentOccurrence> groundTruthOccurrences = SimpleComponentOccurrence.fromComponents(groundTruth);
 
+        //System.out.println("componentsOccurrences: " + componentsOccurrences);
+        //System.out.println("groundTruthOccurrences: " + groundTruthOccurrences);
+
         ClassificationMetricsCalculator calculator = ClassificationMetricsCalculator.getInstance();
         SingleClassificationResult<SimpleComponentOccurrence> result = calculator.calculateMetrics(componentsOccurrences, groundTruthOccurrences, null);
 
         //logger.info("Precision = {}; Recall = {}; F1-Score = {}", result.getPrecision(), result.getRecall(), result.getF1());
+        //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||");
         result.prettyPrint();
+        //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||");
+        System.out.println("false positives (= zu viel): " + result.getFalsePositives().stream().sorted().toList());
+        System.out.println("false negatives (= fehlt): " + result.getFalseNegatives().stream().sorted().toList());
     }
 
     /**

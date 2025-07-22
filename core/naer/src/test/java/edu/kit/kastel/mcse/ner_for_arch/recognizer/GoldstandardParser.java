@@ -11,6 +11,10 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+/**
+ * This class is responsible for parsing goldstandard data into structured {@link NamedEntity} objects
+ * and retrieving component-related information from a test project directory.
+ */
 public class GoldstandardParser {
 
     /**
@@ -84,6 +88,12 @@ public class GoldstandardParser {
     }
 
 
+    /**
+     * Parses the specified file to extract possible component names and organizes them into a map.
+     *
+     * @param componentNameFile the path to the file containing component names
+     * @return a map where the key is {@link NamedEntityType#COMPONENT}, and the value is a set of strings representing extracted component names
+     */
     private static Map<NamedEntityType, Set<String>> parsePossibleComponents(Path componentNameFile) {
         String csvContent = assertDoesNotThrow(() -> Files.readString(componentNameFile));
 

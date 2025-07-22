@@ -11,7 +11,8 @@ import java.util.Set;
  * @param componentName  name of the component
  * @param sentenceNumber 1-indexed number of the sentence where the component is mentioned
  */
-public record SimpleComponentOccurrence(String componentName, int sentenceNumber) {
+public record SimpleComponentOccurrence(String componentName,
+                                        int sentenceNumber) implements Comparable<SimpleComponentOccurrence> {
 
     public static Set<SimpleComponentOccurrence> fromComponents(Set<NamedEntity> components) {
         Set<SimpleComponentOccurrence> result = new HashSet<>();
@@ -23,6 +24,15 @@ public record SimpleComponentOccurrence(String componentName, int sentenceNumber
         }
 
         return result;
+    }
+
+    @Override
+    public int compareTo(SimpleComponentOccurrence other) {
+        int sentenceCompare = Integer.compare(this.sentenceNumber, other.sentenceNumber);
+        if (sentenceCompare != 0) {
+            return sentenceCompare;
+        }
+        return this.componentName.compareTo(other.componentName);
     }
 
 }

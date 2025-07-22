@@ -17,17 +17,22 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Parameterized test class for evaluating component recognition in software projects.
+ * The tests are configured using a test configuration file, named 'test-config.json'.
+ * This configuration outlines details regarding the model, test project, prompts, and additional settings.
+ */
 public class ComponentRecognitionParameterizedTest {
     private final Logger logger = LoggerFactory.getLogger(ComponentRecognitionParameterizedTest.class);
 
     static Stream<TestConfig> loadTestConfig() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-        
+
         // Register the custom deserializer for the Prompt class
         mapper.registerModule(new com.fasterxml.jackson.databind.module.SimpleModule()
                 .addDeserializer(Prompt.class, new PromptDeserializer()));
-                
+
         InputStream is = ComponentRecognitionParameterizedTest.class.getResourceAsStream("test-config.json");
         List<TestConfig> configList = mapper.readValue(is, new TypeReference<>() {
         });
@@ -57,6 +62,13 @@ public class ComponentRecognitionParameterizedTest {
         evaluator.evaluate(project);
     }
 
+    /**
+     * An enumeration of test projects utilized in evaluating component recognition.
+     * <p>
+     * The enumeration represents different software projects used for testing purposes
+     * in the context of component recognition. It also includes an option to represent
+     * all test projects collectively.
+     */
     public enum TestProject {
         BIGBLUEBUTTON, JABREF, MEDIASTORE, TEAMMATES, TEASTORE, ALL
     }
