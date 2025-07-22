@@ -84,14 +84,29 @@ public class NamedEntity {
         this.name = name;
     }
 
+    /**
+     * Retrieves the type of the named entity.
+     *
+     * @return the type of the named entity as an instance of {@link NamedEntityType}
+     */
     public NamedEntityType getType() {
         return type;
     }
 
+    /**
+     * Retrieves the set of alternative names associated with this {@link NamedEntity}.
+     *
+     * @return a set of strings representing alternative names for this entity
+     */
     public Set<String> getAlternativeNames() {
         return alternativeNames;
     }
 
+    /**
+     * Adds an alternative name to the set of alternative names for this {@link NamedEntity}.
+     *
+     * @param alternativeName the alternative name to be added
+     */
     public void addAlternativeName(String alternativeName) {
         this.alternativeNames.add(alternativeName);
     }
@@ -128,6 +143,12 @@ public class NamedEntity {
         return result;
     }
 
+    /**
+     * Adds an occurrence of the {@link NamedEntity} in a sentence with a specified reference type.
+     *
+     * @param sentenceNumber the 1-based index of the sentence where the entity occurs
+     * @param referenceType the type of reference (direct or indirect) as an instance of {@link NamedEntityReferenceType}
+     */
     public void addOccurrence(int sentenceNumber, NamedEntityReferenceType referenceType) {
         this.occurrences.add(new Occurrence(sentenceNumber, referenceType));
     }
