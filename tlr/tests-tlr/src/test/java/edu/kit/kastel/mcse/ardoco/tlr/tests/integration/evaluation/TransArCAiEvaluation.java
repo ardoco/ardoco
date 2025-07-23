@@ -4,9 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
 
 import java.io.File;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
@@ -55,13 +54,12 @@ public class TransArCAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();
-        SortedMap<String, String> additionalConfigsMap = new TreeMap<>();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
         var runner = new TransArCAi(projectName);
-        runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), additionalConfigsMap, outputDirectory,
-                largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
+        runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
+                outputDirectory, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         return runner;
     }
 }
