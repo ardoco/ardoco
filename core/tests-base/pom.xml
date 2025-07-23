@@ -22,6 +22,12 @@
       <artifactId>metrics</artifactId>
       <version>0.1.1</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
