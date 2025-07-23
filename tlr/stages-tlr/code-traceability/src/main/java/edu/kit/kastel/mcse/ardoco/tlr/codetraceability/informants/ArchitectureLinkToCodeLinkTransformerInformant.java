@@ -3,9 +3,9 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
@@ -121,7 +121,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // empty
     }
 }

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
@@ -32,7 +33,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 public class HoldBackRunResultsProducer {
     protected File inputText;
     protected File inputModel;
-    protected SortedMap<String, String> additionalConfigs;
+    protected ImmutableSortedMap<String, String> additionalConfigs;
 
     public HoldBackRunResultsProducer() {
     }

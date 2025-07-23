@@ -3,7 +3,8 @@ package edu.kit.kastel.mcse.ardoco.core.pipeline.agent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.ChildClassConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -93,7 +94,7 @@ public abstract class PipelineAgent extends Pipeline implements Agent {
      * Applies additional configuration to internal objects and informants.
      */
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         super.delegateApplyConfigurationToInternalObjects(additionalConfiguration);
         this.informants.forEach(filter -> filter.applyConfiguration(additionalConfiguration));
     }

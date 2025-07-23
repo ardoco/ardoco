@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.data;
 
 import java.io.Serial;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 
@@ -15,7 +16,7 @@ public abstract class AbstractState extends AbstractConfigurable implements Pipe
     private static final long serialVersionUID = -3318799425973820663L;
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }
