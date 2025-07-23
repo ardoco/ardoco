@@ -5,7 +5,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
@@ -106,15 +107,15 @@ public class Pipeline extends AbstractPipelineStep {
     /**
      * This method is called at the start of running the pipeline. Within this method, the added PipelineSteps are prepared. Sub-classes of Pipeline can
      * override it with special cases. It is recommended that you apply the Map from {@link #getLastAppliedConfiguration()} via
-     * {@link #applyConfiguration(SortedMap)} to each pipeline step. You can do that on your own if you need special treatment or by default call
-     * {@link #delegateApplyConfigurationToInternalObjects(SortedMap)}. The base version does apply the last configuration via the default call.
+     * {@link #applyConfiguration(ImmutableSortedMap)} to each pipeline step. You can do that on your own if you need special treatment or by default call
+     * {@link #delegateApplyConfigurationToInternalObjects(ImmutableSortedMap)}. The base version does apply the last configuration via the default call.
      */
     protected void preparePipelineSteps() {
         this.delegateApplyConfigurationToInternalObjects(this.getLastAppliedConfiguration());
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         for (AbstractPipelineStep abstractPipelineStep : this.pipelineSteps) {
             abstractPipelineStep.applyConfiguration(additionalConfiguration);
         }

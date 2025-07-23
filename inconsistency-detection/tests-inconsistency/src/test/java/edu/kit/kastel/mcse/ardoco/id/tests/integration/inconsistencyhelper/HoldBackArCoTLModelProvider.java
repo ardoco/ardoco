@@ -4,10 +4,10 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
@@ -71,7 +71,7 @@ public class HoldBackArCoTLModelProvider {
         return this.components.get(this.currentHoldBackIndex);
     }
 
-    public PipelineAgent get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public PipelineAgent get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("", this.initialModel.getMetamodel()) {
 
             @Override
@@ -84,7 +84,7 @@ public class HoldBackArCoTLModelProvider {
         })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
 
             @Override
-            protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+            protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
                 // empty
             }
         };

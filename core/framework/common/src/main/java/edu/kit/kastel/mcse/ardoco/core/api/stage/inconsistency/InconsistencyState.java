@@ -1,8 +1,6 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency;
 
-import java.util.List;
-
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -35,7 +33,7 @@ public interface InconsistencyState extends IConfigurable {
      * @param recommendedInstances the recommended instances to add
      * @return true if all were added successfully
      */
-    default boolean addRecommendedInstances(List<RecommendedInstance> recommendedInstances) {
+    default boolean addRecommendedInstances(ImmutableList<RecommendedInstance> recommendedInstances) {
         var success = true;
         for (var recommendedInstance : recommendedInstances) {
             success &= addRecommendedInstance(recommendedInstance);
@@ -56,7 +54,7 @@ public interface InconsistencyState extends IConfigurable {
      *
      * @param recommendedInstances the recommended instances to set
      */
-    void setRecommendedInstances(List<RecommendedInstance> recommendedInstances);
+    void setRecommendedInstances(ImmutableList<RecommendedInstance> recommendedInstances);
 
     /**
      * Returns the recommended instances.

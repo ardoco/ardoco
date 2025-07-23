@@ -1,7 +1,7 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
-import java.util.SortedMap;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.text.NlpInformant;
@@ -56,7 +56,7 @@ public class CoreNLPProvider extends NlpInformant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }

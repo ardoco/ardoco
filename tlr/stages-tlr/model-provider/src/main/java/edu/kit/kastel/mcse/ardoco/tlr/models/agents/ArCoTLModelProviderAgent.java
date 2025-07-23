@@ -3,7 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
@@ -48,7 +49,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         return informants;
     }
 
-    public static ArCoTLModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, SortedMap<String, String> additionalConfigs,
+    public static ArCoTLModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
             ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
         if (architectureConfiguration == null && codeConfiguration == null) {
             throw new IllegalArgumentException("At least one configuration must be provided");
@@ -60,7 +61,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // empty
     }
 }

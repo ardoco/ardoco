@@ -191,7 +191,7 @@ public final class JavaModel {
                 packageNames = getPackageNames(fullName);
             }
             CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements,
-                    extension, ProgrammingLanguages.JAVA);
+                    extension, ProgrammingLanguage.JAVA);
             codeCompilationUnits.add(codeCompilationUnit);
             if (null != packageDeclaration) {
                 CodePackage codePackage = getPackage(packageNames, codeCompilationUnit);

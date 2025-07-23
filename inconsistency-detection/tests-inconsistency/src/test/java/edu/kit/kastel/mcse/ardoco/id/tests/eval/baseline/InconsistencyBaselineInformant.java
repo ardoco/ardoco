@@ -1,9 +1,8 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.tests.eval.baseline;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
@@ -47,7 +46,7 @@ public class InconsistencyBaselineInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }
