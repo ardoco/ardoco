@@ -5,6 +5,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TestProjectEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(TestProjectEvaluator.class);
+    public static final String SEPARATOR = "-----------------------------------------------";
+
     private final ChatModel model;
-    private final boolean useGoldstandardComponentNames;
+    private final boolean useGoldStandardComponentNames;
     private Prompt prompt;
 
-    public TestProjectEvaluator(ChatModel model, Prompt prompt, boolean useGoldstandardComponentNames) {
+    public TestProjectEvaluator(ChatModel model, Prompt prompt, boolean useGoldStandardComponentNames) {
         this.model = model;
         this.prompt = prompt;
-        this.useGoldstandardComponentNames = useGoldstandardComponentNames;
+        this.useGoldStandardComponentNames = useGoldStandardComponentNames;
     }
 
     // We do this because sometimes the LLM returns names like "gui component" but we use names like "gui" in the goldstandards
@@ -77,8 +80,8 @@ public class TestProjectEvaluator {
                     } catch (Exception e) {
                         errorCounter[0]++;
                         logger.error("Evaluation failed for project: {}", dir.getFileName());
-                        logger.info("-----------------------------------------------");
                     }
+                    logger.info(SEPARATOR);
                 });
 
         assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
@@ -120,22 +123,19 @@ public class TestProjectEvaluator {
         logger.info("Evaluating project: {}", dir.getFileName());
 
         Path goldstandardFile = findGoldstandardFile(dir);
-        Path sadFile = findSadFile(dir);
+        Path sadPath = findSadFile(dir);
+        SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(sadPath);
 
-        NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder(sadFile).chatModel(model);
+        NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder().chatModel(model);
         if (prompt != null) {
             builder = builder.prompt(prompt);
         }
         NamedEntityRecognizer recognizer = builder.build();
 
-        Set<NamedEntity> components = useGoldstandardComponentNames ? recognizer.recognize(GoldstandardParser.getPossibleComponents(dir)) : recognizer.recognize();
+        Set<NamedEntity> components = useGoldStandardComponentNames ? recognizer.recognize(sad,GoldstandardParser.getPossibleComponents(dir)) : recognizer.recognize(sad);
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));
-        //System.out.println("recognized:\n" + components);
-        //System.out.println("-----------------------------------------------");
-        //System.out.println("groundTruth:\n" + groundTruth);
 
         matchAndLogResults(components, groundTruth);
-        logger.info("-----------------------------------------------");
     }
 
     /**
@@ -195,18 +195,12 @@ public class TestProjectEvaluator {
         Set<SimpleComponentOccurrence> componentsOccurrences = SimpleComponentOccurrence.fromComponents(components);
         Set<SimpleComponentOccurrence> groundTruthOccurrences = SimpleComponentOccurrence.fromComponents(groundTruth);
 
-        //System.out.println("componentsOccurrences: " + componentsOccurrences);
-        //System.out.println("groundTruthOccurrences: " + groundTruthOccurrences);
-
         ClassificationMetricsCalculator calculator = ClassificationMetricsCalculator.getInstance();
         SingleClassificationResult<SimpleComponentOccurrence> result = calculator.calculateMetrics(componentsOccurrences, groundTruthOccurrences, null);
 
-        //logger.info("Precision = {}; Recall = {}; F1-Score = {}", result.getPrecision(), result.getRecall(), result.getF1());
-        //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||");
         result.prettyPrint();
-        //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||");
-        System.out.println("false positives (= zu viel): " + result.getFalsePositives().stream().sorted().toList());
-        System.out.println("false negatives (= fehlt): " + result.getFalseNegatives().stream().sorted().toList());
+        System.out.println("false positives: " + result.getFalsePositives().stream().sorted().toList());
+        System.out.println("false negatives: " + result.getFalseNegatives().stream().sorted().toList());
     }
 
     /**
@@ -242,7 +236,6 @@ public class TestProjectEvaluator {
                         //in this case: componentName is the name that joins/matches both components
                         component.changeName(componentName);
                         groundTruthComponent.changeName(componentName);
-                        //System.out.println("MATCH: " + componentName);
                         break; //because we assume that there is only one possible match to be found
                     }
                 }
