@@ -1,9 +1,9 @@
 # ArDoCo
 
-[![Maven Verify](https://github.com/ArDoCo/Core/actions/workflows/verify.yml/badge.svg)](https://github.com/ArDoCo/Core/actions/workflows/verify.yml)
+[![Maven Verify](https://github.com/ArDoCo/ArDoCo/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ArDoCo/ArDoCo/actions/workflows/verify.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArDoCo_Core&metric=alert_status)](https://sonarcloud.io/dashboard?id=ArDoCo_Core)
-[![Latest Release](https://img.shields.io/github/release/ArDoCo/Core.svg)](https://github.com/ArDoCo/Core/releases/latest)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArDoCo_ArDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ArDoCo_ArDoCo)
+[![Latest Release](https://img.shields.io/github/release/ArDoCo/ArDoCo.svg)](https://github.com/ArDoCo/ArDoCo/releases/latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7274034.svg)](https://doi.org/10.5281/zenodo.7274034)
 
 The goal of the ArDoCo project is to connect architecture documentation and models with Traceability Link Recovery (TLR) while identifying missing or deviating elements (inconsistencies).
@@ -15,7 +15,7 @@ ArDoCo is actively developed by researchers of the _[Modelling for Continuous So
 This **Core** repository contains the framework and core definitions for the other approaches.
 As such, there is the definition of our pipeline and the data handling as well as the definitions for the various pipeline steps, inputs, outputs, etc.
 
-For more information about the setup, the project structure, or the architecture, please have a look at the [Wiki](https://github.com/ArDoCo/Core/wiki).
+For more information about the setup, the project structure, or the architecture, please have a look at the [Wiki](https://github.com/ArDoCo/ArDoCo/wiki).
 
 ## Maven
 
