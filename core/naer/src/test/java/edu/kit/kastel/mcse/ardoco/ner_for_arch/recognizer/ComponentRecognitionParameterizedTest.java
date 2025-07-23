@@ -46,7 +46,7 @@ public class ComponentRecognitionParameterizedTest {
         logger.info("Evaluation with this configuration: \n{}", testConfig);
 
         //create the chat model (VDL is the default)
-        ChatModelFactory chatModelFactory = ChatModelFactory.withProvider(testConfig.modelProvider != null ? testConfig.modelProvider : ModelProvider.VDL);
+        ChatModelFactory chatModelFactory = ChatModelFactory.withProvider(testConfig.modelProvider != null ? testConfig.modelProvider : ModelProvider.OLLAMA);
         if (testConfig.model() != null) {
             chatModelFactory = chatModelFactory.modelName(testConfig.model());
         }

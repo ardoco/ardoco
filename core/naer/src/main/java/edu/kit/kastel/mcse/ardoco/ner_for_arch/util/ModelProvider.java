@@ -10,7 +10,7 @@ public enum ModelProvider {
     /**
      * Virtual Design Lab Server provider (from KIT SDQ).
      */
-    VDL,
+    OLLAMA,
 
     /**
      * OpenAI provider.

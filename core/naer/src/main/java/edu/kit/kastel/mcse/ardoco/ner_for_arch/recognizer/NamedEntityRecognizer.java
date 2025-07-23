@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
@@ -115,7 +114,7 @@ public class NamedEntityRecognizer {
     public static class Builder {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
-        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.VDL).build(); // default value
+        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.OLLAMA).build(); // default value
         private Prompt prompt = new StructuredTextOutputPrompt(EXAMPLE_PROMPT);                 // default value
 
         /**
