@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
@@ -23,7 +24,8 @@ public class Swattr extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs, File outputDir) {
+    public void setUp(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
+            File outputDir) {
         if (architectureConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
@@ -32,12 +34,12 @@ public class Swattr extends ArDoCoRunner {
         isSetUp = true;
     }
 
-    public void setUp(String inputTextLocation, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs,
+    public void setUp(String inputTextLocation, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             String outputDirectory) {
         setUp(new File(inputTextLocation), architectureConfiguration, additionalConfigs, new File(outputDirectory));
     }
 
-    private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs) {
         var dataRepository = this.getArDoCo().getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {

@@ -4,6 +4,12 @@ package edu.kit.kastel.mcse.ardoco.core.tests.architecture;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -141,5 +147,33 @@ public class ArchitectureTest {
             .doNotHaveFullyQualifiedName("edu.kit.kastel.mcse.ardoco.magika.Configuration")
             .should()
             .callConstructor(ObjectMapper.class);
+
+    @ArchTest
+    public static final ArchRule preferEclipseCollections = noMethods().that()
+            .areDeclaredInClassesThat()
+            .areInterfaces()
+            .and()
+            .areDeclaredInClassesThat()
+            .resideOutsideOfPackage("..metrics..")
+            .should()
+            .haveRawReturnType(List.class)
+            .orShould()
+            .haveRawReturnType(Set.class)
+            .orShould()
+            .haveRawReturnType(SortedSet.class)
+            .orShould()
+            .haveRawReturnType(Map.class)
+            .orShould()
+            .haveRawReturnType(SortedMap.class)
+            .orShould()
+            .haveRawParameterTypes(List.class)
+            .orShould()
+            .haveRawParameterTypes(Set.class)
+            .orShould()
+            .haveRawParameterTypes(SortedSet.class)
+            .orShould()
+            .haveRawParameterTypes(Map.class)
+            .orShould()
+            .haveRawParameterTypes(SortedMap.class);
 
 }

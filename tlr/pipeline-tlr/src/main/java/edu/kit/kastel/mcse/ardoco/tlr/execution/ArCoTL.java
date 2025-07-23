@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
@@ -18,8 +19,8 @@ public class ArCoTL extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs,
-            File outputDir) {
+    public void setUp(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
+            ImmutableSortedMap<String, String> additionalConfigs, File outputDir) {
         if (architectureConfiguration.metamodel() != null || codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner define the metamodels.");
         }
@@ -30,7 +31,7 @@ public class ArCoTL extends ArDoCoRunner {
     }
 
     private void definePipeline(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
-            SortedMap<String, String> additionalConfigs) {
+            ImmutableSortedMap<String, String> additionalConfigs) {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 

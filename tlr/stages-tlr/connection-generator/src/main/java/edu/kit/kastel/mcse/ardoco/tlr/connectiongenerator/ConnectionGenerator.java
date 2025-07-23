@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
@@ -37,7 +38,7 @@ public class ConnectionGenerator extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of connectionGenerator
      */
-    public static ConnectionGenerator get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static ConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var connectionGenerator = new ConnectionGenerator(dataRepository);
         connectionGenerator.applyConfiguration(additionalConfigs);
         return connectionGenerator;

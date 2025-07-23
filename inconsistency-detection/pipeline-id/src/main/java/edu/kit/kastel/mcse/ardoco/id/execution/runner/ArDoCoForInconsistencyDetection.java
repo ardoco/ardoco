@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.id.execution.runner;
 
 import java.io.File;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
@@ -23,14 +24,15 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputModelArchitecture, ModelFormat inputModelFormat, SortedMap<String, String> additionalConfigs, File outputDir) {
+    public void setUp(File inputText, File inputModelArchitecture, ModelFormat inputModelFormat, ImmutableSortedMap<String, String> additionalConfigs,
+            File outputDir) {
         definePipeline(inputText, inputModelArchitecture, inputModelFormat, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs,
-            String outputDirectory) {
+    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ModelFormat modelFormat,
+            ImmutableSortedMap<String, String> additionalConfigs, String outputDirectory) {
         setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), modelFormat, additionalConfigs, new File(outputDirectory));
     }
 
@@ -42,7 +44,7 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
      * @param modelFormat            the type of the architecture (e.g., PCM, UML)
      * @param additionalConfigs      the additional configs
      */
-    private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, ImmutableSortedMap<String, String> additionalConfigs) {
         ArDoCo arDoCo = getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
         var text = CommonUtilities.readInputText(inputText);

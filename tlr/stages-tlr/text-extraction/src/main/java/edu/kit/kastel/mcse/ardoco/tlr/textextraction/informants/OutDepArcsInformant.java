@@ -1,10 +1,9 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
@@ -69,7 +68,7 @@ public class OutDepArcsInformant extends TextExtractionInformant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // empty
     }
 

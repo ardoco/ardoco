@@ -1,14 +1,15 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 
 import java.util.List;
-import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.agents.InitialCodeTraceabilityAgent;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.agents.InitialCodeTraceabilityAgent;
 
 public class SamCodeTraceabilityLinkRecovery extends AbstractExecutionStage {
 
@@ -16,7 +17,7 @@ public class SamCodeTraceabilityLinkRecovery extends AbstractExecutionStage {
         super(List.of(new InitialCodeTraceabilityAgent(dataRepository)), SamCodeTraceabilityLinkRecovery.class.getSimpleName(), dataRepository);
     }
 
-    public static SamCodeTraceabilityLinkRecovery get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static SamCodeTraceabilityLinkRecovery get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var samCodeTraceabilityLinkRecovery = new SamCodeTraceabilityLinkRecovery(dataRepository);
         samCodeTraceabilityLinkRecovery.applyConfiguration(additionalConfigs);
         return samCodeTraceabilityLinkRecovery;

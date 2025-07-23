@@ -4,8 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
 
 import java.io.File;
-import java.util.TreeMap;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
@@ -52,7 +52,8 @@ public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         outputDirectory.mkdirs();
 
         var runner = new TransArC(projectName);
-        runner.setUp(textInput, new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, new TreeMap<>(), outputDirectory);
+        runner.setUp(textInput, new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, SortedMaps.immutable.empty(),
+                outputDirectory);
         return runner;
     }
 }

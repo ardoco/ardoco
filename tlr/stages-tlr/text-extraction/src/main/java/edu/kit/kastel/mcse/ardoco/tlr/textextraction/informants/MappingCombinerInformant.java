@@ -1,11 +1,10 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.PhraseMapping;
@@ -127,7 +126,7 @@ public class MappingCombinerInformant extends TextExtractionInformant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         //none
     }
 }

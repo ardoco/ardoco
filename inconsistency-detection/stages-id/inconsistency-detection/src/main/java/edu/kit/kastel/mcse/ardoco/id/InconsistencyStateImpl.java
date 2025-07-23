@@ -2,7 +2,6 @@
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.io.Serial;
-import java.util.List;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -67,9 +66,9 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      * @param recommendedInstances the recommendedInstances to set
      */
     @Override
-    public void setRecommendedInstances(List<RecommendedInstance> recommendedInstances) {
+    public void setRecommendedInstances(ImmutableList<RecommendedInstance> recommendedInstances) {
         this.recommendedInstances = Lists.mutable.empty();
-        this.recommendedInstances.addAll(recommendedInstances);
+        this.recommendedInstances.addAll(recommendedInstances.castToList());
     }
 
 }

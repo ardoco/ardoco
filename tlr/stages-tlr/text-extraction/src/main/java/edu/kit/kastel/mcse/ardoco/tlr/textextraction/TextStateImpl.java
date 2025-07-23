@@ -3,11 +3,11 @@ package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.io.Serial;
 import java.util.Comparator;
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.ordered.SortedIterable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -164,7 +164,7 @@ public class TextStateImpl extends AbstractState implements TextState {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // handle additional configuration
     }
 

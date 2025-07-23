@@ -4,11 +4,11 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.MutableSet;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +83,7 @@ public class SwattrEvaluation extends AbstractEvaluation {
         outputDirectory.mkdirs();
 
         Swattr swattr = new Swattr(projectName);
-        swattr.setUp(documentationFile, architectureModel, new TreeMap<>(), outputDirectory);
+        swattr.setUp(documentationFile, architectureModel, SortedMaps.immutable.empty(), outputDirectory);
         return swattr;
     }
 

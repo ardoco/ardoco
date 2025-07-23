@@ -2,12 +2,12 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.Objects;
-import java.util.SortedMap;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -142,7 +142,7 @@ public class ProjectNameInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // handle additional configuration
     }
 }
