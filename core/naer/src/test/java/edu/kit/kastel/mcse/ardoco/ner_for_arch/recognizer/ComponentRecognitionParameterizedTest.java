@@ -8,6 +8,7 @@ import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ public class ComponentRecognitionParameterizedTest {
         return configList.stream();
     }
 
+    @EnabledIfEnvironmentVariable(named = "runEval", matches = ".*")
     @DisplayName("Evaluate component recognition of test projects. Test configuration can be specified in 'test-config.json'.")
     @ParameterizedTest
     @MethodSource("loadTestConfig")
