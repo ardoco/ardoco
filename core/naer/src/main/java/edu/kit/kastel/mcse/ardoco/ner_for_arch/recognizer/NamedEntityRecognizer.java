@@ -31,10 +31,7 @@ public class NamedEntityRecognizer {
      * The chat model used to process the SAD
      */
     private final ChatModel chatModel;
-    /**
-     * The software architecture documentation (SAD) to analyze
-     */
-    private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
+
     /**
      * The prompt that instructs the chat model on how to identify named entities
      */
@@ -48,7 +45,6 @@ public class NamedEntityRecognizer {
     private NamedEntityRecognizer(Builder builder) {
         this.chatModel = builder.chatModel;
         this.prompt = builder.prompt;
-        this.softwareArchitectureDocumentation = builder.softwareArchitectureDocumentation;
     }
 
     private static String loadPromptFromResources(String path) {
@@ -65,14 +61,14 @@ public class NamedEntityRecognizer {
     }
 
     /**
-     * Recognizes {@link NamedEntity} instances in the given {@link NamedEntityRecognizer#softwareArchitectureDocumentation}.
+     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation}.
      * <p>
      * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
      * </p>
      *
      * @return a set of recognized named entities
      */
-    public Set<NamedEntity> recognize() {
+    public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
         logger.info("calling LLM...");
         String answer = prompt.process(chatModel, softwareArchitectureDocumentation);
 
@@ -99,7 +95,7 @@ public class NamedEntityRecognizer {
     }
 
     /**
-     * Recognizes {@link NamedEntity} instances in the given {@link NamedEntityRecognizer#softwareArchitectureDocumentation} using a set of entity names (that are suspected to occur in the SAD) as support.
+     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation} using a set of entity names (that are suspected to occur in the SAD) as support.
      * <p>
      * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
      * </p>
@@ -107,9 +103,9 @@ public class NamedEntityRecognizer {
      * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that should be recognized with their corresponding types).
      * @return a set of recognized named entities
      */
-    public Set<NamedEntity> recognize(Map<NamedEntityType, Set<String>> possibleEntities) {
+    public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, Map<NamedEntityType, Set<String>> possibleEntities) {
         prompt.addPossibleEntities(possibleEntities);
-        return recognize();
+        return recognize(softwareArchitectureDocumentation);
     }
 
 
@@ -119,31 +115,8 @@ public class NamedEntityRecognizer {
     public static class Builder {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
-        private final SoftwareArchitectureDocumentation softwareArchitectureDocumentation;
         private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.VDL).build(); // default value
         private Prompt prompt = new StructuredTextOutputPrompt(EXAMPLE_PROMPT);                 // default value
-
-        /**
-         * Creates a builder using a path to the file containing the SAD.
-         *
-         * @param sadFilePath the path to the SAD file
-         */
-        public Builder(Path sadFilePath) {
-            this.softwareArchitectureDocumentation = new SoftwareArchitectureDocumentation(sadFilePath);
-        }
-
-        /**
-         * Creates a builder using a provided text as the SAD.
-         *
-         * <p>
-         * Note: If this constructor is used, {@link SoftwareArchitectureDocumentation#getFilePath()}{@code == null}
-         * </p>
-         *
-         * @param sadText the SAD as plain text
-         */
-        public Builder(String sadText) {
-            this.softwareArchitectureDocumentation = new SoftwareArchitectureDocumentation(sadText);
-        }
 
         /**
          * Sets the chat model to use.
