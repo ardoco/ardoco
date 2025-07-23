@@ -124,9 +124,11 @@ public class TestProjectEvaluator {
 
         Path goldstandardFile = findGoldstandardFile(dir);
         Path sadPath = findSadFile(dir);
+
         SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(sadPath);
 
-        NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder().chatModel(model);
+        NamedEntityRecognizer.Builder builder = new NamedEntityRecognizer.Builder();
+        builder = builder.chatModel(model);
         if (prompt != null) {
             builder = builder.prompt(prompt);
         }

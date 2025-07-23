@@ -114,8 +114,8 @@ public class NamedEntityRecognizer {
     public static class Builder {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
-        private ChatModel chatModel = ChatModelFactory.withProvider(ModelProvider.OLLAMA).build(); // default value
-        private Prompt prompt = new StructuredTextOutputPrompt(EXAMPLE_PROMPT);                 // default value
+        private ChatModel chatModel;
+        private Prompt prompt;                 // default value
 
         /**
          * Sets the chat model to use.
