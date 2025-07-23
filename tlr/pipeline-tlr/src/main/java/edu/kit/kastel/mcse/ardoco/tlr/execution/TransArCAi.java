@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
@@ -27,7 +28,7 @@ public class TransArCAi extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs, File outputDir,
+    public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
             LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
             LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
         if (codeConfiguration.metamodel() != null) {
@@ -39,7 +40,7 @@ public class TransArCAi extends ArDoCoRunner {
         isSetUp = true;
     }
 
-    private void definePipeline(File inputText, CodeConfiguration codeConfiguration, SortedMap<String, String> additionalConfigs,
+    private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
             LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
         ArDoCo arDoCo = this.getArDoCo();

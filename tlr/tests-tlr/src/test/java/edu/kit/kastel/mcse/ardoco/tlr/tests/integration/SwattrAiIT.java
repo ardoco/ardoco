@@ -2,8 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import java.io.File;
-import java.util.TreeMap;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +48,7 @@ class SwattrAiIT {
                 File outputDir = new File(OUTPUT);
 
                 var runner = new Swattr(name);
-                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), new TreeMap<>(), outputDir);
+                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), SortedMaps.immutable.empty(), outputDir);
                 return runner;
             }
 
@@ -75,7 +75,7 @@ class SwattrAiIT {
                 File outputDir = new File(OUTPUT);
 
                 var runner = new Swattr(name);
-                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), new TreeMap<>(), outputDir);
+                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), SortedMaps.immutable.empty(), outputDir);
                 return runner;
             }
 
