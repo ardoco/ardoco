@@ -13,18 +13,16 @@ The library is also designed for easy extension, enabling integration with custo
 ## Features
 
 - Identify named entities in SAD
-- Support for multiple LLM providers (OpenAI and
-  VDL ([Virtual Design Lab Server from KIT SDQ](https://sdq.kastel.kit.edu/wiki/Virtual_Design_Lab_Server)), with easy
-  extensibility to add more)
+- Support for multiple LLM providers (OpenAI and Ollama), easily extensibility to add more
 - Configurable prompts for different recognition strategies
-- Evaluation against goldstandard data
+- Evaluation against gold standard data
 - Flexible builder pattern for easy configuration
 
 ## Requirements
 
 - Java 17 or higher
 - Maven 3.6 or higher
-- Access to LLM APIs (OpenAI API key, VDL account, etc.)
+- Access to LLM APIs (OpenAI API key, Ollama server, etc.)
 
 ## Installation
 
@@ -33,17 +31,15 @@ Add the following dependency to your Maven project:
 ```xml
 
 <dependency>
-    <groupId>edu.kit</groupId>
-    <artifactId>vongeisaujohannes</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>io.github.ardoco</groupId>
+    <artifactId>named-architecture-entity-recognition</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 Or clone the repository and build it locally:
 
 ```bash
-git clone https://gitlab.kit.edu/kit/kastel/sdq/stud/praktika/sose2025/vongeisaujohannes.git
-cd vongeisaujohannes
 mvn clean install
 ```
 
@@ -85,7 +81,3 @@ Map<NamedEntityType, Set<String>> possibleEntities = Map.of(NamedEntityType.COMP
 Set<NamedEntity> entities = recognizer.recognize(possibleEntities);
 ```
 
-## Evaluation
-
-The library includes test functionality for evaluating the performance of the named entity recognition against
-goldstandard data... (sollte das mit in der Readme stehen?)

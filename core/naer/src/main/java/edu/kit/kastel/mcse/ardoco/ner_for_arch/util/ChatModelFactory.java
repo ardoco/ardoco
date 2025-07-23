@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ner_for_arch.util;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.util;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;

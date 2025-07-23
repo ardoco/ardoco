@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ner_for_arch.util;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.util;
 
 /**
  * Enum representing different providers of chat models supported by the application.

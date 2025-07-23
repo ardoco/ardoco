@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ner_for_arch.model;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.model;
 
 import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.slf4j.Logger;

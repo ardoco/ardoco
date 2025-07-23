@@ -1,11 +1,12 @@
-package edu.kit.kastel.mcse.ner_for_arch.serialization;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityReferenceType;
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer.StructuredTextOutputPrompt;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class NamedEntityParser {
 
     /**
      * Parses a string representation of named entities into a set of {@link NamedEntity} instances.
-     * The input string must follow the specific format created by {@link edu.kit.kastel.mcse.ner_for_arch.recognizer.StructuredTextOutputPrompt}.
+     * The input string must follow the specific format created by {@link StructuredTextOutputPrompt}.
      *
      * @param str                               the string (structured text format of named entities)
      * @param softwareArchitectureDocumentation the software architecture documentation associated with the named entities

@@ -1,6 +1,6 @@
-package edu.kit.kastel.mcse.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
 
 import java.util.HashSet;
 import java.util.Set;

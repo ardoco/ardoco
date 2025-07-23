@@ -1,15 +1,15 @@
-package edu.kit.kastel.mcse.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import edu.kit.kastel.mcse.ner_for_arch.util.ChatModelFactory;
-import edu.kit.kastel.mcse.ner_for_arch.util.ModelProvider;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
