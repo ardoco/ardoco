@@ -1,0 +1,169 @@
+[
+  {
+    "modelTemperature": 0.5,
+    "prompt": {
+      "first": "In the following text, identify all architecturally relevant components that are explicitly named.\n\nFor each such component:\n1. Provide:\n- The primary name (as it appears in the text)\n- All alternative names or abbreviations found in the text (case-insensitive match)\n\n2. For each appearance:\n- The line number (start counting from 1)\n- Whether the appearance is:\n    DIRECT = The name or any alternative name of the component appears literally in the text (case-insensitive)\n    or\n    INDIRECT = The component is referred to indirectly, e.g., by pronouns (\"it\", \"this component\", \"such module\")\n\nRules:\n- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)\n- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components\nReturn your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.\n",
+      "second": "Given the last answer (see below), transform it into a valid JSON array.\nFor each component, output a JSON object containing:\n{\n  \"name\": \"<primary name>\",\n  \"type\": \"COMPONENT\",\n  \"alternativeNames\": [\"<alt1>\", \"<alt2>\", ...],\n  \"occurrences\": [\n    { \"line\": <line number>, \"referenceType\": \"<DIRECT|INDIRECT>\" },\n    ...\n  ]\n}\n\nMake sure:\n- The JSON array is syntactically correct.\n- All alternative names are inside an array (even if empty).\n- All occurrences are listed with correct line numbers and \"DIRECT\" or \"INDIRECT\" as \"referenceType\".\n- No extra text - output only the JSON array.\n\nExample for a single component:\n[\n  {\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\",\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [\n      { \"line\": 1, \"referenceType\": \"DIRECT\" },\n      { \"line\": 3, \"referenceType\": \"INDIRECT\" },\n      { \"line\": 8, \"referenceType\": \"DIRECT\" },\n      { \"line\": 11, \"referenceType\": \"INDIRECT\" }\n    ]\n  }\n]",
+      "type": "TWO_PART_PROMPT"
+    },
+    "useGoldstandardComponentNames": true,
+    "testProject": "teammates"
+  },
+  {
+    "modelProvider": "VDL",
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "useGoldstandardComponentNames": true,
+    "prompt":{
+      "type": "JSON_OUTPUT_PROMPT",
+      "first": "You are an experienced software engineer with expertise in software architecture analysis.\nGiven a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.\n\nFor each component, output a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\nRules:\n- Use the exact casing of the component as it appears in the text.\n- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).\n- Only include components that are relevant architectural elements.\n- If a component appears in multiple lines, list all occurrences.\n- Only return a JSON array of component objects, nothing else.\n\nExample (for a single component):\n{\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\"\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [1, 3, 7, 12]\n}\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]\n"
+    }
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "STRUCTURED_TEXT_OUTPUT_PROMPT",
+      "first": "Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.\n\nInstructions:\n1. Component Identification:\nIdentify all explicitly named, architecturally relevant software components.\nFor each, choose the most descriptive and consistent name.\n2. Line-by-Line Analysis:\nFor each line (starting at line 1):\nEvery time a component is mentioned, output:\n\"<componentName>, <lineNumber>\"\ncomponentName: The most descriptive name of the component (consistent across all lines).\nlineNumber: The line in which the component is mentioned.\n3. Alternative Names:\nAfter all lines are processed, list alternative or ambiguous names for each component in the format:\n\"<componentName>: <alternativeName1>, <alternativeName2>, ...\"\n(If there are no alternative names for a component, write \"None\".)\n4. Final Consistency Check:\nEnsure:\nAll line numbers are correct.\nAll alternative names are properly listed.\n\nOutput Format:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\n<componentName>, <lineNumber>\n...\nAlternative names:\n<componentName>: <alternativeName1>, <alternativeName2>, ...\n...\nEND-OUTPUT\n\nUse this exact format. Do not add anything else."
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "STRUCTURED_TEXT_OUTPUT_PROMPT",
+      "first": "Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.\n\nInstructions:\n1. Component Identification:\nIdentify all explicitly named, architecturally relevant software components.\nFor each, choose the most descriptive and consistent name.\n2. Line-by-Line Analysis:\nFor each line (starting at line 1):\nEvery time a component is mentioned, output:\n\"<componentName>, <lineNumber>\"\ncomponentName: The most descriptive name of the component (consistent across all lines).\nlineNumber: The line in which the component is mentioned.\n3. Alternative Names:\nAfter all lines are processed, list alternative or ambiguous names for each component in the format:\n\"<componentName>: <alternativeName1>, <alternativeName2>, ...\"\n(If there are no alternative names for a component, write \"None\".)\n4. Final Consistency Check:\nEnsure:\nAll line numbers are correct.\nAll alternative names are properly listed.\n\nOutput Format:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\n<componentName>, <lineNumber>\n...\nAlternative names:\n<componentName>: <alternativeName1>, <alternativeName2>, ...\n...\nEND-OUTPUT\n\nUse this exact format. Do not add anything else.\n\nExample:\nText:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nOutput:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nAuthenticationService, 1\nAuthenticationService, 2\nUserDatabase, 2\nAuthenticationService, 3\n\nAlternative names:\nAuthenticationService: service\nUserDatabase: None\nEND-OUTPUT"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "STRUCTURED_TEXT_OUTPUT_PROMPT",
+      "first": "Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.\n\nInstructions:\n1. Component Identification:\nIdentify all explicitly named, architecturally relevant software components.\nFor each, choose the most descriptive and consistent name.\n2. Line-by-Line Analysis:\nFor each line (starting at line 1):\nEvery time a component is mentioned, output:\n\"<componentName>, <lineNumber>\"\ncomponentName: The most descriptive name of the component (consistent across all lines).\nlineNumber: The line in which the component is mentioned.\n3. Alternative Names:\nAfter all lines are processed, list alternative or ambiguous names for each component in the format:\n\"<componentName>: <alternativeName1>, <alternativeName2>, ...\"\n(If there are no alternative names for a component, write \"None\".)\n4. Final Consistency Check:\nEnsure:\nAll line numbers are correct.\nAll alternative names are properly listed.\n\nOutput Format:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\n<componentName>, <lineNumber>\n...\nAlternative names:\n<componentName>: <alternativeName1>, <alternativeName2>, ...\n...\nEND-OUTPUT\n\nUse this exact format. Do not add anything else.\n\nExample 1:\nText 1:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nOutput 1:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nAuthenticationService, 1\nAuthenticationService, 2\nUserDatabase, 2\nAuthenticationService, 3\n\nAlternative names:\nAuthenticationService: service\nUserDatabase: None\nEND-OUTPUT\n\nExample 2:\nText 2:\nThe OrderService receives new orders from the web application.\nIt communicates with the InventoryManager to check stock levels.\nIf items are available, the PaymentProcessor is triggered to initiate payment.\nThe NotificationDispatcher then informs the customer via email.\nFinally, the AuditLogger records all actions for compliance purposes.\nThe logger stores the recordings in a file.\n\n\nOutput 2:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nOrderService, 1\nOrderService, 2\nInventoryManager, 2\nPaymentProcessor, 3\nNotificationDispatcher, 4\nAuditLogger, 5\nAuditLogger, 6\n\nAlternative names:\nOrderService: None\nInventoryManager: None\nPaymentProcessor: None\nNotificationDispatcher: None\nAuditLogger: logger\nEND-OUTPUT"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "STRUCTURED_TEXT_OUTPUT_PROMPT",
+      "first": "Your task is to analyze the input text (one sentence per line), to extract all architecturally relevant software architecture components, and return structured data on their mentions.\n\nInstructions:\n1. Component Identification:\nIdentify all explicitly named, architecturally relevant software components.\nFor each, choose the most descriptive and consistent name.\n2. Line-by-Line Analysis:\nFor each line (starting at line 1):\nEvery time a component is mentioned, output:\n\"<componentName>, <lineNumber>\"\ncomponentName: The most descriptive name of the component (consistent across all lines).\nlineNumber: The line in which the component is mentioned.\n3. Alternative Names:\nAfter all lines are processed, list alternative or ambiguous names for each component in the format:\n\"<componentName>: <alternativeName1>, <alternativeName2>, ...\"\n(If there are no alternative names for a component, write \"None\".)\n4. Final Consistency Check:\nEnsure:\nAll line numbers are correct.\nAll alternative names are properly listed.\n\nOutput Format:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\n<componentName>, <lineNumber>\n...\nAlternative names:\n<componentName>: <alternativeName1>, <alternativeName2>, ...\n...\nEND-OUTPUT\n\nUse this exact format. Do not add anything else.\n\nExample 1:\nText 1:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nOutput 1:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nAuthenticationService, 1\nAuthenticationService, 2\nUserDatabase, 2\nAuthenticationService, 3\n\nAlternative names:\nAuthenticationService: service\nUserDatabase: None\nEND-OUTPUT\n\nExample 2:\nText 2:\nThe PaymentGateway interfaces with the TransactionManager.\nA failure in the gateway triggers a rollback via the TransactionManager.\n\nOutput 2:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nPaymentGateway, 1\nTransactionManager, 1\nPaymentGateway, 2\nTransactionManager, 2\n\nAlternative names:\nPaymentGateway: gateway\nTransactionManager: None\nEND-OUTPUT\n\nExample 3:\nText 3:\nThe OrderService receives new orders from the web application.\nIt communicates with the InventoryManager to check stock levels.\nIf items are available, the PaymentProcessor is triggered to initiate payment.\nThe NotificationDispatcher then informs the customer via email.\nFinally, the AuditLogger records all actions for compliance purposes.\nThe logger stores the recordings in a file.\n\n\nOutput 3:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nOrderService, 1\nOrderService, 2\nInventoryManager, 2\nPaymentProcessor, 3\nNotificationDispatcher, 4\nAuditLogger, 5\nAuditLogger, 6\n\nAlternative names:\nOrderService: None\nInventoryManager: None\nPaymentProcessor: None\nNotificationDispatcher: None\nAuditLogger: logger\nEND-OUTPUT"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "STRUCTURED_TEXT_OUTPUT_PROMPT",
+      "first": "Your task is to extract architecturally relevant software components from the input text (one sentence per line), and output structured data on their mentions using a step-by-step reasoning process.\n\nStep-by-step Reasoning:\nComponent Identification:\nRead through each line.\nIdentify all explicitly named software components that serve architectural functions (e.g., services, managers, databases).\nAssign each a descriptive and consistent name.\nTrack Mentions by Line:\nFor each line (starting at line 1), identify when a component is mentioned.\nInclude indirect references (e.g., pronouns or aliases) and map them to the canonical component name.\nLog each mention as: <componentName>, <lineNumber>\nResolve Alternative Names:\nFor each component, list aliases or ambiguous terms used to refer to it.\nUse \"None\" if no alternatives were found.\n\nVerify Consistency:\nEnsure all line numbers are correct.\nEnsure all alternative names are properly listed.\n\nOutput Format:\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\n<componentName>, <lineNumber>\n...\nAlternative names:\n<componentName>: <alternativeName1>, <alternativeName2>, ...\n...\nEND-OUTPUT\n\nExample:\nText:\nThe SchedulerService queues tasks based on priority.\nIt notifies the ExecutionEngine to start jobs.\nThe engine logs job completion status.\n\nOutput (step-by-step analysis happens internally):\nBEGIN-OUTPUT\nCOMPONENT entities recognized:\nSchedulerService, 1\nSchedulerService, 2\nExecutionEngine, 2\nExecutionEngine, 3\n\nAlternative names:\nSchedulerService: None\nExecutionEngine: engine\nEND-OUTPUT\n\nNow perform the same analysis on the input text below. Use the same reasoning process and produce the output in the exact format. Do not add anything else."
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "JSON_OUTPUT_PROMPT",
+      "first": "Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.\n\nFor each component, output a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\nRules:\n- Use the exact casing of the component as it appears in the text.\n- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).\n- Only include components that are relevant architectural elements.\n- If a component appears in multiple lines, list all occurrences.\n- Only return a JSON array of component objects, nothing else.\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "JSON_OUTPUT_PROMPT",
+      "first": "Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.\n\nFor each component, output a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\nRules:\n- Use the exact casing of the component as it appears in the text.\n- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).\n- Only include components that are relevant architectural elements.\n- If a component appears in multiple lines, list all occurrences.\n- Only return a JSON array of component objects, nothing else.\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]\n\nExample:\nText:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nOutput:\n[\n    {\n        \"name\": \"AuthenticationService\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [\"service\"],\n        \"occurrences\": [1, 2, 3]\n    },\n    {\n        \"name\": \"UserDatabase\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [],\n        \"occurrences\": [2]\n    }\n]"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "JSON_OUTPUT_PROMPT",
+      "first": "Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.\n\nFor each component, output a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\nRules:\n- Use the exact casing of the component as it appears in the text.\n- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).\n- Only include components that are relevant architectural elements.\n- If a component appears in multiple lines, list all occurrences.\n- Only return a JSON array of component objects, nothing else.\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]\n\nExample 1:\nText 1:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nOutput 1:\n[\n    {\n        \"name\": \"AuthenticationService\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [\"service\"],\n        \"occurrences\": [1, 2, 3]\n    },\n    {\n        \"name\": \"UserDatabase\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [],\n        \"occurrences\": [2]\n    }\n]\n\nExample 2:\nText 2:\nThe OrderService receives new orders from the web application.\nIt communicates with the InventoryManager to check stock levels.\nIf items are available, the PaymentProcessor is triggered to initiate payment.\nThe NotificationDispatcher then informs the customer via email.\nFinally, the AuditLogger records all actions for compliance purposes.\nThe logger stores the recordings in a file.\n\nOutput 2:\n[\n    {\n        \"name\": \"OrderService\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [],\n        \"occurrences\": [1, 2]\n    },\n    {\n        \"name\": \"InventoryManager\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [],\n        \"occurrences\": [2]\n    },\n    {\n        \"name\": \"PaymentProcessor\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [\"service\"],\n        \"occurrences\": [3]\n    },\n    {\n        \"name\": \"NotificationDispatcher\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [],\n        \"occurrences\": [4]\n    },\n    {\n        \"name\": \"AuditLogger\",\n        \"type\": \"COMPONENT\"\n        \"alternativeNames\": [\"logger\"],\n        \"occurrences\": [5, 6]\n    }\n]"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "JSON_OUTPUT_PROMPT",
+      "first": "Given a text describing a software architecture (one sentence per line), your task is to identify all architecturally relevant components and output structured JSON data describing them.\n\nThink step-by-step:\n\n1. Read the input line-by-line.\n   - For each sentence, identify explicitly mentioned software architecture components (e.g., services, databases, managers, dispatchers, loggers, etc.).\n\n2. Determine the primary name:\n   - Use the most descriptive and specific name mentioned in the text (e.g., prefer \"UserDatabase\" over just \"Database\").\n   - Match casing exactly as it appears in the input.\n\n3. Track alternative or ambiguous references:\n   - If a component is referred to by an alias or pronoun (e.g., \"the service\", \"it\"), treat it as the same component and note the alias in \"alternativeNames\".\n\n4. Track all occurrences:\n   - For each component, collect the line numbers where it is mentioned (directly or indirectly).\n\n5. Normalize component identities:\n   - If two terms clearly refer to the same component (e.g., “Database” and “UserDatabase”), unify them under the more descriptive name.\n\n6. Exclude irrelevant terms:\n   - Only include entities that serve architectural roles (ignore generic terms like \"system\", \"feature\", etc. unless clearly functioning as a component).\n\nOutput:\n- Return a JSON array only. No explanation, headers, or comments.\n- Each object must include:\n    - \"name\": The component's canonical name.\n    - \"type\": Always \"COMPONENT\".\n    - \"alternativeNames\": List of ambiguous names, aliases, or pronouns (empty list if none).\n    - \"occurrences\": List of line numbers where the component appears or is referenced.\n\nExample Input:\nThe AuthenticationService handles login requests.\nIt forwards valid credentials to the UserDatabase.\nThe service logs each attempt.\n\nExample Output:\n[\n    {\n        \"name\": \"AuthenticationService\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [\"the service\"],\n        \"occurrences\": [1, 2, 3]\n    },\n    {\n        \"name\": \"UserDatabase\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [],\n        \"occurrences\": [2]\n    }\n]\n\nNow perform this step-by-step reasoning internally and return only the final JSON array output.\n"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "TWO_PART_PROMPT",
+      "first": "In the following text, which architecturally relevant components are directly named?\nFor each component, provide its name, all alternative names, and the line numbers where it appears.",
+      "second": "Given the last answer (see below), for each component, return a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\n\nExample (for a single component):\n{\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\"\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [1, 3, 7, 12]\n}\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "TWO_PART_PROMPT",
+      "first": "In the following text, which architecturally relevant components are directly named?\nFor each component, provide its name, all alternative names, and the line numbers where it appears.\nBe careful to only name real components and no interfaces or external libraries etc.",
+      "second": "Given the last answer (see below), for each component, return a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\n\nExample (for a single component):\n{\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\"\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [1, 3, 7, 12]\n}\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]"
+    },
+    "useGoldstandardComponentNames": true
+  },
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.5,
+    "testProject": "all",
+    "prompt":{
+      "type": "TWO_PART_PROMPT",
+      "first": "In the following text, identify all architecturally relevant components that are explicitly named.\n\nFor each component, provide:\n- The primary name (as it appears in the text)\n- All alternative names or abbreviations found in the text (case-insensitive match)\n- All line numbers (start counting from 1) where the component is mentioned.\n\nRules:\n- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)\n- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components\n",
+      "second": "Given the last answer (see below), for each component, return a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of line numbers where the component appears or is referenced.\n\n\nExample (for a single component):\n{\n    \"name\": \"Database\",\n    \"type\": \"COMPONENT\"\n    \"alternativeNames\": [\"UserDatabase\", \"DB\"],\n    \"occurrences\": [1, 3, 7, 12]\n}\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]"
+    },
+    "useGoldstandardComponentNames": true
+  }
+]
