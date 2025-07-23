@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsA
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.ShellExtractor;
@@ -21,12 +21,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.Sh
 @Deterministic
 public final class AllLanguagesExtractor extends CodeExtractor {
 
-    private final Map<String, CodeExtractor> codeExtractors;
+    private final Map<ProgrammingLanguage, CodeExtractor> codeExtractors;
     private CodeModel codeModel;
 
     public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
-        this.codeExtractors = Map.of(ProgrammingLanguages.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguages.SHELL,
+        this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguage.SHELL,
                 new ShellExtractor(codeItemRepository, path, metamodelToExtract));
     }
 
