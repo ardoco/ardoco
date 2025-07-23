@@ -4,7 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -93,7 +94,7 @@ public final class ArCoTLModelProviderInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }

@@ -5,11 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,23 +35,24 @@ public abstract class AbstractConfigurable implements IConfigurable {
     @SuppressWarnings("java:S2065") // The logger is used in the subclasses that are serializable
     private transient Logger logger;
 
-    private SortedMap<String, String> lastAppliedConfiguration = new TreeMap<>();
+    private ImmutableSortedMap<String, String> lastAppliedConfiguration = SortedMaps.immutable.empty();
 
     @Override
-    public final void applyConfiguration(SortedMap<String, String> additionalConfiguration) {
+    public final void applyConfiguration(ImmutableSortedMap<String, String> additionalConfiguration) {
         this.applyConfiguration(additionalConfiguration, this, this.getClass());
         this.delegateApplyConfigurationToInternalObjects(additionalConfiguration);
-        this.lastAppliedConfiguration = new TreeMap<>(additionalConfiguration);
+        this.lastAppliedConfiguration = additionalConfiguration;
     }
 
     @Override
-    public SortedMap<String, String> getLastAppliedConfiguration() {
-        return Collections.unmodifiableSortedMap(this.lastAppliedConfiguration);
+    public ImmutableSortedMap<String, String> getLastAppliedConfiguration() {
+        return this.lastAppliedConfiguration;
     }
 
-    protected abstract void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration);
+    protected abstract void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration);
 
-    private void applyConfiguration(SortedMap<String, String> additionalConfiguration, AbstractConfigurable configurable, Class<?> currentClassInHierarchy) {
+    private void applyConfiguration(ImmutableSortedMap<String, String> additionalConfiguration, AbstractConfigurable configurable,
+            Class<?> currentClassInHierarchy) {
         if (currentClassInHierarchy == Object.class || currentClassInHierarchy == AbstractConfigurable.class) {
             return;
         }

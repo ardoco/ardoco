@@ -5,6 +5,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -177,5 +181,33 @@ public class ArchitectureTest {
             .orShould()
             .callMethod(List.class, "forEachOrdered", Consumer.class)
             .because("Lambdas should be functional. ForEach is typically used for side-effects.");
+
+    @ArchTest
+    public static final ArchRule preferEclipseCollections = noMethods().that()
+            .areDeclaredInClassesThat()
+            .areInterfaces()
+            .and()
+            .areDeclaredInClassesThat()
+            .resideOutsideOfPackage("..metrics..")
+            .should()
+            .haveRawReturnType(List.class)
+            .orShould()
+            .haveRawReturnType(Set.class)
+            .orShould()
+            .haveRawReturnType(SortedSet.class)
+            .orShould()
+            .haveRawReturnType(Map.class)
+            .orShould()
+            .haveRawReturnType(SortedMap.class)
+            .orShould()
+            .haveRawParameterTypes(List.class)
+            .orShould()
+            .haveRawParameterTypes(Set.class)
+            .orShould()
+            .haveRawParameterTypes(SortedSet.class)
+            .orShould()
+            .haveRawParameterTypes(Map.class)
+            .orShould()
+            .haveRawParameterTypes(SortedMap.class);
 
 }

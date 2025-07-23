@@ -1,9 +1,8 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
@@ -36,7 +35,7 @@ public class RecommendationGenerator extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of {@link RecommendationGenerator}
      */
-    public static RecommendationGenerator get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static RecommendationGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var recommendationGenerator = new RecommendationGenerator(dataRepository);
         recommendationGenerator.applyConfiguration(additionalConfigs);
         return recommendationGenerator;

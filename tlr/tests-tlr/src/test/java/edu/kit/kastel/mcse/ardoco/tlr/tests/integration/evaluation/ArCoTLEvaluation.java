@@ -5,11 +5,10 @@ import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COM
 
 import java.io.File;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -59,12 +58,11 @@ public class ArCoTLEvaluation extends AbstractEvaluation {
         CodeConfiguration inputCode = useAcmFile //
                 ? new CodeConfiguration(project.getTlrTask().getCodeModelFromResources(), CodeConfiguration.CodeConfigurationType.ACM_FILE) //
                 : new CodeConfiguration(project.getTlrTask().getCodeDirectory(), CodeConfiguration.CodeConfigurationType.DIRECTORY);
-        SortedMap<String, String> additionalConfigsMap = new TreeMap<>();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
         var runner = new ArCoTL(projectName);
-        runner.setUp(new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, additionalConfigsMap, outputDirectory);
+        runner.setUp(new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, SortedMaps.immutable.empty(), outputDirectory);
         return runner;
     }
 

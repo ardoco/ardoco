@@ -26,7 +26,7 @@ public final class CodeCompilationUnit extends CodeModule {
     @JsonProperty
     private String extension;
     @JsonProperty
-    private String language;
+    private ProgrammingLanguage language;
 
     /**
      * Default constructor for Jackson.
@@ -47,7 +47,7 @@ public final class CodeCompilationUnit extends CodeModule {
      * @param language           the programming language
      */
     public CodeCompilationUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
-            String extension, String language) {
+            String extension, ProgrammingLanguage language) {
         super(codeItemRepository, name, content);
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
@@ -59,7 +59,7 @@ public final class CodeCompilationUnit extends CodeModule {
      *
      * @return the language
      */
-    public String getLanguage() {
+    public ProgrammingLanguage getLanguage() {
         return this.language;
     }
 
@@ -155,7 +155,7 @@ public final class CodeCompilationUnit extends CodeModule {
             // Default to Class
             return Optional.of("Class");
         }
-        if (ProgrammingLanguages.SHELL.equals(this.getLanguage())) {
+        if (ProgrammingLanguage.SHELL == this.getLanguage()) {
             return Optional.of("ShellScript");
         }
         return Optional.empty();

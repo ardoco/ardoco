@@ -31,7 +31,7 @@ public class InitialInconsistencyAgent extends PipelineAgent {
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
 
-            inconsistencyState.addRecommendedInstances(recommendationState.getRecommendedInstances().toList());
+            inconsistencyState.addRecommendedInstances(recommendationState.getRecommendedInstances().toImmutable());
         }
     }
 }

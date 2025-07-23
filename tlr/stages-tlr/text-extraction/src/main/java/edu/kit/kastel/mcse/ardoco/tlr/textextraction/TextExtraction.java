@@ -2,7 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -29,7 +30,7 @@ public class TextExtraction extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of InconsistencyChecker
      */
-    public static TextExtraction get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static TextExtraction get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var textExtractor = new TextExtraction(dataRepository);
         textExtractor.applyConfiguration(additionalConfigs);
         return textExtractor;

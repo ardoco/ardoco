@@ -1,10 +1,10 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.Comparator;
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -37,7 +37,7 @@ public class OccasionFilter extends Filter {
                 filteredRecommendedInstances.add(recommendedInstance);
             }
         }
-        inconsistencyState.setRecommendedInstances(filteredRecommendedInstances);
+        inconsistencyState.setRecommendedInstances(filteredRecommendedInstances.toImmutable());
     }
 
     private boolean recommendedInstanceHasMultipleOccasions(RecommendedInstance recommendedInstance) {
@@ -74,7 +74,7 @@ public class OccasionFilter extends Filter {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // handle additional config
     }
 
