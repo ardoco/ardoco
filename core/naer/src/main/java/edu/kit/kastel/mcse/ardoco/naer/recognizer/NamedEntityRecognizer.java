@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +16,10 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.naer.util.ModelProvider;
 
 /**
  * The main interface of the library for recognizing named entities in software architecture documentations.
@@ -119,7 +119,7 @@ public class NamedEntityRecognizer {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
         private ChatModel chatModel;
-        private Prompt prompt;                 // default value
+        private Prompt prompt;
 
         /**
          * Sets the chat model to use.
@@ -157,13 +157,6 @@ public class NamedEntityRecognizer {
 
         /**
          * Builds the {@link NamedEntityRecognizer} with the configured settings.
-         *
-         * <p>
-         * default values (if not explicitly configured differently):
-         * <ul>
-         * <li>{@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel}</li>
-         * <li>{@link NamedEntityRecognizer#prompt} = {@link #EXAMPLE_PROMPT}</li>
-         * </ul>
          *
          * @return a new {@link NamedEntityRecognizer}
          */

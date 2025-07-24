@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization;
+package edu.kit.kastel.mcse.ardoco.naer.serialization;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer.StructuredTextOutputPrompt;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.naer.recognizer.StructuredTextOutputPrompt;
 
 /**
  * Utility class for parsing named entities from various input formats.

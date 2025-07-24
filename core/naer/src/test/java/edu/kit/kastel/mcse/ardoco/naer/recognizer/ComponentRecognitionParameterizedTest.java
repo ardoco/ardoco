@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.InputStream;
 import java.util.List;
@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import dev.langchain4j.model.chat.ChatModel;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
+import edu.kit.kastel.mcse.ardoco.naer.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ardoco.naer.util.ModelProvider;
 
 /**
  * Parameterized test class for evaluating component recognition in software projects.

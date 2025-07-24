@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -8,9 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
 /**
  * This class is responsible for parsing goldstandard data into structured {@link NamedEntity} objects

@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.util;
+package edu.kit.kastel.mcse.ardoco.naer.util;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

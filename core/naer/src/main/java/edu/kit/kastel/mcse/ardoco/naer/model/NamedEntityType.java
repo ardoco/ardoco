@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.model;
+package edu.kit.kastel.mcse.ardoco.naer.model;
 
 /**
  * Represents the type of a {@link NamedEntity}.

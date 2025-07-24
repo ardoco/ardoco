@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.model.chat.ChatModel;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 
 /**
  * Abstract base class representing a prompt for named entity recognition.

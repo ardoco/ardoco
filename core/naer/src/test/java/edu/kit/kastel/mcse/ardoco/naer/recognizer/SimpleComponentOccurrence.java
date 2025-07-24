@@ -1,10 +1,10 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
 
 /**
  * Represents the occurrence of a component in a text in a simple way (using only the component name and the line number of the occurrence - in alignment with
