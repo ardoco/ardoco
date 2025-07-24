@@ -28,10 +28,7 @@
       <version>${javaparser.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>io.github.ardoco</groupId>
       <artifactId>magika</artifactId>

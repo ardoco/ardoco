@@ -77,15 +77,9 @@
     <revision>2.0.0-refactoring</revision>
     <ardoco.version>${revision}</ardoco.version>
 
-    <sonar.projectKey>ArDoCo_Core</sonar.projectKey>
-    <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
-    <sonar.organization>ardoco</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../${aggregate.report.dir},
-            ${project.basedir}/../../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
-    <aggregate.report.dir>report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
-    <argLine>-Xmx4g -Xss256m</argLine>
-    <doclint.options>all,-missing</doclint.options>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.source.encoding>UTF-8</project.source.encoding>
   </properties>
 
   <repositories>
@@ -101,7 +95,7 @@
         <enabled>true</enabled>
       </snapshots>
       <id>mavenSnapshot</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </repository>
   </repositories>
 
@@ -110,137 +104,22 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>${spotless.version}</version>
-        <configuration>
-          <formats>
-            <format>
-              <includes>
-                <include>*.md</include>
-                <include>.gitignore</include>
-              </includes>
-              <trimTrailingWhitespace />
-              <endWithNewline />
-              <indent>
-                <tabs>true</tabs>
-                <spacesPerTab>4</spacesPerTab>
-              </indent>
-            </format>
-          </formats>
-          <!-- define a language-specific format -->
-          <java>
-            <eclipse>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
-            </eclipse>
-            <removeUnusedImports />
-            <licenseHeader>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/license-header</file>
-            </licenseHeader>
-            <importOrder>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
-            </importOrder>
-          </java>
-          <pom>
-            <sortPom>
-              <encoding>UTF-8</encoding>
-              <keepBlankLines>true</keepBlankLines>
-              <indentBlankLines>false</indentBlankLines>
-              <nrOfIndentSpace>2</nrOfIndentSpace>
-              <expandEmptyElements>false</expandEmptyElements>
-              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
-              <sortDependencies>groupId,artifactId</sortDependencies>
-              <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
-              <sortDependencyManagement>groupId,artifactId</sortDependencyManagement>
-              <sortPlugins>groupId,artifactId</sortPlugins>
-              <sortProperties>false</sortProperties>
-              <sortModules>true</sortModules>
-              <sortExecutions>true</sortExecutions>
-              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
-            </sortPom>
-          </pom>
-          <ratchetFrom>origin/main</ratchetFrom>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.7.0</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <updatePomFile>true</updatePomFile>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flatten.clean</id>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-            <phase>clean</phase>
-          </execution>
-          <execution>
-            <id>flatten</id>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.16.2</version>
-        <configuration>
-          <ruleSet>
-            <rule>
-              <groupId>*</groupId>
-              <ignoreVersion>
-                <type>regex</type>
-                <version>.+-(alpha|Alpha|beta|Beta|RC).*</version>
-              </ignoreVersion>
-            </rule>
-          </ruleSet>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.sonatype.central</groupId>
@@ -312,7 +191,6 @@
       <modules>
         <module>framework</module>
         <module>pipeline-core</module>
-        <module>report</module>
         <module>tests-base</module>
       </modules>
     </profile>
