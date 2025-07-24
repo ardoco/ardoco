@@ -1,14 +1,16 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.model;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a named entity.
@@ -40,7 +42,8 @@ public class NamedEntity {
      * @param occurrences      occurrences of the entity
      */
     @JsonCreator
-    private NamedEntity(@JsonProperty("name") String name, @JsonProperty("type") NamedEntityType type, @JsonProperty("alternativeNames") List<String> alternativeNames, @JsonProperty("occurrences") List<Occurrence> occurrences) {
+    private NamedEntity(@JsonProperty("name") String name, @JsonProperty("type") NamedEntityType type,
+            @JsonProperty("alternativeNames") List<String> alternativeNames, @JsonProperty("occurrences") List<Occurrence> occurrences) {
         this.name = name;
         this.type = type;
         this.alternativeNames = new HashSet<>(alternativeNames);
@@ -147,7 +150,7 @@ public class NamedEntity {
      * Adds an occurrence of the {@link NamedEntity} in a sentence with a specified reference type.
      *
      * @param sentenceNumber the 1-based index of the sentence where the entity occurs
-     * @param referenceType the type of reference (direct or indirect) as an instance of {@link NamedEntityReferenceType}
+     * @param referenceType  the type of reference (direct or indirect) as an instance of {@link NamedEntityReferenceType}
      */
     public void addOccurrence(int sentenceNumber, NamedEntityReferenceType referenceType) {
         this.occurrences.add(new Occurrence(sentenceNumber, referenceType));
@@ -156,9 +159,11 @@ public class NamedEntity {
     @Override
     public boolean equals(Object o) {
         // sourceText is ignored here
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         NamedEntity entity = (NamedEntity) o;
-        return type == entity.type && Objects.equals(alternativeNames, entity.alternativeNames) && Objects.equals(occurrences, entity.occurrences) && Objects.equals(name, entity.name);
+        return type == entity.type && Objects.equals(alternativeNames, entity.alternativeNames) && Objects.equals(occurrences, entity.occurrences) && Objects
+                .equals(name, entity.name);
     }
 
     @Override

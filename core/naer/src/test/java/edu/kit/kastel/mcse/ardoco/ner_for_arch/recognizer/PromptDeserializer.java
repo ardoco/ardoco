@@ -1,13 +1,15 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * Custom deserializer for the {@link Prompt} class hierarchy.
@@ -35,16 +37,16 @@ public class PromptDeserializer extends StdDeserializer<Prompt> {
 
         try {
             return switch (typeStr) {
-                case "STRUCTURED_TEXT_OUTPUT_PROMPT" -> new StructuredTextOutputPrompt(first);
-                case "JSON_OUTPUT_PROMPT" -> new JsonOutputPrompt(first);
-                case "TWO_PART_PROMPT" -> {
-                    if (second == null || second.isBlank()) {
-                        logger.error("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
-                        throw new IllegalArgumentException("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
-                    }
-                    yield new TwoPartPrompt(first, second);
+            case "STRUCTURED_TEXT_OUTPUT_PROMPT" -> new StructuredTextOutputPrompt(first);
+            case "JSON_OUTPUT_PROMPT" -> new JsonOutputPrompt(first);
+            case "TWO_PART_PROMPT" -> {
+                if (second == null || second.isBlank()) {
+                    logger.error("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
+                    throw new IllegalArgumentException("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
                 }
-                default -> throw new IllegalStateException("Unexpected prompt type value: " + typeStr);
+                yield new TwoPartPrompt(first, second);
+            }
+            default -> throw new IllegalStateException("Unexpected prompt type value: " + typeStr);
             };
         } catch (IllegalArgumentException e) {
             logger.error("Could not create prompt of type {}", typeStr, e);

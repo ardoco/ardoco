@@ -31,9 +31,9 @@ Add the following dependency to your Maven project:
 ```xml
 
 <dependency>
-    <groupId>io.github.ardoco</groupId>
-    <artifactId>named-architecture-entity-recognition</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+	<groupId>io.github.ardoco</groupId>
+	<artifactId>named-architecture-entity-recognition</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -60,9 +60,9 @@ Set<NamedEntity> entities = recognizer.recognize();
 ```java
 // Create a recognizer with custom configuration of the used LLM chatmodel and prompt
 NamedEntityRecognizer recognizer = new NamedEntityRecognizer.Builder(Path.of("software/architecture/documentation.txt"))
-                .chatModel(ChatModelFactory.withProvider(ModelProvider.OPEN_AI).modelName("gpt-4.1").temperature(0.5).timeout(60).build())
-                .prompt(new JsonOutputPrompt("Perform NER and use the following output format..."))
-                .build();
+				.chatModel(ChatModelFactory.withProvider(ModelProvider.OPEN_AI).modelName("gpt-4.1").temperature(0.5).timeout(60).build())
+				.prompt(new JsonOutputPrompt("Perform NER and use the following output format..."))
+				.build();
 
 // Recognize named entities
 Set<NamedEntity> entities = recognizer.recognize();
@@ -80,4 +80,3 @@ Map<NamedEntityType, Set<String>> possibleEntities = Map.of(NamedEntityType.COMP
 // Recognize named entities with possible entities
 Set<NamedEntity> entities = recognizer.recognize(possibleEntities);
 ```
-

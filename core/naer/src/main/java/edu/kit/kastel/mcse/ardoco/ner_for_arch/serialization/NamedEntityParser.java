@@ -1,14 +1,5 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer.StructuredTextOutputPrompt;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +8,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer.StructuredTextOutputPrompt;
 
 /**
  * Utility class for parsing named entities from various input formats.
@@ -77,7 +80,6 @@ public class NamedEntityParser {
      * @throws IOException if the input string is invalid or cannot be parsed
      */
     public static Set<NamedEntity> fromString(String str, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) throws IOException {
-        //System.out.println("Parsing: \n" + str);
         Map<String, NamedEntity> entityMap = new HashMap<>();
         Map<String, Set<Integer>> entityOccurencesMap = new HashMap<>(); //needed to determine reference types of the occurrences after information about alternative names is saved
         String[] lines = str.split("\\R");
@@ -161,7 +163,6 @@ public class NamedEntityParser {
                     throw new IOException("Alternative names for unknown entity: '" + name + "'");
                 }
 
-
             }
         }
 
@@ -175,7 +176,8 @@ public class NamedEntityParser {
         return new HashSet<>(entityMap.values());
     }
 
-    private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
+    private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber,
+            SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
         if (lineNumber == -1) {
             //to improve resilience, we skip invalid occurrences
             return;

@@ -1,15 +1,16 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityReferenceType;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
 
 /**
  * This class is responsible for parsing goldstandard data into structured {@link NamedEntity} objects
@@ -19,7 +20,8 @@ public class GoldstandardParser {
 
     /**
      * Parses the goldstandards in the given path to {@link NamedEntity} objects.
-     * <p>Attention: The created named entities will not have alternative names and each sentence occurrence will be DIRECT (because the current goldstandards do not contain this information)! Also, the SAD reference will not be set.</p>
+     * <p>Attention: The created named entities will not have alternative names and each sentence occurrence will be DIRECT (because the current goldstandards
+     * do not contain this information)! Also, the SAD reference will not be set.</p>
      *
      * @param goldstandardFilePath the path of the goldstandard file
      * @return the created {@link NamedEntity} objects
@@ -54,7 +56,6 @@ public class GoldstandardParser {
         return new HashSet<>(entitiesMap.values());
     }
 
-
     /**
      * Retrieves possible component names from the goldstandard.
      *
@@ -67,26 +68,20 @@ public class GoldstandardParser {
         return parsePossibleComponents(componentNameFile);
     }
 
-
     private static Path findComponentNameFile(Path projectDir) {
-        Path modelDir = assertDoesNotThrow(() ->
-                Files.list(projectDir)
-                        .filter(Files::isDirectory)
-                        .filter(p -> p.getFileName().toString().startsWith("model_"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No model_ directory in " + projectDir))
-        );
+        Path modelDir = assertDoesNotThrow(() -> Files.list(projectDir)
+                .filter(Files::isDirectory)
+                .filter(p -> p.getFileName().toString().startsWith("model_"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No model_ directory in " + projectDir)));
 
         Path umlDir = modelDir.resolve("uml");
 
-        return assertDoesNotThrow(() ->
-                Files.list(umlDir)
-                        .filter(p -> p.getFileName().toString().equals("modelElementID_to_ComponentName.csv"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No modelElementID_to_ComponentName.csv in " + umlDir))
-        );
+        return assertDoesNotThrow(() -> Files.list(umlDir)
+                .filter(p -> p.getFileName().toString().equals("modelElementID_to_ComponentName.csv"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No modelElementID_to_ComponentName.csv in " + umlDir)));
     }
-
 
     /**
      * Parses the specified file to extract possible component names and organizes them into a map.
@@ -98,12 +93,12 @@ public class GoldstandardParser {
         String csvContent = assertDoesNotThrow(() -> Files.readString(componentNameFile));
 
         if (csvContent.isBlank()) {
-            return new HashMap<>();
+            return new EnumMap<>(NamedEntityType.class);
         }
 
         List<String> lines = csvContent.lines().toList();
-        Map<NamedEntityType, Set<String>> possibleComponents = new HashMap<>();
-        possibleComponents.put(NamedEntityType.COMPONENT, new HashSet<>());
+        Map<NamedEntityType, Set<String>> possibleComponents = new EnumMap<>(NamedEntityType.class);
+        possibleComponents.put(NamedEntityType.COMPONENT, new TreeSet<>());
 
         for (int i = 1; i < lines.size(); i++) { // Skip header
             String[] parts = lines.get(i).split(",");
@@ -117,6 +112,5 @@ public class GoldstandardParser {
 
         return possibleComponents;
     }
-
 
 }

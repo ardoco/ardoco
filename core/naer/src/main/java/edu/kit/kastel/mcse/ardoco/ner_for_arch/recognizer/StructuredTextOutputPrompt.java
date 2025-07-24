@@ -1,4 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+
+import java.io.IOException;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
@@ -7,12 +14,6 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization.NamedEntityParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Set;
-
 
 /**
  * A prompt type designed to generate a structured text output using only one call.
@@ -77,7 +78,7 @@ public class StructuredTextOutputPrompt extends Prompt {
                 <componentName>: <alternativeName1>, <alternativeName2>, ...
                 ...
                 END-OUTPUT
-                
+
                 Example (content is imaginary):
                 BEGIN-OUTPUT
                 COMPONENT entities recognized:
@@ -85,7 +86,7 @@ public class StructuredTextOutputPrompt extends Prompt {
                 AuthenticationService, 'It forwards valid credentials to the UserDatabase.'
                 UserDatabase, 'It forwards valid credentials to the UserDatabase.'
                 AuthenticationService, 'The service logs each attempt.'
-                
+
                 Alternative names:
                 AuthenticationService: service
                 UserDatabase: None
@@ -117,8 +118,6 @@ public class StructuredTextOutputPrompt extends Prompt {
 
     @Override
     public String toString() {
-        return "StructuredTextOutputPrompt{" +
-                "text='" + text + '\'' +
-                '}';
+        return "StructuredTextOutputPrompt{" + "text='" + text + '\'' + '}';
     }
 }

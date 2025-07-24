@@ -1,12 +1,13 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.model;
-
-import org.apache.commons.text.similarity.JaccardSimilarity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.apache.commons.text.similarity.JaccardSimilarity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a textual software architecture documentation (SAD).
@@ -60,8 +61,8 @@ public class SoftwareArchitectureDocumentation {
             logger.error("sadText is null");
             throw new IllegalArgumentException("sadText is null");
         }
-        if (sadText.isEmpty()) logger.warn("sadText is empty");
-
+        if (sadText.isEmpty())
+            logger.warn("sadText is empty");
 
         this.filePath = null;
         this.lines = sadText.split("\\R");
@@ -158,9 +159,11 @@ public class SoftwareArchitectureDocumentation {
 
         if (bestScore >= 0.90) {
             return bestLineNumber;
-        } else {
-            logger.warn("could not find similar SAD line for the following output line: '{}'\nBest score: {} best line: '{}'", textLine, bestScore, getLine(bestLineNumber));
-            return -1;
         }
+        if (logger.isWarnEnabled()) {
+            logger.warn("could not find similar SAD line for the following output line: '{}'\nBest score: {} best line: '{}'", textLine, bestScore, getLine(
+                    bestLineNumber));
+        }
+        return -1;
     }
 }

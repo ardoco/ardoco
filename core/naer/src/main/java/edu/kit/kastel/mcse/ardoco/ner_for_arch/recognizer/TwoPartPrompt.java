@@ -1,4 +1,12 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+
+import java.io.IOException;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
@@ -7,12 +15,6 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization.NamedEntityParser;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * A prompt type that does two calls.
@@ -20,13 +22,13 @@ import java.util.Set;
  * The second part takes the output from the first part as input and converts it into a structured JSON format that must adhere to the following JSON structure:
  * <pre>
  * [
- *   {
- *     "name": "...",
- *     "type": "...",
- *     "alternativeNames": [...],
- *     "occurrences": [...]
- *   },
- *   ...
+ * {
+ * "name": "...",
+ * "type": "...",
+ * "alternativeNames": [...],
+ * "occurrences": [...]
+ * },
+ * ...
  * ]
  * </pre>
  * Example:<br>
@@ -38,18 +40,18 @@ import java.util.Set;
  * Output:<br>
  * <pre>
  * [
- *     {
- *         "name": "AuthenticationService",
- *         "type": "COMPONENT",
- *         "alternativeNames": ["service"],
- *         "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
- *     },
- *     {
- *         "name": "UserDatabase",
- *         "type": "COMPONENT",
- *         "alternativeNames": [],
- *         "occurrences": ["It forwards valid credentials to the UserDatabase."]
- *     }
+ * {
+ * "name": "AuthenticationService",
+ * "type": "COMPONENT",
+ * "alternativeNames": ["service"],
+ * "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+ * },
+ * {
+ * "name": "UserDatabase",
+ * "type": "COMPONENT",
+ * "alternativeNames": [],
+ * "occurrences": ["It forwards valid credentials to the UserDatabase."]
+ * }
  * ]
  * </pre>
  */
@@ -95,7 +97,7 @@ public class TwoPartPrompt extends Prompt {
                     },
                     ...
                 ]
-                
+
                 Example (content is imaginary):
                 [
                     {
@@ -145,62 +147,60 @@ public class TwoPartPrompt extends Prompt {
     @NotNull
     @Override
     public String toString() {
-        return "TwoPartPrompt{" +
-                "first=\n'" + text + "'" +
-                "\n, second=\n'" + secondText + "'}";
+        return "TwoPartPrompt{" + "first=\n'" + text + "'" + "\n, second=\n'" + secondText + "'}";
     }
 
     public static TwoPartPrompt getDefault() {
         String taskPrompt = """
-        In the following text, identify all architecturally relevant components that are explicitly named.
-        
-        For each component, provide:
-        - The primary name (as it appears in the text)
-        - All alternative names or abbreviations found in the text (case-insensitive match)
-        - All complete lines where the component is mentioned.
-        
-        Rules:
-        - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
-        - Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
-        - Include all indirect references to components as well.
-          For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
-        
-        Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
-        """;
+                In the following text, identify all architecturally relevant components that are explicitly named.
+
+                For each component, provide:
+                - The primary name (as it appears in the text)
+                - All alternative names or abbreviations found in the text (case-insensitive match)
+                - All complete lines where the component is mentioned.
+
+                Rules:
+                - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+                - Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+                - Include all indirect references to components as well.
+                  For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
+
+                Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
+                """;
         String formattingPrompt = """
-        Given the last answer (see below), for each component, return a JSON object containing:
-        - "name": the primary name of the component (use the most descriptive name).
-        - "type": "COMPONENT"
-        - "alternativeNames": a list of alternative or ambiguous names, if applicable.
-        - "occurrences": a list of lines where the component appears or is referenced.
-        
-        Output should be a JSON array (and nothing else!), like:
-        [
-            {
-                "name": "...",
-                "type": "COMPONENT",
-                "alternativeNames": [...],
-                "occurrences": [...]
-            },
-            ...
-        ]
-        
-        Example:
-        [
-            {
-                "name": "AuthenticationService",
-                "type": "COMPONENT",
-                "alternativeNames": ["service"],
-                "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
-            },
-            {
-                "name": "UserDatabase",
-                "type": "COMPONENT",
-                "alternativeNames": ["DB"],
-                "occurrences": ["It forwards valid credentials to the UserDatabase.", "The DB then validates the credentials."]
-            }
-        ]
-        """;
+                Given the last answer (see below), for each component, return a JSON object containing:
+                - "name": the primary name of the component (use the most descriptive name).
+                - "type": "COMPONENT"
+                - "alternativeNames": a list of alternative or ambiguous names, if applicable.
+                - "occurrences": a list of lines where the component appears or is referenced.
+
+                Output should be a JSON array (and nothing else!), like:
+                [
+                    {
+                        "name": "...",
+                        "type": "COMPONENT",
+                        "alternativeNames": [...],
+                        "occurrences": [...]
+                    },
+                    ...
+                ]
+
+                Example:
+                [
+                    {
+                        "name": "AuthenticationService",
+                        "type": "COMPONENT",
+                        "alternativeNames": ["service"],
+                        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+                    },
+                    {
+                        "name": "UserDatabase",
+                        "type": "COMPONENT",
+                        "alternativeNames": ["DB"],
+                        "occurrences": ["It forwards valid credentials to the UserDatabase.", "The DB then validates the credentials."]
+                    }
+                ]
+                """;
         return new TwoPartPrompt(taskPrompt, formattingPrompt);
     }
 

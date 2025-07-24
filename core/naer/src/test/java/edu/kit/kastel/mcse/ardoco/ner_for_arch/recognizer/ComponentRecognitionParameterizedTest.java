@@ -1,11 +1,10 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.langchain4j.model.chat.ChatModel;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
+import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -14,25 +13,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import dev.langchain4j.model.chat.ChatModel;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
 
 /**
  * Parameterized test class for evaluating component recognition in software projects.
  * The tests are configured using a test configuration file, named 'test-config.json'.
  * This configuration outlines details regarding the model, test project, prompts, and additional settings.
  */
-public class ComponentRecognitionParameterizedTest {
+class ComponentRecognitionParameterizedTest {
     private final Logger logger = LoggerFactory.getLogger(ComponentRecognitionParameterizedTest.class);
 
     static Stream<TestConfig> loadTestConfig() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+        ObjectMapper mapper = JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build();
 
         // Register the custom deserializer for the Prompt class
-        mapper.registerModule(new com.fasterxml.jackson.databind.module.SimpleModule()
-                .addDeserializer(Prompt.class, new PromptDeserializer()));
+        mapper.registerModule(new com.fasterxml.jackson.databind.module.SimpleModule().addDeserializer(Prompt.class, new PromptDeserializer()));
 
         InputStream is = ComponentRecognitionParameterizedTest.class.getResourceAsStream("test-config.json");
         List<TestConfig> configList = mapper.readValue(is, new TypeReference<>() {
@@ -76,25 +78,15 @@ public class ComponentRecognitionParameterizedTest {
     }
 
     //Config holder record matching the JSON structure:
-    public record TestConfig(ModelProvider modelProvider, String model, double modelTemperature,
-                             int modelTimeoutSeconds, TestProject testProject, Prompt prompt,
-                             boolean useGoldstandardComponentNames) {
+    public record TestConfig(ModelProvider modelProvider, String model, double modelTemperature, int modelTimeoutSeconds, TestProject testProject,
+                             Prompt prompt, boolean useGoldstandardComponentNames) {
         // more parameters can be added above (if a param is not set in the config its simply null)
 
         @NotNull
         @Override
         public String toString() {
-            return "TestConfig{" +
-                    "modelProvider=" + modelProvider +
-                    ", model='" + model + "'" +
-                    ", modelTemperature=" + modelTemperature +
-                    ", modelTimeoutSeconds=" + modelTimeoutSeconds +
-                    ",\ntestProject=" + testProject +
-                    ", prompt=" + prompt +
-                    ", useGoldstandardComponentNames=" + useGoldstandardComponentNames +
-                    "}";
+            return "TestConfig{" + "modelProvider=" + modelProvider + ", model='" + model + "'" + ", modelTemperature=" + modelTemperature + ", modelTimeoutSeconds=" + modelTimeoutSeconds + ",\ntestProject=" + testProject + ", prompt=" + prompt + ", useGoldstandardComponentNames=" + useGoldstandardComponentNames + "}";
         }
-
 
     }
 }

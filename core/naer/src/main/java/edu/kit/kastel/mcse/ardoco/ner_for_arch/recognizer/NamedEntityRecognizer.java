@@ -1,4 +1,15 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -8,16 +19,7 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.util.ModelProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The main interface of the library for recognizing named entities in software architecture documentations.
@@ -25,7 +27,6 @@ import java.util.Set;
  */
 public class NamedEntityRecognizer {
     private static final Logger logger = LoggerFactory.getLogger(NamedEntityRecognizer.class);
-    private static final String EXAMPLE_PROMPT = loadPromptFromResources("component_recognition_example_prompt.txt");
     /**
      * The chat model used to process the SAD
      */
@@ -62,7 +63,8 @@ public class NamedEntityRecognizer {
     /**
      * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation}.
      * <p>
-     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
+     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of
+     * {@link NamedEntity} instances.
      * </p>
      *
      * @return a set of recognized named entities
@@ -75,8 +77,9 @@ public class NamedEntityRecognizer {
             return prompt.parseAnswer(answer, softwareArchitectureDocumentation); //if everything works as intended, this does not fail
         } catch (IOException e) {
             logger.warn("initial parsing failed, attempting to reformat LLM output (via LLM)...");
-            String repairPrompt = "The following output is invalid. Reformat it so it precisely adheres to the following output format:\n" + prompt.getExpectedOutputFormat() +
-                    "\n\nInvalid output to reformat:\n" + answer + "\nThis error occurred when trying to parse it:\n" + e.getMessage();
+            String repairPrompt = "The following output is invalid. Reformat it so it precisely adheres to the following output format:\n" + prompt
+                    .getExpectedOutputFormat() + "\n\nInvalid output to reformat:\n" + answer + "\nThis error occurred when trying to parse it:\n" + e
+                            .getMessage();
             UserMessage repairMessage = new UserMessage(repairPrompt);
             SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
             ChatRequest repairRequest = ChatRequest.builder().messages(systemMessage, repairMessage).build();
@@ -87,26 +90,27 @@ public class NamedEntityRecognizer {
             try {
                 return prompt.parseAnswer(repairedAnswer, softwareArchitectureDocumentation);
             } catch (IOException e2) {
-                logger.error("repair attempt failed");
-                throw new RuntimeException("Both original and repair attempts failed", e2);
+                throw new UncheckedIOException("Both original and repair attempts failed", e2);
             }
         }
     }
 
     /**
-     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation} using a set of entity names (that are suspected to occur in the SAD) as support.
+     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation} using a set of entity names (that are suspected to occur
+     * in the SAD) as support.
      * <p>
-     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of {@link NamedEntity} instances.
+     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of
+     * {@link NamedEntity} instances.
      * </p>
      *
-     * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that should be recognized with their corresponding types).
+     * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that
+     *                         should be recognized with their corresponding types).
      * @return a set of recognized named entities
      */
     public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, Map<NamedEntityType, Set<String>> possibleEntities) {
         prompt.addPossibleEntities(possibleEntities);
         return recognize(softwareArchitectureDocumentation);
     }
-
 
     /**
      * Builder for {@link NamedEntityRecognizer} instances.
@@ -132,7 +136,6 @@ public class NamedEntityRecognizer {
             return this;
         }
 
-
         /**
          * Sets the prompt that will be provided to the chat model.
          *
@@ -152,15 +155,14 @@ public class NamedEntityRecognizer {
             return this;
         }
 
-
         /**
          * Builds the {@link NamedEntityRecognizer} with the configured settings.
          *
          * <p>
          * default values (if not explicitly configured differently):
          * <ul>
-         *     <li>{@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel}</li>
-         *     <li>{@link NamedEntityRecognizer#prompt} = {@link #EXAMPLE_PROMPT}</li>
+         * <li>{@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel}</li>
+         * <li>{@link NamedEntityRecognizer#prompt} = {@link #EXAMPLE_PROMPT}</li>
          * </ul>
          *
          * @return a new {@link NamedEntityRecognizer}

@@ -1,15 +1,17 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.util;
-
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.ollama.OllamaChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 
 /**
  * A factory class for creating different types of {@link ChatModel} instances.
@@ -77,9 +79,9 @@ public class ChatModelFactory {
      * Each provider has different available models.
      * If not specified, a default model will be selected based on the provider:
      * <ul>
-     *     <li>OPEN_AI: "gpt-4.1-nano"</li>
-     *     <li>VDL: "phi4:latest"</li>
-     *     <li>LOCAL: N/A (not implemented)</li>
+     * <li>OPEN_AI: "gpt-4.1-nano"</li>
+     * <li>VDL: "phi4:latest"</li>
+     * <li>LOCAL: N/A (not implemented)</li>
      * </ul>
      *
      * @param modelName the name of the model to use (provider-specific)
@@ -97,18 +99,18 @@ public class ChatModelFactory {
      */
     public ChatModel build() {
         return switch (provider) {
-            case OPEN_AI -> {
-                //most cost efficient models: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
-                if (modelName == null) modelName = "gpt-4.1-nano"; //default
-                yield buildOpenAiModel();
-            }
-            case LOCAL -> {
-                yield buildLocalModel();
-            }
-            case OLLAMA -> {
-                if (modelName == null) modelName = "phi4:latest"; //default
-                yield buildOllamaModel();
-            }
+        case OPEN_AI -> {
+            //most cost efficient models: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
+            if (modelName == null)
+                modelName = "gpt-4.1-nano"; //default
+            yield buildOpenAiModel();
+        }
+        case LOCAL -> buildLocalModel();
+        case OLLAMA -> {
+            if (modelName == null)
+                modelName = "phi4:latest"; //default
+            yield buildOllamaModel();
+        }
         };
     }
 
@@ -122,12 +124,7 @@ public class ChatModelFactory {
      */
     private ChatModel buildOpenAiModel() {
         String apiKey = System.getenv("OPENAI_API_KEY");
-        return OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .timeout(Duration.ofSeconds(timeoutSeconds))
-                .modelName(modelName)
-                .temperature(temperature)
-                .build();
+        return OpenAiChatModel.builder().apiKey(apiKey).timeout(Duration.ofSeconds(timeoutSeconds)).modelName(modelName).temperature(temperature).build();
     }
 
     /**
@@ -135,9 +132,9 @@ public class ChatModelFactory {
      * <p>
      * This method requires the following environment variables to be set:
      * <ul>
-     *   <li>OLLAMA_HOST: The base URL of the Ollama server</li>
-     *   <li>OLLAMA_USER: Username for authentication</li>
-     *   <li>OLLAMA_PASSWORD: Password for authentication</li>
+     * <li>OLLAMA_HOST: The base URL of the Ollama server</li>
+     * <li>OLLAMA_USER: Username for authentication</li>
+     * <li>OLLAMA_PASSWORD: Password for authentication</li>
      * </ul>
      * <p>
      *
@@ -148,14 +145,11 @@ public class ChatModelFactory {
         String user = System.getenv("OLLAMA_USER");
         String password = System.getenv("OLLAMA_PASSWORD");
 
-        var builder = OllamaChatModel.builder()
-                .baseUrl(host)
-                .modelName(modelName)
-                .temperature(temperature)
-                .timeout(Duration.ofSeconds(timeoutSeconds));
+        var builder = OllamaChatModel.builder().baseUrl(host).modelName(modelName).temperature(temperature).timeout(Duration.ofSeconds(timeoutSeconds));
 
         if (user != null && password != null) {
-            builder = builder.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
+            builder = builder.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder()
+                    .encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
         }
 
         return builder.build();

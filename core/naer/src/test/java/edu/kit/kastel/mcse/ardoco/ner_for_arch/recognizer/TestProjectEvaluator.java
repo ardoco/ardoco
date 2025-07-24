@@ -1,13 +1,7 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
 
-
-import dev.langchain4j.model.chat.ChatModel;
-import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
-import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -17,7 +11,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dev.langchain4j.model.chat.ChatModel;
+import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
+import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 
 /**
  * The TestProjectEvaluator class is responsible for evaluating component recognition within test projects.
@@ -70,19 +71,17 @@ public class TestProjectEvaluator {
     private void evaluateAll() {
         Path evalResourcesPath = getEvaluationResourcesPath();
         Stream<Path> testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
-        int[] errorCounter = {0};
+        int[] errorCounter = { 0 };
 
-        testProjectDirs
-                .filter(Files::isDirectory)
-                .forEach(dir -> {
-                    try {
-                        evaluateProjectInDirectory(dir);
-                    } catch (Exception e) {
-                        errorCounter[0]++;
-                        logger.error("Evaluation failed for project: {}", dir.getFileName());
-                    }
-                    logger.info(SEPARATOR);
-                });
+        testProjectDirs.filter(Files::isDirectory).forEach(dir -> {
+            try {
+                evaluateProjectInDirectory(dir);
+            } catch (Exception e) {
+                errorCounter[0]++;
+                logger.error("Evaluation failed for project: {}", dir.getFileName());
+            }
+            logger.info(SEPARATOR);
+        });
 
         assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
     }
@@ -134,7 +133,9 @@ public class TestProjectEvaluator {
         }
         NamedEntityRecognizer recognizer = builder.build();
 
-        Set<NamedEntity> components = useGoldStandardComponentNames ? recognizer.recognize(sad,GoldstandardParser.getPossibleComponents(dir)) : recognizer.recognize(sad);
+        Set<NamedEntity> components = useGoldStandardComponentNames ?
+                recognizer.recognize(sad, GoldstandardParser.getPossibleComponents(dir)) :
+                recognizer.recognize(sad);
         Set<NamedEntity> groundTruth = assertDoesNotThrow(() -> GoldstandardParser.parse(goldstandardFile));
 
         matchAndLogResults(components, groundTruth);
@@ -149,12 +150,10 @@ public class TestProjectEvaluator {
      * @return the {@link Path} to the first matching goldstandard file
      */
     private Path findGoldstandardFile(Path dir) {
-        return assertDoesNotThrow(() ->
-                Files.list(dir.resolve("goldstandards"))
-                        .filter(p -> p.getFileName().toString().contains("goldstandard_NER.csv"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No goldstandard file in " + dir))
-        );
+        return assertDoesNotThrow(() -> Files.list(dir.resolve("goldstandards"))
+                .filter(p -> p.getFileName().toString().contains("goldstandard_NER.csv"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No goldstandard file in " + dir)));
     }
 
     /**
@@ -168,20 +167,16 @@ public class TestProjectEvaluator {
      * @return the {@link Path} to the found SAD file
      */
     private Path findSadFile(Path dir) {
-        Path sadDir = assertDoesNotThrow(() ->
-                Files.list(dir)
-                        .filter(Files::isDirectory)
-                        .filter(p -> p.getFileName().toString().contains("text_"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No SAD directory in " + dir))
-        );
+        Path sadDir = assertDoesNotThrow(() -> Files.list(dir)
+                .filter(Files::isDirectory)
+                .filter(p -> p.getFileName().toString().contains("text_"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No SAD directory in " + dir)));
 
-        return assertDoesNotThrow(() ->
-                Files.list(sadDir)
-                        .filter(p -> p.getFileName().toString().endsWith("_1SentPerLine.txt"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No SAD file in " + sadDir))
-        );
+        return assertDoesNotThrow(() -> Files.list(sadDir)
+                .filter(p -> p.getFileName().toString().endsWith("_1SentPerLine.txt"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No SAD file in " + sadDir)));
     }
 
     /**

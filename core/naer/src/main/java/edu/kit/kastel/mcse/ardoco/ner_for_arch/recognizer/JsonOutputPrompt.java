@@ -1,4 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.ner_for_arch.recognizer;
+
+import java.io.IOException;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
@@ -7,24 +14,19 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.ner_for_arch.serialization.NamedEntityParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * A prompt type designed to generate JSON-formatted output using only one call.
  * This type indicates that the prompt output format must adhere to the following JSON structure:
  * <pre>
  * [
- *   {
- *     "name": "...",
- *     "type": "...",
- *     "alternativeNames": [...],
- *     "occurrences": [...]
- *   },
- *   ...
+ * {
+ * "name": "...",
+ * "type": "...",
+ * "alternativeNames": [...],
+ * "occurrences": [...]
+ * },
+ * ...
  * ]
  * </pre>
  * Example:<br>
@@ -36,18 +38,18 @@ import java.util.Set;
  * Output:<br>
  * <pre>
  * [
- *     {
- *         "name": "AuthenticationService",
- *         "type": "COMPONENT",
- *         "alternativeNames": ["service"],
- *         "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
- *     },
- *     {
- *         "name": "UserDatabase",
- *         "type": "COMPONENT",
- *         "alternativeNames": [],
- *         "occurrences": ["It forwards valid credentials to the UserDatabase."]
- *     }
+ * {
+ * "name": "AuthenticationService",
+ * "type": "COMPONENT",
+ * "alternativeNames": ["service"],
+ * "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+ * },
+ * {
+ * "name": "UserDatabase",
+ * "type": "COMPONENT",
+ * "alternativeNames": [],
+ * "occurrences": ["It forwards valid credentials to the UserDatabase."]
+ * }
  * ]
  * </pre>
  */
@@ -97,7 +99,7 @@ public class JsonOutputPrompt extends Prompt {
                     },
                     ...
                 ]
-                
+
                 Example (content is imaginary):
                 [
                     {
@@ -118,8 +120,6 @@ public class JsonOutputPrompt extends Prompt {
 
     @Override
     public String toString() {
-        return "JsonOutputPrompt{" +
-                "text='" + text + '\'' +
-                '}';
+        return "JsonOutputPrompt{" + "text='" + text + '\'' + '}';
     }
 }
