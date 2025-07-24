@@ -15,22 +15,22 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRe
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LLMArchitectureProviderAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class TransArCAi extends ArDoCoRunner {
+public class TransarcAi extends ArDoCoRunner {
 
-    public TransArCAi(String projectName) {
+    public TransarcAi(String projectName) {
         super(projectName);
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
-            LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
+            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
@@ -41,8 +41,8 @@ public class TransArCAi extends ArDoCoRunner {
     }
 
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt, LLMArchitecturePrompt codeExtractionPrompt,
-            LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
+            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
@@ -58,7 +58,7 @@ public class TransArCAi extends ArDoCoRunner {
                 codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
-        LLMArchitectureProviderAgent llmArchitectureProviderAgent = new LLMArchitectureProviderAgent(dataRepository, largeLanguageModel,
+        LlmArchitectureProviderAgent llmArchitectureProviderAgent = new LlmArchitectureProviderAgent(dataRepository, largeLanguageModel,
                 documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 

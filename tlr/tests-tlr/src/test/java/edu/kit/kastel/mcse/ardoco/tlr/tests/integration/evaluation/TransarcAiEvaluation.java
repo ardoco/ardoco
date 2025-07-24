@@ -10,24 +10,24 @@ import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArCAi;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.TransarcAi;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
-public class TransArCAiEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
+public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
 
     private final ArDoCodeEvaluationProject project;
 
     private final LargeLanguageModel largeLanguageModel;
-    private final LLMArchitecturePrompt documentationExtractionPrompt;
-    private final LLMArchitecturePrompt codeExtractionPrompt;
-    private final LLMArchitecturePrompt aggregationPrompt;
-    private final LLMArchitecturePrompt.Features codeFeatures;
+    private final LlmArchitecturePrompt documentationExtractionPrompt;
+    private final LlmArchitecturePrompt codeExtractionPrompt;
+    private final LlmArchitecturePrompt aggregationPrompt;
+    private final LlmArchitecturePrompt.Features codeFeatures;
 
-    public TransArCAiEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentationExtractionPrompt,
-            LLMArchitecturePrompt codeExtractionPrompt, LLMArchitecturePrompt.Features codeFeatures, LLMArchitecturePrompt aggregationPrompt) {
+    public TransarcAiEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt,
+            LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
         this.project = project;
         this.largeLanguageModel = largeLanguageModel;
         this.documentationExtractionPrompt = documentationExtractionPrompt;
@@ -57,7 +57,7 @@ public class TransArCAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new TransArCAi(projectName);
+        var runner = new TransarcAi(projectName);
         runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
                 outputDirectory, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         return runner;

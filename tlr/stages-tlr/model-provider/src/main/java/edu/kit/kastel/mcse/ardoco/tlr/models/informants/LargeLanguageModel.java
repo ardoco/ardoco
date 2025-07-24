@@ -7,6 +7,9 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -22,6 +25,8 @@ public enum LargeLanguageModel {
     // OLLAMA
     LLAMA_3_1_8B("Llama3.1 8b", () -> createOllamaModel("llama3.1:8b-instruct-fp16")), //
     OLLAMA_GENERIC(Environment.getEnv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(Environment.getEnv("OLLAMA_MODEL_NAME")));
+
+    private static final Logger logger = LoggerFactory.getLogger(LargeLanguageModel.class);
 
     private final Supplier<ChatModel> creator;
     private final String humanReadableName;
@@ -47,7 +52,20 @@ public enum LargeLanguageModel {
         return this.name().startsWith("GPT_");
     }
 
-    private static final int SEED = 422413373;
+    private static final int SEED = loadSeed();
+
+    private static int loadSeed() {
+        String seedEnv = Environment.getEnv("SEED");
+        if (seedEnv == null) {
+            return 422413373;
+        }
+        try {
+            logger.info("Using SEED: {}", seedEnv);
+            return Integer.parseInt(seedEnv);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid SEED environment variable: " + seedEnv, e);
+        }
+    }
 
     /**
      * Creates an OpenAI chat model instance.
@@ -71,15 +89,19 @@ public enum LargeLanguageModel {
                 .build();
     }
 
-    private static OllamaChatModel createOllamaModel(String model) {
+    private static ChatModel createOllamaModel(String model) {
         String host = Environment.getEnv("OLLAMA_HOST");
         String user = Environment.getEnv("OLLAMA_USER");
         String password = Environment.getEnv("OLLAMA_PASSWORD");
+        String token = Environment.getEnv("OLLAMA_TOKEN");
 
         var ollama = OllamaChatModel.builder().baseUrl(host).modelName(model).timeout(Duration.ofMinutes(15)).temperature(0.0).seed(SEED);
         if (user != null && password != null && !user.isEmpty() && !password.isEmpty()) {
             ollama.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder()
                     .encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
+        } else if (token != null && !token.isEmpty()) {
+            // Default to OpenAI API token authentication
+            return OpenAiChatModel.builder().baseUrl(host).modelName(model).apiKey(token).timeout(Duration.ofMinutes(15)).temperature(0.0).seed(SEED).build();
         }
         return ollama.build();
     }
