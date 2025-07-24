@@ -40,7 +40,6 @@ public class NamedEntityParser {
      * @throws IOException if deserialization fails (e.g. malformed JSON)
      */
     public static Set<NamedEntity> fromJson(String json, SoftwareArchitectureDocumentation sad) throws IOException {
-        //System.out.println("Parsing: \n" + json);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(json);
         Set<NamedEntity> entities = new HashSet<>();
@@ -83,12 +82,28 @@ public class NamedEntityParser {
         Map<String, NamedEntity> entityMap = new HashMap<>();
         Map<String, Set<Integer>> entityOccurencesMap = new HashMap<>(); //needed to determine reference types of the occurrences after information about alternative names is saved
         String[] lines = str.split("\\R");
+        for (int i = 0; i < lines.length; i++) {
+            lines[i] = lines[i].trim();
+        }
 
         boolean parsingAlternativeNames = false;
         NamedEntityType currentEntityType = null;
 
+        processLines(softwareArchitectureDocumentation, lines, parsingAlternativeNames, currentEntityType, entityMap, entityOccurencesMap);
+
+        //add occurrences with correct reference types
+        for (NamedEntity entity : entityMap.values()) {
+            for (int lineNumber : entityOccurencesMap.get(entity.getName())) {
+                addOccurrenceWithDeductedReferenceType(entity, lineNumber, softwareArchitectureDocumentation);
+            }
+        }
+
+        return new HashSet<>(entityMap.values());
+    }
+
+    private static void processLines(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String[] lines, boolean parsingAlternativeNames,
+            NamedEntityType currentEntityType, Map<String, NamedEntity> entityMap, Map<String, Set<Integer>> entityOccurencesMap) throws IOException {
         for (String line : lines) {
-            line = line.trim();
             if (line.isEmpty()) {
                 continue;
             }
@@ -112,68 +127,65 @@ public class NamedEntityParser {
             }
 
             if (currentEntityType == null) {
-                logger.error("Entity type not specified before entries: '{}'", line);
                 throw new IOException("Entity type not specified before entries: '" + line + "'");
             }
 
             if (!parsingAlternativeNames) {
-                // Parse entity occurrence: <name>, '<line>'
-                Pattern pattern = Pattern.compile("^(.*?),\\s*'(.*)'$");
-                Matcher matcher = pattern.matcher(line.trim());
-                if (!matcher.matches()) {
-                    logger.error("Invalid entity occurrence format: '{}'", line);
-                    throw new IOException("Invalid entity occurrence format: '" + line + "'");
-                }
-
-                String name = matcher.group(1).trim();
-                String textLine = matcher.group(2);
-                int lineNumber = softwareArchitectureDocumentation.getLineNumber(textLine);
-
-                NamedEntity entity = entityMap.get(name);
-                if (entity == null) {
-                    entity = new NamedEntity(name, currentEntityType);
-                    entity.setSourceText(softwareArchitectureDocumentation);
-                    entityMap.put(name, entity);
-                    entityOccurencesMap.put(name, new HashSet<>());
-                }
-                entityOccurencesMap.get(name).add(lineNumber);
-
+                parseEntityOccurrence(softwareArchitectureDocumentation, line, entityMap, currentEntityType, entityOccurencesMap);
             } else {
-                // Parse alternative names: <componentName>: <alt1>, <alt2>, ...
-                String[] parts = line.split(":");
-                if (parts.length != 2) {
-                    logger.error("Invalid alternative names format: '{}'", line);
-                    throw new IOException("Invalid alternative names format: '" + line + "'");
-                }
-
-                String name = parts[0].trim();
-                String alternativesStr = parts[1].trim();
-                if (alternativesStr.equalsIgnoreCase("None")) {
-                    continue;
-                }
-
-                NamedEntity entity = entityMap.get(name);
-                if (entity != null) {
-                    String[] alternatives = alternativesStr.split(",");
-                    for (String alt : alternatives) {
-                        entity.addAlternativeName(alt.trim());
-                    }
-                } else {
-                    logger.error("Alternative names for unknown entity: '{}'", name);
-                    throw new IOException("Alternative names for unknown entity: '" + name + "'");
-                }
-
+                parseAlternativeNames(line, entityMap);
             }
         }
+    }
 
-        //add occurrences with correct reference types
-        for (NamedEntity entity : entityMap.values()) {
-            for (int lineNumber : entityOccurencesMap.get(entity.getName())) {
-                addOccurrenceWithDeductedReferenceType(entity, lineNumber, softwareArchitectureDocumentation);
-            }
+    private static void parseEntityOccurrence(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String line,
+            Map<String, NamedEntity> entityMap, NamedEntityType currentEntityType, Map<String, Set<Integer>> entityOccurencesMap) throws IOException {
+        // Parse entity occurrence: <name>, '<line>'
+        Pattern pattern = Pattern.compile("^(.*?),\\s*'(.*)'$");
+        Matcher matcher = pattern.matcher(line.trim());
+        if (!matcher.matches()) {
+            logger.error("Invalid entity occurrence format: '{}'", line);
+            throw new IOException("Invalid entity occurrence format: '" + line + "'");
         }
 
-        return new HashSet<>(entityMap.values());
+        String name = matcher.group(1).trim();
+        String textLine = matcher.group(2);
+        int lineNumber = softwareArchitectureDocumentation.getLineNumber(textLine);
+
+        NamedEntity entity = entityMap.get(name);
+        if (entity == null) {
+            entity = new NamedEntity(name, currentEntityType);
+            entity.setSourceText(softwareArchitectureDocumentation);
+            entityMap.put(name, entity);
+            entityOccurencesMap.put(name, new HashSet<>());
+        }
+        entityOccurencesMap.get(name).add(lineNumber);
+    }
+
+    private static void parseAlternativeNames(String line, Map<String, NamedEntity> entityMap) throws IOException {
+        // Parse alternative names: <componentName>: <alt1>, <alt2>, ...
+        String[] parts = line.split(":");
+        if (parts.length != 2) {
+            logger.error("Invalid alternative names format: '{}'", line);
+            throw new IOException("Invalid alternative names format: '" + line + "'");
+        }
+
+        String name = parts[0].trim();
+        String alternativesStr = parts[1].trim();
+        if (alternativesStr.equalsIgnoreCase("None")) {
+            return;
+        }
+
+        NamedEntity entity = entityMap.get(name);
+        if (entity != null) {
+            String[] alternatives = alternativesStr.split(",");
+            for (String alt : alternatives) {
+                entity.addAlternativeName(alt.trim());
+            }
+        } else {
+            logger.error("Alternative names for unknown entity: '{}'", name);
+            throw new IOException("Alternative names for unknown entity: '" + name + "'");
+        }
     }
 
     private static void addOccurrenceWithDeductedReferenceType(NamedEntity entity, int lineNumber,

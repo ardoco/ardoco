@@ -2,9 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,19 +43,6 @@ public class NamedEntityRecognizer {
     private NamedEntityRecognizer(Builder builder) {
         this.chatModel = builder.chatModel;
         this.prompt = builder.prompt;
-    }
-
-    private static String loadPromptFromResources(String path) {
-        try (InputStream is = NamedEntityRecognizer.class.getClassLoader().getResourceAsStream(path)) {
-            if (is == null) {
-                logger.error("could not load resource '{}'", path);
-                throw new IllegalStateException("Could not find resource: " + path);
-            }
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            logger.error("could not load prompt from resources '{}'", path);
-            throw new IllegalStateException("Could not load prompt from resources", e);
-        }
     }
 
     /**
