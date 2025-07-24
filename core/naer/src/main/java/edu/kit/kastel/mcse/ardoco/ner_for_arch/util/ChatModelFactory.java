@@ -81,7 +81,6 @@ public class ChatModelFactory {
      *     <li>VDL: "phi4:latest"</li>
      *     <li>LOCAL: N/A (not implemented)</li>
      * </ul>
-     * </p>
      *
      * @param modelName the name of the model to use (provider-specific)
      * @return this factory instance for method chaining

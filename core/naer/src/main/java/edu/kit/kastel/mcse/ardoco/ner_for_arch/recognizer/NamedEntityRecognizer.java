@@ -162,7 +162,6 @@ public class NamedEntityRecognizer {
          *     <li>{@link NamedEntityRecognizer#chatModel} = {@code defaultVDLChatModel}</li>
          *     <li>{@link NamedEntityRecognizer#prompt} = {@link #EXAMPLE_PROMPT}</li>
          * </ul>
-         * </p>
          *
          * @return a new {@link NamedEntityRecognizer}
          */
