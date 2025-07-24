@@ -40,10 +40,7 @@
       <version>${javaparser.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
@@ -64,6 +61,12 @@
       <groupId>io.github.ardoco</groupId>
       <artifactId>magika</artifactId>
       <version>0.6.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
@@ -84,11 +87,6 @@
       <groupId>org.fuchss</groupId>
       <artifactId>xml-object-mapper</artifactId>
       <version>0.7.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
