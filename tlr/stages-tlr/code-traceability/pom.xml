@@ -37,11 +37,5 @@
       <artifactId>common</artifactId>
       <version>${revision}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.opennlp</groupId>
-      <artifactId>opennlp-tools</artifactId>
-      <version>2.3.2</version>
-    </dependency>
   </dependencies>
-
 </project>
