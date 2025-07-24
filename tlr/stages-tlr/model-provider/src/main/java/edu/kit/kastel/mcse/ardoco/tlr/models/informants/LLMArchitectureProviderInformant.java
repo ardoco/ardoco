@@ -51,8 +51,8 @@ public class LLMArchitectureProviderInformant extends Informant {
     public LLMArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentation,
             LLMArchitecturePrompt code, LLMArchitecturePrompt.Features codeFeature, LLMArchitecturePrompt aggregation) {
         super(LLMArchitectureProviderInformant.class.getSimpleName(), dataRepository);
-        String apiKey = Environment.getenv("OPENAI_API_KEY");
-        String orgId = Environment.getenv("OPENAI_ORGANIZATION_ID");
+        String apiKey = Environment.getEnv("OPENAI_API_KEY");
+        String orgId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
         if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
             throw new IllegalArgumentException("OpenAI API Key and Organization ID must be set");
         }
