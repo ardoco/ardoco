@@ -3,9 +3,9 @@ name: Maven Verify
 on:
   push: # Ignore releases and main dev branch
     tags-ignore:
-      - 'v*'
-    #branches-ignore:
-    # - 'main'
+      - 'v*' 
+    branches-ignore:
+     - 'main'
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -23,3 +23,4 @@ jobs:
       CENTRAL_USER: ""
       CENTRAL_TOKEN: ""
       GPG_KEY: ""
+
