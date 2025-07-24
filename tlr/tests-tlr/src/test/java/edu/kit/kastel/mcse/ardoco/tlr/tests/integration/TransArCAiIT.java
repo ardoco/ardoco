@@ -45,7 +45,7 @@ class TransArCAiIT {
     @BeforeAll
     static void beforeAll() {
         System.setProperty(LOGGING_ARDOCO_CORE, "info");
-        Assumptions.assumeTrue(Environment.getenv("OPENAI_API_KEY") != null || Environment.getenv("OLLAMA_HOST") != null);
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
     }
 
     @AfterAll
@@ -57,7 +57,7 @@ class TransArCAiIT {
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
     void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
-        Assumptions.assumeTrue(Environment.getenv("CI") == null);
+        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
         LLMArchitecturePrompt docPrompt = LLMArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LLMArchitecturePrompt codePrompt = null;

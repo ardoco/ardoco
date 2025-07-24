@@ -71,9 +71,9 @@ public class CachedChatLanguageModel implements ChatModel {
             return CACHE_DIR;
         }
 
-        String cacheDir = Environment.getenv("LLM_CACHE_DIR");
+        String cacheDir = Environment.getEnv("LLM_CACHE_DIR");
         if (cacheDir == null) {
-            cacheDir = "cache-llm/";
+            cacheDir = ".cache-llm/";
         }
         File cache = new File(cacheDir);
         if (!cache.mkdirs() && !cache.isDirectory()) {

@@ -18,28 +18,10 @@ public enum LargeLanguageModel {
     // OPENAI
     GPT_4_O_MINI("GPT-4o mini", () -> createOpenAiModel("gpt-4o-mini-2024-07-18")), //
     GPT_4_O("GPT-4o", () -> createOpenAiModel("gpt-4o-2024-08-06")), //
-    GPT_4_TURBO("GPT-4 Turbo", () -> createOpenAiModel("gpt-4-turbo-2024-04-09")), //
-    GPT_4("GPT-4", () -> createOpenAiModel("gpt-4-0613")), //
-    GPT_3_5_TURBO("GPT-3.5 Turbo", () -> createOpenAiModel("gpt-3.5-turbo-0125")), //
-    OPENAI_GENERIC(Environment.getenv("OPENAI_MODEL_NAME"), () -> createOpenAiModel(Environment.getenv("OPENAI_MODEL_NAME"))), //
+    OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), () -> createOpenAiModel(Environment.getEnv("OPENAI_MODEL_NAME"))), //
     // OLLAMA
-    CODELLAMA_13B("Codellama 13b", () -> createOllamaModel("codellama:13b")), //
-    // CODELLAMA_70B("Codellama 70b", () -> createOllamaModel("codellama:70b")), //
-    //
-    // GEMMA_2_27B("Gemma2 27b", () -> createOllamaModel("gemma2:27b")), //
-    //
-    // QWEN_2_72B("Qwen2 72b", () -> createOllamaModel("qwen2:72b")), //
-    //
     LLAMA_3_1_8B("Llama3.1 8b", () -> createOllamaModel("llama3.1:8b-instruct-fp16")), //
-    LLAMA_3_1_70B("Llama3.1 70b", () -> createOllamaModel("llama3.1:70b")), //
-    //
-    // MISTRAL_7B("Mistral 7b", () -> createOllamaModel("mistral:7b")), //
-    // MISTRAL_NEMO_27B("Mistral Nemo 12b", () -> createOllamaModel("mistral-nemo:12b")), //
-    // MIXTRAL_8_X_22B("Mixtral 8x22b", () -> createOllamaModel("mixtral:8x22b")), //
-    //
-    // PHI_3_14B("Phi3 14b", () -> createOllamaModel("phi3:14b")), //
-    //
-    OLLAMA_GENERIC(Environment.getenv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(Environment.getenv("OLLAMA_MODEL_NAME")));
+    OLLAMA_GENERIC(Environment.getEnv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(Environment.getEnv("OLLAMA_MODEL_NAME")));
 
     private final Supplier<ChatModel> creator;
     private final String humanReadableName;
@@ -76,8 +58,8 @@ public enum LargeLanguageModel {
      * @throws IllegalStateException If required environment variables are not set
      */
     private static OpenAiChatModel createOpenAiModel(String model) {
-        String openAiOrganizationId = Environment.getenv("OPENAI_ORGANIZATION_ID");
-        String openAiApiKey = Environment.getenv("OPENAI_API_KEY");
+        String openAiOrganizationId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
+        String openAiApiKey = Environment.getEnv("OPENAI_API_KEY");
         if (openAiOrganizationId == null || openAiApiKey == null) {
             throw new IllegalStateException("OPENAI_ORGANIZATION_ID or OPENAI_API_KEY environment variable not set");
         }
@@ -90,9 +72,9 @@ public enum LargeLanguageModel {
     }
 
     private static OllamaChatModel createOllamaModel(String model) {
-        String host = Environment.getenv("OLLAMA_HOST");
-        String user = Environment.getenv("OLLAMA_USER");
-        String password = Environment.getenv("OLLAMA_PASSWORD");
+        String host = Environment.getEnv("OLLAMA_HOST");
+        String user = Environment.getEnv("OLLAMA_USER");
+        String password = Environment.getEnv("OLLAMA_PASSWORD");
 
         var ollama = OllamaChatModel.builder().baseUrl(host).modelName(model).timeout(Duration.ofMinutes(15)).temperature(0.0).seed(SEED);
         if (user != null && password != null && !user.isEmpty() && !password.isEmpty()) {

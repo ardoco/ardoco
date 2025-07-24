@@ -23,8 +23,8 @@ public class HttpCommunicator {
     public static final String ENV_PASSWORD = "SCNLP_SERVICE_PASSWORD";
 
     public String sendAuthenticatedGetRequest(String requestUrl) throws IOException {
-        String username = Environment.getenv(ENV_USERNAME);
-        String password = Environment.getenv(ENV_PASSWORD);
+        String username = Environment.getEnv(ENV_USERNAME);
+        String password = Environment.getEnv(ENV_PASSWORD);
         if (username == null || password == null) {
             throw new IOException("Environment variables " + ENV_USERNAME + " and " + ENV_PASSWORD + " must be set.");
         }
@@ -38,8 +38,8 @@ public class HttpCommunicator {
     }
 
     public String sendAuthenticatedPostRequest(String requestUrl, String body) throws IOException {
-        String username = Environment.getenv(ENV_USERNAME);
-        String password = Environment.getenv(ENV_PASSWORD);
+        String username = Environment.getEnv(ENV_USERNAME);
+        String password = Environment.getEnv(ENV_PASSWORD);
         if (username == null || password == null) {
             throw new IOException("Environment variables " + ENV_USERNAME + " and " + ENV_PASSWORD + " must be set.");
         }

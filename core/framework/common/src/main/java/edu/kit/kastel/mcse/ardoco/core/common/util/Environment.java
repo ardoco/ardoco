@@ -51,7 +51,7 @@ public final class Environment {
      * @param key The name of the environment variable to retrieve
      * @return The value of the environment variable, or null if not found
      */
-    public static String getenv(String key) {
+    public static String getEnv(String key) {
         String dotenvValue = DOTENV == null ? null : DOTENV.get(key);
         if (dotenvValue != null)
             return dotenvValue;
@@ -62,7 +62,7 @@ public final class Environment {
      * Retrieves an environment variable value, requiring it to be non-null.
      * This method:
      * <ol>
-     * <li>Attempts to retrieve the variable using {@link #getenv(String)}</li>
+     * <li>Attempts to retrieve the variable using {@link #getEnv(String)}</li>
      * <li>Logs an error if the variable is not found</li>
      * <li>Returns the value (which may be null, despite the method name)</li>
      * </ol>
@@ -71,8 +71,8 @@ public final class Environment {
      * @return The value of the environment variable
      * @throws IllegalStateException if the variable is not found and strict mode is enabled
      */
-    public static String getenvNonNull(String key) {
-        String env = getenv(key);
+    public static String getEnvNonNull(String key) {
+        String env = getEnv(key);
         if (env == null) {
             logger.error("environment variable {} is missing, use '.env' or your system to set it up", key);
         }

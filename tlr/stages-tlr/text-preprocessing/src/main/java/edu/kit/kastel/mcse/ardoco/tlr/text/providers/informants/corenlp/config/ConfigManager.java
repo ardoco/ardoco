@@ -37,11 +37,11 @@ public final class ConfigManager {
             properties.setProperty(PROPERTY_CORENLP_SERVICE, "/stanfordnlp");
             properties.setProperty(PROPERTY_HEALTH_SERVICE, "/stanfordnlp/health");
         }
-        if (Environment.getenv("MICROSERVICE_URL") != null) {
-            properties.setProperty(PROPERTY_MICROSERVICE_URL, Environment.getenv("MICROSERVICE_URL"));
+        if (Environment.getEnv("MICROSERVICE_URL") != null) {
+            properties.setProperty(PROPERTY_MICROSERVICE_URL, Environment.getEnv("MICROSERVICE_URL"));
         }
-        if (Environment.getenv("NLP_PROVIDER_SOURCE") != null) {
-            properties.setProperty(PROPERTY_NLP_PROVIDER_SOURCE, Environment.getenv("NLP_PROVIDER_SOURCE"));
+        if (Environment.getEnv("NLP_PROVIDER_SOURCE") != null) {
+            properties.setProperty(PROPERTY_NLP_PROVIDER_SOURCE, Environment.getEnv("NLP_PROVIDER_SOURCE"));
         }
     }
 
