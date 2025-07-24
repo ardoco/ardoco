@@ -48,7 +48,7 @@ class SwattrAiIT {
                 File outputDir = new File(OUTPUT);
 
                 var runner = new Swattr(name);
-                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), SortedMaps.immutable.empty(), outputDir);
+                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.COMPONENT_LISTING), SortedMaps.immutable.empty(), outputDir);
                 return runner;
             }
 
@@ -75,7 +75,7 @@ class SwattrAiIT {
                 File outputDir = new File(OUTPUT);
 
                 var runner = new Swattr(name);
-                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.RAW), SortedMaps.immutable.empty(), outputDir);
+                runner.setUp(inputText, new ArchitectureConfiguration(inputModel, ModelFormat.COMPONENT_LISTING), SortedMaps.immutable.empty(), outputDir);
                 return runner;
             }
 

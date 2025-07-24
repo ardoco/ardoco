@@ -29,10 +29,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
  * Name2::ID
  * </p>
  */
-public class RawArchitectureExtractor extends ArchitectureExtractor {
-    private static final Logger logger = LoggerFactory.getLogger(RawArchitectureExtractor.class);
+public class ComponentListingArchitectureExtractor extends ArchitectureExtractor {
+    private static final Logger logger = LoggerFactory.getLogger(ComponentListingArchitectureExtractor.class);
 
-    public RawArchitectureExtractor(String modelPath, Metamodel metamodelToExtract) {
+    public ComponentListingArchitectureExtractor(String modelPath, Metamodel metamodelToExtract) {
         super(modelPath, metamodelToExtract);
     }
 

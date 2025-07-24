@@ -30,14 +30,14 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransArCAiEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcAiEvaluation;
 
 @Disabled("Only for manual execution")
-class TransArCAiIT {
-    private static final Logger logger = LoggerFactory.getLogger(TransArCAiIT.class);
+class TransarcAiIT {
+    private static final Logger logger = LoggerFactory.getLogger(TransarcAiIT.class);
     protected static final String LOGGING_ARDOCO_CORE = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.core";
 
     private static final Map<Pair<ArDoCodeEvaluationProject, LargeLanguageModel>, ArDoCoResult> RESULTS = new HashMap<>();
@@ -59,18 +59,18 @@ class TransArCAiIT {
     void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
-        LLMArchitecturePrompt docPrompt = LLMArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
-        LLMArchitecturePrompt codePrompt = null;
-        LLMArchitecturePrompt aggPrompt = null;
+        LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
+        LlmArchitecturePrompt codePrompt = null;
+        LlmArchitecturePrompt aggPrompt = null;
 
-        LLMArchitecturePrompt.Features codeFeatures = LLMArchitecturePrompt.Features.PACKAGES;
+        LlmArchitecturePrompt.Features codeFeatures = LlmArchitecturePrompt.Features.PACKAGES;
 
         logger.info("###############################################");
         logger.info("Evaluating project {} with LLM '{}'", project, llm);
         logger.info("Prompts: {}, {}, {}", docPrompt, codePrompt, aggPrompt);
         logger.info("Features: {}", codeFeatures);
 
-        var evaluation = new TransArCAiEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
+        var evaluation = new TransarcAiEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
         var result = evaluation.runTraceLinkEvaluation();
         if (result != null) {
             RESULTS.put(Tuples.pair(project, llm), result);
@@ -99,8 +99,8 @@ class TransArCAiIT {
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
                 var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-                goldStandard = TransArCAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
-                var evaluationResults = TransArCAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                goldStandard = TransarcAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                var evaluationResults = TransarcAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
                 classificationResults.add(evaluationResults);
                 llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.getPrecision(), evaluationResults.getRecall(),
                         evaluationResults.getF1()));

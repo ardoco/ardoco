@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.util.List;
 
-public enum LLMArchitecturePrompt {
+public enum LlmArchitecturePrompt {
     EXTRACT_FROM_ARCHITECTURE(
             """
                     Your task is to identify the high-level components based on a software architecture documentation. In a first step, you shall elaborate on the following documentation:
@@ -44,7 +44,7 @@ public enum LLMArchitecturePrompt {
 
     private final List<String> templates;
 
-    LLMArchitecturePrompt(String... templates) {
+    LlmArchitecturePrompt(String... templates) {
         this.templates = List.of(templates);
     }
 

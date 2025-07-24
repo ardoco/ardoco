@@ -1,8 +1,8 @@
 /* Licensed under MIT 2024-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
-import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt.Features.PACKAGES;
-import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LLMArchitecturePrompt.Features.PACKAGES_AND_THEIR_CLASSES;
+import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt.Features.PACKAGES;
+import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt.Features.PACKAGES_AND_THEIR_CLASSES;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,20 +37,20 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
-public class LLMArchitectureProviderInformant extends Informant {
+public class LlmArchitectureProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
 
-    private static final Logger logger = LoggerFactory.getLogger(LLMArchitectureProviderInformant.class);
+    private static final Logger logger = LoggerFactory.getLogger(LlmArchitectureProviderInformant.class);
 
     private final ChatModel chatLanguageModel;
-    private final LLMArchitecturePrompt documentationPrompt;
-    private final LLMArchitecturePrompt codePrompt;
-    private final LLMArchitecturePrompt aggregationPrompt;
-    private final LLMArchitecturePrompt.Features codeFeature;
+    private final LlmArchitecturePrompt documentationPrompt;
+    private final LlmArchitecturePrompt codePrompt;
+    private final LlmArchitecturePrompt aggregationPrompt;
+    private final LlmArchitecturePrompt.Features codeFeature;
 
-    public LLMArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LLMArchitecturePrompt documentation,
-            LLMArchitecturePrompt code, LLMArchitecturePrompt.Features codeFeature, LLMArchitecturePrompt aggregation) {
-        super(LLMArchitectureProviderInformant.class.getSimpleName(), dataRepository);
+    public LlmArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentation,
+            LlmArchitecturePrompt code, LlmArchitecturePrompt.Features codeFeature, LlmArchitecturePrompt aggregation) {
+        super(LlmArchitectureProviderInformant.class.getSimpleName(), dataRepository);
         String apiKey = Environment.getEnv("OPENAI_API_KEY");
         String orgId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
         if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
@@ -97,7 +97,6 @@ public class LLMArchitectureProviderInformant extends Informant {
 
         // Remove any not letter characters
         componentNames = componentNames.stream()
-                // .map(it -> it.replaceAll("[^a-zA-Z0-9 \\-_]", "").replaceAll("\\s+", " ").trim())
                 .map(it -> it.replace("Components", "").replace("Component", "").trim())
                 // Ensure parts CamelCase
                 .map(it -> it.replace(" ", ""))

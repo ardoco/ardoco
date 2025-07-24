@@ -66,7 +66,7 @@ public enum EvaluationProject {
         return switch (modelFormat) {
             case PCM -> EvaluationHelper.loadFileFromResources(architectureModelResource);
             case UML -> EvaluationHelper.loadFileFromResources(architectureModelResource.replace("/pcm/", "/uml/").replace(".repository", ".uml"));
-            case ACM, RAW -> throw new IllegalArgumentException("Model format " + modelFormat + " is not supported for this project.");
+            case ACM, COMPONENT_LISTING -> throw new IllegalArgumentException("Model format " + modelFormat + " is not supported for this project.");
         };
     }
 
