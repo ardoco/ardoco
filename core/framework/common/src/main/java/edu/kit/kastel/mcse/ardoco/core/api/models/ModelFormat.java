@@ -9,8 +9,8 @@ public enum ModelFormat {
     PCM,
     /** Unified Modeling Language (UML). */
     UML,
-    /** RAW Model, e.g., text-based models. */
-    RAW,
+    /** Component Listing Model, Simply a list of component names. */
+    COMPONENT_LISTING,
     /** Code Model for the ArCoTL framework. */
     ACM
 }

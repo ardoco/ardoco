@@ -18,7 +18,7 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 
 abstract class AbstractDocumentationToCodeTlrEvaluation extends AbstractEvaluation {
 
-    protected SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard,
+    public static SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard,
             Metamodel metamodel) {
         var sadSamCodeTlsAsString = result.getSadCodeTraceLinks()
                 .collect(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1 + " -> " + tl.getSecondEndpoint().toString())
@@ -30,7 +30,7 @@ abstract class AbstractDocumentationToCodeTlrEvaluation extends AbstractEvaluati
         return calculator.calculateMetrics(sadSamCodeTlsAsString, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private int getConfusionMatrixSum(ArDoCoResult result, Metamodel metamodel) {
+    private static int getConfusionMatrixSum(ArDoCoResult result, Metamodel metamodel) {
         DataRepository dataRepository = result.dataRepository();
 
         Text text = DataRepositoryHelper.getAnnotatedText(dataRepository);

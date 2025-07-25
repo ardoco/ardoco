@@ -57,7 +57,9 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
     public List<CodeItem> getEndpoints() {
         // The order is more than important here! Otherwise, ArDoCo Heuristics might not work properly.
         List<CodeItem> entities = new ArrayList<>(codeModel.getAllPackages());
-        codeModel.getContent().forEach(c -> entities.addAll(c.getAllCompilationUnits()));
+        for (CodeItem codeItem : codeModel.getContent()) {
+            entities.addAll(codeItem.getAllCompilationUnits());
+        }
         return entities;
     }
 

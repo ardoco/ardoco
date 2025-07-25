@@ -94,7 +94,9 @@ public final class JavaModel {
                             .orElseThrow())
                     .toList();
             SortedSet<Datatype> codeImplInterfaces = new TreeSet<>();
-            javaImplInterfaces.forEach(javaImplInterface -> codeImplInterfaces.add(javaImplInterface.codeInterface()));
+            for (JavaInterface javaImplInterface : javaImplInterfaces) {
+                codeImplInterfaces.add(javaImplInterface.codeInterface());
+            }
             javaClassifier.codeClassifier().setImplementedTypes(codeImplInterfaces);
         }
     }
@@ -110,7 +112,9 @@ public final class JavaModel {
                             .orElseThrow())
                     .toList();
             SortedSet<Datatype> codeExtendedInterfaces = new TreeSet<>();
-            javaExtendedInterfaces.forEach(javaExtendedInterface -> codeExtendedInterfaces.add(javaExtendedInterface.codeInterface()));
+            for (JavaInterface javaExtendedInterface : javaExtendedInterfaces) {
+                codeExtendedInterfaces.add(javaExtendedInterface.codeInterface());
+            }
             javaInterface.codeInterface().setExtendedTypes(codeExtendedInterfaces);
         }
     }
@@ -149,7 +153,9 @@ public final class JavaModel {
     private static List<ITypeBinding> getReferencedBindings(AbstractTypeDeclaration abstractTypeDeclaration) {
         @SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = abstractTypeDeclaration.bodyDeclarations();
         List<Type> referencedTypes = new ArrayList<>();
-        bodyDeclarations.forEach(bodyDeclaration -> referencedTypes.addAll(TypeFinder.find(bodyDeclaration)));
+        for (BodyDeclaration bodyDeclaration : bodyDeclarations) {
+            referencedTypes.addAll(TypeFinder.find(bodyDeclaration));
+        }
         List<ITypeBinding> referencedBindings = new ArrayList<>();
         for (Type referencedType : referencedTypes) {
             ITypeBinding referencedBinding = referencedType.resolveBinding();
@@ -194,7 +200,9 @@ public final class JavaModel {
                 content.add(codeCompilationUnit);
             }
             List<Datatype> types = extractTypes(compilationUnit);
-            types.forEach(t -> t.setCompilationUnit(codeCompilationUnit));
+            for (Datatype type : types) {
+                type.setCompilationUnit(codeCompilationUnit);
+            }
             codeCompilationUnit.setContent(types);
         }
 
@@ -312,7 +320,9 @@ public final class JavaModel {
             List<CodeModule> mergedPackageElements = new ArrayList<>();
             mergedPackageElements.addAll(codePackage.getCompilationUnits());
             mergedPackageElements.addAll(mergePackages(codePackage.getSubpackages()));
-            mergedPackageElements.forEach(packageElement -> packageElement.setParent(codePackage));
+            for (CodeModule packageElement : mergedPackageElements) {
+                packageElement.setParent(codePackage);
+            }
             codePackage.setContent(mergedPackageElements);
         }
         return new LinkedHashSet<>(packageMap.values());
