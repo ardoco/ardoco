@@ -3,7 +3,9 @@ name: Maven Verify
 on:
   push: # Ignore releases and main dev branch
     tags-ignore:
-      - 'v*'
+      - 'v*'    
+    branches:
+      - 'main' 
   pull_request:
     types: [opened, synchronize, reopened]
 
