@@ -29,7 +29,9 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
             var arDoCo = getArDoCo();
             var dataRepository = arDoCo.getDataRepository();
             var pipelineSteps = initializePipelineSteps(dataRepository);
-            pipelineSteps.forEach(arDoCo::addPipelineStep);
+            for (AbstractPipelineStep pipelineStep : pipelineSteps) {
+                arDoCo.addPipelineStep(pipelineStep);
+            }
             return true;
         } catch (IOException e) {
             logger.error("Problem in initialising pipeline when loading data (IOException)", e.getCause());

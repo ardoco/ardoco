@@ -96,7 +96,9 @@ public abstract class PipelineAgent extends Pipeline implements Agent {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         super.delegateApplyConfigurationToInternalObjects(additionalConfiguration);
-        this.informants.forEach(filter -> filter.applyConfiguration(additionalConfiguration));
+        for (Informant informant : this.informants) {
+            informant.applyConfiguration(additionalConfiguration);
+        }
     }
 
 }

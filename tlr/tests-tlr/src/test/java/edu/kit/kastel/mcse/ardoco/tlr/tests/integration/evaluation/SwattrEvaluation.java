@@ -29,7 +29,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.SwattrEvaluationProject;
 
 public class SwattrEvaluation extends AbstractEvaluation {
 
-    private final SwattrEvaluationProject project;
+    protected final SwattrEvaluationProject project;
 
     public SwattrEvaluation(SwattrEvaluationProject project) {
         this.project = Objects.requireNonNull(project);
@@ -73,7 +73,7 @@ public class SwattrEvaluation extends AbstractEvaluation {
         return sentences * modelElements;
     }
 
-    private ArDoCoRunner createSwattrRunner() {
+    protected ArDoCoRunner createSwattrRunner() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),

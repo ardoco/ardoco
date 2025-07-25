@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.parser;
 
 import java.util.ArrayList;
@@ -31,8 +31,12 @@ public final class PcmRepository {
     }
 
     void init() {
-        interfaces.forEach(i -> i.init(datatypes));
-        components.forEach(c -> c.init(interfaces));
+        for (PcmInterface pcmInterface : interfaces) {
+            pcmInterface.init(datatypes);
+        }
+        for (PcmComponent pcmComponent : components) {
+            pcmComponent.init(interfaces);
+        }
     }
 
     public String getId() {
