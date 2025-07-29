@@ -53,11 +53,11 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
     public abstract Optional<String> getType();
 
     /**
-     * Returns the type parts of the entity, if available.
+     * Returns the type parts of the entity
      *
-     * @return an Optional containing the type parts, or empty if not available
+     * @return a list containing the type parts, or empty if not available
      */
-    public abstract Optional<ImmutableList<String>> getTypeParts();
+    public abstract ImmutableList<String> getTypeParts();
 
     /**
      * Returns the parts of the entity's name.

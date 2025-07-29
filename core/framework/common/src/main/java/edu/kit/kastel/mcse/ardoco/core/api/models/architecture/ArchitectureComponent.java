@@ -73,8 +73,8 @@ public final class ArchitectureComponent extends ArchitectureItem {
     }
 
     @Override
-    public Optional<ImmutableList<String>> getTypeParts() {
-        return Optional.of(this.typeParts.toImmutable());
+    public ImmutableList<String> getTypeParts() {
+        return this.typeParts.toImmutable();
     }
 
     @Override

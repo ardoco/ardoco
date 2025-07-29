@@ -73,7 +73,7 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
         for (var item : getContent()) {
             if (item.getType().isPresent()) {
                 identifiers.add(item.getType().orElseThrow());
-                identifiers.addAll(item.getTypeParts().orElseThrow().toList());
+                identifiers.addAll(item.getTypeParts().toList());
             }
         }
         return identifiers;

@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.architecture;
 import java.io.Serial;
 import java.util.Optional;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 /**
@@ -37,12 +38,12 @@ public final class ArchitectureMethod extends ArchitectureItem {
     /**
      * Returns the type parts of this method (currently not specified).
      *
-     * @return empty optional
+     * @return empty List
      */
     @Override
-    public Optional<ImmutableList<String>> getTypeParts() {
+    public ImmutableList<String> getTypeParts() {
         // Not implemented yet. Methods currently have no specified type.
-        return Optional.empty();
+        return Lists.immutable.empty();
     }
 
 }

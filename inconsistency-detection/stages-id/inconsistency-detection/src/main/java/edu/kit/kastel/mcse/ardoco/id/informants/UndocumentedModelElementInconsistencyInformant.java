@@ -43,7 +43,7 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
             if (types.contains(entityType.orElseThrow())) {
                 return true;
             }
-            for (var instanceType : modelEntity.getTypeParts().orElseThrow()) {
+            for (var instanceType : modelEntity.getTypeParts()) {
                 if (types.contains(instanceType)) {
                     return true;
                 }
