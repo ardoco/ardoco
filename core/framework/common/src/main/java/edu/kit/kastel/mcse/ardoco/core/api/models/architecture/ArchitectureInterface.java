@@ -5,6 +5,7 @@ import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
@@ -37,7 +38,7 @@ public final class ArchitectureInterface extends ArchitectureItem {
      * @return method signatures
      */
     public SortedSet<ArchitectureMethod> getMethodSignatures() {
-        return this.methodSignatures;
+        return new TreeSet<>(this.methodSignatures);
     }
 
     /**

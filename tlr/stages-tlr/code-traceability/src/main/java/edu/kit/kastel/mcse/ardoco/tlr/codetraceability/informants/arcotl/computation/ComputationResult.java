@@ -8,7 +8,7 @@ import java.util.Set;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
@@ -63,7 +63,7 @@ public class ComputationResult {
      * @param node the computation node for which the trace links are to be returned
      * @return trace links for every endpoint tuple whose confidence in the specified computation node's result has a value
      */
-    public Set<ModelCodeTraceLink> getTraceLinks(Node node) {
+    public Set<ArchitectureCodeTraceLink> getTraceLinks(Node node) {
         if (!this.exists(node)) {
             return new java.util.LinkedHashSet<>();
         }

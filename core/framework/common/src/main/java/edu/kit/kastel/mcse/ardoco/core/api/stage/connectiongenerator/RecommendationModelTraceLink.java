@@ -85,7 +85,7 @@ public final class RecommendationModelTraceLink extends TraceLink<RecommendedIns
             case CodeEntity ignored -> typeInfo = "";
         }
 
-        return "InstanceMapping [ uid=" + this.getSecondEndpoint().getId() + ", name=" + this.getSecondEndpoint().getName() + //
+        return "RecommendationModelTraceLink [ uid=" + this.getSecondEndpoint().getId() + ", name=" + this.getSecondEndpoint().getName() + //
                 ", as=" + String.join(", ", typeInfo) + ", probability=" + this.getConfidence() + ", FOUND: " + //
                 this.getFirstEndpoint().getName() + " : " + this.getFirstEndpoint().getType() + ", occurrences= " + //
                 "NameVariants: " + names.size() + ": " + names + " sentences{" + Arrays.toString(namePositions.toArray()) + "}" + //

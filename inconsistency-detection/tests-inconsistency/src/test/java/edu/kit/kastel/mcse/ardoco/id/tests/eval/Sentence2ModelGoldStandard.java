@@ -18,8 +18,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 /**
  * Represents a gold standard for evaluation, containing mappings between sentences and architecture elements.
  */
-public final class GoldStandard {
-    private final Logger logger = LoggerFactory.getLogger(GoldStandard.class);
+public final class Sentence2ModelGoldStandard {
+    private final Logger logger = LoggerFactory.getLogger(Sentence2ModelGoldStandard.class);
 
     private final File goldStandardFile;
     private final ArchitectureComponentModel model;
@@ -32,7 +32,7 @@ public final class GoldStandard {
      * @param goldStandardFile the file containing the gold standard data
      * @param model            the architecture component model
      */
-    public GoldStandard(File goldStandardFile, ArchitectureComponentModel model) {
+    public Sentence2ModelGoldStandard(File goldStandardFile, ArchitectureComponentModel model) {
         this.goldStandardFile = goldStandardFile;
         this.model = model;
         this.load();

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Computation;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
@@ -110,7 +110,7 @@ public final class TraceLinkGenerator {
         return Filter.getFilterArchNode(maxCompInterface, new ProvidedInterfaceCorrespondence().getNode(maxCompInterface));
     }
 
-    public static Set<ModelCodeTraceLink> generateTraceLinks(Node root, ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(Node root, ArchitectureModel archModel, CodeModel codeModel) {
         if (archModel == null || codeModel == null) {
             return new java.util.LinkedHashSet<>();
         }
@@ -122,7 +122,7 @@ public final class TraceLinkGenerator {
         return computation.getTraceLinks();
     }
 
-    public static Set<ModelCodeTraceLink> generateTraceLinks(ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(ArchitectureModel archModel, CodeModel codeModel) {
         return generateTraceLinks(getRoot(), archModel, codeModel);
     }
 }

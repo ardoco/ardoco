@@ -10,7 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 /**
  * Trace link between an architecture item and a code item.
  */
-public final class ModelCodeTraceLink extends TraceLink<ArchitectureItem, CodeItem> {
+public final class ArchitectureCodeTraceLink extends TraceLink<ArchitectureItem, CodeItem> {
     @Serial
     private static final long serialVersionUID = 7583961097321596737L;
 
@@ -20,7 +20,7 @@ public final class ModelCodeTraceLink extends TraceLink<ArchitectureItem, CodeIt
      * @param firstEndpoint  the architecture item
      * @param secondEndpoint the code item
      */
-    public ModelCodeTraceLink(ArchitectureItem firstEndpoint, CodeItem secondEndpoint) {
+    public ArchitectureCodeTraceLink(ArchitectureItem firstEndpoint, CodeItem secondEndpoint) {
         super(firstEndpoint, secondEndpoint);
     }
 }
