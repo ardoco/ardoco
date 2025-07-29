@@ -39,14 +39,14 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
         }
     }
 
-    private void exec(TextStateStrategy tss, ModelStates modelStates, Word word) {
+    private void exec(TextStateStrategy textStateStrategy, ModelStates modelStates, Word word) {
         for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
             if (model == null) {
                 continue;
             }
-            this.searchForNameInModel(model, tss, word);
-            this.searchForType(model, tss, word);
+            this.searchForNameInModel(model, textStateStrategy, word);
+            this.searchForType(model, textStateStrategy, word);
         }
     }
 
@@ -54,14 +54,14 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
      * This method checks whether a given node is a name of an instance given in the model extraction state. If it appears to be a name this is stored in the
      * text extraction state.
      */
-    private void searchForNameInModel(Model model, TextStateStrategy tss, Word word) {
+    private void searchForNameInModel(Model model, TextStateStrategy textStateStrategy, Word word) {
         if (this.posTagIsUndesired(word) && !this.wordStartsWithCapitalLetter(word)) {
             return;
         }
 
         var instanceNameIsSimilar = model.getEndpoints().stream().anyMatch(i -> SimilarityUtils.getInstance().isWordSimilarToEntity(word, i));
         if (instanceNameIsSimilar) {
-            tss.addNounMapping(word, MappingKind.NAME, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.NAME, this, this.probability);
         }
     }
 
@@ -78,13 +78,13 @@ public class ExtractionDependentOccurrenceInformant extends Informant {
      * text extraction state. If multiple options are available the node value is taken as reference.
      */
 
-    private void searchForType(Model model, TextStateStrategy tss, Word word) {
+    private void searchForType(Model model, TextStateStrategy textStateStrategy, Word word) {
         var instanceTypeIsSimilar = model.getEndpoints()
                 .stream()
                 .filter(modelEntity -> modelEntity.getType().isPresent())
                 .anyMatch(modelEntity -> SimilarityUtils.getInstance().isWordSimilarToModelInstanceType(word, modelEntity));
         if (instanceTypeIsSimilar) {
-            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
         }
     }
 

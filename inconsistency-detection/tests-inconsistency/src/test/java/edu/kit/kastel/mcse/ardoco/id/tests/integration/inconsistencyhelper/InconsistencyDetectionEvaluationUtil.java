@@ -71,20 +71,23 @@ public final class InconsistencyDetectionEvaluationUtil {
     }
 
     private static String getExtendedResultStringWithExpected(AggregatedClassificationResult results, ExpectedResults expectedResults) {
-        return String.format(Locale.ENGLISH, """
-                \tPrecision:%8.2f (min. expected: %.2f)
-                \tRecall:%11.2f (min. expected: %.2f)
-                \tF1:%15.2f (min. expected: %.2f)""", results.getPrecision(), expectedResults.precision(), results.getRecall(), expectedResults.recall(),
-                results.getF1(), expectedResults.f1()) + String.format(Locale.ENGLISH, """
+        return "" //
+                + String.format(Locale.ENGLISH, """
+                        \tPrecision:%8.2f (min. expected: %.2f)
+                        \tRecall:%11.2f (min. expected: %.2f)
+                        \tF1:%15.2f (min. expected: %.2f)""", results.getPrecision(), expectedResults.precision(), results.getRecall(), expectedResults
+                        .recall(), results.getF1(), expectedResults.f1()) //
+                + String.format(Locale.ENGLISH, """
 
                         \tAccuracy:%9.2f (min. expected: %.2f)
                         \tSpecificity:%6.2f (min. expected: %.2f)""", results.getAccuracy(), expectedResults.accuracy(), results.getSpecificity(),
-                        expectedResults.specificity()) + String.format(Locale.ENGLISH, """
+                        expectedResults.specificity()) //
+                + String.format(Locale.ENGLISH, """
 
-                                \tPhi Coef.:%8.2f (min. expected: %.2f)
-                                \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
-                                %s""", results.getPhiCoefficient(), expectedResults.phiCoefficient(), results.getPhiOverPhiMax(), results
-                                .getPhiCoefficientMax(), toRow(results));
+                        \tPhi Coef.:%8.2f (min. expected: %.2f)
+                        \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
+                        %s""", results.getPhiCoefficient(), expectedResults.phiCoefficient(), results.getPhiOverPhiMax(), results.getPhiCoefficientMax(), toRow(
+                        results));
     }
 
     public static String toRow(AggregatedClassificationResult results) {

@@ -13,18 +13,17 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
-public enum Documentation2ArchitectureModelTlrTask {
-
-    MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv"),//
-    TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020.csv"),//
-    TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021.csv"),//
-    BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv"),//
-    JABREF(EvaluationProject.JABREF, "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021.csv");
+public enum DocumentationToModelToCodeTlrTask {
+    MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-code_2016.csv"),//
+    TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sad_2020-code_2022.csv"),//
+    TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sad_2021-code_2023.csv"),//
+    BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-code_2023.csv"),//
+    JABREF(EvaluationProject.JABREF, "/benchmark/jabref/goldstandards/goldstandard_sad_2021-code_2023.csv");
 
     private final EvaluationProject project;
     private final String goldStandardPath;
 
-    Documentation2ArchitectureModelTlrTask(EvaluationProject project, String goldStandardPath) {
+    DocumentationToModelToCodeTlrTask(EvaluationProject project, String goldStandardPath) {
         this.project = project;
         this.goldStandardPath = goldStandardPath;
     }
@@ -37,12 +36,27 @@ public enum Documentation2ArchitectureModelTlrTask {
         return project.getArchitectureModel(modelFormat);
     }
 
+    public File getCodeModelFromResources() {
+        return project.getCodeModelFromResources();
+    }
+
+    public File getCodeDirectory() {
+        return project.getCodeDirectory();
+    }
+
+    public File getCodeDirectoryWithoutCloning() {
+        return project.getCodeDirectoryWithoutCloning();
+    }
+
     /**
      * Get the expected trace links from the gold standard file.
      * <p>
-     * The pairs in the list contain the sentence number (starting at 1) and the model element ID.
-     * 
-     * @return a list of pairs where each pair contains the sentence number and the model element ID
+     * The pairs in the list contain the sentence number (starting at 1) and the code element ID (path to the file/package). If a ID ends with a slash, it is a
+     * package, otherwise it is a file.
+     * <p>
+     * <b>IMPORTANT</b> you may need to unroll the gold standard.
+     *
+     * @return a list of pairs where each pair contains the sentence number and the code element ID
      */
     public List<Pair<Integer, String>> getExpectedTraceLinks() {
         File file = EvaluationHelper.loadFileFromResources(goldStandardPath);
@@ -62,11 +76,11 @@ public enum Documentation2ArchitectureModelTlrTask {
             if (parts.length < 2) {
                 throw new IllegalArgumentException("Invalid gold standard format: " + line);
             }
-            String modelElementId = parts[0].trim();
-            int sentenceId = Integer.parseInt(parts[1].trim());
+            int sentenceId = Integer.parseInt(parts[0].trim());
+            String modelElementId = parts[1].trim();
             expectedLinks.add(new Pair<>(sentenceId, modelElementId));
         }
+
         return expectedLinks;
     }
-
 }

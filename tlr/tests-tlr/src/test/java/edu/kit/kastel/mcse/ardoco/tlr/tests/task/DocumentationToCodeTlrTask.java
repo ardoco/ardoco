@@ -8,12 +8,11 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
-public enum Documentation2Model2CodeTlrTask {
+public enum DocumentationToCodeTlrTask {
     MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-code_2016.csv"),//
     TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sad_2020-code_2022.csv"),//
     TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sad_2021-code_2023.csv"),//
@@ -23,17 +22,13 @@ public enum Documentation2Model2CodeTlrTask {
     private final EvaluationProject project;
     private final String goldStandardPath;
 
-    Documentation2Model2CodeTlrTask(EvaluationProject project, String goldStandardPath) {
+    DocumentationToCodeTlrTask(EvaluationProject project, String goldStandardPath) {
         this.project = project;
         this.goldStandardPath = goldStandardPath;
     }
 
     public File getTextFile() {
         return project.getTextFile();
-    }
-
-    public File getArchitectureModelFile(ModelFormat modelFormat) {
-        return project.getArchitectureModel(modelFormat);
     }
 
     public File getCodeModelFromResources() {
@@ -51,11 +46,11 @@ public enum Documentation2Model2CodeTlrTask {
     /**
      * Get the expected trace links from the gold standard file.
      * <p>
-     * The pairs in the list contain the sentence number (starting at 1) and the code element ID (path to the file/package).
-     * If a ID ends with a slash, it is a package, otherwise it is a file.
+     * The pairs in the list contain the sentence number (starting at 1) and the code element ID (path to the file/package). If a ID ends with a slash, it is a
+     * package, otherwise it is a file.
      * <p>
      * <b>IMPORTANT</b> you may need to unroll the gold standard.
-     * 
+     *
      * @return a list of pairs where each pair contains the sentence number and the code element ID
      */
     public List<Pair<Integer, String>> getExpectedTraceLinks() {
