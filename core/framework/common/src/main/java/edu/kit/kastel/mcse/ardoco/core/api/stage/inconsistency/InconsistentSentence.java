@@ -58,7 +58,7 @@ public final class InconsistentSentence {
         }
 
         String formatString = "S%3d: \"%s\"%n\tInconsistent due to the following reasons:%n%s";
-        return String.format(Locale.ENGLISH, formatString, sentence.getSentenceNumberForOutput(), sentence.getText(), reasonsBuilder);
+        return String.format(Locale.ENGLISH, formatString, sentence.getSentenceNumber() + 1, sentence.getText(), reasonsBuilder);
     }
 
     public Sentence sentence() {

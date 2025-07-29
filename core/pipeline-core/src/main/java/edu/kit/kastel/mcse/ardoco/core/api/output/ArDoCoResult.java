@@ -50,7 +50,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         String modelInfo = String.format("%s (%s)", modelElementName, modelElementUid);
 
         var sentence = traceLink.getFirstEndpoint().getSentence();
-        int sentenceNumber = sentence.getSentenceNumberForOutput();
+        int sentenceNumber = sentence.getSentenceNumber() + 1;
         String sentenceInfo = String.format("S%3d: \"%s\"", sentenceNumber, sentence.getText());
 
         return String.format("%-42s <--> %s", modelInfo, sentenceInfo);
@@ -212,7 +212,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
             }
         }
 
-        var sortedInconsistentSentences = Lists.mutable.withAll(incSentenceMap.values()).sortThisByInt(i -> i.sentence().getSentenceNumberForOutput());
+        var sortedInconsistentSentences = Lists.mutable.withAll(incSentenceMap.values()).sortThisByInt(i -> i.sentence().getSentenceNumber() + 1);
         return sortedInconsistentSentences.toImmutable();
     }
 
@@ -222,8 +222,8 @@ public record ArDoCoResult(DataRepository dataRepository) {
      * @param sentenceNo the sentence number
      * @return sentence with the given number
      */
-    public Sentence getSentence(int sentenceNo) {
-        return this.getText().getSentences().detect(s -> s.getSentenceNumberForOutput() == sentenceNo);
+    private Sentence getSentence(int sentenceNo) {
+        return this.getText().getSentences().detect(s -> s.getSentenceNumber() + 1 == sentenceNo);
     }
 
     /**
