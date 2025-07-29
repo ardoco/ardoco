@@ -18,8 +18,8 @@ public abstract class ConfidenceAggregator extends Aggregation {
     @Override
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, List<NodeResult> childrenResults) {
         NodeResult nodeResult = new NodeResult();
-        CodeTraceabilityHelper codeTraceabilityHelper = new CodeTraceabilityHelper(archModel, codeModel);
-        for (Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple : codeTraceabilityHelper.getEndpointTuples()) {
+        for (Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple : CodeTraceabilityHelper.crossProductFromArchitectureItemsToCompilationUnits(archModel,
+                codeModel)) {
             Confidence confidence = this.aggregateConfidences(this.getConfidences(childrenResults, endpointTuple));
             nodeResult.add(endpointTuple, confidence);
         }
