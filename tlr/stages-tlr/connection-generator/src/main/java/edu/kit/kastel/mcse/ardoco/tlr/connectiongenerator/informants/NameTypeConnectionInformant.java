@@ -55,7 +55,7 @@ public class NameTypeConnectionInformant extends Informant {
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy tss, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
+    private void exec(TextState textState, TextStateStrategy textStateStrategy, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
 
         for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
@@ -63,10 +63,10 @@ public class NameTypeConnectionInformant extends Informant {
                 continue;
             }
             var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
-            this.checkForNameAfterType(textState, tss, word, model, recommendationState);
-            this.checkForNameBeforeType(textState, tss, word, model, recommendationState);
-            this.checkForNortBeforeType(textState, tss, word, model, recommendationState);
-            this.checkForNortAfterType(textState, tss, word, model, recommendationState);
+            this.checkForNameAfterType(textState, textStateStrategy, word, model, recommendationState);
+            this.checkForNameBeforeType(textState, textStateStrategy, word, model, recommendationState);
+            this.checkForNortBeforeType(textState, textStateStrategy, word, model, recommendationState);
+            this.checkForNortAfterType(textState, textStateStrategy, word, model, recommendationState);
         }
     }
 
@@ -74,7 +74,8 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the names of the text extraction state contain the previous node. If that's the
      * case a recommendation for the combination of both is created.
      */
-    private void checkForNameBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNameBeforeType(TextState textExtractionState, TextStateStrategy textStateStrategy, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -84,7 +85,7 @@ public class NameTypeConnectionInformant extends Informant {
         var similarTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!similarTypes.isEmpty()) {
-            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(preWord, MappingKind.NAME);
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
@@ -103,7 +104,8 @@ public class NameTypeConnectionInformant extends Informant {
      * @param model               the current model state
      * @param recommendationState the current recommendation state
      */
-    private void checkForNameAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNameAfterType(TextState textExtractionState, TextStateStrategy textStateStrategy, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -112,7 +114,7 @@ public class NameTypeConnectionInformant extends Informant {
 
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
-            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(after, MappingKind.NAME);
@@ -126,7 +128,8 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the previous node. If that's
      * the case a recommendation for the combination of both is created.
      */
-    private void checkForNortBeforeType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNortBeforeType(TextState textExtractionState, TextStateStrategy textStateStrategy, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -136,7 +139,7 @@ public class NameTypeConnectionInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
 
         if (!sameLemmaTypes.isEmpty()) {
-            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(preWord, MappingKind.NAME, MappingKind.TYPE);
@@ -150,7 +153,8 @@ public class NameTypeConnectionInformant extends Informant {
      * Checks if the current node is a type in the text extraction state. If the name_or_types of the text extraction state contain the afterwards node. If
      * that's the case a recommendation for the combination of both is created.
      */
-    private void checkForNortAfterType(TextState textExtractionState, TextStateStrategy tss, Word word, Model model, RecommendationState recommendationState) {
+    private void checkForNortAfterType(TextState textExtractionState, TextStateStrategy textStateStrategy, Word word, Model model,
+            RecommendationState recommendationState) {
         if (textExtractionState == null || word == null) {
             return;
         }
@@ -159,7 +163,7 @@ public class NameTypeConnectionInformant extends Informant {
 
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
-            tss.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(after, MappingKind.NAME, MappingKind.TYPE);

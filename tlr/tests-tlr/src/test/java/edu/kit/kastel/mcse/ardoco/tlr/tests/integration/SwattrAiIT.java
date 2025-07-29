@@ -54,7 +54,7 @@ class SwattrAiIT {
 
             @Override
             protected void compareResults(SingleClassificationResult<?> results, ExpectedResults expectedResults) {
-                // Disable Error Logging
+                // Disable Error Logging and asserts of junit
             }
         };
         var result = evaluation.runTraceLinkEvaluation();

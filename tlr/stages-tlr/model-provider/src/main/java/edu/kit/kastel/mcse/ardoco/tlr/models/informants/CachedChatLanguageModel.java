@@ -46,7 +46,7 @@ public class CachedChatLanguageModel implements ChatModel {
     }
 
     @Override
-    public ChatResponse chat(List<ChatMessage> messages) {
+    public synchronized ChatResponse chat(List<ChatMessage> messages) {
         if (cache.containsKey(messages.toString())) {
             return ChatResponse.builder().aiMessage(new AiMessage(cache.get(messages.toString()))).build();
         }
