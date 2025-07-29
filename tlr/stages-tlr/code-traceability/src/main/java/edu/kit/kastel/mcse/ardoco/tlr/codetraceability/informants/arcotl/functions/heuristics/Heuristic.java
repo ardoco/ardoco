@@ -22,8 +22,7 @@ public abstract class Heuristic {
 
     protected final NodeResult getNodeResult(ArchitectureModel archModel, CodeModel codeModel) {
         NodeResult confidences = new NodeResult();
-        CodeTraceabilityHelper codeTraceabilityHelper = new CodeTraceabilityHelper(archModel, codeModel);
-        for (var endpointTuple : codeTraceabilityHelper.getEndpointTuples()) {
+        for (var endpointTuple : CodeTraceabilityHelper.crossProductFromArchitectureItemsToCompilationUnits(archModel, codeModel)) {
             ArchitectureItem archEndpoint = endpointTuple.first();
             CodeCompilationUnit compUnit = endpointTuple.second();
             Confidence confidence = new Confidence();
