@@ -1,12 +1,10 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
-import org.slf4j.LoggerFactory;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
@@ -20,8 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ArCoTLModelProviderInfor
 public class ArCoTLModelProviderAgent extends PipelineAgent {
 
     /**
-     * Instantiates a new model provider agent.
-     * The constructor takes a list of ModelConnectors that are executed and used to extract information from models.
+     * Instantiates a new model provider agent. The constructor takes a list of ModelConnectors that are executed and used to extract information from models.
      * You can specify the extractors xor the code model file.
      *
      * @param data                      the DataRepository
@@ -40,7 +37,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code()));
+            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {
@@ -52,7 +49,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
         return informants;
     }
 
-    public static ArCoTLModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, SortedMap<String, String> additionalConfigs,
+    public static ArCoTLModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
             ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
         if (architectureConfiguration == null && codeConfiguration == null) {
             throw new IllegalArgumentException("At least one configuration must be provided");
@@ -64,27 +61,7 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // empty
-    }
-
-    public static CodeConfiguration getCodeConfiguration(File inputCode) {
-        if (inputCode == null) {
-            throw new IllegalArgumentException("Code file must not be null");
-        }
-
-        if (inputCode.isFile()) {
-            return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE);
-        }
-
-        // Legacy Support for only ACM_FILE in a directory
-        // TODO: Maybe delete in the future
-        if (inputCode.isDirectory() && new File(inputCode, "codeModel.acm").exists()) {
-            var logger = LoggerFactory.getLogger(ArCoTLModelProviderAgent.class);
-            logger.error("Legacy support for only ACM_FILE in a directory. Please use the ACM_FILE directly.");
-            return new CodeConfiguration(new File(inputCode, "codeModel.acm"), CodeConfiguration.CodeConfigurationType.ACM_FILE);
-        }
-
-        return new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.DIRECTORY);
     }
 }

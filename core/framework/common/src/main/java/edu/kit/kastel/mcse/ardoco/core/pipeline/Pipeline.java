@@ -1,20 +1,18 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.pipeline;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 /**
- * Class that represents a pipeline that can consist of multiple {@link AbstractPipelineStep
- * AbstractPipelineSteps}.
- * Steps are executed consecutively one after another in the order they were added to the
- * pipeline. Execution calls the
- * {@link #process()} method of the different {@link AbstractPipelineStep AbstractPipelineSteps}.
+ * Represents a pipeline consisting of multiple {@link AbstractPipelineStep} steps executed in sequence. Steps are executed in the order they are added to the
+ * pipeline.
  */
 public class Pipeline extends AbstractPipelineStep {
     private final List<AbstractPipelineStep> pipelineSteps;
@@ -36,8 +34,7 @@ public class Pipeline extends AbstractPipelineStep {
      *
      * @param id             id for the pipeline
      * @param dataRepository {@link DataRepository} that should be used for fetching and saving data
-     * @param pipelineSteps  List of {@link AbstractPipelineStep} that should be added to the
-     *                       constructed pipeline
+     * @param pipelineSteps  List of {@link AbstractPipelineStep} that should be added to the constructed pipeline
      */
     public Pipeline(String id, DataRepository dataRepository, List<AbstractPipelineStep> pipelineSteps) {
         super(id, dataRepository);
@@ -66,7 +63,7 @@ public class Pipeline extends AbstractPipelineStep {
     /**
      * {@return whether the pipeline has finished execution}
      */
-    public boolean wasExecuted() {
+    public boolean hasFinished() {
         return this.executed;
     }
 
@@ -108,19 +105,19 @@ public class Pipeline extends AbstractPipelineStep {
     }
 
     /**
-     * This method is called at the start of running the pipeline. Within this method, the added
-     * PipelineSteps are prepared.
-     * Sub-classes of Pipeline can override it with special cases.
-     * It is recommended that you apply the Map from {@link #getLastAppliedConfiguration()} via {@link #applyConfiguration(SortedMap)} to each pipeline step.
-     * You can do that on your own if you need special treatment or by default call {@link #delegateApplyConfigurationToInternalObjects(SortedMap)}.
-     * The base version does apply the last configuration via the default call.
+     * This method is called at the start of running the pipeline. Within this method, the added PipelineSteps are prepared. Sub-classes of Pipeline can
+     * override it with special cases. It is recommended that you apply the Map from {@link #getLastAppliedConfiguration()} via
+     * {@link #applyConfiguration(ImmutableSortedMap)} to each pipeline step. You can do that on your own if you need special treatment or by default call
+     * {@link #delegateApplyConfigurationToInternalObjects(ImmutableSortedMap)}. The base version does apply the last configuration via the default call.
      */
     protected void preparePipelineSteps() {
         this.delegateApplyConfigurationToInternalObjects(this.getLastAppliedConfiguration());
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
-        this.pipelineSteps.forEach(it -> it.applyConfiguration(additionalConfiguration));
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
+        for (AbstractPipelineStep abstractPipelineStep : this.pipelineSteps) {
+            abstractPipelineStep.applyConfiguration(additionalConfiguration);
+        }
     }
 }

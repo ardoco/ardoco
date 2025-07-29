@@ -62,7 +62,7 @@ public class CppElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> cppFiles = new ArrayList<>();
         try (var files = Files.walk(dir)) {
-            files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h")).forEach(cppFiles::add);
+            cppFiles.addAll(files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".cpp") || f.toString().endsWith(".h")).toList());
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }

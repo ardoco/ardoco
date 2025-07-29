@@ -1,13 +1,12 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
-
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.bag.sorted.MutableSortedBag;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedBags;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -60,7 +59,7 @@ public class RecommendedInstanceProbabilityFilter extends Filter {
             }
         }
 
-        inconsistencyState.setRecommendedInstances(filteredRecommendedInstances);
+        inconsistencyState.setRecommendedInstances(filteredRecommendedInstances.toImmutable());
     }
 
     private double analyzeProbabilitiesofRecommendedInstances(MutableList<RecommendedInstance> recommendedInstances) {
@@ -127,7 +126,7 @@ public class RecommendedInstanceProbabilityFilter extends Filter {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // handle additional config
     }
 

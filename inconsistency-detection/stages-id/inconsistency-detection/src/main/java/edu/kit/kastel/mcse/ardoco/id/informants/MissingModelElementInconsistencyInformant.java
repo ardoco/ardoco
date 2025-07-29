@@ -1,14 +1,13 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
-
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
@@ -40,15 +39,14 @@ public class MissingModelElementInconsistencyInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, modelState);
+        for (var metamodel : modelStates.getMetamodels()) {
+            var model = modelStates.getModel(metamodel);
+            this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, model);
         }
     }
 
-    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates,
-            LegacyModelExtractionState modelState) {
-        Metamodel metamodel = modelState.getMetamodel();
+    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates, Model model) {
+        Metamodel metamodel = model.getMetamodel();
         var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
         var connectionState = connectionStates.getConnectionState(metamodel);
 
@@ -121,7 +119,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
                 RecommendedInstance recommendedInstance = candidate.getRecommendedInstance();
                 double confidence = recommendedInstance.getProbability();
                 for (var word : recommendedInstance.getNameMappings().flatCollect(NounMapping::getWords).distinct()) {
-                    var sentenceNo = word.getSentenceNo() + 1;
+                    var sentenceNo = word.getSentenceNumber() + 1;
                     var wordText = word.getText();
                     inconsistencyState.addInconsistency(new MissingModelInstanceInconsistency(wordText, sentenceNo, confidence, candidate));
                 }
@@ -130,7 +128,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }

@@ -57,7 +57,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> pythonFiles = new ArrayList<>();
         try (var files = Files.walk(dir)) {
-            files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".py")).forEach(pythonFiles::add);
+            pythonFiles.addAll(files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".py")).toList());
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }

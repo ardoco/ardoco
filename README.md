@@ -30,24 +30,6 @@ For more information about the setup, the project structure, or the architecture
 </dependencies>
 ```
 
-For snapshot releases, make sure to add the following repository
-
-```xml
-
-<repositories>
-	<repository>
-		<releases>
-			<enabled>false</enabled>
-		</releases>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-		<id>mavenSnapshot</id>
-		<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-	</repository>
-</repositories>
-```
-
 ## Relevant repositories
 The following is an excerpt of repositories that use this framework and implement the different approaches and pipelines of ArDoCo:
 * [ArDoCo/Core](https://github.com/ArDoCo/Core): implementing the core of the approach

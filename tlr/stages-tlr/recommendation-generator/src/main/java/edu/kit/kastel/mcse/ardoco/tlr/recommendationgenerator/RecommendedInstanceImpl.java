@@ -1,6 +1,7 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,15 +11,11 @@ import java.util.UUID;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
-import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMappingChangeListener;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
@@ -28,18 +25,20 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  * This class represents recommended instances. These instances should be contained by the model. The likelihood is measured by the probability. Every
  * recommended instance has a unique name.
  */
-public final class RecommendedInstanceImpl extends RecommendedInstance implements Claimant, NounMappingChangeListener {
+public final class RecommendedInstanceImpl extends RecommendedInstance implements Claimant {
 
     private static final AggregationFunctions GLOBAL_AGGREGATOR = AggregationFunctions.AVERAGE;
+    @Serial
+    private static final long serialVersionUID = -8664363203506956742L;
     /**
      * Meaning (Weights): <br/> 0,-1,1 => Balanced <br/> 2 => InternalConfidence: 2 / mappingConfidence: 1<br/> -2 => InternalConfidence: 1 / mappingConfidence:
      * 2<br/> ...
      */
-    private int weightInternalConfidence = 0;
+    private static final int WEIGHT_INTERNAL_CONFIDENCE = 0;
 
-    private String type;
-    private String name;
-    private Confidence internalConfidence;
+    private final String type;
+    private final String name;
+    private final Confidence internalConfidence;
     private final MutableList<NounMapping> typeMappings;
     private final MutableList<NounMapping> nameMappings;
 
@@ -53,19 +52,17 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     @Override
-    public void onDelete(NounMapping deletedNounMapping, NounMapping replacement) {
-        if (replacement == null) {
-            throw new IllegalArgumentException("Replacement should not be null!");
-        }
-
+    public void onNounMappingDeletion(NounMapping deletedNounMapping, NounMapping replacement) {
         if (this.nameMappings.remove(deletedNounMapping)) {
+            if (replacement == null) {
+                throw new IllegalArgumentException("Replacement cannot be null");
+            }
             this.nameMappings.add(replacement);
-            replacement.registerChangeListener(this);
         } else if (this.typeMappings.remove(deletedNounMapping)) {
+            if (replacement == null) {
+                throw new IllegalArgumentException("Replacement cannot be null");
+            }
             this.typeMappings.add(replacement);
-            replacement.registerChangeListener(this);
-        } else {
-            throw new IllegalArgumentException("Try to delete an unknown noun mapping: " + deletedNounMapping);
         }
     }
 
@@ -85,9 +82,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
 
         this.nameMappings.addAll(nameNodes.castToCollection());
         this.typeMappings.addAll(typeNodes.castToCollection());
-
-        this.nameMappings.forEach(nm -> nm.registerChangeListener(this));
-        this.typeMappings.forEach(nm -> nm.registerChangeListener(this));
     }
 
     private static double calculateMappingProbability(ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings) {
@@ -130,26 +124,14 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         probabilities.add(mappingProbability);
         probabilities.add(ownProbability);
 
-        if (Math.abs(this.weightInternalConfidence) > 1) {
-            var element = this.weightInternalConfidence > 0 ? ownProbability : mappingProbability;
-            for (int i = 0; i < Math.abs(this.weightInternalConfidence) - 1; i++) {
+        if (Math.abs(WEIGHT_INTERNAL_CONFIDENCE) > 1) {
+            var element = WEIGHT_INTERNAL_CONFIDENCE > 0 ? ownProbability : mappingProbability;
+            for (int i = 0; i < Math.abs(WEIGHT_INTERNAL_CONFIDENCE) - 1; i++) {
                 probabilities.add(element);
             }
         }
 
         return RecommendedInstanceImpl.GLOBAL_AGGREGATOR.applyAsDouble(probabilities);
-    }
-
-    /**
-     * Adds a name and type mapping to this recommended instance.
-     *
-     * @param nameMapping the name mapping to add
-     * @param typeMapping the type mapping to add
-     */
-    @Override
-    public void addMappings(NounMapping nameMapping, NounMapping typeMapping) {
-        this.addName(nameMapping);
-        this.addType(typeMapping);
     }
 
     /**
@@ -175,7 +157,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
             return;
         }
         this.nameMappings.add(nameMapping);
-        nameMapping.registerChangeListener(this);
     }
 
     /**
@@ -189,7 +170,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
             return;
         }
         this.typeMappings.add(typeMapping);
-        typeMapping.registerChangeListener(this);
     }
 
     /**
@@ -212,35 +192,9 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         return this.name;
     }
 
-    /**
-     * Sets the type of this recommended instance to the given type.
-     *
-     * @param type the new type
-     */
-    @Override
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * Sets the name of this recommended instance to the given name.
-     *
-     * @param name the new name
-     */
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public void addProbability(Claimant claimant, double probability) {
         this.internalConfidence.addAgentConfidence(claimant, probability);
-    }
-
-    @Override
-    public ImmutableSortedSet<Integer> getSentenceNumbers() {
-        MutableSortedSet<Integer> sentenceNos = this.getNameMappings().flatCollect(nm -> nm.getWords().collect(Word::getSentenceNo)).toSortedSet();
-        return sentenceNos.toImmutableSortedSet();
     }
 
     @Override
@@ -259,13 +213,11 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
                 ", mappings:]= " + separator + String.join(separator, nameNodeVals) + separator + String.join(separator, typeNodeVals) + "\n";
     }
 
-    //FIXME Uses mutable properties
     @Override
     public int hashCode() {
         return Objects.hash(this.name, this.type);
     }
 
-    //FIXME Uses mutable properties
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -286,11 +238,6 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
             return Comparator.comparing(RecommendedInstance::getName).thenComparing(RecommendedInstance::getType).compare(this, ri);
         }
         return super.compareTo(o);
-    }
-
-    @Override
-    public ImmutableList<Claimant> getClaimants() {
-        return Lists.immutable.withAll(this.internalConfidence.getClaimants());
     }
 
 }

@@ -1,9 +1,10 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.ModelMapper;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 
@@ -22,7 +23,8 @@ public class AntlrExtractor extends CodeExtractor {
     private boolean contentExtracted;
 
     protected AntlrExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
-        super(codeItemRepository, path);
+        // TODO Allow different meta models
+        super(codeItemRepository, path, Metamodel.CODE_WITH_COMPILATION_UNITS);
         this.language = language;
         this.contentExtracted = false;
     }

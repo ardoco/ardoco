@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.config;
 
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 
 /**
  * This Singleton manages access to the config file.
@@ -35,11 +37,11 @@ public final class ConfigManager {
             properties.setProperty(PROPERTY_CORENLP_SERVICE, "/stanfordnlp");
             properties.setProperty(PROPERTY_HEALTH_SERVICE, "/stanfordnlp/health");
         }
-        if (System.getenv("MICROSERVICE_URL") != null) {
-            properties.setProperty(PROPERTY_MICROSERVICE_URL, System.getenv("MICROSERVICE_URL"));
+        if (Environment.getEnv("MICROSERVICE_URL") != null) {
+            properties.setProperty(PROPERTY_MICROSERVICE_URL, Environment.getEnv("MICROSERVICE_URL"));
         }
-        if (System.getenv("NLP_PROVIDER_SOURCE") != null) {
-            properties.setProperty(PROPERTY_NLP_PROVIDER_SOURCE, System.getenv("NLP_PROVIDER_SOURCE"));
+        if (Environment.getEnv("NLP_PROVIDER_SOURCE") != null) {
+            properties.setProperty(PROPERTY_NLP_PROVIDER_SOURCE, Environment.getEnv("NLP_PROVIDER_SOURCE"));
         }
     }
 

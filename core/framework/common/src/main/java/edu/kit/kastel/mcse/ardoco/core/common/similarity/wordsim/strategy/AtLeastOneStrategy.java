@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.strategy;
 
 import java.util.List;
@@ -7,15 +7,21 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.ComparisonConte
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimMeasure;
 
 /**
- * This comparison strategy accepts any word pair as similar if at least one of the specified word similarity measures
- * also accept that word pair as similar.
+ * Comparison strategy: accepts a word pair as similar if at least one measure accepts it as similar.
  */
 public class AtLeastOneStrategy implements ComparisonStrategy {
 
+    /**
+     * Returns true if at least one measure considers the words similar.
+     *
+     * @param comparisonContext the comparison context
+     * @param measures          the measures to use
+     * @return true if at least one measure returns true
+     */
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx, List<WordSimMeasure> measures) {
+    public boolean areWordsSimilar(ComparisonContext comparisonContext, List<WordSimMeasure> measures) {
         for (WordSimMeasure measure : measures) {
-            if (measure.areWordsSimilar(ctx)) {
+            if (measure.areWordsSimilar(comparisonContext)) {
                 return true;
             }
         }

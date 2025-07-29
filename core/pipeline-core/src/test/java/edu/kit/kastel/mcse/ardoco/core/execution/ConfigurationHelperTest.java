@@ -1,11 +1,12 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class ConfigurationHelperTest {
         var configs = ConfigurationHelper.getDefaultConfigurationOptions();
         Assertions.assertNotNull(configs);
 
-        for (var entry : configs.entrySet()) {
+        for (var entry : configs.castToSortedMap().entrySet()) {
             Assertions.assertAll(//
                     () -> Assertions.assertNotNull(entry.getKey()), //
                     () -> Assertions.assertNotNull(entry.getValue()));
@@ -31,7 +32,7 @@ class ConfigurationHelperTest {
 
     @Test
     void testBasicConfigurable() throws Exception {
-        SortedMap<String, String> configs = new TreeMap<>();
+        MutableSortedMap<String, String> configs = SortedMaps.mutable.empty();
         ConfigurationHelper.processConfigurationOfClass(configs, TestConfigurable.class);
         Assertions.assertEquals(5, configs.size());
 
@@ -49,7 +50,7 @@ class ConfigurationHelperTest {
         Assertions.assertEquals(TestConfigurable.MyEnum.B, t.testEnumNo);
 
         //@formatter:off
-        configs = new TreeMap<>(Map.of(//
+        configs = SortedMaps.mutable.ofSortedMap(Map.of(//
                 TestConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "testInt", "42", //
                 TestConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "testIntNo", "42", //
                 TestConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "testDouble", "48", //
@@ -64,7 +65,7 @@ class ConfigurationHelperTest {
         ));
         //@formatter:on
 
-        t.applyConfiguration(configs);
+        t.applyConfiguration(configs.toImmutable());
         Assertions.assertEquals(42, t.testInt);
         Assertions.assertEquals(24, t.testIntNo);
         Assertions.assertEquals(48, t.testDouble);
@@ -80,27 +81,27 @@ class ConfigurationHelperTest {
 
     @Test
     void testBaseAndChildConfigurable() throws Exception {
-        SortedMap<String, String> configs = new TreeMap<>();
+        MutableSortedMap<String, String> configs = SortedMaps.mutable.empty();
         ConfigurationHelper.processConfigurationOfClass(configs, TestBaseConfigurable.class);
         Assertions.assertEquals(1, configs.size());
         Assertions.assertEquals("1", configs.get(TestBaseConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "value"));
 
-        configs = new TreeMap<>();
+        configs = SortedMaps.mutable.empty();
         ConfigurationHelper.processConfigurationOfClass(configs, TestChildConfigurable.class);
         Assertions.assertEquals(1, configs.size());
         Assertions.assertEquals("2", configs.get(TestChildConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "value"));
 
-        configs = new TreeMap<>(Map.of(//
+        configs = SortedMaps.mutable.ofSortedMap(Map.of(//
                 TestBaseConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "value", "42", //
                 TestChildConfigurable.class.getSimpleName() + AbstractConfigurable.CLASS_ATTRIBUTE_CONNECTOR + "value", "43" //
         ));
 
         var t1 = new TestBaseConfigurable();
-        t1.applyConfiguration(configs);
+        t1.applyConfiguration(configs.toImmutable());
         Assertions.assertEquals(42, t1.value);
 
         var t2 = new TestChildConfigurable();
-        t2.applyConfiguration(configs);
+        t2.applyConfiguration(configs.toImmutable());
         Assertions.assertEquals(43, t2.value);
     }
 
@@ -114,7 +115,7 @@ class ConfigurationHelperTest {
         }
 
         @Override
-        protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+        protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
             // NOP
         }
     }
@@ -150,7 +151,7 @@ class ConfigurationHelperTest {
         }
 
         @Override
-        protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+        protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         }
 
         private enum MyEnum {
