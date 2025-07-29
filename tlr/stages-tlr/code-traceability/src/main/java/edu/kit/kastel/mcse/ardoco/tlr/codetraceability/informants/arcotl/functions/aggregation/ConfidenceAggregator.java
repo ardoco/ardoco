@@ -9,8 +9,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.CodeTraceabilityHelper;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.EndpointTupleRepo;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 
 public abstract class ConfidenceAggregator extends Aggregation {
@@ -18,8 +18,8 @@ public abstract class ConfidenceAggregator extends Aggregation {
     @Override
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, List<NodeResult> childrenResults) {
         NodeResult nodeResult = new NodeResult();
-        EndpointTupleRepo endpointTupleRepo = new EndpointTupleRepo(archModel, codeModel);
-        for (Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple : endpointTupleRepo.getEndpointTuples()) {
+        CodeTraceabilityHelper codeTraceabilityHelper = new CodeTraceabilityHelper(archModel, codeModel);
+        for (Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple : codeTraceabilityHelper.getEndpointTuples()) {
             Confidence confidence = this.aggregateConfidences(this.getConfidences(childrenResults, endpointTuple));
             nodeResult.add(endpointTuple, confidence);
         }

@@ -158,8 +158,8 @@ class InconsistencyDetectionEvaluationIT {
 
         List<String> expectedInconsistentModelElements = project.getUnmentionedModelElementIds();
         var inconsistentModelElements = projectResults.getAllModelInconsistencies().collect(ModelInconsistency::getModelInstanceUid).toList();
-        var results = compareInconsistencies(projectResults, inconsistentModelElements.toImmutable(), Lists.immutable.withAll(
-                expectedInconsistentModelElements));
+        var results = compareInconsistencies(projectResults, inconsistentModelElements.toImmutable(),
+                Lists.immutable.withAll(expectedInconsistentModelElements));
 
         String name = project.name() + " missing text inconsistency";
         logExplicitResults(InconsistencyDetectionEvaluationIT.logger, name, results);
@@ -245,8 +245,8 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static ArchitectureComponentModel getComponentModel(InconsistencyDetectionTask project) {
-        return new ArchitectureComponentModel(new PcmExtractor(project.getArchitectureModelFile(ModelFormat.PCM).getAbsolutePath(),
-                Metamodel.ARCHITECTURE_WITH_COMPONENTS).extractModel());
+        return new ArchitectureComponentModel(
+                new PcmExtractor(project.getArchitectureModelFile(ModelFormat.PCM).getAbsolutePath(), Metamodel.ARCHITECTURE_WITH_COMPONENTS).extractModel());
     }
 
     private static void saveOutput(InconsistencyDetectionTask project, ArDoCoResult arDoCoResult) {
@@ -315,8 +315,8 @@ class InconsistencyDetectionEvaluationIT {
                 detailedOutputBuilder.append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR);
                 var result = results.get(counter);
                 counter++;
-                var resultString = String.format(Locale.ENGLISH, "Precision: %.3f, Recall: %.3f, F1: %" + ".3f, Accuracy: %.3f, Phi Coef.: %.3f", result
-                        .getPrecision(), result.getRecall(), result.getF1(), result.getAccuracy(), result.getPhiCoefficient());
+                var resultString = String.format(Locale.ENGLISH, "Precision: %.3f, Recall: %.3f, F1: %" + ".3f, Accuracy: %.3f, Phi Coef.: %.3f",
+                        result.getPrecision(), result.getRecall(), result.getF1(), result.getAccuracy(), result.getPhiCoefficient());
                 outputBuilder.append(resultString);
                 detailedOutputBuilder.append(resultString);
                 InconsistencyDetectionEvaluationIT.inspectRun(outputBuilder, detailedOutputBuilder, resultsWithWeight, arDoCoResult, result);
@@ -371,7 +371,7 @@ class InconsistencyDetectionEvaluationIT {
         }
 
         for (var inconsistentSentence : result.getInconsistentSentences()) {
-            int sentenceNumber = inconsistentSentence.sentence().getSentenceNumberForOutput();
+            int sentenceNumber = inconsistentSentence.sentence().getSentenceNumber() + 1;
             var sentenceNumberString = Integer.toString(sentenceNumber);
             if (sentenceNumbers.contains(sentenceNumberString)) {
                 outputBuilder.append(inconsistentSentence.getInfoString());

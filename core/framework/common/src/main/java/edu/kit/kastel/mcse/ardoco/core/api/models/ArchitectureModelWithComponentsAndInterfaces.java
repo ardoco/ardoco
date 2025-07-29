@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 
 /**
@@ -20,7 +22,11 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
      * @param content the content of the architecture model
      */
     public ArchitectureModelWithComponentsAndInterfaces(List<ArchitectureItem> content) {
-        //TODO: Ensure that only interfaces and components are added to the content
+        for (ArchitectureItem item : content) {
+            if (item instanceof ArchitectureComponent || item instanceof ArchitectureInterface) {
+                content.add(item);
+            }
+        }
         this.content = content;
     }
 

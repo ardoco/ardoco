@@ -36,8 +36,8 @@ public class NodeResult {
 
     public NodeResult(ArchitectureModel archModel, CodeModel codeModel) {
         this.confidenceMap = new LinkedHashMap<>();
-        EndpointTupleRepo endpointTupleRepo = new EndpointTupleRepo(archModel, codeModel);
-        for (var endpointTuple : endpointTupleRepo.getEndpointTuples()) {
+        CodeTraceabilityHelper codeTraceabilityHelper = new CodeTraceabilityHelper(archModel, codeModel);
+        for (var endpointTuple : codeTraceabilityHelper.getEndpointTuples()) {
             this.add(endpointTuple, new Confidence());
         }
     }
