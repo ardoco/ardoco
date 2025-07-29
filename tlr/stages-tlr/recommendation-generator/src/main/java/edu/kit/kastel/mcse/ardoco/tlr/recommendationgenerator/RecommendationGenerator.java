@@ -1,10 +1,11 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
@@ -34,7 +35,7 @@ public class RecommendationGenerator extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of {@link RecommendationGenerator}
      */
-    public static RecommendationGenerator get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static RecommendationGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var recommendationGenerator = new RecommendationGenerator(dataRepository);
         recommendationGenerator.applyConfiguration(additionalConfigs);
         return recommendationGenerator;
@@ -42,7 +43,8 @@ public class RecommendationGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
-        var recommendationStates = RecommendationStatesImpl.build();
+        var activeMetamodels = this.getDataRepository().getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
+        var recommendationStates = RecommendationStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
         this.getDataRepository().addData(RecommendationStates.ID, recommendationStates);
     }
 }

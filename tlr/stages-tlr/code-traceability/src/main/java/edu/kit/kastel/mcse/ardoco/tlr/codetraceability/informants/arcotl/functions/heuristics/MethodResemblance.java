@@ -1,14 +1,14 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureMethod;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ControlElement;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.Datatype;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ControlElement;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.NameComparisonUtils;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 
@@ -16,7 +16,7 @@ public class MethodResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        int numArchMethods = archInterface.getSignatures().size();
+        int numArchMethods = archInterface.getMethodSignatures().size();
         if (0 == numArchMethods) {
             return new Confidence();
         }
@@ -33,7 +33,7 @@ public class MethodResemblance extends StandaloneHeuristic {
         //
 
         double sumConfidenceValue = 0.0;
-        for (ArchitectureMethod archMethod : archInterface.getSignatures()) {
+        for (ArchitectureMethod archMethod : archInterface.getMethodSignatures()) {
             double maxConfidenceValue = 0.0;
             for (ControlElement codeMethod : firstMethods) {
                 double similarity = NameComparisonUtils.areEqual(archMethod, codeMethod) ? 1.0 : 0.0;

@@ -1,6 +1,7 @@
-/* Licensed under MIT 2022-2023. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.data.impl;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
  * Example {@link PipelineStepData}
  */
 public class TextData implements PipelineStepData {
+    @Serial
     private static final long serialVersionUID = 3062730501023901345L;
     private final String text;
     private List<String> tokens;

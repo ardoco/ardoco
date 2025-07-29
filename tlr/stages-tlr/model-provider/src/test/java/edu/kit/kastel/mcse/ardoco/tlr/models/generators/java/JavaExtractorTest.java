@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.java;
 
 import org.junit.jupiter.api.Assertions;
@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaExtractor;
 
 class JavaExtractorTest {
@@ -16,7 +17,7 @@ class JavaExtractorTest {
 
     @Test
     void extractorTest() {
-        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/interface");
+        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/interface", Metamodel.CODE_WITH_COMPILATION_UNITS);
         CodeModel model = extractor.extractModel();
         Assertions.assertNotNull(model);
         for (Entity codePackage : model.getAllPackages()) {

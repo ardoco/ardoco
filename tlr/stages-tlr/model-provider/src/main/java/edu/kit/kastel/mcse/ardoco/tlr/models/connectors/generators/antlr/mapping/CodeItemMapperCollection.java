@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappin
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 
 /**

@@ -4,7 +4,7 @@
 
   <groupId>io.github.ardoco</groupId>
   <artifactId>parent</artifactId>
-  <version>2.0.0-refactoring</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>ArDoCo - The Consistency Analyzer</name>
@@ -68,70 +68,51 @@
   </distributionManagement>
 
   <properties>
-    <revision>2.0.0-refactoring</revision>
+    <revision>2.0.0-SNAPSHOT</revision>
     <ardoco.version>${revision}</ardoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.source.encoding>UTF-8</project.source.encoding>
+
     <java.version>21</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.compiler.release>${java.version}</maven.compiler.release>
 
-    <!-- Plugin Versions -->
+    <!-- Versions -->
     <slf4j.version>2.0.14</slf4j.version>
     <spotless.version>2.43.0</spotless.version>
     <junit.version>5.11.0</junit.version>
     <eclipse-collections.version>12.0.0.M3</eclipse-collections.version>
-    <jackson.version>2.17.2</jackson.version>
     <javaparser.version>3.25.8</javaparser.version>
-    <error-prone.version>2.31.0</error-prone.version>
     <mockito.version>5.2.0</mockito.version>
-    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-    <jgrapht.version>1.5.2</jgrapht.version>
     <stanford.corenlp.version>4.5.6</stanford.corenlp.version>
+    <antlr.version>4.13.2</antlr.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jdk8</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <!-- Kotlin -->
-      <dependency>
-        <groupId>com.fasterxml.jackson.module</groupId>
-        <artifactId>jackson-module-kotlin</artifactId>
-        <version>${jackson.version}</version>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.17.2</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.tngtech.archunit</groupId>
         <artifactId>archunit-junit5</artifactId>
         <version>1.3.0</version>
+        <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.16.1</version>
       </dependency>
 
+      <!-- Apache Commons -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -142,7 +123,6 @@
         <artifactId>commons-text</artifactId>
         <version>1.12.0</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
@@ -169,15 +149,29 @@
         <artifactId>org.eclipse.jgit</artifactId>
         <version>6.9.0.202403050737-r</version>
       </dependency>
+
+      <!-- JUnit -->
       <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${mockito.version}</version>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-inline</artifactId>
+        <artifactId>mockito-core</artifactId>
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
@@ -187,18 +181,19 @@
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>0.10.2</version>
       </dependency>
+
+      <!-- SLF4J -->
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>log4j-over-slf4j</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
-
-      <!-- Testing -->
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
@@ -209,38 +204,39 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.errorprone</groupId>
-      <artifactId>error_prone_core</artifactId>
-      <version>${error-prone.version}</version>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit.version}</version>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -261,13 +257,69 @@
         <enabled>true</enabled>
       </snapshots>
       <id>mavenSnapshot</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </repository>
   </repositories>
 
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <formats>
+              <format>
+                <includes>
+                  <include>*.md</include>
+                  <include>.gitignore</include>
+                </includes>
+                <trimTrailingWhitespace />
+                <endWithNewline />
+                <indent>
+                  <tabs>true</tabs>
+                  <spacesPerTab>4</spacesPerTab>
+                </indent>
+              </format>
+            </formats>
+            <!-- define a language-specific format -->
+            <java>
+              <eclipse>
+                <!--suppress UnresolvedMavenProperty -->
+                <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
+              </eclipse>
+              <removeUnusedImports />
+              <licenseHeader>
+                <!--suppress UnresolvedMavenProperty -->
+                <file>${maven.multiModuleProjectDirectory}/license-header</file>
+              </licenseHeader>
+              <importOrder>
+                <!--suppress UnresolvedMavenProperty -->
+                <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
+              </importOrder>
+            </java>
+            <pom>
+              <sortPom>
+                <encoding>UTF-8</encoding>
+                <keepBlankLines>true</keepBlankLines>
+                <indentBlankLines>false</indentBlankLines>
+                <nrOfIndentSpace>2</nrOfIndentSpace>
+                <expandEmptyElements>false</expandEmptyElements>
+                <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                <sortDependencies>groupId,artifactId</sortDependencies>
+                <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
+                <sortDependencyManagement>groupId,artifactId</sortDependencyManagement>
+                <sortPlugins>groupId,artifactId</sortPlugins>
+                <sortProperties>false</sortProperties>
+                <sortModules>true</sortModules>
+                <sortExecutions>true</sortExecutions>
+                <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+              </sortPom>
+            </pom>
+            <ratchetFrom>origin/main</ratchetFrom>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
@@ -283,29 +335,6 @@
             <target>${java.version}</target>
             <encoding>UTF-8</encoding>
             <fork>true</fork>
-            <compilerArgs>
-              <arg>-XDcompilePolicy=simple</arg>
-              <arg>-Xplugin:ErrorProne</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-              <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-              <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-              <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
-            </compilerArgs>
-            <meminitial>128m</meminitial>
-            <maxmem>512m</maxmem>
-            <annotationProcessorPaths>
-              <path>
-                <groupId>com.google.errorprone</groupId>
-                <artifactId>error_prone_core</artifactId>
-                <version>${error-prone.version}</version>
-              </path>
-            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>
@@ -339,13 +368,38 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.7.0</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.2.5</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
-          <version>1.6.0</version>
           <configuration>
             <updatePomFile>true</updatePomFile>
             <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -372,9 +426,25 @@
           </executions>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.16.2</version>
+          <configuration>
+            <ruleSet>
+              <rule>
+                <groupId>*</groupId>
+                <ignoreVersion>
+                  <type>regex</type>
+                  <version>.+-(alpha|Alpha|beta|Beta|RC).*</version>
+                </ignoreVersion>
+              </rule>
+            </ruleSet>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
-          <version>0.7.0</version>
+          <version>0.8.0</version>
           <extensions>true</extensions>
           <configuration>
             <publishingServerId>central</publishingServerId>
@@ -389,137 +459,22 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>${spotless.version}</version>
-        <configuration>
-          <formats>
-            <format>
-              <includes>
-                <include>*.md</include>
-                <include>.gitignore</include>
-              </includes>
-              <trimTrailingWhitespace />
-              <endWithNewline />
-              <indent>
-                <tabs>true</tabs>
-                <spacesPerTab>4</spacesPerTab>
-              </indent>
-            </format>
-          </formats>
-          <!-- define a language-specific format -->
-          <java>
-            <eclipse>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
-            </eclipse>
-            <removeUnusedImports />
-            <licenseHeader>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/license-header</file>
-            </licenseHeader>
-            <importOrder>
-              <!--suppress UnresolvedMavenProperty -->
-              <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
-            </importOrder>
-          </java>
-          <pom>
-            <sortPom>
-              <encoding>UTF-8</encoding>
-              <keepBlankLines>true</keepBlankLines>
-              <indentBlankLines>false</indentBlankLines>
-              <nrOfIndentSpace>2</nrOfIndentSpace>
-              <expandEmptyElements>false</expandEmptyElements>
-              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
-              <sortDependencies>groupId,artifactId</sortDependencies>
-              <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
-              <sortDependencyManagement>groupId,artifactId</sortDependencyManagement>
-              <sortPlugins>groupId,artifactId</sortPlugins>
-              <sortProperties>false</sortProperties>
-              <sortModules>true</sortModules>
-              <sortExecutions>true</sortExecutions>
-              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
-            </sortPom>
-          </pom>
-          <ratchetFrom>origin/main</ratchetFrom>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.7.0</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <updatePomFile>true</updatePomFile>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flatten.clean</id>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-            <phase>clean</phase>
-          </execution>
-          <execution>
-            <id>flatten</id>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.16.2</version>
-        <configuration>
-          <ruleSet>
-            <rule>
-              <groupId>*</groupId>
-              <ignoreVersion>
-                <type>regex</type>
-                <version>.+-(alpha|Alpha|beta|Beta|RC).*</version>
-              </ignoreVersion>
-            </rule>
-          </ruleSet>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.sonatype.central</groupId>

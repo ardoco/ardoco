@@ -1,19 +1,19 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.List;
 import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.NameComparisonUtils;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 
 public class PackageResemblance extends StandaloneHeuristic {
 
-    private NameComparisonUtils.PreprocessingMethod config;
+    private final NameComparisonUtils.PreprocessingMethod config;
 
     public PackageResemblance(NameComparisonUtils.PreprocessingMethod config) {
         this.config = config;
@@ -26,7 +26,7 @@ public class PackageResemblance extends StandaloneHeuristic {
 
     @Override
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
-        if (!archInterface.getSignatures().isEmpty()) {
+        if (!archInterface.getMethodSignatures().isEmpty()) {
             return new Confidence();
         }
         return calculatePackageResemblance(archInterface, compUnit);

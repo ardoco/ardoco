@@ -1,7 +1,5 @@
-/* Licensed under MIT 2021-2023. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency;
-
-import java.util.List;
 
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
@@ -10,20 +8,19 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 
 /**
- * Inconsistency state holding data and information about inconsistency.
- * 
+ * State holding data and information about inconsistencies.
  */
 public interface InconsistencyState extends IConfigurable {
 
     /**
-     * Returns a list of inconsistencies held by this state
+     * Returns a list of inconsistencies held by this state.
      *
      * @return list of inconsistencies
      */
     ImmutableList<Inconsistency> getInconsistencies();
 
     /**
-     * Add an Inconsistency to this state
+     * Add an inconsistency to this state.
      *
      * @param inconsistency the inconsistency to add
      * @return true if added successfully
@@ -31,14 +28,12 @@ public interface InconsistencyState extends IConfigurable {
     boolean addInconsistency(Inconsistency inconsistency);
 
     /**
-     * Remove an Inconsistency from this state
+     * Add multiple recommended instances to this state.
      *
-     * @param inconsistency the inconsistency to remove
-     * @return true if removed successfully
+     * @param recommendedInstances the recommended instances to add
+     * @return true if all were added successfully
      */
-    boolean removeInconsistency(Inconsistency inconsistency);
-
-    default boolean addRecommendedInstances(List<RecommendedInstance> recommendedInstances) {
+    default boolean addRecommendedInstances(ImmutableList<RecommendedInstance> recommendedInstances) {
         var success = true;
         for (var recommendedInstance : recommendedInstances) {
             success &= addRecommendedInstance(recommendedInstance);
@@ -46,29 +41,25 @@ public interface InconsistencyState extends IConfigurable {
         return success;
     }
 
+    /**
+     * Add a single recommended instance to this state.
+     *
+     * @param recommendedInstance the recommended instance to add
+     * @return true if added successfully
+     */
     boolean addRecommendedInstance(RecommendedInstance recommendedInstance);
 
-    default boolean removeRecommendedInstances(List<RecommendedInstance> recommendedInstances) {
-        var success = true;
-        for (var recommendedInstance : recommendedInstances) {
-            success &= removeRecommendedInstance(recommendedInstance);
-        }
-        return success;
-    }
-
-    boolean removeRecommendedInstance(RecommendedInstance recommendedInstance);
-
     /**
-     * Sets the recommended Instances
-     * 
-     * @param recommendedInstances the recommendedInstances to set
+     * Sets the recommended instances.
+     *
+     * @param recommendedInstances the recommended instances to set
      */
-    void setRecommendedInstances(List<RecommendedInstance> recommendedInstances);
+    void setRecommendedInstances(ImmutableList<RecommendedInstance> recommendedInstances);
 
     /**
-     * Returns the recommended Instances
-     * 
-     * @return the recommendedInstances
+     * Returns the recommended instances.
+     *
+     * @return the recommended instances
      */
     MutableList<RecommendedInstance> getRecommendedInstances();
 

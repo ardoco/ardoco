@@ -1,20 +1,28 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
+import java.io.Serial;
+
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * The Interface IRecommendedInstance defines the aggregation of noun mappings to one recommendation.
+ * Represents an aggregation of noun mappings to one recommendation.
  */
 public abstract class RecommendedInstance extends TextEntity {
 
+    @Serial
     private static final long serialVersionUID = -5422301094494768943L;
 
+    /**
+     * Creates a new recommended instance.
+     *
+     * @param name the name
+     * @param id   the identifier
+     */
     protected RecommendedInstance(String name, String id) {
         super(name, id);
     }
@@ -22,59 +30,51 @@ public abstract class RecommendedInstance extends TextEntity {
     /**
      * Returns the involved name mappings.
      *
-     * @return the name mappings of this recommended instance
+     * @return the name mappings
      */
     public abstract ImmutableList<NounMapping> getNameMappings();
 
     /**
      * Returns the involved type mappings.
      *
-     * @return the type mappings of this recommended instance
+     * @return the type mappings
      */
     public abstract ImmutableList<NounMapping> getTypeMappings();
 
     /**
-     * Returns the probability being an instance of the model.
+     * Returns the probability of being an instance of the model.
      *
-     * @return the probability to be found in the model
+     * @return the probability
      */
     public abstract double getProbability();
 
     /**
-     * Adds a probability to the recommended instance
+     * Adds a probability to the recommended instance.
      *
-     * @param claimant    the claimant of the confidence
+     * @param claimant    the claimant
      * @param probability the confidence
      */
     public abstract void addProbability(Claimant claimant, double probability);
 
     /**
-     * Adds a name and type mapping to this recommended instance.
-     *
-     * @param nameMapping the name mapping to add
-     * @param typeMapping the type mapping to add
-     */
-    public abstract void addMappings(NounMapping nameMapping, NounMapping typeMapping);
-
-    /**
      * Adds name and type mappings to this recommended instance.
      *
-     * @param nameMapping the name mappings to add
-     * @param typeMapping the type mappings to add
+     * @param nameMapping the name mappings
+     * @param typeMapping the type mappings
      */
     public abstract void addMappings(ImmutableList<NounMapping> nameMapping, ImmutableList<NounMapping> typeMapping);
 
     /**
      * Adds a name mapping to this recommended instance.
      *
-     * @param nameMapping the name mapping to add
+     * @param nameMapping the name mapping
      */
     public abstract void addName(NounMapping nameMapping);
 
     /**
      * Adds a type mapping to this recommended instance.
      *
-     * @param typeMapping the type mapping to add
+     * @param typeMapping the type mapping
      */
     public abstract void addType(NounMapping typeMapping);
 
@@ -94,20 +94,10 @@ public abstract class RecommendedInstance extends TextEntity {
     public abstract String getName();
 
     /**
-     * Sets the type of this recommended instance to the given type.
+     * Handles the deletion of a noun mapping by replacing it with another.
      *
-     * @param type the new type
+     * @param nounMapping the noun mapping to delete
+     * @param replacement the replacement noun mapping
      */
-    public abstract void setType(String type);
-
-    /**
-     * Sets the name of this recommended instance to the given name.
-     *
-     * @param name the new name
-     */
-    public abstract void setName(String name);
-
-    public abstract ImmutableSortedSet<Integer> getSentenceNumbers();
-
-    public abstract ImmutableList<Claimant> getClaimants();
+    public abstract void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
 }

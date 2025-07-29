@@ -1,17 +1,17 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.CodeTraceabilityHelper;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.EndpointTupleRepo;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 
 /**
@@ -22,8 +22,7 @@ public abstract class Heuristic {
 
     protected final NodeResult getNodeResult(ArchitectureModel archModel, CodeModel codeModel) {
         NodeResult confidences = new NodeResult();
-        EndpointTupleRepo endpointTupleRepo = new EndpointTupleRepo(archModel, codeModel);
-        for (var endpointTuple : endpointTupleRepo.getEndpointTuples()) {
+        for (var endpointTuple : CodeTraceabilityHelper.crossProductFromArchitectureItemsToCompilationUnits(archModel, codeModel)) {
             ArchitectureItem archEndpoint = endpointTuple.first();
             CodeCompilationUnit compUnit = endpointTuple.second();
             Confidence confidence = new Confidence();
@@ -40,14 +39,14 @@ public abstract class Heuristic {
 
     protected Confidence calculateConfidence(ArchitectureComponent archComponent, CodeCompilationUnit compUnit) {
         if (archComponent == null || compUnit == null) {
-            logger.warn("null values when calculating confidence");
+            logger.warn("null values when calculating confidence (component)");
         }
         return new Confidence();
     }
 
     protected Confidence calculateConfidence(ArchitectureInterface archInterface, CodeCompilationUnit compUnit) {
         if (archInterface == null || compUnit == null) {
-            logger.warn("null values when calculating confidence");
+            logger.warn("null values when calculating confidence (interface)");
         }
         return new Confidence();
     }

@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mappin
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;

@@ -41,16 +41,11 @@
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <profiles>
     <profile>
-      <id>test-deps</id>
+      <id>test-dependencies</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>

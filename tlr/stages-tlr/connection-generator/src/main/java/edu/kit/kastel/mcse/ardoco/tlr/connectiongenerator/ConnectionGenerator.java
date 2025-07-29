@@ -1,16 +1,19 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.util.List;
-import java.util.SortedMap;
 
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.agents.InitialConnectionAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.agents.InstanceConnectionAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.agents.ProjectNameFilterAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.agents.ReferenceAgent;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
-import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 
 /**
  * The ModelConnectionAgent runs different analyzers and solvers. This agent creates recommendations as well as matchings between text and model. The order is
@@ -35,7 +38,7 @@ public class ConnectionGenerator extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of connectionGenerator
      */
-    public static ConnectionGenerator get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static ConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var connectionGenerator = new ConnectionGenerator(dataRepository);
         connectionGenerator.applyConfiguration(additionalConfigs);
         return connectionGenerator;
@@ -43,7 +46,8 @@ public class ConnectionGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
-        var connectionStates = ConnectionStatesImpl.build();
+        var activeMetamodels = this.getDataRepository().getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
+        var connectionStates = ConnectionStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
         getDataRepository().addData(ConnectionStates.ID, connectionStates);
     }
 }

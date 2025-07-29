@@ -56,7 +56,7 @@ public class JavaElementExtractor extends ElementExtractor {
         Path dir = Path.of(directoryPath);
         List<Path> javaFiles = new ArrayList<>();
         try {
-            Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).forEach(javaFiles::add);
+            javaFiles.addAll(Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).toList());
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
@@ -346,12 +346,11 @@ public class JavaElementExtractor extends ElementExtractor {
     private List<String> extractImplementedInterfaces(JavaParser.TypeListContext ctx) {
         List<String> implementedInterfaces = new ArrayList<>();
         if (ctx != null) {
-            ctx.typeType().forEach(typeTypeContext -> {
-                // Extract the text and remove generic type parameters
+            for (JavaParser.TypeTypeContext typeTypeContext : ctx.typeType()) {// Extract the text and remove generic type parameters
                 String typeName = typeTypeContext.getText();
                 String simpleName = typeName.replaceAll("<.*?>", ""); // Remove everything inside <>
                 implementedInterfaces.add(simpleName);
-            });
+            }
         }
         return implementedInterfaces;
     }

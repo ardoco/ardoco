@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.ElementStorageRegistry;
@@ -35,7 +36,8 @@ public class ModelMapper {
     public void mapToCodeModel() {
         List<ElementIdentifier> rootParentIdentifiers = elementRegistry.getRootIdentifiers();
         SortedSet<CodeItem> content = buildContentFromRoot(rootParentIdentifiers);
-        codeModel = new CodeModel(codeItemRepository, content);
+        // TODO Allow different meta models
+        codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
     }
 
     protected SortedSet<CodeItem> buildContentFromRoot(List<ElementIdentifier> identifiers) {

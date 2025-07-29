@@ -1,12 +1,10 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.tests.eval.baseline;
 
-import java.util.SortedMap;
-
 import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.MutableSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
@@ -35,9 +33,7 @@ public class InconsistencyBaselineInformant extends Informant {
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
 
         var sentences = Sets.mutable.fromStream(text.getSentences().stream().map(Sentence::getSentenceNumber));
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            Metamodel metamodel = modelState.getMetamodel();
+        for (var metamodel : modelStates.getMetamodels()) {
             var traceLinks = connectionStates.getConnectionState(metamodel).getTraceLinks();
             var sentencesWithTraceLinks = traceLinks.collect(it -> it.getFirstEndpoint().getSentence().getSentenceNumber()).toSet();
             MutableSet<Integer> sentencesWithoutTraceLinks = sentences.withoutAll(sentencesWithTraceLinks);
@@ -50,7 +46,7 @@ public class InconsistencyBaselineInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }
