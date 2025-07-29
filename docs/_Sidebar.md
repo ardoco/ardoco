@@ -1,6 +1,6 @@
 # Table of Contents
 
-1. [Home](ardoco)
+1. [Home](home)
 2. [Quickstart](quickstart)
 3. [Pipeline](pipeline)
 4. [Intermediate Artifacts](intermediate-artifacts)
