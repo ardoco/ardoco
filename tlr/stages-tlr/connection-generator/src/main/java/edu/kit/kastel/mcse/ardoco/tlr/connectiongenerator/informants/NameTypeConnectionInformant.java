@@ -226,8 +226,7 @@ public class NameTypeConnectionInformant extends Informant {
     }
 
     private List<ModelEntity> getEntitiesOfType(Model model, String type) {
-        var entitiesWithTypeParts = model.getEndpoints().stream().filter(e -> e.getTypeParts().isPresent());
-        return entitiesWithTypeParts.filter(e -> e.getTypeParts().orElseThrow().contains(type)).collect(Collectors.toList());
+        return model.getEndpoints().stream().filter(e -> e.getTypeParts().contains(type)).collect(Collectors.toList());
     }
 
     @Override

@@ -73,7 +73,7 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
         for (var component : getContent()) {
             if (component.getType().isPresent()) {
                 identifiers.add(component.getType().orElseThrow());
-                identifiers.addAll(component.getTypeParts().orElseThrow().toList());
+                identifiers.addAll(component.getTypeParts().toList());
             }
         }
         return identifiers;

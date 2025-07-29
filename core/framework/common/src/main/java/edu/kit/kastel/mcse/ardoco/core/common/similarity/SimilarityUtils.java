@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.similarity.CosineSimilarity;
@@ -208,8 +207,8 @@ public final class SimilarityUtils {
      */
     public boolean isWordSimilarToModelInstanceType(Word word, ModelEntity modelEntity) {
 
-        Optional<ImmutableList<String>> typeParts = modelEntity.getTypeParts();
-        return typeParts.filter(strings -> this.compareWordWithStringListEntries(word, strings)).isPresent();
+        ImmutableList<String> typeParts = modelEntity.getTypeParts();
+        return !typeParts.isEmpty() && this.compareWordWithStringListEntries(word, typeParts);
     }
 
     private boolean compareWordWithStringListEntries(Word word, ImmutableList<String> names) {

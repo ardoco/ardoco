@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.entity;
 import java.io.Serial;
 import java.util.Optional;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 
 /**
@@ -38,9 +39,9 @@ public non-sealed class CodeEntity extends ModelEntity {
     }
 
     @Override
-    public Optional<ImmutableList<String>> getTypeParts() {
+    public ImmutableList<String> getTypeParts() {
         Optional<String> type = this.getType();
-        return type.map(s -> splitIdentifierIntoParts(s).toImmutable());
+        return type.map(s -> splitIdentifierIntoParts(s).toImmutable()).orElse(Lists.immutable.empty());
     }
 
 }

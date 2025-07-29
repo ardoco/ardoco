@@ -62,8 +62,8 @@ public final class ArchitectureEntityImpl extends ArchitectureEntity {
     }
 
     @Override
-    public Optional<ImmutableList<String>> getTypeParts() {
-        return Optional.of(this.types.toImmutable());
+    public ImmutableList<String> getTypeParts() {
+        return this.types.toImmutable();
     }
 
     @Override
