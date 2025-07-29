@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
-public enum Model2CodeTlrTask {
+public enum ModelToCodeTlrTask {
     MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sam_2016-code_2016.csv"),//
     TEASTORE(EvaluationProject.TEASTORE, "/benchmark/teastore/goldstandards/goldstandard_sam_2020-code_2022.csv"),//
     TEAMMATES(EvaluationProject.TEAMMATES, "/benchmark/teammates/goldstandards/goldstandard_sam_2021-code_2023.csv"),//
@@ -23,7 +23,7 @@ public enum Model2CodeTlrTask {
     private final EvaluationProject project;
     private final String goldStandardPath;
 
-    Model2CodeTlrTask(EvaluationProject project, String goldStandardPath) {
+    ModelToCodeTlrTask(EvaluationProject project, String goldStandardPath) {
         this.project = project;
         this.goldStandardPath = goldStandardPath;
     }
@@ -47,8 +47,8 @@ public enum Model2CodeTlrTask {
     /**
      * Get the expected trace links from the gold standard file.
      * <p>
-     * The pairs in the list contain the architecture element id and the code element ID (path to the file/package).
-     * If a ID ends with a slash, it is a package, otherwise it is a file.
+     * The pairs in the list contain the architecture element id and the code element ID (path to the file/package). If a ID ends with a slash, it is a package,
+     * otherwise it is a file.
      * <p>
      * <b>IMPORTANT</b> you may need to unroll the gold standard.
      *

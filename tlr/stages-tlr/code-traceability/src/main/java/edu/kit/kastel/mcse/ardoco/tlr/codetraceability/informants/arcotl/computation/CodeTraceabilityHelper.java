@@ -15,6 +15,10 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
  */
 public class CodeTraceabilityHelper {
 
+    private CodeTraceabilityHelper() {
+        throw new IllegalAccessError("Utility class should not be instantiated");
+    }
+
     /**
      * Returns the cross product of all architecture items of the specified architecture model and all code compilation units of the specified code model.
      *
