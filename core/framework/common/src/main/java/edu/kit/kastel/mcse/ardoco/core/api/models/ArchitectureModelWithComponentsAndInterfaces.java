@@ -23,8 +23,8 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
      */
     public ArchitectureModelWithComponentsAndInterfaces(List<ArchitectureItem> content) {
         for (ArchitectureItem item : content) {
-            if (item instanceof ArchitectureComponent || item instanceof ArchitectureInterface) {
-                content.add(item);
+            if (!(item instanceof ArchitectureComponent || item instanceof ArchitectureInterface)) {
+                throw new IllegalArgumentException("Architecture items must be of type ArchitectureComponent, ArchitectureInterface");
             }
         }
         this.content = content;
