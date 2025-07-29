@@ -5,7 +5,7 @@ import java.util.Set;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
 
@@ -45,7 +45,7 @@ public class Computation {
      *
      * @return trace links for every endpoint tuple whose confidence in the root's result has a value
      */
-    public Set<ModelCodeTraceLink> getTraceLinks() {
+    public Set<ArchitectureCodeTraceLink> getTraceLinks() {
         return result.getTraceLinks(root);
     }
 }

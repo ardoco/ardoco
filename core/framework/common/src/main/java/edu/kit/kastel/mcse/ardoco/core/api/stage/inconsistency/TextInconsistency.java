@@ -7,7 +7,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency;
  */
 public interface TextInconsistency extends Inconsistency {
     /**
-     * Returns the sentence number associated with this inconsistency.
+     * Returns the sentence number associated with this inconsistency. Sentence numbers start at 1.)
      *
      * @return the sentence number
      */

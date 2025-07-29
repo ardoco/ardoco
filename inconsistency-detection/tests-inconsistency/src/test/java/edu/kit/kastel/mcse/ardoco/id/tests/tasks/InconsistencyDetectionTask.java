@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
-import edu.kit.kastel.mcse.ardoco.id.tests.eval.GoldStandard;
+import edu.kit.kastel.mcse.ardoco.id.tests.eval.Sentence2ModelGoldStandard;
 
 public enum InconsistencyDetectionTask {
     MEDIASTORE(EvaluationProject.MEDIASTORE, //
@@ -77,9 +77,9 @@ public enum InconsistencyDetectionTask {
         return EvaluationHelper.loadFileFromResources(filterListPath);
     }
 
-    public GoldStandard getGoldstandardForArchitectureModel(ArchitectureComponentModel model) {
+    public Sentence2ModelGoldStandard getGoldstandardForArchitectureModel(ArchitectureComponentModel model) {
         File file = EvaluationHelper.loadFileFromResources(documentation2ArchitectureModelGoldStandardPath);
-        return new GoldStandard(file, model);
+        return new Sentence2ModelGoldStandard(file, model);
     }
 
     public List<String> getUnmentionedModelElementIds() {

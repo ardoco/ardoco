@@ -1,5 +1,5 @@
 /* Licensed under MIT 2024-2025. */
-package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.raw;
+package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.listing;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -25,8 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 /**
  * An extractor for raw architecture models. Expected format:
  * <p>
- * Name1::ID<br>
- * Name2::ID
+ * Name1::ID<br> Name2::ID
  * </p>
  */
 public class ComponentListingArchitectureExtractor extends ArchitectureExtractor {

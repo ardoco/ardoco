@@ -18,15 +18,6 @@ public interface Sentence extends Serializable {
     int getSentenceNumber();
 
     /**
-     * Returns the sentence number for output (starting at 1).
-     *
-     * @return the sentence number for output
-     */
-    default int getSentenceNumberForOutput() {
-        return getSentenceNumber() + 1;
-    }
-
-    /**
      * Returns the words contained in this sentence.
      *
      * @return the words

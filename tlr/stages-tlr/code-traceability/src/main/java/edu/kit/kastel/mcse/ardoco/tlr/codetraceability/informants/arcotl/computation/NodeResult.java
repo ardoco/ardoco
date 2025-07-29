@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ModelCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 
@@ -95,15 +95,15 @@ public class NodeResult {
      *
      * @return trace links for every endpoint tuple whose confidence has a value
      */
-    public Set<ModelCodeTraceLink> getTraceLinks() {
-        Set<ModelCodeTraceLink> traceLinks = new LinkedHashSet<>();
+    public Set<ArchitectureCodeTraceLink> getTraceLinks() {
+        Set<ArchitectureCodeTraceLink> traceLinks = new LinkedHashSet<>();
         for (var entry : this.confidenceMap.entrySet()) {
             Confidence confidence = entry.getValue();
             if (confidence.hasValue()) {
                 Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple = entry.getKey();
                 ArchitectureItem architectureEndpoint = endpointTuple.first();
                 CodeItem codeEndpoint = endpointTuple.second();
-                traceLinks.add(new ModelCodeTraceLink(architectureEndpoint, codeEndpoint));
+                traceLinks.add(new ArchitectureCodeTraceLink(architectureEndpoint, codeEndpoint));
             }
         }
         return traceLinks;
