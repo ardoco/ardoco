@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
