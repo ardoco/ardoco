@@ -9,15 +9,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArCoTLEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArcotlEvaluation;
 
-class ArCoTLIT extends AbstractArDoCoIT {
+class ArcotlIT extends AbstractArdocoIT {
 
     @DisplayName("Evaluate ArCoTL (SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
     @EnumSource(ArCoTLEvaluationProject.class)
     void evaluateSamCodeTlrIT(ArCoTLEvaluationProject project) {
-        var evaluation = new ArCoTLEvaluation(project, true);
+        var evaluation = new ArcotlEvaluation(project, true);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }
@@ -29,7 +29,7 @@ class ArCoTLIT extends AbstractArDoCoIT {
     void evaluateSamCodeTlrITFull(ArCoTLEvaluationProject project) {
         RepositoryHandler.removeRepository(project.getTlrTask().getCodeDirectoryWithoutCloning().getAbsolutePath());
 
-        var evaluation = new ArCoTLEvaluation(project, false);
+        var evaluation = new ArcotlEvaluation(project, false);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }

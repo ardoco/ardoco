@@ -36,7 +36,7 @@ public class SwattrEvaluation extends AbstractEvaluation {
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner swattr = createSwattrRunner();
+        ArDoCoRunner swattr = createSwattr();
         ArDoCoResult result = swattr.run();
         Assertions.assertNotNull(result);
 
@@ -73,7 +73,7 @@ public class SwattrEvaluation extends AbstractEvaluation {
         return sentences * modelElements;
     }
 
-    protected ArDoCoRunner createSwattrRunner() {
+    protected ArDoCoRunner createSwattr() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),

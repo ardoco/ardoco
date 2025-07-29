@@ -20,9 +20,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class TransArC extends ArDoCoRunner {
+/**
+ * TransArC is a transitive trace link recovery approach that connects architecture documents to code via an intermediate architecture model. It first uses an
+ * existing method (SWATTR) to connect the textual architecture documentation and component-based architecture model (SAM), then applies a new method (ArCoTL)
+ * to link the model elements to code. In other words, TransArC builds a bridge: document ⟶ model ⟶ code. This two-step strategy helps bridge the semantic gap
+ * between informal text and code.
+ */
+public class Transarc extends ArDoCoRunner {
 
-    public TransArC(String projectName) {
+    public Transarc(String projectName) {
         super(projectName);
     }
 

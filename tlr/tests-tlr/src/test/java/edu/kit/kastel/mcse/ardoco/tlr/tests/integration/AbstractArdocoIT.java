@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-abstract class AbstractArDoCoIT {
+abstract class AbstractArdocoIT {
     protected static final String LOGGING_ARDOCO_CORE = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.core";
 
     @BeforeAll

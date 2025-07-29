@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-class TransArCTest extends CodeRunnerBaseTest {
+class TransarcTest extends CodeRunnerBaseTest {
 
     @Test
     @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (PCM)")
     void testSadSamTlrPcm() {
-        var runner = new TransArC(projectName);
+        var runner = new Transarc(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
                 additionalConfigsMap, new File(outputDir));
@@ -32,7 +32,7 @@ class TransArCTest extends CodeRunnerBaseTest {
     @Test
     @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (UML)")
     void testSadSamTlrUml() {
-        var runner = new TransArC(projectName);
+        var runner = new Transarc(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitectureUml), ModelFormat.UML), codeConfiguration,
                 additionalConfigsMap, new File(outputDir));

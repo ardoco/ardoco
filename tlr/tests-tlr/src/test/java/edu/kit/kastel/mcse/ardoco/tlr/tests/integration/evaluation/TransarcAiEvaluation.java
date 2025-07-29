@@ -37,7 +37,7 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner transArCAiRunner = createTransArCAiRunner();
+        ArDoCoRunner transArCAiRunner = createTransarcAi();
         ArDoCoResult result = transArCAiRunner.run();
         Assertions.assertNotNull(result);
 
@@ -50,7 +50,7 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
         return result;
     }
 
-    private ArDoCoRunner createTransArCAiRunner() {
+    private ArDoCoRunner createTransarcAi() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();

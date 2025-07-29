@@ -9,15 +9,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransArCEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcEvaluation;
 
-class TransArCIT extends AbstractArDoCoIT {
+class TransarcIT extends AbstractArdocoIT {
 
     @DisplayName("Evaluate TransArC (SAD-SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
     @EnumSource(TransArCEvaluationProject.class)
     void evaluateSadSamCodeTlrIT(TransArCEvaluationProject project) {
-        var evaluation = new TransArCEvaluation(project, true);
+        var evaluation = new TransarcEvaluation(project, true);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }
@@ -29,7 +29,7 @@ class TransArCIT extends AbstractArDoCoIT {
     void evaluateSadSamCodeTlrITFull(TransArCEvaluationProject project) {
         RepositoryHandler.removeRepository(project.getTlrTask().getCodeDirectoryWithoutCloning().getAbsolutePath());
 
-        var evaluation = new TransArCEvaluation(project, false);
+        var evaluation = new TransarcEvaluation(project, false);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }

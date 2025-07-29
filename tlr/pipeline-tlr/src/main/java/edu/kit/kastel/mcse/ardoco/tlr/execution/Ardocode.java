@@ -18,9 +18,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class ArDoCode extends ArDoCoRunner {
+/**
+ * ArDoCode is a simpler variant of trace recovery that treats source code itself as the model. Instead of first building a formal model, ArDoCode directly
+ * matches architecture document content with code elements using the same heuristics designed for linking docs to models. In practice, it extracts key terms
+ * from the documentation and tries to align them with names in the code (e.g. class or module names) as if the code were the model.
+ */
+public class Ardocode extends ArDoCoRunner {
 
-    public ArDoCode(String projectName) {
+    public Ardocode(String projectName) {
         super(projectName);
     }
 

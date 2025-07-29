@@ -7,14 +7,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArDoCodeEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArdocodeEvaluation;
 
-class ArDoCodeIT extends AbstractArDoCoIT {
+class ArdocodeIT extends AbstractArdocoIT {
     @DisplayName("Evaluate ArDoCode (SAD-Code TLR)")
     @ParameterizedTest(name = "{0}")
     @EnumSource(ArDoCodeEvaluationProject.class)
     void evaluateSadSamCodeTlrIT(ArDoCodeEvaluationProject project) {
-        var evaluation = new ArDoCodeEvaluation(project);
+        var evaluation = new ArdocodeEvaluation(project);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }

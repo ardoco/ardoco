@@ -10,19 +10,19 @@ import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCode;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
-public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
+public class ArdocodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
     private final ArDoCodeEvaluationProject project;
 
-    public ArDoCodeEvaluation(ArDoCodeEvaluationProject project) {
+    public ArdocodeEvaluation(ArDoCodeEvaluationProject project) {
         this.project = project;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner ardocode = createArDoCodeRunner();
+        ArDoCoRunner ardocode = createArdocode();
         ArDoCoResult result = ardocode.run();
         Assertions.assertNotNull(result);
 
@@ -36,14 +36,14 @@ public class ArDoCodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         return result;
     }
 
-    private ArDoCoRunner createArDoCodeRunner() {
+    private ArDoCoRunner createArdocode() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new ArDoCode(projectName);
+        var runner = new Ardocode(projectName);
         runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
                 outputDirectory);
         return runner;

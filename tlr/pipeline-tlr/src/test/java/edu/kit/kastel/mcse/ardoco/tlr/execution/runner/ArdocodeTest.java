@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArDoCode;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 
-class ArDoCodeTest extends CodeRunnerBaseTest {
+class ArdocodeTest extends CodeRunnerBaseTest {
 
     @Test
     @DisplayName("Test ArDoCo for SAD-Code-TLR")
     void testSadCodeTlr() {
-        var runner = new ArDoCode(projectName);
+        var runner = new Ardocode(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
 
