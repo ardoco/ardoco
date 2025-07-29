@@ -37,11 +37,11 @@ The following is an excerpt of repositories that use this framework and implemen
 * [ArDoCo/InconsistencyDetection](https://github.com/ArDoCo/InconsistencyDetection): implementing inconsistency detection approaches
 
 ### Pull
-* git subtree pull --prefix=core git@github.com:ArDoCo/Core feature/v2
-* git subtree pull --prefix=tlr git@github.com:ArDoCo/TLR feature/v2
-* git subtree pull --prefix=inconsistency-detection git@github.com:ArDoCo/InconsistencyDetection feature/v2
+* git subtree pull --prefix=core git@github.com:ArDoCo/Core <<branch>>
+* git subtree pull --prefix=tlr git@github.com:ArDoCo/TLR <<branch>>
+* git subtree pull --prefix=inconsistency-detection git@github.com:ArDoCo/InconsistencyDetection <<branch>>
 
 ### Push
-* git subtree push --prefix=core git@github.com:ArDoCo/Core feature/v2
-* git subtree push --prefix=tlr git@github.com:ArDoCo/TLR feature/v2
-* git subtree push --prefix=inconsistency-detection git@github.com:ArDoCo/InconsistencyDetection feature/v2
+* git subtree push --prefix=core git@github.com:ArDoCo/Core <<branch>>
+* git subtree push --prefix=tlr git@github.com:ArDoCo/TLR <<branch>>
+* git subtree push --prefix=inconsistency-detection git@github.com:ArDoCo/InconsistencyDetection <<branch>>
