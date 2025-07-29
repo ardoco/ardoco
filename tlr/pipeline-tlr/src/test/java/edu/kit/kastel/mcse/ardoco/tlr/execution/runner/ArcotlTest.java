@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArCoTL;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Arcotl;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-class ArCoTLTest extends CodeRunnerBaseTest {
+class ArcotlTest extends CodeRunnerBaseTest {
 
     @Test
     @DisplayName("Test ArDoCo for SAM-Code-TLR (PCM)")
     void testSamCodeTlrPcm() {
-        var runner = new ArCoTL(projectName);
+        var runner = new Arcotl(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, additionalConfigsMap, new File(
                 outputDir));
@@ -32,7 +32,7 @@ class ArCoTLTest extends CodeRunnerBaseTest {
     @Test
     @DisplayName("Test ArDoCo for SAM-Code-TLR (UML)")
     void testSamCodeTlrUml() {
-        var runner = new ArCoTL(projectName);
+        var runner = new Arcotl(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitectureUml), ModelFormat.UML), codeConfiguration, additionalConfigsMap, new File(
                 outputDir));

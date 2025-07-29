@@ -41,7 +41,7 @@ class SwattrAiIT {
 
         SwattrEvaluation evaluation = new SwattrEvaluation(projectToConsider) {
             @Override
-            protected ArDoCoRunner createSwattrRunner() {
+            protected ArDoCoRunner createSwattr() {
 
                 String name = project.name();
                 File inputText = project.getTlrTask().getTextFile();
@@ -69,7 +69,7 @@ class SwattrAiIT {
 
         SwattrEvaluation evaluation = new SwattrEvaluation(projectToConsider) {
             @Override
-            protected ArDoCoRunner createSwattrRunner() {
+            protected ArDoCoRunner createSwattr() {
                 String name = project.name();
                 File inputText = project.getTlrTask().getTextFile();
                 File outputDir = new File(OUTPUT);

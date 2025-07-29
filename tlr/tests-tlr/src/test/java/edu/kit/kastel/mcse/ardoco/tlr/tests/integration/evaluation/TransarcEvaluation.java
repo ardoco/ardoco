@@ -11,22 +11,22 @@ import org.junit.jupiter.api.Assertions;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.TransArC;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
 
-public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
+public class TransarcEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
     private final TransArCEvaluationProject project;
     private final boolean useAcmFile;
 
-    public TransArCEvaluation(TransArCEvaluationProject project, boolean useAcmFile) {
+    public TransarcEvaluation(TransArCEvaluationProject project, boolean useAcmFile) {
         this.project = project;
         this.useAcmFile = useAcmFile;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner transArC = createTransArCRunner();
+        ArDoCoRunner transArC = createTransarc();
         ArDoCoResult result = transArC.run();
         Assertions.assertNotNull(result);
 
@@ -40,7 +40,7 @@ public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         return result;
     }
 
-    private ArDoCoRunner createTransArCRunner() {
+    private ArDoCoRunner createTransarc() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
@@ -51,7 +51,7 @@ public class TransArCEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new TransArC(projectName);
+        var runner = new Transarc(projectName);
         runner.setUp(textInput, new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, SortedMaps.immutable.empty(),
                 outputDirectory);
         return runner;

@@ -13,9 +13,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 
-public class ArCoTL extends ArDoCoRunner {
+/**
+ * ArCoTL (Architecture-Code Trace Links) focuses on linking a given architecture model (SAM) to the source code. It assumes you have a formal model of the
+ * system’s components and interfaces, and wants to find the corresponding code. ArCoTL transforms both the architecture model and the code into intermediate
+ * representations (e.g. simplified graphs) and then applies various heuristics to match elements These heuristics include standalone rules and dependent rules
+ * (which consider relationships) plus filters to refine the links.
+ */
+public class Arcotl extends ArDoCoRunner {
 
-    public ArCoTL(String projectName) {
+    public Arcotl(String projectName) {
         super(projectName);
     }
 

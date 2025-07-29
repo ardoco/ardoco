@@ -21,23 +21,23 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArCoTL;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Arcotl;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
 
-public class ArCoTLEvaluation extends AbstractEvaluation {
+public class ArcotlEvaluation extends AbstractEvaluation {
 
     private final ArCoTLEvaluationProject project;
     private final boolean useAcmFile;
 
-    public ArCoTLEvaluation(ArCoTLEvaluationProject project, boolean useAcmFile) {
+    public ArcotlEvaluation(ArCoTLEvaluationProject project, boolean useAcmFile) {
         this.project = project;
         this.useAcmFile = useAcmFile;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner arcotl = createArCoTL();
+        ArDoCoRunner arcotl = createArcotl();
         ArDoCoResult result = arcotl.run();
         Assertions.assertNotNull(result);
 
@@ -51,7 +51,7 @@ public class ArCoTLEvaluation extends AbstractEvaluation {
         return result;
     }
 
-    private ArDoCoRunner createArCoTL() {
+    private ArDoCoRunner createArcotl() {
         String projectName = project.name().toLowerCase();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         File inputArchitectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
@@ -61,7 +61,7 @@ public class ArCoTLEvaluation extends AbstractEvaluation {
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new ArCoTL(projectName);
+        var runner = new Arcotl(projectName);
         runner.setUp(new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, SortedMaps.immutable.empty(), outputDirectory);
         return runner;
     }

@@ -17,7 +17,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
 /**
- * The Swattr Runner realizes the Software Architecture Documentation to Architecture Model Traceability Link Recovery (TLR) approach.
+ * SWATTR (SoftWare Architecture TexT TRace link recovery) is an agent-based framework for linking textual architecture documentation (SAD) and formal models
+ * (SAM). Rather than focusing on a single algorithm, SWATTR defines a pipeline with multiple stages where different “agents” can operate. First it extracts and
+ * preprocesses text from the SAD and components from the architecture model. Next, it uses NLP and heuristics to identify architecture elements (like component
+ * names) mentioned in the text. Finally, it connects these identified text elements to model elements to form trace links.
  */
 public class Swattr extends ArDoCoRunner {
     public Swattr(String projectName) {
