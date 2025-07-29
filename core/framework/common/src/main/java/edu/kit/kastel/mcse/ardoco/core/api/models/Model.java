@@ -8,8 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
 /**
- * Abstract base class for all models.
- * Provides unique ID and access to content, endpoints, metamodel, and type identifiers.
+ * Abstract base class for all models. Provides unique ID and access to content, endpoints, metamodel, and type identifiers.
  */
 public abstract sealed class Model permits ArchitectureModel, CodeModel {
 

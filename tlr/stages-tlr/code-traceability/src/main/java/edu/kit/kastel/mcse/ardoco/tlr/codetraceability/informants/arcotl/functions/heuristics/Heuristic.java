@@ -10,8 +10,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.CodeTraceabilityHelper;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
-import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.EndpointTupleRepo;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 
 /**
@@ -22,8 +22,8 @@ public abstract class Heuristic {
 
     protected final NodeResult getNodeResult(ArchitectureModel archModel, CodeModel codeModel) {
         NodeResult confidences = new NodeResult();
-        EndpointTupleRepo endpointTupleRepo = new EndpointTupleRepo(archModel, codeModel);
-        for (var endpointTuple : endpointTupleRepo.getEndpointTuples()) {
+        CodeTraceabilityHelper codeTraceabilityHelper = new CodeTraceabilityHelper(archModel, codeModel);
+        for (var endpointTuple : codeTraceabilityHelper.getEndpointTuples()) {
             ArchitectureItem archEndpoint = endpointTuple.first();
             CodeCompilationUnit compUnit = endpointTuple.second();
             Confidence confidence = new Confidence();
