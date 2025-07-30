@@ -12,7 +12,7 @@ public class NerAgent extends PipelineAgent {
      *
      * @param dataRepository the data repository
      */
-    protected NerAgent(DataRepository dataRepository) {
+    public NerAgent(DataRepository dataRepository) {
         super(List.of(new NerInformant(dataRepository)), NerAgent.class.getSimpleName(), dataRepository);
     }
 }

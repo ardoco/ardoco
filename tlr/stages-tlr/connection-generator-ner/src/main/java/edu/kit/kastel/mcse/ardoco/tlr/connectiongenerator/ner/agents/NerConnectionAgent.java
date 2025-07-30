@@ -13,7 +13,7 @@ public class NerConnectionAgent extends PipelineAgent {
      *
      * @param dataRepository the data repository
      */
-    protected NerConnectionAgent(DataRepository dataRepository) {
+    public NerConnectionAgent(DataRepository dataRepository) {
         super(List.of(new NerConnectionInformant(dataRepository)), NerConnectionAgent.class.getSimpleName(), dataRepository);
     }
 }

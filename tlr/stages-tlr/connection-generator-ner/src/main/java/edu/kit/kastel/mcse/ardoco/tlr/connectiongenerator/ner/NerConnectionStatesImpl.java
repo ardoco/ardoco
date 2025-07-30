@@ -1,10 +1,10 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
+
 import java.io.Serial;
 import java.util.EnumMap;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.NerConnectionStates;
 
 public class NerConnectionStatesImpl implements NerConnectionStates {
 
@@ -26,7 +26,7 @@ public class NerConnectionStatesImpl implements NerConnectionStates {
     }
 
     @Override
-    public NerConnectionStateImpl getConnectionState(Metamodel metamodel) {
+    public NerConnectionStateImpl getNerConnectionState(Metamodel metamodel) {
         return connectionStates.get(metamodel);
     }
 }

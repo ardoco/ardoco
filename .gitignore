@@ -118,4 +118,4 @@ pipeline/src/main/resources/evaluations/
 
 *.iml
 
-.env
+tlr/tests-tlr/.env

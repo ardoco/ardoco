@@ -1,17 +1,16 @@
-package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
+package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 
 import java.io.Serial;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
-public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArchitectureEntity, ModelEntity> {
+public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> {
 
     @Serial
     private static final long serialVersionUID = 6354707742249919076L;
@@ -20,24 +19,25 @@ public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArch
     /**
      * Create a new instance link.
      *
-     * @param namedArchitectureEntity the recommended instance
-     * @param entity                  the model instance
+     * @param namedArchitectureEntityOccurrence the recommended instance
+     * @param entity                            the model instance
      */
-    public NamedArchitectureEntityToModelTraceLink(NamedArchitectureEntity namedArchitectureEntity, ModelEntity entity) {
-        super(namedArchitectureEntity, entity);
+    public NamedArchitectureEntityToModelTraceLink(NamedArchitectureEntityOccurrence namedArchitectureEntityOccurrence, ModelEntity entity) {
+        super(namedArchitectureEntityOccurrence, entity);
         this.confidence = new Confidence(AggregationFunctions.AVERAGE);
     }
 
     /**
      * Creates a new instance link with a claimant and probability.
      *
-     * @param namedArchitectureEntity the recommended instance
-     * @param entity                  the model instance
-     * @param claimant                the claimant
-     * @param probability             the probability of this link
+     * @param namedArchitectureEntityOccurrence the recommended instance
+     * @param entity                            the model instance
+     * @param claimant                          the claimant
+     * @param probability                       the probability of this link
      */
-    public NamedArchitectureEntityToModelTraceLink(NamedArchitectureEntity namedArchitectureEntity, ModelEntity entity, Claimant claimant, double probability) {
-        this(namedArchitectureEntity, entity);
+    public NamedArchitectureEntityToModelTraceLink(NamedArchitectureEntityOccurrence namedArchitectureEntityOccurrence, ModelEntity entity, Claimant claimant,
+            double probability) {
+        this(namedArchitectureEntityOccurrence, entity);
         this.confidence.addAgentConfidence(claimant, probability);
     }
 
@@ -52,7 +52,7 @@ public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArch
 
     @Override
     public String toString() {
-        NamedArchitectureEntity namedArchitectureEntity = this.getFirstEndpoint();
+        NamedArchitectureEntityOccurrence namedArchitectureEntityOccurrence = this.getFirstEndpoint();
         ModelEntity modelEntity = this.getSecondEndpoint();
 
         String typeInfo;
@@ -62,9 +62,9 @@ public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArch
         }
 
         // TODO
-        return "RecommendationModelTraceLink [ uid=" + modelEntity.getId() + ", name=" + modelEntity.getName() + //
+        return "NamedArchitectureEntityToModelTraceLink [ uid=" + modelEntity.getId() + ", name=" + modelEntity.getName() + //
                 ", as=" + String.join(", ", typeInfo) + ", probability=" + this.getConfidence() + ", FOUND: " + //
-                namedArchitectureEntity.getName() + " : " + namedArchitectureEntity.getName() + "]";
+                namedArchitectureEntityOccurrence.getName() + " (" + namedArchitectureEntityOccurrence.getSentenceNumber() + ")]";
     }
 
     @Override

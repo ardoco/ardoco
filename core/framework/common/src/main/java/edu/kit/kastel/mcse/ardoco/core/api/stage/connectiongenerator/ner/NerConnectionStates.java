@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
+package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
@@ -18,5 +18,5 @@ public interface NerConnectionStates extends PipelineStepData {
      * @param metamodel the metamodel
      * @return the connection state
      */
-    NerConnectionState getConnectionState(Metamodel metamodel);
+    NerConnectionState getNerConnectionState(Metamodel metamodel);
 }

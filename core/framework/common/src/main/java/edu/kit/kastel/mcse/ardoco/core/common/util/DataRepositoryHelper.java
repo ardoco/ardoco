@@ -3,12 +3,15 @@ package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
+import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
@@ -87,6 +90,28 @@ public final class DataRepositoryHelper {
     }
 
     /**
+     * Checks whether there is annotated {@link SimpleText} stored within the provided {@link DataRepository}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return true, if there is {@link SimpleText} within the {@link DataRepository}; else, false
+     */
+    public static boolean hasSimpleText(DataRepository dataRepository) {
+        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).isPresent();
+    }
+
+    /**
+     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
+     * {@link java.util.NoSuchElementException} if the data is not present. To make sure that there is data present, use
+     * {@link #hasAnnotatedText(DataRepository)}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return the text
+     */
+    public static SimpleText getSimpleText(DataRepository dataRepository) {
+        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow().getText();
+    }
+
+    /**
      * Returns the {@link TextState} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
      * {@link java.util.NoSuchElementException} if the state is not present.
      *
@@ -153,6 +178,28 @@ public final class DataRepositoryHelper {
     }
 
     /**
+     * Checks whether there is {@link ConnectionStates} stored within the provided {@link DataRepository}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return true, if there is {@link ConnectionStates} within the {@link DataRepository}; else, false
+     */
+    public static boolean hasNerConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).isPresent();
+    }
+
+    /**
+     * Returns the {@link NerConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and
+     * throw an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
+     * {@link #hasConnectionStates(DataRepository)}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return the state
+     */
+    public static NerConnectionStates getNerConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).orElseThrow();
+    }
+
+    /**
      * Checks whether there is {@link InconsistencyStates} stored within the provided {@link DataRepository}
      *
      * @param dataRepository the DataRepository to access
@@ -210,5 +257,15 @@ public final class DataRepositoryHelper {
      */
     public static void putPreprocessingData(DataRepository dataRepository, PreprocessingData preprocessingData) {
         dataRepository.addData(PreprocessingData.ID, preprocessingData);
+    }
+
+    /**
+     * Put the given {@link SimplePreprocessingData} into the given {@link DataRepository}. This will override existing data!
+     *
+     * @param dataRepository    the dataRepository
+     * @param preprocessingData the preprocessingData
+     */
+    public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
+        dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
     }
 }

@@ -1,41 +1,58 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner;
 
-import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.list.MutableList;
-
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.NamedArchitectureEntityToModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.NerConnectionState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.set.ImmutableSet;
+import org.eclipse.collections.api.set.MutableSet;
+
+import java.util.Collection;
 
 public class NerConnectionStateImpl extends AbstractState implements NerConnectionState {
 
-    private final MutableList<TraceLink<NamedArchitectureEntity, ModelEntity>> instanceLinks;
+    private final MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> instanceLinks;
+    private final MutableSet<NamedArchitectureEntity> namedEntities;
 
     /**
      * Creates a new connection state.
      */
     public NerConnectionStateImpl() {
-        super();
         this.instanceLinks = Lists.mutable.empty();
+        this.namedEntities = Sets.mutable.empty();
     }
 
     @Override
-    public ImmutableList<TraceLink<NamedArchitectureEntity, ModelEntity>> getTraceLinks() {
+    public ImmutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> getTraceLinks() {
         return Lists.immutable.withAll(this.instanceLinks);
     }
 
     @Override
-    public void addToLinks(NamedArchitectureEntity namedArchitectureEntity, ModelEntity modelEntity, Claimant claimant, double probability) {
-        TraceLink<NamedArchitectureEntity, ModelEntity> traceLink = new NamedArchitectureEntityToModelTraceLink(namedArchitectureEntity, modelEntity, claimant,
-                probability);
+    public void addToLinks(NamedArchitectureEntityOccurrence namedArchitectureEntityOccurrence, ModelEntity modelEntity, Claimant claimant,
+            double probability) {
+        TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> traceLink = new NamedArchitectureEntityToModelTraceLink(namedArchitectureEntityOccurrence,
+                modelEntity, claimant, probability);
         if (!this.instanceLinks.contains(traceLink)) {
             this.instanceLinks.add(traceLink);
         }
+    }
+
+    @Override
+    public ImmutableSet<NamedArchitectureEntity> getNamedArchitectureEntities() {
+        return Sets.immutable.withAll(this.namedEntities);
+    }
+
+    @Override
+    public void addNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
+        this.namedEntities.addAll(namedArchitectureEntities);
     }
 
 }

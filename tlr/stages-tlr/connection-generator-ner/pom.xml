@@ -17,5 +17,10 @@
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.ardoco</groupId>
+            <artifactId>named-architecture-entity-recognition</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
