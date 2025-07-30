@@ -123,7 +123,7 @@ public class ChatModelFactory {
      * @return a configured OpenAiChatModel instance
      */
     private ChatModel buildOpenAiModel() {
-        String apiKey = System.getenv("OPENAI_API_KEY");
+        String apiKey = Environment.getEnvNonNull("OPENAI_API_KEY");
         return OpenAiChatModel.builder().apiKey(apiKey).timeout(Duration.ofSeconds(timeoutSeconds)).modelName(modelName).temperature(temperature).build();
     }
 
@@ -141,9 +141,9 @@ public class ChatModelFactory {
      * @return a configured OllamaChatModel instance
      */
     private ChatModel buildOllamaModel() {
-        String host = System.getenv("OLLAMA_HOST");
-        String user = System.getenv("OLLAMA_USER");
-        String password = System.getenv("OLLAMA_PASSWORD");
+        String host = Environment.getEnvNonNull("OLLAMA_HOST");
+        String user = Environment.getEnvNonNull("OLLAMA_USER");
+        String password = Environment.getEnvNonNull("OLLAMA_PASSWORD");
 
         var builder = OllamaChatModel.builder().baseUrl(host).modelName(modelName).temperature(temperature).timeout(Duration.ofSeconds(timeoutSeconds));
 
