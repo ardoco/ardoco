@@ -6,6 +6,6 @@ if [ -z "$1" ]; then
 fi
 
 for val in core tlr inconsistency-detection ; do
-    echo "Pushing $val to branch $1"
+    echo "Pulling $val to branch $1"
     git subtree pull --prefix=$val git@github.com:ardoco/$val "$1"
 done
