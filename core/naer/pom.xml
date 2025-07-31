@@ -28,7 +28,6 @@
       <timezone>GMT+1</timezone>
     </developer>
   </developers>
-
   <scm>
     <connection>scm:git:git://github.com/ArDoCo/NamedArchitectureEntityRecognition.git</connection>
     <developerConnection>scm:git:ssh://github.com:ArDoCo/NamedArchitectureEntityRecognition.git</developerConnection>
@@ -140,6 +139,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>mavenCentral</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>mavenSnapshot</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </repository>
+  </repositories>
 
   <build>
     <pluginManagement>
