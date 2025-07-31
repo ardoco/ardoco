@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -15,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
@@ -25,6 +27,7 @@ import edu.kit.kastel.mcse.ardoco.naer.recognizer.NamedEntityRecognizer;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
 
+@Deterministic("Currently not fully deterministic due to NAER.")
 public class NerInformant extends Informant {
 
     public NerInformant(DataRepository dataRepository) {
@@ -55,12 +58,13 @@ public class NerInformant extends Informant {
 
     private static Set<NamedArchitectureEntity> recognizeNamedArchitectureEntities(NamedEntityRecognizer namedEntityRecognizer,
             SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities) {
-        SortedSet<NamedEntity> namedEntities = new TreeSet<>(namedEntityRecognizer.recognize(sad, possibleEntities));
+        // TODO This is not deterministic .. as the hashset has a random order. This should be fixed in NAER.
+        Set<NamedEntity> namedEntities = new LinkedHashSet<>(namedEntityRecognizer.recognize(sad, possibleEntities));
         return transformNamedEntitiesToNamedArchitectureEntities(namedEntities);
     }
 
     @NotNull
-    private static Set<NamedArchitectureEntity> transformNamedEntitiesToNamedArchitectureEntities(SortedSet<NamedEntity> namedEntities) {
+    private static Set<NamedArchitectureEntity> transformNamedEntitiesToNamedArchitectureEntities(Set<NamedEntity> namedEntities) {
         SortedSet<NamedArchitectureEntity> namedArchitectureEntities = new TreeSet<>();
         for (var namedEntity : namedEntities) {
             var name = namedEntity.getName();
