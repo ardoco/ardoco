@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.SortedSet;
 
 public class NamedArchitectureEntity implements Comparable<NamedArchitectureEntity> {
 
@@ -11,10 +11,10 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
     /**
      * alternative names of the entity, e.g., if the name is ambiguous
      */
-    private final Set<String> alternativeNames;
+    private final SortedSet<String> alternativeNames;
     private final String name;
 
-    public NamedArchitectureEntity(String name, Set<String> alternativeNames, List<NamedArchitectureEntityOccurrence> occurrences) {
+    public NamedArchitectureEntity(String name, SortedSet<String> alternativeNames, List<NamedArchitectureEntityOccurrence> occurrences) {
         this.alternativeNames = alternativeNames;
         this.name = name;
         this.occurrences = occurrences;
@@ -24,7 +24,7 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
         return occurrences;
     }
 
-    public Set<String> getAlternativeNames() {
+    public SortedSet<String> getAlternativeNames() {
         return alternativeNames;
     }
 

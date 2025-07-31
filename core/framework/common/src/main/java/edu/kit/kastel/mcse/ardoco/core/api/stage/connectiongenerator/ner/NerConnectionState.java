@@ -4,7 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 import java.util.Collection;
 
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.set.ImmutableSet;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -30,7 +30,7 @@ public interface NerConnectionState extends IConfigurable {
      */
     void addToLinks(NamedArchitectureEntityOccurrence namedArchitectureEntityOccurrence, ModelEntity modelEntity, Claimant claimant, double probability);
 
-    ImmutableSet<NamedArchitectureEntity> getNamedArchitectureEntities();
+    ImmutableSortedSet<NamedArchitectureEntity> getNamedArchitectureEntities();
 
     void addNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities);
 }

@@ -5,10 +5,11 @@ import java.util.Collection;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
@@ -48,8 +49,8 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     }
 
     @Override
-    public ImmutableSet<NamedArchitectureEntity> getNamedArchitectureEntities() {
-        return Sets.immutable.withAll(this.namedEntities);
+    public ImmutableSortedSet<NamedArchitectureEntity> getNamedArchitectureEntities() {
+        return SortedSets.immutable.withAll(this.namedEntities);
     }
 
     @Override

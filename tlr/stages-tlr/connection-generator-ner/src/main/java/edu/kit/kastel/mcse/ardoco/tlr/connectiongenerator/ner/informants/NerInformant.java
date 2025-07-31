@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -32,7 +33,7 @@ public class NerInformant extends Informant {
 
     @Override
     public void process() {
-        var nerConnectionStates = (NerConnectionStatesImpl) DataRepositoryHelper.getNerConnectionStates(dataRepository);
+        var nerConnectionStates = DataRepositoryHelper.getNerConnectionStates(dataRepository).asPipelineStepData(NerConnectionStatesImpl.class).orElseThrow();
 
         var text = DataRepositoryHelper.getSimpleText(dataRepository);
         SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(text.getText());
@@ -54,16 +55,16 @@ public class NerInformant extends Informant {
 
     private static Set<NamedArchitectureEntity> recognizeNamedArchitectureEntities(NamedEntityRecognizer namedEntityRecognizer,
             SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities) {
-        Set<NamedEntity> namedEntities = namedEntityRecognizer.recognize(sad, possibleEntities);
+        SortedSet<NamedEntity> namedEntities = new TreeSet<>(namedEntityRecognizer.recognize(sad, possibleEntities));
         return transformNamedEntitiesToNamedArchitectureEntities(namedEntities);
     }
 
     @NotNull
-    private static Set<NamedArchitectureEntity> transformNamedEntitiesToNamedArchitectureEntities(Set<NamedEntity> namedEntities) {
-        Set<NamedArchitectureEntity> namedArchitectureEntities = new TreeSet<>();
+    private static Set<NamedArchitectureEntity> transformNamedEntitiesToNamedArchitectureEntities(SortedSet<NamedEntity> namedEntities) {
+        SortedSet<NamedArchitectureEntity> namedArchitectureEntities = new TreeSet<>();
         for (var namedEntity : namedEntities) {
             var name = namedEntity.getName();
-            var alternativeNames = namedEntity.getAlternativeNames();
+            var alternativeNames = new TreeSet<>(namedEntity.getAlternativeNames());
             var occurrences = namedEntity.getOccurrenceLines();
 
             MutableList<NamedArchitectureEntityOccurrence> namedArchitectureEntityOccurrences = getNamedArchitectureEntityOccurrences(name, occurrences);
