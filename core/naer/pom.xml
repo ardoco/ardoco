@@ -84,7 +84,7 @@
     <dependency>
       <groupId>io.github.ardoco</groupId>
       <artifactId>metrics</artifactId>
-      <version>0.1.1</version>
+      <version>${metrics.version}</version>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
