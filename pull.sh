@@ -7,6 +7,5 @@ fi
 
 for val in core tlr inconsistency-detection ; do
     echo "Pushing $val to branch $1"
-    # REPO: Replace - with empty string
-    git subtree pull --prefix=$val git@github.com:ArDoCo/${val//-/} "$1"
+    git subtree pull --prefix=$val git@github.com:ArDoCo/$val "$1"
 done
