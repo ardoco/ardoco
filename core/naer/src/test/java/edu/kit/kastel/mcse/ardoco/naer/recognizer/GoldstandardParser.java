@@ -35,10 +35,10 @@ public class GoldstandardParser {
         goldstandardAsString = firstNewline >= 0 ? goldstandardAsString.substring(firstNewline + 1) : "";
 
         if (goldstandardAsString.isBlank()) {
-            return new HashSet<>();
+            return new LinkedHashSet<>();
         }
 
-        Map<String, NamedEntity> entitiesMap = new HashMap<>(); //map name -> NamedEntity
+        Map<String, NamedEntity> entitiesMap = new LinkedHashMap<>(); //map name -> NamedEntity
 
         for (String line : goldstandardAsString.split("\n")) {
             String[] parts = line.split(",");
@@ -53,7 +53,7 @@ public class GoldstandardParser {
                 entitiesMap.put(name, newComponent);
             }
         }
-        return new HashSet<>(entitiesMap.values());
+        return new LinkedHashSet<>(entitiesMap.values());
     }
 
     /**

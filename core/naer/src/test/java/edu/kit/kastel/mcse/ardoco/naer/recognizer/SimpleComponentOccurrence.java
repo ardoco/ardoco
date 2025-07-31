@@ -1,7 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
 public record SimpleComponentOccurrence(String componentName, int sentenceNumber) implements Comparable<SimpleComponentOccurrence> {
 
     public static Set<SimpleComponentOccurrence> fromComponents(Set<NamedEntity> components) {
-        Set<SimpleComponentOccurrence> result = new HashSet<>();
+        Set<SimpleComponentOccurrence> result = new LinkedHashSet<>();
 
         for (NamedEntity component : components) {
             for (int lineNumber : component.getOccurrenceLines()) {

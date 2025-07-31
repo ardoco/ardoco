@@ -7,9 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +68,10 @@ public class TestProjectEvaluator {
      */
     private void evaluateAll() {
         Path evalResourcesPath = getEvaluationResourcesPath();
-        Stream<Path> testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath));
+        var testProjectDirs = assertDoesNotThrow(() -> Files.list(evalResourcesPath)).filter(Files::isDirectory).toList();
         int[] errorCounter = { 0 };
 
-        testProjectDirs.filter(Files::isDirectory).forEach(dir -> {
+        for (Path dir : testProjectDirs) {
             try {
                 evaluateProjectInDirectory(dir);
             } catch (Exception e) {
@@ -81,7 +79,7 @@ public class TestProjectEvaluator {
                 logger.error("Evaluation failed for project: {}", dir.getFileName());
             }
             logger.info(SEPARATOR);
-        });
+        }
 
         assertEquals(0, errorCounter[0], "There were errors in " + errorCounter[0] + " test project(s) during evaluation. Please check the log for details.");
     }
@@ -219,13 +217,13 @@ public class TestProjectEvaluator {
         for (NamedEntity component : recognizedComponents) {
             //one of the possible names of the recognized component needs to match one of the possible names of a ground-truth-component for them to be "equivalent":
             boolean foundEquivalentComponent = false;
-            Set<String> componentNamePool = new HashSet<>(component.getAlternativeNames());
+            SortedSet<String> componentNamePool = new TreeSet<>(component.getAlternativeNames());
             componentNamePool.add(cleanComponentName(component.getName()));
             for (NamedEntity groundTruthComponent : groundTruth) {
                 if (foundEquivalentComponent) {
                     break; //because we assume that there is only one possible match to be found
                 }
-                Set<String> groundTruthComponentNamePool = new HashSet<>(groundTruthComponent.getAlternativeNames());
+                SortedSet<String> groundTruthComponentNamePool = new TreeSet<>(groundTruthComponent.getAlternativeNames());
                 groundTruthComponentNamePool.add(cleanComponentName(groundTruthComponent.getName()));
                 for (String componentName : componentNamePool) {
                     if (groundTruthComponentNamePool.contains(componentName)) {

@@ -2,10 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.naer.serialization;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +39,7 @@ public class NamedEntityParser {
     public static Set<NamedEntity> fromJson(String json, SoftwareArchitectureDocumentation sad) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(json);
-        Set<NamedEntity> entities = new HashSet<>();
+        Set<NamedEntity> entities = new LinkedHashSet<>();
 
         for (JsonNode entityNode : rootNode) {
             String name = entityNode.get("name").asText();
@@ -79,8 +76,8 @@ public class NamedEntityParser {
      * @throws IOException if the input string is invalid or cannot be parsed
      */
     public static Set<NamedEntity> fromString(String str, SoftwareArchitectureDocumentation softwareArchitectureDocumentation) throws IOException {
-        Map<String, NamedEntity> entityMap = new HashMap<>();
-        Map<String, Set<Integer>> entityOccurencesMap = new HashMap<>(); //needed to determine reference types of the occurrences after information about alternative names is saved
+        Map<String, NamedEntity> entityMap = new LinkedHashMap<>();
+        Map<String, Set<Integer>> entityOccurencesMap = new LinkedHashMap<>(); //needed to determine reference types of the occurrences after information about alternative names is saved
         String[] lines = str.split("\\R");
         for (int i = 0; i < lines.length; i++) {
             lines[i] = lines[i].trim();
@@ -98,7 +95,7 @@ public class NamedEntityParser {
             }
         }
 
-        return new HashSet<>(entityMap.values());
+        return new LinkedHashSet<>(entityMap.values());
     }
 
     private static void processLines(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String[] lines, boolean parsingAlternativeNames,
@@ -157,7 +154,7 @@ public class NamedEntityParser {
             entity = new NamedEntity(name, currentEntityType);
             entity.setSourceText(softwareArchitectureDocumentation);
             entityMap.put(name, entity);
-            entityOccurencesMap.put(name, new HashSet<>());
+            entityOccurencesMap.put(name, new LinkedHashSet<>());
         }
         entityOccurencesMap.get(name).add(lineNumber);
     }
