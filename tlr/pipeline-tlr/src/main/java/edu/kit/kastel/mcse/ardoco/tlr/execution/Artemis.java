@@ -10,6 +10,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.ModelProvider;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
@@ -54,6 +56,8 @@ public class Artemis extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(modelProviderAgent);
 
         NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository);
+        LlmSettings llmSettings = new LlmSettings.Builder().modelProvider(ModelProvider.OPEN_AI).modelName("gpt-4.1").temperature(0.3).timeout(120).build();
+        nerConnectionGenerator.setLlmSettings(llmSettings);
         this.getArDoCo().addPipelineStep(nerConnectionGenerator);
     }
 }

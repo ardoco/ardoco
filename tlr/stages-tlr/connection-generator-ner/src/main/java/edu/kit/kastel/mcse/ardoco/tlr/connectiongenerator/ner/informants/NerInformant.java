@@ -21,8 +21,7 @@ import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.NamedEntityRecognizer;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
-import edu.kit.kastel.mcse.ardoco.naer.util.ChatModelFactory;
-import edu.kit.kastel.mcse.ardoco.naer.util.ModelProvider;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
 
 public class NerInformant extends Informant {
 
@@ -32,20 +31,21 @@ public class NerInformant extends Informant {
 
     @Override
     public void process() {
+        var nerConnectionStates = (NerConnectionStatesImpl) DataRepositoryHelper.getNerConnectionStates(dataRepository);
 
         var text = DataRepositoryHelper.getSimpleText(dataRepository);
         SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(text.getText());
 
-        var chatModel = ChatModelFactory.withProvider(ModelProvider.OPEN_AI).modelName("gpt-4.1-nano").temperature(0.3).timeout(120).build();
+        var llmSettings = nerConnectionStates.getLlmSettings();
+        var chatModel = llmSettings.createChatModel();
         var prompt = TwoPartPrompt.getDefault();
         var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(prompt).build();
 
-        var nerConnectionStates = DataRepositoryHelper.getNerConnectionStates(dataRepository);
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         for (var metamodel : modelStatesData.getMetamodels()) {
             var possibleEntities = getPossibleEntities(metamodel);
             var namedArchitectureEntities = recognizeNamedArchitectureEntities(namedEntityRecognizer, sad, possibleEntities);
-            
+
             var nerConnectionState = nerConnectionStates.getNerConnectionState(metamodel);
             nerConnectionState.addNamedEntities(namedArchitectureEntities);
         }
