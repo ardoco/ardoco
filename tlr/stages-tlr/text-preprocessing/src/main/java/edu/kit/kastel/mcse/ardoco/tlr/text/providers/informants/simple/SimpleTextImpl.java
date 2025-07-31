@@ -1,7 +1,11 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.simple;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 
@@ -40,7 +44,7 @@ public class SimpleTextImpl implements SimpleText {
     }
 
     @Override
-    public List<String> getLines() {
-        return this.lines;
+    public ImmutableList<String> getLines() {
+        return Lists.immutable.withAll(this.lines);
     }
 }

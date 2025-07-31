@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisEvalua
 
 class ArtemisIT extends AbstractArdocoIT {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @DisplayName("Evaluate ArTEMiS (SAD-SAM TLR with NER)")
     @ParameterizedTest(name = "{0}")
     @EnumSource(ArtemisEvaluationProject.class)

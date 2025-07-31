@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 
 import java.io.Serial;
@@ -10,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
-public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> {
+public final class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> {
 
     @Serial
     private static final long serialVersionUID = 6354707742249919076L;
@@ -57,8 +58,8 @@ public class NamedArchitectureEntityToModelTraceLink extends TraceLink<NamedArch
 
         String typeInfo;
         switch (this.getSecondEndpoint()) {
-        case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType().orElseThrow();
-        case CodeEntity ignored -> typeInfo = "";
+            case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType().orElseThrow();
+            case CodeEntity ignored -> typeInfo = "";
         }
 
         // TODO

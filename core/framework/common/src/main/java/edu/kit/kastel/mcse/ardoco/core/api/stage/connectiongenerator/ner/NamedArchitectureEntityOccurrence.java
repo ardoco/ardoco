@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;

@@ -1,183 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>io.github.ardoco</groupId>
-        <artifactId>parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
-    <groupId>io.github.ardoco.id</groupId>
-    <artifactId>parent-id</artifactId>
-    <version>${revision}</version>
-    <packaging>pom</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.ardoco</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <groupId>io.github.ardoco.id</groupId>
+  <artifactId>parent-id</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
 
-    <name>ArDoCo ID</name>
-    <description>The goal of this project is to identify missing or deviating elements (inconsistencies) between informal and formal artifacts like software
-        architecture documentation, software architecture, and code.
-    </description>
-    <url>https://github.com/ArDoCo/InconsistencyDetection</url>
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://www.opensource.org/licenses/mit-license.php</url>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <id>Hossiphi</id>
-            <name>Sophie Corallo</name>
-            <email>sophie.corallo@kit.edu</email>
-            <url>https://mcse.kastel.kit.edu/staff_sophie_corallo.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
-            <timezone>GMT+1</timezone>
-        </developer>
-        <developer>
-            <id>dfuchss</id>
-            <name>Dominik Fuchss</name>
-            <email>dominik.fuchss@kit.edu</email>
-            <url>https://mcse.kastel.kit.edu/staff_dominik_fuchss.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
-            <timezone>GMT+1</timezone>
-        </developer>
-        <developer>
-            <id>Gram21</id>
-            <name>Jan Keim</name>
-            <email>jan.keim@kit.edu</email>
-            <url>https://mcse.kastel.kit.edu/staff_Keim_Jan.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
-            <timezone>GMT+1</timezone>
-        </developer>
-    </developers>
+  <name>ArDoCo ID</name>
+  <description>The goal of this project is to identify missing or deviating elements (inconsistencies) between informal and formal artifacts like software
+        architecture documentation, software architecture, and code.</description>
+  <url>https://github.com/ArDoCo/InconsistencyDetection</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>Hossiphi</id>
+      <name>Sophie Corallo</name>
+      <email>sophie.corallo@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_sophie_corallo.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>dfuchss</id>
+      <name>Dominik Fuchss</name>
+      <email>dominik.fuchss@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_dominik_fuchss.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>Gram21</id>
+      <name>Jan Keim</name>
+      <email>jan.keim@kit.edu</email>
+      <url>https://mcse.kastel.kit.edu/staff_Keim_Jan.php</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+  </developers>
 
-    <scm>
-        <connection>scm:git:git://github.com/ArDoCo/InconsistencyDetection.git</connection>
-        <developerConnection>scm:git:ssh://github.com:ArDoCo/InconsistencyDetection.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/ArDoCo/InconsistencyDetection/tree/main</url>
-    </scm>
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/ArDoCo/InconsistencyDetection/issues</url>
-    </issueManagement>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>central</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+  <scm>
+    <connection>scm:git:git://github.com/ArDoCo/InconsistencyDetection.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ArDoCo/InconsistencyDetection.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/ArDoCo/InconsistencyDetection/tree/main</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/ArDoCo/InconsistencyDetection/issues</url>
+  </issueManagement>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>central</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
-    <properties>
-        <revision>2.0.0-SNAPSHOT</revision>
-        <ardoco.version>${revision}</ardoco.version>
+  <properties>
+    <revision>2.0.0-SNAPSHOT</revision>
+    <ardoco.version>${revision}</ardoco.version>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.source.encoding>UTF-8</project.source.encoding>
-    </properties>
-    <repositories>
-        <repository>
-            <id>mavenCentral</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>mavenSnapshot</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-        </repository>
-    </repositories>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.source.encoding>UTF-8</project.source.encoding>
+  </properties>
+  <repositories>
+    <repository>
+      <id>mavenCentral</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>mavenSnapshot</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </repository>
+  </repositories>
 
-    <build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+          <deploymentName>ardoco-id</deploymentName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>deployment</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>pipeline-id</module>
+        <module>stages-id</module>
+      </modules>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
                 <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <autoPublish>true</autoPublish>
-                    <waitUntil>published</waitUntil>
-                    <deploymentName>ardoco-id</deploymentName>
+                  <keyname>2673EE7DF64D33426A93D642E88F0DA2FB06A126</keyname>
                 </configuration>
-            </plugin>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>deployment</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>pipeline-id</module>
-                <module>stages-id</module>
-            </modules>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <phase>verify</phase>
-                                <configuration>
-                                    <keyname>2673EE7DF64D33426A93D642E88F0DA2FB06A126</keyname>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>complete</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>pipeline-id</module>
-                <module>stages-id</module>
-                <module>tests-inconsistency</module>
-            </modules>
-        </profile>
-    </profiles>
+      </build>
+    </profile>
+    <profile>
+      <id>complete</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>pipeline-id</module>
+        <module>stages-id</module>
+        <module>tests-inconsistency</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

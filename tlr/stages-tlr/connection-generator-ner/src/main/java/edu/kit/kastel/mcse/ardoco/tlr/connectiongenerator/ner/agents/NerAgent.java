@@ -1,3 +1,4 @@
+/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents;
 
 import java.util.List;
