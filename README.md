@@ -32,16 +32,16 @@ For more information about the setup, the project structure, or the architecture
 
 ## Relevant repositories
 The following is an excerpt of repositories that use this framework and implement the different approaches and pipelines of ARDoCo:
-* [ardoco/Core](https://github.com/ardoco/Core): implementing the core of the approach
-* [ardoco/TLR](https://github.com/ardoco/TLR): implementing different traceability link recovery approaches
-* [ardoco/InconsistencyDetection](https://github.com/ardoco/InconsistencyDetection): implementing inconsistency detection approaches
+* [ardoco/core](https://github.com/ardoco/core): implementing the core of the approach
+* [ardoco/tlr](https://github.com/ardoco/TLR): implementing different traceability link recovery approaches
+* [ardoco/inconsistency-detection](https://github.com/ardoco/inconsistency-detection): implementing inconsistency detection approaches
 
 ### Pull
-* `git subtree pull --prefix=core git@github.com:ardoco/Core <<branch>>`
-* `git subtree pull --prefix=tlr git@github.com:ardoco/TLR <<branch>>`
-* `git subtree pull --prefix=inconsistency-detection git@github.com:ardoco/InconsistencyDetection <<branch>>`
+* `git subtree pull --prefix=core git@github.com:ardoco/core <<branch>>`
+* `git subtree pull --prefix=tlr git@github.com:ardoco/tlr <<branch>>`
+* `git subtree pull --prefix=inconsistency-detection git@github.com:ardoco/inconsistency-detection <<branch>>`
 
 ### Push
-* `git subtree push --prefix=core git@github.com:ardoco/Core <<branch>>`
-* `git subtree push --prefix=tlr git@github.com:ardoco/TLR <<branch>>`
-* `git subtree push --prefix=inconsistency-detection git@github.com:ardoco/InconsistencyDetection <<branch>>`
+* `git subtree push --prefix=core git@github.com:ardoco/core <<branch>>`
+* `git subtree push --prefix=tlr git@github.com:ardoco/tlr <<branch>>`
+* `git subtree push --prefix=inconsistency-detection git@github.com:ardoco/inconsistency-detection <<branch>>`
