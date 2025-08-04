@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents.NerConnecti
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
 
 public class NerConnectionGenerator extends AbstractExecutionStage {
-    protected static final String LOGGING_SETUP_DEBUG = "edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner";
+    protected static final String LOGGING_SETUP_DEBUG = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner";
 
     private LlmSettings llmSettings = LlmSettings.getDefaultSettings();
 
@@ -39,17 +39,5 @@ public class NerConnectionGenerator extends AbstractExecutionStage {
 
     public void setLlmSettings(LlmSettings llmSettings) {
         this.llmSettings = llmSettings;
-    }
-
-    @Override
-    protected void before() {
-        // TODO remove later
-        System.setProperty(LOGGING_SETUP_DEBUG, "debug");
-    }
-
-    @Override
-    protected void after() {
-        super.after();
-        System.setProperty(LOGGING_SETUP_DEBUG, "info");
     }
 }
