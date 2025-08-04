@@ -49,8 +49,8 @@ public class NerConnectionInformant extends Informant {
         for (var metamodel : modelStatesData.getMetamodels()) {
             processForMetamodel(metamodel);
             if (logger.isDebugEnabled()) {
-                logger.debug("For metamodel {} at the end not matched: {} NAEs", metamodel,
-                        nerConnectionStates.getNerConnectionState(metamodel).getUnlinkedNamedArchitectureEntities().size());
+                int numberOfUnmatchedEntities = nerConnectionStates.getNerConnectionState(metamodel).getUnlinkedNamedArchitectureEntities().size();
+                logger.debug("For metamodel {} at the end not matched: {} NAEs", metamodel, numberOfUnmatchedEntities);
             }
         }
     }
