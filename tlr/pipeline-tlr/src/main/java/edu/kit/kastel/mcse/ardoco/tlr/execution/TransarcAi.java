@@ -13,9 +13,9 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
@@ -60,8 +60,8 @@ public class TransarcAi extends ArDoCoRunner {
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, null,
-                codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+        ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, null, codeConfiguration
+                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
         LlmArchitectureProviderAgent llmArchitectureProviderAgent = new LlmArchitectureProviderAgent(dataRepository, largeLanguageModel,

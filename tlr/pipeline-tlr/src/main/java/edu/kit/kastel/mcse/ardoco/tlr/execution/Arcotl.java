@@ -9,9 +9,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 
 /**
  * ArCoTL (Architecture-Code Trace Links) focuses on linking a given architecture model (SAM) to the source code. It assumes you have a formal model of the
@@ -41,11 +41,11 @@ public class Arcotl extends ArDoCoRunner {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, //
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, //
                 architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES), //
                 codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) //
         );
-        arDoCo.addPipelineStep(arCoTLModelProviderAgent);
+        arDoCo.addPipelineStep(modelProviderAgent);
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
     }
 }

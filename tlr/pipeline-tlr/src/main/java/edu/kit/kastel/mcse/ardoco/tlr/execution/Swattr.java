@@ -10,8 +10,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -52,10 +52,10 @@ public class Swattr extends ArDoCoRunner {
 
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = //
-                ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
+        ModelProviderAgent modelProviderAgent = //
+                ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
                         Metamodel.ARCHITECTURE_WITH_COMPONENTS), null);
-        this.getArDoCo().addPipelineStep(arCoTLModelProviderAgent);
+        this.getArDoCo().addPipelineStep(modelProviderAgent);
 
         this.getArDoCo().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
         this.getArDoCo().addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));

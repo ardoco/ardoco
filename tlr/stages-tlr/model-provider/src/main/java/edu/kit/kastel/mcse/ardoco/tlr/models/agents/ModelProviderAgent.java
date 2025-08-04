@@ -10,12 +10,12 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ArCoTLModelProviderInformant;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ModelProviderInformant;
 
 /**
  * Agent that provides information from models.
  */
-public class ArCoTLModelProviderAgent extends PipelineAgent {
+public class ModelProviderAgent extends PipelineAgent {
 
     /**
      * Instantiates a new model provider agent. The constructor takes a list of ModelConnectors that are executed and used to extract information from models.
@@ -25,37 +25,37 @@ public class ArCoTLModelProviderAgent extends PipelineAgent {
      * @param architectureConfiguration the architecture configuration
      * @param codeConfiguration         the code configuration
      */
-    public ArCoTLModelProviderAgent(DataRepository data, ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
-        super(informants(data, architectureConfiguration, codeConfiguration), ArCoTLModelProviderAgent.class.getSimpleName(), data);
+    public ModelProviderAgent(DataRepository data, ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
+        super(informants(data, architectureConfiguration, codeConfiguration), ModelProviderAgent.class.getSimpleName(), data);
     }
 
     private static List<? extends Informant> informants(DataRepository data, ArchitectureConfiguration architectureConfiguration,
             CodeConfiguration codeConfiguration) {
         List<Informant> informants = new ArrayList<>();
         if (architectureConfiguration != null) {
-            informants.add(new ArCoTLModelProviderInformant(data, architectureConfiguration.extractor()));
+            informants.add(new ModelProviderInformant(data, architectureConfiguration.extractor()));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ArCoTLModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
+            informants.add(new ModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {
             for (Extractor e : codeConfiguration.extractors()) {
-                informants.add(new ArCoTLModelProviderInformant(data, e));
+                informants.add(new ModelProviderInformant(data, e));
             }
         }
 
         return informants;
     }
 
-    public static ArCoTLModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
+    public static ModelProviderAgent getModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
             ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
         if (architectureConfiguration == null && codeConfiguration == null) {
             throw new IllegalArgumentException("At least one configuration must be provided");
         }
 
-        var agent = new ArCoTLModelProviderAgent(dataRepository, architectureConfiguration, codeConfiguration);
+        var agent = new ModelProviderAgent(dataRepository, architectureConfiguration, codeConfiguration);
         agent.applyConfiguration(additionalConfigs);
         return agent;
     }
