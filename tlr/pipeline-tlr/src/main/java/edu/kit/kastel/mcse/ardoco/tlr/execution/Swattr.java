@@ -53,7 +53,7 @@ public class Swattr extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent modelProviderAgent = //
-                ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
+                ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
                         Metamodel.ARCHITECTURE_WITH_COMPONENTS), null);
         this.getArDoCo().addPipelineStep(modelProviderAgent);
 

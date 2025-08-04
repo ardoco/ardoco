@@ -49,7 +49,7 @@ public class ModelProviderAgent extends PipelineAgent {
         return informants;
     }
 
-    public static ModelProviderAgent getArCoTLModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
+    public static ModelProviderAgent getModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
             ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
         if (architectureConfiguration == null && codeConfiguration == null) {
             throw new IllegalArgumentException("At least one configuration must be provided");

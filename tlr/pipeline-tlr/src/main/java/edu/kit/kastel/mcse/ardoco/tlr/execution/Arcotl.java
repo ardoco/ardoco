@@ -41,7 +41,7 @@ public class Arcotl extends ArDoCoRunner {
         ArDoCo arDoCo = this.getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
 
-        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, //
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, //
                 architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES), //
                 codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) //
         );

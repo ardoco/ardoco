@@ -55,7 +55,7 @@ public class Transarc extends ArDoCoRunner {
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration
                 .withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS), //
                 codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) //
         );

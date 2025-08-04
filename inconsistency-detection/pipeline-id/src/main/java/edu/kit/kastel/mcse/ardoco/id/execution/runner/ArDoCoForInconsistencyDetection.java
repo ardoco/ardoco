@@ -56,8 +56,8 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
         var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat,
                 Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
-        ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
-                architectureConfiguration, null);
+        ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration,
+                null);
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
         arDoCo.addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
         arDoCo.addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
