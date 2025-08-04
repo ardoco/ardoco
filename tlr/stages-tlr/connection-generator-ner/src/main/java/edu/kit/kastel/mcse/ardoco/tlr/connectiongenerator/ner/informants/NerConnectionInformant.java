@@ -1,14 +1,14 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -25,6 +25,8 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
 
 public class NerConnectionInformant extends Informant {
+    private static final Logger logger = LoggerFactory.getLogger(NerConnectionInformant.class);
+
     public static final double DEFAULT_PROBABILITY = 0.92;
     public static final double EMBEDDING_SIMILARITY_THRESHOLD = 0.6;
     private static final String promptTemplate = """
@@ -52,6 +54,9 @@ public class NerConnectionInformant extends Informant {
         nerConnectionStates = DataRepositoryHelper.getNerConnectionStates(dataRepository).asPipelineStepData(NerConnectionStatesImpl.class).orElseThrow();
         for (var metamodel : modelStatesData.getMetamodels()) {
             processForMetamodel(metamodel);
+            System.out.println("For metamodel " + metamodel + " at the end not matched: " + nerConnectionStates.getNerConnectionState(metamodel)
+                    .getUnlinkedNamedArchitectureEntities()
+                    .size());
         }
     }
 
@@ -59,46 +64,49 @@ public class NerConnectionInformant extends Informant {
         var modelEndpoints = modelStatesData.getModel(metamodel).getEndpoints();
         var nerConnectionState = nerConnectionStates.getNerConnectionState(metamodel);
         var namedArchitectureEntities = nerConnectionState.getNamedArchitectureEntities();
+
+        // Try to match with similarity metrics
         var nonMatchedNamedArchitectureEntities = Lists.mutable.withAll(namedArchitectureEntities.toList());
+        var matchedNamedArchitectureEntities = Lists.mutable.empty();
         for (var namedArchitectureEntity : namedArchitectureEntities) {
             for (var modelEndpoint : modelEndpoints) {
                 if (areNamedArchitectureEntityAndModelEndpointSimilar(namedArchitectureEntity, modelEndpoint)) {
                     createTraceLinks(nerConnectionState, namedArchitectureEntity, modelEndpoint);
-                    nonMatchedNamedArchitectureEntities.remove(namedArchitectureEntity);
+                    matchedNamedArchitectureEntities.add(namedArchitectureEntity);
                 }
             }
         }
+        nonMatchedNamedArchitectureEntities.removeAll(matchedNamedArchitectureEntities);
+        matchedNamedArchitectureEntities = Lists.mutable.empty();
 
+        // try to match with weaker similarity comparison
         for (var namedArchitectureEntity : nonMatchedNamedArchitectureEntities) {
             for (var modelEndpoint : modelEndpoints) {
                 if (areNamedArchitectureEntityAndModelEndpointWeaklySimilar(namedArchitectureEntity, modelEndpoint)) {
                     createTraceLinks(nerConnectionState, namedArchitectureEntity, modelEndpoint);
-                    nonMatchedNamedArchitectureEntities.remove(namedArchitectureEntity);
+                    matchedNamedArchitectureEntities.add(namedArchitectureEntity);
                 }
             }
         }
+        nonMatchedNamedArchitectureEntities.removeAll(matchedNamedArchitectureEntities);
+        matchedNamedArchitectureEntities = Lists.mutable.empty();
 
-        System.out.println("Still not matched: " + nonMatchedNamedArchitectureEntities.size());
-        var start = Instant.now();
+        // try to match using embedding similarity
         for (var namedArchitectureEntity : nonMatchedNamedArchitectureEntities) {
+            logger.debug("Trying to match using embeddings for the NAE: {}", namedArchitectureEntity.getName());
             var currentNamedArchitectureEntityEmbeddings = getNamedArchitectureEntityEmbeddings(namedArchitectureEntity);
             for (var modelEndpoint : modelEndpoints) {
                 var modelEndpointEmbeddings = getModelEndpointEmbeddings(modelEndpoint);
                 if (embeddingsAreSimilar(currentNamedArchitectureEntityEmbeddings, modelEndpointEmbeddings)) {
-                    System.out.println(" for " + namedArchitectureEntity.getName() + " <-> " + modelEndpoint.getName());
+                    logger.debug("^ similarity for {} <-> {}", namedArchitectureEntity.getName(), modelEndpoint.getName());
                     createTraceLinks(nerConnectionState, namedArchitectureEntity, modelEndpoint);
-                    nonMatchedNamedArchitectureEntities.remove(namedArchitectureEntity);
+                    matchedNamedArchitectureEntities.add(namedArchitectureEntity);
                 }
             }
         }
-        Instant end = Instant.now();
-        System.out.println("Time: " + Duration.between(start, end).toMillis());
+        nonMatchedNamedArchitectureEntities.removeAll(matchedNamedArchitectureEntities);
 
-        System.out.println("At the end not matched: " + nonMatchedNamedArchitectureEntities.size());
-        for (var namedArchitectureEntity : nonMatchedNamedArchitectureEntities) {
-            System.out.println(namedArchitectureEntity);
-        }
-
+        nerConnectionState.addUnlinkedNamedArchitectureEntities(nonMatchedNamedArchitectureEntities);
     }
 
     private boolean embeddingsAreSimilar(List<Embedding> namedArchitectureEntityEmbeddings, List<Embedding> modelEndpointEmbeddings) {
@@ -106,7 +114,7 @@ public class NerConnectionInformant extends Informant {
             for (var modelEndpointEmbedding : modelEndpointEmbeddings) {
                 var similarity = CosineSimilarity.between(namedArchitectireEntityEmbedding, modelEndpointEmbedding);
                 if (similarity >= EMBEDDING_SIMILARITY_THRESHOLD) {
-                    System.out.print("Similarity of " + similarity);
+                    logger.debug("Similarity of {}", similarity);
                     return true;
                 }
             }

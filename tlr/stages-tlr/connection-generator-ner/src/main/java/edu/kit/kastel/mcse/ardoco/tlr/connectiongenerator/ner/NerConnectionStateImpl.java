@@ -24,6 +24,7 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
 
     private final MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> instanceLinks;
     private final MutableSet<NamedArchitectureEntity> namedEntities;
+    private final MutableSet<NamedArchitectureEntity> unlinkedNamedArchitectureEntities;
 
     /**
      * Creates a new connection state.
@@ -31,6 +32,7 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     public NerConnectionStateImpl() {
         this.instanceLinks = Lists.mutable.empty();
         this.namedEntities = Sets.mutable.empty();
+        this.unlinkedNamedArchitectureEntities = Sets.mutable.empty();
     }
 
     @Override
@@ -56,6 +58,16 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     @Override
     public void addNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
         this.namedEntities.addAll(namedArchitectureEntities);
+    }
+
+    @Override
+    public ImmutableSortedSet<NamedArchitectureEntity> getUnlinkedNamedArchitectureEntities() {
+        return SortedSets.immutable.withAll(unlinkedNamedArchitectureEntities);
+    }
+
+    @Override
+    public void addUnlinkedNamedArchitectureEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
+        this.unlinkedNamedArchitectureEntities.addAll(namedArchitectureEntities);
     }
 
 }

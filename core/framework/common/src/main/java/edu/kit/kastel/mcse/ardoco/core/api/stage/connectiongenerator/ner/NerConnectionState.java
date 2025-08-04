@@ -33,4 +33,8 @@ public interface NerConnectionState extends IConfigurable {
     ImmutableSortedSet<NamedArchitectureEntity> getNamedArchitectureEntities();
 
     void addNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities);
+
+    ImmutableSortedSet<NamedArchitectureEntity> getUnlinkedNamedArchitectureEntities();
+
+    void addUnlinkedNamedArchitectureEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities);
 }
