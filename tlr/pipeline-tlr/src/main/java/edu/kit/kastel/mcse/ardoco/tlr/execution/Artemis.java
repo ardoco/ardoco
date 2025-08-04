@@ -13,8 +13,8 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.ModelProvider;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -52,7 +52,7 @@ public class Artemis extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(SimpleTextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ArchitectureConfiguration architectureConfigurationWithMetamodel = architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
-        ArCoTLModelProviderAgent modelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs,
                 architectureConfigurationWithMetamodel, null);
         this.getArDoCo().addPipelineStep(modelProviderAgent);
 
