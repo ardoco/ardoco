@@ -1,10 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.naer.model;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,11 +17,11 @@ public class NamedEntity {
     /**
      * alternative names of the entity, e.g., if the name is ambiguous
      */
-    private final Set<String> alternativeNames;
+    private final SortedSet<String> alternativeNames;
     /**
      * all occurrences of the entity in the {@link #sourceText}
      */
-    private final Set<Occurrence> occurrences;
+    private final SortedSet<Occurrence> occurrences;
     private String name;
     /**
      * the software architecture documentation (text) in which the named entity has been recognized
@@ -46,8 +43,8 @@ public class NamedEntity {
             @JsonProperty("alternativeNames") List<String> alternativeNames, @JsonProperty("occurrences") List<Occurrence> occurrences) {
         this.name = name;
         this.type = type;
-        this.alternativeNames = new HashSet<>(alternativeNames);
-        this.occurrences = new HashSet<>(occurrences);
+        this.alternativeNames = new TreeSet<>(alternativeNames);
+        this.occurrences = new TreeSet<>(occurrences);
     }
 
     /**
@@ -60,8 +57,8 @@ public class NamedEntity {
     public NamedEntity(String name, NamedEntityType type) {
         this.name = name;
         this.type = type;
-        this.alternativeNames = new HashSet<>();
-        this.occurrences = new HashSet<>();
+        this.alternativeNames = new TreeSet<>();
+        this.occurrences = new TreeSet<>();
     }
 
     @Nullable
@@ -101,7 +98,7 @@ public class NamedEntity {
      *
      * @return a set of strings representing alternative names for this entity
      */
-    public Set<String> getAlternativeNames() {
+    public SortedSet<String> getAlternativeNames() {
         return alternativeNames;
     }
 
@@ -122,7 +119,7 @@ public class NamedEntity {
             this.name = this.name.toLowerCase();
         }
 
-        Set<String> lowercasedAlternativeNames = new HashSet<>();
+        SortedSet<String> lowercasedAlternativeNames = new TreeSet<>();
         for (String alternativeName : this.alternativeNames) {
             if (alternativeName != null) {
                 lowercasedAlternativeNames.add(alternativeName.toLowerCase());
@@ -138,8 +135,8 @@ public class NamedEntity {
      *
      * @return a set of unique integers representing the line/sentence numbers in which the entity is mentioned (line numbers are 1-indexed).
      */
-    public Set<Integer> getOccurrenceLines() {
-        Set<Integer> result = new HashSet<>();
+    public SortedSet<Integer> getOccurrenceLines() {
+        SortedSet<Integer> result = new TreeSet<>();
         for (Occurrence occurrence : occurrences) {
             result.add(occurrence.sentenceNumber);
         }
@@ -184,7 +181,7 @@ public class NamedEntity {
      * @param sentenceNumber starting at {@code 1}
      * @param referenceType  type of how the entity is referenced
      */
-    private record Occurrence(int sentenceNumber, NamedEntityReferenceType referenceType) {
+    private record Occurrence(int sentenceNumber, NamedEntityReferenceType referenceType) implements Comparable<Occurrence> {
         @JsonCreator
         private Occurrence(@JsonProperty("line") int sentenceNumber, @JsonProperty("referenceType") NamedEntityReferenceType referenceType) {
             this.sentenceNumber = sentenceNumber;
@@ -195,6 +192,15 @@ public class NamedEntity {
         @Override
         public String toString() {
             return sentenceNumber + ":" + referenceType;
+        }
+
+        @Override
+        public int compareTo(@NotNull Occurrence o) {
+            int cmp = Integer.compare(this.sentenceNumber, o.sentenceNumber);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return this.referenceType.compareTo(o.referenceType);
         }
     }
 }

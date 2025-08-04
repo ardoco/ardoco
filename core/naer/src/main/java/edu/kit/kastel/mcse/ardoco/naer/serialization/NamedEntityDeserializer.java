@@ -2,9 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.naer.serialization;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,6 +48,6 @@ public class NamedEntityDeserializer extends JsonDeserializer<Set<NamedEntity>> 
         for (NamedEntity entity : entities) {
             entity.setSourceText(softwareArchitectureDocumentation);
         }
-        return new HashSet<>(entities);
+        return new LinkedHashSet<>(entities);
     }
 }
