@@ -13,9 +13,9 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -55,11 +55,11 @@ public class Transarc extends ArDoCoRunner {
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
-                architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS), //
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration
+                .withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS), //
                 codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) //
         );
-        arDoCo.addPipelineStep(arCoTLModelProviderAgent);
+        arDoCo.addPipelineStep(modelProviderAgent);
 
         arDoCo.addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
         arDoCo.addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));

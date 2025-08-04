@@ -20,14 +20,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
 /**
  * The model extractor extracts the instances and relations via a connector. The extracted items are stored in a model extraction state.
  */
-public final class ArCoTLModelProviderInformant extends Informant {
+public final class ModelProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
     private final Extractor extractor;
     private final File fromFile;
     private final Metamodel metamodel;
 
     // Needed for Configuration Generation
-    private ArCoTLModelProviderInformant() {
+    private ModelProviderInformant() {
         super(null, null);
         this.extractor = null;
         this.fromFile = null;
@@ -40,7 +40,7 @@ public final class ArCoTLModelProviderInformant extends Informant {
      * @param dataRepository the data repository
      * @param fromFile       whether the model should be read from a file
      */
-    public ArCoTLModelProviderInformant(DataRepository dataRepository, File fromFile, Metamodel metamodel) {
+    public ModelProviderInformant(DataRepository dataRepository, File fromFile, Metamodel metamodel) {
         super("Extractor File", dataRepository);
         this.fromFile = Objects.requireNonNull(fromFile);
         this.metamodel = Objects.requireNonNull(metamodel);
@@ -53,7 +53,7 @@ public final class ArCoTLModelProviderInformant extends Informant {
      * @param dataRepository the data repository
      * @param extractor      the model connector
      */
-    public ArCoTLModelProviderInformant(DataRepository dataRepository, Extractor extractor) {
+    public ModelProviderInformant(DataRepository dataRepository, Extractor extractor) {
         super("Extractor " + (extractor == null ? "File" : extractor.getClass().getSimpleName()), dataRepository);
         this.extractor = extractor;
         this.fromFile = null;
@@ -83,13 +83,13 @@ public final class ArCoTLModelProviderInformant extends Informant {
 
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
         var dataRepository = this.getDataRepository();
-        Optional<ModelStates> modelStatesOptional = dataRepository.getData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);
+        Optional<ModelStates> modelStatesOptional = dataRepository.getData(ModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);
         var modelStates = modelStatesOptional.orElseGet(ModelStates::new);
 
         modelStates.addModel(metamodel, model);
 
         if (modelStatesOptional.isEmpty()) {
-            dataRepository.addData(ArCoTLModelProviderInformant.MODEL_STATES_DATA, modelStates);
+            dataRepository.addData(ModelProviderInformant.MODEL_STATES_DATA, modelStates);
         }
     }
 

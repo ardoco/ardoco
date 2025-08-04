@@ -16,10 +16,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ArCoTLModelProviderInformant;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ModelProviderInformant;
 
 public class HoldBackArCoTLModelProvider {
 
@@ -72,7 +72,7 @@ public class HoldBackArCoTLModelProvider {
     }
 
     public PipelineAgent get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
-        PipelineAgent agent = new PipelineAgent(List.of(new ArCoTLModelProviderInformant(dataRepository, new Extractor("", this.initialModel.getMetamodel()) {
+        PipelineAgent agent = new PipelineAgent(List.of(new ModelProviderInformant(dataRepository, new Extractor("", this.initialModel.getMetamodel()) {
 
             @Override
             public Model extractModel() {
@@ -81,7 +81,7 @@ public class HoldBackArCoTLModelProvider {
                 elements.remove(elementToRemove);
                 return new ArchitectureComponentModel(new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>(elements)));
             }
-        })), ArCoTLModelProviderAgent.class.getSimpleName(), dataRepository) {
+        })), ModelProviderAgent.class.getSimpleName(), dataRepository) {
 
             @Override
             protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {

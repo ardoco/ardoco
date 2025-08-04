@@ -12,8 +12,8 @@ import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -47,9 +47,9 @@ public class Ardocode extends ArDoCoRunner {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, null,
-                codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
-        arDoCo.addPipelineStep(arCoTLModelProviderAgent);
+        ModelProviderAgent modelProviderAgent = ModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs, null, codeConfiguration
+                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+        arDoCo.addPipelineStep(modelProviderAgent);
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
