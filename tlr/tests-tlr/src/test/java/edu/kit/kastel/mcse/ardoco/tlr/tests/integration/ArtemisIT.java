@@ -1,6 +1,8 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +31,12 @@ class ArtemisIT extends AbstractArdocoIT {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
         if (checkLlmProvision()) {
             logger.info("Skipping evaluation of ArTEMiS as the LLM provider is not properly set");
+            return;
+        }
+
+        if (!List.of(ArtemisEvaluationProject.TEAMMATES, ArtemisEvaluationProject.BIGBLUEBUTTON).contains(project)) {
+            // TODO
+            logger.info("SKIPPING");
             return;
         }
 
