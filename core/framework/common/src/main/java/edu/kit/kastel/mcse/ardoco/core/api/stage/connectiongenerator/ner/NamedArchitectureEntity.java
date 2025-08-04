@@ -49,4 +49,9 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
     public int compareTo(NamedArchitectureEntity o) {
         return this.name.compareTo(o.name);
     }
+
+    @Override
+    public String toString() {
+        return "NamedArchitectureEntity{" + "name='" + name + '\'' + ", alternativeNames=" + alternativeNames + '}';
+    }
 }

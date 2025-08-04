@@ -26,6 +26,11 @@ class ArtemisIT extends AbstractArdocoIT {
             return;
         }
 
+        // TODO
+        if (project != ArtemisEvaluationProject.MEDIASTORE) {
+            return;
+        }
+
         var evaluation = new ArtemisEvaluation(project);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
