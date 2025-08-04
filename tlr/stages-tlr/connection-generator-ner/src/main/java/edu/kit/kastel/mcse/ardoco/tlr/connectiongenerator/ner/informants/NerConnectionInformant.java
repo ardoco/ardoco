@@ -29,12 +29,6 @@ public class NerConnectionInformant extends Informant {
 
     public static final double DEFAULT_PROBABILITY = 0.92;
     public static final double EMBEDDING_SIMILARITY_THRESHOLD = 0.6;
-    private static final String promptTemplate = """
-            You get two named architecture entities with their names and alternative names. 
-            Are these entities equivalent and are semantically similar? Answer only with "Yes" or "No".
-            The first entity is "{first}" with the following alternative names: {first_alt}.
-            The second entity is "{second}". 
-            """;
 
     private SimilarityUtils similarityUtils;
     private NerConnectionStatesImpl nerConnectionStates; // Use Impl to access distinct fields/methods
