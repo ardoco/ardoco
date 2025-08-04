@@ -4,8 +4,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.list.ImmutableList;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -24,6 +26,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionState
 
 public class NerConnectionInformant extends Informant {
     public static final double DEFAULT_PROBABILITY = 0.92;
+    public static final double EMBEDDING_SIMILARITY_THRESHOLD = 0.6;
     private static final String promptTemplate = """
             You get two named architecture entities with their names and alternative names. 
             Are these entities equivalent and are semantically similar? Answer only with "Yes" or "No".
@@ -34,6 +37,8 @@ public class NerConnectionInformant extends Informant {
     private SimilarityUtils similarityUtils;
     private NerConnectionStatesImpl nerConnectionStates; // Use Impl to access distinct fields/methods
     private ModelStates modelStatesData;
+    private final Map<ModelEntity, List<Embedding>> modelEntityEmbeddings = Maps.mutable.empty();
+    private final Map<NamedArchitectureEntity, List<Embedding>> namedArchitectureEntityEmbeddings = Maps.mutable.empty();
 
     public NerConnectionInformant(DataRepository dataRepository) {
         super(NerConnectionInformant.class.getSimpleName(), dataRepository);
@@ -76,8 +81,11 @@ public class NerConnectionInformant extends Informant {
         System.out.println("Still not matched: " + nonMatchedNamedArchitectureEntities.size());
         var start = Instant.now();
         for (var namedArchitectureEntity : nonMatchedNamedArchitectureEntities) {
+            var currentNamedArchitectureEntityEmbeddings = getNamedArchitectureEntityEmbeddings(namedArchitectureEntity);
             for (var modelEndpoint : modelEndpoints) {
-                if (areNamedArchitectureEntityAndModelEndpointSimilarLlm(namedArchitectureEntity, modelEndpoint)) {
+                var modelEndpointEmbeddings = getModelEndpointEmbeddings(modelEndpoint);
+                if (embeddingsAreSimilar(currentNamedArchitectureEntityEmbeddings, modelEndpointEmbeddings)) {
+                    System.out.println(" for " + namedArchitectureEntity.getName() + " <-> " + modelEndpoint.getName());
                     createTraceLinks(nerConnectionState, namedArchitectureEntity, modelEndpoint);
                     nonMatchedNamedArchitectureEntities.remove(namedArchitectureEntity);
                 }
@@ -91,6 +99,34 @@ public class NerConnectionInformant extends Informant {
             System.out.println(namedArchitectureEntity);
         }
 
+    }
+
+    private boolean embeddingsAreSimilar(List<Embedding> namedArchitectureEntityEmbeddings, List<Embedding> modelEndpointEmbeddings) {
+        for (var namedArchitectireEntityEmbedding : namedArchitectureEntityEmbeddings) {
+            for (var modelEndpointEmbedding : modelEndpointEmbeddings) {
+                var similarity = CosineSimilarity.between(namedArchitectireEntityEmbedding, modelEndpointEmbedding);
+                if (similarity >= EMBEDDING_SIMILARITY_THRESHOLD) {
+                    System.out.print("Similarity of " + similarity);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Embedding> getModelEndpointEmbeddings(ModelEntity modelEndpoint) {
+        return this.modelEntityEmbeddings.computeIfAbsent(modelEndpoint, modelEntity -> {
+            var modelEndpointNames = Lists.mutable.of(modelEntity.getName());
+            return embed(modelEndpointNames);
+        });
+    }
+
+    private List<Embedding> getNamedArchitectureEntityEmbeddings(NamedArchitectureEntity namedArchitectureEntity) {
+        return this.namedArchitectureEntityEmbeddings.computeIfAbsent(namedArchitectureEntity, nae -> {
+            var namedArchitectureEntityNames = Lists.mutable.withAll(nae.getAlternativeNames());
+            namedArchitectureEntityNames.add(nae.getName());
+            return embed(namedArchitectureEntityNames);
+        });
     }
 
     private boolean areNamedArchitectureEntityAndModelEndpointSimilar(NamedArchitectureEntity namedArchitectureEntity, ModelEntity modelEndpoint) {
@@ -115,32 +151,6 @@ public class NerConnectionInformant extends Informant {
 
         return similarityUtils.areWordsOfListsSimilar(namedArchitectureEntityNameParts, modelEndpointNameParts) //
                 || similarityUtils.areWordsOfListsSimilar(modelEndpointNameParts, namedArchitectureEntityNameParts);
-    }
-
-    private boolean areNamedArchitectureEntityAndModelEndpointSimilarLlm(NamedArchitectureEntity namedArchitectureEntity, ModelEntity modelEndpoint) {
-        //        String prompt = promptTemplate.replace("{first}", namedArchitectureEntity.getName());
-        //        prompt = prompt.replace("{first_alt}", StringUtils.join(namedArchitectureEntity.getAlternativeNames(), ", "));
-        //        prompt = prompt.replace("{second}", modelEndpoint.getName());
-        //        var llmResponse = this.chatModel.chat(prompt).toLowerCase();
-        //        return llmResponse.contains("yes");
-        var namedArchitectureEntityNames = Lists.mutable.withAll(namedArchitectureEntity.getAlternativeNames());
-        namedArchitectureEntityNames.add(namedArchitectureEntity.getName());
-        var namedArchitectureEntityEmbeddings = embed(namedArchitectureEntityNames);
-        var modelEndpointNames = Lists.mutable.of(modelEndpoint.getName());
-        var modelEndpointEmbeddings = embed(modelEndpointNames);
-
-        for (var namedArchitectireEntityEmbedding : namedArchitectureEntityEmbeddings) {
-            for (var modelEndpointEmbedding : modelEndpointEmbeddings) {
-                var similarity = CosineSimilarity.between(namedArchitectireEntityEmbedding, modelEndpointEmbedding);
-                System.out.println("Similarity of " + similarity + " for: " + namedArchitectureEntity.getName() + " <-> " + modelEndpoint.getName());
-                if (similarity >= 0.88) {
-                    System.out.println("Similarity of " + similarity + " for: " + namedArchitectureEntity.getName() + " <-> " + modelEndpoint.getName());
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private List<Embedding> embed(List<String> names) {
