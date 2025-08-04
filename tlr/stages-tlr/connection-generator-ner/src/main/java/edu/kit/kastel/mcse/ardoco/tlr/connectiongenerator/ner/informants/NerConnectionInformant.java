@@ -48,9 +48,10 @@ public class NerConnectionInformant extends Informant {
         nerConnectionStates = DataRepositoryHelper.getNerConnectionStates(dataRepository).asPipelineStepData(NerConnectionStatesImpl.class).orElseThrow();
         for (var metamodel : modelStatesData.getMetamodels()) {
             processForMetamodel(metamodel);
-            System.out.println("For metamodel " + metamodel + " at the end not matched: " + nerConnectionStates.getNerConnectionState(metamodel)
-                    .getUnlinkedNamedArchitectureEntities()
-                    .size());
+            if (logger.isDebugEnabled()) {
+                logger.debug("For metamodel {} at the end not matched: {} NAEs", metamodel,
+                        nerConnectionStates.getNerConnectionState(metamodel).getUnlinkedNamedArchitectureEntities().size());
+            }
         }
     }
 
@@ -157,7 +158,7 @@ public class NerConnectionInformant extends Informant {
 
     private List<Embedding> embed(List<String> names) {
         var embeddingModel = nerConnectionStates.getLlmSettings().createEmbeddingModel();
-        var segments = names.stream().map(name -> TextSegment.from(name)).toList();
+        var segments = names.stream().map(TextSegment::from).toList();
         return embeddingModel.embedAll(segments).content();
     }
 
