@@ -1,11 +1,11 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ public class NerConnectionInformant extends Informant {
     private SimilarityUtils similarityUtils;
     private NerConnectionStatesImpl nerConnectionStates; // Use Impl to access distinct fields/methods
     private ModelStates modelStatesData;
-    private final Map<ModelEntity, List<Embedding>> modelEntityEmbeddings = Maps.mutable.empty();
-    private final Map<NamedArchitectureEntity, List<Embedding>> namedArchitectureEntityEmbeddings = Maps.mutable.empty();
+    private final Map<ModelEntity, List<Embedding>> modelEntityEmbeddings = new LinkedHashMap<>();
+    private final Map<NamedArchitectureEntity, List<Embedding>> namedArchitectureEntityEmbeddings = new LinkedHashMap<>();
 
     public NerConnectionInformant(DataRepository dataRepository) {
         super(NerConnectionInformant.class.getSimpleName(), dataRepository);
