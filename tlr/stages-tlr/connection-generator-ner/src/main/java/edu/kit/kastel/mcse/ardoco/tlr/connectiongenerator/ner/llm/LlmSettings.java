@@ -1,15 +1,23 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Objects;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
-import edu.kit.kastel.mcse.ardoco.naer.util.ChatModelFactory;
 import edu.kit.kastel.mcse.ardoco.naer.util.Environment;
 
 public class LlmSettings {
 
+    public static final int DEFAULT_SEED = 1995820773;
     private ChatModel chatModel = null;
     private EmbeddingModel embeddingModel = null;
 
@@ -36,21 +44,53 @@ public class LlmSettings {
 
     public synchronized ChatModel createChatModel() {
         if (chatModel == null) {
-            chatModel = ChatModelFactory.withProvider(modelProvider.getNaerModelProvider())
-                    .modelName(modelName)
-                    .temperature(temperature)
-                    .timeout(timeout)
-                    .build();
+            if (Objects.requireNonNull(modelProvider) == ModelProvider.OPEN_AI) {
+                chatModel = buildOpenAiChatModel();
+            } else if (modelProvider == ModelProvider.OLLAMA) {
+                chatModel = buildOllamaModel();
+            }
         }
         return chatModel;
+    }
+
+    private OpenAiChatModel buildOpenAiChatModel() {
+        return OpenAiChatModel.builder()
+                .apiKey(getOpenaiApiKey())
+                .timeout(Duration.ofSeconds(timeout))
+                .modelName(modelName)
+                .temperature(temperature)
+                .seed(DEFAULT_SEED)
+                .build();
+    }
+
+    private static String getOpenaiApiKey() {
+        return Environment.getEnv("OPENAI_API_KEY");
+    }
+
+    private ChatModel buildOllamaModel() {
+        String user = Environment.getEnvNonNull("OLLAMA_USER");
+        String password = Environment.getEnvNonNull("OLLAMA_PASSWORD");
+
+        var builder = OllamaChatModel.builder().baseUrl(getOllamaHost()).modelName(modelName).temperature(temperature).timeout(Duration.ofSeconds(timeout));
+
+        if (user != null && password != null) {
+            builder = builder.customHeaders(
+                    Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
+        }
+
+        return builder.build();
+    }
+
+    private static String getOllamaHost() {
+        return Environment.getEnv("OLLAMA_HOST");
     }
 
     public EmbeddingModel createEmbeddingModel() {
         if (embeddingModel == null) {
             embeddingModel = switch (embeddingModelProvider) {
-                case OPEN_AI -> OpenAiEmbeddingModel.builder().modelName(embeddingModelName).apiKey(Environment.getEnv("OPENAI_API_KEY")).build();
+                case OPEN_AI -> OpenAiEmbeddingModel.builder().modelName(embeddingModelName).apiKey(getOpenaiApiKey()).build();
                 // TODO what about authentication with ollama.
-                case OLLAMA -> OllamaEmbeddingModel.builder().baseUrl(Environment.getEnv("OLLAMA_HOST")).modelName(embeddingModelName).build();
+                case OLLAMA -> OllamaEmbeddingModel.builder().baseUrl(getOllamaHost()).modelName(embeddingModelName).build();
             };
         }
         return embeddingModel;
