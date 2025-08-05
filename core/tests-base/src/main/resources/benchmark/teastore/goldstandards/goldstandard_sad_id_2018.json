@@ -1,0 +1,358 @@
+{
+    "$schema": "../../DiagramSchema.json",
+    "diagrams": [
+        {
+            "path": "/benchmark/teastore/diagrams_2018/Overview.jpg",
+            "boxes": [
+                {
+                    "boundingBox": {
+                        "x": 655,
+                        "y": 29,
+                        "w": 214,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Registry",
+                            "boundingBox": {
+                                "x": 706,
+                                "y": 104,
+                                "w": 117,
+                                "h": 26
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                1,
+                                2,
+                                15,
+                                16,
+                                18,
+                                39,
+                                77,
+                                79
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                1,
+                                37,
+                                38,
+                                41,
+                                43
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 191,
+                        "y": 29,
+                        "w": 214,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "WebUI",
+                            "boundingBox": {
+                                "x": 251,
+                                "y": 104,
+                                "w": 96,
+                                "h": 21
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                3,
+                                7,
+                                26,
+                                27,
+                                32,
+                                34,
+                                37,
+                                41,
+                                43,
+                                44,
+                                45,
+                                46
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        33
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                2,
+                                5,
+                                7,
+                                8,
+                                10
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        6
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 23,
+                        "y": 345,
+                        "w": 213,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "ImageProvider",
+                            "boundingBox": {
+                                "x": 70,
+                                "y": 407,
+                                "w": 119,
+                                "h": 49
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                3,
+                                4,
+                                6,
+                                28,
+                                37,
+                                42,
+                                46,
+                                48,
+                                49
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                2,
+                                7,
+                                10,
+                                12
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        11
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 297,
+                        "y": 345,
+                        "w": 214,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Auth",
+                            "boundingBox": {
+                                "x": 369,
+                                "y": 421,
+                                "w": 66,
+                                "h": 20
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                3,
+                                7,
+                                32,
+                                53,
+                                58
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                3,
+                                18
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 550,
+                        "y": 345,
+                        "w": 214,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Persistence",
+                            "boundingBox": {
+                                "x": 578,
+                                "y": 421,
+                                "w": 162,
+                                "h": 20
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                3,
+                                4,
+                                7,
+                                27,
+                                33,
+                                42,
+                                43,
+                                52,
+                                61,
+                                65,
+                                69,
+                                71,
+                                72,
+                                74,
+                                75
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                4,
+                                22,
+                                25
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        23,
+                                        24,
+                                        26
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                },
+                                {
+                                    "sentences": [
+                                        22,
+                                        24
+                                    ],
+                                    "traceType": "SHARED_STEM"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 803,
+                        "y": 345,
+                        "w": 213,
+                        "h": 172
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Recommender",
+                            "boundingBox": {
+                                "x": 812,
+                                "y": 421,
+                                "w": 202,
+                                "h": 20
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "text_2018/teastore_2018_AB.txt",
+                            "sentences": [
+                                3,
+                                4,
+                                6,
+                                34,
+                                35,
+                                59,
+                                61,
+                                62,
+                                63,
+                                64,
+                                65
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        34,
+                                        36,
+                                        37,
+                                        42,
+                                        59,
+                                        60,
+                                        63,
+                                        66,
+                                        68
+                                    ],
+                                    "traceType": "SHARED_STEM"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "text_2020/teastore.txt",
+                            "sentences": [
+                                4,
+                                27
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        28
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                },
+                                {
+                                    "sentences": [
+                                        4,
+                                        27,
+                                        29,
+                                        32,
+                                        36
+                                    ],
+                                    "traceType": "SHARED_STEM"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

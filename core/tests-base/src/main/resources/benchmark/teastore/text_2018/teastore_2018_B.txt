@@ -1,0 +1,51 @@
+The TeaStore consists of five services, in addition to a registry necessary for service discovery and load balancing.
+In case monitoring is enabled, a trace repository service can be used to collect the monitoring traces centrally.
+1) WebUI: This service provides the user interface, compiling and serving Java Server Pages (JSPs).
+All data, available categories, their products, product recommendations and images, are retrieved from the Image provider and Persistence service instances.
+The WebUI service performs preliminary validity checking on user inputs before passing the inputs to the Persistence service.
+The WebUI focuses purely on presentation and web front-end operations.
+However, the performance of the WebUI depends on the page that has to be rendered as each page contains at least one picture in different formats.
+2) Image Provider: The Image provider serves images of different image sizes to the WebUI when being queried.
+It optimizes image sizes depending on the target size in the presentation view.
+The Image provider uses an internal cache and returns the image with the target size from the cache if available.
+If the image is not available for this size, the image provider uses the largest available image for the category or product, scales it to the target size, and enters it into the cache.
+It uses a least frequently used cache, reducing resource demand on frequently accessed data.
+Through the caching, the response time for an image depends on whether this image is in the cache or not.
+This service queries the Persistence service once on start-up to generate all product images with a fixed random seed.
+3) Authentication: This service is responsible for the verification of both the login and the session data of a user.
+The session data is validated using SHA-512 hashes.
+For login verification, the BCrypt algorithm is used.
+The session data includes information about the current shopping cart content, the user’s login status and old orders.
+Thus, the performance of the hashing for the session data depends on number of articles in the cart and number of old orders.
+Furthermore, as all session data is passed to the client, the Authentication itself manages to remain stateless and does not need additional information on startup.
+4) Recommender: The Recommender service uses a rating algorithm to recommend products for the user to purchase.
+The recommendations are based on items other customers bought, on the products in a user’s current shopping cart, and on the product the user is viewing at the time.
+The initial Recommender instance usually uses the automatically generated data-set, as provided by the persistence service at initial startup, for training.
+Any additional Recommender instance queries existing Recommender service instances for their training data-set and uses only those purchases for training.
+This way, all Recommenders stay coherent, recommending identical products for the same input.
+In addition, using identical training input also ensures that different instances of the Recommender service exhibit the same performance characteristics, which is important for many benchmarking and modeling contexts.
+The Recommender service queries the Persistence service only once on startup.
+For recommending, different algorithm implementations exhibiting different performance behaviors are available.
+Next to a fallback algorithm based on overall item-popularity, two variants of Slope One [33] and one order-based nearest-neighbor approach are currently implemented.
+One variant of Slope One calculates the predicted rating matrix beforehand and keeps it in the memory (memory-intensive), wheras the other one calculates every row if needed, but discards all results after each recommendation step (CPU-intensive).
+5) Persistence: The Persistence service provides access and caching for the store’s relational database.
+Products, their categories, purchases, and registered store users are stored in a relational SQL database.
+The Persistence service uses caching to decrease response times and to reduce the load on the database itself for improved scalability.
+The cache is kept coherent across multiple Persistence service instances.
+We use the EclipseLink JPA implementation as a black-box cache.
+All data inside the database itself is generated at the first start of the initial persistence instance.
+By using a persistence service in separation from the actual database, we improve scalability by providing a replicable caching service.
+However, the performance of the database accesses depends on the content in the database that is changed or can be repopulated during the operation of the store.
+6) Registry: The registry is not part of the TeaStore application under test but is a necessary support service.
+It keeps track of all running service instances, their IP addresses or host names and port numbers under which the services are available.
+All service instances send keep-alive messages to the registry after registration.
+If a service unregisters or no keep-alive message is received within a fixed time frame, the service is removed from the list of available service instances.
+All services can query the list of service instances for a specified service type in order to distribute their outgoing requests between running target instances.
+7) TraceRepository: The services are configured with optional Kieker monitoring [31], [32].
+With monitoring enabled, each service instance collects information about utilization, response times and call paths.
+Collecting these monitoring traces manually is only feasible for small deployments.
+Therefore, we offer a central trace repository, which consists of an AMQP server coupled with a graphical web interface.
+All service instances send their logs to the AMQP server.
+The web interface collects them and makes them available for download.
+The trace repository does not only reduce the effort required to acquire the monitoring traces, but also enables online analysis such as online resource demand estimation [34].
+Kieker traces are also available for use with tools other than Kieker’s own tooling, as they can be automatically transformed to Open Execution Trace Exchange (OPEN.xtrace) traces, an open source trace format enabling interoperability between software performance engineering approaches [35].

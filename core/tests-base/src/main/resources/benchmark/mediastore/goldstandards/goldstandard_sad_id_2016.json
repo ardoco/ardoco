@@ -1,0 +1,378 @@
+{
+    "$schema": "../../DiagramSchema.json",
+    "diagrams": [
+        {
+            "path": "/benchmark/mediastore/diagrams_2016/ArchitectureWithCache.png",
+            "boxes": [
+                {
+                    "boundingBox": {
+                        "x": 654,
+                        "y": 43,
+                        "w": 407,
+                        "h": 250
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "User Management",
+                            "boundingBox": {
+                                "x": 696,
+                                "y": 114,
+                                "w": 330,
+                                "h": 116
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                11,
+                                13
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 1306,
+                        "y": 52,
+                        "w": 386,
+                        "h": 242
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "UserDB Adapter",
+                            "boundingBox": {
+                                "x": 1405,
+                                "y": 121,
+                                "w": 191,
+                                "h": 114
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                12,
+                                29,
+                                30
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 991,
+                        "y": 389,
+                        "w": 393,
+                        "h": 244
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Cache",
+                            "boundingBox": {
+                                "x": 1118,
+                                "y": 487,
+                                "w": 143,
+                                "h": 40
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": []
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 288,
+                        "y": 790,
+                        "w": 297,
+                        "h": 253
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "WebGUI",
+                            "boundingBox": {
+                                "x": 329,
+                                "y": 908,
+                                "w": 210,
+                                "h": 43
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": []
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 670,
+                        "y": 781,
+                        "w": 407,
+                        "h": 255
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Tag Watermarking",
+                            "boundingBox": {
+                                "x": 695,
+                                "y": 854,
+                                "w": 355,
+                                "h": 110
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                16,
+                                17
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 1313,
+                        "y": 770,
+                        "w": 387,
+                        "h": 246
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "ReEncoder",
+                            "boundingBox": {
+                                "x": 1384,
+                                "y": 868,
+                                "w": 248,
+                                "h": 43
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                20
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        15,
+                                        16,
+                                        37
+                                    ],
+                                    "traceType": "SHARED_STEM"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 1985,
+                        "y": 679,
+                        "w": 282,
+                        "h": 241
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "DB",
+                            "boundingBox": {
+                                "x": 2094,
+                                "y": 793,
+                                "w": 65,
+                                "h": 38
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                12,
+                                23,
+                                25,
+                                31,
+                                32,
+                                33,
+                                34
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        12,
+                                        29,
+                                        30
+                                    ],
+                                    "traceType": "OTHER_ENTITY"
+                                },
+                                {
+                                    "sentences": [
+                                        24
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                },
+                                {
+                                    "sentences": [
+                                        27
+                                    ],
+                                    "traceType": "COMMON_NOUN"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 677,
+                        "y": 1179,
+                        "w": 406,
+                        "h": 263
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Media Management",
+                            "boundingBox": {
+                                "x": 717,
+                                "y": 1253,
+                                "w": 331,
+                                "h": 120
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                7,
+                                8,
+                                17
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        9
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 1320,
+                        "y": 1160,
+                        "w": 390,
+                        "h": 253
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "MediaAccess",
+                            "boundingBox": {
+                                "x": 1367,
+                                "y": 1278,
+                                "w": 297,
+                                "h": 44
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                26,
+                                27,
+                                34
+                            ],
+                            "typedTracelinks": [
+                                {
+                                    "sentences": [
+                                        28
+                                    ],
+                                    "traceType": "ENTITY_COREFERENCE"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 681,
+                        "y": 1645,
+                        "w": 408,
+                        "h": 268
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "Packaging",
+                            "boundingBox": {
+                                "x": 762,
+                                "y": 1768,
+                                "w": 249,
+                                "h": 56
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                19
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "boundingBox": {
+                        "x": 1898,
+                        "y": 1598,
+                        "w": 390,
+                        "h": 249
+                    },
+                    "textBoxes": [
+                        {
+                            "text": "DataStorage",
+                            "boundingBox": {
+                                "x": 1948,
+                                "y": 1715,
+                                "w": 293,
+                                "h": 48
+                            }
+                        }
+                    ],
+                    "subBoxes": [],
+                    "tracelinks": [
+                        {
+                            "name": "mediastore/text_2016/mediastore.txt",
+                            "sentences": [
+                                33,
+                                35,
+                                36
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
