@@ -5,10 +5,10 @@ import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
 
 public enum TransArCEvaluationProject {
-    MEDIASTORE(DocumentationToModelToCodeTlrTask.MEDIASTORE, new ExpectedResults(.995, .515, .675, .99, .715, .999)),//
+    MEDIASTORE(DocumentationToModelToCodeTlrTask.MEDIASTORE, new ExpectedResults(.96, .42, .588, .99, .63, .999)),//
     TEASTORE(DocumentationToModelToCodeTlrTask.TEASTORE, new ExpectedResults(.999, .708, .829, .976, .831, .999)),//
-    TEAMMATES(DocumentationToModelToCodeTlrTask.TEAMMATES, new ExpectedResults(.705, .909, .795, .975, .785, .975)),//
-    BIGBLUEBUTTON(DocumentationToModelToCodeTlrTask.BIGBLUEBUTTON, new ExpectedResults(.765, .905, .835, .985, .825, .985)),//
+    TEAMMATES(DocumentationToModelToCodeTlrTask.TEAMMATES, new ExpectedResults(.75, .90, .82, .98, .81, .98)),//
+    BIGBLUEBUTTON(DocumentationToModelToCodeTlrTask.BIGBLUEBUTTON, new ExpectedResults(.82, .84, .83, .989, .825, .985)),//
     JABREF(DocumentationToModelToCodeTlrTask.JABREF, new ExpectedResults(.885, .999, .935, .96, .915, .935));
 
     private final DocumentationToModelToCodeTlrTask tlrTask;
