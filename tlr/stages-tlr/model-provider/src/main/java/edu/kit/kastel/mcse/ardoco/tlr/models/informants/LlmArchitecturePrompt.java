@@ -11,7 +11,7 @@ public enum LlmArchitecturePrompt {
                     %s
                     """,
             """
-                    Now provide a list that only covers the component names in camel case. Omit common prefixes and suffixes.
+                    Now provide a list that only covers the component names. Omit common prefixes and suffixes in the names in camel case.
                     Output format:
                     - Name1
                     - Name2
@@ -30,7 +30,7 @@ public enum LlmArchitecturePrompt {
                     - Name1
                     - Name2
                     """), //
-    AGGREGATE("""
+    AGGREGATION("""
             You get a list of possible component names. Your task is to aggregate the list and remove duplicates.
             Omit common prefixes and suffixes in the names in camel case.
             Output format:
