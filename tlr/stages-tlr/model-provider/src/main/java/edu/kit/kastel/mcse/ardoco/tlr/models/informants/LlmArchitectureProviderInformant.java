@@ -95,19 +95,35 @@ public class LlmArchitectureProviderInformant extends Informant {
             componentNames = Stream.concat(componentNamesDocumentation.stream(), componentNamesCode.stream()).toList();
         }
 
-        // Remove any not letter characters
         componentNames = componentNames.stream()
                 .map(it -> it.replace("Components", "").replace("Component", "").trim())
-                // Ensure parts CamelCase
-                .map(it -> it.replace(" ", ""))
+                .map(this::toCamelCase)
                 .filter(it -> !it.isBlank())
                 .distinct()
                 .sorted()
                 .toList();
+
         if (logger.isInfoEnabled()) {
             logger.info("Component names:\n{}", String.join("\n", componentNames));
         }
         buildModel(componentNames);
+    }
+
+    private String toCamelCase(String name) {
+        if (!name.contains(" ")) {
+            return name;
+        }
+        String[] parts = name.split(" ");
+        StringBuilder camelCaseName = new StringBuilder();
+        for (String part : parts) {
+            if (!part.isBlank()) {
+                camelCaseName.append(part.substring(0, 1).toUpperCase());
+                if (part.length() > 1) {
+                    camelCaseName.append(part.substring(1).toLowerCase());
+                }
+            }
+        }
+        return camelCaseName.toString();
     }
 
     private List<String> mergeViaSimilarity(List<String> componentNamesDocumentation, List<String> componentNamesCode) {
