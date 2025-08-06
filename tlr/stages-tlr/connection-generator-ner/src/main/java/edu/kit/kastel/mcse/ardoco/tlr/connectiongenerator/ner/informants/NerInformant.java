@@ -10,7 +10,6 @@ import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
-import org.jetbrains.annotations.NotNull;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -63,7 +62,6 @@ public class NerInformant extends Informant {
         return transformNamedEntitiesToNamedArchitectureEntities(namedEntities);
     }
 
-    @NotNull
     private static Set<NamedArchitectureEntity> transformNamedEntitiesToNamedArchitectureEntities(Set<NamedEntity> namedEntities) {
         SortedSet<NamedArchitectureEntity> namedArchitectureEntities = new TreeSet<>();
         for (var namedEntity : namedEntities) {
@@ -105,7 +103,6 @@ public class NerInformant extends Informant {
         return possibleEntities;
     }
 
-    @NotNull
     private static NamedEntityType getNamedEntityType(ModelEntity endpoint) {
         NamedEntityType namedEntityType = NamedEntityType.COMPONENT;
         var type = endpoint.getType();
