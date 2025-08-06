@@ -118,4 +118,6 @@ pipeline/src/main/resources/evaluations/
 
 *.iml
 
-.env
+**/.env
+
+**/.cache-llm/
