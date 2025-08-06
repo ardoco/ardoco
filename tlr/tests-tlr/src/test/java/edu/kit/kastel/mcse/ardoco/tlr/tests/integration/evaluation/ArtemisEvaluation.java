@@ -49,7 +49,6 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         logExtendedResultsWithExpected(project.name(), evaluationResults, expectedResults);
         compareResults(evaluationResults, expectedResults);
         return result;
-
     }
 
     private SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard) {

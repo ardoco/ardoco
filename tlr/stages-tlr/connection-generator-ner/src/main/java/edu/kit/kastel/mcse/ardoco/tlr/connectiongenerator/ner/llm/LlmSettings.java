@@ -99,7 +99,7 @@ public class LlmSettings {
     public static class Builder {
         private ModelProvider modelProvider = ModelProvider.OPEN_AI;
         private String modelName = "gpt-4.1";
-        private double temperature = 0.3;
+        private double temperature = 0.0;
         private int timeout = 120;
         private ModelProvider embeddingModelProvider = ModelProvider.OPEN_AI;
         private String embeddingModelName = "text-embedding-3-large";
