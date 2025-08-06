@@ -8,6 +8,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
@@ -57,8 +58,16 @@ public class Artemis extends ArDoCoRunner {
         this.getArDoCo().addPipelineStep(modelProviderAgent);
 
         NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository);
-        LlmSettings llmSettings = new LlmSettings.Builder().modelProvider(ModelProvider.OPEN_AI).modelName("gpt-4.1").temperature(0.3).timeout(120).build();
+        LlmSettings llmSettings = getLlmSettings();
         nerConnectionGenerator.setLlmSettings(llmSettings);
         this.getArDoCo().addPipelineStep(nerConnectionGenerator);
+    }
+
+    private static LlmSettings getLlmSettings() {
+        String modelName = Environment.getEnv("MODEL_NAME_NER");
+        if (modelName == null)
+            modelName = "gpt-4.1";
+        double temperature = 0.0;
+        return new LlmSettings.Builder().modelProvider(ModelProvider.OPEN_AI).modelName(modelName).temperature(temperature).timeout(120).build();
     }
 }

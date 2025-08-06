@@ -126,10 +126,11 @@ public class NerInformant extends Informant {
                 
                 Rules:
                 - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
-                - Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+                - Do not include: package names (e.g., "common.util"), interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+                - Do not include package names, i.e., occurrences where the name contains dots in the middle; for example "common.util" or "x.util" should be skipped.
                 - Include all indirect references to components as well.
                   For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
-                - Package names are not architecturally relevant. For example, the package "common.util" should not be found as architecturally relevant.
+                
                 
                 Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
                 """;
