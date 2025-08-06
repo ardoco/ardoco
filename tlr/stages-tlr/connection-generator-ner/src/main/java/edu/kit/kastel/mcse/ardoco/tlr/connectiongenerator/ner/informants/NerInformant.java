@@ -125,11 +125,11 @@ public class NerInformant extends Informant {
                 - All complete lines where the component is mentioned.
                 
                 Rules:
-                - Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
-                - Do not include: package names (e.g., "common.util"), interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
-                - Do not include package names, i.e., occurrences where the name contains dots in the middle; for example "common.util" or "x.util" should be skipped.
-                - Include all indirect references to components as well.
-                  For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
+                1. Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+                2. Do not include domain entities. You need to distinguish between the architecture components and entities. For example "FileStorage" is the component, but "file" alone is a domain entity.
+                3. Do not include: package names (e.g., "common.util"), interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+                4. Do not include package names, i.e., occurrences where the name contains dots in the middle; for example "common.util" or "x.util" should be skipped.
+                5. Include all references to components as well. For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
                 
                 
                 Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
