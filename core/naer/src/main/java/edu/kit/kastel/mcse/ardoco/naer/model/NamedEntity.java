@@ -3,9 +3,6 @@ package edu.kit.kastel.mcse.ardoco.naer.model;
 
 import java.util.*;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,7 +23,6 @@ public class NamedEntity {
     /**
      * the software architecture documentation (text) in which the named entity has been recognized
      */
-    @Nullable
     private SoftwareArchitectureDocumentation sourceText;
 
     /**
@@ -61,12 +57,11 @@ public class NamedEntity {
         this.occurrences = new TreeSet<>();
     }
 
-    @Nullable
     public SoftwareArchitectureDocumentation getSourceText() {
         return sourceText;
     }
 
-    public void setSourceText(@NotNull SoftwareArchitectureDocumentation sourceText) {
+    public void setSourceText(SoftwareArchitectureDocumentation sourceText) {
         this.sourceText = sourceText;
     }
 
@@ -188,14 +183,13 @@ public class NamedEntity {
             this.referenceType = referenceType;
         }
 
-        @NotNull
         @Override
         public String toString() {
             return sentenceNumber + ":" + referenceType;
         }
 
         @Override
-        public int compareTo(@NotNull Occurrence o) {
+        public int compareTo(Occurrence o) {
             int cmp = Integer.compare(this.sentenceNumber, o.sentenceNumber);
             if (cmp != 0) {
                 return cmp;

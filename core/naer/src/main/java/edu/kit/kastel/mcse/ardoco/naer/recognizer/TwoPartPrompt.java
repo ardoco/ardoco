@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +143,6 @@ public class TwoPartPrompt extends Prompt {
         return NamedEntityParser.fromJson(answer, sad);
     }
 
-    @NotNull
     @Override
     public String toString() {
         return "TwoPartPrompt{" + "first=\n'" + text + "'" + "\n, second=\n'" + secondText + "'}";
