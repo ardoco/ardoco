@@ -31,7 +31,7 @@ class ArtemisIT extends AbstractArdocoIT {
             logger.info("Skipping evaluation of ArTEMiS as the LLM provider is not properly set");
             return;
         }
-        
+
         var evaluation = new ArtemisEvaluation(project);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);

@@ -74,8 +74,8 @@ public class LlmSettings {
         var builder = OllamaChatModel.builder().baseUrl(getOllamaHost()).modelName(modelName).temperature(temperature).timeout(Duration.ofSeconds(timeout));
 
         if (user != null && password != null) {
-            builder = builder.customHeaders(
-                    Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
+            builder = builder.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder()
+                    .encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
         }
 
         return builder.build();
