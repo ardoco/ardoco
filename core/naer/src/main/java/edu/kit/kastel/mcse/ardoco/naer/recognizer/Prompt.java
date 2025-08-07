@@ -21,6 +21,7 @@ public abstract class Prompt {
     private static final Logger logger = LoggerFactory.getLogger(Prompt.class);
     protected final SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
     protected String text;
+    private boolean modified = false;
 
     /**
      * Constructs a new {@link Prompt} instance.
@@ -52,8 +53,16 @@ public abstract class Prompt {
      *                         as values. Each type represents a category (e.g., COMPONENT, INTERFACE),
      *                         and each set contains the names of entities belonging to that type.
      *                         Must not be null or contain null keys/values.
+     * @throws IllegalStateException if the prompt has already been modified (addPossibleEntities can only be called once)
      */
     public void addPossibleEntities(Map<NamedEntityType, Set<String>> possibleEntities) {
+        if (modified) {
+			// TODO we need to refactor the modification of the prompt!
+            throw new IllegalStateException("Cannot modify prompt after already modified.");
+        }
+
+        modified = true;
+
         StringBuilder sb = new StringBuilder();
 
         for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
