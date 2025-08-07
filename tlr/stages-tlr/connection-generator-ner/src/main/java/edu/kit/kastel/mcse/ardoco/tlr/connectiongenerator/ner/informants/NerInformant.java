@@ -135,14 +135,18 @@ public class NerInformant extends Informant {
                 - RequestRouter
                 - NotificationAdapter
                 
-                2. Do not include domain entities. These are concepts tied to the business/problem domain rather than software structure. Exclude any names that refer to models, data objects, or conceptual entities such as:
-                - user
-                - file
-                - image
-                - presentation
-                - transaction
-                - document
-                Even if capitalized, skip such words unless clearly described as active components.
+                2. Do not include domain entities. These are concepts tied to the business/problem domain rather than software structure. Exclude any names that refer to models, data objects, or conceptual entities. Even if capitalized, skip such words unless clearly described as active components.
+                
+                Do not include:
+                - image — "Each item includes an image."
+                - recommendation — "A recommendation is then shown."
+                - file — "Uploads include a JSON file."
+                - session — "Each session is stored separately."
+                - presentation — "The presentations are only locally stored."
+                
+                Do include:
+                - ImageProvider
+                - RecommendationEngine
                 
                 3. Do not include:
                 - Package or namespace names (e.g. "common.util", "x.y.z")
@@ -164,27 +168,8 @@ public class NerInformant extends Informant {
                 - the module
                 - we
                 
-                6. Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 
-                Examples
-                Do Include:
-                
-                Component: ImageProvider
-                Alternative Names:
-                Mentions:
-                - The ImageProvider retrieves assets from the CDN.
-                
-                Component: RecommendationEngine
-                Alternative Names: Recommender
-                Mentions:
-                - The RecommendationEngine generates personalized results.
-                
-                Do Not Include:
-                image — "Each item includes an image."
-                recommendation — "A recommendation is then shown."
-                file — "Uploads include a JSON file."
-                session — "Each session is stored separately."
-                presentation — "The presentations are only locally stored."
+                Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
         String formattingPrompt = """
                 Given the last answer (see below), for each component, return a JSON object containing:
