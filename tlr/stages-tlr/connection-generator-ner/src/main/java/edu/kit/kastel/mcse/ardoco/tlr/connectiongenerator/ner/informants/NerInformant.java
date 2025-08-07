@@ -119,20 +119,51 @@ public class NerInformant extends Informant {
         String taskPrompt = """
                 In the following text, identify all architecturally relevant components that are explicitly named.
                 
-                For each component, provide:
+                For each identified component, provide:
+                
                 - The primary name (as it appears in the text)
-                - All alternative names or abbreviations found in the text (case-insensitive match)
-                - All complete lines where the component is mentioned.
+                - All alternative names or abbreviations used for the same component in the text (case-insensitive)
+                - All full lines where the component is mentioned (directly or via clear context)
                 
                 Rules:
-                1. Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
-                2. Do not include domain entities. You need to distinguish between the architecture components and entities. For example "FileStorage" is the component, but "file" alone is a domain entity.
-                3. Do not include: package names (e.g., "common.util"), interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
-                4. Do not include package names, i.e., occurrences where the name contains dots in the middle; for example "common.util" or "x.util" should be skipped.
-                5. Include all references to components as well. For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
                 
+                1. Only include explicitly named components that represent modular software building blocks with distinct technical responsibilities (e.g., modules, services, APIs, layers, subsystems, adapters, clients). These must be implemented or described as concrete parts of the architecture.
                 
-                Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
+                Examples of valid components:
+                - ImageProcessor
+                - UserService
+                - RequestRouter
+                - NotificationAdapter
+                
+                2. Do not include domain entities. These are concepts tied to the business/problem domain rather than software structure. Exclude any names that refer to models, data objects, or conceptual entities such as:
+                - user
+                - file
+                - image
+                - transaction
+                - document
+                Even if capitalized, skip such words unless clearly described as active components.
+                
+                3. Do not include:
+                - Package or namespace names (e.g. "common.util", "x.y.z")
+                - Interfaces (unless implemented directly as standalone deployable components)
+                - External libraries, frameworks, or technologies (e.g., Spring, React) unless they are implemented or wrapped internally as identifiable system components.
+                
+                4. A component’s name must include either:
+                - an explicitly functional suffix (e.g., Service, Manager, Client, Processor, Router, Adapter, Handler, Engine), or
+                - be clearly described as providing a technical function, such as transforming, routing, aggregating, sending, saving, or authenticating data.
+                
+                5. Include indirect references only when they clearly refer to a specific previously-named component across adjacent or contextually tied sentences. For example:
+                Sentence A: “The AuthService validates credentials.”
+                Sentence B: “It also handles token creation.”
+                → Include both sentences under AuthService.
+                
+                Avoid collecting vague references like:
+                - it (without clear tie-back)
+                - this system
+                - the module
+                - we
+                
+                6. Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
         String formattingPrompt = """
                 Given the last answer (see below), for each component, return a JSON object containing:
