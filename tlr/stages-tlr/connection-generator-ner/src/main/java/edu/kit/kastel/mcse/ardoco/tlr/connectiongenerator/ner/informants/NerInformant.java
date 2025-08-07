@@ -139,6 +139,7 @@ public class NerInformant extends Informant {
                 - user
                 - file
                 - image
+                - presentation
                 - transaction
                 - document
                 Even if capitalized, skip such words unless clearly described as active components.
@@ -153,8 +154,8 @@ public class NerInformant extends Informant {
                 - be clearly described as providing a technical function, such as transforming, routing, aggregating, sending, saving, or authenticating data.
                 
                 5. Include indirect references only when they clearly refer to a specific previously-named component across adjacent or contextually tied sentences. For example:
-                Sentence A: “The AuthService validates credentials.”
-                Sentence B: “It also handles token creation.”
+                Sentence A: "The AuthService validates credentials."
+                Sentence B: "It also handles token creation."
                 → Include both sentences under AuthService.
                 
                 Avoid collecting vague references like:
@@ -164,6 +165,26 @@ public class NerInformant extends Informant {
                 - we
                 
                 6. Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
+                
+                Examples
+                Do Include:
+                
+                Component: ImageProvider
+                Alternative Names:
+                Mentions:
+                - The ImageProvider retrieves assets from the CDN.
+                
+                Component: RecommendationEngine
+                Alternative Names: Recommender
+                Mentions:
+                - The RecommendationEngine generates personalized results.
+                
+                Do Not Include:
+                image — "Each item includes an image."
+                recommendation — "A recommendation is then shown."
+                file — "Uploads include a JSON file."
+                session — "Each session is stored separately."
+                presentation — "The presentations are only locally stored."
                 """;
         String formattingPrompt = """
                 Given the last answer (see below), for each component, return a JSON object containing:
