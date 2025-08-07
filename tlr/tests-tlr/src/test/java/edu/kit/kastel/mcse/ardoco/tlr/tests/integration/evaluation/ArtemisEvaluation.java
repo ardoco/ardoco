@@ -51,7 +51,7 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         return result;
     }
 
-    private SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard) {
+    public SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard) {
         var traceLinks = getArchitectureTraceLinks(result);
         var sadSamTlsAsStrings = traceLinks.collect(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().getId()).toSortedSet();
         var goldStandardAsStrings = goldStandard.stream().map(pair -> pair.first() + " -> " + pair.second()).collect(Collectors.toCollection(TreeSet::new));
@@ -76,7 +76,7 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         return sentences * modelElements;
     }
 
-    protected ArDoCoRunner createArtemis() {
+    public ArDoCoRunner createArtemis() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),
