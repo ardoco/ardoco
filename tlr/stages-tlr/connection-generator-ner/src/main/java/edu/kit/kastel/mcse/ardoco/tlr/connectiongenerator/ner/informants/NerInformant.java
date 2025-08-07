@@ -117,56 +117,61 @@ public class NerInformant extends Informant {
 
     private TwoPartPrompt getPrompt() {
         String taskPrompt = """
-                In the following text, identify all architecturally relevant components that are explicitly named.
+                Identify all architecturally relevant software components that are explicitly named in the following text.
                 
                 For each identified component, provide:
-                
                 - The primary name (as it appears in the text)
                 - All alternative names or abbreviations used for the same component in the text (case-insensitive)
                 - All full lines where the component is mentioned (directly or via clear context)
                 
-                Rules:
+                Rules for identifying components:
                 
-                1. Only include explicitly named components that represent modular software building blocks with distinct technical responsibilities (e.g., modules, services, APIs, layers, subsystems, adapters, clients). These must be implemented or described as concrete parts of the architecture.
+                1. Only include explicit modular software components with distinct technical responsibilities. These may include:
+                   - services (e.g., UserService)
+                   - APIs (e.g., PaymentAPI)
+                   - adapters, handlers, managers, routers, engines
+                   - infrastructure components (e.g., Media Server, Presentation Conversion Pipeline)
+                   - client-side or server-side subsystems (e.g., HTML5 client, HTML5 server, WebRTC-SFU)
                 
-                Examples of valid components:
-                - ImageProcessor
-                - UserService
-                - RequestRouter
-                - NotificationAdapter
+                2. Exclude domain-level entities, even if capitalized — such as business data objects, file types, or general functionalities — unless used as part of a named technical unit.
+                   ❌ Do not include non-technical concepts even if mentioned with verbs like "convert", "generate", or "store" — these are often subject-side actions unless framed as components.
                 
-                2. Do not include domain entities. These are concepts tied to the business/problem domain rather than software structure. Exclude any names that refer to models, data objects, or conceptual entities. Even if capitalized, skip such words unless clearly described as active components.
+                   Examples of domain terms (do not include):
+                   - image — "Each item includes an image."
+                   - recommendation — "Recommendations are generated..."
+                   - file — "Uploads include a JSON file."
+                   - session — "Each session is stored separately."
+                   - presentation — "Uploaded presentations go through conversion..."
                 
-                Do not include:
-                - image — "Each item includes an image."
-                - recommendation — "A recommendation is then shown."
-                - file — "Uploads include a JSON file."
-                - session — "Each session is stored separately."
-                - presentation — "The presentations are only locally stored."
+                   ✅ Include only when wrapped in named software components that perform active, modular responsibilities – for example:
+                   - ImageProvider
+                   - RecommendationEngine
+                   - PresentationConverter (if explicitly named and described)
                 
-                Do include:
-                - ImageProvider
-                - RecommendationEngine
+                3. DO include technical subsystems described with proper software roles, and clearly scoped:
+                   - (Web) server — if described as a component implementing client-server communication or event dispatching
+                   - (Web) client — if described as rendering or subscribing to events/data
+                   - Media Server / MS — as a media streaming component implementing SFU/MCU
                 
-                3. Do not include:
-                - Package or namespace names (e.g. "common.util", "x.y.z")
-                - Interfaces (unless implemented directly as standalone deployable components)
-                - External libraries, frameworks, or technologies (e.g., Spring, React) unless they are implemented or wrapped internally as identifiable system components.
+                4. Do not include:
+                   - Package, class, or namespace names (e.g., common.util, x.y.z)
+                   - Interfaces (unless directly implemented and deployed)
+                   - General use of technologies or third-party tools like "React" or "Spring" unless internally wrapped as system components
                 
-                4. A component’s name must include either:
-                - an explicitly functional suffix (e.g., Service, Manager, Client, Processor, Router, Adapter, Handler, Engine), or
-                - be clearly described as providing a technical function, such as transforming, routing, aggregating, sending, saving, or authenticating data.
+                5. A component is valid if:
+                   a) Its name includes a functional suffix or architecture-relevant term (Service, Client, Engine, Manager, Adapter, Server, Router, Converter, etc.)
+                   OR
+                   b) The text clearly describes it as implementing a technical function within the system (e.g., routing requests, synchronizing state, managing media streams)
                 
-                5. Include indirect references only when they clearly refer to a specific previously-named component across adjacent or contextually tied sentences. For example:
-                Sentence A: "The AuthService validates credentials."
-                Sentence B: "It also handles token creation."
-                → Include both sentences under AuthService.
+                6. Reverse pronoun references are allowed only when strongly tied to a previously named component across adjacent lines.
+                   ❗ Do not infer vague or implied components through generic phrases like:
+                   - it handles the process
+                   - this system
+                   - the module
                 
-                Avoid collecting vague references like:
-                - it (without clear tie-back)
-                - this system
-                - the module
-                - we
+                7. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
+                
+                8. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
                 
                 
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
