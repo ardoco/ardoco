@@ -164,7 +164,17 @@ public class NerInformant extends Informant {
                 - the module
                 - we
                 
-                6. Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
+                6. Acronyms and abbreviations that refer to architectural components must also be identified.
+                - Include any uppercase abbreviations that clearly refer to a component.
+                - If the full name and abbreviation are both present, list the longer one as the Primary Name and the acronym(s) as Alternative Names.
+                - Include behavioral evidence as with any component. For example, do include:
+                    - DB — if it is used as a named and described database component (e.g., “DB stores the session metadata.”)
+                    - VDL — if it refers to the VirtualDesignLab component used for representing a virtual lab for designing
+                - Do not include acronyms that are vague or refer only to external technology unless they represent an actual implemented component within the architecture. For example:
+                    - AI — "This system uses AI to personalize responses."
+                    - CDN — "Assets are served via a CDN." (unless it is implemented as a named internal component like CdnProxy or AssetCdnClient)
+                
+                7. Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 
                 Examples
                 Do Include:
