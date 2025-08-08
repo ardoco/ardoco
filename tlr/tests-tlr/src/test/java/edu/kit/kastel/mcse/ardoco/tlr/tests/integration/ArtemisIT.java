@@ -79,15 +79,15 @@ class ArtemisIT extends AbstractArdocoIT {
 
         if (logger.isInfoEnabled()) {
             var logString = String.format(Locale.ENGLISH, """
-                            
-                            Average results:
-                            \tPrecision:%8.2f
-                            \tRecall:%11.2f
-                            \tF1:%15.2f
-                            \tAccuracy:%9.2f
-                            \tSpecificity:%6.2f
-                            \tPhi Coef.:%8.2f
-                            """, //
+
+                    Average results:
+                    \tPrecision:%8.2f
+                    \tRecall:%11.2f
+                    \tF1:%15.2f
+                    \tAccuracy:%9.2f
+                    \tSpecificity:%6.2f
+                    \tPhi Coef.:%8.2f
+                    """, //
                     avgPrecision, avgRecall, avgF1, avgAccuracy, avgSpecificity, avgPhi);
             logger.info(logString);
         }

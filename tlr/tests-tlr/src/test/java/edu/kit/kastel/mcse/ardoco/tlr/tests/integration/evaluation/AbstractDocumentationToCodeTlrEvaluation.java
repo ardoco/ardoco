@@ -33,8 +33,7 @@ abstract class AbstractDocumentationToCodeTlrEvaluation extends AbstractEvaluati
     private static int getConfusionMatrixSum(ArDoCoResult result, Metamodel metamodel) {
         DataRepository dataRepository = result.dataRepository();
 
-        Text text = DataRepositoryHelper.getAnnotatedText(dataRepository);
-        int sentences = text.getSentences().size();
+        int sentences = (int)DataRepositoryHelper.getInputText(dataRepository).lines().count();
 
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         Model codeModel = modelStatesData.getModel(metamodel);
