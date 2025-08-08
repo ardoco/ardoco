@@ -2,7 +2,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
 
 import java.io.File;
 

@@ -1,7 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,8 +99,8 @@ class TransarcAiIT {
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
                 var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-                goldStandard = TransarcAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
-                var evaluationResults = TransarcAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                goldStandard = TransarcAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
+                var evaluationResults = TransarcAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS);
                 classificationResults.add(evaluationResults);
                 llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.getPrecision(), evaluationResults.getRecall(),
                         evaluationResults.getF1()));

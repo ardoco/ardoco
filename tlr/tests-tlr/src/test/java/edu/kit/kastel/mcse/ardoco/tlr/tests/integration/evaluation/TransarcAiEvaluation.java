@@ -1,7 +1,7 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
 
 import java.io.File;
 
@@ -42,8 +42,8 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-        goldStandard = enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
-        var evaluationResults = calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        goldStandard = enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
+        var evaluationResults = calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS);
         var expectedResults = project.getExpectedResults();
 
         logExtendedResultsWithExpected(project.name(), evaluationResults, expectedResults);
