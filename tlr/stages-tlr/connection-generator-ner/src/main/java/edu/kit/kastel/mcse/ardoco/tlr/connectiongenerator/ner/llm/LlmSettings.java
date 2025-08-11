@@ -18,6 +18,7 @@ import edu.kit.kastel.mcse.ardoco.naer.util.Environment;
 public class LlmSettings {
 
     public static final int DEFAULT_SEED = 1995820773;
+    public static final double TOP_P = 1.0;
     private ChatModel chatModel = null;
     private EmbeddingModel embeddingModel = null;
 
@@ -60,6 +61,7 @@ public class LlmSettings {
                 .modelName(modelName)
                 .temperature(temperature)
                 .seed(DEFAULT_SEED)
+                .topP(TOP_P)
                 .build();
     }
 
@@ -71,7 +73,13 @@ public class LlmSettings {
         String user = Environment.getEnvNonNull("OLLAMA_USER");
         String password = Environment.getEnvNonNull("OLLAMA_PASSWORD");
 
-        var builder = OllamaChatModel.builder().baseUrl(getOllamaHost()).modelName(modelName).temperature(temperature).timeout(Duration.ofSeconds(timeout));
+        var builder = OllamaChatModel.builder()
+                .baseUrl(getOllamaHost())
+                .modelName(modelName)
+                .temperature(temperature)
+                .seed(DEFAULT_SEED)
+                .topP(TOP_P)
+                .timeout(Duration.ofSeconds(timeout));
 
         if (user != null && password != null) {
             builder = builder.customHeaders(Map.of("Authorization", "Basic " + Base64.getEncoder()
@@ -100,7 +108,7 @@ public class LlmSettings {
         private ModelProvider modelProvider = ModelProvider.OPEN_AI;
         private String modelName = "gpt-4.1";
         private double temperature = 0.0;
-        private int timeout = 120;
+        private int timeout = 600;
         private ModelProvider embeddingModelProvider = ModelProvider.OPEN_AI;
         private String embeddingModelName = "text-embedding-3-large";
 
