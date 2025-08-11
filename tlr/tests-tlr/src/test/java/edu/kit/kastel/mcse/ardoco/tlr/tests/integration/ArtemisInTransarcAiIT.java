@@ -85,7 +85,7 @@ class ArtemisInTransarcAiIT {
         System.out.println(Arrays.stream(ArDoCodeEvaluationProject.values())
                 .map(Enum::name)
                 .collect(Collectors.joining(" & ")) + " & Macro Avg & Weighted Average" + " \\\\");
-        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
+        for (LargeLanguageModel llm : List.of(LargeLanguageModel.GPT_4_O)) {
             if (llm.isGeneric() && RESULTS.keySet().stream().noneMatch(k -> k.getTwo() == llm)) {
                 continue;
             }
