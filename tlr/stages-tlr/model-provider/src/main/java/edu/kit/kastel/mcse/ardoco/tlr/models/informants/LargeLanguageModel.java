@@ -101,6 +101,7 @@ public enum LargeLanguageModel {
                 .organizationId(openAiOrganizationId)
                 .apiKey(openAiApiKey)
                 .temperature(temperature)
+                .timeout(Duration.ofMinutes(10))
                 .seed(SEED)
                 .build();
     }
@@ -117,7 +118,7 @@ public enum LargeLanguageModel {
                     .encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8))));
         } else if (token != null && !token.isEmpty()) {
             // Default to OpenAI API token authentication
-            return OpenAiChatModel.builder().baseUrl(host).modelName(model).apiKey(token).timeout(Duration.ofMinutes(15)).temperature(0.0).seed(SEED).build();
+            return OpenAiChatModel.builder().baseUrl(host).modelName(model).apiKey(token).timeout(Duration.ofMinutes(30)).temperature(0.0).seed(SEED).build();
         }
         return ollama.build();
     }
