@@ -8,30 +8,29 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.ModelProvider;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
-import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
+import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
 /**
- * TransArC-AI extends the TransArC idea by using an LLM to generate a simple architecture mode (SAM). In this approach, instead of requiring a hand-made SAM, a
+ * ExArch extends the TransArC idea by using an LLM to generate a simple architecture mode (SAM). In this approach, instead of requiring a hand-made SAM, a
  * large language model (such as GPT-4) is prompted to extract or invent the main component names from the SAD (and optionally from code). These names serve as
  * a minimal architecture model (i.e. a list of components). Then, as in TransArC, these LLM-derived components are matched to code. The goal is to bridge the
  * SAD–code gap without manual modeling.
  */
-public class ArtemisInTransarcAi extends ArDoCoRunner {
+public class ExArch extends ArDoCoRunner {
 
-    public ArtemisInTransarcAi(String projectName) {
+    public ExArch(String projectName) {
         super(projectName);
     }
 
@@ -58,7 +57,8 @@ public class ArtemisInTransarcAi extends ArDoCoRunner {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
-        arDoCo.addPipelineStep(SimpleTextPreprocessingAgent.get(additionalConfigs, dataRepository));
+
+        arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, null, codeConfiguration
                 .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS));
@@ -68,21 +68,12 @@ public class ArtemisInTransarcAi extends ArDoCoRunner {
                 documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 
-        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository);
-        LlmSettings llmSettings = getLlmSettings();
-        nerConnectionGenerator.setLlmSettings(llmSettings);
-        this.getArDoCo().addPipelineStep(nerConnectionGenerator);
+        arDoCo.addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
+        arDoCo.addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
+        arDoCo.addPipelineStep(ConnectionGenerator.get(additionalConfigs, dataRepository));
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
 
         arDoCo.addPipelineStep(SadSamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
-    }
-
-    private static LlmSettings getLlmSettings() {
-        String modelName = Environment.getEnv("MODEL_NAME_NER");
-        if (modelName == null)
-            modelName = "gpt-4.1";
-        double temperature = 0.0;
-        return new LlmSettings.Builder().modelProvider(ModelProvider.OPEN_AI).modelName(modelName).temperature(temperature).timeout(120).build();
     }
 }

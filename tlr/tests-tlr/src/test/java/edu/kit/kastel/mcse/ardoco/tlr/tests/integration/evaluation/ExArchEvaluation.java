@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.TransarcAi;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.ExArch;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
-public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
+public class ExArchEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
 
     private final ArDoCodeEvaluationProject project;
 
@@ -26,7 +26,7 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
     private final LlmArchitecturePrompt aggregationPrompt;
     private final LlmArchitecturePrompt.Features codeFeatures;
 
-    public TransarcAiEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt,
+    public ExArchEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt,
             LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
         this.project = project;
         this.largeLanguageModel = largeLanguageModel;
@@ -37,8 +37,8 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner transArCAiRunner = createTransarcAi();
-        ArDoCoResult result = transArCAiRunner.run();
+        ArDoCoRunner exArchRunner = createExArch();
+        ArDoCoResult result = exArchRunner.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -50,14 +50,14 @@ public class TransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluati
         return result;
     }
 
-    private ArDoCoRunner createTransarcAi() {
+    private ArDoCoRunner createExArch() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new TransarcAi(projectName);
+        var runner = new ExArch(projectName);
         runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
                 outputDirectory, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         return runner;

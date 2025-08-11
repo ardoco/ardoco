@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.eclipse.collections.api.tuple.Pair;
 import org.eclipse.collections.impl.tuple.Tuples;
@@ -20,8 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +31,12 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcAiEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInExArchEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ExArchEvaluation;
 
 @Disabled("Only for manual execution")
-class TransarcAiIT {
-    private static final Logger logger = LoggerFactory.getLogger(TransarcAiIT.class);
+class ArtemisInExArchIT {
+    private static final Logger logger = LoggerFactory.getLogger(ArtemisInExArchIT.class);
     protected static final String LOGGING_ARDOCO_CORE = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.core";
 
     private static final Map<Pair<ArDoCodeEvaluationProject, LargeLanguageModel>, ArDoCoResult> RESULTS = new HashMap<>();
@@ -53,12 +52,13 @@ class TransarcAiIT {
         System.setProperty(LOGGING_ARDOCO_CORE, "error");
     }
 
-    @DisplayName("Evaluate SAD-SAM-via-LLM-Code TLR")
-    @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource("llmsXprojects")
-    void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
+    @DisplayName("Evaluate Artemis @ ExArch (SAD-SAM-via-LLM-Code) TLR")
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(ArDoCodeEvaluationProject.class)
+    void evaluateArtemisInExArch(ArDoCodeEvaluationProject project) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
+        LargeLanguageModel llm = LargeLanguageModel.GPT_4_O;
         LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LlmArchitecturePrompt codePrompt = null;
         LlmArchitecturePrompt aggPrompt = null;
@@ -70,7 +70,7 @@ class TransarcAiIT {
         logger.info("Prompts: {}, {}, {}", docPrompt, codePrompt, aggPrompt);
         logger.info("Features: {}", codeFeatures);
 
-        var evaluation = new TransarcAiEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
+        var evaluation = new ArtemisInExArchEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
         var result = evaluation.runTraceLinkEvaluation();
         if (result != null) {
             RESULTS.put(Tuples.pair(project, llm), result);
@@ -85,7 +85,7 @@ class TransarcAiIT {
         System.out.println(Arrays.stream(ArDoCodeEvaluationProject.values())
                 .map(Enum::name)
                 .collect(Collectors.joining(" & ")) + " & Macro Avg & Weighted Average" + " \\\\");
-        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
+        for (LargeLanguageModel llm : List.of(LargeLanguageModel.GPT_4_O)) {
             if (llm.isGeneric() && RESULTS.keySet().stream().noneMatch(k -> k.getTwo() == llm)) {
                 continue;
             }
@@ -100,8 +100,8 @@ class TransarcAiIT {
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
                 var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-                goldStandard = TransarcAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
-                var evaluationResults = TransarcAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS);
+                goldStandard = ExArchEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
+                var evaluationResults = ExArchEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS);
                 classificationResults.add(evaluationResults);
                 llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.getPrecision(), evaluationResults.getRecall(),
                         evaluationResults.getF1()));
@@ -117,17 +117,5 @@ class TransarcAiIT {
             System.out.println(llmResult.toString().replace("0.", ".").replace("1.00", "1.0"));
             System.setProperty("org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation", "info");
         }
-    }
-
-    private static Stream<Arguments> llmsXprojects() {
-        List<Arguments> result = new ArrayList<>();
-        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
-            if (llm.isGeneric())
-                continue;
-            for (ArDoCodeEvaluationProject codeProject : ArDoCodeEvaluationProject.values()) {
-                result.add(Arguments.of(codeProject, llm));
-            }
-        }
-        return result.stream();
     }
 }

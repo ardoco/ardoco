@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.ArtemisInTransarcAi;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.ArtemisInExArch;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
 
-public class ArtemisInTransarcAiEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
+public class ArtemisInExArchEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
 
     private final ArDoCodeEvaluationProject project;
 
@@ -26,7 +26,7 @@ public class ArtemisInTransarcAiEvaluation extends AbstractDocumentationToCodeTl
     private final LlmArchitecturePrompt aggregationPrompt;
     private final LlmArchitecturePrompt.Features codeFeatures;
 
-    public ArtemisInTransarcAiEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel,
+    public ArtemisInExArchEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel,
             LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.Features codeFeatures,
             LlmArchitecturePrompt aggregationPrompt) {
         this.project = project;
@@ -38,8 +38,8 @@ public class ArtemisInTransarcAiEvaluation extends AbstractDocumentationToCodeTl
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner transArCAiRunner = createArtemisInTransarcAi();
-        ArDoCoResult result = transArCAiRunner.run();
+        ArDoCoRunner exArchRunner = createArtemisInExArch();
+        ArDoCoResult result = exArchRunner.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -51,14 +51,14 @@ public class ArtemisInTransarcAiEvaluation extends AbstractDocumentationToCodeTl
         return result;
     }
 
-    private ArDoCoRunner createArtemisInTransarcAi() {
+    private ArDoCoRunner createArtemisInExArch() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();
         File outputDirectory = new File("target", projectName + "-output");
         outputDirectory.mkdirs();
 
-        var runner = new ArtemisInTransarcAi(projectName);
+        var runner = new ArtemisInExArch(projectName);
         runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
                 outputDirectory, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         return runner;
