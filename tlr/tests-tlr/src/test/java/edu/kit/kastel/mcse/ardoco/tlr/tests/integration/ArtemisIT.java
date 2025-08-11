@@ -1,6 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,27 +71,51 @@ class ArtemisIT extends AbstractArdocoIT {
     }
 
     private void averageAndLog(List<SingleClassificationResult<String>> results) {
-        var avgPrecision = results.stream().mapToDouble(SingleClassificationResult::getPrecision).average().orElse(0.0);
-        var avgRecall = results.stream().mapToDouble(SingleClassificationResult::getRecall).average().orElse(0.0);
-        var avgF1 = results.stream().mapToDouble(SingleClassificationResult::getF1).average().orElse(0.0);
-        var avgAccuracy = results.stream().mapToDouble(SingleClassificationResult::getAccuracy).average().orElse(0.0);
-        var avgSpecificity = results.stream().mapToDouble(SingleClassificationResult::getSpecificity).average().orElse(0.0);
-        var avgPhi = results.stream().mapToDouble(SingleClassificationResult::getPhiCoefficient).average().orElse(0.0);
+        var precisions = results.stream().mapToDouble(SingleClassificationResult::getPrecision).toArray();
+        var recalls = results.stream().mapToDouble(SingleClassificationResult::getRecall).toArray();
+        var f1s = results.stream().mapToDouble(SingleClassificationResult::getF1).toArray();
+        var accuracies = results.stream().mapToDouble(SingleClassificationResult::getAccuracy).toArray();
+        var specificities = results.stream().mapToDouble(SingleClassificationResult::getSpecificity).toArray();
+        var phis = results.stream().mapToDouble(SingleClassificationResult::getPhiCoefficient).toArray();
+
+        var avgPrecision = Arrays.stream(precisions).average().orElse(0.0);
+        var avgRecall = Arrays.stream(recalls).average().orElse(0.0);
+        var avgF1 = Arrays.stream(f1s).average().orElse(0.0);
+        var avgAccuracy = Arrays.stream(accuracies).average().orElse(0.0);
+        var avgSpecificity = Arrays.stream(specificities).average().orElse(0.0);
+        var avgPhi = Arrays.stream(phis).average().orElse(0.0);
+
+        var stdPrecision = stddev(precisions, avgPrecision);
+        var stdRecall = stddev(recalls, avgRecall);
+        var stdF1 = stddev(f1s, avgF1);
+        var stdAccuracy = stddev(accuracies, avgAccuracy);
+        var stdSpecificity = stddev(specificities, avgSpecificity);
+        var stdPhi = stddev(phis, avgPhi);
 
         if (logger.isInfoEnabled()) {
             var logString = String.format(Locale.ENGLISH, """
 
-                    Average results:
-                    \tPrecision:%8.2f
-                    \tRecall:%11.2f
-                    \tF1:%15.2f
-                    \tAccuracy:%9.2f
-                    \tSpecificity:%6.2f
-                    \tPhi Coef.:%8.2f
-                    """, //
-                    avgPrecision, avgRecall, avgF1, avgAccuracy, avgSpecificity, avgPhi);
+                    Average results (± StdDev):
+                    	Precision:   %8.2f ± %6.2f
+                    	Recall:      %8.2f ± %6.2f
+                    	F1:          %8.2f ± %6.2f
+                    	Accuracy:    %8.2f ± %6.2f
+                    	Specificity: %8.2f ± %6.2f
+                    	Phi Coef.:   %8.2f ± %6.2f
+                    """, avgPrecision, stdPrecision, avgRecall, stdRecall, avgF1, stdF1, avgAccuracy, stdAccuracy, avgSpecificity, stdSpecificity, avgPhi,
+                    stdPhi);
             logger.info(logString);
         }
+    }
+
+    private static double stddev(double[] values, double mean) {
+        if (values.length == 0)
+            return 0.0;
+        double sum = 0.0;
+        for (double v : values) {
+            sum += (v - mean) * (v - mean);
+        }
+        return Math.sqrt(sum / values.length);
     }
 
     public SingleClassificationResult<String> runTraceLinkEvaluation(ArtemisEvaluationProject project) {
