@@ -44,6 +44,9 @@ public class NerInformant extends Informant {
 
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         for (var metamodel : modelStatesData.getMetamodels()) {
+            if (!metamodel.isArchitectureModel()) {
+                continue;
+            }
             var prompt = getPrompt();
             var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(prompt).build();
             var possibleEntities = getPossibleEntities(metamodel);

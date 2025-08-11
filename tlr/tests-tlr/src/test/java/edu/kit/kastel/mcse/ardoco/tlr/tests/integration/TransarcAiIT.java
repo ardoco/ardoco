@@ -81,6 +81,7 @@ class TransarcAiIT {
 
     @AfterAll
     static void printResults() {
+        System.setProperty("org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation", "error");
         System.out.println(Arrays.stream(ArDoCodeEvaluationProject.values())
                 .map(Enum::name)
                 .collect(Collectors.joining(" & ")) + " & Macro Avg & Weighted Average" + " \\\\");
@@ -114,6 +115,7 @@ class TransarcAiIT {
             llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f&%.2f&%.2f&%.2f\\\\", macro.getPrecision(), macro.getRecall(), macro.getF1(),
                     weighted.getPrecision(), weighted.getRecall(), weighted.getF1())); // end of line
             System.out.println(llmResult.toString().replace("0.", ".").replace("1.00", "1.0"));
+            System.setProperty("org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation", "info");
         }
     }
 
