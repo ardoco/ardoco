@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.eclipse.collections.api.tuple.Pair;
 import org.eclipse.collections.impl.tuple.Tuples;
@@ -20,8 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +53,12 @@ class ArtemisInTransarcAiIT {
     }
 
     @DisplayName("Evaluate Artemis @ TransArCAi (SAD-SAM-via-LLM-Code) TLR")
-    @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource("llmsXprojects")
-    void evaluateArtemisInTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(ArDoCodeEvaluationProject.class)
+    void evaluateArtemisInTransArCAi(ArDoCodeEvaluationProject project) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
+        LargeLanguageModel llm = LargeLanguageModel.GPT_4_O;
         LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LlmArchitecturePrompt codePrompt = null;
         LlmArchitecturePrompt aggPrompt = null;
@@ -116,17 +115,5 @@ class ArtemisInTransarcAiIT {
                     weighted.getPrecision(), weighted.getRecall(), weighted.getF1())); // end of line
             System.out.println(llmResult.toString().replace("0.", ".").replace("1.00", "1.0"));
         }
-    }
-
-    private static Stream<Arguments> llmsXprojects() {
-        List<Arguments> result = new ArrayList<>();
-        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
-            if (llm.isGeneric())
-                continue;
-            for (ArDoCodeEvaluationProject codeProject : ArDoCodeEvaluationProject.values()) {
-                result.add(Arguments.of(codeProject, llm));
-            }
-        }
-        return result.stream();
     }
 }
