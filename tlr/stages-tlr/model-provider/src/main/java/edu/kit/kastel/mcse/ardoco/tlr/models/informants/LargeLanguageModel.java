@@ -19,11 +19,14 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 @Deterministic
 public enum LargeLanguageModel {
     // OPENAI
-    GPT_4_O_MINI("GPT-4o mini", () -> createOpenAiModel("gpt-4o-mini-2024-07-18")), //
     GPT_4_O("GPT-4o", () -> createOpenAiModel("gpt-4o-2024-08-06")), //
+    GPT_4_1("GPT-4.1", () -> createOpenAiModel("gpt-4.1-2025-04-14")), //
+    GPT_5("GPT-5", () -> createOpenAiModel("gpt-5-2025-08-07", 1.0)), //
+    GPT_5_MINI("GPT-5 mini", () -> createOpenAiModel("gpt-5-mini-2025-08-07", 1.0)), //
+    GPT_5_NANO("GPT-5 nano", () -> createOpenAiModel("gpt-5-nano-2025-08-07", 1.0)), //
     OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), () -> createOpenAiModel(Environment.getEnv("OPENAI_MODEL_NAME"))), //
     // OLLAMA
-    LLAMA_3_1_8B("Llama3.1 8b", () -> createOllamaModel("llama3.1:8b-instruct-fp16")), //
+    GPT_OSS_20B("GPT OSS 20b", () -> createOllamaModel("gpt-oss:20b")), //
     OLLAMA_GENERIC(Environment.getEnv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(Environment.getEnv("OLLAMA_MODEL_NAME")));
 
     private static final Logger logger = LoggerFactory.getLogger(LargeLanguageModel.class);
@@ -76,6 +79,19 @@ public enum LargeLanguageModel {
      * @throws IllegalStateException If required environment variables are not set
      */
     private static OpenAiChatModel createOpenAiModel(String model) {
+        return createOpenAiModel(model, 0.0);
+    }
+
+    /**
+     * Creates an OpenAI chat model instance.
+     * Requires OpenAI organization ID and API key to be set in environment variables.
+     *
+     * @param model       The name of the model to use
+     * @param temperature The temperature setting for the model
+     * @return A configured OpenAI chat model instance
+     * @throws IllegalStateException If required environment variables are not set
+     */
+    private static OpenAiChatModel createOpenAiModel(String model, double temperature) {
         String openAiOrganizationId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
         String openAiApiKey = Environment.getEnv("OPENAI_API_KEY");
         if (openAiOrganizationId == null || openAiApiKey == null) {
@@ -84,7 +100,7 @@ public enum LargeLanguageModel {
         return new OpenAiChatModel.OpenAiChatModelBuilder().modelName(model)
                 .organizationId(openAiOrganizationId)
                 .apiKey(openAiApiKey)
-                .temperature(0.0)
+                .temperature(temperature)
                 .seed(SEED)
                 .build();
     }
