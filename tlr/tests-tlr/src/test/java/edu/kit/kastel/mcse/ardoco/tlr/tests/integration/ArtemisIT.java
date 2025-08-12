@@ -39,7 +39,7 @@ class ArtemisIT extends AbstractArdocoIT {
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate ArTEMiS (SAD-SAM TLR with NER)")
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
     void evaluateSadSamTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
@@ -55,7 +55,7 @@ class ArtemisIT extends AbstractArdocoIT {
 
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate ArTEMiS (SAD-SAM TLR with NER) Multi")
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
     void evaluateSadSamTlrMultipleIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);

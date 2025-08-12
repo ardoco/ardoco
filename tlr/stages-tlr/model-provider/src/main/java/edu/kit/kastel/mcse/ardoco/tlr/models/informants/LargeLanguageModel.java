@@ -45,6 +45,10 @@ public enum LargeLanguageModel {
         return new CachedChatLanguageModel(creator.get(), this.name());
     }
 
+    public ChatModel createUncached() {
+        return creator.get();
+    }
+
     public boolean isGeneric() {
         return this.name().endsWith("_GENERIC");
     }
