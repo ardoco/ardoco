@@ -66,7 +66,7 @@ class ArtemisIT extends AbstractArdocoIT {
 
         List<SingleClassificationResult<String>> results = Lists.mutable.empty();
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
-            logger.info("Eval run {}/{}", i, NUMBER_OF_RUNS);
+            logger.info("Eval run {}/{} [{},{}]", i, NUMBER_OF_RUNS, project, llm);
             var result = runTraceLinkEvaluation(project, llm);
             Assertions.assertNotNull(result);
             results.add(result);
