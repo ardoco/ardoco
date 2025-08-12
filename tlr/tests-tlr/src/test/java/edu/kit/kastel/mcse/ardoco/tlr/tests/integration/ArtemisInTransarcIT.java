@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInTransarcEvaluation;
 
@@ -15,7 +16,8 @@ class ArtemisInTransarcIT extends AbstractArdocoIT {
     @ParameterizedTest(name = "{0}")
     @EnumSource(TransArCEvaluationProject.class)
     void evaluateSadSamCodeTlrIT(TransArCEvaluationProject project) {
-        var evaluation = new ArtemisInTransarcEvaluation(project);
+        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_4_O;
+        var evaluation = new ArtemisInTransarcEvaluation(project, llmForNer);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
     }

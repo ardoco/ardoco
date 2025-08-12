@@ -22,11 +22,9 @@ public enum LargeLanguageModel {
     GPT_4_O("GPT-4o", () -> createOpenAiModel("gpt-4o-2024-08-06")), //
     GPT_4_1("GPT-4.1", () -> createOpenAiModel("gpt-4.1-2025-04-14")), //
     GPT_5("GPT-5", () -> createOpenAiModel("gpt-5-2025-08-07", 1.0)), //
-    GPT_5_MINI("GPT-5 mini", () -> createOpenAiModel("gpt-5-mini-2025-08-07", 1.0)), //
-    GPT_5_NANO("GPT-5 nano", () -> createOpenAiModel("gpt-5-nano-2025-08-07", 1.0)), //
     OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), () -> createOpenAiModel(Environment.getEnv("OPENAI_MODEL_NAME"))), //
     // OLLAMA
-    GPT_OSS_20B("GPT OSS 20b", () -> createOllamaModel("gpt-oss:20b")), //
+    // GPT_OSS_20B("GPT OSS 20b", () -> createOllamaModel("gpt-oss:20b")), //
     OLLAMA_GENERIC(Environment.getEnv("OLLAMA_MODEL_NAME"), () -> createOllamaModel(Environment.getEnv("OLLAMA_MODEL_NAME")));
 
     private static final Logger logger = LoggerFactory.getLogger(LargeLanguageModel.class);

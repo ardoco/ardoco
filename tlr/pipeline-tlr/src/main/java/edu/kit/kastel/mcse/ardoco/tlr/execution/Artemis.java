@@ -8,14 +8,12 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.ModelProvider;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -28,22 +26,23 @@ public class Artemis extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            File outputDir) {
+    public void setUp(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
+            LargeLanguageModel llmForNer) {
         if (architectureConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
-        definePipeline(inputText, architectureConfiguration, additionalConfigs);
+        definePipeline(inputText, architectureConfiguration, additionalConfigs, llmForNer);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
     public void setUp(String inputTextLocation, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            String outputDirectory) {
-        setUp(new File(inputTextLocation), architectureConfiguration, additionalConfigs, new File(outputDirectory));
+            String outputDirectory, LargeLanguageModel llmForNer) {
+        setUp(new File(inputTextLocation), architectureConfiguration, additionalConfigs, new File(outputDirectory), llmForNer);
     }
 
-    private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
+            LargeLanguageModel llmForNer) {
         DataRepository dataRepository = this.getArDoCo().getDataRepository();
         String text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
@@ -57,17 +56,7 @@ public class Artemis extends ArDoCoRunner {
                 architectureConfigurationWithMetamodel, null);
         this.getArDoCo().addPipelineStep(modelProviderAgent);
 
-        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository);
-        LlmSettings llmSettings = getLlmSettings();
-        nerConnectionGenerator.setLlmSettings(llmSettings);
+        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
         this.getArDoCo().addPipelineStep(nerConnectionGenerator);
-    }
-
-    private static LlmSettings getLlmSettings() {
-        String modelName = Environment.getEnv("MODEL_NAME_NER");
-        if (modelName == null)
-            modelName = "gpt-4.1";
-        double temperature = 0.0;
-        return new LlmSettings.Builder().modelProvider(ModelProvider.OPEN_AI).modelName(modelName).temperature(temperature).timeout(120).build();
     }
 }

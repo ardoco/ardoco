@@ -6,14 +6,12 @@ import java.util.EnumMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
 
 public class NerConnectionStatesImpl implements NerConnectionStates {
 
     @Serial
     private static final long serialVersionUID = 439228649106802974L;
     private final EnumMap<Metamodel, NerConnectionStateImpl> connectionStates;
-    private LlmSettings llmSettings;
 
     private NerConnectionStatesImpl() {
         connectionStates = new EnumMap<>(Metamodel.class);
@@ -33,11 +31,4 @@ public class NerConnectionStatesImpl implements NerConnectionStates {
         return connectionStates.get(metamodel);
     }
 
-    public LlmSettings getLlmSettings() {
-        return this.llmSettings;
-    }
-
-    public void setLlmSettings(LlmSettings llmSettings) {
-        this.llmSettings = llmSettings;
-    }
 }

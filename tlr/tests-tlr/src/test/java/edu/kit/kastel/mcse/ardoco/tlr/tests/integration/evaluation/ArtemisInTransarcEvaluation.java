@@ -14,14 +14,17 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.ArtemisInTransArC;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
 
 public class ArtemisInTransarcEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
 
     private final TransArCEvaluationProject project;
+    private final LargeLanguageModel largeLanguageModel;
 
-    public ArtemisInTransarcEvaluation(TransArCEvaluationProject project) {
+    public ArtemisInTransarcEvaluation(TransArCEvaluationProject project, LargeLanguageModel llmForNer) {
         this.project = project;
+        this.largeLanguageModel = llmForNer;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
@@ -49,7 +52,7 @@ public class ArtemisInTransarcEvaluation extends AbstractDocumentationToCodeTlrE
 
         var runner = new ArtemisInTransArC(projectName);
         runner.setUp(textInput, new ArchitectureConfiguration(inputArchitectureModel, architectureModelFormat), inputCode, SortedMaps.immutable.empty(),
-                outputDirectory);
+                outputDirectory, largeLanguageModel);
         return runner;
     }
 }

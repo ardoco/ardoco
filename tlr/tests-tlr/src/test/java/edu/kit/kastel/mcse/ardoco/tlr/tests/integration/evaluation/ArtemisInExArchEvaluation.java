@@ -20,21 +20,23 @@ public class ArtemisInExArchEvaluation extends AbstractDocumentationToCodeTlrEva
 
     private final ArDoCodeEvaluationProject project;
 
-    private final LargeLanguageModel largeLanguageModel;
+    private final LargeLanguageModel llmForExArch;
     private final LlmArchitecturePrompt documentationExtractionPrompt;
     private final LlmArchitecturePrompt codeExtractionPrompt;
     private final LlmArchitecturePrompt aggregationPrompt;
     private final LlmArchitecturePrompt.Features codeFeatures;
+    private final LargeLanguageModel llmForNer;
 
-    public ArtemisInExArchEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel largeLanguageModel,
-            LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.Features codeFeatures,
-            LlmArchitecturePrompt aggregationPrompt) {
+    public ArtemisInExArchEvaluation(ArDoCodeEvaluationProject project, LargeLanguageModel llmForExArch, LlmArchitecturePrompt documentationExtractionPrompt,
+            LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt,
+            LargeLanguageModel llmForNer) {
         this.project = project;
-        this.largeLanguageModel = largeLanguageModel;
+        this.llmForExArch = llmForExArch;
         this.documentationExtractionPrompt = documentationExtractionPrompt;
         this.codeExtractionPrompt = codeExtractionPrompt;
         this.codeFeatures = codeFeatures;
         this.aggregationPrompt = aggregationPrompt;
+        this.llmForNer = llmForNer;
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
@@ -60,7 +62,7 @@ public class ArtemisInExArchEvaluation extends AbstractDocumentationToCodeTlrEva
 
         var runner = new ArtemisInExArch(projectName);
         runner.setUp(textInput, new CodeConfiguration(inputCode, CodeConfiguration.CodeConfigurationType.ACM_FILE), SortedMaps.immutable.empty(),
-                outputDirectory, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
+                outputDirectory, llmForExArch, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt, llmForNer);
         return runner;
     }
 }

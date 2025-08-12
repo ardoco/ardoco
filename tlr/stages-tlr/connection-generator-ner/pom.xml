@@ -20,5 +20,10 @@
       <artifactId>common</artifactId>
       <version>${revision}</version>
     </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>model-provider</artifactId>
+      <version>${revision}</version>
+    </dependency>
   </dependencies>
 </project>

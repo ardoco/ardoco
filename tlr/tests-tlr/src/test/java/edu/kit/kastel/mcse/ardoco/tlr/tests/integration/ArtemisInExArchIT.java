@@ -58,24 +58,26 @@ class ArtemisInExArchIT {
     void evaluateArtemisInExArch(ArDoCodeEvaluationProject project) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
-        LargeLanguageModel llm = LargeLanguageModel.GPT_4_O;
+        LargeLanguageModel llmForExArch = LargeLanguageModel.GPT_4_O;
         LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LlmArchitecturePrompt codePrompt = null;
         LlmArchitecturePrompt aggPrompt = null;
 
         LlmArchitecturePrompt.Features codeFeatures = LlmArchitecturePrompt.Features.PACKAGES;
 
+        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_4_O;
+
         logger.info("###############################################");
-        logger.info("Evaluating project {} with LLM '{}'", project, llm);
+        logger.info("Evaluating project {} with LLM '{}', '{}'", project, llmForExArch, llmForNer);
         logger.info("Prompts: {}, {}, {}", docPrompt, codePrompt, aggPrompt);
         logger.info("Features: {}", codeFeatures);
 
-        var evaluation = new ArtemisInExArchEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
+        var evaluation = new ArtemisInExArchEvaluation(project, llmForExArch, docPrompt, codePrompt, codeFeatures, aggPrompt, llmForNer);
         var result = evaluation.runTraceLinkEvaluation();
         if (result != null) {
-            RESULTS.put(Tuples.pair(project, llm), result);
+            RESULTS.put(Tuples.pair(project, llmForExArch), result);
         }
-        System.err.printf("--- Evaluated project %s with LLM '%s' ---%n", project, llm);
+        System.err.printf("--- Evaluated project %s with LLM '%s' ---%n", project, llmForExArch);
         logger.info("###############################################");
     }
 

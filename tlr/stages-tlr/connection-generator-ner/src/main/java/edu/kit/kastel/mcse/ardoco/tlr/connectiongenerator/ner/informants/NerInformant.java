@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,12 +25,16 @@ import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.NamedEntityRecognizer;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 @Deterministic("Currently not fully deterministic due to NAER.")
 public class NerInformant extends Informant {
 
-    public NerInformant(DataRepository dataRepository) {
+    private final LargeLanguageModel llm;
+
+    public NerInformant(DataRepository dataRepository, LargeLanguageModel llm) {
         super(NerInformant.class.getSimpleName(), dataRepository);
+        this.llm = Objects.requireNonNull(llm);
     }
 
     @Override
@@ -39,8 +44,7 @@ public class NerInformant extends Informant {
         var text = DataRepositoryHelper.getSimpleText(dataRepository);
         SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(text.getText());
 
-        var llmSettings = nerConnectionStates.getLlmSettings();
-        var chatModel = llmSettings.createChatModel();
+        var chatModel = llm.create();
 
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         for (var metamodel : modelStatesData.getMetamodels()) {
