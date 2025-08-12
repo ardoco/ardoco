@@ -16,7 +16,7 @@ class ArtemisInTransarcIT extends AbstractArdocoIT {
     @ParameterizedTest(name = "{0}")
     @EnumSource(TransArCEvaluationProject.class)
     void evaluateSadSamCodeTlrIT(TransArCEvaluationProject project) {
-        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_4_O;
+        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_5;
         var evaluation = new ArtemisInTransarcEvaluation(project, llmForNer);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);

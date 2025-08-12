@@ -65,7 +65,7 @@ class ArtemisInExArchIT {
 
         LlmArchitecturePrompt.Features codeFeatures = LlmArchitecturePrompt.Features.PACKAGES;
 
-        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_4_O;
+        LargeLanguageModel llmForNer = LargeLanguageModel.GPT_5;
 
         logger.info("###############################################");
         logger.info("Evaluating project {} with LLM '{}', '{}'", project, llmForExArch, llmForNer);
