@@ -13,4 +13,8 @@ public enum Metamodel {
     CODE_WITH_COMPILATION_UNITS_AND_PACKAGES,
     /** Architecture model with only components. */
     ARCHITECTURE_WITH_COMPONENTS;
+
+    public boolean isArchitectureModel() {
+        return this.name().startsWith("ARCHITECTURE");
+    }
 }

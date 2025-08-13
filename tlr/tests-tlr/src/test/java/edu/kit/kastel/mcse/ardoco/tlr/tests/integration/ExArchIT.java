@@ -1,7 +1,7 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
-import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
+import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,11 +33,11 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcAiEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ExArchEvaluation;
 
 @Disabled("Only for manual execution")
-class TransarcAiIT {
-    private static final Logger logger = LoggerFactory.getLogger(TransarcAiIT.class);
+class ExArchIT {
+    private static final Logger logger = LoggerFactory.getLogger(ExArchIT.class);
     protected static final String LOGGING_ARDOCO_CORE = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.core";
 
     private static final Map<Pair<ArDoCodeEvaluationProject, LargeLanguageModel>, ArDoCoResult> RESULTS = new HashMap<>();
@@ -56,7 +56,7 @@ class TransarcAiIT {
     @DisplayName("Evaluate SAD-SAM-via-LLM-Code TLR")
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
-    void evaluateTransArCAi(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
+    void evaluateExArch(ArDoCodeEvaluationProject project, LargeLanguageModel llm) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
         LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
@@ -70,7 +70,7 @@ class TransarcAiIT {
         logger.info("Prompts: {}, {}, {}", docPrompt, codePrompt, aggPrompt);
         logger.info("Features: {}", codeFeatures);
 
-        var evaluation = new TransarcAiEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
+        var evaluation = new ExArchEvaluation(project, llm, docPrompt, codePrompt, codeFeatures, aggPrompt);
         var result = evaluation.runTraceLinkEvaluation();
         if (result != null) {
             RESULTS.put(Tuples.pair(project, llm), result);
@@ -81,6 +81,7 @@ class TransarcAiIT {
 
     @AfterAll
     static void printResults() {
+        System.setProperty("org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation", "error");
         System.out.println(Arrays.stream(ArDoCodeEvaluationProject.values())
                 .map(Enum::name)
                 .collect(Collectors.joining(" & ")) + " & Macro Avg & Weighted Average" + " \\\\");
@@ -99,8 +100,8 @@ class TransarcAiIT {
                 ArDoCoResult result = RESULTS.get(Tuples.pair(project, llm));
 
                 var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-                goldStandard = TransarcAiEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
-                var evaluationResults = TransarcAiEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+                goldStandard = ExArchEvaluation.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
+                var evaluationResults = ExArchEvaluation.calculateEvaluationResults(result, goldStandard, CODE_WITH_COMPILATION_UNITS);
                 classificationResults.add(evaluationResults);
                 llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f", evaluationResults.getPrecision(), evaluationResults.getRecall(),
                         evaluationResults.getF1()));
@@ -114,6 +115,7 @@ class TransarcAiIT {
             llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f&%.2f&%.2f&%.2f\\\\", macro.getPrecision(), macro.getRecall(), macro.getF1(),
                     weighted.getPrecision(), weighted.getRecall(), weighted.getF1())); // end of line
             System.out.println(llmResult.toString().replace("0.", ".").replace("1.00", "1.0"));
+            System.setProperty("org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation", "info");
         }
     }
 

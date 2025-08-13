@@ -12,19 +12,17 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents.NerAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents.NerConnectionAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.llm.LlmSettings;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class NerConnectionGenerator extends AbstractExecutionStage {
     protected static final String LOGGING_SETUP_DEBUG = "org.slf4j.simpleLogger.log.edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner";
 
-    private LlmSettings llmSettings = LlmSettings.getDefaultSettings();
-
-    public NerConnectionGenerator(DataRepository dataRepository) {
-        super(List.of(new NerAgent(dataRepository), new NerConnectionAgent(dataRepository)), NerConnectionGenerator.class.getSimpleName(), dataRepository);
+    public NerConnectionGenerator(DataRepository dataRepository, LargeLanguageModel llm) {
+        super(List.of(new NerAgent(dataRepository, llm), new NerConnectionAgent(dataRepository)), NerConnectionGenerator.class.getSimpleName(), dataRepository);
     }
 
-    public static NerConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
-        var connectionGenerator = new NerConnectionGenerator(dataRepository);
+    public static NerConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository, LargeLanguageModel llm) {
+        var connectionGenerator = new NerConnectionGenerator(dataRepository, llm);
         connectionGenerator.applyConfiguration(additionalConfigs);
         return connectionGenerator;
     }
@@ -33,11 +31,6 @@ public class NerConnectionGenerator extends AbstractExecutionStage {
     protected void initializeState() {
         var activeMetamodels = this.getDataRepository().getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
         var connectionStates = NerConnectionStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
-        connectionStates.setLlmSettings(llmSettings);
         getDataRepository().addData(NerConnectionStates.ID, connectionStates);
-    }
-
-    public void setLlmSettings(LlmSettings llmSettings) {
-        this.llmSettings = llmSettings;
     }
 }

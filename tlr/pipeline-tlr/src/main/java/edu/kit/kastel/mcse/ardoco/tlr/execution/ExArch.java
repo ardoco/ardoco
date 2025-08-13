@@ -23,14 +23,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
 /**
- * TransArC-AI extends the TransArC idea by using an LLM to generate a simple architecture mode (SAM). In this approach, instead of requiring a hand-made SAM, a
+ * ExArch extends the TransArC idea by using an LLM to generate a simple architecture mode (SAM). In this approach, instead of requiring a hand-made SAM, a
  * large language model (such as GPT-4) is prompted to extract or invent the main component names from the SAD (and optionally from code). These names serve as
  * a minimal architecture model (i.e. a list of components). Then, as in TransArC, these LLM-derived components are matched to code. The goal is to bridge the
  * SAD–code gap without manual modeling.
  */
-public class TransarcAi extends ArDoCoRunner {
+public class ExArch extends ArDoCoRunner {
 
-    public TransarcAi(String projectName) {
+    public ExArch(String projectName) {
         super(projectName);
     }
 
@@ -61,7 +61,7 @@ public class TransarcAi extends ArDoCoRunner {
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, null, codeConfiguration
-                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
         LlmArchitectureProviderAgent llmArchitectureProviderAgent = new LlmArchitectureProviderAgent(dataRepository, largeLanguageModel,

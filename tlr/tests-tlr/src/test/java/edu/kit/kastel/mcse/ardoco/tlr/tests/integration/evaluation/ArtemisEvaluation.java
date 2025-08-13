@@ -27,14 +27,17 @@ import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Artemis;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
 
 public class ArtemisEvaluation extends AbstractEvaluation {
 
     protected final ArtemisEvaluationProject project;
+    private final LargeLanguageModel llmForNer;
 
-    public ArtemisEvaluation(ArtemisEvaluationProject project) {
+    public ArtemisEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llmForNer) {
         this.project = Objects.requireNonNull(project);
+        this.llmForNer = Objects.requireNonNull(llmForNer);
     }
 
     public ArDoCoResult runTraceLinkEvaluation() {
@@ -86,7 +89,7 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         outputDirectory.mkdirs();
 
         Artemis artemis = new Artemis(projectName);
-        artemis.setUp(documentationFile, architectureModel, SortedMaps.immutable.empty(), outputDirectory);
+        artemis.setUp(documentationFile, architectureModel, SortedMaps.immutable.empty(), outputDirectory, llmForNer);
         return artemis;
     }
 
