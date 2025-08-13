@@ -20,3 +20,33 @@ updates:
     commit-message:
       prefix: "Dependency"
       include: "scope"
+  - package-ecosystem: "github-actions"
+    directory: "/core/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
+  - package-ecosystem: "github-actions"
+    directory: "/tlr/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
+  - package-ecosystem: "github-actions"
+    directory: "/inconsistency-detection/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
