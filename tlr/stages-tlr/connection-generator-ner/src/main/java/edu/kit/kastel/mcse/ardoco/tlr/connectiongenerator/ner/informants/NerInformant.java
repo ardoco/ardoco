@@ -3,7 +3,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,7 +33,7 @@ public class NerInformant extends Informant {
 
     public NerInformant(DataRepository dataRepository, LargeLanguageModel llm) {
         super(NerInformant.class.getSimpleName(), dataRepository);
-        this.llm = Objects.requireNonNull(llm);
+        this.llm = llm;
     }
 
     @Override
