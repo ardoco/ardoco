@@ -7,12 +7,15 @@ import java.util.List;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
@@ -21,6 +24,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInTran
 
 class ArtemisInTransarcIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
+
+    @BeforeAll
+    static void beforeAll() {
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
+    }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Artemis @ TransArC (SAD-SAM-Code TLR)")

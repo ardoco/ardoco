@@ -35,6 +35,8 @@ class ArtemisInExArchIT extends AbstractArdocoIT {
 
     @BeforeAll
     static void beforeAll() {
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
+
         System.setProperty(LOGGING_ARDOCO_CORE, "info");
         Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
     }
