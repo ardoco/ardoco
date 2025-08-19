@@ -3,10 +3,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class CachedChatLanguageModel implements ChatModel {
         try {
             this.cache = createObjectMapper().readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
             });
-            var keys = new HashSet<>(cache.keySet());
+            var keys = new TreeSet<>(cache.keySet());
             for (String key : keys) {
                 String cleanedKey = cleanEndings(key);
                 String cleanedValue = cleanEndings(cache.get(key));
