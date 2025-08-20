@@ -62,7 +62,6 @@ public final class NamedArchitectureEntityToModelTraceLink extends TraceLink<Nam
             case CodeEntity ignored -> typeInfo = "";
         }
 
-        // TODO
         return "NamedArchitectureEntityToModelTraceLink [ uid=" + modelEntity.getId() + ", name=" + modelEntity.getName() + //
                 ", as=" + String.join(", ", typeInfo) + ", probability=" + this.getConfidence() + ", FOUND: " + //
                 namedArchitectureEntityOccurrence.getName() + " (" + namedArchitectureEntityOccurrence.getSentenceNumber() + ")]";
