@@ -20,8 +20,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
- * ArTEMiS (Architecture Traceability with Entity Matching via Semantic inference) uses Named Entity Recognition to detect architecturally relevent entities in
- * text (i.e., components) to hunt trace links.
+ * ArtemisInTransArC integrates ArTEMiS into TransArC. TransArC links SAD → SAM → code (SWATTR for SAD–SAM, ArCoTL for SAM–code). This variant replaces the
+ * SAD–SAM step with ArTEMiS' NER-based matching while keeping SAM–code and transitive SAD–code recovery unchanged.
  */
 public class ArtemisInTransArC extends ArDoCoRunner {
 
