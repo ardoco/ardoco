@@ -90,7 +90,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
         for (var metamodel : this.getMetamodels()) {
-            if (metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS) {
+            if (metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS || metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES) {
                 traceLinks.addAll(this.getTraceLinksForModel(metamodel).castToCollection());
             }
         }

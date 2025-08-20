@@ -82,9 +82,9 @@
     <!-- Versions -->
     <slf4j.version>2.0.17</slf4j.version>
     <spotless.version>2.46.1</spotless.version>
-    <junit.version>5.11.0</junit.version>
+    <junit.version>5.13.4</junit.version>
     <eclipse-collections.version>12.0.0.M3</eclipse-collections.version>
-    <javaparser.version>3.25.8</javaparser.version>
+    <javaparser.version>3.27.0</javaparser.version>
     <mockito.version>5.2.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
@@ -123,12 +123,12 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.12.0</version>
+        <version>1.14.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
-        <version>5.3.1</version>
+        <version>5.5</version>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
@@ -149,7 +149,7 @@
       <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>6.9.0.202403050737-r</version>
+        <version>7.3.0.202506031305-r</version>
       </dependency>
 
       <!-- JUnit -->
@@ -361,7 +361,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.4</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -430,7 +430,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.16.2</version>
+          <version>2.18.0</version>
           <configuration>
             <ruleSet>
               <rule>
