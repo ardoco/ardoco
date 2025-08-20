@@ -12,7 +12,8 @@
   <packaging>pom</packaging>
 
   <name>ArDoCo TLR</name>
-  <description>The goal of this project is to create trace links between informal and formal artifacts like software architecture documentation, software architecture, and code.</description>
+  <description>The goal of this project is to create trace links between informal and formal artifacts like software architecture documentation, software
+        architecture, and code.</description>
   <url>https://github.com/ArDoCo/TLR</url>
   <licenses>
     <license>

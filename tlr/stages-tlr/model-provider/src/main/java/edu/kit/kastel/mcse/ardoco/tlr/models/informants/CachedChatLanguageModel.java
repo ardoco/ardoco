@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,12 @@ public class CachedChatLanguageModel implements ChatModel {
         try {
             this.cache = createObjectMapper().readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
             });
+            var keys = new TreeSet<>(cache.keySet());
+            for (String key : keys) {
+                String cleanedKey = cleanEndings(key);
+                String cleanedValue = cleanEndings(cache.get(key));
+                cache.put(cleanedKey, cleanedValue);
+            }
         } catch (IOException e) {
             logger.debug("Could not read cache file", e);
         }
@@ -47,17 +54,21 @@ public class CachedChatLanguageModel implements ChatModel {
 
     @Override
     public synchronized ChatResponse chat(List<ChatMessage> messages) {
-        if (cache.containsKey(messages.toString())) {
-            return ChatResponse.builder().aiMessage(new AiMessage(cache.get(messages.toString()))).build();
+        if (cache.containsKey(cleanEndings(messages.toString()))) {
+            return ChatResponse.builder().aiMessage(new AiMessage(cache.get(cleanEndings(messages.toString())))).build();
         }
         ChatResponse response = chatLanguageModel.chat(messages);
-        cache.put(messages.toString(), response.aiMessage().text());
+        cache.put(cleanEndings(messages.toString()), cleanEndings(response.aiMessage().text()));
         try {
             createObjectMapper().writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
         } catch (IOException e) {
             logger.error("Could not write cache file", e);
         }
         return response;
+    }
+
+    private String cleanEndings(String text) {
+        return text.replace("\r\n", "\n").replace("\r", "\n");
     }
 
     private static ObjectMapper createObjectMapper() {

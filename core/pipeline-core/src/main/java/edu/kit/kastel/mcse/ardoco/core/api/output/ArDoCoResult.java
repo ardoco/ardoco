@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
+import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -23,6 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
@@ -88,7 +90,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
         for (var metamodel : this.getMetamodels()) {
-            if (metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS || metamodel == Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES) {
+            if (metamodel.isArchitectureModel()) {
                 traceLinks.addAll(this.getTraceLinksForModel(metamodel).castToCollection());
             }
         }
@@ -242,6 +244,21 @@ public record ArDoCoResult(DataRepository dataRepository) {
     }
 
     /**
+     * Returns the internal {@link NerConnectionState} for the model with the given metamodel or null if there is none.
+     *
+     * @param metamodel the metamodel to get the connection state for
+     * @return the connection state or null if there is no {@link ConnectionState} for the given metamodel
+     */
+    public NerConnectionState getNerConnectionState(Metamodel metamodel) {
+        if (DataRepositoryHelper.hasNerConnectionStates(this.dataRepository)) {
+            var connectionStates = DataRepositoryHelper.getNerConnectionStates(this.dataRepository);
+            return connectionStates.getNerConnectionState(metamodel);
+        }
+        logger.warn("No NerConnectionState found.");
+        return null;
+    }
+
+    /**
      * Returns the internal {@link InconsistencyState} for the model with the given metamodel or null if there is none.
      *
      * @param metamodel the metamodel to get the inconsistency state for
@@ -306,6 +323,15 @@ public record ArDoCoResult(DataRepository dataRepository) {
      */
     public PreprocessingData getPreprocessingData() {
         return this.dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow();
+    }
+
+    /**
+     * Returns the internal {@link SimplePreprocessingData}.
+     *
+     * @return the preprocessing data
+     */
+    public SimplePreprocessingData getSimplePreprocessingData() {
+        return this.dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow();
     }
 
     /**

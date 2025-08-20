@@ -146,8 +146,6 @@ public class ArchitectureTest {
     @ArchTest
     public static final ArchRule jacksonIsConfiguredGlobally = noClasses().that()
             .doNotHaveFullyQualifiedName(JsonHandling.class.getName())
-            .and()
-            .doNotHaveFullyQualifiedName("edu.kit.kastel.mcse.ardoco.magika.Configuration")
             .should()
             .callConstructor(ObjectMapper.class);
 

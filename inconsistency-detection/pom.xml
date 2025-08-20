@@ -12,7 +12,8 @@
   <packaging>pom</packaging>
 
   <name>ArDoCo ID</name>
-  <description>The goal of this project is to identify missing or deviating elements (inconsistencies) between informal and formal artifacts like software architecture documentation, software architecture, and code.</description>
+  <description>The goal of this project is to identify missing or deviating elements (inconsistencies) between informal and formal artifacts like software
+        architecture documentation, software architecture, and code.</description>
   <url>https://github.com/ArDoCo/InconsistencyDetection</url>
   <licenses>
     <license>

@@ -40,7 +40,7 @@ public enum InconsistencyDetectionTask {
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/bbb/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.666, .461, .545, .96, .535, .988) //
+            , new ExpectedResults(.685, .403, .510, .954, .507, .988) //
     ), //
 
     JABREF(EvaluationProject.JABREF, //
