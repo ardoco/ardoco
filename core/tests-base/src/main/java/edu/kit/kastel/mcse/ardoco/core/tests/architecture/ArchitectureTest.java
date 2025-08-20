@@ -146,10 +146,6 @@ public class ArchitectureTest {
     @ArchTest
     public static final ArchRule jacksonIsConfiguredGlobally = noClasses().that()
             .doNotHaveFullyQualifiedName(JsonHandling.class.getName())
-            .and()
-            .doNotHaveFullyQualifiedName("edu.kit.kastel.mcse.ardoco.magika.Configuration")
-            .and()
-            .doNotHaveFullyQualifiedName("edu.kit.kastel.mcse.ardoco.naer.serialization.NamedEntityParser")
             .should()
             .callConstructor(ObjectMapper.class);
 
@@ -162,8 +158,6 @@ public class ArchitectureTest {
     @ArchTest
     static final ArchRule noGetEnv = noClasses().that()
             .haveNameNotMatching(Environment.class.getName())
-            .and()
-            .haveNameNotMatching("edu.kit.kastel.mcse.ardoco.naer.util.Environment")
             .should()
             .callMethod(System.class, "getenv")
             .orShould()
