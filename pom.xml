@@ -85,7 +85,7 @@
     <junit.version>5.13.4</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.27.0</javaparser.version>
-    <mockito.version>5.2.0</mockito.version>
+    <mockito.version>5.19.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.19.2</jackson.version>
