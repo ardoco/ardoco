@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.fuchss</groupId>
       <artifactId>xml-object-mapper</artifactId>
-      <version>0.7.0</version>
+      <version>0.7.8</version>
     </dependency>
   </dependencies>
 
