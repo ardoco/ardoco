@@ -1,0 +1,26 @@
+name: Maven Verify
+
+on:
+  push: # Ignore releases and main dev branch
+    tags-ignore:
+      - 'v*' 
+    branches:
+     - 'main'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  verify:
+    uses: ardoco/actions/.github/workflows/maven.yml@main
+    with:
+      deploy: false
+      with-submodules: true
+      runs-on: ubuntu-latest
+    secrets:
+      CENTRAL_USER: ""
+      CENTRAL_TOKEN: ""
+      GPG_KEY: ""
+

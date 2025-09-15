@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
@@ -12,36 +12,36 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel.CodeModelDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 
 public abstract class CodeExtractor extends Extractor {
     private static final Logger logger = LoggerFactory.getLogger(CodeExtractor.class);
 
+    protected static final FileTypePredictor fileTypePredictor = new FileTypePredictor();
+
     private static final String CODE_MODEL_FILE_NAME = "codeModel.acm";
     protected final CodeItemRepository codeItemRepository;
 
-    protected CodeExtractor(CodeItemRepository codeItemRepository, String path) {
-        super(path);
+    protected CodeExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
+        super(path, metamodelToExtract);
         this.codeItemRepository = codeItemRepository;
     }
 
     @Override
     public abstract CodeModel extractModel();
 
-    @Override
-    public final ModelType getModelType() {
-        return CodeModelType.CODE_MODEL;
-    }
-
     public void writeOutCodeModel(CodeModel codeModel, File outputFile) {
         ObjectMapper objectMapper = createObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
         try {
-            objectMapper.writeValue(outputFile, codeModel);
+            objectMapper.writeValue(outputFile, codeModel.createCodeModelDto());
         } catch (IOException e) {
             logger.warn("An exception occurred when writing the code model.", e);
         }
@@ -57,13 +57,20 @@ public abstract class CodeExtractor extends Extractor {
         writeOutCodeModel(codeModel, file);
     }
 
-    public static CodeModel readInCodeModel(File codeModelFile) {
+    public static CodeModel readInCodeModel(File codeModelFile, Metamodel metamodelToExtract) {
         if (codeModelFile != null && codeModelFile.isFile()) {
             logger.info("Reading in existing code model.");
             ObjectMapper objectMapper = createObjectMapper();
             objectMapper.registerModule(new Jdk8Module());
             try {
-                return objectMapper.readValue(codeModelFile, CodeModel.class);
+                CodeModelDto content = objectMapper.readValue(codeModelFile, CodeModelDto.class);
+
+                return switch (metamodelToExtract) {
+                    case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> new CodeModelWithCompilationUnitsAndPackages(content);
+                    case CODE_WITH_COMPILATION_UNITS -> new CodeModelWithCompilationUnits(content);
+                    default -> throw new IllegalStateException("Unexpected value: " + metamodelToExtract);
+                };
+
             } catch (IOException e) {
                 logger.warn("An exception occurred when reading the code model.", e);
             }

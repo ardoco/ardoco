@@ -1,20 +1,19 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
-
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.architecture.legacy.LegacyModelExtractionState;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.InstanceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -35,41 +34,40 @@ public class MissingModelElementInconsistencyInformant extends Informant {
 
     @Override
     public void process() {
-        var dataRepository = getDataRepository();
+        var dataRepository = this.getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
-        for (var model : modelStates.modelIds()) {
-            var modelState = modelStates.getModelExtractionState(model);
-            findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, modelState);
+        for (var metamodel : modelStates.getMetamodels()) {
+            var model = modelStates.getModel(metamodel);
+            this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, model);
         }
     }
 
-    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates,
-            LegacyModelExtractionState modelState) {
-        Metamodel metamodel = modelState.getMetamodel();
+    private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates, Model model) {
+        Metamodel metamodel = model.getMetamodel();
         var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
         var connectionState = connectionStates.getConnectionState(metamodel);
 
         var candidates = Lists.mutable.<MissingElementInconsistencyCandidate>empty();
 
         var candidateElements = Lists.mutable.ofAll(inconsistencyState.getRecommendedInstances());
-        var linkedRecommendedInstances = connectionState.getInstanceLinks().collect(InstanceLink::getTextualInstance);
+        var linkedRecommendedInstances = connectionState.getInstanceLinks().collect(TraceLink::getFirstEndpoint);
 
         // find recommendedInstances with no trace link (also not sharing words with linked RIs)
         candidateElements.removeAllIterable(linkedRecommendedInstances);
-        filterCandidatesCoveredByRecommendedInstance(candidateElements, linkedRecommendedInstances);
+        this.filterCandidatesCoveredByRecommendedInstance(candidateElements, linkedRecommendedInstances);
 
         for (var candidate : candidateElements) {
-            addToCandidates(candidates, candidate, MissingElementSupport.ELEMENT_WITH_NO_TRACE_LINK);
+            this.addToCandidates(candidates, candidate, MissingElementSupport.ELEMENT_WITH_NO_TRACE_LINK);
         }
 
         // methods for other kinds of support
         // NONE
 
         // finally create inconsistencies
-        createInconsistencies(candidates, inconsistencyState);
+        this.createInconsistencies(candidates, inconsistencyState);
     }
 
     /**
@@ -117,11 +115,11 @@ public class MissingModelElementInconsistencyInformant extends Informant {
     private void createInconsistencies(MutableList<MissingElementInconsistencyCandidate> candidates, InconsistencyState inconsistencyState) {
         for (var candidate : candidates) {
             var support = candidate.getAmountOfSupport();
-            if (support >= minSupport) {
+            if (support >= this.minSupport) {
                 RecommendedInstance recommendedInstance = candidate.getRecommendedInstance();
                 double confidence = recommendedInstance.getProbability();
                 for (var word : recommendedInstance.getNameMappings().flatCollect(NounMapping::getWords).distinct()) {
-                    var sentenceNo = word.getSentenceNo() + 1;
+                    var sentenceNo = word.getSentenceNumber() + 1;
                     var wordText = word.getText();
                     inconsistencyState.addInconsistency(new MissingModelInstanceInconsistency(wordText, sentenceNo, confidence, candidate));
                 }
@@ -130,7 +128,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
     }
 }

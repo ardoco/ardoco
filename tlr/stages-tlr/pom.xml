@@ -5,16 +5,17 @@
     <groupId>io.github.ardoco.tlr</groupId>
     <artifactId>parent-tlr</artifactId>
     <version>${revision}</version>
-      <relativePath>../pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>stages-tlr</artifactId>
   <packaging>pom</packaging>
-    <modules>
-        <module>connection-generator</module>
-        <module>model-provider</module>
-        <module>recommendation-generator</module>
-        <module>text-extraction</module>
-        <module>text-preprocessing</module>
-        <module>code-traceability</module>
-    </modules>
+  <modules>
+    <module>code-traceability</module>
+    <module>connection-generator</module>
+    <module>connection-generator-ner</module>
+    <module>model-provider</module>
+    <module>recommendation-generator</module>
+    <module>text-extraction</module>
+    <module>text-preprocessing</module>
+  </modules>
 </project>

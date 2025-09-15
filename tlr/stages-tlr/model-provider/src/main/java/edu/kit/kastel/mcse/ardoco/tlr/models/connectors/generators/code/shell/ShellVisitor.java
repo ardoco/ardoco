@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell;
 
 import java.io.FileReader;
@@ -18,11 +18,13 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.CodeItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.code.ProgrammingLanguages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
+import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 
 public class ShellVisitor implements FileVisitor<Path> {
     private static final Logger logger = LoggerFactory.getLogger(ShellVisitor.class);
@@ -30,34 +32,36 @@ public class ShellVisitor implements FileVisitor<Path> {
     private final Path startingDir;
     private final SortedSet<CodeItem> codeEndpoints;
     private final CodeItemRepository codeItemRepository;
+    private final FileTypePredictor fileTypePredictor;
 
-    public ShellVisitor(CodeItemRepository codeItemRepository, Path startingDir) {
+    public ShellVisitor(FileTypePredictor fileTypePredictor, CodeItemRepository codeItemRepository, Path startingDir) {
+        this.fileTypePredictor = fileTypePredictor;
         this.codeItemRepository = codeItemRepository;
         this.startingDir = startingDir;
         codeEndpoints = new TreeSet<>();
     }
 
     public CodeModel getCodeModel() {
-        return new CodeModel(codeItemRepository, codeEndpoints);
+        return new CodeModelWithCompilationUnits(codeItemRepository, codeEndpoints);
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+    public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
         String fileName = path.getFileName().toString();
         String code = "";
         try (FileReader reader = new FileReader(path.toFile())) {
@@ -65,7 +69,7 @@ public class ShellVisitor implements FileVisitor<Path> {
         } catch (IOException e) {
             logger.warn("Exception when reading file", e);
         }
-        if (!isShellFile(fileName, code)) {
+        if (!isShellFile(code)) {
             return FileVisitResult.CONTINUE;
         }
 
@@ -87,10 +91,10 @@ public class ShellVisitor implements FileVisitor<Path> {
         for (int i = 0; i < relativePath.getNameCount() - 1; i++) {
             pathElements.add(relativePath.getName(i).toString());
         }
-        return new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements, extension, ProgrammingLanguages.SHELL);
+        return new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements, extension, ProgrammingLanguage.SHELL);
     }
 
-    private static boolean isShellFile(String fileName, String code) {
-        return fileName.endsWith(".sh") || code.startsWith("#!/bin/bash") || code.startsWith("#!/bin/sh") || code.startsWith("#!/usr/bin/env bash");
+    private boolean isShellFile(String code) {
+        return fileTypePredictor.predictBytes(code.getBytes()).label().equals("shell");
     }
 }

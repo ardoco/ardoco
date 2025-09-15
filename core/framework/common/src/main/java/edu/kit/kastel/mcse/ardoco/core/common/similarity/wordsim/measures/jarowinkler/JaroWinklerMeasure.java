@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.jarowinkler;
 
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
@@ -38,14 +38,14 @@ public class JaroWinklerMeasure implements WordSimMeasure {
     }
 
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
-        double similarity = this.getSimilarity(ctx);
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
+        double similarity = this.getSimilarity(comparisonContext);
         return similarity >= this.similarityThreshold;
     }
 
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
-        return this.jaroWinklerSimilarity.apply(ctx.firstTerm(), ctx.secondTerm());
+    public double getSimilarity(ComparisonContext comparisonContext) {
+        return this.jaroWinklerSimilarity.apply(comparisonContext.firstTerm(), comparisonContext.secondTerm());
     }
 
 }

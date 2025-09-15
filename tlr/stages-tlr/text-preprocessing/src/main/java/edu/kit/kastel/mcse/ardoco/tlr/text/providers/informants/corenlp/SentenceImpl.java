@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.IOException;
@@ -24,14 +24,16 @@ import edu.stanford.nlp.trees.Tree;
 
 class SentenceImpl implements Sentence {
     private static final Logger logger = LoggerFactory.getLogger(SentenceImpl.class);
+    @Serial
+    private static final long serialVersionUID = 3807070330613904325L;
 
     private MutableList<Word> words = Lists.mutable.empty();
     private MutableList<Phrase> phrases = Lists.mutable.empty();
 
-    private TextImpl parent;
-    private transient CoreSentence coreSentence;
+    private final TextImpl parent;
+    private final transient CoreSentence coreSentence;
     private SemanticGraph semanticGraph;
-    private int sentenceNumber;
+    private final int sentenceNumber;
 
     private final String text;
 
@@ -50,7 +52,7 @@ class SentenceImpl implements Sentence {
     @Override
     public ImmutableList<Word> getWords() {
         if (words.isEmpty()) {
-            this.words = Lists.mutable.ofAll(parent.words().select(w -> w.getSentenceNo() == sentenceNumber));
+            this.words = Lists.mutable.ofAll(parent.words().select(w -> w.getSentenceNumber() == sentenceNumber));
         }
         return words.toImmutable();
     }
@@ -76,11 +78,6 @@ class SentenceImpl implements Sentence {
         }
 
         return phrases.toImmutable();
-    }
-
-    @Override
-    public void addPhrase(Phrase phrase) {
-        phrases.add(phrase);
     }
 
     protected List<Word> getWordsForPhrase(Tree phrase) {

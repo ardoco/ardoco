@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.parser;
 
 import java.util.List;
@@ -24,7 +24,9 @@ public final class UmlModelRoot {
     public void init() {
         this.interfaces = loadInterfaces();
         this.components = loadComponents();
-        this.components.forEach(umlComponent -> umlComponent.init(this));
+        for (UmlComponent umlComponent : this.components) {
+            umlComponent.init(this);
+        }
     }
 
     private List<UmlComponent> loadComponents() {

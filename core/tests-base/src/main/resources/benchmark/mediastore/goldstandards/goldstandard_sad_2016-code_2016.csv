@@ -26,6 +26,8 @@ sentenceID,codeID
 25,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/UserAlreadyExistsException.java
 25,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/DbManager.java
 25,Implementation/mediastore.ejb.userdbadapter/src/edu/kit/ipd/sdq/mediastore/ejb/userdbadapter/DbManager.java
+25,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/Audio.java
+25,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/MediaAccessImpl.java
 26,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/Audio.java
 26,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/MediaAccessImpl.java
 27,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/Audio.java
@@ -44,6 +46,13 @@ sentenceID,codeID
 32,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/UserAlreadyExistsException.java
 32,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/DbManager.java
 32,Implementation/mediastore.ejb.userdbadapter/src/edu/kit/ipd/sdq/mediastore/ejb/userdbadapter/DbManager.java
+33,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/DbException.java
+33,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/UserAlreadyExistsException.java
+33,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/DbManager.java
+33,Implementation/mediastore.ejb.userdbadapter/src/edu/kit/ipd/sdq/mediastore/ejb/userdbadapter/DbManager.java
+34,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/DbException.java
+34,Implementation/mediastore.basic/src/edu/kit/ipd/sdq/mediastore/basic/exceptions/UserAlreadyExistsException.java
+34,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/DbManager.java
+34,Implementation/mediastore.ejb.userdbadapter/src/edu/kit/ipd/sdq/mediastore/ejb/userdbadapter/DbManager.java
 34,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/Audio.java
 34,Implementation/mediastore.ejb.mediaaccess/src/edu/kit/ipd/sdq/mediastore/ejb/mediaaccess/MediaAccessImpl.java
-37,Implementation/mediastore.ejb.reencoder/src/edu/kit/ipd/sdq/mediastore/ejb/reencoder/ReEncoderImpl.java

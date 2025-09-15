@@ -1,23 +1,22 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
-import java.util.SortedMap;
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.WordHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
 /**
  * The analyzer examines the outgoing arcs of the current node.
  */
 
-public class OutDepArcsInformant extends Informant {
+public class OutDepArcsInformant extends TextExtractionInformant {
 
     @Configurable
     private double nameOrTypeWeight = 0.5;
@@ -36,42 +35,51 @@ public class OutDepArcsInformant extends Informant {
 
     @Override
     public void process() {
-        var textState = DataRepositoryHelper.getTextState(getDataRepository());
-        for (var word : DataRepositoryHelper.getAnnotatedText(getDataRepository()).words()) {
-            exec(textState, word);
+        for (var word : DataRepositoryHelper.getAnnotatedText(this.getDataRepository()).words()) {
+            this.exec(word);
         }
     }
 
-    private void exec(TextState textState, Word word) {
+    private void exec(Word word) {
 
         var nodeValue = word.getText();
         if (nodeValue.length() == 1 && !Character.isLetter(nodeValue.charAt(0))) {
             return;
         }
-        examineOutgoingDepArcs(textState, word);
+        this.examineOutgoingDepArcs(word);
     }
 
     /**
      * Examines the outgoing dependencies of a node.
      */
-    private void examineOutgoingDepArcs(TextState textState, Word word) {
+    private void examineOutgoingDepArcs(Word word) {
 
-        var outgoingDepArcs = WordHelper.getOutgoingDependencyTags(word);
+        var outgoingDepArcs = getOutgoingDependencyTags(word);
 
         for (DependencyTag shortDepTag : outgoingDepArcs) {
 
             if (DependencyTag.AGENT == shortDepTag || DependencyTag.RCMOD == shortDepTag) {
-                textState.addNounMapping(word, MappingKind.NAME, this, probability * nameOrTypeWeight);
-                textState.addNounMapping(word, MappingKind.TYPE, this, probability * nameOrTypeWeight);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.NAME, this, this.probability * this.nameOrTypeWeight);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability * this.nameOrTypeWeight);
             } else if (DependencyTag.NUM == shortDepTag || DependencyTag.PREDET == shortDepTag) {
-                textState.addNounMapping(word, MappingKind.TYPE, this, probability);
+                this.getTextStateStrategy().addNounMapping(word, MappingKind.TYPE, this, this.probability);
             }
         }
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
-        // emtpy
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
+        // empty
+    }
+
+    /**
+     * Gets the outgoing dependency tags.
+     *
+     * @param word the word
+     * @return the outgoing dependency tags
+     */
+    private ImmutableList<DependencyTag> getOutgoingDependencyTags(Word word) {
+        return Lists.immutable.with(DependencyTag.values()).select(d -> !word.getOutgoingDependencyWordsWithType(d).isEmpty());
     }
 
 }

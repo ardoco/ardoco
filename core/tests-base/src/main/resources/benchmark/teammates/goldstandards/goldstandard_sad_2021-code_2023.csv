@@ -18,11 +18,15 @@ sentenceID,codeID
 7,src/main/java/teammates/ui/
 7,src/test/java/teammates/logic/
 7,src/test/java/teammates/ui/
+8,src/main/java/teammates/logic/
+8,src/test/java/teammates/logic/
 9,src/main/java/teammates/storage/
 9,src/test/java/teammates/storage/
 10,src/test/java/teammates/test/
 15,src/e2e/java/teammates/e2e/
+16,src/e2e/java/teammates/e2e/
 18,src/client/java/teammates/client/
+19,src/client/java/teammates/client/
 20,src/main/java/teammates/common/
 20,src/test/java/teammates/common/
 22,src/main/java/teammates/logic/
@@ -92,6 +96,8 @@ sentenceID,codeID
 87,src/main/java/teammates/logic/api/TaskQueuer.java
 88,src/main/java/teammates/storage/
 88,src/test/java/teammates/storage/
+88,src/main/java/teammates/logic/
+88,src/test/java/teammates/logic/
 90,src/main/java/teammates/logic/api/EmailGenerator.java
 90,src/test/java/teammates/logic/api/EmailGeneratorTest.java
 91,src/main/java/teammates/logic/api/EmailSender.java
@@ -132,6 +138,8 @@ sentenceID,codeID
 110,src/main/java/teammates/common/exception/InvalidParametersException.java
 118,src/main/java/teammates/storage/
 118,src/test/java/teammates/storage/
+119,src/main/java/teammates/storage/
+119,src/test/java/teammates/storage/
 120,src/main/java/teammates/storage/
 120,src/test/java/teammates/storage/
 122,src/main/java/teammates/logic/
@@ -203,6 +211,7 @@ sentenceID,codeID
 185,src/e2e/java/teammates/e2e/
 185,src/main/java/teammates/logic/
 185,src/test/java/teammates/logic/
+186,src/e2e/java/teammates/e2e/
 187,src/e2e/java/teammates/e2e/util/
 187,src/e2e/java/teammates/e2e/pageobjects/
 187,src/e2e/java/teammates/e2e/cases/

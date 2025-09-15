@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -61,10 +61,10 @@ public class LevenshteinMeasure implements WordSimMeasure {
     }
 
     @Override
-    public boolean areWordsSimilar(ComparisonContext ctx) {
+    public boolean areWordsSimilar(ComparisonContext comparisonContext) {
         // FIXME cast to lower case seems unwarranted given that this is delegated to WordSimUtils already
-        String firstWord = ctx.firstTerm().toLowerCase();
-        String secondWord = ctx.secondTerm().toLowerCase();
+        String firstWord = comparisonContext.firstTerm().toLowerCase();
+        String secondWord = comparisonContext.secondTerm().toLowerCase();
 
         int maxDynamicDistance = (int) Math.min(this.maxDistance, this.threshold * Math.min(firstWord.length(), secondWord.length()));
         int distance = this.levenshteinDistance.apply(firstWord, secondWord);
@@ -76,10 +76,10 @@ public class LevenshteinMeasure implements WordSimMeasure {
     }
 
     @Override
-    public double getSimilarity(ComparisonContext ctx) {
+    public double getSimilarity(ComparisonContext comparisonContext) {
         // FIXME cast to lower case seems unwarranted given that this is delegated to WordSimUtils already
-        String firstWord = ctx.firstTerm().toLowerCase();
-        String secondWord = ctx.secondTerm().toLowerCase();
+        String firstWord = comparisonContext.firstTerm().toLowerCase();
+        String secondWord = comparisonContext.secondTerm().toLowerCase();
         int distance = this.levenshteinDistance.apply(firstWord, secondWord);
         return 1.0 - (distance / (double) Math.max(firstWord.length(), secondWord.length()));
     }

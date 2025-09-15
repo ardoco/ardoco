@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -10,12 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +34,18 @@ public class ConfigurationHelper {
     }
 
     /**
-     * Loads the file that contains additional configurations and returns the Map that consists of the configuration options.
+     * Loads a file containing additional configurations and returns a map of configuration options.
      *
      * @param additionalConfigsFile the file containing the additional configurations
-     * @return a Map with the additional configurations
+     * @return a map with the additional configurations
      */
-    public static SortedMap<String, String> loadAdditionalConfigs(File additionalConfigsFile) {
-        SortedMap<String, String> additionalConfigs = new TreeMap<>();
+    public static ImmutableSortedMap<String, String> loadAdditionalConfigs(File additionalConfigsFile) {
+        MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
         if (additionalConfigsFile != null && (!additionalConfigsFile.exists() || !additionalConfigsFile.isFile())) {
             throw new IllegalArgumentException("File " + additionalConfigsFile.getAbsolutePath() + " is not a valid configuration file!");
         }
         if (additionalConfigsFile == null) {
-            return additionalConfigs;
+            return additionalConfigs.toImmutable();
         }
 
         try (var scanner = new Scanner(additionalConfigsFile, StandardCharsets.UTF_8)) {
@@ -66,11 +66,16 @@ public class ConfigurationHelper {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return additionalConfigs;
+        return additionalConfigs.toImmutable();
     }
 
-    public static Map<String, String> getDefaultConfigurationOptions() {
-        Map<String, String> configs = new TreeMap<>();
+    /**
+     * Returns a map containing all default configuration options for all configurable classes in the ArDoCo framework.
+     *
+     * @return a map with all default configuration options
+     */
+    public static ImmutableSortedMap<String, String> getDefaultConfigurationOptions() {
+        MutableSortedMap<String, String> configs = SortedMaps.mutable.empty();
         var reflectAccess = new Reflections("edu.kit.kastel.mcse.ardoco");
         var classesThatMayBeConfigured = reflectAccess.getSubTypesOf(AbstractConfigurable.class)
                 .stream()
@@ -85,10 +90,19 @@ public class ConfigurationHelper {
                 throw new IllegalStateException(e);
             }
         }
-        return configs;
+        return configs.toImmutable();
     }
 
-    protected static void processConfigurationOfClass(Map<String, String> configs, Class<? extends AbstractConfigurable> clazz)
+    /**
+     * Processes the configuration of a specific class by creating an instance and extracting all configurable fields.
+     *
+     * @param configs the map to store configuration options in
+     * @param clazz   the class to process
+     * @throws InvocationTargetException if the constructor cannot be invoked
+     * @throws InstantiationException    if the class cannot be instantiated
+     * @throws IllegalAccessException    if access to fields is denied
+     */
+    protected static void processConfigurationOfClass(MutableSortedMap<String, String> configs, Class<? extends AbstractConfigurable> clazz)
             throws InvocationTargetException, InstantiationException, IllegalAccessException {
         var object = ConfigurationInstantiatorUtils.createObject(clazz);
         List<Field> fields = new ArrayList<>();
@@ -96,7 +110,7 @@ public class ConfigurationHelper {
         fillConfigs(object, fields, configs);
     }
 
-    private static void fillConfigs(AbstractConfigurable object, List<Field> fields, Map<String, String> configs) throws IllegalAccessException {
+    private static void fillConfigs(AbstractConfigurable object, List<Field> fields, MutableSortedMap<String, String> configs) throws IllegalAccessException {
         for (Field f : fields) {
             f.setAccessible(true);
             var key = AbstractConfigurable.getKeyOfField(object, f.getDeclaringClass(), f);

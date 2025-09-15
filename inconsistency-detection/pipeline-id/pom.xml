@@ -31,7 +31,6 @@
       <artifactId>model-provider</artifactId>
       <version>${revision}</version>
     </dependency>
-
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>recommendation-generator</artifactId>
@@ -46,7 +45,7 @@
 
   <profiles>
     <profile>
-      <id>test-deps</id>
+      <id>test-dependencies</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>

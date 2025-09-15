@@ -1,11 +1,11 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrategy;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.agents.InitialTextAgent;
@@ -30,7 +30,7 @@ public class TextExtraction extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of InconsistencyChecker
      */
-    public static TextExtraction get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static TextExtraction get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var textExtractor = new TextExtraction(dataRepository);
         textExtractor.applyConfiguration(additionalConfigs);
         return textExtractor;
@@ -41,8 +41,7 @@ public class TextExtraction extends AbstractExecutionStage {
         var dataRepository = this.getDataRepository();
         var optionalTextState = dataRepository.getData(TextState.ID, TextStateImpl.class);
         if (optionalTextState.isEmpty()) {
-            TextStateStrategy tts = new OriginalTextStateStrategy();
-            var textState = new TextStateImpl(tts);
+            var textState = new TextStateImpl();
             dataRepository.addData(TextState.ID, textState);
         }
     }

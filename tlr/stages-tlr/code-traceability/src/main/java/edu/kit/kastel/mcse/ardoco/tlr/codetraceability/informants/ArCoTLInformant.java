@@ -1,14 +1,10 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
-import java.util.Arrays;
-import java.util.SortedMap;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelType;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.ArchitectureModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.arcotl.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
@@ -28,11 +24,26 @@ public class ArCoTLInformant extends Informant {
 
         ArchitectureModel architectureModel = null;
         CodeModel codeModel = null;
-        for (var modelId : modelStates.modelIds()) {
-            if (ArCoTLInformant.isAnArchitectureModel(modelId)) {
-                architectureModel = (ArchitectureModel) modelStates.getModel(modelId);
-            } else if (ArCoTLInformant.isACodeModel(modelId)) {
-                codeModel = (CodeModel) modelStates.getModel(modelId);
+
+        for (var metamodel : modelStates.getMetamodels()) {
+            var model = modelStates.getModel(metamodel);
+            if (model == null) {
+                continue;
+            }
+
+            switch (model) {
+                case ArchitectureModel arch -> {
+                    if (architectureModel != null) {
+                        throw new IllegalStateException("Multiple architecture models found in the data repository.");
+                    }
+                    architectureModel = arch;
+                }
+                case CodeModel code -> {
+                    if (codeModel != null) {
+                        throw new IllegalStateException("Multiple code models found in the data repository.");
+                    }
+                    codeModel = code;
+                }
             }
         }
 
@@ -41,16 +52,8 @@ public class ArCoTLInformant extends Informant {
         samCodeTraceabilityState.addSamCodeTraceLinks(traceLinks);
     }
 
-    private static boolean isACodeModel(Metamodel modelId) {
-        return Arrays.stream(CodeModelType.values()).anyMatch(codeModelType -> codeModelType.getMetamodel().equals(modelId));
-    }
-
-    private static boolean isAnArchitectureModel(Metamodel modelId) {
-        return Arrays.stream(ArchitectureModelType.values()).anyMatch(architectureModelType -> architectureModelType.getMetamodel().equals(modelId));
-    }
-
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> additionalConfiguration) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // empty
     }
 

@@ -33,6 +33,15 @@ Thereby, the text became more readable and easier to understand.
 * If it would not lead to a semantic change, colons in sentences were removed. Otherwise there were replaced by "are"/ "is"/ "is that"/ ...
 * In case of "##TestDriver This component [..]", the "This" was replaced with "The TestDriver".
 
+## Diagram (originally taken from 2023)
+
+Taken directly from [TEAMMATES Design Page](https://teammates.github.io/teammates/design.html)
+
+This is traced to the 2021 text fragment.
+
+For the tracelinks subtext like "HTML, CSS.." in highlevelArchitecture.png was ignored. "UI (browser)" and "UI (server)" were grouped
+
+
 
 ## License
 

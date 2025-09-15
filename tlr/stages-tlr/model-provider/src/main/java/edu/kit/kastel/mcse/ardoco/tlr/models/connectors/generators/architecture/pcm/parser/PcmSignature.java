@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.parser;
 
 import java.util.ArrayList;
@@ -46,7 +46,9 @@ public final class PcmSignature {
     }
 
     void init(List<PcmDatatype> datatypes) {
-        parameters.forEach(p -> p.init(datatypes));
+        for (PcmParameter parameter : parameters) {
+            parameter.init(datatypes);
+        }
         returnType = datatypes.stream().filter(datatype -> datatype.getId().equals(returnTypeId)).findFirst().orElse(null);
     }
 }

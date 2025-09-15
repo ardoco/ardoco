@@ -1,8 +1,9 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers;
 
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.NlpInformant;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -27,7 +28,7 @@ public class TextPreprocessingAgent extends PipelineAgent {
      * @param dataRepository    the data repository
      * @return a CoreNLPProvider with the provided text read in
      */
-    public static TextPreprocessingAgent get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static TextPreprocessingAgent get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var textProvider = new TextPreprocessingAgent(dataRepository);
         textProvider.applyConfiguration(additionalConfigs);
         return textProvider;

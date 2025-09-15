@@ -1,11 +1,10 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
-
-import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.PhraseMapping;
@@ -18,9 +17,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Comparators;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
-public class MappingCombinerInformant extends Informant {
+public class MappingCombinerInformant extends TextExtractionInformant {
 
     @Configurable
     private double minCosineSimilarity = 0.4;
@@ -67,14 +65,14 @@ public class MappingCombinerInformant extends Informant {
             }
 
             if (nounMappingsOfPhraseMapping.size() == nounMappingsOfSimilarPhraseMapping.size()) {
-                this.processSimilarPhraseMappingWhenEquallySized(textState, similarPhraseMappings, phraseMapping, nounMappingsOfPhraseMapping,
-                        similarPhraseMapping, nounMappingsOfSimilarPhraseMapping);
+                this.processSimilarPhraseMappingWhenEquallySized(similarPhraseMappings, phraseMapping, nounMappingsOfPhraseMapping, similarPhraseMapping,
+                        nounMappingsOfSimilarPhraseMapping);
             }
         }
     }
 
-    private void processSimilarPhraseMappingWhenEquallySized(TextState textState, ImmutableList<PhraseMapping> similarPhraseMappings,
-            PhraseMapping phraseMapping, ImmutableList<NounMapping> nounMappingsOfPhraseMapping, PhraseMapping similarPhraseMapping,
+    private void processSimilarPhraseMappingWhenEquallySized(ImmutableList<PhraseMapping> similarPhraseMappings, PhraseMapping phraseMapping,
+            ImmutableList<NounMapping> nounMappingsOfPhraseMapping, PhraseMapping similarPhraseMapping,
             ImmutableList<NounMapping> nounMappingsOfSimilarPhraseMapping) {
         MutableList<Pair<NounMapping, NounMapping>> similarNounMappings = Lists.mutable.empty();
 
@@ -90,7 +88,7 @@ public class MappingCombinerInformant extends Informant {
         merge &= similarPhraseMappings.size() == similarNounMappings.collect(Pair::second).distinct().size() * 2;
 
         if (merge) {
-            textState.mergePhraseMappingsAndNounMappings(phraseMapping, similarPhraseMapping, similarNounMappings, this);
+            this.getTextStateStrategy().mergePhraseMappingsAndNounMappings(phraseMapping, similarPhraseMapping, similarNounMappings, this);
         }
     }
 
@@ -104,7 +102,7 @@ public class MappingCombinerInformant extends Informant {
                     continue;
                 }
                 if (SimilarityUtils.getInstance().areNounMappingsSimilar(nounMapping, nounMappingOfSimilarPhraseMapping)) {
-                    textState.mergeNounMappings(nounMapping, nounMappingOfSimilarPhraseMapping, this);
+                    this.getTextStateStrategy().mergeNounMappings(nounMapping, nounMappingOfSimilarPhraseMapping, this);
                 }
             }
         }
@@ -128,7 +126,7 @@ public class MappingCombinerInformant extends Informant {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         //none
     }
 }

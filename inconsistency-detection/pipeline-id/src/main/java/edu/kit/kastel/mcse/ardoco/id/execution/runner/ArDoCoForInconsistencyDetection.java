@@ -1,18 +1,20 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.id.execution.runner;
 
 import java.io.File;
-import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelType;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
 import edu.kit.kastel.mcse.ardoco.id.InconsistencyChecker;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArCoTLModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -22,16 +24,16 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         super(projectName);
     }
 
-    public void setUp(File inputText, File inputModelArchitecture, ArchitectureModelType inputArchitectureModelType,
-            SortedMap<String, String> additionalConfigs, File outputDir) {
-        definePipeline(inputText, inputModelArchitecture, inputArchitectureModelType, additionalConfigs);
+    public void setUp(File inputText, File inputModelArchitecture, ModelFormat inputModelFormat, ImmutableSortedMap<String, String> additionalConfigs,
+            File outputDir) {
+        definePipeline(inputText, inputModelArchitecture, inputModelFormat, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;
     }
 
-    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ArchitectureModelType architectureModelType,
-            SortedMap<String, String> additionalConfigs, String outputDirectory) {
-        setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), architectureModelType, additionalConfigs, new File(outputDirectory));
+    public void setUp(String inputTextLocation, String inputArchitectureModelLocation, ModelFormat modelFormat,
+            ImmutableSortedMap<String, String> additionalConfigs, String outputDirectory) {
+        setUp(new File(inputTextLocation), new File(inputArchitectureModelLocation), modelFormat, additionalConfigs, new File(outputDirectory));
     }
 
     /**
@@ -39,11 +41,10 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
      *
      * @param inputText              The input text file
      * @param inputArchitectureModel the input architecture file
-     * @param architectureModelType  the type of the architecture (e.g., PCM, UML)
+     * @param modelFormat            the type of the architecture (e.g., PCM, UML)
      * @param additionalConfigs      the additional configs
      */
-    private void definePipeline(File inputText, File inputArchitectureModel, ArchitectureModelType architectureModelType,
-            SortedMap<String, String> additionalConfigs) {
+    private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, ImmutableSortedMap<String, String> additionalConfigs) {
         ArDoCo arDoCo = getArDoCo();
         var dataRepository = arDoCo.getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
@@ -53,9 +54,10 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
         DataRepositoryHelper.putInputText(dataRepository, text);
 
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
-        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, architectureModelType);
-        ArCoTLModelProviderAgent arCoTLModelProviderAgent = ArCoTLModelProviderAgent.getArCoTLModelProviderAgent(dataRepository, additionalConfigs,
-                architectureConfiguration, null);
+        var architectureConfiguration = new ArchitectureConfiguration(inputArchitectureModel, modelFormat,
+                Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+        ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration,
+                null);
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
         arDoCo.addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
         arDoCo.addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));

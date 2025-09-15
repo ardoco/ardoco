@@ -1,8 +1,9 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.List;
-import java.util.SortedMap;
+
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -25,7 +26,7 @@ public class InconsistencyChecker extends AbstractExecutionStage {
      * @param dataRepository    the data repository
      * @return an instance of InconsistencyChecker
      */
-    public static InconsistencyChecker get(SortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
+    public static InconsistencyChecker get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {
         var inconsistencyChecker = new InconsistencyChecker(dataRepository);
         inconsistencyChecker.applyConfiguration(additionalConfigs);
         return inconsistencyChecker;

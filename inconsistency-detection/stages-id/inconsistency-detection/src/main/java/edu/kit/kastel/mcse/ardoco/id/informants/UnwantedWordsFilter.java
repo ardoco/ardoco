@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
@@ -6,11 +6,11 @@ import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMa
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -56,7 +56,7 @@ public class UnwantedWordsFilter extends Filter {
             }
         }
 
-        inconsistencyState.setRecommendedInstances(recommendedInstancesToKeep);
+        inconsistencyState.setRecommendedInstances(recommendedInstancesToKeep.toImmutable());
     }
 
     private boolean checkRecommendedInstance(RecommendedInstance recommendedInstance) {
@@ -112,7 +112,7 @@ public class UnwantedWordsFilter extends Filter {
     }
 
     @Override
-    protected void delegateApplyConfigurationToInternalObjects(SortedMap<String, String> map) {
+    protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // nothing
     }
 

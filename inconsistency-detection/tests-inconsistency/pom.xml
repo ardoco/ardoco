@@ -26,12 +26,6 @@
       <groupId>io.github.ardoco.id</groupId>
       <artifactId>pipeline-id</artifactId>
       <version>${revision}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
@@ -51,7 +45,6 @@
       <version>${revision}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>text-extraction</artifactId>
@@ -63,12 +56,6 @@
       <artifactId>text-preprocessing</artifactId>
       <version>${revision}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 
@@ -91,5 +78,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

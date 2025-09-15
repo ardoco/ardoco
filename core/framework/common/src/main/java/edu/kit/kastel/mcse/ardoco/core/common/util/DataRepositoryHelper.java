@@ -1,29 +1,23 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
+import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 
 /**
- * This class helps to access {@link DataRepository DataRepositories}. It provides methods to access the different {@link PipelineStepData} that is stored
- * within the repository that are used within ArDoCo.
+ * Utility class to help access and manipulate {@link DataRepository} and its stored pipeline data.
  */
 public final class DataRepositoryHelper {
 
@@ -96,18 +90,30 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Checks whether there is {@link TextState} stored within the provided {@link DataRepository}
+     * Checks whether there is annotated {@link SimpleText} stored within the provided {@link DataRepository}
      *
      * @param dataRepository the DataRepository to access
-     * @return true, if there is {@link TextState} within the {@link DataRepository}; else, false
+     * @return true, if there is {@link SimpleText} within the {@link DataRepository}; else, false
      */
-    public static boolean hasTextState(DataRepository dataRepository) {
-        return dataRepository.getData(TextState.ID, TextState.class).isPresent();
+    public static boolean hasSimpleText(DataRepository dataRepository) {
+        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).isPresent();
+    }
+
+    /**
+     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
+     * {@link java.util.NoSuchElementException} if the data is not present. To make sure that there is data present, use
+     * {@link #hasAnnotatedText(DataRepository)}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return the text
+     */
+    public static SimpleText getSimpleText(DataRepository dataRepository) {
+        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow().getText();
     }
 
     /**
      * Returns the {@link TextState} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
-     * {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use {@link #hasTextState(DataRepository)}
+     * {@link java.util.NoSuchElementException} if the state is not present.
      *
      * @param dataRepository the DataRepository to access
      * @return the state
@@ -117,19 +123,8 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Checks whether there is {@link ModelStates} stored within the provided {@link DataRepository}
-     *
-     * @param dataRepository the DataRepository to access
-     * @return true, if there is {@link ModelStates} within the {@link DataRepository}; else, false
-     */
-    public static boolean hasModelStatesData(DataRepository dataRepository) {
-        return dataRepository.getData(ModelStates.ID, ModelStates.class).isPresent();
-    }
-
-    /**
      * Returns the {@link ModelStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw
-     * an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
-     * {@link #hasModelStatesData(DataRepository)}
+     * an {@link java.util.NoSuchElementException} if the state is not present.
      *
      * @param dataRepository the DataRepository to access
      * @return the state
@@ -180,6 +175,28 @@ public final class DataRepositoryHelper {
      */
     public static ConnectionStates getConnectionStates(DataRepository dataRepository) {
         return dataRepository.getData(ConnectionStates.ID, ConnectionStates.class).orElseThrow();
+    }
+
+    /**
+     * Checks whether there is {@link ConnectionStates} stored within the provided {@link DataRepository}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return true, if there is {@link ConnectionStates} within the {@link DataRepository}; else, false
+     */
+    public static boolean hasNerConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).isPresent();
+    }
+
+    /**
+     * Returns the {@link NerConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and
+     * throw an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
+     * {@link #hasConnectionStates(DataRepository)}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return the state
+     */
+    public static NerConnectionStates getNerConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).orElseThrow();
     }
 
     /**
@@ -243,19 +260,12 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * {@return a deep copy of a serializable object using serialization}
+     * Put the given {@link SimplePreprocessingData} into the given {@link DataRepository}. This will override existing data!
      *
-     * @param object the object to copy
+     * @param dataRepository    the dataRepository
+     * @param preprocessingData the preprocessingData
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends Serializable> T deepCopy(T object) {
-        try {
-            var byteArrayOutputStream = new ByteArrayOutputStream();
-            new ObjectOutputStream(byteArrayOutputStream).writeObject(object);
-            var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            return (T) new ObjectInputStream(byteArrayInputStream).readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
+    public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
+        dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
     }
 }
