@@ -82,10 +82,10 @@
     <!-- Versions -->
     <slf4j.version>2.0.17</slf4j.version>
     <spotless.version>2.46.1</spotless.version>
-    <junit.version>5.13.4</junit.version>
+    <junit.version>6.0.0</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.27.0</javaparser.version>
-    <mockito.version>5.19.0</mockito.version>
+    <mockito.version>5.20.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.20.0</jackson.version>
@@ -128,7 +128,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
-        <version>5.5</version>
+        <version>5.5.1</version>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
@@ -330,7 +330,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.0</version>
+          <version>3.14.1</version>
           <configuration>
             <release>${java.version}</release>
             <source>${java.version}</source>
@@ -342,7 +342,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.3</version>
+          <version>3.5.4</version>
           <executions>
             <execution>
               <goals>
@@ -371,7 +371,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.11.3</version>
+          <version>3.12.0</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -397,7 +397,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.3</version>
+          <version>3.5.4</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -446,7 +446,7 @@
         <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
-          <version>0.8.0</version>
+          <version>0.9.0</version>
           <extensions>true</extensions>
           <configuration>
             <publishingServerId>central</publishingServerId>
