@@ -19,14 +19,6 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
     private static final long serialVersionUID = -3169247087879811254L;
 
     /**
-     * Default constructor for deserialization frameworks.
-     */
-    protected ModelEntity() {
-        // Jackson
-        super(null);
-    }
-
-    /**
      * Creates a new entity with the specified name.
      *
      * @param name the name of the entity to be created
