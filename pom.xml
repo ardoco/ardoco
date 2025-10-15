@@ -459,6 +459,9 @@
                 <goal>generate</goal>
               </goals>
               <phase>process-sources</phase>
+              <configuration>
+                <generatedSourcesDirectory>${project.build.sourceDirectory}</generatedSourcesDirectory>
+              </configuration>
             </execution>
           </executions>
         </plugin>

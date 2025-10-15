@@ -5,11 +5,11 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract base class for entities, the smallest unit of a trace link. Provides identity, name, and comparison logic.
