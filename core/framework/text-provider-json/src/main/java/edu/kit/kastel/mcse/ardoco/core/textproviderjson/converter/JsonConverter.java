@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
@@ -6,16 +6,15 @@ import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMa
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.dto.TextDto;
@@ -43,15 +42,15 @@ public final class JsonConverter {
      */
     public static boolean validateJson(String json) throws IOException {
         ObjectMapper mapper = createObjectMapper();
-        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
+        SchemaRegistry schemaRegistry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12);
 
         InputStream inputSchema = JsonConverter.class.getClassLoader().getResourceAsStream(SCHEMA_PATH);
-        JsonSchema schema = schemaFactory.getSchema(inputSchema);
+        Schema schema = schemaRegistry.getSchema(inputSchema);
 
-        Set<ValidationMessage> message = schema.validate(mapper.readTree(json));
+        List<Error> message = schema.validate(mapper.readTree(json));
         if (!message.isEmpty()) {
             // get only the first fifteen messages
-            List<String> loggerMessages = message.stream().map(ValidationMessage::getMessage).toList();
+            List<String> loggerMessages = message.stream().map(Error::getMessage).toList();
             if (loggerMessages.size() > 15) {
                 loggerMessages = loggerMessages.subList(0, 15);
             }
