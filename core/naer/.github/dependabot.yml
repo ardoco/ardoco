@@ -9,12 +9,3 @@ updates:
       commit-message:
           prefix: "Dependency"
           include: "scope"
-    - package-ecosystem: "docker"
-      directory: "/"
-      schedule:
-          interval: "monthly"
-          time: "11:00"
-          timezone: "Europe/Berlin"
-      commit-message:
-          prefix: "Dependency"
-          include: "scope"
