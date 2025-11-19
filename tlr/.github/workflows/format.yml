@@ -19,7 +19,7 @@ jobs:
       - uses: joshlong/java-version-export-github-action@v28
         id: jve
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: ${{ steps.jve.outputs.java_major_version }}
@@ -27,6 +27,6 @@ jobs:
       - name: Format with Spotless in Maven
         run: mvn -B spotless:apply --file pom.xml
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Apply formatting changes
