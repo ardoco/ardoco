@@ -5,6 +5,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
@@ -21,7 +23,7 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
     private final String id;
 
     @JsonProperty
-    private String name;
+    private @Nullable String name;
 
     /**
      * Default constructor for deserialization frameworks.
@@ -36,7 +38,7 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
      *
      * @param name the name of the entity to be created
      */
-    protected Entity(String name) {
+    protected Entity(@Nullable String name) {
         this(name, IdentifierProvider.createId());
     }
 
@@ -46,7 +48,7 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
      * @param name the name of the entity
      * @param id   the unique identifier
      */
-    protected Entity(String name, String id) {
+    protected Entity(@Nullable String name, String id) {
         this.name = name;
         this.id = Objects.requireNonNull(id);
     }
@@ -65,13 +67,13 @@ public abstract sealed class Entity implements Serializable, Comparable<Entity> 
      *
      * @return the entity's name
      */
-    public String getName() {
+    public @Nullable String getName() {
         return this.name;
     }
 
     @Override
     public String toString() {
-        return this.name;
+        return this.name == null ? this.id : this.name;
     }
 
     @Override

@@ -216,6 +216,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
@@ -444,6 +449,23 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.fuchss</groupId>
+          <artifactId>jspecify-maven-plugin</artifactId>
+          <version>0.1.0</version>
+          <executions>
+            <execution>
+              <id>generate-jspecify-package-infos</id>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+              <phase>process-sources</phase>
+              <configuration>
+                <generatedSourcesDirectory>${project.build.sourceDirectory}</generatedSourcesDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
           <version>0.9.0</version>
@@ -477,6 +499,10 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.fuchss</groupId>
+        <artifactId>jspecify-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.sonatype.central</groupId>
