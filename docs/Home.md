@@ -11,7 +11,7 @@ to identify inconsistencies.
 
 You can find ArDoCo on the [website](https://ardoco.de) and [on GitHub](https://github.com/ArDoCo).
 
-Before contributing, please read the [Quickstart Guide](quickstart).
+Before contributing, please read the [Quickstart Guide](quickstart) and the developer note on [Nullness and JSpecify](jspecify).
 
 <!-- JavaDocs can be found [here](https://ardoco.github.io/Core-Docs/). -->
 

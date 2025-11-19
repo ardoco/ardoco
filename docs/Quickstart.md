@@ -30,6 +30,18 @@ Please use the provided [formatter](https://github.com/ArDoCo/Core/blob/main/for
 Additionally, please make use of the spotless-plugin for maven to format your code. You can run it via `mvn spotless:apply` ([more info about spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven)).
 
 
+### Nullness (JSpecify)
+
+ArDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations.
+
+- Default is non-null via `@NullMarked` generated during build.
+- Mark nullable references explicitly with `org.jspecify.annotations.Nullable`.
+- Do not use other `@Nullable` variants (e.g., `javax.annotation.Nullable`).
+- Do not commit `package-info.java`; these are auto-generated and ignored.
+
+See the dedicated guide: [Nullness and JSpecify](jspecify).
+
+
 ### Save Actions (Eclipse)
 
 Go to your Eclipse Workspace folder and open the
