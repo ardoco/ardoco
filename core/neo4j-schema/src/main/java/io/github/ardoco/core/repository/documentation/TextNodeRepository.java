@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
     TextNode findByArdocoId(String ardocoId);
+
+    boolean existsByArdocoId(String ardocoId);
 }
