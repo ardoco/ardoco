@@ -82,7 +82,7 @@
     <project.source.encoding>UTF-8</project.source.encoding>
   </properties>
 
-  <repositories>
+    <repositories>
     <repository>
       <id>mavenCentral</id>
       <url>https://repo1.maven.org/maven2/</url>
@@ -149,6 +149,7 @@
         <module>framework</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
+        <module>neo4j-schema</module>
       </modules>
       <build>
         <plugins>
