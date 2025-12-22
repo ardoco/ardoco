@@ -86,6 +86,7 @@ public final class JavaExtractor extends CodeExtractor {
         parser.setStatementsRecovery(true);
         parser.setCompilerOptions(Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion,
                 JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, javaCoreVersion));
+        parser.setResolveBindings(false);
         return parser;
     }
 
