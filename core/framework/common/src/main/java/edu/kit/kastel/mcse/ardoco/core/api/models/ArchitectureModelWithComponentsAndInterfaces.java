@@ -22,13 +22,34 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
      * @param content the content of the architecture model
      */
     public ArchitectureModelWithComponentsAndInterfaces(List<ArchitectureItem> content) {
+        super();
+        validateContent(content);
+        this.content = content;
+    }
+
+    /**
+     * Creates a new architecture model with the specified identifier. (Used for neo4j reconstruction)
+     *
+     * @param id      the identifier of the architecture model
+     * @param content the content of the architecture model
+     */
+    public ArchitectureModelWithComponentsAndInterfaces(String id, List<ArchitectureItem> content) {
+        super(id);
+        validateContent(content);
+        this.content = content;
+    }
+
+
+
+    private void validateContent(List<ArchitectureItem> content) {
         for (ArchitectureItem item : content) {
             if (!(item instanceof ArchitectureComponent || item instanceof ArchitectureInterface)) {
                 throw new IllegalArgumentException("Architecture items must be of type ArchitectureComponent, ArchitectureInterface");
             }
         }
-        this.content = content;
     }
+
+
 
     /**
      * Returns the content of the architecture model.

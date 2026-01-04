@@ -197,6 +197,7 @@
         <module>framework</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
+        <module>neo4j-schema</module>
       </modules>
     </profile>
   </profiles>

@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Neo4jSentence implements Sentence {
 
@@ -29,11 +28,9 @@ public class Neo4jSentence implements Sentence {
     public Neo4jSentence(SentenceNode node) {
         this.node = node;
 
-        // 1. Hydrate Words
         List<Neo4jWord> mutableWords = new ArrayList<>();
         Map<Integer, Neo4jWord> wordMap = new HashMap<>();
 
-        // Assuming node.getWords() is sorted by position. If not, sort it first.
         var wordNodes = node.getWords();
         wordNodes.sort((a, b) -> Integer.compare(a.getPosition(), b.getPosition()));
 
@@ -43,7 +40,7 @@ public class Neo4jSentence implements Sentence {
             wordMap.put(wn.getPosition(), word);
         }
 
-        // 2. Link Words (Previous/Next)
+        // Link Words (Previous/Next)
         for (int i = 0; i < mutableWords.size(); i++) {
             Neo4jWord curr = mutableWords.get(i);
             if (i > 0) curr.setPreWord(mutableWords.get(i - 1));
@@ -51,7 +48,6 @@ public class Neo4jSentence implements Sentence {
         }
         this.words = new ArrayList<>(mutableWords);
 
-        // 3. Hydrate Phrases (Roots)
         List<Phrase> mutablePhrases = new ArrayList<>();
         for (var pn : node.getRootPhrases()) {
             mutablePhrases.add(new Neo4jPhrase(pn, this, wordMap));

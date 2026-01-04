@@ -62,6 +62,11 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
         return Metamodel.ARCHITECTURE_WITH_COMPONENTS;
     }
 
+    @Override
+    public String getId() {
+        return architectureModel.getId();
+    }
+
     /**
      * Returns the type identifiers of the architecture components in this model.
      *

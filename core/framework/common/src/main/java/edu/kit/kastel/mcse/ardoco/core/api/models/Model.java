@@ -12,7 +12,16 @@ import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
  */
 public abstract sealed class Model permits ArchitectureModel, CodeModel {
 
-    private final String id = IdentifierProvider.createId();
+    private final String id;
+
+    public Model() {
+        this.id = IdentifierProvider.createId();
+    }
+
+    // Allow restoring ID for neo4j reconstruction
+    public Model(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return this.id;

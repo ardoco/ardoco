@@ -15,7 +15,6 @@ public class Neo4jWord implements Word {
     private Neo4jWord nextWord;
     private Neo4jWord preWord;
 
-    // Lazy loaded phrase reference
     private Phrase phrase;
 
     public Neo4jWord(WordNode node, Neo4jSentence parentSentence) {
@@ -23,7 +22,6 @@ public class Neo4jWord implements Word {
         this.parentSentence = parentSentence;
     }
 
-    // Called during hydration to link the list
     public void setNextWord(Neo4jWord nextWord) {
         this.nextWord = nextWord;
     }
@@ -49,7 +47,7 @@ public class Neo4jWord implements Word {
 
     @Override
     public POSTag getPosTag() {
-        return POSTag.get(node.getPosTag()); // parsing the stored string
+        return POSTag.get(node.getPosTag());
     }
 
     @Override
@@ -76,7 +74,6 @@ public class Neo4jWord implements Word {
     public Phrase getPhrase() {
         if (this.phrase == null) {
             // Logic to find the deepest phrase containing this word
-            // We search from the sentence root phrases down
             this.phrase = findDeepestPhrase(this.parentSentence.getPhrases(), this);
         }
         return this.phrase;
@@ -93,19 +90,17 @@ public class Neo4jWord implements Word {
         return null;
     }
 
-    // Implementing abstract methods from Interface with defaults or empty for now
-    // Note: Dependency logic requires storing relationships in Neo4j (see previous steps)
+
     @Override
     public ImmutableList<Word> getOutgoingDependencyWordsWithType(DependencyTag dependencyTag) {
-        return Lists.immutable.empty(); // Placeholder
+        return Lists.immutable.empty(); // TODO
     }
 
     @Override
     public ImmutableList<Word> getIncomingDependencyWordsWithType(DependencyTag dependencyTag) {
-        return Lists.immutable.empty(); // Placeholder
+        return Lists.immutable.empty(); // TODO
     }
 
-    // Required for equality checks in collections
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

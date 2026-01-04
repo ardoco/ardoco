@@ -7,6 +7,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 /**
@@ -28,6 +29,9 @@ public final class ModelStates implements PipelineStepData {
      * @return the IDs of all contained {@link Model Models}
      */
     public SortedSet<Metamodel> getMetamodels() {
+//        if (PersistenceBridge.isAvailable()) {
+//            return PersistenceBridge.getHandler().getStoredMetamodels();
+//        }
         return new TreeSet<>(this.models.keySet());
     }
 
@@ -38,6 +42,10 @@ public final class ModelStates implements PipelineStepData {
      * @param model the {@link Model}
      */
     public void addModel(Metamodel id, Model model) {
+        // store the model in neo4j
+        if (id.isArchitectureModel() && PersistenceBridge.isAvailable()) {
+            PersistenceBridge.getHandler().saveModel(id, model);
+        }
         this.models.put(id, model);
     }
 
@@ -48,6 +56,11 @@ public final class ModelStates implements PipelineStepData {
      * @return the corresponding {@link Model}
      */
     public Model getModel(Metamodel id) {
+        // retrieve model from neo4j
+        if (id.isArchitectureModel() && PersistenceBridge.isAvailable()) {
+            Model loaded = PersistenceBridge.getHandler().loadModel(id);
+            return loaded; // TODO: cache it?
+        }
         return this.models.get(id);
     }
 

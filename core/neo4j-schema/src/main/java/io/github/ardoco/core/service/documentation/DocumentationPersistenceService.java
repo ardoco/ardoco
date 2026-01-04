@@ -6,6 +6,8 @@ import io.github.ardoco.core.entities.documentation.TextNode;
 import io.github.ardoco.core.entities.documentation.WordNode;
 import io.github.ardoco.core.repository.documentation.TextNodeRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import edu.kit.kastel.mcse.ardoco.core.api.text.*;
@@ -13,6 +15,8 @@ import java.util.*;
 
 @Service
 public class DocumentationPersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
 
     private final TextNodeRepository textRepository;
 
@@ -64,14 +68,15 @@ public class DocumentationPersistenceService {
 
             prevSentenceNode = sentenceNode;
         }
-
         textRepository.save(textNode);
+        logger.info("Saved documentation for document ID to neo4j: {}", documentId);
     }
 
     private PhraseNode convertPhrase(Phrase domainPhrase,
             Map<Integer, WordNode> wordMap,
             Map<Phrase, PhraseNode> phraseCache) {
 
+        logger.info("Converting phrase: {} of type: {}", domainPhrase.getText(), domainPhrase.getPhraseType());
         // cycle/ duplication detection
         if (phraseCache.containsKey(domainPhrase)) {
             return phraseCache.get(domainPhrase);

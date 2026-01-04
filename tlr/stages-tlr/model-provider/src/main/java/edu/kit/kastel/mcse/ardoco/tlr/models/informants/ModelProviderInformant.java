@@ -82,6 +82,7 @@ public final class ModelProviderInformant extends Informant {
     }
 
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
+        // TODO: add somewhere here or in the modelstates repo a method to save the model to neo4j
         var dataRepository = this.getDataRepository();
         Optional<ModelStates> modelStatesOptional = dataRepository.getData(ModelProviderInformant.MODEL_STATES_DATA, ModelStates.class);
         var modelStates = modelStatesOptional.orElseGet(ModelStates::new);

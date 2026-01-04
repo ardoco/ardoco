@@ -84,7 +84,6 @@ public class Neo4jPhrase implements Phrase {
 
     @Override
     public ImmutableSortedMap<Word, Integer> getPhraseVector() {
-        // Re-implementing logic from PhraseImpl
         var map = SortedMaps.mutable.<Word, Integer>empty();
         var grouped = getContainedWords().groupBy(Word::getText).toMap();
         grouped.forEach((key, value) -> map.put(value.getAny(), value.size()));
