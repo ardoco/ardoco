@@ -51,6 +51,19 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
     }
 
     /**
+     * Creates a new code item with the specified name and id.
+     *
+     * @param id                the identifier of the code item
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code item
+     */
+    protected CodeItem(String id, CodeItemRepository codeItemRepository, String name) {
+        super(name, id);
+        this.codeItemRepository = Objects.requireNonNull(codeItemRepository);
+        this.codeItemRepository.addCodeItem(this);
+    }
+
+    /**
      * Registers the current code item repository for this code item.
      *
      * @param codeItemRepository the code item repository to register

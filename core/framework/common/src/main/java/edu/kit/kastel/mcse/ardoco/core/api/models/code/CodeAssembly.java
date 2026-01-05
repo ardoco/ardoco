@@ -39,8 +39,8 @@ public final class CodeAssembly extends CodeModule {
         super(codeItemRepository, name, content);
     }
 
-    public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
-        super(codeItemRepository, name, content);
+    public CodeAssembly(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
+        super(id, codeItemRepository, name, content);
         this.language = language;
     }
 

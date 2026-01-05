@@ -43,7 +43,7 @@ public final class ModelStates implements PipelineStepData {
      */
     public void addModel(Metamodel id, Model model) {
         // store the model in neo4j
-        if (id.isArchitectureModel() && PersistenceBridge.isAvailable()) {
+        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
             PersistenceBridge.getHandler().saveModel(id, model);
         }
         this.models.put(id, model);
@@ -57,7 +57,7 @@ public final class ModelStates implements PipelineStepData {
      */
     public Model getModel(Metamodel id) {
         // retrieve model from neo4j
-        if (id.isArchitectureModel() && PersistenceBridge.isAvailable()) {
+        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
             Model loaded = PersistenceBridge.getHandler().loadModel(id);
             return loaded; // TODO: cache it?
         }

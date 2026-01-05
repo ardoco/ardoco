@@ -55,6 +55,34 @@ public final class CodeCompilationUnit extends CodeModule {
     }
 
     /**
+     * Creates a new CodeCompilationUnit.
+     *
+     * @param id                 the identifier of the compilation unit
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the compilation unit
+     * @param content            the content of the compilation unit
+     * @param pathElements       the path elements
+     * @param extension          the file extension
+     * @param language           the programming language
+     */
+    public CodeCompilationUnit(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
+            String extension, ProgrammingLanguage language) {
+        super(id, codeItemRepository, name, content);
+        this.pathElements = new ArrayList<>(pathElements);
+        this.extension = extension;
+        this.language = language;
+    }
+
+    /**
+     * Return the file extension of this compilation unit.
+     *
+     * @return the extension
+     */
+    public String getExtension() {
+        return extension;
+    }
+
+    /**
      * Returns the programming language of this compilation unit.
      *
      * @return the language

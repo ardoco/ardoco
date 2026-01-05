@@ -37,6 +37,18 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
     }
 
     /**
+     * Creates a new code model from a repository, content and an id.
+     * This constructor is
+     *
+     * @param id                 the model id
+     * @param codeItemRepository the code item repository
+     * @param content            the code items
+     */
+    public CodeModelWithCompilationUnits(String id, CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, content);
+    }
+
+    /**
      * Returns the endpoints of this code model.
      *
      * @return list of compilation units

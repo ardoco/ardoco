@@ -17,4 +17,8 @@ public enum Metamodel {
     public boolean isArchitectureModel() {
         return this.name().startsWith("ARCHITECTURE");
     }
+
+    public boolean isCodeModel() {
+        return this.name().startsWith("CODE");
+    }
 }

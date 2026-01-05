@@ -36,4 +36,14 @@ public sealed class ComputationalObject extends CodeItem permits ControlElement 
         super(codeItemRepository, name);
     }
 
+    /**
+     * Creates a new computational object with the specified name.
+     *
+     * @param id                 the id of the computational object
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the computational object
+     */
+    public ComputationalObject(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name);
+    }
 }

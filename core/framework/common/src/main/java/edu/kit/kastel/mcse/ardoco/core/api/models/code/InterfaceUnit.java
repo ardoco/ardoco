@@ -44,6 +44,32 @@ public final class InterfaceUnit extends Datatype {
     }
 
     /**
+     * Creates a new interface unit with the specified name and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the interface unit
+     * @param content            the content of the interface unit
+     */
+    public InterfaceUnit(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Adds a code item to the content of this interface unit.
+     *
+     * @param item the code item to add
+     */
+    public void addContent(CodeItem item) {
+        if (!this.content.contains(item.getId())) {
+            this.content.add(item.getId());
+        }
+    }
+
+    /**
      * Returns the content IDs of this interface unit.
      *
      * @return list of content IDs

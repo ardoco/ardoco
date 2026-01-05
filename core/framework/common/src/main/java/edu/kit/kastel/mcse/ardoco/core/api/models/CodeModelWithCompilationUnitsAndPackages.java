@@ -41,6 +41,17 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
     }
 
     /**
+     * Creates a new code model from a repository and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            the code items
+     */
+    public CodeModelWithCompilationUnitsAndPackages(String id, CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, content);
+        this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
+    }
+
+    /**
      * Returns the content of this code model.
      *
      * @return list of compilation units and packages

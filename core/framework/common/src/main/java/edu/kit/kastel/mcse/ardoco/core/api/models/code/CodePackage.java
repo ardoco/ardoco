@@ -32,6 +32,17 @@ public final class CodePackage extends CodeModule {
     }
 
     /**
+     * Creates a new code package with the specified name and id.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code package
+     * @param id                 the unique identifier
+     */
+    public CodePackage(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name, new TreeSet<>());
+    }
+
+    /**
      * Creates a new code package with the specified name and content.
      *
      * @param codeItemRepository the code item repository

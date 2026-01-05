@@ -57,6 +57,20 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     }
 
     /**
+     * Creates a new datatype with the specified name.
+     *
+     * @param id                 the identifier of the datatype
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the datatype
+     */
+    public Datatype(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name);
+        this.extendedDataTypesIds = new ArrayList<>();
+        this.implementedDataTypesIds = new ArrayList<>();
+        this.datatypeReferencesIds = new ArrayList<>();
+    }
+
+    /**
      * Returns the compilation unit associated with this datatype.
      *
      * @return the compilation unit, or null if not set

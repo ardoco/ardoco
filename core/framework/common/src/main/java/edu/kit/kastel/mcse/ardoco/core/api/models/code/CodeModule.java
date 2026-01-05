@@ -55,6 +55,22 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     }
 
     /**
+     * Creates a new code module with the specified name and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code module
+     * @param content            the content of the code module
+     */
+    public CodeModule(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+        this.parentId = null;
+    }
+
+    /**
      * Returns the content IDs of this code module.
      *
      * @return list of content IDs
