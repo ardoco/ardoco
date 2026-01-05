@@ -56,11 +56,10 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
     @Test
     @DisplayName("Should persist and restore a Code Model")
     void testSaveAndLoadCodeModel() {
-        // TODO implement test
         File codeFile = codeConfiguration.code();
         Metamodel model = codeConfiguration.metamodel();
 
-        CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, model);
+        CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         persistenceService.saveCodeModel(extractedModel);
         CodeModel loadedModel = persistenceService.loadCodeModel(extractedModel.getId());
         Assertions.assertTrue(areCodeModelsEqual(extractedModel, loadedModel));

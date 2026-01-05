@@ -2,6 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -23,15 +25,14 @@ public final class ModelStates implements PipelineStepData {
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
 
+    // If a Metamodel is in this set, it must be re-loaded from the DB
+    private final Set<Metamodel> dirtyMetamodels = new HashSet<>();
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
      *
      * @return the IDs of all contained {@link Model Models}
      */
     public SortedSet<Metamodel> getMetamodels() {
-//        if (PersistenceBridge.isAvailable()) {
-//            return PersistenceBridge.getHandler().getStoredMetamodels();
-//        }
         return new TreeSet<>(this.models.keySet());
     }
 
@@ -45,6 +46,7 @@ public final class ModelStates implements PipelineStepData {
         // store the model in neo4j
         if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
             PersistenceBridge.getHandler().saveModel(id, model);
+            this.dirtyMetamodels.add(id);
         }
         this.models.put(id, model);
     }
@@ -56,12 +58,34 @@ public final class ModelStates implements PipelineStepData {
      * @return the corresponding {@link Model}
      */
     public Model getModel(Metamodel id) {
-        // retrieve model from neo4j
-        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
+        boolean isPersistentType = id.isArchitectureModel() || id.isCodeModel();
+        boolean persistenceAvailable = PersistenceBridge.isAvailable();
+
+        // dirty check
+        if (this.dirtyMetamodels.contains(id) && isPersistentType && persistenceAvailable) {
             Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            return loaded; // TODO: cache it?
+            if (loaded != null) {
+                this.models.put(id, loaded);    // Update Cache
+                this.dirtyMetamodels.remove(id); // Mark Clean
+                return loaded;
+            }
         }
-        return this.models.get(id);
+
+        // Cache hit
+        if (this.models.containsKey(id)) {
+            return this.models.get(id);
+        }
+
+        // Cache miss
+        if (isPersistentType && persistenceAvailable) {
+            Model loaded = PersistenceBridge.getHandler().loadModel(id);
+            if (loaded != null) {
+                this.models.put(id, loaded); // Fill Cache
+                return loaded;
+            }
+        }
+
+        throw new IllegalArgumentException("Model with id " + id.toString() + " not found");
     }
 
 }
