@@ -1,5 +1,6 @@
 package io.github.ardoco.core.service.documentation;
 
+import io.github.ardoco.core.adapter.Neo4jText;
 import io.github.ardoco.core.entities.documentation.PhraseNode;
 import io.github.ardoco.core.entities.documentation.SentenceNode;
 import io.github.ardoco.core.entities.documentation.TextNode;
@@ -24,8 +25,19 @@ public class DocumentationPersistenceService {
         this.textRepository = textRepository;
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasPreprocessedText(String identifier) {
+        return textRepository.existsByArdocoId(identifier);
+    }
+
+    @Transactional(readOnly = true)
+    public Text loadPreprocessedText(String identifier) {
+        TextNode textNode = textRepository.findByArdocoId(identifier);
+        return new Neo4jText(textNode);
+    }
+
     @Transactional
-    public void saveDocumentation(Text domainText, String documentId) {
+    public void savePreprocessedText(Text domainText, String documentId) {
         TextNode textNode = new TextNode(documentId);
         Map<Integer, WordNode> wordIndexMap = new HashMap<>();
 
@@ -76,7 +88,6 @@ public class DocumentationPersistenceService {
             Map<Integer, WordNode> wordMap,
             Map<Phrase, PhraseNode> phraseCache) {
 
-        logger.info("Converting phrase: {} of type: {}", domainPhrase.getText(), domainPhrase.getPhraseType());
         // cycle/ duplication detection
         if (phraseCache.containsKey(domainPhrase)) {
             return phraseCache.get(domainPhrase);

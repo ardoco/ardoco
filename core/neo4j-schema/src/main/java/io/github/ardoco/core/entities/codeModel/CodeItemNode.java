@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Node("CodeItem")
-public abstract class CodeItemNode implements Comparable<CodeItemNode> {
+public class CodeItemNode implements Comparable<CodeItemNode> {
     @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
     private String name;
@@ -20,7 +20,7 @@ public abstract class CodeItemNode implements Comparable<CodeItemNode> {
     @Relationship(type = "CONTAINS_CODE_ITEM", direction = Relationship.Direction.OUTGOING)
     private List<CodeItemNode> content = new ArrayList<>();
 
-    protected CodeItemNode(String name, String ardocoId) {
+    public CodeItemNode(String name, String ardocoId) {
         this.name = name;
         this.ardocoId = ardocoId;
     }

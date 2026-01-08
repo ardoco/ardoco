@@ -1,11 +1,15 @@
 package io.github.ardoco.core;
 
+import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.CoreNLPProvider;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl;
 import io.github.ardoco.core.adapter.Neo4jText;
 import io.github.ardoco.core.entities.documentation.TextNode;
@@ -15,6 +19,8 @@ import io.github.ardoco.core.service.documentation.DocumentationPersistenceServi
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
+import io.github.ardoco.core.util.TextEqualityHelper;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,7 +28,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,18 +89,18 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
 
         Text domainText = new TextImpl(coreDocument);
 
-        persistenceService.saveDocumentation(domainText, documentId);
+        persistenceService.savePreprocessedText(domainText, documentId);
 
         // --- VISUALIZATION BLOCK ---
         System.out.println("----------------------------------------------------------");
         System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
         System.out.println("password:      " + neo4j.getAdminPassword());
+        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
         System.out.println("----------------------------------------------------------");
 
         // Uncomment this line when you want to look at the graph.
         //Thread.sleep(1000 * 60 * 5); // Pauses for 5 minutes
 
-        // Check if the TextNode exists
         TextNode retrievedNode = textNodeRepository.findByArdocoId(documentId);
 
         assertThat(retrievedNode).isNotNull();
@@ -116,9 +121,7 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         assertThat(firstWord.getNextWord()).isNotNull();
         assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
 
-        // 2. Map it back to your Application Domain Object (Neo4jText)
         Text restoredText = new Neo4jText(retrievedNode);
-
         assertThat(restoredText.getSentences()).hasSize(2);
 
         var neo4jFirstSentence = restoredText.getSentences().get(0);
@@ -128,7 +131,6 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         var rootPhrase = neo4jFirstSentence.getPhrases().get(0);
         assertThat(rootPhrase.getPhraseType().toString()).isEqualTo("ROOT");
 
-        var neo4jFirstWord = firstSentence.getWords().get(0);
         assertThat(firstWord.getText()).isEqualTo("The");
         assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
     }
@@ -142,5 +144,16 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
 
         testRunnerAssertions(runner);
         Assertions.assertNotNull(runner.run());
+    }
+
+    @Test
+    void saveAndLoadDocumentation() {
+        DataRepository dataRepository = new DataRepository();
+        DataRepositoryHelper.putInputText(dataRepository, this.inputText);
+        CoreNLPProvider provider = new CoreNLPProvider(dataRepository);
+        Text originalText = provider.getAnnotatedText();
+        persistenceService.savePreprocessedText(originalText, InputTextData.ID);
+        Text loadedText = persistenceService.loadPreprocessedText(InputTextData.ID);
+        Assertions.assertTrue(TextEqualityHelper.areTextsEqual(originalText, loadedText));
     }
 }

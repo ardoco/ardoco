@@ -1,6 +1,7 @@
 package io.github.ardoco.core.service.architectureModel;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
@@ -18,7 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 @Service
 public class ArchitecturePersistenceService {
@@ -120,13 +124,29 @@ public class ArchitecturePersistenceService {
     }
 
     @Transactional(readOnly = true)
-    public ArchitectureModel loadArchitectureModel(String modelId) {
-        logger.info("Start loading Architecture Model with ID: {}", modelId);
-        ArchitectureModelNode node = repository.findByModelId(modelId)
-                .orElseThrow(() -> new RuntimeException("Model not found: " + modelId));
-        logger.info("Finished loading Architecture Model with ID: {}", modelId);
-        // 2. Map back to Domain Object
-        return mapper.mapToDomain(node);
+    public ArchitectureModel loadArchitectureModel(Metamodel metamodel) {
+        List<ArchitectureModelNode> nodes = repository.findAll();
+        for (ArchitectureModelNode node : nodes) {
+            if (node.getMetamodel() != null && node.getMetamodel().equals(metamodel.name())) {
+                return mapper.mapToDomain(node);
+            }
+        }
+        logger.warn("No Architecture Model found for type: " + metamodel);
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public SortedSet<Metamodel> getStoredArchitectureModelMetamodels() {
+        SortedSet<Metamodel> available = new java.util.TreeSet<>();
+        List<ArchitectureModelNode> archNodes = repository.findAll();
+        for (ArchitectureModelNode node : archNodes) {
+            try {
+                available.add(Metamodel.valueOf(node.getMetamodel()));
+            } catch (IllegalArgumentException e) {
+                logger.warn("Unknown metamodel found in stored Architecture Models: " + node.getMetamodel());
+            }
+        }
+        return available;
     }
 
 }

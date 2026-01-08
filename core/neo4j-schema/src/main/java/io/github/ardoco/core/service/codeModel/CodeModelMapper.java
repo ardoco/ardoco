@@ -16,29 +16,22 @@ public class CodeModelMapper {
     private static final Logger logger = LoggerFactory.getLogger(CodeModelMapper.class);
 
     public CodeModel mapToDomain(CodeModelNode node) {
-        // 1. Create a fresh repository for this model restoration
         CodeItemRepository repository = new CodeItemRepository();
 
-        // 2. Flatten the Neo4j graph (BFS) to get a linear list of all nodes.
-        //    This prevents StackOverflowError by avoiding recursive method calls.
         List<CodeItemNode> allNodes = flattenGraph(node.getContent());
 
-        // 3. PASS 1: Instantiation
-        //    Create all Domain Objects with correct IDs but EMPTY content.
-        //    They automatically register themselves in the repository constructor.
         for (CodeItemNode itemNode : allNodes) {
             if (!repository.containsCodeItem(itemNode.getArdocoId())) {
                 createInstance(itemNode, repository);
             }
         }
 
-        // 4. PASS 2: Linking
-        //    Now that all objects exist in the repository, we can link them safely.
+        // Link items
         for (CodeItemNode itemNode : allNodes) {
             CodeItem parentItem = repository.getCodeItem(itemNode.getArdocoId());
             if (parentItem == null) continue;
 
-            // A. Link Content (Children)
+            // Link Content (Children)
             for (CodeItemNode childNode : itemNode.getContent()) {
                 CodeItem childItem = repository.getCodeItem(childNode.getArdocoId());
                 if (childItem != null) {
@@ -48,16 +41,15 @@ public class CodeModelMapper {
                 }
             }
 
-            // B. Link Datatype Relationships (Extends/Implements)
+            // Link Datatype Relationships (Extends/Implements)
             if (itemNode instanceof DatatypeNode dtNode && parentItem instanceof Datatype dtItem) {
                 linkDatatypes(dtItem, dtNode, repository);
             }
         }
 
-        // 5. Initialize Repository internal state
         repository.init();
 
-        // 6. Construct the final CodeModel container
+        // 6. Construct CodeModel container
         SortedSet<CodeItem> rootItems = new TreeSet<>();
         for (CodeItemNode rootItemNode : node.getContent()) {
             rootItems.add(repository.getCodeItem(rootItemNode.getArdocoId()));
@@ -67,7 +59,6 @@ public class CodeModelMapper {
         if (Metamodel.CODE_WITH_COMPILATION_UNITS.name().equals(node.getMetamodel())) {
             return new CodeModelWithCompilationUnits(node.getModelId(), repository, rootItems);
         } else if (Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES.name().equals(node.getMetamodel())) {
-            // Using the constructor you added that takes repository + content
             return new CodeModelWithCompilationUnitsAndPackages(node.getModelId(), repository, rootItems);
         }
 
@@ -86,7 +77,7 @@ public class CodeModelMapper {
             CodeItemNode current = queue.poll();
             if (visitedIds.add(current.getArdocoId())) {
                 result.add(current);
-                // Enqueue children
+
                 if (current.getContent() != null) {
                     queue.addAll(current.getContent());
                 }
@@ -108,20 +99,16 @@ public class CodeModelMapper {
         String id = node.getArdocoId();
 
         if (node instanceof CodePackageNode p) {
-            // Requires: public CodePackage(String id, CodeItemRepository repo, String name)
             return new CodePackage(id, repo, p.getName());
         }
         else if (node instanceof CodeCompilationUnitNode c) {
-            // Requires constructor with ID
             return new CodeCompilationUnit(id, repo, c.getName(), new TreeSet<>(), c.getPathElements(),
                     c.getExtension(), ProgrammingLanguage.valueOf(c.getLanguage()));
         }
         else if (node instanceof ClassUnitNode c) {
-            // Requires: public ClassUnit(String id, CodeItemRepository repo, String name, SortedSet content)
-            return new ClassUnit(id, repo, c.getName(), new TreeSet<>());
+           return new ClassUnit(id, repo, c.getName(), new TreeSet<>());
         }
         else if (node instanceof InterfaceUnitNode i) {
-            // Requires constructor with ID
             return new InterfaceUnit(id, repo, i.getName(), new TreeSet<>());
         }
         else if (node instanceof CodeAssemblyNode a) {
@@ -134,16 +121,16 @@ public class CodeModelMapper {
     }
 
     private void linkChildToParent(CodeItem parent, CodeItem child) {
-        // 1. Add Child to Parent's Content List
-        if (parent instanceof CodeModule module) {
-            module.addContent(child);
-        } else if (parent instanceof ClassUnit cls) {
-            cls.addContent(child);
-        } else if (parent instanceof InterfaceUnit iface) {
-            iface.addContent(child); // Assuming you added this method like in ClassUnit
+        // Add Child to Parent's Content List
+        switch (parent) {
+            case CodeModule module -> module.addContent(child);
+            case ClassUnit cls -> cls.addContent(child);
+            case InterfaceUnit iface -> iface.addContent(child);
+            default -> {
+            }
         }
 
-        // 2. Set Child's Parent Reference
+        // Set Child's Parent Reference
         if (child instanceof CodeModule childModule && parent instanceof CodeModule parentModule) {
             childModule.setParent(parentModule);
         } else if (child instanceof Datatype childDt && parent instanceof CodeCompilationUnit parentCu) {

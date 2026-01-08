@@ -1,6 +1,9 @@
 package io.github.ardoco.core.service.codeModel;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
 
 import io.github.ardoco.core.entities.codeModel.*;
@@ -18,7 +21,6 @@ public class CodePersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(CodePersistenceService.class);
 
-
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
 
@@ -27,24 +29,84 @@ public class CodePersistenceService {
         this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true)
+    public SortedSet<Metamodel> getStoredCodeModelMetamodels() {
+        SortedSet<Metamodel> available = new java.util.TreeSet<>();
+        List<CodeModelNode> archNodes = repository.findAll();
+        for (CodeModelNode node : archNodes) {
+            try {
+                available.add(Metamodel.valueOf(node.getMetamodel()));
+            } catch (IllegalArgumentException e) {
+                logger.warn("Unknown metamodel found in stored Code Models: " + node.getMetamodel());
+            }
+        }
+        return available;
+    }
+
+    @Transactional(readOnly = true)
+    public CodeModel loadCodeModel(Metamodel metamodel) {
+
+        List<CodeModelNode> nodes = repository.findAll();
+        for (CodeModelNode node : nodes) {
+            if (node.getMetamodel().equals(metamodel.name())) {
+                return mapper.mapToDomain(node);
+            }
+        }
+        logger.warn("No Code Model found for type: " + metamodel);
+        return null;
+    }
+
     @Transactional
     public void saveCodeModel(CodeModel model) {
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
         Map<String, CodeItemNode> cache = new HashMap<>();
 
-        for (CodeItem item : model.getContent()) {
-            CodeItemNode itemNode = mapToNode(item, cache);
-            modelNode.addContent(itemNode);
+        CodeModel.CodeModelDto dto = model.createCodeModelDto();
+        List<String> contentIds = dto.content();
+        CodeItemRepository itemRepository = dto.codeItemRepository();
+
+        List<CodeItem> contentItems = itemRepository.getCodeItemsByIds(contentIds);
+        Set<String> modelContentIdSet = new HashSet<>(contentIds);
+
+        if (model instanceof CodeModelWithCompilationUnitsAndPackages) {
+            for (CodeItem item : contentItems) {
+                if (isRootInModel(item, modelContentIdSet)) {
+                    modelNode.addContent(mapToNode(item, cache));
+                }
+            }
+        } else if (model instanceof CodeModelWithCompilationUnits) {
+            for (CodeItem item : contentItems) {
+                modelNode.addContent(mapToNode(item, cache));
+            }
+        } else {
+            for (CodeItem item : contentItems) {
+                modelNode.addContent(mapToNode(item, cache));
+            }
         }
+
         repository.save(modelNode);
     }
 
-    @Transactional(readOnly = true)
-    public CodeModel loadCodeModel(String modelId) {
-        CodeModelNode node = repository.findByModelId(modelId)
-                .orElseThrow(() -> new RuntimeException("CodeModel not found: " + modelId));
-        logger.info("Finished loading CodeModel");
-        return mapper.mapToDomain(node);
+    /**
+     * Checks if the given code item is a "Root" relative to the set of IDs in the model.
+     * An item is a root if it has no parent, or if its parent is not part of the modelContentIdSet.
+     */
+    private boolean isRootInModel(CodeItem item, Set<String> modelContentIdSet) {
+        if (item instanceof CodeModule cm) {
+            if (cm.hasParent() && modelContentIdSet.contains(cm.getParent().getId())) {
+                return false;
+            }
+        }
+
+        else if (item instanceof Datatype dt) {
+            if (dt.getCompilationUnit() != null && modelContentIdSet.contains(dt.getCompilationUnit().getId())) {
+                return false;
+            }
+            if (dt.getParentDatatype() != null && modelContentIdSet.contains(dt.getParentDatatype().getId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private CodeItemNode mapToNode(CodeItem item, Map<String, CodeItemNode> cache) {
@@ -53,7 +115,6 @@ public class CodePersistenceService {
         CodeItemNode node = createNode(item);
         cache.put(item.getId(), node);
 
-        // Map Content (Children)
         for (CodeItem child : item.getContent()) {
             node.addContent(mapToNode(child, cache));
         }

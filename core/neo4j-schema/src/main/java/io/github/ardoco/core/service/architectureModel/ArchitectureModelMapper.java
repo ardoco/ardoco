@@ -65,7 +65,6 @@ public class ArchitectureModelMapper {
 
     private ArchitectureInterface mapInterface(ArchitectureInterfaceNode node,
             Map<String, ArchitectureInterface> cache) {
-        logger.info("Mapping ArchitectureInterfaceNode with ID {} to domain model.", node.getArdocoId());
         if (cache.containsKey(node.getArdocoId())) {
             return cache.get(node.getArdocoId());
         }
@@ -88,7 +87,6 @@ public class ArchitectureModelMapper {
     private ArchitectureComponent mapComponent(ArchitectureComponentNode node,
             Map<String, ArchitectureComponent> compCache,
             Map<String, ArchitectureInterface> ifaceCache) {
-        logger.info("Mapping ArchitectureComponentNode with ID {} to domain model.", node.getArdocoId());
         if (compCache.containsKey(node.getArdocoId())) {
             return compCache.get(node.getArdocoId());
         }

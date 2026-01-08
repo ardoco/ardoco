@@ -56,18 +56,32 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
     @Test
     @DisplayName("Should persist and restore a Code Model")
     void testSaveAndLoadCodeModel() {
+        // --- VISUALIZATION BLOCK ---
+        System.out.println("----------------------------------------------------------");
+        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
+        System.out.println("password:      " + neo4j.getAdminPassword());
+        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
+        System.out.println("----------------------------------------------------------");
+
         File codeFile = codeConfiguration.code();
         Metamodel model = codeConfiguration.metamodel();
 
         CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         persistenceService.saveCodeModel(extractedModel);
-        CodeModel loadedModel = persistenceService.loadCodeModel(extractedModel.getId());
+        CodeModel loadedModel = persistenceService.loadCodeModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         Assertions.assertTrue(areCodeModelsEqual(extractedModel, loadedModel));
     }
 
     @Test
     @DisplayName("Should run ArdoCode pipeline and persist results")
     void testArdoCodePipelineWithNeo4j() {
+        // --- VISUALIZATION BLOCK ---
+        System.out.println("----------------------------------------------------------");
+        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
+        System.out.println("password:      " + neo4j.getAdminPassword());
+        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
+        System.out.println("----------------------------------------------------------");
+
         var runner = new Ardocode(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));

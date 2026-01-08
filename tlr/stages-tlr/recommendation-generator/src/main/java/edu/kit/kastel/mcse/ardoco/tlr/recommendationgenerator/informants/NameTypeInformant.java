@@ -1,6 +1,8 @@
 /* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
@@ -17,6 +19,10 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * This analyzer searches for name type patterns. If these patterns occur recommendations are created.
@@ -45,15 +51,27 @@ public class NameTypeInformant extends Informant {
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
 
+        // prepare models to not have to call getModel multiple times
+        var metamodels = modelStatesData.getMetamodels();
+        Map<Metamodel, Model> metamodelModelMap  = new HashMap<>();
+        for (var metamodel : metamodels) {
+            var model = modelStatesData.getModel(metamodel);
+            if (model != null) {
+                metamodelModelMap.put(metamodel, model);
+            }
+        }
+
         for (var word : text.words()) {
-            this.exec(textState, textStateStrategy, modelStatesData, recommendationStates, word);
+            this.exec(textState, textStateStrategy, metamodelModelMap, recommendationStates, word);
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy textStateStrategy, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
+    private void exec(TextState textState, TextStateStrategy textStateStrategy, Map<Metamodel, Model> metamodelModelMap, RecommendationStates recommendationStates, Word word) {
 
-        for (var metamodel : modelStates.getMetamodels()) {
-            var model = modelStates.getModel(metamodel);
+
+        for (var modelEntry : metamodelModelMap.entrySet()) {
+            Metamodel metamodel = modelEntry.getKey();
+            var model = modelEntry.getValue();
             if (model == null) {
                 continue;
             }

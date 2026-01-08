@@ -1,12 +1,17 @@
 package io.github.ardoco.core;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
+import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 import io.github.ardoco.core.service.architectureModel.ArchitecturePersistenceService;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +25,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static io.github.ardoco.core.util.ArchitectureModelEqualityHelper.areArchitectureModelsEqual;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
 @Transactional
-class ArchitecturePersistenceTest {
+class ArchitecturePersistenceTest extends RunnerBaseTest {
 
     @Autowired
     private ArchitecturePersistenceService persistenceService;
@@ -62,28 +67,18 @@ class ArchitecturePersistenceTest {
                 "AuthService", "id_comp_1",
                 subcomponents, providedInterfaces, requiredInterfaces, "Service"
         );
-
-        // Create Model Container
         List<ArchitectureItem> items = new ArrayList<>();
         items.add(authComponent);
         items.add(authInterface);
 
         var originalModel = new ArchitectureModelWithComponentsAndInterfaces(items);
-
-        // 2. Save
         persistenceService.saveArchitectureModel(originalModel);
+        var loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
 
-        // 3. Load
-        var loadedModel = persistenceService.loadArchitectureModel(originalModel.getId());
 
-        // 4. Assert
         assertThat(loadedModel).isNotNull();
         assertThat(loadedModel.getContent()).hasSize(2); // Component + Interface
-
-        // Check Identity
         assertThat(loadedModel.getId()).isEqualTo(originalModel.getId());
-
-        // Check Deep Structure
         ArchitectureComponent loadedComp = (ArchitectureComponent) loadedModel.getContent().stream()
                 .filter(i -> i instanceof ArchitectureComponent).findFirst().orElseThrow();
 
@@ -93,5 +88,16 @@ class ArchitecturePersistenceTest {
         ArchitectureInterface loadedIface = loadedComp.getProvidedInterfaces().first();
         assertThat(loadedIface.getName()).isEqualTo("IAuth");
         assertThat(loadedIface.getMethodSignatures()).hasSize(2);
+    }
+
+    @Test
+    void testSaveAndLoadCodeModel2() {
+        UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+        ArchitectureModel originalModel = extractor.extractModel();
+        persistenceService.saveArchitectureModel(originalModel);
+        ArchitectureModel loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
+        System.out.println("Hello from testSaveAndLoadCodeModel2");
+        assertThat(loadedModel).isNotNull();
+        Assertions.assertTrue(areArchitectureModelsEqual(originalModel, loadedModel));
     }
 }
