@@ -10,6 +10,7 @@
 
   <artifactId>tests-base</artifactId>
   <packaging>jar</packaging>
+  <name>ARDoCo Tests Base</name>
   <description>Base classes for tests. It also includes the benchmark data from https://github.com/ArDoCo/Benchmark</description>
 
   <dependencies>

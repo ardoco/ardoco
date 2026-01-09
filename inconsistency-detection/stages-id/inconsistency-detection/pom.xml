@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>inconsistency-detection</artifactId>
+  <name>ARDoCo Inconsistency Detection</name>
+  <description>Core inconsistency detection stage for identifying missing or deviating elements between documentation and models.</description>
 
   <dependencies>
     <dependency>

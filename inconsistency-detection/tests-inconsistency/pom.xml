@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>tests-inconsistency</artifactId>
+  <name>ARDoCo ID Tests</name>
+  <description>Integration and unit tests for Inconsistency Detection (ID) modules.</description>
 
   <dependencies>
     <dependency>

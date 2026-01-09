@@ -9,6 +9,8 @@
   </parent>
 
   <artifactId>code-traceability</artifactId>
+  <name>ARDoCo Code Traceability</name>
+  <description>Code traceability stage for creating trace links between documentation and source code.</description>
 
   <dependencies>
     <dependency>

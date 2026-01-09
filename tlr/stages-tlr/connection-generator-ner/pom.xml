@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>connection-generator-ner</artifactId>
+  <name>ARDoCo Connection Generator with NER</name>
+  <description>Connection generator using Named Entity Recognition for architecture components.</description>
 
   <dependencies>
     <dependency>

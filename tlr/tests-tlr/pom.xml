@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>tests-tlr</artifactId>
+  <name>ARDoCo TLR Tests</name>
+  <description>Integration and unit tests for Traceability Link Recovery (TLR) modules.</description>
 
   <dependencies>
     <dependency>

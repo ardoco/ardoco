@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>recommendation-generator</artifactId>
+  <name>ARDoCo Recommendation Generator</name>
+  <description>Recommendation generator stage for creating traceability link recommendations.</description>
 
   <dependencies>
     <dependency>

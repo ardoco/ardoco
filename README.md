@@ -1,4 +1,4 @@
-# Automating Requirements and Documentation Comprehension (ARDoCo)
+# ARDoCo - Automating Requirements and Documentation Comprehension
 
 [![Maven Verify](https://github.com/ardoco/ARDoCo/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ArDoCo/ArDoCo/actions/workflows/verify.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent)
@@ -33,7 +33,7 @@ For more information about the setup, the project structure, or the architecture
 ## Relevant repositories
 The following is an excerpt of repositories that use this framework and implement the different approaches and pipelines of ARDoCo:
 * [ardoco/core](https://github.com/ardoco/core): implementing the core of the approach
-* [ardoco/tlr](https://github.com/ardoco/TLR): implementing different traceability link recovery approaches
+* [ardoco/tlr](https://github.com/ardoco/tlr): implementing different traceability link recovery approaches
 * [ardoco/inconsistency-detection](https://github.com/ardoco/inconsistency-detection): implementing inconsistency detection approaches
 
 ### Pull

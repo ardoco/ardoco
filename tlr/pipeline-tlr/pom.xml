@@ -9,6 +9,8 @@
   </parent>
 
   <artifactId>pipeline-tlr</artifactId>
+  <name>ARDoCo TLR Pipeline</name>
+  <description>Pipeline implementation for Traceability Link Recovery (TLR) in ARDoCo.</description>
 
   <dependencies>
     <dependency>

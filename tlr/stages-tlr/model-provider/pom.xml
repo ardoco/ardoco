@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>model-provider</artifactId>
+  <name>ARDoCo Model Provider</name>
+  <description>Model provider stage for loading and processing software architecture models.</description>
 
   <dependencyManagement>
     <dependencies>

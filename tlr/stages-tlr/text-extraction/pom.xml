@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>text-extraction</artifactId>
+  <name>ARDoCo Text Extraction</name>
+  <description>Text extraction stage for extracting and processing textual information from documentation.</description>
 
   <dependencies>
     <dependency>
