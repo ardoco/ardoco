@@ -1,10 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.approach;
 
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToCodeTlrTask;
 
-public enum ArDoCodeEvaluationProject {
+public enum ArdocodeEvaluationProject {
     MEDIASTORE(DocumentationToCodeTlrTask.MEDIASTORE, new ExpectedResults(.049, .593, .096, .856, .145, .86)),//
     TEASTORE(DocumentationToCodeTlrTask.TEASTORE, new ExpectedResults(.196, .74, .31, .787, .305, .79)),//
     TEAMMATES(DocumentationToCodeTlrTask.TEAMMATES, new ExpectedResults(.39, .916, .55, .928, .57, .93)),//
@@ -14,7 +14,7 @@ public enum ArDoCodeEvaluationProject {
     private final DocumentationToCodeTlrTask tlrTask;
     private final ExpectedResults expectedResults;
 
-    ArDoCodeEvaluationProject(DocumentationToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
+    ArdocodeEvaluationProject(DocumentationToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
         this.tlrTask = tlrTask;
         this.expectedResults = expectedResults;
     }

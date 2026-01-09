@@ -1,9 +1,9 @@
 # ARDoCo - Automating Requirements and Documentation Comprehension
 
-[![Maven Verify](https://github.com/ardoco/ARDoCo/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ArDoCo/ArDoCo/actions/workflows/verify.yml)
+[![Maven Verify](https://github.com/ardoco/ardoco/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ardoco/ardoco/actions/workflows/verify.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArDoCo_ArDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ArDoCo_ArDoCo)
-[![Latest Release](https://img.shields.io/github/release/ardoco/ARDoCo.svg)](https://github.com/ardoco/ARDoCo/releases/latest)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ARDoCo_ARDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ARDoCo_ARDoCo)
+[![Latest Release](https://img.shields.io/github/release/ardoco/ARDoCo.svg)](https://github.com/ardoco/ardoco/releases/latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7274034.svg)](https://doi.org/10.5281/zenodo.7274034)
 
 The goal of the ARDoCo project is to connect architecture documentation and models with Traceability Link Recovery (TLR) while identifying missing or deviating elements (inconsistencies).
@@ -15,7 +15,7 @@ ARDoCo is actively developed by researchers of the _[Modelling for Continuous So
 This repository contains the framework and the approaches.
 As such, there is the definition of our pipeline and the data handling as well as the definitions for the various pipeline steps, inputs, outputs, etc.
 
-For more information about the setup, the project structure, or the architecture, please have a look at the [Wiki](https://github.com/ardoco/ARDoCo/wiki).
+For more information about the setup, the project structure, or the architecture, please have a look at the [Wiki](https://github.com/ardoco/ardoco/wiki).
 
 ## Maven
 

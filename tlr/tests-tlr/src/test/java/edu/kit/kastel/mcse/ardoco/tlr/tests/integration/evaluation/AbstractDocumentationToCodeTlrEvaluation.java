@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -19,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 
 abstract class AbstractDocumentationToCodeTlrEvaluation extends AbstractEvaluation {
 
-    public static SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard,
+    public static SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard,
             Metamodel metamodel) {
         var sadSamCodeTlsAsString = result.getSadCodeTraceLinks()
                 .collect(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1 + " -> " + tl.getSecondEndpoint().toString())
@@ -35,7 +35,7 @@ abstract class AbstractDocumentationToCodeTlrEvaluation extends AbstractEvaluati
         return calculator.calculateMetrics(sadSamCodeTlsAsString, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private static int getConfusionMatrixSum(ArDoCoResult result, Metamodel metamodel) {
+    private static int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel) {
         DataRepository dataRepository = result.dataRepository();
 
         int sentences = (int) DataRepositoryHelper.getInputText(dataRepository).lines().count();

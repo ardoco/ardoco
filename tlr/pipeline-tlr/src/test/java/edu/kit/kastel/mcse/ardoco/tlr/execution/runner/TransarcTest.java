@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution.runner;
 
 import java.io.File;
@@ -17,7 +17,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 class TransarcTest extends CodeRunnerBaseTest {
 
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (PCM)")
+    @DisplayName("Test ARDoCo for SAD-SAM-Code-TLR (PCM)")
     void testSadSamTlrPcm() {
         var runner = new Transarc(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
@@ -30,7 +30,7 @@ class TransarcTest extends CodeRunnerBaseTest {
 
     @Disabled("Disabled for faster builds. Enable if you need to check UML models.")
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-Code-TLR (UML)")
+    @DisplayName("Test ARDoCo for SAD-SAM-Code-TLR (UML)")
     void testSadSamTlrUml() {
         var runner = new Transarc(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));

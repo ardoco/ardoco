@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.File;
@@ -14,35 +14,35 @@ public enum EvaluationProject {
     MEDIASTORE(//
             "/benchmark/mediastore/model_2016/pcm/ms.repository", //
             "/benchmark/mediastore/text_2016/mediastore.txt", //
-            "https://github.com/ArDoCo/MediaStore3.git", //
+            "https://github.com/ardoco/MediaStore3.git", //
             "94c398fa02b3d6b8d71517522a7206d37ed3a9af", //
             "/benchmark/mediastore/model_2016/code/codeModel.acm"),//
 
     TEASTORE(//
             "/benchmark/teastore/model_2020/pcm/teastore.repository", //
             "/benchmark/teastore/text_2020/teastore.txt", //
-            "https://github.com/ArDoCo/TeaStore.git", //
+            "https://github.com/ardoco/TeaStore.git", //
             "bdc49020a55cfa97eaabbb25744fefbc2697defa", //
             "/benchmark/teastore/model_2022/code/codeModel.acm"),//
 
     TEAMMATES(//
             "/benchmark/teammates/model_2021/pcm/teammates.repository", //
             "/benchmark/teammates/text_2021/teammates.txt", //
-            "https://github.com/ArDoCo/teammates.git", //
+            "https://github.com/ardoco/teammates.git", //
             "b24519a2af9e17b2bc9c025e87e4cf60009c425d", //
             "/benchmark/teammates/model_2023/code/codeModel.acm"),//
 
     BIGBLUEBUTTON(//
             "/benchmark/bigbluebutton/model_2021/pcm/bbb.repository", //
             "/benchmark/bigbluebutton/text_2021/bigbluebutton.txt", //
-            "https://github.com/ArDoCo/bigbluebutton.git", //
+            "https://github.com/ardoco/bigbluebutton.git", //
             "8fa2507d6c3865a9850004fd6fefd09738e68406", //
             "/benchmark/bigbluebutton/model_2023/code/codeModel.acm"), //
 
     JABREF(//
             "/benchmark/jabref/model_2021/pcm/jabref.repository", //
             "/benchmark/jabref/text_2021/jabref.txt", //
-            "https://github.com/ArDoCo/jabref.git", //
+            "https://github.com/ardoco/jabref.git", //
             "6269698cae437610ec79c38e6dd611eef7e88afe", //
             "/benchmark/jabref/model_2023/code/codeModel.acm");
 
@@ -106,7 +106,7 @@ public enum EvaluationProject {
      */
     public File getCodeDirectoryWithoutCloning() {
         String temp = System.getProperty("java.io.tmpdir");
-        var temporary = new File(temp + File.separator + "ArDoCo" + File.separator + this.name());
+        var temporary = new File(temp + File.separator + "ARDoCo" + File.separator + this.name());
         logger.debug("Location of Code: {}", temporary.getAbsolutePath());
         temporary.mkdirs();
         return temporary;

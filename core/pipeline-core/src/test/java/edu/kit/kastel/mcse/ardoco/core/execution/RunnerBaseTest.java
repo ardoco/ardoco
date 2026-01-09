@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2024. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 
 public class RunnerBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(RunnerBaseTest.class);
@@ -104,7 +104,7 @@ public class RunnerBaseTest {
         );
     }
 
-    protected void testRunnerAssertions(ArDoCoRunner runner) {
+    protected void testRunnerAssertions(ArdocoRunner runner) {
         Assertions.assertAll(//
                 () -> Assertions.assertNotNull(runner),//
                 () -> Assertions.assertTrue(runner.isSetUp())//

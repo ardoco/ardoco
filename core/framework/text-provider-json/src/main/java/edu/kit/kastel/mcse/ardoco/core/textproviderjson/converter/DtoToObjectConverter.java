@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject.TextImpl;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject.WordImpl;
 
 /***
- * this class converts a DTO text into an ArDoCo text object
+ * this class converts a DTO text into an ARDoCo text object
  */
 public class DtoToObjectConverter {
 
@@ -37,10 +37,10 @@ public class DtoToObjectConverter {
     private static final char CONSTITUENCY_TREE_CLOSE_BRACKET = ')';
 
     /**
-     * converts the given text DTO into an ArDoCo text object
+     * converts the given text DTO into an ARDoCo text object
      * 
      * @param textDTO the text DTO
-     * @return the ArDoCo text
+     * @return the ARDoCo text
      */
     public Text convertText(TextDto textDTO) throws NotConvertableException {
         if (textDTO == null) {

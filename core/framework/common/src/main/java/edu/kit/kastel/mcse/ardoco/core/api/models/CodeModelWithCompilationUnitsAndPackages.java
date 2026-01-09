@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
      */
     @Override
     public List<CodeItem> getEndpoints() {
-        // The order is more than important here! Otherwise, ArDoCo Heuristics might not work properly.
+        // The order is more than important here! Otherwise, ARDoCo Heuristics might not work properly.
         List<CodeItem> entities = new ArrayList<>(codeModel.getAllPackages());
         for (CodeItem codeItem : codeModel.getContent()) {
             entities.addAll(codeItem.getAllCompilationUnits());

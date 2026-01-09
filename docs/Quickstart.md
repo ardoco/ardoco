@@ -1,7 +1,7 @@
 
-The ArDoCo is a maven project and can be embedded by using its specs (from the [pom](https://github.com/ArDoCo/Core/blob/main/pom.xml)).
+The ARDoCo is a maven project and can be embedded by using its specs (from the [pom](https://github.com/ardoco/Core/blob/main/pom.xml)).
 
-Please acknowledge the [code of conduct](https://github.com/ArDoCo/Core/blob/main/CODE_OF_CONDUCT.md).
+Please acknowledge the [code of conduct](https://github.com/ardoco/Core/blob/main/CODE_OF_CONDUCT.md).
 
 ## Forking the project & submitting pull requests
 
@@ -25,14 +25,14 @@ Follow the following steps to do so:
 
 ### Formatter
 
-Please use the provided [formatter](https://github.com/ArDoCo/Core/blob/main/formatter.xml) when contributing.
+Please use the provided [formatter](https://github.com/ardoco/Core/blob/main/formatter.xml) when contributing.
 
 Additionally, please make use of the spotless-plugin for maven to format your code. You can run it via `mvn spotless:apply` ([more info about spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven)).
 
 
 ### Nullness (JSpecify)
 
-ArDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations.
+ARDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations.
 
 - Default is non-null via `@NullMarked` generated during build.
 - Mark nullable references explicitly with `org.jspecify.annotations.Nullable`.

@@ -19,7 +19,7 @@
         or a relation. To do so, we first create trace links and then make use of them and other information to identify
         inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software
         Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
-  <url>https://github.com/ArDoCo/Core</url>
+  <url>https://github.com/ardoco/Core</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -57,14 +57,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/ArDoCo/Core.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ArDoCo/Core.git</developerConnection>
+    <connection>scm:git:git://github.com/ardoco/Core.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ardoco/Core.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/ArDoCo/Core/tree/main</url>
+    <url>https://github.com/ardoco/Core/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ArDoCo/Core/issues</url>
+    <url>https://github.com/ardoco/Core/issues</url>
   </issueManagement>
   <distributionManagement>
     <snapshotRepository>

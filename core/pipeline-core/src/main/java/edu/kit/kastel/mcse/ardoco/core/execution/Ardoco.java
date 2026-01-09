@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
@@ -18,9 +18,9 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.Pipeline;
 /**
  * The Pipeline defines and manages the execution of agents.
  */
-public final class ArDoCo extends Pipeline {
+public final class Ardoco extends Pipeline {
 
-    private static final Logger classLogger = LoggerFactory.getLogger(ArDoCo.class);
+    private static final Logger classLogger = LoggerFactory.getLogger(Ardoco.class);
 
     private final String projectName;
 
@@ -28,18 +28,18 @@ public final class ArDoCo extends Pipeline {
      * Default constructor to simplify tests that do not require the project's name. Also needed for testing configurations.
      */
     @SuppressWarnings("unused")
-    private ArDoCo() {
+    private Ardoco() {
         this("");
     }
 
     /**
-     * Creates a new instance of ArDoCo. The provided name should be the project's name and will be used to identify locations within the text where the project
+     * Creates a new instance of ARDoCo. The provided name should be the project's name and will be used to identify locations within the text where the project
      * is mentioned.
      *
      * @param projectName the project's name
      */
-    public ArDoCo(String projectName) {
-        super("ArDoCo", new DataRepository());
+    public Ardoco(String projectName) {
+        super("ARDoCo", new DataRepository());
         this.projectName = projectName;
         this.initDataRepository();
     }
@@ -55,12 +55,12 @@ public final class ArDoCo extends Pipeline {
     }
 
     /**
-     * Runs the ArDoCo pipeline and saves the results to the specified output directory.
+     * Runs the ARDoCo pipeline and saves the results to the specified output directory.
      *
      * @param outputDir the directory where output files should be saved
-     * @return the ArDoCo result containing all analysis data, or null if the pipeline is not properly initialized
+     * @return the ARDoCo result containing all analysis data, or null if the pipeline is not properly initialized
      */
-    public ArDoCoResult runAndSave(File outputDir) {
+    public ArdocoResult runAndSave(File outputDir) {
         classLogger.info("Starting {}", this.projectName);
 
         if (!this.hasPipelineSteps()) {
@@ -72,7 +72,7 @@ public final class ArDoCo extends Pipeline {
         this.run();
         var endTime = Instant.now();
 
-        ArDoCoResult arDoCoResult = new ArDoCoResult(this.getDataRepository());
+        ArdocoResult arDoCoResult = new ArdocoResult(this.getDataRepository());
         saveOutput(this.projectName, outputDir, arDoCoResult);
 
         if (this.getLogger().isInfoEnabled()) {
@@ -86,7 +86,7 @@ public final class ArDoCo extends Pipeline {
         return arDoCoResult;
     }
 
-    private static void saveOutput(String name, File outputDir, ArDoCoResult arDoCoResult) {
+    private static void saveOutput(String name, File outputDir, ArdocoResult arDoCoResult) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(outputDir);
         Objects.requireNonNull(arDoCoResult);

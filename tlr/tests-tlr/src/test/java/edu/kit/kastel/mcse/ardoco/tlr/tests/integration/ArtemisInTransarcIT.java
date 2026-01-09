@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInExArchEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInTransarcEvaluation;
 
@@ -33,8 +33,8 @@ class ArtemisInTransarcIT extends AbstractArdocoIT {
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Artemis @ TransArC (SAD-SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(TransArCEvaluationProject.class)
-    void evaluateSadSamCodeTlrIT(TransArCEvaluationProject project) {
+    @EnumSource(TransarcEvaluationProject.class)
+    void evaluateSadSamCodeTlrIT(TransarcEvaluationProject project) {
         LargeLanguageModel llmForNer = LargeLanguageModel.GPT_5;
         var evaluation = new ArtemisInTransarcEvaluation(project, llmForNer);
         var results = evaluation.runTraceLinkEvaluation();
@@ -44,8 +44,8 @@ class ArtemisInTransarcIT extends AbstractArdocoIT {
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Artemis @ TransArC (SAD-SAM-Code TLR) Multi")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(TransArCEvaluationProject.class)
-    void evaluateSadSamCodeTlrMultiIT(TransArCEvaluationProject project) {
+    @EnumSource(TransarcEvaluationProject.class)
+    void evaluateSadSamCodeTlrMultiIT(TransarcEvaluationProject project) {
         LargeLanguageModel llmForNer = LargeLanguageModel.GPT_5;
 
         List<SingleClassificationResult<String>> results = Lists.mutable.empty();

@@ -1,10 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.approach;
 
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
 
-public enum TransArCEvaluationProject {
+public enum TransarcEvaluationProject {
     MEDIASTORE(DocumentationToModelToCodeTlrTask.MEDIASTORE, new ExpectedResults(.96, .42, .588, .99, .63, .999)),//
     TEASTORE(DocumentationToModelToCodeTlrTask.TEASTORE, new ExpectedResults(.999, .708, .829, .976, .831, .999)),//
     TEAMMATES(DocumentationToModelToCodeTlrTask.TEAMMATES, new ExpectedResults(.75, .90, .82, .98, .81, .98)),//
@@ -14,7 +14,7 @@ public enum TransArCEvaluationProject {
     private final DocumentationToModelToCodeTlrTask tlrTask;
     private final ExpectedResults expectedResults;
 
-    TransArCEvaluationProject(DocumentationToModelToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
+    TransarcEvaluationProject(DocumentationToModelToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
         this.tlrTask = tlrTask;
         this.expectedResults = expectedResults;
     }

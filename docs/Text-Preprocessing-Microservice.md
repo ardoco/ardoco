@@ -2,7 +2,7 @@
 Text preprocessing works locally, but there is also the option to host a **microservice** for this.
 The benefit is that the models do not need to be loaded each time, saving some runtime (and local memory).
 
-The microservice can be found at [ArDoCo/StanfordCoreNLP-Provider-Service](https://github.com/ArDoCo/StanfordCoreNLP-Provider-Service/).
+The microservice can be found at [ardoco/StanfordCoreNLP-Provider-Service](https://github.com/ardoco/StanfordCoreNLP-Provider-Service/).
 
 The microservice is secured with credentials and the usage of the microservice needs to be activated and the URL of the microservice configured.
 These settings can be provided to the execution via environment variables.

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.io.File;
@@ -16,11 +16,11 @@ import org.junit.jupiter.api.Assertions;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
@@ -35,9 +35,9 @@ public class SwattrEvaluation extends AbstractEvaluation {
         this.project = Objects.requireNonNull(project);
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner swattr = createSwattr();
-        ArDoCoResult result = swattr.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner swattr = createSwattr();
+        ArdocoResult result = swattr.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -50,7 +50,7 @@ public class SwattrEvaluation extends AbstractEvaluation {
 
     }
 
-    private SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard) {
+    private SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard) {
         var sadSamTlsAsStrings = getArchitectureTraceLinks(result).collect(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber() + 1 + " -> " + tl
                 .getSecondEndpoint()
                 .getId()).toSortedSet();
@@ -61,19 +61,19 @@ public class SwattrEvaluation extends AbstractEvaluation {
         return calculator.calculateMetrics(sadSamTlsAsStrings, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private ImmutableList<TraceLink<SentenceEntity, ModelEntity>> getArchitectureTraceLinks(ArDoCoResult result) {
+    private ImmutableList<TraceLink<SentenceEntity, ModelEntity>> getArchitectureTraceLinks(ArdocoResult result) {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
         traceLinks.addAll(result.getConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS).getTraceLinks().castToCollection());
         return traceLinks.toImmutableList();
     }
 
-    private int getConfusionMatrixSum(ArDoCoResult result) {
+    private int getConfusionMatrixSum(ArdocoResult result) {
         int sentences = result.getText().getSentences().size();
         int modelElements = result.getModelState(Metamodel.ARCHITECTURE_WITH_COMPONENTS).getEndpoints().size();
         return sentences * modelElements;
     }
 
-    protected ArDoCoRunner createSwattr() {
+    protected ArdocoRunner createSwattr() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),

@@ -195,7 +195,7 @@ The goal of generic mapping is to establish a **unified and standardized** mappi
 
 2️⃣ Specific Mapping Approach
 
-While a standardized mapping approach is beneficial, it was recognized that **different programming languages contain unique structural elements** that **could provide additional valuable information**. By allowing specific mappings, the system gains flexibility in handling language-specific constructs while still ensuring compatibility with the ArDoCo Framework.
+While a standardized mapping approach is beneficial, it was recognized that **different programming languages contain unique structural elements** that **could provide additional valuable information**. By allowing specific mappings, the system gains flexibility in handling language-specific constructs while still ensuring compatibility with the ARDoCo Framework.
 
 ✅ Pros:
 - **Supports language-specific features**, preserving valuable contextual information.
@@ -303,7 +303,7 @@ By combining **synthetic test cases** with **real-world datasets**, the testing 
 
 ## Guide: Adding a new Language
 
-This guide outlines the **steps required** to integrate a new programming language (**PL**) into the ArDoCo Framework by leveraging **ANTLR Grammars**.
+This guide outlines the **steps required** to integrate a new programming language (**PL**) into the ARDoCo Framework by leveraging **ANTLR Grammars**.
 
 ### 1️⃣ Downloading ANTLR Grammar Files
 - Obtain the **Lexer & Parser grammars** (`.g4` files) for the target **programming language (PL)** from **[ANTLR Grammars v4 Repository](https://github.com/antlr/grammars-v4)**.

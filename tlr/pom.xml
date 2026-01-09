@@ -11,10 +11,10 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
 
-  <name>ArDoCo TLR</name>
+  <name>ARDoCo TLR</name>
   <description>The goal of this project is to create trace links between informal and formal artifacts like software architecture documentation, software
         architecture, and code.</description>
-  <url>https://github.com/ArDoCo/TLR</url>
+  <url>https://github.com/ardoco/TLR</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -52,14 +52,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/ArDoCo/TLR.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ArDoCo/TLR.git</developerConnection>
+    <connection>scm:git:git://github.com/ardoco/TLR.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ardoco/TLR.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/ArDoCo/TLR/tree/main</url>
+    <url>https://github.com/ardoco/TLR/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ArDoCo/TLR/issues</url>
+    <url>https://github.com/ardoco/TLR/issues</url>
   </issueManagement>
   <distributionManagement>
     <snapshotRepository>

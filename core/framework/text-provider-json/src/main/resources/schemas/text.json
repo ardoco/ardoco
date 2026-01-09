@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema#",
-    "$id": "https://raw.githubusercontent.com/ArDoCo/Core/main/framework/text-provider-json/src/main/resources/schemas/text.json",
+    "$id": "https://raw.githubusercontent.com/ardoco/core/main/framework/text-provider-json/src/main/resources/schemas/text.json",
     "title": "Text",
     "description": "A definition of a text",
     "type": "object",

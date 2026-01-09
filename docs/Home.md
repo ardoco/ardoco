@@ -1,7 +1,7 @@
 # ARDoCo
 
 <p align="center">
- <img alt="ARDoCo" src="https://github.com/ArDoCo/.github/raw/main/profile/logo.png" height="210"/>
+ <img alt="ARDoCo" src="https://github.com/ardoco/.github/raw/main/profile/logo.png" height="210"/>
 </p>
 
 ARDoCo (Automating Requirements and Documentation Comprehension) is a framework to connect architecture documentation and models while
@@ -22,7 +22,7 @@ To get to know the project, please read the following pages:
 * [Text Preprocessing Microservice](Text-Preprocessing-Microservice)
 * [Traceability Link Recovery (TLR)](traceability-link-recovery)
 * [Inconsistency Detection (ID)](inconsistency-detection)
-* [LiSSA Retrieval-Augmented TLR](LiSSA)
+* [LiSSA](LiSSA)
 
 ## Project Structure
 

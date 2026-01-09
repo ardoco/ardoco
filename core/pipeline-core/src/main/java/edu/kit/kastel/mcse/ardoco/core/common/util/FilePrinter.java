@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
@@ -75,9 +75,9 @@ public final class FilePrinter {
      * Writes inconsistency output to the specified file. Includes both inconsistent sentences and model inconsistencies.
      *
      * @param file         the file to write the inconsistency output to
-     * @param arDoCoResult the ArDoCo result containing inconsistency data
+     * @param arDoCoResult the ARDoCo result containing inconsistency data
      */
-    public static void writeInconsistencyOutput(File file, ArDoCoResult arDoCoResult) {
+    public static void writeInconsistencyOutput(File file, ArdocoResult arDoCoResult) {
         MutableList<String> allInconsistencies = Lists.mutable.empty();
         allInconsistencies.addAll(arDoCoResult.getInconsistentSentences().collect(InconsistentSentence::getInfoString).toList());
         allInconsistencies.addAll(arDoCoResult.getAllModelInconsistencies().collect(ModelInconsistency::getReason).toList());
@@ -89,9 +89,9 @@ public final class FilePrinter {
      * Writes traceability link recovery output to the specified file.
      *
      * @param file         the file to write the traceability link output to
-     * @param arDoCoResult the ArDoCo result containing trace link data
+     * @param arDoCoResult the ARDoCo result containing trace link data
      */
-    public static void writeTraceabilityLinkRecoveryOutput(File file, ArDoCoResult arDoCoResult) {
+    public static void writeTraceabilityLinkRecoveryOutput(File file, ArdocoResult arDoCoResult) {
         Supplier<List<String>> outputExtractor = arDoCoResult::getAllTraceLinksAsBeautifiedStrings;
         writeOutput(file, "Trace Links", outputExtractor);
     }
@@ -112,10 +112,10 @@ public final class FilePrinter {
     /**
      * Writes trace links as Comma-Separated Values files to the specified output directory. Creates separate files for different types of trace links.
      *
-     * @param arDoCoResult the ArDoCo result containing trace link data
+     * @param arDoCoResult the ARDoCo result containing trace link data
      * @param outputDir    the directory where Comma-Separated Values files should be written
      */
-    public static void writeTraceLinksAsCsv(ArDoCoResult arDoCoResult, File outputDir) {
+    public static void writeTraceLinksAsCsv(ArdocoResult arDoCoResult, File outputDir) {
         String name = arDoCoResult.getProjectName();
         String header;
 

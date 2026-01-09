@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 public class CodeRunnerBaseTest extends RunnerBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CodeRunnerBaseTest.class);
-    protected static final String inputCodeRepository = "https://github.com/ArDoCo/TeaStore.git";
+    protected static final String inputCodeRepository = "https://github.com/ardoco/TeaStore.git";
 
     protected CodeConfiguration codeConfiguration = null;
     protected static String commitHash = "bdc49020a55cfa97eaabbb25744fefbc2697defa";

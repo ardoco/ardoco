@@ -11,10 +11,10 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
 
-  <name>ArDoCo ID</name>
+  <name>ARDoCo ID</name>
   <description>The goal of this project is to identify missing or deviating elements (inconsistencies) between informal and formal artifacts like software
         architecture documentation, software architecture, and code.</description>
-  <url>https://github.com/ArDoCo/InconsistencyDetection</url>
+  <url>https://github.com/ardoco/InconsistencyDetection</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -52,14 +52,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/ArDoCo/InconsistencyDetection.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ArDoCo/InconsistencyDetection.git</developerConnection>
+    <connection>scm:git:git://github.com/ardoco/InconsistencyDetection.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ardoco/InconsistencyDetection.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/ArDoCo/InconsistencyDetection/tree/main</url>
+    <url>https://github.com/ardoco/InconsistencyDetection/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ArDoCo/InconsistencyDetection/issues</url>
+    <url>https://github.com/ardoco/InconsistencyDetection/issues</url>
   </issueManagement>
   <distributionManagement>
     <snapshotRepository>

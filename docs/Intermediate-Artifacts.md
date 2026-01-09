@@ -1,6 +1,6 @@
 
 Currently, there are three kinds of intermediate artifacts.
-First, the input text has an internal representation (cf. [edu/kit/kastel/mcse/ardoco/core/api/text/Text.java](https://github.com/ArDoCo/Core/blob/main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/text/Text.java)) to cover all the annotations from the preprocessing.
+First, the input text has an internal representation (cf. [edu/kit/kastel/mcse/ardoco/core/api/text/Text.java](https://github.com/ardoco/Core/blob/main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/text/Text.java)) to cover all the annotations from the preprocessing.
 Second, there is the intermediate representation of software architecture models (SAMs) that we cover [below](#software-architecture-models).
 Third, we create a uniform representation for code that we also explain [below](#code).
 

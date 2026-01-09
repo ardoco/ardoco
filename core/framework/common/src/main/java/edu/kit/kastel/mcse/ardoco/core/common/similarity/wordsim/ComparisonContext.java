@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim;
 
 import java.util.Objects;
@@ -6,7 +6,7 @@ import java.util.Objects;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 /**
- * Contains all information for comparing similarity between objects in ArDoCo.
+ * Contains all information for comparing similarity between objects in ARDoCo.
  * The fields {@code firstString} and {@code secondString} are always non-null.
  * The field {@code lemmatize} decides whether the lemmatized version of both words should be used for comparison.
  */

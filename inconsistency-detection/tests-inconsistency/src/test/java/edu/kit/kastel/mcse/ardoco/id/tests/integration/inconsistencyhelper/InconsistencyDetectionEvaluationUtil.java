@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
 
 import java.util.LinkedHashSet;
@@ -8,7 +8,7 @@ import java.util.Set;
 import org.eclipse.collections.api.collection.ImmutableCollection;
 import org.slf4j.Logger;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
@@ -22,12 +22,12 @@ public final class InconsistencyDetectionEvaluationUtil {
     /**
      * compares the inconsistencies results with the expected results and creates a new {@link SingleClassificationResult}.
      *
-     * @param arDoCoResult the ArDoCoResult
+     * @param arDoCoResult the ARDoCoResult
      * @param results      Collection representing the results
      * @param goldStandard Collection representing the gold standard
      * @return the result of the comparison
      */
-    public static <T> SingleClassificationResult<T> compareInconsistencies(ArDoCoResult arDoCoResult, ImmutableCollection<T> results,
+    public static <T> SingleClassificationResult<T> compareInconsistencies(ArdocoResult arDoCoResult, ImmutableCollection<T> results,
             ImmutableCollection<T> goldStandard) {
 
         Set<T> distinctTraceLinks = new LinkedHashSet<>(results.castToCollection());

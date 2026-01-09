@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution.runner;
 
 import java.io.File;
@@ -6,23 +6,23 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
+import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 
 /**
- * Abstract runner for ArDoCo pipeline execution.
+ * Abstract runner for ARDoCo pipeline execution.
  */
-public abstract class ArDoCoRunner {
-    private static final Logger logger = LoggerFactory.getLogger(ArDoCoRunner.class);
+public abstract class ArdocoRunner {
+    private static final Logger logger = LoggerFactory.getLogger(ArdocoRunner.class);
 
-    private final ArDoCo arDoCo;
+    private final Ardoco arDoCo;
 
     private File outputDirectory;
     protected boolean isSetUp = false;
 
-    protected ArDoCoRunner(String projectName) {
-        this.arDoCo = new ArDoCo(projectName);
+    protected ArdocoRunner(String projectName) {
+        this.arDoCo = new Ardoco(projectName);
         this.outputDirectory = null;
     }
 
@@ -36,15 +36,15 @@ public abstract class ArDoCoRunner {
     }
 
     /**
-     * Runs the ArDoCo pipeline and saves the results to the output directory.
+     * Runs the ARDoCo pipeline and saves the results to the output directory.
      *
-     * @return the ArDoCo result, or null if the runner is not properly set up
+     * @return the ARDoCo result, or null if the runner is not properly set up
      */
-    public final ArDoCoResult run() {
+    public final ArdocoResult run() {
         if (this.isSetUp() && this.outputDirectory != null) {
-            return this.getArDoCo().runAndSave(this.outputDirectory);
+            return this.getARDoCo().runAndSave(this.outputDirectory);
         } else {
-            logger.error("Cannot run ArDoCo because the runner is not properly set up (#run).");
+            logger.error("Cannot run ARDoCo because the runner is not properly set up (#run).");
             return null;
         }
     }
@@ -56,20 +56,20 @@ public abstract class ArDoCoRunner {
      */
     public final DataRepository runWithoutSaving() {
         if (this.isSetUp()) {
-            this.getArDoCo().run();
-            return this.getArDoCo().getDataRepository();
+            this.getARDoCo().run();
+            return this.getARDoCo().getDataRepository();
         } else {
-            logger.error("Cannot run ArDoCo because the runner is not properly set up (#runWithoutSaving).");
+            logger.error("Cannot run ARDoCo because the runner is not properly set up (#runWithoutSaving).");
             return null;
         }
     }
 
     /**
-     * Returns the ArDoCo instance used by this runner.
+     * Returns the ARDoCo instance used by this runner.
      *
-     * @return the ArDoCo instance
+     * @return the ARDoCo instance
      */
-    public ArDoCo getArDoCo() {
+    public Ardoco getARDoCo() {
         return this.arDoCo;
     }
 
