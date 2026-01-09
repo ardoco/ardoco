@@ -130,3 +130,5 @@ $RECYCLE.BIN/
 nohup.out
 
 .flattened-pom.xml
+
+**/package-info.java

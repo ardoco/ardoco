@@ -11,10 +11,10 @@
   <artifactId>named-architecture-entity-recognition</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
-  <name>ArDoCo NamedArchitectureEntityRecognition</name>
+  <name>ARDoCo NamedArchitectureEntityRecognition</name>
   <description>A Java library that uses Large Language Models to automatically identify and extract architectural entities (like components and interfaces) from Software Architecture
         Documentation. It supports multiple LLM providers (OpenAI, Ollama) with configurable prompts and provides a flexible builder pattern for easy integration.</description>
-  <url>https://github.com/ArDoCo/NamedArchitectureEntityRecognition</url>
+  <url>https://github.com/ardoco/named-architecture-entity-recognition</url>
 
   <licenses>
     <license>
@@ -34,14 +34,14 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com/ArDoCo/NamedArchitectureEntityRecognition.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ArDoCo/NamedArchitectureEntityRecognition.git</developerConnection>
+    <connection>scm:git:git://github.com/ardoco/named-architecture-entity-recognition.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ardoco/named-architecture-entity-recognition.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/ArDoCo/NamedArchitectureEntityRecognition/tree/main</url>
+    <url>https://github.com/ardoco/named-architecture-entity-recognition/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ArDoCo/NamedArchitectureEntityRecognition/issues</url>
+    <url>https://github.com/ardoco/named-architecture-entity-recognition/issues</url>
   </issueManagement>
   <distributionManagement>
     <snapshotRepository>
