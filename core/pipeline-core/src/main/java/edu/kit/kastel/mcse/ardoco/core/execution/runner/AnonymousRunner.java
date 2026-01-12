@@ -26,7 +26,7 @@ public abstract class AnonymousRunner extends ArdocoRunner {
      */
     private boolean setUp() {
         try {
-            var arDoCo = getARDoCo();
+            var arDoCo = getArdoco();
             var dataRepository = arDoCo.getDataRepository();
             var pipelineSteps = initializePipelineSteps(dataRepository);
             for (AbstractPipelineStep pipelineStep : pipelineSteps) {

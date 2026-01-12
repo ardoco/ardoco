@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.core.execution.runner;
 
 import java.io.File;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +17,13 @@ import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 public abstract class ArdocoRunner {
     private static final Logger logger = LoggerFactory.getLogger(ArdocoRunner.class);
 
-    private final Ardoco arDoCo;
+    private final Ardoco ardoco;
 
-    private File outputDirectory;
+    private @Nullable File outputDirectory;
     protected boolean isSetUp = false;
 
     protected ArdocoRunner(String projectName) {
-        this.arDoCo = new Ardoco(projectName);
+        this.ardoco = new Ardoco(projectName);
         this.outputDirectory = null;
     }
 
@@ -40,9 +41,9 @@ public abstract class ArdocoRunner {
      *
      * @return the ARDoCo result, or null if the runner is not properly set up
      */
-    public final ArdocoResult run() {
+    public final @Nullable ArdocoResult run() {
         if (this.isSetUp() && this.outputDirectory != null) {
-            return this.getARDoCo().runAndSave(this.outputDirectory);
+            return this.getArdoco().runAndSave(this.outputDirectory);
         } else {
             logger.error("Cannot run ARDoCo because the runner is not properly set up (#run).");
             return null;
@@ -54,10 +55,10 @@ public abstract class ArdocoRunner {
      *
      * @return the data repository produced by the run
      */
-    public final DataRepository runWithoutSaving() {
+    public final @Nullable DataRepository runWithoutSaving() {
         if (this.isSetUp()) {
-            this.getARDoCo().run();
-            return this.getARDoCo().getDataRepository();
+            this.getArdoco().run();
+            return this.getArdoco().getDataRepository();
         } else {
             logger.error("Cannot run ARDoCo because the runner is not properly set up (#runWithoutSaving).");
             return null;
@@ -69,8 +70,8 @@ public abstract class ArdocoRunner {
      *
      * @return the ARDoCo instance
      */
-    public Ardoco getARDoCo() {
-        return this.arDoCo;
+    public Ardoco getArdoco() {
+        return this.ardoco;
     }
 
     /**
