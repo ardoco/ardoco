@@ -44,7 +44,7 @@ public class Transarc extends ArdocoRunner {
 
     private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs) {
-        Ardoco arDoCo = this.getARDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         var text = CommonUtilities.readInputText(inputText);

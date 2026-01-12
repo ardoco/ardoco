@@ -46,7 +46,7 @@ public class ArtemisInExArch extends ArdocoRunner {
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             LargeLanguageModel llmForExArch, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
             LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
-        Ardoco arDoCo = this.getARDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         var text = CommonUtilities.readInputText(inputText);
@@ -65,7 +65,7 @@ public class ArtemisInExArch extends ArdocoRunner {
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 
         NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
-        this.getARDoCo().addPipelineStep(nerConnectionGenerator);
+        this.getArdoco().addPipelineStep(nerConnectionGenerator);
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
 

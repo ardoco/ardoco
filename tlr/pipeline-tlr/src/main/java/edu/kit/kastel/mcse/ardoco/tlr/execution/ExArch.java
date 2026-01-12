@@ -49,7 +49,7 @@ public class ExArch extends ArdocoRunner {
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
             LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
-        Ardoco arDoCo = this.getARDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         var text = CommonUtilities.readInputText(inputText);

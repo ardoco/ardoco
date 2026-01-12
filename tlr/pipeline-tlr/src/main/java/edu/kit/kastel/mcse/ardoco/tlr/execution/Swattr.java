@@ -43,22 +43,22 @@ public class Swattr extends ArdocoRunner {
     }
 
     private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs) {
-        var dataRepository = this.getARDoCo().getDataRepository();
+        var dataRepository = this.getArdoco().getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
 
-        this.getARDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent modelProviderAgent = //
                 ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
                         Metamodel.ARCHITECTURE_WITH_COMPONENTS), null);
-        this.getARDoCo().addPipelineStep(modelProviderAgent);
+        this.getArdoco().addPipelineStep(modelProviderAgent);
 
-        this.getARDoCo().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
-        this.getARDoCo().addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
-        this.getARDoCo().addPipelineStep(ConnectionGenerator.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(ConnectionGenerator.get(additionalConfigs, dataRepository));
     }
 }

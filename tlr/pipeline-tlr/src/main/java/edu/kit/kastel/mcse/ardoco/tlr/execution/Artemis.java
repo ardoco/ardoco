@@ -43,20 +43,20 @@ public class Artemis extends ArdocoRunner {
 
     private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             LargeLanguageModel llmForNer) {
-        DataRepository dataRepository = this.getARDoCo().getDataRepository();
+        DataRepository dataRepository = this.getArdoco().getDataRepository();
         String text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
-        this.getARDoCo().addPipelineStep(SimpleTextPreprocessingAgent.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(SimpleTextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ArchitectureConfiguration architectureConfigurationWithMetamodel = architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs,
                 architectureConfigurationWithMetamodel, null);
-        this.getARDoCo().addPipelineStep(modelProviderAgent);
+        this.getArdoco().addPipelineStep(modelProviderAgent);
 
         NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
-        this.getARDoCo().addPipelineStep(nerConnectionGenerator);
+        this.getArdoco().addPipelineStep(nerConnectionGenerator);
     }
 }

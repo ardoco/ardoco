@@ -38,7 +38,7 @@ public class Arcotl extends ArdocoRunner {
 
     private void definePipeline(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs) {
-        Ardoco arDoCo = this.getARDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, //
