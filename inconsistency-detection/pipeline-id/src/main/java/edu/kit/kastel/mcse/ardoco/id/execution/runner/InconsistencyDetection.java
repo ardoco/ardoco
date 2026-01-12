@@ -45,7 +45,7 @@ public class InconsistencyDetection extends ArdocoRunner {
      * @param additionalConfigs      the additional configs
      */
     private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, ImmutableSortedMap<String, String> additionalConfigs) {
-        Ardoco arDoCo = getARDoCo();
+        Ardoco arDoCo = getArdoco();
         var dataRepository = arDoCo.getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
