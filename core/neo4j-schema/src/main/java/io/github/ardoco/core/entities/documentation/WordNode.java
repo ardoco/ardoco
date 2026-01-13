@@ -6,20 +6,25 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Node("Word")
 public class WordNode {
 
     @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
 
-    private int position; // Global index in text
+    private int position;
     private String text;
     private String lemma;
-    private String posTag; // Store Enum as String
+    private String posTag;
 
-    // Linked List for Word Order
     @Relationship(type = "NEXT_WORD", direction = Relationship.Direction.OUTGOING)
     private WordNode nextWord;
+
+    @Relationship(type = "DEPENDENCY", direction = Relationship.Direction.OUTGOING)
+    private List<DependencyRelationship> dependencies = new ArrayList<>();
 
     public WordNode(int position, String text, String lemma, String posTag) {
         this.position = position;
@@ -29,6 +34,10 @@ public class WordNode {
     }
 
     public WordNode() {}
+
+    public void addDependency(String type, WordNode target) {
+        this.dependencies.add(new DependencyRelationship(type, target));
+    }
 
     public void setNextWord(WordNode nextWord) {
         this.nextWord = nextWord;
@@ -56,5 +65,9 @@ public class WordNode {
 
     public WordNode getNextWord() {
         return nextWord;
+    }
+
+    public List<DependencyRelationship> getDependencies() {
+        return dependencies;
     }
 }

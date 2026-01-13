@@ -1,65 +1,41 @@
 package io.github.ardoco.core.adapter;
 
-
-
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
-
-
-
-
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-
-import io.github.ardoco.core.entities.documentation.SentenceNode;
-
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.Objects;
 
 public class Neo4jSentence implements Sentence {
 
-    private final SentenceNode node;
-    private final List<Word> words;
-    private final List<Phrase> phrases;
+    private final int sentenceNumber;
+    private final String text;
 
-    public Neo4jSentence(SentenceNode node) {
-        this.node = node;
+    // Mutable during mapping phase, finalized via setters
+    private List<Neo4jWord> words;
+    private List<Phrase> phrases;
 
-        List<Neo4jWord> mutableWords = new ArrayList<>();
-        Map<Integer, Neo4jWord> wordMap = new HashMap<>();
+    public Neo4jSentence(int sentenceNumber, String text) {
+        this.sentenceNumber = sentenceNumber;
+        this.text = text;
+    }
 
-        var wordNodes = node.getWords();
-        wordNodes.sort((a, b) -> Integer.compare(a.getPosition(), b.getPosition()));
+    // Setters used by Mapper
+    public void setWords(List<Neo4jWord> words) {
+        this.words = words;
+    }
 
-        for (var wn : wordNodes) {
-            Neo4jWord word = new Neo4jWord(wn, this);
-            mutableWords.add(word);
-            wordMap.put(wn.getPosition(), word);
-        }
-
-        // Link Words (Previous/Next)
-        for (int i = 0; i < mutableWords.size(); i++) {
-            Neo4jWord curr = mutableWords.get(i);
-            if (i > 0) curr.setPreWord(mutableWords.get(i - 1));
-            if (i < mutableWords.size() - 1) curr.setNextWord(mutableWords.get(i + 1));
-        }
-        this.words = new ArrayList<>(mutableWords);
-
-        List<Phrase> mutablePhrases = new ArrayList<>();
-        for (var pn : node.getRootPhrases()) {
-            mutablePhrases.add(new Neo4jPhrase(pn, this, wordMap));
-        }
-        this.phrases = mutablePhrases;
+    public void setPhrases(List<Phrase> phrases) {
+        this.phrases = phrases;
     }
 
     @Override
     public int getSentenceNumber() {
-        return node.getSentenceNumber();
+        return sentenceNumber;
     }
-
 
     @Override
     public ImmutableList<Word> getWords() {
@@ -68,12 +44,7 @@ public class Neo4jSentence implements Sentence {
 
     @Override
     public String getText() {
-        return node.getText();
-    }
-
-    @Override
-    public boolean isEqualTo(Sentence other) {
-        return Sentence.super.isEqualTo(other);
+        return text;
     }
 
     @Override
@@ -81,4 +52,16 @@ public class Neo4jSentence implements Sentence {
         return Lists.immutable.withAll(phrases);
     }
 
+    // Equals and HashCode implementations...
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Sentence s)) return false;
+        return sentenceNumber == s.getSentenceNumber() && Objects.equals(text, s.getText());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sentenceNumber, text);
+    }
 }

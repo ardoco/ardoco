@@ -1,18 +1,25 @@
+/* Licensed under MIT 2023-2025. */
 package io.github.ardoco.core.service.documentation;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import io.github.ardoco.core.adapter.Neo4jText;
 import io.github.ardoco.core.entities.documentation.PhraseNode;
 import io.github.ardoco.core.entities.documentation.SentenceNode;
 import io.github.ardoco.core.entities.documentation.TextNode;
 import io.github.ardoco.core.entities.documentation.WordNode;
 import io.github.ardoco.core.repository.documentation.TextNodeRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import edu.kit.kastel.mcse.ardoco.core.api.text.*;
-import java.util.*;
 
 @Service
 public class DocumentationPersistenceService {
@@ -32,30 +39,29 @@ public class DocumentationPersistenceService {
 
     @Transactional(readOnly = true)
     public Text loadPreprocessedText(String identifier) {
+        // We use the Mapper service to load and map
+        // Note: The logic for this is usually in the Mapper, but if you call it here:
         TextNode textNode = textRepository.findByArdocoId(identifier);
-        return new Neo4jText(textNode);
+        if (textNode == null) return null;
+        DocumentationMapper mapper = new DocumentationMapper();
+        return mapper.mapToDomain(textNode);
     }
 
     @Transactional
     public void savePreprocessedText(Text domainText, String documentId) {
         TextNode textNode = new TextNode(documentId);
-        Map<Integer, WordNode> wordIndexMap = new HashMap<>();
-
-        // Cache to track converted phrases (Prevents cycles & duplication)
+        Map<Integer, WordNode> wordIndexMap = new HashMap<>(); // Global Map: Position -> Node
         Map<Phrase, PhraseNode> phraseCache = new HashMap<>();
 
         SentenceNode prevSentenceNode = null;
 
         for (Sentence domainSentence : domainText.getSentences()) {
-            SentenceNode sentenceNode = new SentenceNode(
-                    domainSentence.getSentenceNumber(),
-                    domainSentence.getText()
-            );
+            SentenceNode sentenceNode = new SentenceNode(domainSentence.getSentenceNumber(), domainSentence.getText());
+            textNode.addSentence(sentenceNode);
 
             if (prevSentenceNode != null) {
                 prevSentenceNode.setNextSentence(sentenceNode);
             }
-            textNode.addSentence(sentenceNode);
 
             WordNode prevWordNode = null;
             for (Word domainWord : domainSentence.getWords()) {
@@ -65,11 +71,13 @@ public class DocumentationPersistenceService {
                         domainWord.getLemma(),
                         domainWord.getPosTag().toString()
                 );
+
+                sentenceNode.getWords().add(wordNode);
+                wordIndexMap.put(domainWord.getPosition(), wordNode);
+
                 if (prevWordNode != null) {
                     prevWordNode.setNextWord(wordNode);
                 }
-                sentenceNode.getWords().add(wordNode);
-                wordIndexMap.put(domainWord.getPosition(), wordNode);
                 prevWordNode = wordNode;
             }
 
@@ -80,15 +88,31 @@ public class DocumentationPersistenceService {
 
             prevSentenceNode = sentenceNode;
         }
+
+        createDependencyLinks(domainText, wordIndexMap);
+
         textRepository.save(textNode);
         logger.info("Saved documentation for document ID to neo4j: {}", documentId);
     }
 
-    private PhraseNode convertPhrase(Phrase domainPhrase,
-            Map<Integer, WordNode> wordMap,
-            Map<Phrase, PhraseNode> phraseCache) {
+    private void createDependencyLinks(Text domainText, Map<Integer, WordNode> wordMap) {
+        for (Word word : domainText.words()) {
+            WordNode sourceNode = wordMap.get(word.getPosition());
+            if (sourceNode == null) continue;
 
-        // cycle/ duplication detection
+            for (DependencyTag tag : DependencyTag.values()) {
+                for (Word target : word.getOutgoingDependencyWordsWithType(tag)) {
+                    WordNode targetNode = wordMap.get(target.getPosition());
+                    if (targetNode != null) {
+                        // Assuming addDependency(type, target) exists on WordNode
+                        sourceNode.addDependency(tag.name(), targetNode);
+                    }
+                }
+            }
+        }
+    }
+
+    private PhraseNode convertPhrase(Phrase domainPhrase, Map<Integer, WordNode> wordMap, Map<Phrase, PhraseNode> phraseCache) {
         if (phraseCache.containsKey(domainPhrase)) {
             return phraseCache.get(domainPhrase);
         }
@@ -97,7 +121,6 @@ public class DocumentationPersistenceService {
                 domainPhrase.getText(),
                 domainPhrase.getPhraseType().toString()
         );
-
         phraseCache.put(domainPhrase, phraseNode);
 
         for (Word containedWord : domainPhrase.getContainedWords()) {

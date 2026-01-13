@@ -1,80 +1,84 @@
 package io.github.ardoco.core.adapter;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.*;
-
-import io.github.ardoco.core.entities.documentation.WordNode;
-
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Multimaps;
+
 import java.util.Objects;
 
 public class Neo4jWord implements Word {
 
-    private final WordNode node;
+    private final int position;
+    private final String text;
+    private final String lemma;
+    private final POSTag posTag;
     private final Neo4jSentence parentSentence;
+
     private Neo4jWord nextWord;
     private Neo4jWord preWord;
-
     private Phrase phrase;
 
-    public Neo4jWord(WordNode node, Neo4jSentence parentSentence) {
-        this.node = node;
+    private final MutableListMultimap<DependencyTag, Word> outgoingDependencies = Multimaps.mutable.list.empty();
+    private final MutableListMultimap<DependencyTag, Word> incomingDependencies = Multimaps.mutable.list.empty();
+
+    // Constructor takes raw data, not Nodes
+    public Neo4jWord(int position, String text, String lemma, String posTagStr, Neo4jSentence parentSentence) {
+        this.position = position;
+        this.text = text;
+        this.lemma = lemma;
+        this.posTag = POSTag.get(posTagStr);
         this.parentSentence = parentSentence;
     }
 
     public void setNextWord(Neo4jWord nextWord) {
         this.nextWord = nextWord;
     }
-
     public void setPreWord(Neo4jWord preWord) {
         this.preWord = preWord;
     }
 
-    @Override
-    public int getSentenceNumber() {
-        return parentSentence.getSentenceNumber();
+    public void addOutgoingDependency(DependencyTag tag, Neo4jWord target) {
+        this.outgoingDependencies.put(tag, target);
     }
 
-    @Override
-    public Sentence getSentence() {
+    public void addIncomingDependency(DependencyTag tag, Neo4jWord source) {
+        this.incomingDependencies.put(tag, source);
+    }
+
+    // ... Getters ...
+    @Override public int getPosition() {
+        return position;
+    }
+
+    @Override public String getText() {
+        return text;
+    }
+    @Override public String getLemma() {
+        return lemma;
+    }
+    @Override public POSTag getPosTag() {
+        return posTag;
+    }
+    @Override public Sentence getSentence() {
         return parentSentence;
     }
-
-    @Override
-    public String getText() {
-        return node.getText();
+    @Override public int getSentenceNumber() {
+        return parentSentence.getSentenceNumber();
     }
-
-    @Override
-    public POSTag getPosTag() {
-        return POSTag.get(node.getPosTag());
-    }
-
-    @Override
-    public Word getPreWord() {
+    @Override public Word getPreWord() {
         return preWord;
     }
-
-    @Override
-    public Word getNextWord() {
+    @Override public Word getNextWord() {
         return nextWord;
-    }
-
-    @Override
-    public int getPosition() {
-        return node.getPosition();
-    }
-
-    @Override
-    public String getLemma() {
-        return node.getLemma();
     }
 
     @Override
     public Phrase getPhrase() {
         if (this.phrase == null) {
-            // Logic to find the deepest phrase containing this word
-            this.phrase = findDeepestPhrase(this.parentSentence.getPhrases(), this);
+            // Logic to find phrase (same as before)
+            this.phrase = findDeepestPhrase(parentSentence.getPhrases(), this);
         }
         return this.phrase;
     }
@@ -82,7 +86,6 @@ public class Neo4jWord implements Word {
     private Phrase findDeepestPhrase(ImmutableList<Phrase> phrases, Word word) {
         for (Phrase p : phrases) {
             if (p.getContainedWords().contains(word)) {
-                // Check children
                 Phrase deeper = findDeepestPhrase(p.getSubphrases(), word);
                 return deeper != null ? deeper : p;
             }
@@ -90,31 +93,33 @@ public class Neo4jWord implements Word {
         return null;
     }
 
-
     @Override
     public ImmutableList<Word> getOutgoingDependencyWordsWithType(DependencyTag dependencyTag) {
-        return Lists.immutable.empty(); // TODO
+        return this.outgoingDependencies.get(dependencyTag).toImmutable();
     }
 
     @Override
     public ImmutableList<Word> getIncomingDependencyWordsWithType(DependencyTag dependencyTag) {
-        return Lists.immutable.empty(); // TODO
+        return this.incomingDependencies.get(dependencyTag).toImmutable();
+    }
+
+    // compareTo, equals, hashCode ...
+    @Override
+    public int compareTo(Word o) {
+        if (this.equals(o)) return 0;
+        int s = Integer.compare(this.getSentenceNumber(), o.getSentenceNumber());
+        return (s != 0) ? s : Integer.compare(this.position, o.getPosition());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Word other)) return false;
-        return getPosition() == other.getPosition() && getSentenceNumber() == other.getSentenceNumber();
+        if (!(o instanceof Word w)) return false;
+        return position == w.getPosition() && getSentenceNumber() == w.getSentenceNumber();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPosition(), getText(), getPosTag(), getSentenceNumber());
-    }
-
-    @Override
-    public int compareTo(Word o) {
-        return Integer.compare(this.getPosition(), o.getPosition());
+        return Objects.hash(position, text, posTag, getSentenceNumber());
     }
 }

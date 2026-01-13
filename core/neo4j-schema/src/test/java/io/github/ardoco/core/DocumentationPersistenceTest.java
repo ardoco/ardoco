@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl
 import io.github.ardoco.core.adapter.Neo4jText;
 import io.github.ardoco.core.entities.documentation.TextNode;
 import io.github.ardoco.core.repository.documentation.TextNodeRepository;
+import io.github.ardoco.core.service.documentation.DocumentationMapper;
 import io.github.ardoco.core.service.documentation.DocumentationPersistenceService;
 
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -121,7 +122,8 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         assertThat(firstWord.getNextWord()).isNotNull();
         assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
 
-        Text restoredText = new Neo4jText(retrievedNode);
+        DocumentationMapper mapper = new DocumentationMapper();
+        Text restoredText = mapper.mapToDomain(retrievedNode);
         assertThat(restoredText.getSentences()).hasSize(2);
 
         var neo4jFirstSentence = restoredText.getSentences().get(0);
