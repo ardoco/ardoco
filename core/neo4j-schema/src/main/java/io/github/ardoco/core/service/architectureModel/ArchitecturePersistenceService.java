@@ -116,7 +116,7 @@ public class ArchitecturePersistenceService {
         ifaceCache.put(domainInterface.getId(), node);
 
         for (ArchitectureMethod method : domainInterface.getMethodSignatures()) {
-            ArchitectureMethodNode methodNode = new ArchitectureMethodNode(method.getName());
+            ArchitectureMethodNode methodNode = new ArchitectureMethodNode(method.getName(), method.getId());
             node.addMethodSignature(methodNode);
         }
 

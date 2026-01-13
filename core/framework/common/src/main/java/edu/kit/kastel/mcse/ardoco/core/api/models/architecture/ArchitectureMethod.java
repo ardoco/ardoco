@@ -25,6 +25,15 @@ public final class ArchitectureMethod extends ArchitectureItem {
     }
 
     /**
+     * Creates a new ArchitectureMethod with a given id.
+     *
+     * @param name the name of the method
+     */
+    public ArchitectureMethod(String id, String name) {
+        super(name, id);
+    }
+
+    /**
      * Returns the type of this method (currently not specified).
      *
      * @return empty optional

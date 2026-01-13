@@ -2,6 +2,7 @@ package io.github.ardoco.core;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
@@ -27,7 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 
-import static io.github.ardoco.core.util.CodeModelEqualityHelper.areCodeModelsEqual;
+import static io.github.ardoco.core.util.CodeModelEqualityHelper.assertCodeModelsEqual;
 
 @Testcontainers
 @SpringBootTest
@@ -69,7 +70,7 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
         CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         persistenceService.saveCodeModel(extractedModel);
         CodeModel loadedModel = persistenceService.loadCodeModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
-        Assertions.assertTrue(areCodeModelsEqual(extractedModel, loadedModel));
+        assertCodeModelsEqual(extractedModel, loadedModel);
     }
 
     @Test
@@ -87,6 +88,8 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
         runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
 
         testRunnerAssertions(runner);
-        Assertions.assertNotNull(runner.run());
+        ArDoCoResult result = runner.run();
+        Assertions.assertNotNull(result);
+
     }
 }

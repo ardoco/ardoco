@@ -9,120 +9,82 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMetho
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ArchitectureModelEqualityHelper {
 
     /**
-     * Deep compares two ArchitectureModels.
+     * Deep compares two ArchitectureModels using Assertions.
      *
-     * @param modelA The original model
-     * @param modelB The restored model
-     * @return true if structurally identical
+     * @param expected The original model
+     * @param actual   The restored model
      */
-    public static boolean areArchitectureModelsEqual(ArchitectureModel modelA, ArchitectureModel modelB) {
-        if (modelA == modelB) return true;
-        if (modelA == null || modelB == null) return false;
+    public static void assertArchitectureModelsEqual(ArchitectureModel expected, ArchitectureModel actual) {
+        if (expected == actual) return;
+        assertNotNull(expected, "Expected ArchitectureModel is null");
+        assertNotNull(actual, "Actual ArchitectureModel is null");
 
-        // 1. Check Meta-info
-        if (modelA.getMetamodel() != modelB.getMetamodel()) {
-            System.err.println("Metamodel mismatch: " + modelA.getMetamodel() + " vs " + modelB.getMetamodel());
-            return false;
+        assertEquals(expected.getMetamodel(), actual.getMetamodel(), "Metamodel mismatch");
+        assertEquals(expected.getId(), actual.getId(), "Model ID mismatch");
+
+        Map<String, ArchitectureItem> itemsExpected = mapContent(expected.getContent());
+        Map<String, ArchitectureItem> itemsActual = mapContent(actual.getContent());
+
+        assertEquals(itemsExpected.size(), itemsActual.size(),
+                () -> "Content size mismatch. Expected keys: " + itemsExpected.keySet() + ", Actual keys: " + itemsActual.keySet());
+
+        for (String id : itemsExpected.keySet()) {
+            assertTrue(itemsActual.containsKey(id), () -> "Restored model missing item with ID: " + id);
+
+            ArchitectureItem itemExpected = itemsExpected.get(id);
+            ArchitectureItem itemActual = itemsActual.get(id);
+
+            assertItemsEqual(itemExpected, itemActual);
         }
-        if (!Objects.equals(modelA.getId(), modelB.getId())) {
-            System.err.println("Model ID mismatch: " + modelA.getId() + " vs " + modelB.getId());
-            return false;
-        }
-
-        // 2. Map Content by ID for comparison
-        Map<String, ArchitectureItem> itemsA = mapContent(modelA.getContent());
-        Map<String, ArchitectureItem> itemsB = mapContent(modelB.getContent());
-
-        if (itemsA.size() != itemsB.size()) {
-            System.err.println("Content size mismatch: " + itemsA.size() + " vs " + itemsB.size());
-            return false;
-        }
-
-        // 3. Compare each item
-        for (String id : itemsA.keySet()) {
-            if (!itemsB.containsKey(id)) {
-                System.err.println("Restored model missing item: " + id);
-                return false;
-            }
-
-            ArchitectureItem itemA = itemsA.get(id);
-            ArchitectureItem itemB = itemsB.get(id);
-
-            if (!areItemsEqual(itemA, itemB)) {
-                System.err.println("Item mismatch for ID " + id + " (" + itemA.getName() + ")");
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static Map<String, ArchitectureItem> mapContent(List<? extends ArchitectureItem> content) {
         return content.stream().collect(Collectors.toMap(ArchitectureItem::getId, item -> item));
     }
 
-    private static boolean areItemsEqual(ArchitectureItem a, ArchitectureItem b) {
-        if (a.getClass() != b.getClass()) {
-            System.err.println("Class mismatch: " + a.getClass() + " vs " + b.getClass());
-            return false;
-        }
-        if (!Objects.equals(a.getName(), b.getName())) {
-            System.err.println("Name mismatch: " + a.getName() + " vs " + b.getName());
-            return false;
-        }
+    private static void assertItemsEqual(ArchitectureItem expected, ArchitectureItem actual) {
+        assertEquals(expected.getClass(), actual.getClass(),
+                () -> "Class mismatch for ID " + expected.getId());
 
-        if (a instanceof ArchitectureComponent compA && b instanceof ArchitectureComponent compB) {
-            return areComponentsEqual(compA, compB);
-        } else if (a instanceof ArchitectureInterface ifaceA && b instanceof ArchitectureInterface ifaceB) {
-            return areInterfacesEqual(ifaceA, ifaceB);
-        }
+        assertEquals(expected.getName(), actual.getName(),
+                () -> "Name mismatch for ID " + expected.getId());
 
-        return true;
+        if (expected instanceof ArchitectureComponent compExpected && actual instanceof ArchitectureComponent compActual) {
+            assertComponentsEqual(compExpected, compActual);
+        } else if (expected instanceof ArchitectureInterface ifaceExpected && actual instanceof ArchitectureInterface ifaceActual) {
+            assertInterfacesEqual(ifaceExpected, ifaceActual);
+        }
     }
 
-    private static boolean areComponentsEqual(ArchitectureComponent a, ArchitectureComponent b) {
-        // Compare Type
-        if (!Objects.equals(a.getType(), b.getType())) return false;
+    private static void assertComponentsEqual(ArchitectureComponent expected, ArchitectureComponent actual) {
+        String context = "Component: " + expected.getName() + " (" + expected.getId() + ")";
 
-        // Compare Subcomponents (by ID)
-        Set<String> subA = a.getSubcomponents().stream().map(ArchitectureComponent::getId).collect(Collectors.toSet());
-        Set<String> subB = b.getSubcomponents().stream().map(ArchitectureComponent::getId).collect(Collectors.toSet());
-        if (!subA.equals(subB)) {
-            System.err.println("Subcomponents mismatch for " + a.getName());
-            return false;
-        }
+        assertEquals(expected.getType(), actual.getType(), context + " - Type mismatch");
 
-        // Compare Provided Interfaces (by ID)
-        Set<String> provA = a.getProvidedInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
-        Set<String> provB = b.getProvidedInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
-        if (!provA.equals(provB)) {
-            System.err.println("Provided Interfaces mismatch for " + a.getName());
-            return false;
-        }
+        Set<String> subExpected = expected.getSubcomponents().stream().map(ArchitectureComponent::getId).collect(Collectors.toSet());
+        Set<String> subActual = actual.getSubcomponents().stream().map(ArchitectureComponent::getId).collect(Collectors.toSet());
+        assertEquals(subExpected, subActual, context + " - Subcomponents mismatch");
 
-        // Compare Required Interfaces (by ID)
-        Set<String> reqA = a.getRequiredInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
-        Set<String> reqB = b.getRequiredInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
-        if (!reqA.equals(reqB)) {
-            System.err.println("Required Interfaces mismatch for " + a.getName());
-            return false;
-        }
+        Set<String> provExpected = expected.getProvidedInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
+        Set<String> provActual = actual.getProvidedInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
+        assertEquals(provExpected, provActual, context + " - Provided Interfaces mismatch");
 
-        return true;
+        Set<String> reqExpected = expected.getRequiredInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
+        Set<String> reqActual = actual.getRequiredInterfaces().stream().map(ArchitectureInterface::getId).collect(Collectors.toSet());
+        assertEquals(reqExpected, reqActual, context + " - Required Interfaces mismatch");
     }
 
-    private static boolean areInterfacesEqual(ArchitectureInterface a, ArchitectureInterface b) {
-        // Compare Signatures
-        Set<String> sigsA = a.getMethodSignatures().stream().map(ArchitectureMethod::getName).collect(Collectors.toSet());
-        Set<String> sigsB = b.getMethodSignatures().stream().map(ArchitectureMethod::getName).collect(Collectors.toSet());
+    private static void assertInterfacesEqual(ArchitectureInterface expected, ArchitectureInterface actual) {
+        String context = "Interface: " + expected.getName() + " (" + expected.getId() + ")";
 
-        if (!sigsA.equals(sigsB)) {
-            System.err.println("Method signatures mismatch for interface " + a.getName());
-            return false;
-        }
-        return true;
+        Set<String> sigsExpected = expected.getMethodSignatures().stream().map(ArchitectureMethod::getName).collect(Collectors.toSet());
+        Set<String> sigsActual = actual.getMethodSignatures().stream().map(ArchitectureMethod::getName).collect(Collectors.toSet());
+
+        assertEquals(sigsExpected, sigsActual, context + " - Method signatures mismatch");
     }
 }

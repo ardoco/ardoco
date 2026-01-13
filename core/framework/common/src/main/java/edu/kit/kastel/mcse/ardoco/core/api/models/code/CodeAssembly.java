@@ -44,6 +44,11 @@ public final class CodeAssembly extends CodeModule {
         this.language = language;
     }
 
+    public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
+        super(codeItemRepository, name, content);
+        this.language = language;
+    }
+
     public String getLanguage() {
         return language;
     }

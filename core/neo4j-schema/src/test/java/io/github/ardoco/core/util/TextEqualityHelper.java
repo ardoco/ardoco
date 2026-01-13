@@ -7,109 +7,96 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import java.util.Objects;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TextEqualityHelper {
 
     /**
-     * Deep compares two Text objects.
+     * Deep compares two Text objects using JUnit Assertions.
      * Checks Sentences, Words (including dependencies), and Phrases.
      *
-     * @param textA The original text
-     * @param textB The restored text
-     * @return true if identical
+     * @param expected The original text (expected)
+     * @param actual   The restored text (actual)
      */
-    public static boolean areTextsEqual(Text textA, Text textB) {
-        if (textA == textB) return true;
-        if (textA == null || textB == null) return false;
+    public static void assertTextsEqual(Text expected, Text actual) {
+        if (expected == actual) return;
+        assertNotNull(expected, "Expected Text is null");
+        assertNotNull(actual, "Actual Text is null");
 
-        if (textA.getSentences().size() != textB.getSentences().size()) {
-            System.err.println("Sentence count mismatch: " + textA.getSentences().size() + " vs " + textB.getSentences().size());
-            return false;
+        assertEquals(expected.getSentences().size(), actual.getSentences().size(),
+                "Sentence count mismatch");
+
+        for (int i = 0; i < expected.getSentences().size(); i++) {
+            Sentence sExpected = expected.getSentences().get(i);
+            Sentence sActual = actual.getSentences().get(i);
+
+            assertSentencesEqual(sExpected, sActual, i);
         }
-
-        for (int i = 0; i < textA.getSentences().size(); i++) {
-            Sentence sA = textA.getSentences().get(i);
-            Sentence sB = textB.getSentences().get(i);
-
-            if (!areSentencesEqual(sA, sB)) {
-                System.err.println("Sentence mismatch at index " + i);
-                return false;
-            }
-        }
-
-        return true;
     }
 
-    private static boolean areSentencesEqual(Sentence a, Sentence b) {
-        if (a.getSentenceNumber() != b.getSentenceNumber()) return false;
-        if (!Objects.equals(a.getText(), b.getText())) {
-            System.err.println("Sentence text mismatch: [" + a.getText() + "] vs [" + b.getText() + "]");
-            return false;
+    private static void assertSentencesEqual(Sentence expected, Sentence actual, int index) {
+        assertEquals(expected.getSentenceNumber(), actual.getSentenceNumber(),
+                () -> "Sentence number mismatch at index " + index);
+
+        assertEquals(expected.getText(), actual.getText(),
+                () -> "Sentence text mismatch at index " + index);
+
+        assertEquals(expected.getWords().size(), actual.getWords().size(),
+                () -> "Word count mismatch in sentence " + expected.getSentenceNumber());
+
+        for (int i = 0; i < expected.getWords().size(); i++) {
+            assertWordsEqual(expected.getWords().get(i), actual.getWords().get(i));
         }
 
-        if (a.getWords().size() != b.getWords().size()) return false;
-        for (int i = 0; i < a.getWords().size(); i++) {
-            if (!areWordsEqual(a.getWords().get(i), b.getWords().get(i))) {
-                System.err.println("Word mismatch at index " + i + " in sentence " + a.getSentenceNumber());
-                return false;
-            }
-        }
+        assertEquals(expected.getPhrases().size(), actual.getPhrases().size(),
+                () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
 
-        if (a.getPhrases().size() != b.getPhrases().size()) return false;
-        for (int i = 0; i < a.getPhrases().size(); i++) {
-            if (!arePhrasesEqual(a.getPhrases().get(i), b.getPhrases().get(i))) {
-                System.err.println("Phrase mismatch at index " + i + " in sentence " + a.getSentenceNumber());
-                return false;
-            }
+        for (int i = 0; i < expected.getPhrases().size(); i++) {
+            assertPhrasesEqual(expected.getPhrases().get(i), actual.getPhrases().get(i));
         }
-        return true;
     }
 
-    private static boolean areWordsEqual(Word a, Word b) {
-        if (a.getPosition() != b.getPosition()) return false;
-        if (a.getSentenceNumber() != b.getSentenceNumber()) return false;
-        if (!Objects.equals(a.getText(), b.getText())) return false;
-        if (!Objects.equals(a.getLemma(), b.getLemma())) return false;
-        if (a.getPosTag() != b.getPosTag()) return false;
+    private static void assertWordsEqual(Word expected, Word actual) {
+        String context = "Word mismatch (Sentence: " + expected.getSentenceNumber() + ", Pos: " + expected.getPosition() + ")";
+
+        assertEquals(expected.getPosition(), actual.getPosition(), context + " - Position");
+        assertEquals(expected.getSentenceNumber(), actual.getSentenceNumber(), context + " - Sentence Number");
+        assertEquals(expected.getText(), actual.getText(), context + " - Text");
+        assertEquals(expected.getLemma(), actual.getLemma(), context + " - Lemma");
+        assertEquals(expected.getPosTag(), actual.getPosTag(), context + " - POS Tag");
 
         for (DependencyTag tag : DependencyTag.values()) {
-            ImmutableList<Word> outA = a.getOutgoingDependencyWordsWithType(tag);
-            ImmutableList<Word> outB = b.getOutgoingDependencyWordsWithType(tag);
+            ImmutableList<Word> outExpected = expected.getOutgoingDependencyWordsWithType(tag);
+            ImmutableList<Word> outActual = actual.getOutgoingDependencyWordsWithType(tag);
 
-            if (outA.size() != outB.size()) {
-                System.err.println("Dependency count mismatch for tag " + tag + " on word " + a.getText());
-                return false;
-            }
+            assertEquals(outExpected.size(), outActual.size(),
+                    () -> context + " - Dependency count mismatch for tag " + tag);
 
-            for (int k = 0; k < outA.size(); k++) {
-                if (outA.get(k).getPosition() != outB.get(k).getPosition()) {
-                    System.err.println("Dependency target mismatch for tag " + tag);
-                    return false;
-                }
+            for (int k = 0; k < outExpected.size(); k++) {
+                int finalK = k;
+                assertEquals(outExpected.get(k).getPosition(), outActual.get(k).getPosition(),
+                        () -> context + " - Dependency target mismatch for tag " + tag + " at index " + finalK);
             }
         }
-        return true;
     }
 
-    private static boolean arePhrasesEqual(Phrase a, Phrase b) {
-        if (a.getPhraseType() != b.getPhraseType()) return false;
-        if (!Objects.equals(a.getText(), b.getText())) return false;
+    private static void assertPhrasesEqual(Phrase expected, Phrase actual) {
+        String context = "Phrase mismatch: " + expected.getText();
 
-        if (a.getContainedWords().size() != b.getContainedWords().size()) return false;
-        for (int i = 0; i < a.getContainedWords().size(); i++) {
-            if (a.getContainedWords().get(i).getPosition() != b.getContainedWords().get(i).getPosition()) {
-                return false;
-            }
+        assertEquals(expected.getPhraseType(), actual.getPhraseType(), context + " - Type");
+        assertEquals(expected.getText(), actual.getText(), context + " - Text");
+
+        assertEquals(expected.getContainedWords().size(), actual.getContainedWords().size(), context + " - Contained words count");
+
+        for (int i = 0; i < expected.getContainedWords().size(); i++) {
+            assertEquals(expected.getContainedWords().get(i).getPosition(), actual.getContainedWords().get(i).getPosition(),
+                    context + " - Contained word position mismatch at index " + i);
         }
 
-        if (a.getSubphrases().size() != b.getSubphrases().size()) return false;
-        for (int i = 0; i < a.getSubphrases().size(); i++) {
-            if (!arePhrasesEqual(a.getSubphrases().get(i), b.getSubphrases().get(i))) {
-                return false;
-            }
-        }
+        assertEquals(expected.getSubphrases().size(), actual.getSubphrases().size(), context + " - Subphrase count");
 
-        return true;
+        for (int i = 0; i < expected.getSubphrases().size(); i++) {
+            assertPhrasesEqual(expected.getSubphrases().get(i), actual.getSubphrases().get(i));
+        }
     }
 }

@@ -71,7 +71,7 @@ public class ArchitectureModelMapper {
 
         SortedSet<ArchitectureMethod> methods = new TreeSet<>();
         for (ArchitectureMethodNode methodNode : node.getMethodSignatures()) {
-            methods.add(new ArchitectureMethod(methodNode.getName()));
+            methods.add(new ArchitectureMethod(methodNode.getArdocoId(), methodNode.getName()));
         }
 
         ArchitectureInterface domainInterface = new ArchitectureInterface(

@@ -154,6 +154,6 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         Text originalText = provider.getAnnotatedText();
         persistenceService.savePreprocessedText(originalText, InputTextData.ID);
         Text loadedText = persistenceService.loadPreprocessedText(InputTextData.ID);
-        Assertions.assertTrue(TextEqualityHelper.areTextsEqual(originalText, loadedText));
+        TextEqualityHelper.assertTextsEqual(originalText, loadedText);
     }
 }

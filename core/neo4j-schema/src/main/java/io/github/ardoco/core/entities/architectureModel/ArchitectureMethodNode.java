@@ -15,11 +15,13 @@ public class ArchitectureMethodNode implements Comparable<ArchitectureMethodNode
     private String id;
 
     private String name;
+    private String ardocoId;
 
     protected ArchitectureMethodNode() {}
 
-    public ArchitectureMethodNode(String name) {
+    public ArchitectureMethodNode(String name, String ardocoId) {
         this.name = name;
+        this.ardocoId = ardocoId;
     }
 
     public String getName() {
@@ -28,6 +30,10 @@ public class ArchitectureMethodNode implements Comparable<ArchitectureMethodNode
 
     public String getId() {
         return id;
+    }
+
+    public String getArdocoId() {
+        return ardocoId;
     }
 
     @Override

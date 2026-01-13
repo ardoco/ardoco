@@ -6,82 +6,55 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CodeModelEqualityHelper {
 
     /**
-     * Checks if two CodeModels are structurally and content-wise identical.
-     * Assumes that the restoration process preserves IDs (which your architecture does).
+     * Checks if two CodeModels are structurally and content-wise identical using Assertions.
+     * Assumes that the restoration process preserves IDs.
      *
-     * @param modelA the first model
-     * @param modelB the second model
-     * @return true if equal, false otherwise
+     * @param expected the first model (expected)
+     * @param actual   the second model (actual)
      */
-    public static boolean areCodeModelsEqual(CodeModel modelA, CodeModel modelB) {
-        if (modelA == modelB) return true;
-        if (modelA == null || modelB == null) return false;
+    public static void assertCodeModelsEqual(CodeModel expected, CodeModel actual) {
+        if (expected == actual) return;
+        assertNotNull(expected, "Expected CodeModel is null");
+        assertNotNull(actual, "Actual CodeModel is null");
 
-        // 1. Check Metamodel & ID
-        if (modelA.getMetamodel() != modelB.getMetamodel()) {
-            System.err.println("Metamodel mismatch: " + modelA.getMetamodel() + " vs " + modelB.getMetamodel());
-            return false;
-        }
-        if (!Objects.equals(modelA.getId(), modelB.getId())) {
-            System.err.println("Model ID mismatch: " + modelA.getId() + " vs " + modelB.getId());
-            return false;
-        }
+        assertEquals(expected.getMetamodel(), actual.getMetamodel(), "Metamodel mismatch");
+        assertEquals(expected.getId(), actual.getId(), "Model ID mismatch");
 
-        // 2. Check Root Content (Order independent check of IDs)
-        Set<String> rootsA = modelA.getContent().stream().map(CodeItem::getId).collect(Collectors.toSet());
-        Set<String> rootsB = modelB.getContent().stream().map(CodeItem::getId).collect(Collectors.toSet());
+        Set<String> rootsExpected = expected.getContent().stream().map(CodeItem::getId).collect(Collectors.toSet());
+        Set<String> rootsActual = actual.getContent().stream().map(CodeItem::getId).collect(Collectors.toSet());
 
-        if (!rootsA.equals(rootsB)) {
-            System.err.println("Root content mismatch. A=" + rootsA + ", B=" + rootsB);
-            return false;
-        }
+        assertEquals(rootsExpected, rootsActual, "Root content IDs mismatch");
 
-        // 3. Deep Compare All Items in Repository
-        // We use the DTO to access the internal initialized repositories
-        CodeItemRepository repoA = modelA.createCodeModelDto().codeItemRepository();
-        CodeItemRepository repoB = modelB.createCodeModelDto().codeItemRepository();
+        CodeItemRepository repoExpected = expected.createCodeModelDto().codeItemRepository();
+        CodeItemRepository repoActual = actual.createCodeModelDto().codeItemRepository();
 
-        Map<String, CodeItem> itemsA = repoA.getRepository();
-        Map<String, CodeItem> itemsB = repoB.getRepository();
+        Map<String, CodeItem> itemsExpected = repoExpected.getRepository();
+        Map<String, CodeItem> itemsActual = repoActual.getRepository();
 
-        if (itemsA.size() != itemsB.size()) {
-            System.out.println("Repository size mismatch: " + itemsA.size() + " vs " + itemsB.size());
-        }
+//        assertEquals(itemsExpected.size(), itemsActual.size(),
+//                "Repository size mismatch (Total items count)");
 
-        for (String id : itemsA.keySet()) {
-            if (!itemsB.containsKey(id)) {
-                System.err.println("Item " + id + " missing in restored model.");
-                return false;
+        for (String id : itemsExpected.keySet()) {
+            assertTrue(itemsActual.containsKey(id), () -> "Item " + id + " missing in restored model.");
+
+            CodeItem itemExpected = itemsExpected.get(id);
+            CodeItem itemActual = itemsActual.get(id);
+
+            assertEquals(itemExpected, itemActual,
+                    () -> "Item equality check failed for ID " + id);
+
+            if (itemExpected instanceof CodeAssembly assemblyExpected && itemActual instanceof CodeAssembly assemblyActual) {
+                assertEquals(assemblyExpected.getLanguage(), assemblyActual.getLanguage(),
+                        () -> "CodeAssembly language mismatch for ID " + id);
             }
-
-            CodeItem itemA = itemsA.get(id);
-            CodeItem itemB = itemsB.get(id);
-
-            // 3a. Standard Equals Check (Covered by CodeItem subclasses)
-            if (!itemA.equals(itemB)) {
-                System.err.println("Item inequality for ID " + id + ": " + itemA + " vs " + itemB);
-                return false;
-            }
-
-            // 3b. Manual Check for fields missing in equals()
-            // CodeAssembly does not override equals(), so it ignores 'language'. We check it manually.
-            if (itemA instanceof CodeAssembly assemblyA && itemB instanceof CodeAssembly assemblyB) {
-                if (!Objects.equals(assemblyA.getLanguage(), assemblyB.getLanguage())) {
-                    System.err.println("CodeAssembly language mismatch for " + id);
-                    return false;
-                }
-            }
-
-            // Note: CodeCompilationUnit, ClassUnit, InterfaceUnit, Datatype override equals() correctly.
         }
-
-        return true;
     }
 }

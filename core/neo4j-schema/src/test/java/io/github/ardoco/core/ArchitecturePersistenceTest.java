@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import static io.github.ardoco.core.util.ArchitectureModelEqualityHelper.areArchitectureModelsEqual;
+import static io.github.ardoco.core.util.ArchitectureModelEqualityHelper.assertArchitectureModelsEqual;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
@@ -98,6 +98,6 @@ class ArchitecturePersistenceTest extends RunnerBaseTest {
         ArchitectureModel loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
         System.out.println("Hello from testSaveAndLoadCodeModel2");
         assertThat(loadedModel).isNotNull();
-        Assertions.assertTrue(areArchitectureModelsEqual(originalModel, loadedModel));
+        assertArchitectureModelsEqual(originalModel, loadedModel);
     }
 }
