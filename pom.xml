@@ -84,7 +84,7 @@
     <spotless.version>3.1.0</spotless.version>
     <junit.version>6.0.2</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
-    <javaparser.version>3.27.1</javaparser.version>
+    <javaparser.version>3.28.0</javaparser.version>
     <mockito.version>5.21.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
