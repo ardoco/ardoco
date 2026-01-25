@@ -25,6 +25,7 @@ public final class ModelStates implements PipelineStepData {
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
 
+    // TODO: think about wether the currently implemented caching of neo4j persisted models is fine or whether we should do it differently
     // If a Metamodel is in this set, it must be re-loaded from the DB
     private final Set<Metamodel> dirtyMetamodels = new HashSet<>();
     /**
@@ -64,25 +65,19 @@ public final class ModelStates implements PipelineStepData {
         // dirty check
         if (this.dirtyMetamodels.contains(id) && isPersistentType && persistenceAvailable) {
             Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            if (loaded != null) {
-                this.models.put(id, loaded);    // Update Cache
-                this.dirtyMetamodels.remove(id); // Mark Clean
-                return loaded;
-            }
+            this.models.put(id, loaded);    // Update Cache
+            this.dirtyMetamodels.remove(id); // Mark Clean
+            return loaded;
         }
 
-        // Cache hit
         if (this.models.containsKey(id)) {
             return this.models.get(id);
         }
 
-        // Cache miss
         if (isPersistentType && persistenceAvailable) {
             Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            if (loaded != null) {
-                this.models.put(id, loaded); // Fill Cache
-                return loaded;
-            }
+            this.models.put(id, loaded); // Fill Cache
+            return loaded;
         }
 
         throw new IllegalArgumentException("Model with id " + id.toString() + " not found");

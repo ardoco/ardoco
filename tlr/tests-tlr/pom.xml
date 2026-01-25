@@ -56,6 +56,30 @@
       <version>${revision}</version>
       <scope>test</scope>
     </dependency>
+
+
+<!--    <dependency>-->
+<!--      <groupId>io.github.ardoco.core</groupId>-->
+<!--      <artifactId>neo4j-schema</artifactId>-->
+<!--      <version>${project.version}</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter-test</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-testcontainers</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.testcontainers</groupId>-->
+<!--      <artifactId>neo4j</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+
   </dependencies>
 
   <build>

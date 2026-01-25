@@ -5,6 +5,9 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
@@ -26,17 +29,32 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     private MutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> samCodeTraceLinks = Lists.mutable.empty();
     private MutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveTraceLinks = Lists.mutable.empty();
 
+    private transient boolean loadedFromPersistence = false;
+
     public CodeTraceabilityStateImpl() {
         super();
     }
 
     @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
+        if (PersistenceBridge.isAvailable()) {
+            PersistenceBridge.getHandler().saveSamCodeTraceLinks(traceLinks);
+        }
+
         return this.samCodeTraceLinks.addAll(traceLinks);
     }
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
+//        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
+        if (this.samCodeTraceLinks.isEmpty() && !loadedFromPersistence && PersistenceBridge.isAvailable()) {
+            Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadSamCodeTraceLinks();
+            if (loadedLinks != null && !loadedLinks.isEmpty()) {
+                this.samCodeTraceLinks.addAll(loadedLinks);
+            }
+            loadedFromPersistence = true;
+        }
+
         return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
     }
 
