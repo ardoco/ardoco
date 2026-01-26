@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.ardoco.tlr</groupId>
+    <artifactId>parent-tlr</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>cli-plugins-tlr</artifactId>
+  <version>${revision}</version>
+
+  <name>ARDoCo TLR - CLI Plugins</name>
+  <description>Task plugin implementations for the ARDoCo CLI, providing SAD-SAM, SAM-Code, and SAD-Code TLR functionality.</description>
+
+  <dependencies>
+    <!-- CLI API (provided scope - will be supplied by CLI at runtime) -->
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>cli-api</artifactId>
+      <version>${ardoco.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- TLR Pipeline -->
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>pipeline-tlr</artifactId>
+      <version>${ardoco.version}</version>
+    </dependency>
+
+    <!-- Eclipse Collections -->
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections-api</artifactId>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- Google AutoService for ServiceLoader registration -->
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service-annotations</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

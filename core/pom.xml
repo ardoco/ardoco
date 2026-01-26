@@ -146,6 +146,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
+        <module>cli-api</module>
         <module>framework</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
@@ -193,6 +194,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>cli-api</module>
         <module>framework</module>
         <module>pipeline-core</module>
         <module>tests-base</module>

@@ -141,6 +141,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
+        <module>cli-plugins-tlr</module>
         <module>pipeline-tlr</module>
         <module>stages-tlr</module>
       </modules>
@@ -171,6 +172,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>cli-plugins-tlr</module>
         <module>pipeline-tlr</module>
         <module>stages-tlr</module>
         <module>tests-tlr</module>

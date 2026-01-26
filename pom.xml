@@ -568,6 +568,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
+        <module>cli</module>
         <module>core</module>
         <module>inconsistency-detection</module>
         <module>tlr</module>
@@ -615,6 +616,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>cli</module>
         <module>core</module>
         <module>inconsistency-detection</module>
         <module>tlr</module>
