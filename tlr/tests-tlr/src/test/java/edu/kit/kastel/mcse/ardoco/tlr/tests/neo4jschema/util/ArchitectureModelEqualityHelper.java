@@ -1,4 +1,4 @@
-package io.github.ardoco.core.neo4jschema.util;
+package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;

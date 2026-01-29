@@ -1,4 +1,4 @@
-package io.github.ardoco.core.neo4jschema;
+package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;

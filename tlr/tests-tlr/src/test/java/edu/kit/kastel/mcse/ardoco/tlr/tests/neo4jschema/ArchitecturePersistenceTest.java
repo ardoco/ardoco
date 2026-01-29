@@ -1,4 +1,4 @@
-package io.github.ardoco.core.neo4jschema;
+package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
@@ -9,8 +9,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
 import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
+import io.github.ardoco.core.neo4jschema.Main;
 import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import static io.github.ardoco.core.neo4jschema.util.ArchitectureModelEqualityHelper.assertArchitectureModelsEqual;
+import static edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.ArchitectureModelEqualityHelper.assertArchitectureModelsEqual;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
@@ -75,9 +77,9 @@ class ArchitecturePersistenceTest extends RunnerBaseTest {
         var loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
 
 
-        assertThat(loadedModel).isNotNull();
-        assertThat(loadedModel.getContent()).hasSize(2); // Component + Interface
-        assertThat(loadedModel.getId()).isEqualTo(originalModel.getId());
+        Assertions.assertThat(loadedModel).isNotNull();
+        Assertions.assertThat(loadedModel.getContent()).hasSize(2); // Component + Interface
+        Assertions.assertThat(loadedModel.getId()).isEqualTo(originalModel.getId());
         ArchitectureComponent loadedComp = (ArchitectureComponent) loadedModel.getContent().stream()
                 .filter(i -> i instanceof ArchitectureComponent).findFirst().orElseThrow();
 

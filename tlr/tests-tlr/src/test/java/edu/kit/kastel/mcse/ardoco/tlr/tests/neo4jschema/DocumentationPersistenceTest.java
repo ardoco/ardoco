@@ -1,4 +1,4 @@
-package io.github.ardoco.core.neo4jschema;
+package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
@@ -11,6 +11,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.CoreNLPProvider;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl;
+import io.github.ardoco.core.neo4jschema.Main;
 import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
 import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationMapper;
@@ -19,7 +20,7 @@ import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPers
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-import io.github.ardoco.core.neo4jschema.util.TextEqualityHelper;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.TextEqualityHelper;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.junit.jupiter.api.Assertions;
@@ -103,37 +104,37 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
 
         TextNode retrievedNode = textNodeRepository.findByArdocoId(documentId);
 
-        assertThat(retrievedNode).isNotNull();
-        assertThat(retrievedNode.getSentences()).hasSize(2);
+        org.assertj.core.api.Assertions.assertThat(retrievedNode).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(retrievedNode.getSentences()).hasSize(2);
 
         // Check the first sentence
         var firstSentence = retrievedNode.getSentences().get(0);
-        assertThat(firstSentence.getText()).contains("The quick brown fox");
-        assertThat(firstSentence.getSentenceNumber()).isEqualTo(0);
+        org.assertj.core.api.Assertions.assertThat(firstSentence.getText()).contains("The quick brown fox");
+        org.assertj.core.api.Assertions.assertThat(firstSentence.getSentenceNumber()).isEqualTo(0);
 
         // Check the word chain
         var words = firstSentence.getWords();
-        assertThat(words).isNotEmpty();
+        org.assertj.core.api.Assertions.assertThat(words).isNotEmpty();
 
         var firstWord = words.get(0);
-        assertThat(firstWord.getText()).isEqualTo("The");
-        assertThat(firstWord.getPosTag()).isEqualTo("DT");
-        assertThat(firstWord.getNextWord()).isNotNull();
-        assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
+        org.assertj.core.api.Assertions.assertThat(firstWord.getText()).isEqualTo("The");
+        org.assertj.core.api.Assertions.assertThat(firstWord.getPosTag()).isEqualTo("DT");
+        org.assertj.core.api.Assertions.assertThat(firstWord.getNextWord()).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
 
         DocumentationMapper mapper = new DocumentationMapper();
         Text restoredText = mapper.mapToDomain(retrievedNode);
         assertThat(restoredText.getSentences()).hasSize(2);
 
         var neo4jFirstSentence = restoredText.getSentences().get(0);
-        assertThat(firstSentence.getText()).contains("The quick brown fox");
+        org.assertj.core.api.Assertions.assertThat(firstSentence.getText()).contains("The quick brown fox");
 
         assertThat(neo4jFirstSentence.getPhrases()).isNotEmpty();
         var rootPhrase = neo4jFirstSentence.getPhrases().get(0);
         assertThat(rootPhrase.getPhraseType().toString()).isEqualTo("ROOT");
 
-        assertThat(firstWord.getText()).isEqualTo("The");
-        assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
+        org.assertj.core.api.Assertions.assertThat(firstWord.getText()).isEqualTo("The");
+        org.assertj.core.api.Assertions.assertThat(firstWord.getNextWord().getText()).isEqualTo("quick");
     }
 
     @Test

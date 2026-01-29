@@ -1,17 +1,15 @@
-package io.github.ardoco.core.neo4jschema;
+package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 //import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
-import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
+import io.github.ardoco.core.neo4jschema.Main;
 import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
 
 import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 
-import static io.github.ardoco.core.neo4jschema.util.CodeModelEqualityHelper.assertCodeModelsEqual;
+import static edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.CodeModelEqualityHelper.assertCodeModelsEqual;
 
 @Testcontainers
 @SpringBootTest(classes = Main.class)
