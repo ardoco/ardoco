@@ -102,68 +102,80 @@ public class PluginManager {
         options.addOption(opt);
     }
 
+    /** Pattern for temporary inconsistency detection files to clean up. */
+    private static final String PATTERN_INCONSISTENCY_DETECTION = "inconsistencyDetection_.*\\.txt";
+    /** Pattern for temporary trace links files to clean up. */
+    private static final String PATTERN_TRACE_LINKS = "traceLinks_.*\\.txt";
+
     /**
      * Executes plugins based on command-line arguments.
      *
      * @param args command-line arguments
+     * @return true if execution succeeded, false otherwise
      */
-    public void executePlugins(String[] args) {
+    public boolean executePlugins(String[] args) {
         CommandLine cmd;
         try {
             cmd = parseCommandLine(args);
         } catch (ParseException e) {
             logger.error("Failed to parse command line: {}", e.getMessage());
             printUsage();
-            return;
+            return false;
         }
 
         // Show help if requested
         if (cmd.hasOption("h") || args.length == 0) {
             printUsage();
-            return;
+            return true; // Help is not a failure
         }
 
         // Validate required common options
         if (!cmd.hasOption("o")) {
             logger.error("Missing required option: output directory (-o/--output)");
             printUsage();
-            return;
+            return false;
         }
 
         if (!cmd.hasOption("t")) {
             logger.error("Missing required option: task (-t/--task)");
             printUsage();
-            return;
+            return false;
         }
 
         if (!cmd.hasOption("n")) {
             logger.error("Missing required option: project name (-n/--name)");
             printUsage();
-            return;
+            return false;
         }
 
         // Set up output directory
         File outputDir = new File(cmd.getOptionValue("o"));
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            logger.error("Failed to create output directory: {}", outputDir.getAbsolutePath());
+            return false;
         }
 
         // Get project name
         String projectName = cmd.getOptionValue("n");
 
         // Execute the selected task
-        String task = cmd.getOptionValue("t").toLowerCase();
+        String taskValue = cmd.getOptionValue("t");
+        if (taskValue == null || taskValue.isBlank()) {
+            logger.error("Task option provided but value is empty");
+            return false;
+        }
+        String task = taskValue.toLowerCase();
 
         if (!taskNameToPlugin.containsKey(task)) {
             logger.error("Unknown task: {}. Available tasks: {}", task, String.join(", ", taskNameToPlugin.keySet()));
-            return;
+            return false;
         }
 
         TaskPlugin plugin = taskNameToPlugin.get(task);
 
         if (!plugin.validateParameters(cmd)) {
             logger.error("Parameter validation failed for task: {}", task);
-            return;
+            return false;
         }
 
         // Create execution context
@@ -171,10 +183,16 @@ public class PluginManager {
 
         // Execute the plugin
         logger.info("Executing task: {}", task);
-        plugin.execute(context);
+        try {
+            plugin.execute(context);
+        } catch (Exception e) {
+            logger.error("Task execution failed: {}", e.getMessage(), e);
+            return false;
+        }
 
         // Cleanup temporary files
         cleanup(outputDir);
+        return true;
     }
 
     /**
@@ -214,7 +232,7 @@ public class PluginManager {
      * @param outputDir the output directory
      */
     private void cleanup(File outputDir) {
-        String[] patternsToDelete = { "inconsistencyDetection_.*\\.txt", "traceLinks_.*\\.txt" };
+        String[] patternsToDelete = { PATTERN_INCONSISTENCY_DETECTION, PATTERN_TRACE_LINKS };
 
         for (String pattern : patternsToDelete) {
             File[] files = outputDir.listFiles((dir, name) -> name.matches(pattern));
@@ -222,6 +240,8 @@ public class PluginManager {
                 for (File file : files) {
                     if (file.delete()) {
                         logger.debug("Deleted temporary file: {}", file.getName());
+                    } else {
+                        logger.warn("Failed to delete temporary file: {}", file.getAbsolutePath());
                     }
                 }
             }

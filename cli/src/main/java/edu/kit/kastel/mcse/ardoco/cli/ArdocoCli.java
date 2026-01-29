@@ -42,6 +42,9 @@ public final class ArdocoCli {
             System.exit(1);
         }
 
-        pluginManager.executePlugins(args);
+        boolean success = pluginManager.executePlugins(args);
+        if (!success) {
+            System.exit(1);
+        }
     }
 }
