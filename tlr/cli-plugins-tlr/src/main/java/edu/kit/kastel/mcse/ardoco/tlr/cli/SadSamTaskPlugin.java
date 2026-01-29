@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.cli;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -125,7 +126,12 @@ public class SadSamTaskPlugin implements TaskPlugin {
     private ModelFormat detectOrParseModelFormat(CommandLine cmd, File modelFile) {
         if (cmd.hasOption(OPT_MODEL_FORMAT)) {
             String formatStr = cmd.getOptionValue(OPT_MODEL_FORMAT).toUpperCase();
-            return ModelFormat.valueOf(formatStr);
+            try {
+                return ModelFormat.valueOf(formatStr);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(String.format("Invalid model format '%s'. Valid values are: %s", formatStr, Arrays.toString(ModelFormat
+                        .values())), e);
+            }
         }
         return ModelFormatDetector.detect(modelFile);
     }
