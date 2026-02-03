@@ -15,4 +15,4 @@
     1. [ExArch](traceability-link-recovery#exarch)
 7. [Inconsistency Detection (ID)](inconsistency-detection)
 8. [LiSSA](lissa)
-9. [JSpecify](jspecify)
+9. [JSpecify](JSpecify)
