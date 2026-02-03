@@ -29,7 +29,7 @@ Each text mention without a corresponding model link indicates an architectural 
 **Detection Approach**:
 1. Examines each model element and its associated trace links from the TLR results
 2. Identifies elements with no trace links or below a configurable threshold (default: 1 link)
-3. Applies regex-based whitelisting to exclude intentionally undocumented elements
+3. Applies regex-based whitelisting to exclude intentionally unmentioned elements
 
 **Configuration Options**:
 - **Threshold**: Minimum number of trace links required (default: 1)
@@ -50,6 +50,6 @@ The inconsistency detection approach uses trace link recovery as a bridge:
 - **Quality Assurance**: Ensuring completeness of documentation before releases
 - **Onboarding**: Helping new team members understand gaps in documentation
 - **Consistency Checking**: Verifying alignment between informal documents and formal models
-- **Reverse Engineering**: Finding undocumented components when analyzing existing systems
+- **Reverse Engineering**: Finding unmentioned components when analyzing existing systems
 
 For implementation details, see the [inconsistency-detection module](https://github.com/ardoco/ardoco/tree/main/inconsistency-detection).

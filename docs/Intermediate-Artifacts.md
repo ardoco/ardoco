@@ -106,7 +106,7 @@ Represents method declarations within interfaces:
 The SAM intermediate model enables:
 - **Cross-notation Analysis**: Handle UML, PCM, and other architecture models uniformly
 - **Traceability**: Link documentation mentions to model elements
-- **Inconsistency Detection**: Identify missing or undocumented components
+- **Inconsistency Detection**: Identify missing or unmentioned components
 - **Hierarchical Navigation**: Traverse component compositions and interface relationships
 
 ## Code Model
@@ -237,7 +237,7 @@ These intermediate artifacts flow through the ARDoCo pipeline:
 
 3. **Inconsistency Detection**:
    - Compare completeness between representations
-   - Identify missing or undocumented elements
+   - Identify missing or unmentioned elements
    - Report discrepancies
 
 ## Implementation References
