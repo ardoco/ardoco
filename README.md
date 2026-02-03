@@ -1,9 +1,9 @@
 # ARDoCo - Automating Requirements and Documentation Comprehension
 
 [![Maven Verify](https://github.com/ardoco/ardoco/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ardoco/ardoco/actions/workflows/verify.yml)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ARDoCo_ARDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ARDoCo_ARDoCo)
-[![Latest Release](https://img.shields.io/github/release/ardoco/ARDoCo.svg)](https://github.com/ardoco/ardoco/releases/latest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco/parent)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArDoCo_ArDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ArDoCo_ArDoCo)
+[![Latest Release](https://img.shields.io/github/release/ardoco/ardoco.svg)](https://github.com/ardoco/ardoco/releases/latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7274034.svg)](https://doi.org/10.5281/zenodo.7274034)
 
 The goal of the ARDoCo project is to connect architecture documentation and models with Traceability Link Recovery (TLR) while identifying missing or deviating elements (inconsistencies).
