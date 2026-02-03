@@ -12,8 +12,7 @@
   <packaging>pom</packaging>
 
   <name>ARDoCo TLR</name>
-  <description>The goal of this project is to create trace links between informal and formal artifacts like software architecture documentation, software
-        architecture, and code.</description>
+  <description>Traceability Link Recovery (TLR) modules for ARDoCo. Creates trace links between artifacts such as software architecture documentation, software architecture models, and code.</description>
   <url>https://github.com/ardoco/TLR</url>
   <licenses>
     <license>

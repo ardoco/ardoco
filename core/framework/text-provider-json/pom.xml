@@ -10,8 +10,8 @@
 
   <artifactId>text-provider-json</artifactId>
   <packaging>jar</packaging>
-  <name>TextProvider JSON</name>
-  <description>Definition of the JSON schema for the TextProvider</description>
+  <name>ARDoCo TextProvider JSON</name>
+  <description>JSON schema definition and implementation for the TextProvider interface.</description>
 
   <dependencies>
     <dependency>

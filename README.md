@@ -1,4 +1,4 @@
-# ARDoCo - Automating Requirements and Documentation Comprehension
+# ARDoCo
 
 [![Maven Verify](https://github.com/ardoco/ardoco/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/ardoco/ardoco/actions/workflows/verify.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.ardoco.core/parent)
@@ -10,12 +10,23 @@ The goal of the ARDoCo project is to connect architecture documentation and mode
 An element can be any representable item of the model, like a component or a relation.
 To do so, we first create trace links and then make use of them and other information to identify inconsistencies.
 
+Our recent approaches, such as [LiSSA](https://ardoco.de/approaches/lissa/), leverage Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG) to enable more generic and effective traceability link recovery across various artifact types.
+
 ARDoCo is actively developed by researchers of the _[Modelling for Continuous Software Engineering (MCSE) group](https://mcse.kastel.kit.edu)_ of _[KASTEL - Institute of Information Security and Dependability](https://kastel.kit.edu)_ at the [KIT](https://www.kit.edu).
+
+**Website**: [ardoco.de](https://ardoco.de)
 
 This repository contains the framework and the approaches.
 As such, there is the definition of our pipeline and the data handling as well as the definitions for the various pipeline steps, inputs, outputs, etc.
 
 For more information about the setup, the project structure, or the architecture, please have a look at the [Wiki](https://github.com/ardoco/ardoco/wiki).
+
+## Additional Resources
+
+* [Approaches](https://ardoco.de/approaches/) - Overview of different approaches including LiSSA
+* [Publications](https://ardoco.de/publications/) - Research papers and presentations
+* [People](https://ardoco.de/people/) - Team members and contributors
+* [Open Theses](https://mcse.kastel.kit.edu/projects_ardoco.php?tab=%5B661%5D#tabpanel-661) - Available student thesis topics
 
 ## Maven
 

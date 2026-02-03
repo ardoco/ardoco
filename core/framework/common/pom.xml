@@ -8,8 +8,8 @@
   </parent>
 
   <artifactId>common</artifactId>
-  <name>ARDoCo Common Utilities and Pipeline Definitions</name>
-  <description>Common utilities, data structures, and pipeline definitions used across ARDoCo modules.</description>
+  <name>ARDoCo Common</name>
+  <description>Common utilities, data structures, and pipeline definitions used across all ARDoCo modules.</description>
 
   <dependencies>
     <dependency>
