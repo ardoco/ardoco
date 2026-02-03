@@ -80,6 +80,6 @@ For information on deploying the microservice, refer to the [StanfordCoreNLP-Pro
 
 ## Related Documentation
 
-- [Pipeline Architecture](Pipeline) - Learn how text preprocessing fits into ARDoCo's pipeline
-- [Intermediate Artifacts](Intermediate-Artifacts) - Understand the text representation format
-- [Traceability Link Recovery](Traceability-Link-Recovery) - See how preprocessing enables TLR approaches
+- [Pipeline Architecture](pipeline) - Learn how text preprocessing fits into ARDoCo's pipeline
+- [Intermediate Artifacts](intermediate-artifacts) - Understand the text representation format
+- [Traceability Link Recovery](traceability-link-recovery) - See how preprocessing enables TLR approaches
