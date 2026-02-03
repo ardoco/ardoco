@@ -81,4 +81,3 @@ For detailed information, see the [LiSSA page](lissa) or visit [ardoco.de/approa
 * Use **TransArC** when you need complete SAD-to-Code traceability with a model intermediary
 * Use **ExArch** when you want LLM-based component extraction for SAD-to-Code linking
 * Use **LiSSA** when you need generic TLR across various artifact combinations
-* Use **LiSSA** for generic traceability across various artifact types with LLM support
