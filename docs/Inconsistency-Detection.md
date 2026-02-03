@@ -50,7 +50,6 @@ The inconsistency detection approach uses trace link recovery as a bridge:
 - **Quality Assurance**: Ensuring completeness of documentation before releases
 - **Onboarding**: Helping new team members understand gaps in documentation
 - **Consistency Checking**: Verifying alignment between informal documents and formal models
-- **Onboarding**: Helping new team members understand gaps in documentation
 - **Reverse Engineering**: Finding undocumented components when analyzing existing systems
 
 For implementation details, see the [inconsistency-detection module](https://github.com/ardoco/ardoco/tree/main/inconsistency-detection).
