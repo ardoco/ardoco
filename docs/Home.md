@@ -45,7 +45,7 @@ This repository serves as the main monorepo containing:
 ### External Repositories
 
 * **[LiSSA](https://github.com/ardoco/lissa)**: LLM-based generic traceability link recovery framework
-* **[StanfordCoreNLP-Provider-Service](https://github.com/ardoco/standfordcorenlp-provider-service)**: RESTful web service for text preprocessing
+* **[StanfordCoreNLP-Provider-Service](https://github.com/ardoco/stanfordcorenlp-provider-service)**: RESTful web service for text preprocessing
 * **[Benchmark](https://github.com/ardoco/benchmark)**: Evaluation benchmarks and datasets
 * **[Evaluator](https://github.com/ardoco/evaluator)**: Evaluation code for comparing results
 * **[TraceView](https://github.com/ardoco/traceview-v2)**: Visualization tool for TLR and ID outputs
