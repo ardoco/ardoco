@@ -210,8 +210,8 @@ sp_cleanup.use_var=false
 
 ## Next Steps
 
-- Explore the [Pipeline Architecture](Pipeline) to understand ARDoCo's execution model
-- Learn about [Traceability Link Recovery](Traceability-Link-Recovery) approaches
-- Read about [Inconsistency Detection](Inconsistency-Detection) capabilities
-- Check out [Intermediate Artifacts](Intermediate-Artifacts) to understand data models
-- Visit the [Home page](Home) for more information about ARDoCo and its approaches
+- Explore the [Pipeline Architecture](pipeline) to understand ARDoCo's execution model
+- Learn about [Traceability Link Recovery](traceability-link-recovery) approaches
+- Read about [Inconsistency Detection](inconsistency-detection) capabilities
+- Check out [Intermediate Artifacts](intermediate-artifacts) to understand data models
+- Visit the [Home page](home) for more information about ARDoCo and its approaches
