@@ -86,7 +86,7 @@ ARDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations:
 - **Avoid**: Do not use other `@Nullable` variants (e.g., `javax.annotation.Nullable`)
 - **Auto-Generated Files**: `package-info.java` files are auto-generated and git-ignored - do not commit them
 
-For detailed information, see the dedicated guide: [Nullness and JSpecify](JSpecify)
+For detailed information, see the dedicated guide: [Nullness and JSpecify](jspecify)
 
 ### Eclipse Save Actions (Optional)
 
