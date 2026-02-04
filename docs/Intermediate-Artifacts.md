@@ -1,8 +1,14 @@
+# Intermediate Artifacts
 
-Currently, there are three kinds of intermediate artifacts.
-First, the input text has an internal representation (cf. [edu/kit/kastel/mcse/ardoco/core/api/text/Text.java](https://github.com/ardoco/Core/blob/main/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/text/Text.java)) to cover all the annotations from the preprocessing.
-Second, there is the intermediate representation of software architecture models (SAMs) that we cover [below](#software-architecture-models).
-Third, we create a uniform representation for code that we also explain [below](#code).
+ARDoCo processes various inputs and converts them into standardized intermediate representations. These internal models enable uniform analysis across different documentation formats, modeling languages, and programming languages.
+
+## Overview
+
+ARDoCo uses three main categories of intermediate artifacts:
+
+1. **Text Representation**: Internal model for natural language documentation with linguistic annotations
+2. **Software Architecture Models (SAM)**: Unified representation of architecture models from various notations
+3. **Code Model**: Standardized representation of source code based on the Knowledge Discovery Model (KDM)
 
 ```mermaid
 classDiagram
@@ -19,7 +25,27 @@ classDiagram
     Model "0..1" o--"*" Entity: elements
 ```
 
-## Software Architecture Models
+## Text Representation
+
+The input text (Software Architecture Documentation) has an internal representation that preserves all annotations from preprocessing. This includes:
+
+- **Tokenization**: Word boundaries and sentence segmentation
+- **Part-of-Speech Tags**: Grammatical categories (nouns, verbs, etc.)
+- **Dependency Parsing**: Syntactic relationships between words
+- **Named Entity Recognition**: Identified entities and their types
+- **Lemmatization**: Base forms of words
+
+Implementation: [Text.java](https://github.com/ardoco/ardoco/blob/main/core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/text/Text.java)
+
+The text representation enables pipeline steps to:
+- Access linguistic features computed during preprocessing
+- Identify architectural concepts mentioned in documentation
+- Extract relationships between entities
+- Match documentation terminology to model elements
+
+## Software Architecture Models (SAM)
+
+ARDoCo provides a unified intermediate representation for software architecture models, independent of the original modeling language (UML, PCM, etc.).
 
 ```mermaid
 classDiagram
@@ -40,22 +66,52 @@ classDiagram
     Component "*" <-- Component: subcomponents
 ```
 
-In this software model, each class is categorized as an ArchitectureItem, which inherits properties from Entity, including a name and identifier.
-There are three types of ArchitectureItems: Component, Interface, and Signature.
+### Architecture Elements
 
-A Component represents various architectural elements in different modeling languages.
-For instance, it corresponds to a UML Component.
-In the PCM context, it encompasses both BasicComponent and CompositeComponent.
-BasicComponents do not contain sub-components, while CompositeComponents may have sub-components.
+Each architecture element is an **ArchitectureItem** inheriting from **Entity**, which provides:
+- **name**: Human-readable identifier
+- **identifier**: Unique ID within the model
 
-Components can either require or provide Interfaces.
-Provided Interfaces are implemented by the Component, while Required Interfaces specify the functionality required by a Component.
+There are three types of ArchitectureItems:
 
-An Interface contains multiple method Signatures.
-Signatures are linked to Interfaces in a composite relationship, meaning each Signature is associated with an Interface.
+#### Component
 
+Represents architectural elements across different modeling languages:
+- **UML**: Corresponds to UML Components
+- **PCM**: Encompasses BasicComponent and CompositeComponent
+  - BasicComponent: Atomic components without sub-components
+  - CompositeComponent: Components containing sub-components
 
-## Code
+Components can:
+- **Provide Interfaces**: Functionality implemented by the component
+- **Require Interfaces**: Functionality needed by the component
+- **Contain Sub-components**: Hierarchical composition
+
+#### Interface
+
+Defines contracts for component interaction:
+- Contains multiple method **Signatures**
+- Can be provided or required by components
+- Specifies expected behavior without implementation
+
+#### Signature
+
+Represents method declarations within interfaces:
+- Associated with a specific Interface (composite relationship)
+- Defines method name and structure
+- Used for matching documentation to interface operations
+
+### Use Cases
+
+The SAM intermediate model enables:
+- **Cross-notation Analysis**: Handle UML, PCM, and other architecture models uniformly
+- **Traceability**: Link documentation mentions to model elements
+- **Inconsistency Detection**: Identify missing or unmentioned components
+- **Hierarchical Navigation**: Traverse component compositions and interface relationships
+
+## Code Model
+
+ARDoCo's code model is based on the source code package of the [Knowledge Discovery Model (KDM)](https://www.omg.org/spec/KDM/1.3/PDF), providing a language-independent representation of source code.
 
 ```mermaid
 classDiagram
@@ -89,40 +145,103 @@ classDiagram
     Datatype "*" <-- "*" Datatype: extendedTypes
 ```
 
-The intermediate model for code is based on the source code package within the [Knowledge Discover Model (KDM)](https://www.omg.org/spec/KDM/1.3/PDF).
+### Code Elements
 
-The different classes in the code model inherit from CodeItem, which itself is a specialized Entity.
-Thus, each class has a name and identifier.
+All code elements inherit from **CodeItem**, which is a specialized **Entity** with name and identifier.
 
-There are three kinds of source code elements: Module, Datatype, and ComputationalObject.
+There are three main categories of source code elements:
 
-Modules are typically logical components of the system with a certain level of abstraction.
-A Module can contain CodeItems, and there are three differentiations of Modules: CompilationUnit, Package, and CodeAssembly.
+#### Module
 
-A CompilationUnit represents a source file where code is stored.
-It includes a relative path to the file's location on disk and its programming language.
-The CompilationUnit is partly based on the InventoryModel from KDM.
+Represents logical components of the system at various abstraction levels. Modules can contain **CodeItems** and come in three types:
 
-A Package is a logical collection of source code elements (i.e., CodeItems).
-Packages can also contain sub-Packages, similar to the structure commonly found in Java.
+**CompilationUnit**:
+- Represents a source file
+- Includes relative path to file location on disk
+- Specifies programming language
+- Based partly on KDM's InventoryModel
 
-A CodeAssembly consists of source code artifacts linked together to make them runnable.
-For example, source code files together with their headers are grouped in a CodeAssembly.
+**Package**:
+- Logical collection of source code elements
+- Can contain sub-Packages (e.g., Java package hierarchy)
+- Organizes code elements into namespaces
 
-There are two kinds of Datatypes: CodeUnit and InterfaceUnit.
-A CodeUnit is akin to a class in Java and can contain other CodeItems like methods and inner classes.
-Similarly, an InterfaceUnit can also contain code elements like methods.
+**CodeAssembly**:
+- Collection of source code artifacts linked together to be runnable
+- Example: Source files grouped with their headers
+- Represents compiled or executable units
 
-The relationships implementedTypes and extendedTypes from the KDM model are present in the intermediate model.
-A Datatype can implement an arbitrary number of extendedTypes relations, representing inheritance in object-oriented programming languages.
+#### Datatype
 
-The construction around extendedTypes and implementedTypes also enables interfaces to extend other interfaces, akin to Java.
-Interfaces can also extend classes, a feature present in some programming languages like TypeScript.
+Represents type definitions in object-oriented languages. There are two kinds:
 
-The KDM includes several primitive datatypes like boolean, which are not realized within this model as they are not currently needed.
-If future work extends the approaches with a thorough comparison of datatypes, then the intermediate model may need further sub-classing of the KDM.
+**ClassUnit**:
+- Analogous to classes in Java
+- Can contain CodeItems like methods and inner classes
+- Supports object-oriented programming concepts
 
-Currently, there is only one type of ComputationalObject: the ControlElement.
-The ControlElement represents callable parts with specific behaviors, such as functions, procedures, or methods.
-Unlike the KDM, this work does not make a further distinction between CallableUnits and MethodUnits.
-Additionally, it does not utilize parameters, return types, or similar elements of the KDM and therefore does not model them.
+**InterfaceUnit**:
+- Represents interface definitions
+- Can contain code elements like methods
+- Defines contracts for implementation
+
+**Relationships**:
+- **implementedTypes**: Implementation relationships (e.g., Java `implements`)
+- **extendedTypes**: Inheritance relationships (e.g., Java `extends`)
+- Supports multiple inheritance where applicable
+- Interfaces can extend other interfaces (Java-style)
+- Interfaces can extend classes (TypeScript-style)
+
+#### ComputationalObject
+
+Represents executable code with specific behavior:
+
+**ControlElement**:
+- Callable parts with specific behaviors
+- Represents functions, procedures, or methods
+- Unified representation without distinguishing CallableUnits vs MethodUnits
+- Currently does not model parameters, return types (can be extended if needed)
+
+### Design Decisions
+
+**Simplifications from KDM**:
+- Primitive datatypes (boolean, int, etc.) not modeled - not needed for current approaches
+- No distinction between CallableUnits and MethodUnits
+- Parameters and return types not included - can be added if future approaches require them
+
+**Extensibility**:
+- If future work requires thorough datatype comparison, the model can be extended with KDM sub-classing
+- Additional ComputationalObject types can be added as needed
+
+### Use Cases
+
+The code model enables:
+- **Language-Independent Analysis**: Handle Java, C++, Python, etc. uniformly
+- **Code-to-Architecture Tracing**: Link code elements to architecture models
+- **Structure Extraction**: Understand package hierarchies, class relationships, and method locations
+- **Inconsistency Detection**: Find code elements not documented in architecture
+
+## Pipeline Integration
+
+These intermediate artifacts flow through the ARDoCo pipeline:
+
+1. **Input Processing**:
+   - Text documents → Text representation with annotations
+   - Architecture models → SAM representation
+   - Source code → Code model representation
+
+2. **Analysis**:
+   - TLR approaches work with Text, SAM, and Code models
+   - Extract entities, relationships, and patterns
+   - Generate trace link recommendations
+
+3. **Inconsistency Detection**:
+   - Compare completeness between representations
+   - Identify missing or unmentioned elements
+   - Report discrepancies
+
+## Implementation References
+
+- Text API: [edu.kit.kastel.mcse.ardoco.core.api.text](https://github.com/ardoco/ardoco/tree/main/core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/text)
+- Architecture Model API: [edu.kit.kastel.mcse.ardoco.core.api.models](https://github.com/ardoco/ardoco/tree/main/core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models)
+- Code Model API: Integrated within the architecture model API

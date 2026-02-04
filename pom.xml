@@ -7,12 +7,8 @@
   <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ARDoCo - Automating Requirements and Documentation Comprehension</name>
-  <description>The goal of this project is to connect architecture documentation and models while identifying missing
-        or deviating elements (inconsistencies). An element can be any representable item of the model, like a component
-        or a relation. To do so, we first create trace links and then make use of them and other information to identify
-        inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software
-        Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
+  <name>ARDoCo</name>
+  <description>ARDoCo (Automating Requirements and Documentation Comprehension) connects architecture documentation and models while identifying missing or deviating elements (inconsistencies). An element can be any representable item of the model, like a component or a relation. To do so, we first create trace links and then make use of them and other information to identify inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
   <url>https://github.com/ardoco/ARDoCo</url>
   <licenses>
     <license>
