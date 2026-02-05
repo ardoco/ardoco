@@ -45,13 +45,3 @@ The following is an excerpt of repositories that use this framework and implemen
 * [ardoco/core](https://github.com/ardoco/core): implementing the core of the approach
 * [ardoco/tlr](https://github.com/ardoco/tlr): implementing different traceability link recovery approaches
 * [ardoco/inconsistency-detection](https://github.com/ardoco/inconsistency-detection): implementing inconsistency detection approaches
-
-### Pull
-* `git subtree pull --prefix=core git@github.com:ardoco/core <<branch>>`
-* `git subtree pull --prefix=tlr git@github.com:ardoco/tlr <<branch>>`
-* `git subtree pull --prefix=inconsistency-detection git@github.com:ardoco/inconsistency-detection <<branch>>`
-
-### Push
-* `git subtree push --prefix=core git@github.com:ardoco/core <<branch>>`
-* `git subtree push --prefix=tlr git@github.com:ardoco/tlr <<branch>>`
-* `git subtree push --prefix=inconsistency-detection git@github.com:ardoco/inconsistency-detection <<branch>>`
