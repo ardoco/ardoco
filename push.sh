@@ -58,9 +58,9 @@ for REPO in "${REPOS[@]}"; do
     # Copy fresh contents from the monorepo subdirectory
     cp -r "$MONOREPO_ROOT/$REPO/"* . 2>/dev/null || true
     
-    # Also copy hidden files (except .git)
-    for item in $(cd "$MONOREPO_ROOT/$REPO" && find . -maxdepth 1 -name '.*' ! -name '.git' -type f 2>/dev/null); do
-        cp "$MONOREPO_ROOT/$REPO/$item" . 2>/dev/null || true
+    # Also copy hidden files and directories (except .git)
+    for item in $(cd "$MONOREPO_ROOT/$REPO" && find . -maxdepth 1 -name '.*' ! -name '.git' 2>/dev/null); do
+        cp -r "$MONOREPO_ROOT/$REPO/$item" . 2>/dev/null || true
     done
     
     # Stage all changes
