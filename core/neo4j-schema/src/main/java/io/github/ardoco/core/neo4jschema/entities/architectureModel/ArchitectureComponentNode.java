@@ -12,9 +12,6 @@ import java.util.TreeSet;
 @Node("ArchitectureComponent")
 public class ArchitectureComponentNode extends ArchitectureItemNode implements Comparable<ArchitectureComponentNode> {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    private String id;
-
     private String type;
 
     @Relationship(type = "HAS_SUBCOMPONENT", direction = Relationship.Direction.OUTGOING)

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,16 @@ import static edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.Architecture
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-@SpringBootTest(classes = Main.class)
+@SpringBootTest(
+        classes = io.github.ardoco.core.neo4jschema.Main.class,
+        properties = {
+                "spring.neo4j.uri=bolt://localhost:7687",
+                "spring.neo4j.authentication.username=neo4j",
+                "spring.neo4j.authentication.password=password",
+                "spring.data.neo4j.repositories.type=imperative",
+                "spring.neo4j.pool.metrics-enabled=false"
+        }
+)
 @Transactional
 class ArchitecturePersistenceTest extends RunnerBaseTest {
 

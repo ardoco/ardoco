@@ -16,7 +16,7 @@ public abstract class ArchitectureItemNode {
 
     @Id
     @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    private String id;
+    protected String id;
 
     protected String name;
     protected String ardocoId;
@@ -31,6 +31,9 @@ public abstract class ArchitectureItemNode {
 
     protected ArchitectureItemNode() {}
 
+    public String getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }

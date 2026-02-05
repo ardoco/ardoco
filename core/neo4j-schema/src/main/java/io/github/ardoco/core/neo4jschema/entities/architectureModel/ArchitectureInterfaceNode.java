@@ -12,8 +12,6 @@ import java.util.TreeSet;
 @Node("ArchitectureInterface")
 public class ArchitectureInterfaceNode extends ArchitectureItemNode implements Comparable<ArchitectureInterfaceNode>  {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    private String id;
     private String type;
 
     @Relationship(type = "HAS_METHOD", direction = Relationship.Direction.OUTGOING)
@@ -30,7 +28,6 @@ public class ArchitectureInterfaceNode extends ArchitectureItemNode implements C
         this.methodSignatures.add(methodNode);
     }
 
-    public String getId() { return id; }
     public String getType() { return type; }
     public SortedSet<ArchitectureMethodNode> getMethodSignatures() { return methodSignatures; }
 

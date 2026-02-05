@@ -82,7 +82,7 @@
     <!-- Versions -->
     <slf4j.version>2.0.17</slf4j.version>
     <spotless.version>3.1.0</spotless.version>
-    <junit.version>6.0.2</junit.version>
+    <junit.version>5.12.2</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.27.1</javaparser.version>
     <mockito.version>5.20.0</mockito.version>
@@ -90,6 +90,7 @@
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.20.1</jackson.version>
     <metrics.version>0.2.0-SNAPSHOT</metrics.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -207,7 +208,34 @@
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
+
+      <!-- Testcontainer -->
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>${testcontainers.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.neo4j.driver</groupId>
+        <artifactId>neo4j-java-driver</artifactId>
+        <version>5.28.10</version>
+      </dependency>
+
+      <!-- Spring boot -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>3.5.10</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
+
+
+
   </dependencyManagement>
 
   <dependencies>
@@ -256,6 +284,8 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+
+
   </dependencies>
   <repositories>
     <repository>

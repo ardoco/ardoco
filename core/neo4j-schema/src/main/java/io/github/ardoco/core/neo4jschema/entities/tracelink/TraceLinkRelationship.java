@@ -2,15 +2,17 @@ package io.github.ardoco.core.neo4jschema.entities.tracelink;
 
 import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
 
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
+import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 @RelationshipProperties
 public class TraceLinkRelationship {
 
-    @RelationshipId
-    private Long id;
+    @RelationshipId @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    protected String id;
 
     private TraceLinkType traceLinkType;
     private Double confidence;

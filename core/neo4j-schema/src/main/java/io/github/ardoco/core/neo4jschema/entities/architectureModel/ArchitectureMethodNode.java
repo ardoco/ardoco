@@ -8,18 +8,10 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 @Node("ArchitectureMethod")
 public class ArchitectureMethodNode extends ArchitectureItemNode implements Comparable<ArchitectureMethodNode> {
 
-    @Id
-    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    private String id;
-
     protected ArchitectureMethodNode() {}
 
     public ArchitectureMethodNode(String name, String ardocoId) {
         super(name, ardocoId);
-    }
-
-    public String getId() {
-        return id;
     }
 
     @Override

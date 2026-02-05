@@ -12,7 +12,7 @@ import java.util.List;
 @Node("CodeItem")
 public class CodeItemNode implements Comparable<CodeItemNode> {
     @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    private String id;
+    protected String id;
     private String name;
     private String ardocoId; // The domain ID
 

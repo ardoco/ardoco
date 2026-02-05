@@ -58,6 +58,7 @@ public class CodePersistenceService {
 
     @Transactional
     public void saveCodeModel(CodeModel model) {
+        logger.info("saving code model");
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
         Map<String, CodeItemNode> cache = new HashMap<>();
 
@@ -83,7 +84,7 @@ public class CodePersistenceService {
                 modelNode.addContent(mapToNode(item, cache));
             }
         }
-
+        logger.info("about to save code model");
         repository.save(modelNode);
     }
 
