@@ -28,7 +28,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
 /**
  * Produces the inconsistency detection runs. The first run uses all model elements for the baseline. For each subsequent run a single model element is removed
- * to simulate a missing model element.
+ * to simulate a Text Entity Absent from Model (TEAM) inconsistency.
  */
 public class HoldBackRunResultsProducer {
     protected File inputText;

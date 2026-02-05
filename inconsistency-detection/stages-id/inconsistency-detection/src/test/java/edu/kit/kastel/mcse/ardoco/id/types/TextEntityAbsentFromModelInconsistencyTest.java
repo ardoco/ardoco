@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2024. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,25 +7,26 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * This class tests the record MissingModelInconsistency.
+ * This class tests the record TextEntityAbsentFromModelInconsistency.
  */
-public class MissingModelInstanceInconsistencyTest extends AbstractInconsistencyTypeTest implements Claimant {
+public class TextEntityAbsentFromModelInconsistencyTest extends AbstractInconsistencyTypeTest implements Claimant {
 
-    private MissingModelInstanceInconsistency missingModelInstanceInconsistency;
+    private TextEntityAbsentFromModelInconsistency textEntityAbsentFromModelInconsistency;
 
     @BeforeEach
+    @SuppressWarnings("null")
     void beforeEach() {
-        missingModelInstanceInconsistency = new MissingModelInstanceInconsistency("inconsistency", 1, 1.0, null);
+        textEntityAbsentFromModelInconsistency = new TextEntityAbsentFromModelInconsistency("inconsistency", 1, 1.0, null);
     }
 
     @Override
     protected Inconsistency getInconsistency() {
-        return missingModelInstanceInconsistency;
+        return textEntityAbsentFromModelInconsistency;
     }
 
     @Override
     protected String getTypeString() {
-        return "MissingModelInstance";
+        return "TextEntityAbsentFromModel";
     }
 
     @Override
@@ -35,13 +36,15 @@ public class MissingModelInstanceInconsistencyTest extends AbstractInconsistency
     }
 
     @Override
+    @SuppressWarnings("null")
     protected Inconsistency getUnequalInconsistency() {
-        return new MissingModelInstanceInconsistency("otherInconsistency", 1, 1.0, null);
+        return new TextEntityAbsentFromModelInconsistency("otherInconsistency", 1, 1.0, null);
     }
 
     @Override
+    @SuppressWarnings("null")
     protected Inconsistency getEqualInconsistency() {
-        return new MissingModelInstanceInconsistency("inconsistency", 1, 1.0, null);
+        return new TextEntityAbsentFromModelInconsistency("inconsistency", 1, 1.0, null);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -21,15 +21,15 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.id.MissingElementInconsistencyCandidate;
 import edu.kit.kastel.mcse.ardoco.id.MissingElementSupport;
-import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 
-public class MissingModelElementInconsistencyInformant extends Informant {
+public class TextEntityAbsentFromModelInconsistencyInformant extends Informant {
 
     @Configurable
     private double minSupport = 1;
 
-    public MissingModelElementInconsistencyInformant(DataRepository dataRepository) {
-        super(MissingModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
+    public TextEntityAbsentFromModelInconsistencyInformant(DataRepository dataRepository) {
+        super(TextEntityAbsentFromModelInconsistencyInformant.class.getSimpleName(), dataRepository);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class MissingModelElementInconsistencyInformant extends Informant {
                 for (var word : recommendedInstance.getNameMappings().flatCollect(NounMapping::getWords).distinct()) {
                     var sentenceNo = word.getSentenceNumber() + 1;
                     var wordText = word.getText();
-                    inconsistencyState.addInconsistency(new MissingModelInstanceInconsistency(wordText, sentenceNo, confidence, candidate));
+                    inconsistencyState.addInconsistency(new TextEntityAbsentFromModelInconsistency(wordText, sentenceNo, confidence, candidate));
                 }
             }
         }
