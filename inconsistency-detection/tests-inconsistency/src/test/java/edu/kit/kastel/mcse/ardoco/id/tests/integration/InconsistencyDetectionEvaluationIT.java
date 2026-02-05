@@ -141,7 +141,7 @@ class InconsistencyDetectionEvaluationIT {
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
-    @DisplayName("Evaluate Inconsistency Analyses For MissingTextForModelElementInconsistencies")
+    @DisplayName("Evaluating MEAT-Inconsistency Detection")
     @ParameterizedTest(name = "Evaluating MEAT-inconsistency for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(10)
