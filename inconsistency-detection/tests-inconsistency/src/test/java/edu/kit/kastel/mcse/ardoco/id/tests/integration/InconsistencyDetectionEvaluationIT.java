@@ -78,10 +78,10 @@ class InconsistencyDetectionEvaluationIT {
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(1)
     void textEntityAbsentFromModelInconsistencyIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyEval(project);
+        this.runTextEntityAbsentFromModelInconsistencyEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyEval(InconsistencyDetectionTask project) {
+    protected void runTextEntityAbsentFromModelInconsistencyEval(InconsistencyDetectionTask project) {
         InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency for {}", project.name());
         Map<ArchitectureItem, ArdocoResult> runs = this.produceRuns(project);
 
