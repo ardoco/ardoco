@@ -41,7 +41,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.HoldBackRunResultsProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
-import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
@@ -65,7 +65,7 @@ class InconsistencyDetectionEvaluationIT {
     private static final Map<InconsistencyDetectionTask, ArdocoResult> arDoCoResults = new EnumMap<>(InconsistencyDetectionTask.class);
 
     /**
-     * Tests the inconsistency detection for missing model elements on all {@link InconsistencyDetectionTask projects}.
+     * Tests the inconsistency detection for Text Entity Absent from Model (TEAM) on all {@link InconsistencyDetectionTask projects}.
      * <p>
      * NOTE: if you only want to test a specific project, you can simply set up the EnumSource. For more details, see
      * <a href="https://www.baeldung.com/parameterized-tests-junit-5#3-enum">here</a>
@@ -73,16 +73,16 @@ class InconsistencyDetectionEvaluationIT {
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
-    @DisplayName("Evaluating MME-Inconsistency Detection")
-    @ParameterizedTest(name = "Evaluating MME-Inconsistency for {0}")
+    @DisplayName("Evaluating TEAM-Inconsistency Detection")
+    @ParameterizedTest(name = "Evaluating TEAM-Inconsistency for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(1)
-    void missingModelElementInconsistencyIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyEval(project);
+    void textEntityAbsentFromModelInconsistencyIT(InconsistencyDetectionTask project) {
+        this.runTextEntityAbsentFromModelInconsistencyEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyEval(InconsistencyDetectionTask project) {
-        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of MME-inconsistency for {}", project.name());
+    protected void runTextEntityAbsentFromModelInconsistencyEval(InconsistencyDetectionTask project) {
+        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency for {}", project.name());
         Map<ArchitectureItem, ArdocoResult> runs = this.produceRuns(project);
 
         var results = this.calculateEvaluationResults(project, runs);
@@ -97,22 +97,23 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     /**
-     * Tests the baseline approach that reports a missing model element inconsistency for each sentence that is not traced to a model element. This test is
+     * Tests the baseline approach that reports a Text Entity Absent from Model (TEAM) inconsistency for each sentence that is not traced to a model element.
+     * This test is
      * enabled by providing the environment variable "testBaseline" with any value.
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
     @EnabledIfEnvironmentVariable(named = "testBaseline", matches = ".*")
-    @DisplayName("Evaluating MME-Inconsistency Detection Baseline")
+    @DisplayName("Evaluating TEAM-Inconsistency Detection Baseline")
     @ParameterizedTest(name = "Evaluating Baseline for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(5)
-    void missingModelElementInconsistencyBaselineIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyBaselineEval(project);
+    void textEntityAbsentFromModelInconsistencyBaselineIT(InconsistencyDetectionTask project) {
+        this.runTextEntityAbsentFromModelInconsistencyBaselineEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyBaselineEval(InconsistencyDetectionTask project) {
-        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of MME-inconsistency baseline for {}", project.name());
+    protected void runTextEntityAbsentFromModelInconsistencyBaselineEval(InconsistencyDetectionTask project) {
+        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency baseline for {}", project.name());
 
         HoldBackRunResultsProducer holdBackRunResultsProducer = new HoldBackRunResultsProducer();
         Map<ArchitectureItem, ArdocoResult> runs = holdBackRunResultsProducer.produceHoldBackRunResults(project, true);
@@ -136,12 +137,12 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     /**
-     * Tests the inconsistency detection for undocumented model elements on all {@link InconsistencyDetectionTask projects}.
+     * Tests the inconsistency detection for Model Entity Absent from Text (MEAT) on all {@link InconsistencyDetectionTask projects}.
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
-    @DisplayName("Evaluate Inconsistency Analyses For MissingTextForModelElementInconsistencies")
-    @ParameterizedTest(name = "Evaluating UME-inconsistency for {0}")
+    @DisplayName("Evaluating MEAT-Inconsistency Detection")
+    @ParameterizedTest(name = "Evaluating MEAT-inconsistency for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(10)
     void missingTextInconsistencyIT(InconsistencyDetectionTask project) {
@@ -202,8 +203,8 @@ class InconsistencyDetectionEvaluationIT {
     private SingleClassificationResult<String> evaluateRun(InconsistencyDetectionTask project, ArchitectureItem removedElement, ArdocoResult arDoCoResult) {
         var metamodel = arDoCoResult.getMetamodels().getFirst();
 
-        ImmutableList<MissingModelInstanceInconsistency> inconsistencies = arDoCoResult.getInconsistenciesOfTypeForModel(metamodel,
-                MissingModelInstanceInconsistency.class);
+        ImmutableList<TextEntityAbsentFromModelInconsistency> inconsistencies = arDoCoResult.getInconsistenciesOfTypeForModel(metamodel,
+                TextEntityAbsentFromModelInconsistency.class);
         if (removedElement == null) {
             // base case
             return null;
@@ -211,7 +212,7 @@ class InconsistencyDetectionEvaluationIT {
 
         var goldStandard = project.getGoldstandardForArchitectureModel(InconsistencyDetectionEvaluationIT.getComponentModel(project));
         var expectedLines = goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString);
-        var actualSentences = inconsistencies.collect(MissingModelInstanceInconsistency::sentence).distinct().collect(Object::toString);
+        var actualSentences = inconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence).distinct().collect(Object::toString);
 
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
@@ -356,7 +357,7 @@ class InconsistencyDetectionEvaluationIT {
     private static void inspectBaseCase(StringBuilder outputBuilder, ArdocoResult data) {
         var initialInconsistencies = InconsistencyDetectionEvaluationIT.getInitialInconsistencies(data);
         outputBuilder.append("Initial Inconsistencies: ").append(initialInconsistencies.size());
-        var initialInconsistenciesSentences = initialInconsistencies.collect(MissingModelInstanceInconsistency::sentence)
+        var initialInconsistenciesSentences = initialInconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence)
                 .toSortedSet()
                 .collect(Object::toString);
         outputBuilder.append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR)
@@ -390,9 +391,9 @@ class InconsistencyDetectionEvaluationIT {
         return truePositives.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"));
     }
 
-    private static ImmutableList<MissingModelInstanceInconsistency> getInitialInconsistencies(ArdocoResult arDoCoResult) {
+    private static ImmutableList<TextEntityAbsentFromModelInconsistency> getInitialInconsistencies(ArdocoResult arDoCoResult) {
         var id = arDoCoResult.getMetamodels().getFirst();
-        return arDoCoResult.getInconsistenciesOfTypeForModel(id, MissingModelInstanceInconsistency.class);
+        return arDoCoResult.getInconsistenciesOfTypeForModel(id, TextEntityAbsentFromModelInconsistency.class);
     }
 
     private void writeOutResults(InconsistencyDetectionTask project, List<SingleClassificationResult<String>> results,

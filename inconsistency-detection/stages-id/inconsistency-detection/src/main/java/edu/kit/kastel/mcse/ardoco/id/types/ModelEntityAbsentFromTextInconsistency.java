@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
 import java.io.Serial;
@@ -11,14 +11,14 @@ import org.eclipse.collections.api.factory.Lists;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 
-public class MissingTextForModelElementInconsistency implements ModelInconsistency {
-    private static final String INCONSISTENCY_TYPE_NAME = "MissingTextForModelElement";
+public class ModelEntityAbsentFromTextInconsistency implements ModelInconsistency {
+    private static final String INCONSISTENCY_TYPE_NAME = "ModelEntityAbsentFromText";
     @Serial
     private static final long serialVersionUID = 2376071657979892661L;
 
     private final ModelEntity modelEntity;
 
-    public MissingTextForModelElementInconsistency(ModelEntity modelEntity) {
+    public ModelEntityAbsentFromTextInconsistency(ModelEntity modelEntity) {
         this.modelEntity = modelEntity;
     }
 
@@ -36,7 +36,7 @@ public class MissingTextForModelElementInconsistency implements ModelInconsisten
 
     @Override
     public String toString() {
-        return "MissingTextForModelElementInconsistency [modelInstance=" + modelEntity + "]";
+        return "ModelEntityAbsentFromTextInconsistency [modelInstance=" + modelEntity + "]";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MissingTextForModelElementInconsistency implements ModelInconsisten
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof MissingTextForModelElementInconsistency other)) {
+        if (!(obj instanceof ModelEntityAbsentFromTextInconsistency other)) {
             return false;
         }
         return Objects.equals(modelEntity, other.modelEntity);

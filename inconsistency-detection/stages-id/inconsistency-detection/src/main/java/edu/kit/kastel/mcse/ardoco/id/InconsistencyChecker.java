@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.List;
@@ -9,14 +9,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStat
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.id.agents.InitialInconsistencyAgent;
-import edu.kit.kastel.mcse.ardoco.id.agents.MissingModelElementInconsistencyAgent;
-import edu.kit.kastel.mcse.ardoco.id.agents.UndocumentedModelElementInconsistencyAgent;
+import edu.kit.kastel.mcse.ardoco.id.agents.ModelEntityAbsentFromTextInconsistencyAgent;
+import edu.kit.kastel.mcse.ardoco.id.agents.TextEntityAbsentFromModelInconsistencyAgent;
 
 public class InconsistencyChecker extends AbstractExecutionStage {
 
     public InconsistencyChecker(DataRepository dataRepository) {
-        super(List.of(new InitialInconsistencyAgent(dataRepository), new MissingModelElementInconsistencyAgent(dataRepository),
-                new UndocumentedModelElementInconsistencyAgent(dataRepository)), "InconsistencyChecker", dataRepository);
+        super(List.of(new InitialInconsistencyAgent(dataRepository), new TextEntityAbsentFromModelInconsistencyAgent(dataRepository),
+                new ModelEntityAbsentFromTextInconsistencyAgent(dataRepository)), "InconsistencyChecker", dataRepository);
     }
 
     /**

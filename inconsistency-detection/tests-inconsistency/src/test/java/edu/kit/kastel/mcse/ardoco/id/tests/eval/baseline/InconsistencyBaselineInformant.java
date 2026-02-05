@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.eval.baseline;
 
 import org.eclipse.collections.api.factory.Sets;
@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.id.InconsistencyStatesImpl;
-import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 
 /**
  * Informant for {@link InconsistencyBaseline}
@@ -40,7 +40,7 @@ public class InconsistencyBaselineInformant extends Informant {
 
             InconsistencyState inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
             for (var sentence : sentencesWithoutTraceLinks) {
-                inconsistencyState.addInconsistency(new MissingModelInstanceInconsistency("", sentence + 1, 0.69, null));
+                inconsistencyState.addInconsistency(new TextEntityAbsentFromModelInconsistency("", sentence + 1, 0.69, null));
             }
         }
     }

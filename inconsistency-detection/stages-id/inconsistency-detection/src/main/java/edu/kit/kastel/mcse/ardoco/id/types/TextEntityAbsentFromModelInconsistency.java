@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2024. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
 import java.util.Locale;
@@ -11,10 +11,10 @@ import org.eclipse.collections.api.list.MutableList;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.MissingElementInconsistencyCandidate;
 
-public record MissingModelInstanceInconsistency(String name, int sentence, double confidence, MissingElementInconsistencyCandidate origin) implements
+public record TextEntityAbsentFromModelInconsistency(String name, int sentence, double confidence, MissingElementInconsistencyCandidate origin) implements
         TextInconsistency {
 
-    private static final String INCONSISTENCY_TYPE_NAME = "MissingModelInstance";
+    private static final String INCONSISTENCY_TYPE_NAME = "TextEntityAbsentFromModel";
 
     @Override
     public String getReason() {
@@ -53,7 +53,7 @@ public record MissingModelInstanceInconsistency(String name, int sentence, doubl
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof MissingModelInstanceInconsistency other)) {
+        if (!(obj instanceof TextEntityAbsentFromModelInconsistency other)) {
             return false;
         }
         return Objects.equals(name, other.name) && sentence == other.sentence && Math.abs(confidence - other.confidence) < 1e-5;
@@ -61,7 +61,7 @@ public record MissingModelInstanceInconsistency(String name, int sentence, doubl
 
     @Override
     public String toString() {
-        return "MissingModelInstanceInconsistency [name=" + name + ", sentence= " + sentence + "]";
+        return "TextEntityAbsentFromModelInconsistency [name=" + name + ", sentence= " + sentence + "]";
     }
 
 }

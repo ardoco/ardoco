@@ -1,6 +1,8 @@
 # Inconsistency Detection
 
-Inconsistency Detection in ARDoCo identifies discrepancies between software architecture documentation (SAD) and architecture models (SAM). It detects two types of inconsistencies: Missing Model Elements (MMEs) that are described in documentation but absent from the model, and Unmentioned Model Elements (UMEs) that exist in the model but are not documented.
+Inconsistency Detection in ARDoCo identifies discrepancies between software architecture documentation (SAD) and architecture models (SAM). It detects two types of inconsistencies: Text Entity Absent from Model (TEAM) that are described in documentation but absent from the model, and Model Entity Absent from Text (MEAT) that exist in the model but are not documented.
+
+> **Note:** In previous versions of ARDoCo (V1), these were called "Missing Model Elements (MMEs)" and "Unmentioned/Undocumented Model Elements (UMEs)" respectively. The terminology was updated in V2 to be more descriptive and consistent.
 
 For more information about inconsistency detection approaches, visit [ardoco.de/approaches/inconsistency-detection](https://ardoco.de/approaches/inconsistency-detection/).
 
@@ -8,9 +10,9 @@ For more information about inconsistency detection approaches, visit [ardoco.de/
 
 ARDoCo detects two main types of inconsistencies between documentation and architecture models:
 
-### Missing Model Elements (MME)
+### Text Entity Absent from Model (TEAM)
 
-**Missing Model Elements** are architecture elements described in the Software Architecture Documentation (SAD) that cannot be traced to the Software Architecture Model (SAM).
+**Text Entity Absent from Model (TEAM)** inconsistencies (formerly called "Missing Model Elements" or MME) are architecture elements described in the Software Architecture Documentation (SAD) that cannot be traced to the Software Architecture Model (SAM).
 
 **Detection Approach**:
 1. Runs trace link recovery (using SWATTR) to link documentation sentences to model elements
@@ -22,9 +24,9 @@ ARDoCo detects two main types of inconsistencies between documentation and archi
 
 Each text mention without a corresponding model link indicates an architectural concept described in documentation but missing from the formal model.
 
-### Unmentioned Model Elements (UME)
+### Model Entity Absent from Text (MEAT)
 
-**Unmentioned Model Elements** are elements within the Software Architecture Model (SAM) that do not have corresponding descriptions (or insufficient documentation) in the natural language Software Architecture Documentation (SAD).
+**Model Entity Absent from Text (MEAT)** inconsistencies (formerly called "Unmentioned Model Elements" or "Undocumented Model Elements" or UME) are elements within the Software Architecture Model (SAM) that do not have corresponding descriptions (or insufficient documentation) in the natural language Software Architecture Documentation (SAD).
 
 **Detection Approach**:
 1. Examines each model element and its associated trace links from the TLR results
@@ -33,14 +35,14 @@ Each text mention without a corresponding model link indicates an architectural 
 
 **Configuration Options**:
 - **Threshold**: Minimum number of trace links required (default: 1)
-- **Whitelist**: Regex patterns for elements that should be excluded from UME detection
+- **Whitelist**: Regex patterns for elements that should be excluded from MEAT detection
 
 ## Detection Strategy
 
 The inconsistency detection approach uses trace link recovery as a bridge:
 
 1. **TLR Pipeline**: Run SWATTR to establish trace links between SAD and SAM
-2. **Analysis**: Identify orphan elements (UMEs with no links, MMEs with no matching model elements)
+2. **Analysis**: Identify orphan elements (MEAT with no links, TEAM with no matching model elements)
 3. **Filtering**: Apply heuristics and whitelists to reduce false positives
 4. **Reporting**: Output identified inconsistencies for manual review
 

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.types;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,24 +10,24 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 /**
  *
  */
-public class MissingTextForModelElementInconsistencyTest extends AbstractInconsistencyTypeTest {
+public class ModelEntityAbsentFromTextInconsistencyTest extends AbstractInconsistencyTypeTest {
 
-    private MissingTextForModelElementInconsistency missingTextForModelElementInconsistency;
+    private ModelEntityAbsentFromTextInconsistency modelEntityAbsentFromTextInconsistency;
 
     @BeforeEach
     void beforeEach() {
         ModelEntity instance = new ArchitectureEntityImpl("instance", "type", "uid1");
-        missingTextForModelElementInconsistency = new MissingTextForModelElementInconsistency(instance);
+        modelEntityAbsentFromTextInconsistency = new ModelEntityAbsentFromTextInconsistency(instance);
     }
 
     @Override
     protected Inconsistency getInconsistency() {
-        return missingTextForModelElementInconsistency;
+        return modelEntityAbsentFromTextInconsistency;
     }
 
     @Override
     protected String getTypeString() {
-        return "MissingTextForModelElement";
+        return "ModelEntityAbsentFromText";
     }
 
     @Override
@@ -38,13 +38,13 @@ public class MissingTextForModelElementInconsistencyTest extends AbstractInconsi
     @Override
     protected Inconsistency getUnequalInconsistency() {
         ArchitectureEntityImpl entity = new ArchitectureEntityImpl("otherInstance", "otherType", "uid2");
-        return new MissingTextForModelElementInconsistency(entity);
+        return new ModelEntityAbsentFromTextInconsistency(entity);
     }
 
     @Override
     protected Inconsistency getEqualInconsistency() {
         ArchitectureEntityImpl entity = new ArchitectureEntityImpl("instance", "type", "uid1");
-        return new MissingTextForModelElementInconsistency(entity);
+        return new ModelEntityAbsentFromTextInconsistency(entity);
     }
 
     @Override
