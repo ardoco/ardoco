@@ -109,10 +109,10 @@ class InconsistencyDetectionEvaluationIT {
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(5)
     void textEntityAbsentFromModelInconsistencyBaselineIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyBaselineEval(project);
+        this.runTextEntityAbsentFromModelInconsistencyBaselineEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyBaselineEval(InconsistencyDetectionTask project) {
+    protected void runTextEntityAbsentFromModelInconsistencyBaselineEval(InconsistencyDetectionTask project) {
         InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency baseline for {}", project.name());
 
         HoldBackRunResultsProducer holdBackRunResultsProducer = new HoldBackRunResultsProducer();
