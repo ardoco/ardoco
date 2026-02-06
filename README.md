@@ -4,7 +4,7 @@
 [![Maven Central](https://maven-badges.sml.io/maven-central/io.github.ardoco/parent/badge.svg)](https://maven-badges.sml.io/maven-central/io.github.ardoco/parent)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArDoCo_ArDoCo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ArDoCo_ArDoCo)
 [![Latest Release](https://img.shields.io/github/release/ardoco/ardoco.svg)](https://github.com/ardoco/ardoco/releases/latest)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7274034.svg)](https://doi.org/10.5281/zenodo.7274034)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18505529.svg)](https://doi.org/10.5281/zenodo.18505529)
 
 The goal of the ARDoCo project is to connect architecture documentation and models with Traceability Link Recovery (TLR) while identifying missing or deviating elements (inconsistencies).
 An element can be any representable item of the model, like a component or a relation.
