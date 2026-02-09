@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package io.github.ardoco.core.neo4jschema.service.documentation;
 
 import java.util.HashMap;
@@ -41,7 +41,8 @@ public class DocumentationPersistenceService {
         // We use the Mapper service to load and map
         // Note: The logic for this is usually in the Mapper, but if you call it here:
         TextNode textNode = textRepository.findByArdocoId(identifier);
-        if (textNode == null) return null;
+        if (textNode == null)
+            return null;
         DocumentationMapper mapper = new DocumentationMapper();
         return mapper.mapToDomain(textNode);
     }
@@ -64,12 +65,7 @@ public class DocumentationPersistenceService {
 
             WordNode prevWordNode = null;
             for (Word domainWord : domainSentence.getWords()) {
-                WordNode wordNode = new WordNode(
-                        domainWord.getPosition(),
-                        domainWord.getText(),
-                        domainWord.getLemma(),
-                        domainWord.getPosTag().toString()
-                );
+                WordNode wordNode = new WordNode(domainWord.getPosition(), domainWord.getText(), domainWord.getLemma(), domainWord.getPosTag().toString());
 
                 sentenceNode.getWords().add(wordNode);
                 wordIndexMap.put(domainWord.getPosition(), wordNode);
@@ -97,7 +93,8 @@ public class DocumentationPersistenceService {
     private void createDependencyLinks(Text domainText, Map<Integer, WordNode> wordMap) {
         for (Word word : domainText.words()) {
             WordNode sourceNode = wordMap.get(word.getPosition());
-            if (sourceNode == null) continue;
+            if (sourceNode == null)
+                continue;
 
             for (DependencyTag tag : DependencyTag.values()) {
                 for (Word target : word.getOutgoingDependencyWordsWithType(tag)) {
@@ -116,10 +113,7 @@ public class DocumentationPersistenceService {
             return phraseCache.get(domainPhrase);
         }
 
-        PhraseNode phraseNode = new PhraseNode(
-                domainPhrase.getText(),
-                domainPhrase.getPhraseType().toString()
-        );
+        PhraseNode phraseNode = new PhraseNode(domainPhrase.getText(), domainPhrase.getPhraseType().toString());
         phraseCache.put(domainPhrase, phraseNode);
 
         for (Word containedWord : domainPhrase.getContainedWords()) {

@@ -1,14 +1,9 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-//import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
-import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
-import io.github.ardoco.core.neo4jschema.Main;
-import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
+import static edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.CodeModelEqualityHelper.assertCodeModelsEqual;
 
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
+import java.io.File;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +16,13 @@ import org.testcontainers.containers.Neo4jContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-
-import static edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.CodeModelEqualityHelper.assertCodeModelsEqual;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
+import io.github.ardoco.core.neo4jschema.Main;
+import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
+import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 
 @Testcontainers
 @SpringBootTest(classes = Main.class)
@@ -39,8 +38,7 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
     private CodeModelRepository codeModelRepository;
 
     @Container
-    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0")
-            .withRandomPassword();
+    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0").withRandomPassword();
 
     @DynamicPropertySource
     static void neo4jProperties(DynamicPropertyRegistry registry) {
@@ -68,23 +66,23 @@ public class CodePersistenceTest extends CodeRunnerBaseTest {
         assertCodeModelsEqual(extractedModel, loadedModel);
     }
 
-//    @Test
-//    @DisplayName("Should run ArdoCode pipeline and persist results")
-//    void testArdoCodePipelineWithNeo4j() {
-//        // --- VISUALIZATION BLOCK ---
-//        System.out.println("----------------------------------------------------------");
-//        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
-//        System.out.println("password:      " + neo4j.getAdminPassword());
-//        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
-//        System.out.println("----------------------------------------------------------");
-//
-//        var runner = new Ardocode(projectName);
-//        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-//        runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
-//
-//        testRunnerAssertions(runner);
-//        ArDoCoResult result = runner.run();
-//        Assertions.assertNotNull(result);
-//
-//    }
+    //    @Test
+    //    @DisplayName("Should run ArdoCode pipeline and persist results")
+    //    void testArdoCodePipelineWithNeo4j() {
+    //        // --- VISUALIZATION BLOCK ---
+    //        System.out.println("----------------------------------------------------------");
+    //        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
+    //        System.out.println("password:      " + neo4j.getAdminPassword());
+    //        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
+    //        System.out.println("----------------------------------------------------------");
+    //
+    //        var runner = new Ardocode(projectName);
+    //        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+    //        runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
+    //
+    //        testRunnerAssertions(runner);
+    //        ArDoCoResult result = runner.run();
+    //        Assertions.assertNotNull(result);
+    //
+    //    }
 }

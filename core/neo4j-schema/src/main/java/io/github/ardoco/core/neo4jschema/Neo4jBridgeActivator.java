@@ -1,10 +1,12 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema;
 
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import jakarta.annotation.PostConstruct; // or javax.annotation.PostConstruct
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This bean automatically registers the Neo4j implementation with the

@@ -1,11 +1,13 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.adapter;
 
-import edu.kit.kastel.mcse.ardoco.core.api.text.*;
+import java.util.Objects;
+
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.factory.Multimaps;
 
-import java.util.Objects;
+import edu.kit.kastel.mcse.ardoco.core.api.text.*;
 
 public class Neo4jWord implements Word {
 
@@ -34,6 +36,7 @@ public class Neo4jWord implements Word {
     public void setNextWord(Neo4jWord nextWord) {
         this.nextWord = nextWord;
     }
+
     public void setPreWord(Neo4jWord preWord) {
         this.preWord = preWord;
     }
@@ -47,29 +50,43 @@ public class Neo4jWord implements Word {
     }
 
     // ... Getters ...
-    @Override public int getPosition() {
+    @Override
+    public int getPosition() {
         return position;
     }
 
-    @Override public String getText() {
+    @Override
+    public String getText() {
         return text;
     }
-    @Override public String getLemma() {
+
+    @Override
+    public String getLemma() {
         return lemma;
     }
-    @Override public POSTag getPosTag() {
+
+    @Override
+    public POSTag getPosTag() {
         return posTag;
     }
-    @Override public Sentence getSentence() {
+
+    @Override
+    public Sentence getSentence() {
         return parentSentence;
     }
-    @Override public int getSentenceNumber() {
+
+    @Override
+    public int getSentenceNumber() {
         return parentSentence.getSentenceNumber();
     }
-    @Override public Word getPreWord() {
+
+    @Override
+    public Word getPreWord() {
         return preWord;
     }
-    @Override public Word getNextWord() {
+
+    @Override
+    public Word getNextWord() {
         return nextWord;
     }
 
@@ -105,15 +122,18 @@ public class Neo4jWord implements Word {
     // compareTo, equals, hashCode ...
     @Override
     public int compareTo(Word o) {
-        if (this.equals(o)) return 0;
+        if (this.equals(o))
+            return 0;
         int s = Integer.compare(this.getSentenceNumber(), o.getSentenceNumber());
         return (s != 0) ? s : Integer.compare(this.position, o.getPosition());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Word w)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Word w))
+            return false;
         return position == w.getPosition() && getSentenceNumber() == w.getSentenceNumber();
     }
 

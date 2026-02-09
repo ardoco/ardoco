@@ -1,12 +1,13 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.repository.tracelink;
 
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
+import java.util.List;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
 
 @Repository
 public interface TraceLinkRepository extends Neo4jRepository<ArchitectureItemNode, String> {

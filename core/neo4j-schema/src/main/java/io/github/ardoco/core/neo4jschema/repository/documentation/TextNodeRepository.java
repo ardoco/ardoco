@@ -1,9 +1,10 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.repository.documentation;
-
-import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.stereotype.Repository;
+
+import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 
 @Repository
 public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {

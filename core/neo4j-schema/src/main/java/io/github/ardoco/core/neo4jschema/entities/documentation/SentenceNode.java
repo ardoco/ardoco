@@ -1,4 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.documentation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -6,13 +10,11 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Node("Sentence")
 public class SentenceNode {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
 
     private int sentenceNumber;
@@ -35,12 +37,20 @@ public class SentenceNode {
         this.text = text;
     }
 
-    public SentenceNode() {}
+    public SentenceNode() {
+    }
 
+    public void setNextSentence(SentenceNode nextSentence) {
+        this.nextSentence = nextSentence;
+    }
 
-    public void setNextSentence(SentenceNode nextSentence) { this.nextSentence = nextSentence; }
-    public List<WordNode> getWords() { return words; }
-    public List<PhraseNode> getRootPhrases() { return rootPhrases; }
+    public List<WordNode> getWords() {
+        return words;
+    }
+
+    public List<PhraseNode> getRootPhrases() {
+        return rootPhrases;
+    }
 
     public void setSentenceNumber(int sentenceNumber) {
         this.sentenceNumber = sentenceNumber;

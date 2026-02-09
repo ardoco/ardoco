@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.List;

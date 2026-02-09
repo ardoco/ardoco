@@ -1,4 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.codeModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -6,12 +10,10 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Node("CodeItem")
 public class CodeItemNode implements Comparable<CodeItemNode> {
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     protected String id;
     private String name;
     private String ardocoId; // The domain ID
@@ -25,19 +27,29 @@ public class CodeItemNode implements Comparable<CodeItemNode> {
         this.ardocoId = ardocoId;
     }
 
-    protected CodeItemNode() {}
+    protected CodeItemNode() {
+    }
 
     public void addContent(CodeItemNode child) {
         this.content.add(child);
     }
 
-    public String getName() { return name; }
-    public String getArdocoId() { return ardocoId; }
-    public List<CodeItemNode> getContent() { return content; }
+    public String getName() {
+        return name;
+    }
+
+    public String getArdocoId() {
+        return ardocoId;
+    }
+
+    public List<CodeItemNode> getContent() {
+        return content;
+    }
 
     @Override
     public int compareTo(CodeItemNode o) {
-        if (this.ardocoId != null && o.ardocoId != null) return this.ardocoId.compareTo(o.ardocoId);
+        if (this.ardocoId != null && o.ardocoId != null)
+            return this.ardocoId.compareTo(o.ardocoId);
         return this.name.compareTo(o.name);
     }
 }

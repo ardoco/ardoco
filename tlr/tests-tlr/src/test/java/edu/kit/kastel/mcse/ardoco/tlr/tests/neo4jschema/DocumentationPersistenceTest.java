@@ -1,26 +1,10 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
-import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
-import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.CoreNLPProvider;
-import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl;
-import io.github.ardoco.core.neo4jschema.Main;
-import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
-import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationMapper;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import edu.stanford.nlp.pipeline.CoreDocument;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-
-import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.TextEqualityHelper;
+import java.io.File;
+import java.util.Properties;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.junit.jupiter.api.Assertions;
@@ -36,10 +20,25 @@ import org.testcontainers.containers.Neo4jContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.util.Properties;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
+import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.TextEqualityHelper;
+import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.CoreNLPProvider;
+import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import io.github.ardoco.core.neo4jschema.Main;
+import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
+import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
+import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationMapper;
+import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
 
 @Testcontainers
 @SpringBootTest(classes = Main.class)
@@ -54,14 +53,13 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
 
     private static StanfordCoreNLP pipeline;
 
-//    @Container
-//    @ServiceConnection // This automatically overwrites spring.neo4j.uri, username, and password!
-//    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0")
-//            .withRandomPassword();
+    //    @Container
+    //    @ServiceConnection // This automatically overwrites spring.neo4j.uri, username, and password!
+    //    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0")
+    //            .withRandomPassword();
 
     @Container
-    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0")
-            .withRandomPassword();
+    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0").withRandomPassword();
 
     @DynamicPropertySource
     static void neo4jProperties(DynamicPropertyRegistry registry) {

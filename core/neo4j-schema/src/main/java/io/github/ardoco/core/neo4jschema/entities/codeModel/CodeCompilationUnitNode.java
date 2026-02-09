@@ -1,7 +1,9 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.codeModel;
 
-import org.springframework.data.neo4j.core.schema.Node;
 import java.util.List;
+
+import org.springframework.data.neo4j.core.schema.Node;
 
 @Node("CodeCompilationUnit")
 public class CodeCompilationUnitNode extends CodeItemNode {
@@ -16,9 +18,19 @@ public class CodeCompilationUnitNode extends CodeItemNode {
         this.language = language;
         this.pathElements = pathElements;
     }
-    protected CodeCompilationUnitNode() {}
 
-    public String getExtension() { return extension; }
-    public String getLanguage() { return language; }
-    public List<String> getPathElements() { return pathElements; }
+    protected CodeCompilationUnitNode() {
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public List<String> getPathElements() {
+        return pathElements;
+    }
 }

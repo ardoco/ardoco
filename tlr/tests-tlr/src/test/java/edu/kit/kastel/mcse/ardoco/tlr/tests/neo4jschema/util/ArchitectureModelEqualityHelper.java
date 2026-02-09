@@ -1,15 +1,16 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ArchitectureModelEqualityHelper {
 
@@ -20,7 +21,8 @@ public class ArchitectureModelEqualityHelper {
      * @param actual   The restored model
      */
     public static void assertArchitectureModelsEqual(ArchitectureModel expected, ArchitectureModel actual) {
-        if (expected == actual) return;
+        if (expected == actual)
+            return;
         assertNotNull(expected, "Expected ArchitectureModel is null");
         assertNotNull(actual, "Actual ArchitectureModel is null");
 
@@ -30,8 +32,8 @@ public class ArchitectureModelEqualityHelper {
         Map<String, ArchitectureItem> itemsExpected = mapContent(expected.getContent());
         Map<String, ArchitectureItem> itemsActual = mapContent(actual.getContent());
 
-        assertEquals(itemsExpected.size(), itemsActual.size(),
-                () -> "Content size mismatch. Expected keys: " + itemsExpected.keySet() + ", Actual keys: " + itemsActual.keySet());
+        assertEquals(itemsExpected.size(), itemsActual.size(), () -> "Content size mismatch. Expected keys: " + itemsExpected
+                .keySet() + ", Actual keys: " + itemsActual.keySet());
 
         for (String id : itemsActual.keySet()) {
             assertTrue(itemsActual.containsKey(id), () -> "Restored model missing item with ID: " + id);
@@ -48,11 +50,9 @@ public class ArchitectureModelEqualityHelper {
     }
 
     private static void assertItemsEqual(ArchitectureItem expected, ArchitectureItem actual) {
-        assertEquals(expected.getClass(), actual.getClass(),
-                () -> "Class mismatch for ID " + expected.getId());
+        assertEquals(expected.getClass(), actual.getClass(), () -> "Class mismatch for ID " + expected.getId());
 
-        assertEquals(expected.getName(), actual.getName(),
-                () -> "Name mismatch for ID " + expected.getId());
+        assertEquals(expected.getName(), actual.getName(), () -> "Name mismatch for ID " + expected.getId());
 
         if (expected instanceof ArchitectureComponent compExpected && actual instanceof ArchitectureComponent compActual) {
             assertComponentsEqual(compExpected, compActual);

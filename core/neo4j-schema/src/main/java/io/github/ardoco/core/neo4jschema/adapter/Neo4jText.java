@@ -1,12 +1,14 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.adapter;
+
+import java.util.List;
+
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
-
-import java.util.List;
 
 public class Neo4jText implements Text {
 

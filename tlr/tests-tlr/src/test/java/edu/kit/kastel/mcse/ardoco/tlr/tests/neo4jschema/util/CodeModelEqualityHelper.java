@@ -1,15 +1,16 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeAssembly;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeAssembly;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 
 public class CodeModelEqualityHelper {
 
@@ -21,7 +22,8 @@ public class CodeModelEqualityHelper {
      * @param actual   the second model (actual)
      */
     public static void assertCodeModelsEqual(CodeModel expected, CodeModel actual) {
-        if (expected == actual) return;
+        if (expected == actual)
+            return;
         assertNotNull(expected, "Expected CodeModel is null");
         assertNotNull(actual, "Actual CodeModel is null");
 
@@ -39,8 +41,8 @@ public class CodeModelEqualityHelper {
         Map<String, CodeItem> itemsExpected = repoExpected.getRepository();
         Map<String, CodeItem> itemsActual = repoActual.getRepository();
 
-//        assertEquals(itemsExpected.size(), itemsActual.size(),
-//                "Repository size mismatch (Total items count)");
+        //        assertEquals(itemsExpected.size(), itemsActual.size(),
+        //                "Repository size mismatch (Total items count)");
 
         for (String id : itemsExpected.keySet()) {
             assertTrue(itemsActual.containsKey(id), () -> "Item " + id + " missing in restored model.");
@@ -48,12 +50,10 @@ public class CodeModelEqualityHelper {
             CodeItem itemExpected = itemsExpected.get(id);
             CodeItem itemActual = itemsActual.get(id);
 
-            assertEquals(itemExpected, itemActual,
-                    () -> "Item equality check failed for ID " + id);
+            assertEquals(itemExpected, itemActual, () -> "Item equality check failed for ID " + id);
 
             if (itemExpected instanceof CodeAssembly assemblyExpected && itemActual instanceof CodeAssembly assemblyActual) {
-                assertEquals(assemblyExpected.getLanguage(), assemblyActual.getLanguage(),
-                        () -> "CodeAssembly language mismatch for ID " + id);
+                assertEquals(assemblyExpected.getLanguage(), assemblyActual.getLanguage(), () -> "CodeAssembly language mismatch for ID " + id);
             }
         }
     }

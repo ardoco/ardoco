@@ -1,14 +1,15 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.codeModel;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.*;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import edu.kit.kastel.mcse.ardoco.core.api.models.*;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
+import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
 
 @Component
 public class CodeModelMapper {
@@ -30,7 +31,6 @@ public class CodeModelMapper {
         return item;
     }
 
-
     public CodeModel mapToDomain(CodeModelNode node) {
         CodeItemRepository repository = new CodeItemRepository();
 
@@ -45,7 +45,8 @@ public class CodeModelMapper {
         // Link items
         for (CodeItemNode itemNode : allNodes) {
             CodeItem parentItem = repository.getCodeItem(itemNode.getArdocoId());
-            if (parentItem == null) continue;
+            if (parentItem == null)
+                continue;
 
             // Link Content (Children)
             for (CodeItemNode childNode : itemNode.getContent()) {
@@ -116,21 +117,16 @@ public class CodeModelMapper {
 
         if (node instanceof CodePackageNode p) {
             return new CodePackage(id, repo, p.getName());
-        }
-        else if (node instanceof CodeCompilationUnitNode c) {
-            return new CodeCompilationUnit(id, repo, c.getName(), new TreeSet<>(), c.getPathElements(),
-                    c.getExtension(), ProgrammingLanguage.valueOf(c.getLanguage()));
-        }
-        else if (node instanceof ClassUnitNode c) {
-           return new ClassUnit(id, repo, c.getName(), new TreeSet<>());
-        }
-        else if (node instanceof InterfaceUnitNode i) {
+        } else if (node instanceof CodeCompilationUnitNode c) {
+            return new CodeCompilationUnit(id, repo, c.getName(), new TreeSet<>(), c.getPathElements(), c.getExtension(), ProgrammingLanguage.valueOf(c
+                    .getLanguage()));
+        } else if (node instanceof ClassUnitNode c) {
+            return new ClassUnit(id, repo, c.getName(), new TreeSet<>());
+        } else if (node instanceof InterfaceUnitNode i) {
             return new InterfaceUnit(id, repo, i.getName(), new TreeSet<>());
-        }
-        else if (node instanceof CodeAssemblyNode a) {
+        } else if (node instanceof CodeAssemblyNode a) {
             return new CodeAssembly(id, repo, a.getName(), new TreeSet<>(), a.getLanguage());
-        }
-        else if (node instanceof ControlElementNode c) {
+        } else if (node instanceof ControlElementNode c) {
             return new ControlElement(id, repo, c.getName());
         }
         throw new IllegalArgumentException("Unknown node type: " + node.getClass().getSimpleName());
@@ -160,14 +156,16 @@ public class CodeModelMapper {
         SortedSet<Datatype> extended = new TreeSet<>();
         for (DatatypeNode extNode : node.getExtendedTypes()) {
             CodeItem item = repo.getCodeItem(extNode.getArdocoId());
-            if (item instanceof Datatype dt) extended.add(dt);
+            if (item instanceof Datatype dt)
+                extended.add(dt);
         }
         domain.setExtendedTypes(extended);
 
         SortedSet<Datatype> implemented = new TreeSet<>();
         for (DatatypeNode implNode : node.getImplementedTypes()) {
             CodeItem item = repo.getCodeItem(implNode.getArdocoId());
-            if (item instanceof Datatype dt) implemented.add(dt);
+            if (item instanceof Datatype dt)
+                implemented.add(dt);
         }
         domain.setImplementedTypes(implemented);
     }

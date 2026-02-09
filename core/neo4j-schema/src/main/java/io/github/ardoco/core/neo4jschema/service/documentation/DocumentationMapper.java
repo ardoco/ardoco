@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package io.github.ardoco.core.neo4jschema.service.documentation;
 
 import java.util.ArrayList;
@@ -64,13 +64,7 @@ public class DocumentationMapper {
         Map<Integer, Neo4jWord> sentenceWordMap = new HashMap<>(); // Local map for phrase resolution
 
         for (WordNode wNode : wordNodes) {
-            Neo4jWord word = new Neo4jWord(
-                    wNode.getPosition(),
-                    wNode.getText(),
-                    wNode.getLemma(),
-                    wNode.getPosTag(),
-                    sentence
-            );
+            Neo4jWord word = new Neo4jWord(wNode.getPosition(), wNode.getText(), wNode.getLemma(), wNode.getPosTag(), sentence);
             words.add(word);
             // Add to both maps
             sentenceWordMap.put(wNode.getPosition(), word);
@@ -80,8 +74,10 @@ public class DocumentationMapper {
         // Link Words (Pre/Next)
         for (int i = 0; i < words.size(); i++) {
             Neo4jWord current = words.get(i);
-            if (i > 0) current.setPreWord(words.get(i - 1));
-            if (i < words.size() - 1) current.setNextWord(words.get(i + 1));
+            if (i > 0)
+                current.setPreWord(words.get(i - 1));
+            if (i < words.size() - 1)
+                current.setNextWord(words.get(i + 1));
         }
 
         // Map Phrases (using local word references)
@@ -103,17 +99,9 @@ public class DocumentationMapper {
             childPhrases.add(mapPhrase(childNode, parentSentence, wordMap));
         }
 
-        List<Neo4jWord> containedWords = pNode.getContainedWords().stream()
-                .map(wn -> wordMap.get(wn.getPosition()))
-                .collect(Collectors.toList());
+        List<Neo4jWord> containedWords = pNode.getContainedWords().stream().map(wn -> wordMap.get(wn.getPosition())).collect(Collectors.toList());
 
-        return new Neo4jPhrase(
-                pNode.getText(),
-                pNode.getPhraseType(),
-                parentSentence,
-                containedWords,
-                childPhrases
-        );
+        return new Neo4jPhrase(pNode.getText(), pNode.getPhraseType(), parentSentence, containedWords, childPhrases);
     }
 
     private void linkDependencies(TextNode textNode, Map<Integer, Neo4jWord> globalWordMap) {

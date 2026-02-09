@@ -16,7 +16,6 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 @Deterministic
 public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
 
-
     private final CodeModelWithCompilationUnits codeModel;
 
     /**

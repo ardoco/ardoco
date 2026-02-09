@@ -1,4 +1,11 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.architectureModel;
+
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
@@ -13,12 +20,6 @@ import io.github.ardoco.core.neo4jschema.entities.architectureModel.Architecture
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureMethodNode;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 @Component
 public class ArchitectureModelMapper {
@@ -75,8 +76,7 @@ public class ArchitectureModelMapper {
         content.addAll(components);
         content.addAll(interfaces);
 
-        ArchitectureModelWithComponentsAndInterfaces baseModel =
-                new ArchitectureModelWithComponentsAndInterfaces(modelNode.getModelId(), content);
+        ArchitectureModelWithComponentsAndInterfaces baseModel = new ArchitectureModelWithComponentsAndInterfaces(modelNode.getModelId(), content);
 
         String storedType = modelNode.getMetamodel();
         if (Metamodel.ARCHITECTURE_WITH_COMPONENTS.name().equals(storedType)) {
@@ -86,8 +86,7 @@ public class ArchitectureModelMapper {
         return baseModel;
     }
 
-    private ArchitectureInterface mapInterface(ArchitectureInterfaceNode node,
-            Map<String, ArchitectureInterface> cache) {
+    private ArchitectureInterface mapInterface(ArchitectureInterfaceNode node, Map<String, ArchitectureInterface> cache) {
         if (cache.containsKey(node.getArdocoId())) {
             return cache.get(node.getArdocoId());
         }
@@ -97,18 +96,13 @@ public class ArchitectureModelMapper {
             methods.add(new ArchitectureMethod(methodNode.getArdocoId(), methodNode.getName()));
         }
 
-        ArchitectureInterface domainInterface = new ArchitectureInterface(
-                node.getName(),
-                node.getArdocoId(),
-                methods
-        );
+        ArchitectureInterface domainInterface = new ArchitectureInterface(node.getName(), node.getArdocoId(), methods);
 
         cache.put(node.getArdocoId(), domainInterface);
         return domainInterface;
     }
 
-    private ArchitectureComponent mapComponent(ArchitectureComponentNode node,
-            Map<String, ArchitectureComponent> compCache,
+    private ArchitectureComponent mapComponent(ArchitectureComponentNode node, Map<String, ArchitectureComponent> compCache,
             Map<String, ArchitectureInterface> ifaceCache) {
         if (compCache.containsKey(node.getArdocoId())) {
             return compCache.get(node.getArdocoId());
@@ -132,14 +126,8 @@ public class ArchitectureModelMapper {
             required.add(mapInterface(ifaceNode, ifaceCache));
         }
 
-        ArchitectureComponent domainComponent = new ArchitectureComponent(
-                node.getName(),
-                node.getArdocoId(),
-                subcomponents,
-                provided,
-                required,
-                node.getType()
-        );
+        ArchitectureComponent domainComponent = new ArchitectureComponent(node.getName(), node.getArdocoId(), subcomponents, provided, required, node
+                .getType());
 
         compCache.put(node.getArdocoId(), domainComponent);
         return domainComponent;

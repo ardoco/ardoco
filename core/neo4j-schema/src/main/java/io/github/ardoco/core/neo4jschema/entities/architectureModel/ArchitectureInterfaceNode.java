@@ -1,16 +1,14 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.architectureModel;
-
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
+
 @Node("ArchitectureInterface")
-public class ArchitectureInterfaceNode extends ArchitectureItemNode implements Comparable<ArchitectureInterfaceNode>  {
+public class ArchitectureInterfaceNode extends ArchitectureItemNode implements Comparable<ArchitectureInterfaceNode> {
 
     private String type;
 
@@ -22,18 +20,25 @@ public class ArchitectureInterfaceNode extends ArchitectureItemNode implements C
         this.type = type;
     }
 
-    protected ArchitectureInterfaceNode() {}
+    protected ArchitectureInterfaceNode() {
+    }
 
     public void addMethodSignature(ArchitectureMethodNode methodNode) {
         this.methodSignatures.add(methodNode);
     }
 
-    public String getType() { return type; }
-    public SortedSet<ArchitectureMethodNode> getMethodSignatures() { return methodSignatures; }
+    public String getType() {
+        return type;
+    }
+
+    public SortedSet<ArchitectureMethodNode> getMethodSignatures() {
+        return methodSignatures;
+    }
 
     @Override
     public int compareTo(ArchitectureInterfaceNode o) {
-        if (this == o) return 0;
+        if (this == o)
+            return 0;
 
         if (this.ardocoId != null && o.ardocoId != null) {
             return this.ardocoId.compareTo(o.ardocoId);

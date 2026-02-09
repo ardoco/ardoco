@@ -1,12 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -15,10 +12,12 @@ import org.eclipse.collections.impl.factory.Sets;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
 @Deterministic
@@ -46,7 +45,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
-//        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
+        //        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
         if (this.samCodeTraceLinks.isEmpty() && !loadedFromPersistence && PersistenceBridge.isAvailable()) {
             Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadSamCodeTraceLinks();
             if (loadedLinks != null && !loadedLinks.isEmpty()) {

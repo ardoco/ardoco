@@ -1,12 +1,8 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;

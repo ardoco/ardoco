@@ -1,6 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.architectureModel;
 
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -8,8 +10,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.HashSet;
-import java.util.Set;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
 
 @Node("ArchitectureItem")
 public abstract class ArchitectureItemNode {
@@ -29,14 +30,17 @@ public abstract class ArchitectureItemNode {
         this.ardocoId = ardocoId;
     }
 
-    protected ArchitectureItemNode() {}
+    protected ArchitectureItemNode() {
+    }
 
     public String getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
+
     public String getArdocoId() {
         return ardocoId;
     }

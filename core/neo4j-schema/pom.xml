@@ -1,198 +1,195 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.github.ardoco.core</groupId>
-        <artifactId>parent-core</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>io.github.ardoco.core</groupId>
+    <artifactId>parent-core</artifactId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>neo4j-schema</artifactId>
-    <name>Neo4j Schema</name>
-    <description>Contains Neo4j @Node entities and repositories for ArDoCo.</description>
+  <artifactId>neo4j-schema</artifactId>
+  <name>Neo4j Schema</name>
+  <description>Contains Neo4j @Node entities and repositories for ArDoCo.</description>
 
-    <dependencyManagement>
-    </dependencyManagement>
+  <dependencyManagement />
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>edu.stanford.nlp</groupId>
+      <artifactId>stanford-corenlp</artifactId>
+      <version>4.5.10</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>common</artifactId>
+      <version>${revision}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.core</groupId>
-            <artifactId>common</artifactId>
-            <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>pipeline-core</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.core</groupId>
-            <artifactId>pipeline-core</artifactId>
-            <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>pipeline-core</artifactId>
+      <version>${revision}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.core</groupId>
-            <artifactId>pipeline-core</artifactId>
-            <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>pipeline-core</artifactId>
+      <version>${revision}</version>
+      <classifier>tests</classifier>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.core</groupId>
-            <artifactId>pipeline-core</artifactId>
-            <version>${revision}</version>
-            <classifier>tests</classifier>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.id</groupId>
+      <artifactId>pipeline-id</artifactId>
+      <version>${revision}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.id</groupId>
-            <artifactId>pipeline-id</artifactId>
-            <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>pipeline-tlr</artifactId>
+      <version>${revision}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>io.github.ardoco.tlr</groupId>
-            <artifactId>pipeline-tlr</artifactId>
-            <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.neo4j.driver</groupId>
+      <artifactId>neo4j-java-driver</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>4.5.10</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-neo4j</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.neo4j.driver</groupId>
+          <artifactId>neo4j-java-driver</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.neo4j.driver</groupId>
-                    <artifactId>neo4j-java-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j.driver</groupId>
-            <artifactId>neo4j-java-driver</artifactId>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-testcontainers</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.testcontainers</groupId>-->
-<!--            <artifactId>neo4j</artifactId>-->
-<!--            <version>1.21.4</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.testcontainers</groupId>-->
-<!--            <artifactId>junit-jupiter</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--        <dependency>-->
+    <!--            <groupId>org.springframework.boot</groupId>-->
+    <!--            <artifactId>spring-boot-testcontainers</artifactId>-->
+    <!--            <scope>test</scope>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.testcontainers</groupId>-->
+    <!--            <artifactId>neo4j</artifactId>-->
+    <!--            <version>1.21.4</version>-->
+    <!--            <scope>test</scope>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.testcontainers</groupId>-->
+    <!--            <artifactId>junit-jupiter</artifactId>-->
+    <!--            <scope>test</scope>-->
+    <!--        </dependency>-->
 
-        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.neo4j.driver/neo4j-java-driver &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.neo4j.driver</groupId>-->
-<!--            <artifactId>neo4j-java-driver</artifactId>-->
-<!--            <version>6.0.2</version>-->
-<!--        </dependency>-->
-    </dependencies>
+    <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.neo4j.driver/neo4j-java-driver &ndash;&gt;-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.neo4j.driver</groupId>-->
+    <!--            <artifactId>neo4j-java-driver</artifactId>-->
+    <!--            <version>6.0.2</version>-->
+    <!--        </dependency>-->
+  </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <trimStackTrace>false</trimStackTrace>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExclude>org.slf4j:slf4j-simple</classpathDependencyExclude>
-                    </classpathDependencyExcludes>
-                </configuration>
-            </plugin>
-            <!-- Spring Boot Maven Plugin to repackage as an executable JAR -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>io.github.ardoco.core.neo4jschema.Main</mainClass>
-                    <classifier>exec</classifier>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <trimStackTrace>false</trimStackTrace>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.slf4j:slf4j-simple</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
+      </plugin>
+      <!-- Spring Boot Maven Plugin to repackage as an executable JAR -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>io.github.ardoco.core.neo4jschema.Main</mainClass>
+          <classifier>exec</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

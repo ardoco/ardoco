@@ -1,13 +1,11 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.architectureModel;
-
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node("ArchitectureComponent")
 public class ArchitectureComponentNode extends ArchitectureItemNode implements Comparable<ArchitectureComponentNode> {
@@ -28,7 +26,8 @@ public class ArchitectureComponentNode extends ArchitectureItemNode implements C
         this.type = type;
     }
 
-    protected ArchitectureComponentNode() {}
+    protected ArchitectureComponentNode() {
+    }
 
     public void addSubcomponent(ArchitectureComponentNode component) {
         this.subcomponents.add(component);
@@ -42,14 +41,26 @@ public class ArchitectureComponentNode extends ArchitectureItemNode implements C
         this.requiredInterfaces.add(iface);
     }
 
-    public String getType() { return type; }
-    public SortedSet<ArchitectureComponentNode> getSubcomponents() { return subcomponents; }
-    public SortedSet<ArchitectureInterfaceNode> getProvidedInterfaces() { return providedInterfaces; }
-    public SortedSet<ArchitectureInterfaceNode> getRequiredInterfaces() { return requiredInterfaces; }
+    public String getType() {
+        return type;
+    }
+
+    public SortedSet<ArchitectureComponentNode> getSubcomponents() {
+        return subcomponents;
+    }
+
+    public SortedSet<ArchitectureInterfaceNode> getProvidedInterfaces() {
+        return providedInterfaces;
+    }
+
+    public SortedSet<ArchitectureInterfaceNode> getRequiredInterfaces() {
+        return requiredInterfaces;
+    }
 
     @Override
     public int compareTo(ArchitectureComponentNode o) {
-        if (this == o) return 0;
+        if (this == o)
+            return 0;
         if (this.ardocoId != null && o.ardocoId != null) {
             return this.ardocoId.compareTo(o.ardocoId);
         }

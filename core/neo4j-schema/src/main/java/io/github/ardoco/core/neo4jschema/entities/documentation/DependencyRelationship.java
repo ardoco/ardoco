@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.documentation;
 
 import org.springframework.data.neo4j.core.schema.RelationshipId;
@@ -20,8 +21,14 @@ public class DependencyRelationship {
         this.targetWord = targetWord;
     }
 
-    public DependencyRelationship() {}
+    public DependencyRelationship() {
+    }
 
-    public String getDependencyType() { return dependencyType; }
-    public WordNode getTargetWord() { return targetWord; }
+    public String getDependencyType() {
+        return dependencyType;
+    }
+
+    public WordNode getTargetWord() {
+        return targetWord;
+    }
 }

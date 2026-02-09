@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.List;
@@ -39,8 +39,6 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
         this.content = content;
     }
 
-
-
     private void validateContent(List<ArchitectureItem> content) {
         for (ArchitectureItem item : content) {
             if (!(item instanceof ArchitectureComponent || item instanceof ArchitectureInterface)) {
@@ -48,8 +46,6 @@ public final class ArchitectureModelWithComponentsAndInterfaces extends Architec
             }
         }
     }
-
-
 
     /**
      * Returns the content of the architecture model.

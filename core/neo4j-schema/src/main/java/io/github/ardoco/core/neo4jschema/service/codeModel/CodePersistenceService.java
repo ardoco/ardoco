@@ -1,20 +1,20 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.codeModel;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
-
-import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
-import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
+import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
+import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
 
 @Service
 public class CodePersistenceService {
@@ -111,7 +111,8 @@ public class CodePersistenceService {
     }
 
     private CodeItemNode mapToNode(CodeItem item, Map<String, CodeItemNode> cache) {
-        if (cache.containsKey(item.getId())) return cache.get(item.getId());
+        if (cache.containsKey(item.getId()))
+            return cache.get(item.getId());
 
         CodeItemNode node = createNode(item);
         cache.put(item.getId(), node);
@@ -137,8 +138,7 @@ public class CodePersistenceService {
         if (item instanceof CodePackage p) {
             return new CodePackageNode(p.getName(), p.getId());
         } else if (item instanceof CodeCompilationUnit c) {
-            return new CodeCompilationUnitNode(c.getName(), c.getId(), c.getExtension(),
-                    c.getLanguage().name(), c.getPathElements());
+            return new CodeCompilationUnitNode(c.getName(), c.getId(), c.getExtension(), c.getLanguage().name(), c.getPathElements());
         } else if (item instanceof ClassUnit c) {
             return new ClassUnitNode(c.getName(), c.getId());
         } else if (item instanceof InterfaceUnit i) {

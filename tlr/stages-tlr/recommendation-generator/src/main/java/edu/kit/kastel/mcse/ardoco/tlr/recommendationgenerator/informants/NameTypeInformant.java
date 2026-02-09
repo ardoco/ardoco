@@ -1,12 +1,13 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -19,10 +20,6 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextStateStrategies;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedSet;
 
 /**
  * This analyzer searches for name type patterns. If these patterns occur recommendations are created.
@@ -53,7 +50,7 @@ public class NameTypeInformant extends Informant {
 
         // prepare models to not have to call getModel multiple times
         var metamodels = modelStatesData.getMetamodels();
-        Map<Metamodel, Model> metamodelModelMap  = new HashMap<>();
+        Map<Metamodel, Model> metamodelModelMap = new HashMap<>();
         for (var metamodel : metamodels) {
             var model = modelStatesData.getModel(metamodel);
             if (model != null) {
@@ -66,8 +63,8 @@ public class NameTypeInformant extends Informant {
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy textStateStrategy, Map<Metamodel, Model> metamodelModelMap, RecommendationStates recommendationStates, Word word) {
-
+    private void exec(TextState textState, TextStateStrategy textStateStrategy, Map<Metamodel, Model> metamodelModelMap,
+            RecommendationStates recommendationStates, Word word) {
 
         for (var modelEntry : metamodelModelMap.entrySet()) {
             Metamodel metamodel = modelEntry.getKey();

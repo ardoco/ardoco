@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.io.Serial;
@@ -28,6 +28,7 @@ public final class ModelStates implements PipelineStepData {
     // TODO: think about wether the currently implemented caching of neo4j persisted models is fine or whether we should do it differently
     // If a Metamodel is in this set, it must be re-loaded from the DB
     private final Set<Metamodel> dirtyMetamodels = new HashSet<>();
+
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
      *

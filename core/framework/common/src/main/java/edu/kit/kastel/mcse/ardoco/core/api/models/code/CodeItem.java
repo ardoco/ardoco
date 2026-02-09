@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -53,7 +53,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
     /**
      * Creates a new code item with the specified name and id.
      *
-     * @param id                the identifier of the code item
+     * @param id                 the identifier of the code item
      * @param codeItemRepository the code item repository
      * @param name               the name of the code item
      */

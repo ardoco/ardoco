@@ -1,12 +1,14 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.repository.architectureModel;
 
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
+import java.util.Optional;
+
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
 
 @Repository
 public interface ArchitectureModelRepository extends Neo4jRepository<ArchitectureModelNode, String> {
@@ -16,8 +18,6 @@ public interface ArchitectureModelRepository extends Neo4jRepository<Architectur
      * explicit path matching excludes the [:TRACES_TO_CODE] relationship,
      * ensuring we don't accidentally load TraceLinks or CodeItems.
      */
-    @Query("MATCH (m:ArchitectureModel {modelId: $modelId}) " +
-            "OPTIONAL MATCH p=(m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT|PROVIDES_INTERFACE|REQUIRES_INTERFACE|HAS_METHOD*0..]->(n) " +
-            "RETURN m, collect(nodes(p)), collect(relationships(p))")
+    @Query("MATCH (m:ArchitectureModel {modelId: $modelId}) " + "OPTIONAL MATCH p=(m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT|PROVIDES_INTERFACE|REQUIRES_INTERFACE|HAS_METHOD*0..]->(n) " + "RETURN m, collect(nodes(p)), collect(relationships(p))")
     Optional<ArchitectureModelNode> findByModelId(@Param("modelId") String modelId);
 }

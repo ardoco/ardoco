@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import org.junit.jupiter.api.Test;

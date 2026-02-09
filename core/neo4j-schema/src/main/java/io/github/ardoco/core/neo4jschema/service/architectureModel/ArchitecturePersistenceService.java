@@ -1,4 +1,15 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.architectureModel;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -12,27 +23,15 @@ import io.github.ardoco.core.neo4jschema.entities.architectureModel.Architecture
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-
 @Service
 public class ArchitecturePersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(ArchitecturePersistenceService.class);
 
-
     private final ArchitectureModelRepository repository;
     private final ArchitectureModelMapper mapper;
 
-    public ArchitecturePersistenceService(ArchitectureModelRepository repository,
-            ArchitectureModelMapper mapper) {
+    public ArchitecturePersistenceService(ArchitectureModelRepository repository, ArchitectureModelMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
@@ -65,8 +64,7 @@ public class ArchitecturePersistenceService {
         logger.info("Finished saving Architecture Model with ID: {}", model.getId());
     }
 
-    private ArchitectureComponentNode mapComponent(ArchitectureComponent domainComp,
-            Map<String, ArchitectureComponentNode> compCache,
+    private ArchitectureComponentNode mapComponent(ArchitectureComponent domainComp, Map<String, ArchitectureComponentNode> compCache,
             Map<String, ArchitectureInterfaceNode> interfaceCache) {
 
         logger.info("Mapping Architecture Component: {} (ID: {})", domainComp.getName(), domainComp.getId());
@@ -74,11 +72,7 @@ public class ArchitecturePersistenceService {
             return compCache.get(domainComp.getId());
         }
 
-        ArchitectureComponentNode node = new ArchitectureComponentNode(
-                domainComp.getName(),
-                domainComp.getType().orElse(null),
-                domainComp.getId()
-        );
+        ArchitectureComponentNode node = new ArchitectureComponentNode(domainComp.getName(), domainComp.getType().orElse(null), domainComp.getId());
         compCache.put(domainComp.getId(), node);
 
         // Map Subcomponents (Recursion)
@@ -99,18 +93,14 @@ public class ArchitecturePersistenceService {
         return node;
     }
 
-    private ArchitectureInterfaceNode mapInterface(ArchitectureInterface domainInterface,
-            Map<String, ArchitectureInterfaceNode> ifaceCache) {
+    private ArchitectureInterfaceNode mapInterface(ArchitectureInterface domainInterface, Map<String, ArchitectureInterfaceNode> ifaceCache) {
         logger.info("Mapping Architecture Interface: {} (ID: {})", domainInterface.getName(), domainInterface.getId());
         if (ifaceCache.containsKey(domainInterface.getId())) {
             return ifaceCache.get(domainInterface.getId());
         }
 
-        ArchitectureInterfaceNode node = new ArchitectureInterfaceNode(
-                domainInterface.getName(),
-                domainInterface.getType().orElse(null),
-                domainInterface.getId()
-        );
+        ArchitectureInterfaceNode node = new ArchitectureInterfaceNode(domainInterface.getName(), domainInterface.getType().orElse(null), domainInterface
+                .getId());
         ifaceCache.put(domainInterface.getId(), node);
 
         for (ArchitectureMethod method : domainInterface.getMethodSignatures()) {

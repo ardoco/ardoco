@@ -1,4 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.documentation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -6,15 +10,12 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Node("Text")
 public class TextNode {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
-
 
     @Relationship(type = "HAS_SENTENCE", direction = Relationship.Direction.OUTGOING)
     private List<SentenceNode> sentences = new ArrayList<>();
@@ -25,12 +26,12 @@ public class TextNode {
         this.ardocoId = ardocoId;
     }
 
-    public TextNode() {}
+    public TextNode() {
+    }
 
     public void addSentence(SentenceNode sentence) {
         this.sentences.add(sentence);
     }
-
 
     public String getId() {
         return id;

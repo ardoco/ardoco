@@ -1,32 +1,29 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
-import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
-
-import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeItemRepository;
-
-import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
-
-import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureModelMapper;
-
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodeModelMapper;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
+import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
+import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
+import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeItemRepository;
+import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
+import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureModelMapper;
+import io.github.ardoco.core.neo4jschema.service.codeModel.CodeModelMapper;
 
 @Service
 public class TraceLinkPersistenceService {
@@ -40,9 +37,8 @@ public class TraceLinkPersistenceService {
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
-    public TraceLinkPersistenceService(ArchitectureItemRepository archRepo, CodeItemRepository codeRepo,
-            TraceLinkRepository traceLinkRepo, ArchitectureModelMapper archMapper,
-            CodeModelMapper codeMapper) {
+    public TraceLinkPersistenceService(ArchitectureItemRepository archRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
+            ArchitectureModelMapper archMapper, CodeModelMapper codeMapper) {
         this.archRepo = archRepo;
         this.codeRepo = codeRepo;
         this.traceLinkRepo = traceLinkRepo;
@@ -55,14 +51,13 @@ public class TraceLinkPersistenceService {
         saveGenericLink(traceLink);
     }
 
-    public void saveAllTraceLinks(Collection<? extends TraceLink<?,?>> traceLinks) {
-        for (TraceLink<?,?> link : traceLinks) {
+    public void saveAllTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        for (TraceLink<?, ?> link : traceLinks) {
             saveGenericLink(link);
         }
     }
 
-
-    private void saveGenericLink(TraceLink<?,?> link) {
+    private void saveGenericLink(TraceLink<?, ?> link) {
         if (link instanceof ArchitectureCodeTraceLink) {
             ArchitectureItem architectureItem = (ArchitectureItem) link.getFirstEndpoint();
             CodeItem codeItem = (CodeItem) link.getSecondEndpoint();

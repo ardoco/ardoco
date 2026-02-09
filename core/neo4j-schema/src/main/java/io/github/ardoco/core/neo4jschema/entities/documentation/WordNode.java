@@ -1,4 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.documentation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -6,13 +10,11 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Node("Word")
 public class WordNode {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
 
     private int position;
@@ -33,7 +35,8 @@ public class WordNode {
         this.posTag = posTag;
     }
 
-    public WordNode() {}
+    public WordNode() {
+    }
 
     public void addDependency(String type, WordNode target) {
         this.dependencies.add(new DependencyRelationship(type, target));

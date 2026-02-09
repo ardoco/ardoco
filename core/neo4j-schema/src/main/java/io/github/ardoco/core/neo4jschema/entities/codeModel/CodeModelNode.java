@@ -1,4 +1,8 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.codeModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -6,13 +10,11 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Node("CodeModel")
 public class CodeModelNode {
 
-    @Id @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     private String id;
 
     private String modelId;
@@ -26,13 +28,22 @@ public class CodeModelNode {
         this.metamodel = metamodel;
     }
 
-    protected CodeModelNode() {}
+    protected CodeModelNode() {
+    }
 
     public void addContent(CodeItemNode item) {
         this.content.add(item);
     }
 
-    public String getModelId() { return modelId; }
-    public String getMetamodel() { return metamodel; }
-    public List<CodeItemNode> getContent() { return content; }
+    public String getModelId() {
+        return modelId;
+    }
+
+    public String getMetamodel() {
+        return metamodel;
+    }
+
+    public List<CodeItemNode> getContent() {
+        return content;
+    }
 }

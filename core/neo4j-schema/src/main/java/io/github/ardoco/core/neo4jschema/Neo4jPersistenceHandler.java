@@ -1,25 +1,26 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema;
+
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 @Service
 public class Neo4jPersistenceHandler implements PersistenceHandler {
@@ -31,11 +32,8 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final CodePersistenceService codeService;
     private final TraceLinkPersistenceService traceLinkService;
 
-    public Neo4jPersistenceHandler(
-            DocumentationPersistenceService documentationService,
-            ArchitecturePersistenceService architectureService,
-            CodePersistenceService codeService,
-            TraceLinkPersistenceService traceLinkService) {
+    public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
+            CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService) {
         this.documentationService = documentationService;
         this.architectureService = architectureService;
         this.codeService = codeService;
@@ -66,7 +64,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
             return null;
         }
     }
-
 
     @Override
     public SortedSet<Metamodel> getStoredMetamodels() {
