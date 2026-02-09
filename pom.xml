@@ -86,7 +86,6 @@
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.21.0</jackson.version>
     <metrics.version>0.2.0</metrics.version>
-    <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -180,13 +179,12 @@
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
-<!--      <dependency>-->
-<!--        <groupId>org.testcontainers</groupId>-->
-<!--        <artifactId>junit-jupiter</artifactId>-->
-<!--        <version>${junit.version}</version>-->
-<!--        <scope>test</scope>-->
-<!--      </dependency>-->
 
+      <dependency>
+        <groupId>org.neo4j.driver</groupId>
+        <artifactId>neo4j-java-driver</artifactId>
+        <version>5.28.10</version>
+      </dependency>
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
@@ -205,32 +203,23 @@
         <version>${slf4j.version}</version>
       </dependency>
 
-      <!-- Testcontainer -->
-      <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>testcontainers-bom</artifactId>
-        <version>${testcontainers.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.neo4j.driver</groupId>
-        <artifactId>neo4j-java-driver</artifactId>
-        <version>5.28.10</version>
-      </dependency>
-
       <!-- Spring boot -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.5.10</version>
+        <version>4.0.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>1.21.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
-
-
 
   </dependencyManagement>
 
@@ -280,7 +269,6 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
-
 
   </dependencies>
   <repositories>

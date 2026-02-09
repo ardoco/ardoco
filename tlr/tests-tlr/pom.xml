@@ -11,16 +11,27 @@
   <name>ARDoCo TLR Tests</name>
   <description>Integration and unit tests for Traceability Link Recovery (TLR) modules.</description>
 
-    <dependencyManagement>
-
-    </dependencyManagement>
+  <dependencyManagement />
 
   <dependencies>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
+      <artifactId>neo4j-schema</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
       <artifactId>pipeline-core</artifactId>
       <version>${revision}</version>
-        <type>test-jar</type><scope>test</scope>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>pipeline-core</artifactId>
+      <version>${revision}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
@@ -62,10 +73,28 @@
       <version>${revision}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>io.github.ardoco.core</groupId>
-      <artifactId>neo4j-schema</artifactId>
-      <version>${revision}</version> <scope>test</scope>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.neo4j.driver</groupId>
+      <artifactId>neo4j-java-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-neo4j</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.neo4j.driver</groupId>
+          <artifactId>neo4j-java-driver</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -73,44 +102,20 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-
-      <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-data-neo4j</artifactId>
-          <exclusions>
-              <exclusion>
-                  <groupId>org.neo4j.driver</groupId>
-                  <artifactId>neo4j-java-driver</artifactId>
-              </exclusion>
-          </exclusions>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.testcontainers</groupId>
-          <artifactId>testcontainers</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.testcontainers</groupId>
-          <artifactId>junit-jupiter</artifactId>
-      </dependency>
-
-      <dependency>
-          <groupId>org.testcontainers</groupId>
-          <artifactId>neo4j</artifactId>
-          <version>${testcontainers.version}</version>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.neo4j.driver</groupId>
-          <artifactId>neo4j-java-driver</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
 
     <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>neo4j</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
     </dependency>
 
   </dependencies>
@@ -132,17 +137,16 @@
           </execution>
         </executions>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
-            <configuration>
-<!--                explicitly tell slf4j-simple from the test class path so logback from spring can be used-->
-                <classpathDependencyExcludes>
-                    <classpathDependencyExclude>org.slf4j:slf4j-simple</classpathDependencyExclude>
-                </classpathDependencyExcludes>
-            </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!--                explicitly tell slf4j-simple from the test class path so logback from spring can be used-->
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.slf4j:slf4j-simple</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
