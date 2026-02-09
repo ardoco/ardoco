@@ -9,7 +9,6 @@
   </parent>
 
   <artifactId>cli</artifactId>
-  <version>${revision}</version>
 
   <name>ARDoCo CLI</name>
   <description>Command-line interface for ARDoCo Traceability Link Recovery. Discovers and executes task plugins via ServiceLoader.</description>
@@ -35,12 +34,33 @@
       <version>${ardoco.version}</version>
     </dependency>
 
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>io.github.ardoco.core</groupId>
+      <artifactId>tests-base</artifactId>
+      <version>${ardoco.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- TLR plugins (runtime only - discovered via ServiceLoader) -->
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>cli-plugins-tlr</artifactId>
       <version>${ardoco.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>pipeline-tlr</artifactId>
+      <version>${ardoco.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>tests-tlr</artifactId>
+      <version>${ardoco.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <!-- Eclipse Collections -->
@@ -63,14 +83,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <scope>runtime</scope>
-    </dependency>
-
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>io.github.ardoco.core</groupId>
-      <artifactId>tests-base</artifactId>
-      <version>${ardoco.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -105,6 +117,10 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -113,10 +129,6 @@
             </manifest>
           </archive>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

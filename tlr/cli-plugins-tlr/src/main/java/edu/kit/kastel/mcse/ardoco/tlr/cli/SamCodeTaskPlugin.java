@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -60,19 +61,17 @@ public class SamCodeTaskPlugin implements TaskPlugin {
         opt.setRequired(false); // Validation done by plugin
         options.add(opt);
 
+        opt = new Option(null, OPT_MODEL_FORMAT, true, "Model format: " + Arrays.toString(ModelFormat.values()));
+        opt.setType(String.class);
+        opt.setRequired(false); // Validation done by plugin
+        options.add(opt);
+
         return options;
     }
 
     @Override
     public List<Option> getOptionalOptions() {
-        List<Option> options = new ArrayList<>();
-
-        Option opt = new Option(null, OPT_MODEL_FORMAT, true, "Model format: PCM, UML, COMPONENT_LISTING (auto-detected if not specified)");
-        opt.setType(String.class);
-        opt.setRequired(false);
-        options.add(opt);
-
-        return options;
+        return List.of();
     }
 
     @Override
@@ -83,6 +82,10 @@ public class SamCodeTaskPlugin implements TaskPlugin {
         }
         if (!cmd.hasOption(OPT_CODE)) {
             logger.error("Missing required parameter: code (-c)");
+            return false;
+        }
+        if (!cmd.hasOption(OPT_MODEL_FORMAT)) {
+            logger.error("Missing required parameter: model-format (--model-format)");
             return false;
         }
         return true;
@@ -104,7 +107,7 @@ public class SamCodeTaskPlugin implements TaskPlugin {
             return;
         }
 
-        ModelFormat format = detectOrParseModelFormat(cmd, model);
+        ModelFormat format = parseModelFormat(cmd);
         ArchitectureConfiguration architectureConfig = new ArchitectureConfiguration(model, format);
 
         // Auto-detect if code path is a file (ACM) or directory (source code)
@@ -141,16 +144,13 @@ public class SamCodeTaskPlugin implements TaskPlugin {
         return file;
     }
 
-    private ModelFormat detectOrParseModelFormat(CommandLine cmd, File modelFile) {
-        if (cmd.hasOption(OPT_MODEL_FORMAT)) {
-            String formatStr = cmd.getOptionValue(OPT_MODEL_FORMAT).toUpperCase();
-            try {
-                return ModelFormat.valueOf(formatStr);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(String.format("Invalid model format '%s'. Valid values are: %s", formatStr, Arrays.toString(ModelFormat
-                        .values())), e);
-            }
+    private ModelFormat parseModelFormat(CommandLine cmd) {
+        String formatStr = cmd.getOptionValue(OPT_MODEL_FORMAT).toUpperCase(Locale.ROOT);
+        try {
+            return ModelFormat.valueOf(formatStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("Invalid model format '%s'. Valid values are: %s", formatStr, Arrays.toString(ModelFormat
+                    .values())), e);
         }
-        return ModelFormatDetector.detect(modelFile);
     }
 }

@@ -26,10 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.cli.TaskPlugin;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArcotlEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.SwattrEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArcotlEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.SwattrEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcEvaluation;
 
 /**
  * Comprehensive integration tests for the ARDoCo CLI.
- * Tests all TLR tasks (sad-sam, sam-code, sad-code) on all benchmark datasets.
+ * Tests all TLR tasks (sad-sam, sam-code, sad-code) on all benchmark datasets,
+ * asserting that results meet the same quality thresholds as the TLR tests.
  */
 class CliIntegrationIT {
 
@@ -56,21 +63,25 @@ class CliIntegrationIT {
      * Enum representing all benchmark projects with their file paths.
      */
     enum BenchmarkProject {
-        MEDIASTORE("mediastore", "text_2016/mediastore.txt", "model_2016/pcm/ms.repository", "model_2016/code/codeModel.acm"),
-        TEASTORE("teastore", "text_2020/teastore.txt", "model_2020/pcm/teastore.repository", "model_2022/code/codeModel.acm"),
-        TEAMMATES("teammates", "text_2021/teammates.txt", "model_2021/pcm/teammates.repository", "model_2023/code/codeModel.acm"),
-        BIGBLUEBUTTON("bigbluebutton", "text_2021/bigbluebutton.txt", "model_2021/pcm/bbb.repository", "model_2023/code/codeModel.acm"),
-        JABREF("jabref", "text_2021/jabref.txt", "model_2021/pcm/jabref.repository", "model_2023/code/codeModel.acm");
+        MEDIASTORE("mediastore", "text_2016/mediastore.txt", "model_2016/pcm/ms.repository", "model_2016/uml/ms.uml",
+                "model_2016/code/codeModel.acm"), TEASTORE("teastore", "text_2020/teastore.txt", "model_2020/pcm/teastore.repository",
+                        "model_2020/uml/teastore.uml", "model_2022/code/codeModel.acm"), TEAMMATES("teammates", "text_2021/teammates.txt",
+                                "model_2021/pcm/teammates.repository", "model_2021/uml/teammates.uml", "model_2023/code/codeModel.acm"), BIGBLUEBUTTON(
+                                        "bigbluebutton", "text_2021/bigbluebutton.txt", "model_2021/pcm/bbb.repository", "model_2021/uml/bbb.uml",
+                                        "model_2023/code/codeModel.acm"), JABREF("jabref", "text_2021/jabref.txt", "model_2021/pcm/jabref.repository",
+                                                "model_2021/uml/jabref.uml", "model_2023/code/codeModel.acm");
 
         private final String name;
         private final String textPath;
-        private final String modelPath;
+        private final String pcmModelPath;
+        private final String umlModelPath;
         private final String codePath;
 
-        BenchmarkProject(String name, String textPath, String modelPath, String codePath) {
+        BenchmarkProject(String name, String textPath, String pcmModelPath, String umlModelPath, String codePath) {
             this.name = name;
             this.textPath = textPath;
-            this.modelPath = modelPath;
+            this.pcmModelPath = pcmModelPath;
+            this.umlModelPath = umlModelPath;
             this.codePath = codePath;
         }
 
@@ -83,7 +94,11 @@ class CliIntegrationIT {
         }
 
         public File getModelFile() {
-            return getBenchmarkBasePath().resolve(name).resolve(modelPath).toFile();
+            return getBenchmarkBasePath().resolve(name).resolve(pcmModelPath).toFile();
+        }
+
+        public File getUmlModelFile() {
+            return getBenchmarkBasePath().resolve(name).resolve(umlModelPath).toFile();
         }
 
         public File getCodeFile() {
@@ -101,7 +116,13 @@ class CliIntegrationIT {
     void tearDown() throws IOException {
         if (outputDir != null && Files.exists(outputDir)) {
             try (Stream<Path> walk = Files.walk(outputDir)) {
-                walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                walk.sorted(Comparator.reverseOrder()).forEach(path -> {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException e) {
+                        logger.warn("Failed to delete: {}", path, e);
+                    }
+                });
             }
         }
     }
@@ -179,6 +200,18 @@ class CliIntegrationIT {
                 assertTrue(codeFile.getName().endsWith(".acm"), "Code file should be .acm: " + codeFile.getName());
             }
         }
+
+        @Test
+        @DisplayName("All benchmark UML model files should exist")
+        void testUmlModelFilesExist() {
+            for (BenchmarkProject project : BenchmarkProject.values()) {
+                File umlFile = project.getUmlModelFile();
+                assertTrue(umlFile.exists(), "UML model file should exist: " + umlFile.getAbsolutePath());
+                assertTrue(umlFile.isFile(), "UML model path should be a file: " + umlFile.getAbsolutePath());
+                assertTrue(umlFile.length() > 0, "UML model file should not be empty: " + umlFile.getAbsolutePath());
+                assertTrue(umlFile.getName().endsWith(".uml"), "UML model file should be .uml: " + umlFile.getName());
+            }
+        }
     }
 
     @Nested
@@ -186,32 +219,13 @@ class CliIntegrationIT {
     class SadSamTaskTests {
 
         @ParameterizedTest(name = "SAD-SAM on {0}")
-        @EnumSource(BenchmarkProject.class)
-        @DisplayName("Test SAD-SAM task on all benchmark projects")
-        void testSadSamTask(BenchmarkProject project) {
-            logger.info("=== Testing SAD-SAM on {} ===", project.getName());
-
-            String[] args = { "-t", "sad-sam", "-n", project.getName(), "-d", project.getTextFile().getAbsolutePath(), "-m",
-                    project.getModelFile().getAbsolutePath(), "-o", outputDir.toString() };
-
-            PluginManager pluginManager = new PluginManager();
-            assertFalse(pluginManager.getPlugins().isEmpty(), "No plugins discovered");
-
-            pluginManager.executePlugins(args);
-
-            // Verify output was created
-            File[] outputFiles = outputDir.toFile().listFiles();
-            assertNotNull(outputFiles, "Output directory should have files");
-            assertTrue(outputFiles.length > 0, "No output files created for SAD-SAM on " + project.getName());
-
-            // Verify trace links file exists
-            boolean hasTraceLinksFile = Arrays.stream(outputFiles)
-                    .anyMatch(f -> f.getName().contains("traceLinks") || f.getName().contains("TraceLink"));
-            assertTrue(hasTraceLinksFile || outputFiles.length > 0,
-                    "Should produce trace links output for " + project.getName());
-
-            logger.info("SAD-SAM on {} completed. Output files: {}", project.getName(),
-                    Arrays.stream(outputFiles).map(File::getName).toList());
+        @EnumSource(SwattrEvaluationProject.class)
+        @DisplayName("Evaluate SAD-SAM task on all benchmark projects")
+        void testSadSamTask(SwattrEvaluationProject project) {
+            logger.info("=== Evaluating SAD-SAM on {} ===", project.name());
+            var evaluation = new SwattrEvaluation(project);
+            var result = evaluation.runTraceLinkEvaluation();
+            assertNotNull(result);
         }
     }
 
@@ -220,26 +234,13 @@ class CliIntegrationIT {
     class SamCodeTaskTests {
 
         @ParameterizedTest(name = "SAM-Code on {0}")
-        @EnumSource(BenchmarkProject.class)
-        @DisplayName("Test SAM-Code task on all benchmark projects")
-        void testSamCodeTask(BenchmarkProject project) {
-            logger.info("=== Testing SAM-Code on {} ===", project.getName());
-
-            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getModelFile().getAbsolutePath(), "-c",
-                    project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
-
-            PluginManager pluginManager = new PluginManager();
-            assertFalse(pluginManager.getPlugins().isEmpty(), "No plugins discovered");
-
-            pluginManager.executePlugins(args);
-
-            // Verify output was created
-            File[] outputFiles = outputDir.toFile().listFiles();
-            assertNotNull(outputFiles, "Output directory should have files");
-            assertTrue(outputFiles.length > 0, "No output files created for SAM-Code on " + project.getName());
-
-            logger.info("SAM-Code on {} completed. Output files: {}", project.getName(),
-                    Arrays.stream(outputFiles).map(File::getName).toList());
+        @EnumSource(ArcotlEvaluationProject.class)
+        @DisplayName("Evaluate SAM-Code task on all benchmark projects")
+        void testSamCodeTask(ArcotlEvaluationProject project) {
+            logger.info("=== Evaluating SAM-Code on {} ===", project.name());
+            var evaluation = new ArcotlEvaluation(project, true);
+            var result = evaluation.runTraceLinkEvaluation();
+            assertNotNull(result);
         }
     }
 
@@ -248,49 +249,13 @@ class CliIntegrationIT {
     class SadCodeTaskTests {
 
         @ParameterizedTest(name = "SAD-Code on {0}")
-        @EnumSource(BenchmarkProject.class)
-        @DisplayName("Test SAD-Code task on all benchmark projects")
-        void testSadCodeTask(BenchmarkProject project) {
-            logger.info("=== Testing SAD-Code on {} ===", project.getName());
-
-            String[] args = { "-t", "sad-code", "-n", project.getName(), "-d", project.getTextFile().getAbsolutePath(), "-m",
-                    project.getModelFile().getAbsolutePath(), "-c", project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
-
-            PluginManager pluginManager = new PluginManager();
-            assertFalse(pluginManager.getPlugins().isEmpty(), "No plugins discovered");
-
-            pluginManager.executePlugins(args);
-
-            // Verify output was created
-            File[] outputFiles = outputDir.toFile().listFiles();
-            assertNotNull(outputFiles, "Output directory should have files");
-            assertTrue(outputFiles.length > 0, "No output files created for SAD-Code on " + project.getName());
-
-            logger.info("SAD-Code on {} completed. Output files: {}", project.getName(),
-                    Arrays.stream(outputFiles).map(File::getName).toList());
-        }
-    }
-
-    @Nested
-    @DisplayName("Model Format Auto-Detection Tests")
-    class ModelFormatTests {
-
-        @Test
-        @DisplayName("Should auto-detect PCM format from .repository extension")
-        void testPcmFormatAutoDetection() {
-            BenchmarkProject project = BenchmarkProject.MEDIASTORE;
-            logger.info("Testing PCM format auto-detection on {}", project.getName());
-
-            // Run without explicit --model-format, should auto-detect PCM
-            String[] args = { "-t", "sad-sam", "-n", project.getName(), "-d", project.getTextFile().getAbsolutePath(), "-m",
-                    project.getModelFile().getAbsolutePath(), "-o", outputDir.toString() };
-
-            PluginManager pluginManager = new PluginManager();
-            pluginManager.executePlugins(args);
-
-            File[] outputFiles = outputDir.toFile().listFiles();
-            assertNotNull(outputFiles, "Output should be created with auto-detected format");
-            assertTrue(outputFiles.length > 0, "Should produce output with auto-detected PCM format");
+        @EnumSource(TransarcEvaluationProject.class)
+        @DisplayName("Evaluate SAD-Code task on all benchmark projects")
+        void testSadCodeTask(TransarcEvaluationProject project) {
+            logger.info("=== Evaluating SAD-Code on {} ===", project.name());
+            var evaluation = new TransarcEvaluation(project, true);
+            var result = evaluation.runTraceLinkEvaluation();
+            assertNotNull(result);
         }
     }
 
@@ -304,7 +269,7 @@ class CliIntegrationIT {
             BenchmarkProject project = BenchmarkProject.MEDIASTORE;
             logger.info("Testing ACM file type auto-detection on {}", project.getName());
 
-            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getModelFile().getAbsolutePath(), "-c",
+            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getModelFile().getAbsolutePath(), "--model-format", "PCM", "-c",
                     project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
 
             PluginManager pluginManager = new PluginManager();
@@ -313,6 +278,70 @@ class CliIntegrationIT {
             File[] outputFiles = outputDir.toFile().listFiles();
             assertNotNull(outputFiles, "Output should be created with auto-detected code type");
             assertTrue(outputFiles.length > 0, "Should produce output with auto-detected ACM_FILE type");
+        }
+    }
+
+    @Nested
+    @DisplayName("UML Model Format Tests")
+    class UmlModelTests {
+
+        @ParameterizedTest(name = "SAD-SAM with UML on {0}")
+        @EnumSource(BenchmarkProject.class)
+        @DisplayName("Test SAD-SAM task with UML models on all benchmark projects")
+        void testSadSamWithUmlModel(BenchmarkProject project) {
+            logger.info("=== Testing SAD-SAM with UML on {} ===", project.getName());
+
+            String[] args = { "-t", "sad-sam", "-n", project.getName(), "-d", project.getTextFile().getAbsolutePath(), "-m", project.getUmlModelFile()
+                    .getAbsolutePath(), "--model-format", "UML", "-o", outputDir.toString() };
+
+            PluginManager pluginManager = new PluginManager();
+            assertFalse(pluginManager.getPlugins().isEmpty(), "No plugins discovered");
+
+            pluginManager.executePlugins(args);
+
+            File[] outputFiles = outputDir.toFile().listFiles();
+            assertNotNull(outputFiles, "Output directory should have files");
+            assertTrue(outputFiles.length > 0, "No output files created for SAD-SAM with UML on " + project.getName());
+
+            logger.info("SAD-SAM with UML on {} completed. Output files: {}", project.getName(), Arrays.stream(outputFiles).map(File::getName).toList());
+        }
+
+        @Test
+        @DisplayName("Test SAM-Code task with UML model")
+        void testSamCodeWithUmlModel() {
+            BenchmarkProject project = BenchmarkProject.MEDIASTORE;
+            logger.info("=== Testing SAM-Code with UML on {} ===", project.getName());
+
+            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getUmlModelFile().getAbsolutePath(), "--model-format", "UML", "-c",
+                    project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
+
+            PluginManager pluginManager = new PluginManager();
+            pluginManager.executePlugins(args);
+
+            File[] outputFiles = outputDir.toFile().listFiles();
+            assertNotNull(outputFiles, "Output directory should have files");
+            assertTrue(outputFiles.length > 0, "No output files created for SAM-Code with UML on " + project.getName());
+
+            logger.info("SAM-Code with UML on {} completed. Output files: {}", project.getName(), Arrays.stream(outputFiles).map(File::getName).toList());
+        }
+
+        @Test
+        @DisplayName("Test SAD-Code task with UML model")
+        void testSadCodeWithUmlModel() {
+            BenchmarkProject project = BenchmarkProject.MEDIASTORE;
+            logger.info("=== Testing SAD-Code with UML on {} ===", project.getName());
+
+            String[] args = { "-t", "sad-code", "-n", project.getName(), "-d", project.getTextFile().getAbsolutePath(), "-m", project.getUmlModelFile()
+                    .getAbsolutePath(), "--model-format", "UML", "-c", project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
+
+            PluginManager pluginManager = new PluginManager();
+            pluginManager.executePlugins(args);
+
+            File[] outputFiles = outputDir.toFile().listFiles();
+            assertNotNull(outputFiles, "Output directory should have files");
+            assertTrue(outputFiles.length > 0, "No output files created for SAD-Code with UML on " + project.getName());
+
+            logger.info("SAD-Code with UML on {} completed. Output files: {}", project.getName(), Arrays.stream(outputFiles).map(File::getName).toList());
         }
     }
 }
