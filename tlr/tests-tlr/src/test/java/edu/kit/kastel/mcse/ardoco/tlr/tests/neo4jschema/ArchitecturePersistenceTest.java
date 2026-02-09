@@ -42,7 +42,7 @@ class ArchitecturePersistenceTest extends RunnerBaseTest {
     private ArchitecturePersistenceService persistenceService;
 
     @Container
-    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5.15.0").withRandomPassword();
+    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5").withRandomPassword();
 
     @DynamicPropertySource
     static void neo4jProperties(DynamicPropertyRegistry registry) {
