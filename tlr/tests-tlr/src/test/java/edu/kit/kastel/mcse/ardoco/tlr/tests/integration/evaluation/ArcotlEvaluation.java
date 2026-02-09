@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
@@ -15,30 +15,30 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Arcotl;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArcotlEvaluationProject;
 
 public class ArcotlEvaluation extends AbstractEvaluation {
 
-    private final ArCoTLEvaluationProject project;
+    private final ArcotlEvaluationProject project;
     private final boolean useAcmFile;
 
-    public ArcotlEvaluation(ArCoTLEvaluationProject project, boolean useAcmFile) {
+    public ArcotlEvaluation(ArcotlEvaluationProject project, boolean useAcmFile) {
         this.project = project;
         this.useAcmFile = useAcmFile;
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner arcotl = createArcotl();
-        ArDoCoResult result = arcotl.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner arcotl = createArcotl();
+        ArdocoResult result = arcotl.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -51,7 +51,7 @@ public class ArcotlEvaluation extends AbstractEvaluation {
         return result;
     }
 
-    private ArDoCoRunner createArcotl() {
+    private ArdocoRunner createArcotl() {
         String projectName = project.name().toLowerCase();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         File inputArchitectureModel = project.getTlrTask().getArchitectureModelFile(architectureModelFormat);
@@ -66,11 +66,11 @@ public class ArcotlEvaluation extends AbstractEvaluation {
         return runner;
     }
 
-    private List<Pair<String, String>> enrollGoldStandard(List<Pair<String, String>> goldStandard, ArDoCoResult result) {
+    private List<Pair<String, String>> enrollGoldStandard(List<Pair<String, String>> goldStandard, ArdocoResult result) {
         return this.enrollGoldStandard(goldStandard, result, CODE_WITH_COMPILATION_UNITS);
     }
 
-    private SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<String, String>> goldStandard) {
+    private SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<String, String>> goldStandard) {
         var sadSamCodeTlsAsString = result.getSamCodeTraceLinks()
                 .collect(tl -> tl.getFirstEndpoint().getId() + " -> " + tl.getSecondEndpoint().toString())
                 .toSortedSet();
@@ -81,7 +81,7 @@ public class ArcotlEvaluation extends AbstractEvaluation {
         return calculator.calculateMetrics(sadSamCodeTlsAsString, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private int getConfusionMatrixSum(ArDoCoResult result) {
+    private int getConfusionMatrixSum(ArdocoResult result) {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(result.dataRepository());
         Model codeModel = modelStatesData.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         Model architectureModel = modelStatesData.getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);

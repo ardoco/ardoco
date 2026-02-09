@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration;
 
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.*;
@@ -35,13 +35,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.HoldBackRunResultsProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
-import edu.kit.kastel.mcse.ardoco.id.types.MissingModelInstanceInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
@@ -49,7 +49,7 @@ import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 
 /**
- * Integration test that evaluates the inconsistency detection capabilities of ArDoCo. Runs on the projects that are defined in the
+ * Integration test that evaluates the inconsistency detection capabilities of ARDoCo. Runs on the projects that are defined in the
  * {@link InconsistencyDetectionTask} enum.
  * <p>
  * Currently, the focus lies on detecting elements that are mentioned in the text but are not represented in the model. For this, we run an evaluation that
@@ -62,10 +62,10 @@ class InconsistencyDetectionEvaluationIT {
     private static final Logger logger = LoggerFactory.getLogger(InconsistencyDetectionEvaluationIT.class);
     private static final String OUTPUT = "target/testout";
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private static final Map<InconsistencyDetectionTask, ArDoCoResult> arDoCoResults = new EnumMap<>(InconsistencyDetectionTask.class);
+    private static final Map<InconsistencyDetectionTask, ArdocoResult> arDoCoResults = new EnumMap<>(InconsistencyDetectionTask.class);
 
     /**
-     * Tests the inconsistency detection for missing model elements on all {@link InconsistencyDetectionTask projects}.
+     * Tests the inconsistency detection for Text Entity Absent from Model (TEAM) on all {@link InconsistencyDetectionTask projects}.
      * <p>
      * NOTE: if you only want to test a specific project, you can simply set up the EnumSource. For more details, see
      * <a href="https://www.baeldung.com/parameterized-tests-junit-5#3-enum">here</a>
@@ -73,17 +73,17 @@ class InconsistencyDetectionEvaluationIT {
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
-    @DisplayName("Evaluating MME-Inconsistency Detection")
-    @ParameterizedTest(name = "Evaluating MME-Inconsistency for {0}")
+    @DisplayName("Evaluating TEAM-Inconsistency Detection")
+    @ParameterizedTest(name = "Evaluating TEAM-Inconsistency for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(1)
-    void missingModelElementInconsistencyIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyEval(project);
+    void textEntityAbsentFromModelInconsistencyIT(InconsistencyDetectionTask project) {
+        this.runTextEntityAbsentFromModelInconsistencyEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyEval(InconsistencyDetectionTask project) {
-        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of MME-inconsistency for {}", project.name());
-        Map<ArchitectureItem, ArDoCoResult> runs = this.produceRuns(project);
+    protected void runTextEntityAbsentFromModelInconsistencyEval(InconsistencyDetectionTask project) {
+        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency for {}", project.name());
+        Map<ArchitectureItem, ArdocoResult> runs = this.produceRuns(project);
 
         var results = this.calculateEvaluationResults(project, runs);
 
@@ -97,25 +97,26 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     /**
-     * Tests the baseline approach that reports a missing model element inconsistency for each sentence that is not traced to a model element. This test is
+     * Tests the baseline approach that reports a Text Entity Absent from Model (TEAM) inconsistency for each sentence that is not traced to a model element.
+     * This test is
      * enabled by providing the environment variable "testBaseline" with any value.
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
     @EnabledIfEnvironmentVariable(named = "testBaseline", matches = ".*")
-    @DisplayName("Evaluating MME-Inconsistency Detection Baseline")
+    @DisplayName("Evaluating TEAM-Inconsistency Detection Baseline")
     @ParameterizedTest(name = "Evaluating Baseline for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(5)
-    void missingModelElementInconsistencyBaselineIT(InconsistencyDetectionTask project) {
-        this.runMissingModelElementInconsistencyBaselineEval(project);
+    void textEntityAbsentFromModelInconsistencyBaselineIT(InconsistencyDetectionTask project) {
+        this.runTextEntityAbsentFromModelInconsistencyBaselineEval(project);
     }
 
-    protected void runMissingModelElementInconsistencyBaselineEval(InconsistencyDetectionTask project) {
-        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of MME-inconsistency baseline for {}", project.name());
+    protected void runTextEntityAbsentFromModelInconsistencyBaselineEval(InconsistencyDetectionTask project) {
+        InconsistencyDetectionEvaluationIT.logger.info("Start evaluation of TEAM-inconsistency baseline for {}", project.name());
 
         HoldBackRunResultsProducer holdBackRunResultsProducer = new HoldBackRunResultsProducer();
-        Map<ArchitectureItem, ArDoCoResult> runs = holdBackRunResultsProducer.produceHoldBackRunResults(project, true);
+        Map<ArchitectureItem, ArdocoResult> runs = holdBackRunResultsProducer.produceHoldBackRunResults(project, true);
 
         Assertions.assertTrue(runs != null && !runs.isEmpty());
 
@@ -136,12 +137,12 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     /**
-     * Tests the inconsistency detection for undocumented model elements on all {@link InconsistencyDetectionTask projects}.
+     * Tests the inconsistency detection for Model Entity Absent from Text (MEAT) on all {@link InconsistencyDetectionTask projects}.
      *
      * @param project Project that gets inserted automatically with the enum {@link InconsistencyDetectionTask}.
      */
-    @DisplayName("Evaluate Inconsistency Analyses For MissingTextForModelElementInconsistencies")
-    @ParameterizedTest(name = "Evaluating UME-inconsistency for {0}")
+    @DisplayName("Evaluating MEAT-Inconsistency Detection")
+    @ParameterizedTest(name = "Evaluating MEAT-inconsistency for {0}")
     @EnumSource(InconsistencyDetectionTask.class)
     @Order(10)
     void missingTextInconsistencyIT(InconsistencyDetectionTask project) {
@@ -166,14 +167,14 @@ class InconsistencyDetectionEvaluationIT {
         this.writeOutResults(project, results);
     }
 
-    private Map<ArchitectureItem, ArDoCoResult> produceRuns(InconsistencyDetectionTask project) {
+    private Map<ArchitectureItem, ArdocoResult> produceRuns(InconsistencyDetectionTask project) {
         HoldBackRunResultsProducer holdBackRunResultsProducer = this.getHoldBackRunResultsProducer();
 
-        Map<ArchitectureItem, ArDoCoResult> runs = holdBackRunResultsProducer.produceHoldBackRunResults(project, false);
+        Map<ArchitectureItem, ArdocoResult> runs = holdBackRunResultsProducer.produceHoldBackRunResults(project, false);
 
-        ArDoCoResult baseArDoCoResult = runs.get(null);
-        InconsistencyDetectionEvaluationIT.saveOutput(project, baseArDoCoResult);
-        InconsistencyDetectionEvaluationIT.arDoCoResults.put(project, baseArDoCoResult);
+        ArdocoResult baseArdocoResult = runs.get(null);
+        InconsistencyDetectionEvaluationIT.saveOutput(project, baseArdocoResult);
+        InconsistencyDetectionEvaluationIT.arDoCoResults.put(project, baseArdocoResult);
         return runs;
     }
 
@@ -182,13 +183,13 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private MutableList<SingleClassificationResult<String>> calculateEvaluationResults(InconsistencyDetectionTask project,
-            Map<ArchitectureItem, ArDoCoResult> runs) {
+            Map<ArchitectureItem, ArdocoResult> runs) {
 
         Map<ArchitectureItem, SingleClassificationResult<String>> results = Maps.mutable.empty();
 
         for (var run : runs.entrySet()) {
             ArchitectureItem modelInstance = run.getKey();
-            ArDoCoResult arDoCoResult = run.getValue();
+            ArdocoResult arDoCoResult = run.getValue();
             var runEvalResults = this.evaluateRun(project, modelInstance, arDoCoResult);
             if (runEvalResults != null) {
                 results.put(modelInstance, runEvalResults);
@@ -199,11 +200,11 @@ class InconsistencyDetectionEvaluationIT {
         return Lists.mutable.ofAll(results.values());
     }
 
-    private SingleClassificationResult<String> evaluateRun(InconsistencyDetectionTask project, ArchitectureItem removedElement, ArDoCoResult arDoCoResult) {
+    private SingleClassificationResult<String> evaluateRun(InconsistencyDetectionTask project, ArchitectureItem removedElement, ArdocoResult arDoCoResult) {
         var metamodel = arDoCoResult.getMetamodels().getFirst();
 
-        ImmutableList<MissingModelInstanceInconsistency> inconsistencies = arDoCoResult.getInconsistenciesOfTypeForModel(metamodel,
-                MissingModelInstanceInconsistency.class);
+        ImmutableList<TextEntityAbsentFromModelInconsistency> inconsistencies = arDoCoResult.getInconsistenciesOfTypeForModel(metamodel,
+                TextEntityAbsentFromModelInconsistency.class);
         if (removedElement == null) {
             // base case
             return null;
@@ -211,7 +212,7 @@ class InconsistencyDetectionEvaluationIT {
 
         var goldStandard = project.getGoldstandardForArchitectureModel(InconsistencyDetectionEvaluationIT.getComponentModel(project));
         var expectedLines = goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString);
-        var actualSentences = inconsistencies.collect(MissingModelInstanceInconsistency::sentence).distinct().collect(Object::toString);
+        var actualSentences = inconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence).distinct().collect(Object::toString);
 
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
@@ -239,7 +240,7 @@ class InconsistencyDetectionEvaluationIT {
         );
     }
 
-    private static SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult arDoCoResult, ImmutableList<String> expectedLines,
+    private static SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult arDoCoResult, ImmutableList<String> expectedLines,
             ImmutableList<String> actualSentences) {
         return compareInconsistencies(arDoCoResult, actualSentences, expectedLines);
     }
@@ -249,7 +250,7 @@ class InconsistencyDetectionEvaluationIT {
                 Metamodel.ARCHITECTURE_WITH_COMPONENTS).extractModel());
     }
 
-    private static void saveOutput(InconsistencyDetectionTask project, ArDoCoResult arDoCoResult) {
+    private static void saveOutput(InconsistencyDetectionTask project, ArdocoResult arDoCoResult) {
         Objects.requireNonNull(project);
         Objects.requireNonNull(arDoCoResult);
 
@@ -264,7 +265,7 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static Pair<StringBuilder, StringBuilder> createOutput(InconsistencyDetectionTask project, List<SingleClassificationResult<String>> results,
-            Map<ArchitectureItem, ArDoCoResult> runs) {
+            Map<ArchitectureItem, ArdocoResult> runs) {
         StringBuilder outputBuilder = InconsistencyDetectionEvaluationIT.createStringBuilderWithHeader(project);
         var resultCalculatorStringBuilderPair = InconsistencyDetectionEvaluationIT.inspectResults(results, runs, outputBuilder);
         var resultCalculator = resultCalculatorStringBuilderPair.getOne();
@@ -297,12 +298,12 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static Pair<MutableList<SingleClassificationResult<String>>, StringBuilder> inspectResults(List<SingleClassificationResult<String>> results,
-            Map<ArchitectureItem, ArDoCoResult> runs, StringBuilder outputBuilder) {
+            Map<ArchitectureItem, ArdocoResult> runs, StringBuilder outputBuilder) {
         var detailedOutputBuilder = new StringBuilder();
         MutableList<SingleClassificationResult<String>> resultsWithWeight = Lists.mutable.empty();
         int counter = 0;
         for (var run : runs.entrySet()) {
-            ArDoCoResult arDoCoResult = run.getValue();
+            ArdocoResult arDoCoResult = run.getValue();
             ArchitectureItem instance = run.getKey();
             if (instance == null) {
                 InconsistencyDetectionEvaluationIT.inspectBaseCase(outputBuilder, arDoCoResult);
@@ -329,7 +330,7 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static void inspectRun(StringBuilder outputBuilder, StringBuilder detailedOutputBuilder, MutableList<SingleClassificationResult<String>> allResults,
-            ArDoCoResult arDoCoResult, SingleClassificationResult<String> result) {
+            ArdocoResult arDoCoResult, SingleClassificationResult<String> result) {
         var truePositives = result.getTruePositives();
         InconsistencyDetectionEvaluationIT.appendResults(truePositives, detailedOutputBuilder, "True Positives", arDoCoResult, outputBuilder);
 
@@ -341,7 +342,7 @@ class InconsistencyDetectionEvaluationIT {
         allResults.add(result);
     }
 
-    private static void appendResults(Collection<String> resultList, StringBuilder detailedOutputBuilder, String type, ArDoCoResult arDoCoResult,
+    private static void appendResults(Collection<String> resultList, StringBuilder detailedOutputBuilder, String type, ArdocoResult arDoCoResult,
             StringBuilder outputBuilder) {
         resultList = InconsistencyDetectionEvaluationIT.sortIntegerStrings(resultList);
         detailedOutputBuilder.append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR).append("== ").append(type).append(" ==");
@@ -353,17 +354,17 @@ class InconsistencyDetectionEvaluationIT {
                 .append(InconsistencyDetectionEvaluationIT.listToString(resultList));
     }
 
-    private static void inspectBaseCase(StringBuilder outputBuilder, ArDoCoResult data) {
+    private static void inspectBaseCase(StringBuilder outputBuilder, ArdocoResult data) {
         var initialInconsistencies = InconsistencyDetectionEvaluationIT.getInitialInconsistencies(data);
         outputBuilder.append("Initial Inconsistencies: ").append(initialInconsistencies.size());
-        var initialInconsistenciesSentences = initialInconsistencies.collect(MissingModelInstanceInconsistency::sentence)
+        var initialInconsistenciesSentences = initialInconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence)
                 .toSortedSet()
                 .collect(Object::toString);
         outputBuilder.append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR)
                 .append(InconsistencyDetectionEvaluationIT.listToString(initialInconsistenciesSentences));
     }
 
-    private static String createDetailedOutputString(ArDoCoResult result, Collection<String> sentenceNumbers) {
+    private static String createDetailedOutputString(ArdocoResult result, Collection<String> sentenceNumbers) {
         var outputBuilder = new StringBuilder();
 
         if (sentenceNumbers.isEmpty()) {
@@ -390,13 +391,13 @@ class InconsistencyDetectionEvaluationIT {
         return truePositives.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"));
     }
 
-    private static ImmutableList<MissingModelInstanceInconsistency> getInitialInconsistencies(ArDoCoResult arDoCoResult) {
+    private static ImmutableList<TextEntityAbsentFromModelInconsistency> getInitialInconsistencies(ArdocoResult arDoCoResult) {
         var id = arDoCoResult.getMetamodels().getFirst();
-        return arDoCoResult.getInconsistenciesOfTypeForModel(id, MissingModelInstanceInconsistency.class);
+        return arDoCoResult.getInconsistenciesOfTypeForModel(id, TextEntityAbsentFromModelInconsistency.class);
     }
 
     private void writeOutResults(InconsistencyDetectionTask project, List<SingleClassificationResult<String>> results,
-            Map<ArchitectureItem, ArDoCoResult> runs) {
+            Map<ArchitectureItem, ArdocoResult> runs) {
         var outputs = InconsistencyDetectionEvaluationIT.createOutput(project, results, runs);
         var outputBuilder = outputs.getOne();
         var detailedOutputBuilder = outputs.getTwo();

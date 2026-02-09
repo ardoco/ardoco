@@ -9,6 +9,8 @@
   </parent>
   <artifactId>stages-tlr</artifactId>
   <packaging>pom</packaging>
+  <name>ARDoCo TLR Stages</name>
+  <description>Individual stages and components for Traceability Link Recovery (TLR).</description>
   <modules>
     <module>code-traceability</module>
     <module>connection-generator</module>

@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>text-preprocessing</artifactId>
+  <name>ARDoCo Text Preprocessing</name>
+  <description>Text preprocessing stage for natural language processing of documentation using Stanford CoreNLP.</description>
 
   <dependencies>
     <dependency>

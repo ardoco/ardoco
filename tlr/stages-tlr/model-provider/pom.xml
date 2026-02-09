@@ -8,13 +8,15 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>model-provider</artifactId>
+  <name>ARDoCo Model Provider</name>
+  <description>Model provider stage for loading and processing software architecture models.</description>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-bom</artifactId>
-        <version>1.8.0</version>
+        <version>1.10.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -81,7 +83,7 @@
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.core</artifactId>
-      <version>3.36.0</version>
+      <version>3.44.0</version>
     </dependency>
     <dependency>
       <groupId>org.fuchss</groupId>

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
@@ -9,27 +9,27 @@ import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.ArtemisInTransArC;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 
 public class ArtemisInTransarcEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
 
-    private final TransArCEvaluationProject project;
+    private final TransarcEvaluationProject project;
     private final LargeLanguageModel largeLanguageModel;
 
-    public ArtemisInTransarcEvaluation(TransArCEvaluationProject project, LargeLanguageModel llmForNer) {
+    public ArtemisInTransarcEvaluation(TransarcEvaluationProject project, LargeLanguageModel llmForNer) {
         this.project = project;
         this.largeLanguageModel = llmForNer;
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner artemisInTransArC = createArtemisInTransArC();
-        ArDoCoResult result = artemisInTransArC.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner artemisInTransArC = createArtemisInTransArC();
+        ArdocoResult result = artemisInTransArC.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -41,7 +41,7 @@ public class ArtemisInTransarcEvaluation extends AbstractDocumentationToCodeTlrE
         return result;
     }
 
-    private ArDoCoRunner createArtemisInTransArC() {
+    private ArdocoRunner createArtemisInTransArC() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         ModelFormat architectureModelFormat = ModelFormat.PCM;

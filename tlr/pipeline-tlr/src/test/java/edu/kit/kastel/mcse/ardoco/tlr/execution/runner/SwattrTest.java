@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution.runner;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 class SwattrTest extends RunnerBaseTest {
 
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-TLR (PCM)")
+    @DisplayName("Test ARDoCo for SAD-SAM-TLR (PCM)")
     void testSadSamTlrPcm() {
         var runner = new Swattr(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
@@ -30,7 +30,7 @@ class SwattrTest extends RunnerBaseTest {
 
     @Disabled("Disabled for faster builds. Enable if you need to check UML models.")
     @Test
-    @DisplayName("Test ArDoCo for SAD-SAM-TLR (UML)")
+    @DisplayName("Test ARDoCo for SAD-SAM-TLR (UML)")
     void testSadSamTlrUml() {
         var runner = new Swattr(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));

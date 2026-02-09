@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import java.io.IOException;
@@ -30,9 +30,9 @@ public class ObjectToDtoConverter {
     private static final char TREE_CLOSE_BRACKET = ')';
 
     /**
-     * converts an ArDoCo text into a text DTO
+     * converts an ARDoCo text into a text DTO
      *
-     * @param text the ArDoCo text
+     * @param text the ARDoCo text
      * @return the text DTO
      */
     public TextDto convertTextToDTO(Text text) throws NotConvertableException {

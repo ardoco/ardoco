@@ -1,4 +1,4 @@
-git remote add -f integrationTests git@github.com:ArDoCo/IntegrationTests.git
+git remote add -f integrationTests git@github.com:ardoco/IntegrationTests.git
 git fetch integrationTests main
 git subtree pull --prefix tests/integration-tests integrationTests main --squash
 

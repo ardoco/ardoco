@@ -1,13 +1,13 @@
 # LiSSA: A Framework for Generic Traceability Link Recovery
 
-Welcome to the LiSSA project! This framework leverages Large Language Models (LLMs) enhanced through Retrieval-Augmented Generation (RAG) to establish traceability links across various software artifacts.
+Welcome to the LiSSA project! This framework leverages Large Language Models (LLMs) enhanced through Information Retrieval (IR) to establish traceability links across various software artifacts.
 
 > [!TIP]
 > If you have any questions, don't hesitate to [contact us](https://ardoco.de).
 
 ## Overview
 
-In software development and maintenance, numerous artifacts such as requirements, code, and architecture documentation are produced. Understanding the relationships between these artifacts is crucial for tasks like impact analysis, consistency checking, and maintenance. LiSSA aims to provide a generic solution for Traceability Link Recovery (TLR) by utilizing LLMs in combination with RAG techniques.
+In software development and maintenance, numerous artifacts such as requirements, code, and architecture documentation are produced. Understanding the relationships between these artifacts is crucial for tasks like impact analysis, consistency checking, and maintenance. LiSSA aims to provide a generic solution for Traceability Link Recovery (TLR) by utilizing Large Language Models (LLMs) combined with Information Retrieval (IR).
 
 The concept and evaluation of LiSSA are detailed in our paper:
 
@@ -23,16 +23,16 @@ You can access the paper [here](https://ardoco.de/c/icse25).
   - [Architecture documentation to architecture models](https://ardoco.de/c/icse25)
   - [Requirements to requirements](https://ardoco.de/c/refsq25)
 
-- **Retrieval-Augmented Generation**: By combining LLMs with RAG, LiSSA enhances the accuracy and relevance of the recovered traceability links.
+- By combining LLMs with information retrieval techniques with LLMs, LiSSA enhances the accuracy and relevance of the recovered traceability links.
 
 ## Documentation
 
 The documentation is organized into several sections:
-- [Architecture](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/architecture.md): Detailed information about the project's architecture and components
-- [Configuration](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/configuration.md): Guide for configuring LiSSA
-- [CLI Usage](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/cli.md): Information about using the command line interface
-- [Caching](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/caching.md): Information about the caching system and Redis setup
-- [Development](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/development.md): Development setup and contribution guidelines
+- [Architecture](https://github.com/ardoco/lissa/blob/main/docs/architecture.md): Detailed information about the project's architecture and components
+- [Configuration](https://github.com/ardoco/lissa/blob/main/docs/configuration.md): Guide for configuring LiSSA
+- [CLI Usage](https://github.com/ardoco/lissa/blob/main/docs/cli.md): Information about using the command line interface
+- [Caching](https://github.com/ardoco/lissa/blob/main/docs/caching.md): Information about the caching system and Redis setup
+- [Development](https://github.com/ardoco/lissa/blob/main/docs/development.md): Development setup and contribution guidelines
 
 ## Getting Started
 
@@ -40,8 +40,8 @@ To get started with LiSSA, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/ArDoCo/LiSSA-RATLR
-   cd LiSSA-RATLR
+   git clone https://github.com/ardoco/lissa
+   cd lissa
    ```
 
 2. **Install Dependencies**:
@@ -53,15 +53,15 @@ To get started with LiSSA, follow these steps:
 3. **Run LiSSA**:
    Execute the main application:
    ```bash
-   java -jar target/ratlr-*-jar-with-dependencies.jar eval -c config.json
+   java -jar target/lissa-*-jar-with-dependencies.jar eval -c config.json
    ```
 
 ### Configuration
 
-1. Create a configuration you want to use for evaluation / execution. E.g., you can find configurations [here](https://github.com/ArDoCo/ReplicationPackage-ICSE25_LiSSA-Toward-Generic-Traceability-Link-Recovery-through-RAG/tree/main/LiSSA-RATLR-V2/lissa/configs/req2code-significance). You can also provide a directory containing multiple configurations.
-2. Configure your OpenAI API key and organization in a `.env` file. You can use the provided template file as a template [env-template](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/env-template).
+1. Create a configuration you want to use for evaluation / execution. E.g., you can find configurations [here](https://github.com/ardoco/ReplicationPackage-ICSE25_LiSSA-Toward-Generic-Traceability-Link-Recovery-through-RAG/tree/main/LiSSA-RATLR-V2/lissa/configs/req2code-significance). You can also provide a directory containing multiple configurations.
+2. Configure your OpenAI API key and organization in a `.env` file. You can use the provided template file as a template [env-template](https://github.com/ardoco/lissa/blob/main/env-template).
 3. LiSSA caches requests in order to be reproducible. The cache is located in the cache folder that can be specified in the configuration.
-4. Run `java -jar target/ratlr-*-jar-with-dependencies.jar eval -c configs/....` to run the evaluation. You can provide a JSON or a directory containing JSON configurations.
+4. Run `java -jar target/lissa-*-jar-with-dependencies.jar eval -c configs/....` to run the evaluation. You can provide a JSON or a directory containing JSON configurations.
 5. The results will be printed to the console and saved to a file in the current directory. The name is also printed to the console.
 
 ### Results of Evaluation / Execution
@@ -105,15 +105,15 @@ LiSSA has been empirically evaluated on four different TLR tasks:
 - Architecture documentation to architecture models
 - Requirements to requirements
 
-The results indicate that the RAG-based approach can significantly outperform state-of-the-art methods in code-related tasks. However, further research is needed to enhance its performance for broader applicability.
+The results indicate that LiSSA can significantly outperform state-of-the-art methods in code-related tasks. However, further research is needed to enhance its performance for broader applicability.
 
 ## Contributing
 
-We welcome contributions from the community! If you're interested in contributing to LiSSA, please read our [Code of Conduct](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/CODE_OF_CONDUCT.md) and [Development Guide](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/docs/development.md) to get started.
+We welcome contributions from the community! If you're interested in contributing to LiSSA, please read our [Code of Conduct](https://github.com/ardoco/lissa/blob/main/CODE_OF_CONDUCT.md) and [Development Guide](https://github.com/ardoco/lissa/blob/main/docs/development.md) to get started.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE.md](https://github.com/ArDoCo/LiSSA-RATLR/blob/main/LICENSE.md) file for details.
+This project is licensed under the MIT License. See the [LICENSE.md](https://github.com/ardoco/lissa/blob/main/LICENSE.md) file for details.
 
 ## Acknowledgments
 
@@ -123,4 +123,4 @@ For more information about the project and related research, visit our [website]
 
 ---
 
-*Note: This README provides a brief overview of the LiSSA project. For comprehensive details, please refer to our [documentation](https://github.com/ArDoCo/LiSSA-RATLR/tree/main/docs).*
+*Note: This README provides a brief overview of the LiSSA project. For comprehensive details, please refer to our [documentation](https://github.com/ardoco/lissa/tree/main/docs).*

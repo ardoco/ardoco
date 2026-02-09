@@ -8,6 +8,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>connection-generator</artifactId>
+  <name>ARDoCo Connection Generator</name>
+  <description>Connection generator stage for creating connections between textual and model elements.</description>
 
   <dependencies>
     <dependency>

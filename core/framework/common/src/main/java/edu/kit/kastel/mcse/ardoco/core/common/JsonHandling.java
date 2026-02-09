@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -15,7 +15,7 @@ public final class JsonHandling {
     }
 
     /**
-     * Creates and configures a Jackson ObjectMapper for use with ArDoCo models.
+     * Creates and configures a Jackson ObjectMapper for use with ARDoCo models.
      *
      * @return a configured ObjectMapper
      */

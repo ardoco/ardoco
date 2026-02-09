@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.output;
 
 import java.util.Comparator;
@@ -39,12 +39,12 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 /**
- * This record represents the result of running ArDoCo. It is backed by a {@link DataRepository} and provides access to data from it. Besides accessing all data
+ * This record represents the result of running ARDoCo. It is backed by a {@link DataRepository} and provides access to data from it. Besides accessing all data
  * from the calculation steps, this record also provides convenience methods to directly access results such as found trace links and detected inconsistencies.
  */
 @Deterministic
-public record ArDoCoResult(DataRepository dataRepository) {
-    private static final Logger logger = LoggerFactory.getLogger(ArDoCoResult.class);
+public record ArdocoResult(DataRepository dataRepository) {
+    private static final Logger logger = LoggerFactory.getLogger(ArdocoResult.class);
 
     private static String formatTraceLinksHumanReadable(TraceLink<SentenceEntity, ModelEntity> traceLink) {
         String modelElementName = traceLink.getSecondEndpoint().getName();
@@ -105,7 +105,7 @@ public record ArDoCoResult(DataRepository dataRepository) {
     public List<String> getAllTraceLinksAsBeautifiedStrings() {
         return this.getArchitectureTraceLinks()
                 .toSortedList(Comparator.comparingInt(tl -> tl.getFirstEndpoint().getSentence().getSentenceNumber()))
-                .collect(ArDoCoResult::formatTraceLinksHumanReadable);
+                .collect(ArdocoResult::formatTraceLinksHumanReadable);
     }
 
     /**

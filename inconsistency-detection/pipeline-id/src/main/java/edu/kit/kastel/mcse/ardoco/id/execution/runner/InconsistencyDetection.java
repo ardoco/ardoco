@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.id.execution.runner;
 
 import java.io.File;
@@ -9,8 +9,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.id.InconsistencyChecker;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
@@ -19,8 +19,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGene
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
 
-public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
-    public ArDoCoForInconsistencyDetection(String projectName) {
+public class InconsistencyDetection extends ArdocoRunner {
+    public InconsistencyDetection(String projectName) {
         super(projectName);
     }
 
@@ -37,7 +37,7 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
     }
 
     /**
-     * This method sets up the pipeline for ArDoCo.
+     * This method sets up the pipeline for ARDoCo.
      *
      * @param inputText              The input text file
      * @param inputArchitectureModel the input architecture file
@@ -45,7 +45,7 @@ public class ArDoCoForInconsistencyDetection extends ArDoCoRunner {
      * @param additionalConfigs      the additional configs
      */
     private void definePipeline(File inputText, File inputArchitectureModel, ModelFormat modelFormat, ImmutableSortedMap<String, String> additionalConfigs) {
-        ArDoCo arDoCo = getArDoCo();
+        Ardoco arDoCo = getArdoco();
         var dataRepository = arDoCo.getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {

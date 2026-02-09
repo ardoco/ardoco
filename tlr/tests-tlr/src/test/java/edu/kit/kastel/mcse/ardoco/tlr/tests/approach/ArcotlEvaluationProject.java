@@ -1,10 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.approach;
 
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.ModelToCodeTlrTask;
 
-public enum ArCoTLEvaluationProject {
+public enum ArcotlEvaluationProject {
     MEDIASTORE(ModelToCodeTlrTask.MEDIASTORE, new ExpectedResults(.975, .995, .985, .995, .985, .995)),//
     TEASTORE(ModelToCodeTlrTask.TEASTORE, new ExpectedResults(.975, .975, .975, .997, .965, .999)),//
     TEAMMATES(ModelToCodeTlrTask.TEAMMATES, new ExpectedResults(.999, .999, .999, .999, .999, .999)),//
@@ -14,7 +14,7 @@ public enum ArCoTLEvaluationProject {
     private final ModelToCodeTlrTask tlrTask;
     private final ExpectedResults expectedResults;
 
-    ArCoTLEvaluationProject(ModelToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
+    ArcotlEvaluationProject(ModelToCodeTlrTask tlrTask, ExpectedResults expectedResults) {
         this.tlrTask = tlrTask;
         this.expectedResults = expectedResults;
     }

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
@@ -6,8 +6,8 @@ import java.io.File;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
@@ -19,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
  * representations (e.g. simplified graphs) and then applies various heuristics to match elements These heuristics include standalone rules and dependent rules
  * (which consider relationships) plus filters to refine the links.
  */
-public class Arcotl extends ArDoCoRunner {
+public class Arcotl extends ArdocoRunner {
 
     public Arcotl(String projectName) {
         super(projectName);
@@ -38,7 +38,7 @@ public class Arcotl extends ArDoCoRunner {
 
     private void definePipeline(ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs) {
-        ArDoCo arDoCo = this.getArDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, //

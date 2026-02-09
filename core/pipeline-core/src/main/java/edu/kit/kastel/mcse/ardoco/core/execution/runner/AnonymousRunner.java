@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution.runner;
 
 import java.io.IOException;
@@ -11,9 +11,9 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractPipelineStep;
 
 /**
- * This class can be used to easily define an anonymous {@link ArDoCoRunner} for testing purposes.
+ * This class can be used to easily define an anonymous {@link ArdocoRunner} for testing purposes.
  */
-public abstract class AnonymousRunner extends ArDoCoRunner {
+public abstract class AnonymousRunner extends ArdocoRunner {
     private static final Logger logger = LoggerFactory.getLogger(AnonymousRunner.class);
 
     protected AnonymousRunner(String projectName) {
@@ -26,7 +26,7 @@ public abstract class AnonymousRunner extends ArDoCoRunner {
      */
     private boolean setUp() {
         try {
-            var arDoCo = getArDoCo();
+            var arDoCo = getArdoco();
             var dataRepository = arDoCo.getDataRepository();
             var pipelineSteps = initializePipelineSteps(dataRepository);
             for (AbstractPipelineStep pipelineStep : pipelineSteps) {

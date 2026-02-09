@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.io.File;
@@ -17,12 +17,12 @@ import org.junit.jupiter.api.Assertions;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Artemis;
@@ -40,9 +40,9 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         this.llmForNer = Objects.requireNonNull(llmForNer);
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner artemis = createArtemis();
-        ArDoCoResult result = artemis.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner artemis = createArtemis();
+        ArdocoResult result = artemis.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -54,7 +54,7 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         return result;
     }
 
-    public SingleClassificationResult<String> calculateEvaluationResults(ArDoCoResult result, List<Pair<Integer, String>> goldStandard) {
+    public SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard) {
         var traceLinks = getArchitectureTraceLinks(result);
         var sadSamTlsAsStrings = traceLinks.collect(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().getId()).toSortedSet();
         var goldStandardAsStrings = goldStandard.stream().map(pair -> pair.first() + " -> " + pair.second()).collect(Collectors.toCollection(TreeSet::new));
@@ -64,7 +64,7 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         return calculator.calculateMetrics(sadSamTlsAsStrings, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private ImmutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> getArchitectureTraceLinks(ArDoCoResult result) {
+    private ImmutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> getArchitectureTraceLinks(ArdocoResult result) {
         MutableSet<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks = Sets.mutable.empty();
         NerConnectionState nerConnectionState = result.getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         Collection<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> foundLinks = nerConnectionState.getTraceLinks().castToCollection();
@@ -72,14 +72,14 @@ public class ArtemisEvaluation extends AbstractEvaluation {
         return traceLinks.toImmutableList();
     }
 
-    private int getConfusionMatrixSum(ArDoCoResult result) {
+    private int getConfusionMatrixSum(ArdocoResult result) {
         var text = result.getSimplePreprocessingData().getText();
         int sentences = text.getLines().size();
         int modelElements = result.getModelState(Metamodel.ARCHITECTURE_WITH_COMPONENTS).getEndpoints().size();
         return sentences * modelElements;
     }
 
-    public ArDoCoRunner createArtemis() {
+    public ArdocoRunner createArtemis() {
         String projectName = project.name();
         ModelFormat architectureModelFormat = ModelFormat.PCM;
         ArchitectureConfiguration architectureModel = new ArchitectureConfiguration(project.getTlrTask().getArchitectureModelFile(architectureModelFormat),

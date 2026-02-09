@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
@@ -23,7 +23,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArdocodeEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInExArchEvaluation;
 
 @Disabled("Only for manual execution")
@@ -49,8 +49,8 @@ class ArtemisInExArchIT extends AbstractArdocoIT {
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Artemis @ ExArch (SAD-SAM-via-LLM-Code) TLR")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(ArDoCodeEvaluationProject.class)
-    void evaluateArtemisInExArch(ArDoCodeEvaluationProject project) {
+    @EnumSource(ArdocodeEvaluationProject.class)
+    void evaluateArtemisInExArch(ArdocodeEvaluationProject project) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
         LargeLanguageModel llmForExArch = LargeLanguageModel.GPT_4_O;
@@ -74,8 +74,8 @@ class ArtemisInExArchIT extends AbstractArdocoIT {
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Artemis @ ExArch (SAD-SAM-via-LLM-Code) TLR Multi")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(ArDoCodeEvaluationProject.class)
-    void evaluateArtemisInExArchMultiple(ArDoCodeEvaluationProject project) {
+    @EnumSource(ArdocodeEvaluationProject.class)
+    void evaluateArtemisInExArchMultiple(ArdocodeEvaluationProject project) {
         Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
         LargeLanguageModel llmForExArch = LargeLanguageModel.GPT_4_O;

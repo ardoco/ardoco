@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS;
@@ -9,25 +9,25 @@ import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransArCEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 
 public class TransarcEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
-    private final TransArCEvaluationProject project;
+    private final TransarcEvaluationProject project;
     private final boolean useAcmFile;
 
-    public TransarcEvaluation(TransArCEvaluationProject project, boolean useAcmFile) {
+    public TransarcEvaluation(TransarcEvaluationProject project, boolean useAcmFile) {
         this.project = project;
         this.useAcmFile = useAcmFile;
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner transArC = createTransarc();
-        ArDoCoResult result = transArC.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner transArC = createTransarc();
+        ArdocoResult result = transArC.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -40,7 +40,7 @@ public class TransarcEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         return result;
     }
 
-    private ArDoCoRunner createTransarc() {
+    private ArdocoRunner createTransarc() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         ModelFormat architectureModelFormat = ModelFormat.PCM;

@@ -8,7 +8,8 @@
   </parent>
 
   <artifactId>common</artifactId>
-  <name>ArDoCo Common Utilities and Pipeline Definitions</name>
+  <name>ARDoCo Common</name>
+  <description>Common utilities, data structures, and pipeline definitions used across all ARDoCo modules.</description>
 
   <dependencies>
     <dependency>
@@ -43,7 +44,7 @@
     <dependency>
       <groupId>org.apache.opennlp</groupId>
       <artifactId>opennlp-tools</artifactId>
-      <version>2.5.6.1</version>
+      <version>2.5.7</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>

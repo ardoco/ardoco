@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
@@ -8,8 +8,8 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.ArDoCo;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgen
  * This variant replaces the SAD–SAM linking step with ArTEMiS' NER-based matching, then proceeds with SAM–code traceability and transitive SAD–code links.
  * In short: LLM-generated SAM + ArTEMiS matching inside ExArch.
  */
-public class ArtemisInExArch extends ArDoCoRunner {
+public class ArtemisInExArch extends ArdocoRunner {
 
     public ArtemisInExArch(String projectName) {
         super(projectName);
@@ -46,7 +46,7 @@ public class ArtemisInExArch extends ArDoCoRunner {
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
             LargeLanguageModel llmForExArch, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
             LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
-        ArDoCo arDoCo = this.getArDoCo();
+        Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
         var text = CommonUtilities.readInputText(inputText);
@@ -65,7 +65,7 @@ public class ArtemisInExArch extends ArDoCoRunner {
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 
         NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
-        this.getArDoCo().addPipelineStep(nerConnectionGenerator);
+        this.getArdoco().addPipelineStep(nerConnectionGenerator);
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
 

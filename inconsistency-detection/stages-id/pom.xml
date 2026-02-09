@@ -9,6 +9,8 @@
   </parent>
   <artifactId>stages-id</artifactId>
   <packaging>pom</packaging>
+  <name>ARDoCo ID Stages</name>
+  <description>Individual stages and components for Inconsistency Detection (ID).</description>
   <modules>
     <module>inconsistency-detection</module>
   </modules>

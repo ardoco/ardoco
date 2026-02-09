@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
@@ -22,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
  * preprocesses text from the SAD and components from the architecture model. Next, it uses NLP and heuristics to identify architecture elements (like component
  * names) mentioned in the text. Finally, it connects these identified text elements to model elements to form trace links.
  */
-public class Swattr extends ArDoCoRunner {
+public class Swattr extends ArdocoRunner {
     public Swattr(String projectName) {
         super(projectName);
     }
@@ -43,22 +43,22 @@ public class Swattr extends ArDoCoRunner {
     }
 
     private void definePipeline(File inputText, ArchitectureConfiguration architectureConfiguration, ImmutableSortedMap<String, String> additionalConfigs) {
-        var dataRepository = this.getArDoCo().getDataRepository();
+        var dataRepository = this.getArdoco().getDataRepository();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
         }
         DataRepositoryHelper.putInputText(dataRepository, text);
 
-        this.getArDoCo().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent modelProviderAgent = //
                 ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, architectureConfiguration.withMetamodel(
                         Metamodel.ARCHITECTURE_WITH_COMPONENTS), null);
-        this.getArDoCo().addPipelineStep(modelProviderAgent);
+        this.getArdoco().addPipelineStep(modelProviderAgent);
 
-        this.getArDoCo().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
-        this.getArDoCo().addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
-        this.getArDoCo().addPipelineStep(ConnectionGenerator.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(TextExtraction.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(RecommendationGenerator.get(additionalConfigs, dataRepository));
+        this.getArdoco().addPipelineStep(ConnectionGenerator.get(additionalConfigs, dataRepository));
     }
 }

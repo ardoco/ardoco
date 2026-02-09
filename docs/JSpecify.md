@@ -1,6 +1,6 @@
 # Nullness and JSpecify
 
-ArDoCo adopts [JSpecify](https://jspecify.dev/) to make null-safety explicit and consistent across the codebase, improving IDE analysis without changing runtime behavior.
+ARDoCo adopts [JSpecify](https://jspecify.dev/) to make null-safety explicit and consistent across the codebase, improving IDE analysis without changing runtime behavior.
 
 ## Core Rules
 - Default is non-null: Packages are marked `@NullMarked` during the build.

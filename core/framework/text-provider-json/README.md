@@ -4,9 +4,9 @@ In this repository, we present a definition for transferring information about a
 
 
 ## JSON-Schema
-Below, you can find a simple presentation of the JSON-schema for the definition of a text for ArDoCo. Basically, a text consists of sentences and sentences consist of words along with the constituency tree. Words contain information about themselves and the relations (dependencies) to other words.
+Below, you can find a simple presentation of the JSON-schema for the definition of a text for ARDoCo. Basically, a text consists of sentences and sentences consist of words along with the constituency tree. Words contain information about themselves and the relations (dependencies) to other words.
 
-The interfaces of ArDoCo require more, but the rest should be recoverable/calculateable from these entities with their data fields.
+The interfaces of ARDoCo require more, but the rest should be recoverable/calculateable from these entities with their data fields.
 
 An example JSON-file that validates against the schema can be found in [examples/example-text.json](./examples/example-text.json).
 

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
@@ -70,7 +70,7 @@ public class ConfigurationHelper {
     }
 
     /**
-     * Returns a map containing all default configuration options for all configurable classes in the ArDoCo framework.
+     * Returns a map containing all default configuration options for all configurable classes in the ARDoCo framework.
      *
      * @return a map with all default configuration options
      */

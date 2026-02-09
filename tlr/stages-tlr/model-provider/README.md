@@ -1,4 +1,4 @@
-# ArDoCo Code Extraction by Gabriel Gehrig
+# ARDoCo Code Extraction by Gabriel Gehrig
 in "Praktikum: Werkzeuge für agile Modellierung" - WS 2024-2025
 
 ## Table of Contents
@@ -13,14 +13,14 @@ in "Praktikum: Werkzeuge für agile Modellierung" - WS 2024-2025
 ## Introduction
 
 ### Task description
-ArDoCo performs consistency analyses between different types of artifacts and utilizes connections between related artifacts in software development (trace links).
-Currently, only Java source code can be interpreted. In this internship, the ArDoCo is to be extended:
+ARDoCo performs consistency analyses between different types of artifacts and utilizes connections between related artifacts in software development (trace links).
+Currently, only Java source code can be interpreted. In this internship, ARDoCo is to be extended:
 * extend the code extractor to support additional programming languages (e.g. Python)
 * develop a gold standard for testing extraction and the corresponding Traceability Link Recovery (TLR) (?)
 
 
 ### Scope
-This project enhances **code extraction** for the **ArDoCo** tool by integrating [**ANTLR**](https://www.antlr.org/). The primary goal is to simplify future extensions, allowing support for additional programming languages with ease. To achieve this, significant effort has been invested in making the **code extraction process highly modular**. The extraction process concludes with the construction of the **CodeModel**, which is essential for **ArDoCo's analysis**.
+This project enhances **code extraction** for the **ARDoCo** tool by integrating [**ANTLR**](https://www.antlr.org/). The primary goal is to simplify future extensions, allowing support for additional programming languages with ease. To achieve this, significant effort has been invested in making the **code extraction process highly modular**. The extraction process concludes with the construction of the **CodeModel**, which is essential for **ARDoCo's analysis**.
 
 ### Technologies
 * [ANTLR](https://www.antlr.org/)
@@ -28,12 +28,12 @@ This project enhances **code extraction** for the **ArDoCo** tool by integrating
 * [GITLAB](https://gitlab.kit.edu/kit/kastel/sdq/stud/praktika/wise2425/gabrielgehrig)
 
 ## System Overview
-##### Figure 1: Component Diagram of Code Extraction within ArDoCo
+##### Figure 1: Component Diagram of Code Extraction within ARDoCo
 ![Component Diagram](./.docs/component_diagram.png)
 
 
 ### General Description
-The introduced **code extraction process** is divided into three key phases: **extracting** relevant information, **mapping** it to the appropriate constructs provided by the **ArDoCo Framework**, and **storing** the extracted data.
+The introduced **code extraction process** is divided into three key phases: **extracting** relevant information, **mapping** it to the appropriate constructs provided by the **ARDoCo Framework**, and **storing** the extracted data.
 
 The modularity of this approach has been tested by encapsulating the extraction process for different programming languages, **Java**, **Python**, and **C++**. Additionally, its flexibility has been demonstrated by incorporating a new functionality, **CommentExtraction**.
 
@@ -49,9 +49,9 @@ to extract code information from different programming languages.
 
 2️⃣ **Storage Component** – Once extracted, the information is stored and structured efficiently. This component ensures consistency and enables access to the retrieved data, even programming language specific information.
 
-3️⃣ **Mapping Component** – The extracted and stored information is mapped to the appropriate constructs within the ArDoCo Framework, ensuring compatibility with the overall system for further processing and analysis.
+3️⃣ **Mapping Component** – The extracted and stored information is mapped to the appropriate constructs within the ARDoCo Framework, ensuring compatibility with the overall system for further processing and analysis.
 
-These components work together in a modular fashion, allowing easy extensibility for new programming languages. The **Extraction Module** operates independently for different languages (Java, Python, C++) but **relies on the Storage Module** to persist data. The **Mapping Module** then transforms the stored data into a format that the ArDoCo Framework can process further.
+These components work together in a modular fashion, allowing easy extensibility for new programming languages. The **Extraction Module** operates independently for different languages (Java, Python, C++) but **relies on the Storage Module** to persist data. The **Mapping Module** then transforms the stored data into a format that the ARDoCo Framework can process further.
 
 For a more detailed breakdown of the system's structure, refer to Section: [Class Diagram & Component Breakdown](#class-diagrams--components-breakdown).
 
@@ -178,7 +178,7 @@ Thus, the **Bottom-Up** approach was implemented, ensuring a scalable, modular, 
 Thus, the **Visitor Pattern** was chosen for this project.
 
 ### Generic Mapping vs. Specific Mapping
-A key design consideration in the **mapping process** was whether to adopt a **generic mapping** approach — a standardized method for converting extracted elements into the ArDoCo Framework — or to allow **language-specific mappings** that accommodate unique elements from different programming languages.
+A key design consideration in the **mapping process** was whether to adopt a **generic mapping** approach — a standardized method for converting extracted elements into the ARDoCo Framework — or to allow **language-specific mappings** that accommodate unique elements from different programming languages.
 
 1️⃣ Generic Mapping Approach
 
@@ -186,7 +186,7 @@ The goal of generic mapping is to establish a **unified and standardized** mappi
 
 ✅ Pros:
 - Ensures a **consistent structure** for extracted elements.
-- **Simplifies integration** with the ArDoCo Framework.
+- **Simplifies integration** with the ARDoCo Framework.
 - **Reduces maintenance effort** by minimizing language-specific logic.
 
 ❌ Cons:
@@ -195,7 +195,7 @@ The goal of generic mapping is to establish a **unified and standardized** mappi
 
 2️⃣ Specific Mapping Approach
 
-While a standardized mapping approach is beneficial, it was recognized that **different programming languages contain unique structural elements** that **could provide additional valuable information**. By allowing specific mappings, the system gains flexibility in handling language-specific constructs while still ensuring compatibility with the ArDoCo Framework.
+While a standardized mapping approach is beneficial, it was recognized that **different programming languages contain unique structural elements** that **could provide additional valuable information**. By allowing specific mappings, the system gains flexibility in handling language-specific constructs while still ensuring compatibility with the ARDoCo Framework.
 
 ✅ Pros:
 - **Supports language-specific features**, preserving valuable contextual information.
@@ -270,7 +270,7 @@ This diagram provides an **overview of how extracted structural elements** from 
 4️⃣ Mapping
 
 ![Mapping Process Class Diagram](./.docs/mapping_diagram.png)
-This diagram provides an overview of the mapping process, where extracted elements are converted into CodeItems that the ArDoCo Framework defines. The mapping ensures that extracted code structures are correctly interpreted and integrated into the framework.
+This diagram provides an overview of the mapping process, where extracted elements are converted into CodeItems that the ARDoCo Framework defines. The mapping ensures that extracted code structures are correctly interpreted and integrated into the framework.
 
 | **Class Name**                        | **Purpose**                                                                                                            |
 |---------------------------------------|------------------------------------------------------------------------------------------------------------------------|
@@ -293,7 +293,7 @@ To ensure the **accuracy and reliability** of the extraction process, a combinat
 
 2️⃣ **Real-World Project Testing**
 - Small projects were **downloaded from [GitHub](https://github.com/)** to evaluate the **scalability and robustness** of the extraction process.
-- For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management), [ArDoCo-Benchmark jabref](https://github.com/ArDoCo/jabref)
+- For **JAVA**: [Simple Hotel Management](https://github.com/faysal515/Java-Simple-Hotel-Management), [ardoco-benchmark jabref](https://github.com/ardoco/jabref)
 - For **PYTHON3**: [Simple Django Project](https://github.com/Manisha-Bayya/simple-django-project)
 - For **C++**: [Simple Render Engine](https://github.com/mortennobel/SimpleRenderEngineProject) (except thirdparty)
 - These projects helped assess **runtime performance**, identify **potential edge cases**, and detect **unexpected extraction errors**.
@@ -303,7 +303,7 @@ By combining **synthetic test cases** with **real-world datasets**, the testing 
 
 ## Guide: Adding a new Language
 
-This guide outlines the **steps required** to integrate a new programming language (**PL**) into the ArDoCo Framework by leveraging **ANTLR Grammars**.
+This guide outlines the **steps required** to integrate a new programming language (**PL**) into the ARDoCo Framework by leveraging **ANTLR Grammars**.
 
 ### 1️⃣ Downloading ANTLR Grammar Files
 - Obtain the **Lexer & Parser grammars** (`.g4` files) for the target **programming language (PL)** from **[ANTLR Grammars v4 Repository](https://github.com/antlr/grammars-v4)**.
@@ -339,10 +339,10 @@ Each new programming language requires the implementation of several **language-
 
 ---
 
-#### Mapping and Integration into ArDoCo Framework
+#### Mapping and Integration into ARDoCo Framework
 | Class Name                  | Purpose                                                                                                                                 |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| **`<PL>MappingStrategies`** | Specifies **how extracted elements are mapped** to **ArDoCo constructs**.                                                               |
+| **`<PL>MappingStrategies`** | Specifies **how extracted elements are mapped** to **ARDoCo constructs**.                                                               |
 | **`<PL>ItemBuilder`**       | Defines the **allowed mapping strategies**.                                                                                             |
 | **`<PL>ModelMapper`**       | Configures which `ItemBuilder` is used for mapping elements.                                                                            |
 | **`<PL>Extractor`**         | Defines **file suffixes** (e.g., `.py`, `.cpp`) to identify extractable files and integrates **the correct Mapper and ElementManager**. |
@@ -358,15 +358,15 @@ Example: If **Python functions** need special handling, introduce a **`PythonFun
 - Some classes from existing programming languages **may be reusable** for the new language, particularly those related to **mapping, storage, or comment matching**.
 - However, **the ANTLR-based `ElementExtractor` must be newly implemented**, as ANTLR grammars for different languages have **distinct methods and parsing structures**.
 
-🔹 **Ensuring Compatibility with ArDoCo**
-- Validate that **extracted elements correctly align** with ArDoCo's **expected data structure**.
+🔹 **Ensuring Compatibility with ARDoCo**
+- Validate that **extracted elements correctly align** with ARDoCo's **expected data structure**.
 - Perform tests to confirm **successful integration** and correct **parent-child relationships** in extracted elements.
 
 
 ## Conclusion & Future Work
-This internship focused on enhancing the **code extraction process** within **ArDoCo**. The functionality was extended to support **Python 3** and **C++** while maintaining compatibility with **Java**. Additionally, significant effort was invested in making the framework adaptable for future extensions to other programming languages and improving its flexibility in extracting specific information, such as **comments**. To address these challenges, a modular approach was adopted.
+This internship focused on enhancing the **code extraction process** within **ARDoCo**. The functionality was extended to support **Python 3** and **C++** while maintaining compatibility with **Java**. Additionally, significant effort was invested in making the framework adaptable for future extensions to other programming languages and improving its flexibility in extracting specific information, such as **comments**. To address these challenges, a modular approach was adopted.
 
-Further improvements could enhance flexibility by extending the extraction process to include additional structural elements, such as **variables**, **inheritance relationships**, and **imports**. While the extraction of these elements was implemented during this internship, their full integration into the **ArDoCo framework** remains as future work.
+Further improvements could enhance flexibility by extending the extraction process to include additional structural elements, such as **variables**, **inheritance relationships**, and **imports**. While the extraction of these elements was implemented during this internship, their full integration into the **ARDoCo framework** remains as future work.
 
 Additionally, a key focus should be on analyzing the interaction between the **code extraction process** and the overall system. While this internship primarily focused on aligning the extraction process with a predefined interface, **comprehensive testing of its seamless integration with other system components** has yet to be conducted.
 

@@ -9,8 +9,8 @@
   </parent>
 
   <artifactId>pipeline-core</artifactId>
-  <name>Pipeline Core</name>
-  <description>This module contains the pipeline definition or ArDoCo.</description>
+  <name>ARDoCo Pipeline Core</name>
+  <description>Core pipeline definition and orchestration for ARDoCo.</description>
 
   <dependencies>
     <dependency>

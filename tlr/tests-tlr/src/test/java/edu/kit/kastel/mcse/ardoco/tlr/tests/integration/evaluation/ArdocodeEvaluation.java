@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import static edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES;
@@ -8,22 +8,22 @@ import java.io.File;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArDoCodeEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArdocodeEvaluationProject;
 
 public class ArdocodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation {
-    private final ArDoCodeEvaluationProject project;
+    private final ArdocodeEvaluationProject project;
 
-    public ArdocodeEvaluation(ArDoCodeEvaluationProject project) {
+    public ArdocodeEvaluation(ArdocodeEvaluationProject project) {
         this.project = project;
     }
 
-    public ArDoCoResult runTraceLinkEvaluation() {
-        ArDoCoRunner ardocode = createArdocode();
-        ArDoCoResult result = ardocode.run();
+    public ArdocoResult runTraceLinkEvaluation() {
+        ArdocoRunner ardocode = createArdocode();
+        ArdocoResult result = ardocode.run();
         Assertions.assertNotNull(result);
 
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
@@ -36,7 +36,7 @@ public class ArdocodeEvaluation extends AbstractDocumentationToCodeTlrEvaluation
         return result;
     }
 
-    private ArDoCoRunner createArdocode() {
+    private ArdocoRunner createArdocode() {
         String projectName = project.name().toLowerCase();
         File textInput = project.getTlrTask().getTextFile();
         File inputCode = project.getTlrTask().getCodeModelFromResources();

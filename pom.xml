@@ -4,16 +4,12 @@
 
   <groupId>io.github.ardoco</groupId>
   <artifactId>parent</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ArDoCo - The Consistency Analyzer</name>
-  <description>The goal of this project is to connect architecture documentation and models while identifying missing
-        or deviating elements (inconsistencies). An element can be any representable item of the model, like a component
-        or a relation. To do so, we first create trace links and then make use of them and other information to identify
-        inconsistencies. ArDoCo is actively developed by researchers of the Modelling for Continuous Software
-        Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
-  <url>https://github.com/ArDoCo/ArDoCo</url>
+  <name>ARDoCo</name>
+  <description>ARDoCo (Automating Requirements and Documentation Comprehension) connects architecture documentation and models while identifying missing or deviating elements (inconsistencies). An element can be any representable item of the model, like a component or a relation. To do so, we first create trace links and then make use of them and other information to identify inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
+  <url>https://github.com/ardoco/ARDoCo</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -51,14 +47,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/ArDoCo/ArDoCo.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ArDoCo/ArDoCo.git</developerConnection>
+    <connection>scm:git:git://github.com/ardoco/ARDoCo.git</connection>
+    <developerConnection>scm:git:ssh://github.com:ardoco/ARDoCo.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/ArDoCo/ArDoCo/tree/main</url>
+    <url>https://github.com/ardoco/ardoco/tree/main</url>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ArDoCo/ArDoCo/issues</url>
+    <url>https://github.com/ardoco/ardoco/issues</url>
   </issueManagement>
   <distributionManagement>
     <snapshotRepository>
@@ -68,7 +64,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>2.0.0-SNAPSHOT</revision>
+    <revision>2.1.0-SNAPSHOT</revision>
     <ardoco.version>${revision}</ardoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -81,15 +77,15 @@
 
     <!-- Versions -->
     <slf4j.version>2.0.17</slf4j.version>
-    <spotless.version>3.1.0</spotless.version>
-    <junit.version>5.12.2</junit.version>
+    <spotless.version>3.2.1</spotless.version>
+    <junit.version>6.0.2</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
-    <javaparser.version>3.27.1</javaparser.version>
-    <mockito.version>5.20.0</mockito.version>
+    <javaparser.version>3.28.0</javaparser.version>
+    <mockito.version>5.21.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
-    <jackson.version>2.20.1</jackson.version>
-    <metrics.version>0.2.0-SNAPSHOT</metrics.version>
+    <jackson.version>2.21.0</jackson.version>
+    <metrics.version>0.2.0</metrics.version>
     <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
 
@@ -124,17 +120,17 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.14.0</version>
+        <version>1.15.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
-        <version>5.5.1</version>
+        <version>5.6</version>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
+        <version>3.27.7</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -150,7 +146,7 @@
       <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>7.4.0.202509020913-r</version>
+        <version>7.5.0.202512021534-r</version>
       </dependency>
 
       <!-- JUnit -->
@@ -312,6 +308,7 @@
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${spotless.version}</version>
           <configuration>
+            <lineEndings>UNIX</lineEndings>
             <formats>
               <format>
                 <includes>
@@ -366,12 +363,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.1</version>
+          <version>3.15.0</version>
           <configuration>
             <release>${java.version}</release>
             <source>${java.version}</source>
@@ -425,7 +422,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.4.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -471,7 +468,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>2.21.0</version>
           <configuration>
             <ruleSet>
               <rule>
@@ -504,7 +501,7 @@
         <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
-          <version>0.9.0</version>
+          <version>0.10.0</version>
           <extensions>true</extensions>
           <configuration>
             <publishingServerId>central</publishingServerId>

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArDoCoRunner;
+import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
@@ -41,7 +41,7 @@ class SwattrAiIT {
 
         SwattrEvaluation evaluation = new SwattrEvaluation(projectToConsider) {
             @Override
-            protected ArDoCoRunner createSwattr() {
+            protected ArdocoRunner createSwattr() {
 
                 String name = project.name();
                 File inputText = project.getTlrTask().getTextFile();
@@ -69,7 +69,7 @@ class SwattrAiIT {
 
         SwattrEvaluation evaluation = new SwattrEvaluation(projectToConsider) {
             @Override
-            protected ArDoCoRunner createSwattr() {
+            protected ArdocoRunner createSwattr() {
                 String name = project.name();
                 File inputText = project.getTlrTask().getTextFile();
                 File outputDir = new File(OUTPUT);

@@ -9,6 +9,8 @@
   </parent>
 
   <artifactId>pipeline-id</artifactId>
+  <name>ARDoCo ID Pipeline</name>
+  <description>Pipeline implementation for Inconsistency Detection (ID) in ARDoCo.</description>
 
   <dependencies>
     <dependency>

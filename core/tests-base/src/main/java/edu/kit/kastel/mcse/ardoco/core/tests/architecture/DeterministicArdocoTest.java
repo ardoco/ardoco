@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.tests.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -44,9 +44,9 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 @AnalyzeClasses(packages = "edu.kit.kastel.mcse.ardoco")
-public class DeterministicArDoCoTest {
+public class DeterministicArdocoTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeterministicArDoCoTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeterministicArdocoTest.class);
 
     @ArchTest
     public static final ArchRule forbidUnorderedSetsAndMaps = noClasses().that()
@@ -88,7 +88,7 @@ public class DeterministicArDoCoTest {
     public static final ArchRule forbidHashMapAndHashSetInFavorOfLinkedVersions = noClasses().that()
             .resideOutsideOfPackages("..tests..", "..magika..")
             .and()
-            .doNotHaveFullyQualifiedName(DeterministicArDoCoTest.class.getName())
+            .doNotHaveFullyQualifiedName(DeterministicArdocoTest.class.getName())
             .should()
             .accessClassesThat()
             .haveNameMatching(HashMap.class.getName() + "|" + HashSet.class.getName())

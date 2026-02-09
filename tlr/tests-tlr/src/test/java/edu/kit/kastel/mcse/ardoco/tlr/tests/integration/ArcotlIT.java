@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,15 +8,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArCoTLEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArcotlEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArcotlEvaluation;
 
 class ArcotlIT extends AbstractArdocoIT {
 
     @DisplayName("Evaluate ArCoTL (SAM-Code TLR)")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(ArCoTLEvaluationProject.class)
-    void evaluateSamCodeTlrIT(ArCoTLEvaluationProject project) {
+    @EnumSource(ArcotlEvaluationProject.class)
+    void evaluateSamCodeTlrIT(ArcotlEvaluationProject project) {
         var evaluation = new ArcotlEvaluation(project, true);
         var results = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(results);
@@ -25,8 +25,8 @@ class ArcotlIT extends AbstractArdocoIT {
     @EnabledIfEnvironmentVariable(named = "testCodeFull", matches = ".*")
     @DisplayName("Evaluate ArCoTL (SAM-Code TLR) (Full)")
     @ParameterizedTest(name = "{0}")
-    @EnumSource(ArCoTLEvaluationProject.class)
-    void evaluateSamCodeTlrITFull(ArCoTLEvaluationProject project) {
+    @EnumSource(ArcotlEvaluationProject.class)
+    void evaluateSamCodeTlrITFull(ArcotlEvaluationProject project) {
         RepositoryHandler.removeRepository(project.getTlrTask().getCodeDirectoryWithoutCloning().getAbsolutePath());
 
         var evaluation = new ArcotlEvaluation(project, false);

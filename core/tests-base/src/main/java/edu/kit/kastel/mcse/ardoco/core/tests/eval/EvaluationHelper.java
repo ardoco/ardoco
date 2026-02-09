@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public final class EvaluationHelper {
         if (is == null)
             throw new IllegalArgumentException("Resource not found: " + resource);
         try {
-            File temporaryFile = File.createTempFile("ArDoCo", ".tmp");
+            File temporaryFile = File.createTempFile("ARDoCo", ".tmp");
             temporaryFile.deleteOnExit();
             try (FileOutputStream fos = new FileOutputStream(temporaryFile)) {
                 try (is) {

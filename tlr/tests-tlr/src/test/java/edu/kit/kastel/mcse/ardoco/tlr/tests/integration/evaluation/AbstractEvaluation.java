@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArDoCoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
@@ -77,7 +77,7 @@ abstract class AbstractEvaluation {
         );
     }
 
-    public static <T extends Serializable> List<Pair<T, String>> enrollGoldStandard(List<Pair<T, String>> goldStandard, ArDoCoResult result,
+    public static <T extends Serializable> List<Pair<T, String>> enrollGoldStandard(List<Pair<T, String>> goldStandard, ArdocoResult result,
             Metamodel metamodel) {
         MutableList<Pair<T, String>> enrolledGoldStandard = Lists.mutable.empty();
         Model codeModel = DataRepositoryHelper.getModelStatesData(result.dataRepository()).getModel(metamodel);

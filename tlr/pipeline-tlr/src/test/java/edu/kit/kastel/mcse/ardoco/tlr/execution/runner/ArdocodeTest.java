@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution.runner;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 class ArdocodeTest extends CodeRunnerBaseTest {
 
     @Test
-    @DisplayName("Test ArDoCo for SAD-Code-TLR")
+    @DisplayName("Test ARDoCo for SAD-Code-TLR")
     void testSadCodeTlr() {
         var runner = new Ardocode(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
