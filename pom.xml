@@ -4,15 +4,11 @@
 
   <groupId>io.github.ardoco</groupId>
   <artifactId>parent</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ARDoCo - Automating Requirements and Documentation Comprehension</name>
-  <description>The goal of this project is to connect architecture documentation and models while identifying missing
-        or deviating elements (inconsistencies). An element can be any representable item of the model, like a component
-        or a relation. To do so, we first create trace links and then make use of them and other information to identify
-        inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software
-        Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
+  <name>ARDoCo</name>
+  <description>ARDoCo (Automating Requirements and Documentation Comprehension) connects architecture documentation and models while identifying missing or deviating elements (inconsistencies). An element can be any representable item of the model, like a component or a relation. To do so, we first create trace links and then make use of them and other information to identify inconsistencies. ARDoCo is actively developed by researchers of the Modelling for Continuous Software Engineering (MCSE) group of KASTEL - Institute of Information Security and Dependability at the KIT.</description>
   <url>https://github.com/ardoco/ARDoCo</url>
   <licenses>
     <license>
@@ -68,7 +64,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>2.0.0-SNAPSHOT</revision>
+    <revision>2.1.0-SNAPSHOT</revision>
     <ardoco.version>${revision}</ardoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -81,7 +77,7 @@
 
     <!-- Versions -->
     <slf4j.version>2.0.17</slf4j.version>
-    <spotless.version>3.1.0</spotless.version>
+    <spotless.version>3.2.1</spotless.version>
     <junit.version>6.0.2</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.0</javaparser.version>
@@ -89,7 +85,7 @@
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.21.0</jackson.version>
-    <metrics.version>0.2.0-SNAPSHOT</metrics.version>
+    <metrics.version>0.2.0</metrics.version>
   </properties>
 
   <dependencyManagement>
@@ -133,7 +129,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
+        <version>3.27.7</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -336,7 +332,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.1</version>
+          <version>3.15.0</version>
           <configuration>
             <release>${java.version}</release>
             <source>${java.version}</source>

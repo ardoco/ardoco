@@ -1,54 +1,106 @@
+# Quickstart Guide
 
-The ARDoCo is a maven project and can be embedded by using its specs (from the [pom](https://github.com/ardoco/Core/blob/main/pom.xml)).
+This guide helps you get started with ARDoCo, whether you want to use it as a library in your projects or contribute to its development.
 
-Please acknowledge the [code of conduct](https://github.com/ardoco/Core/blob/main/CODE_OF_CONDUCT.md).
+## Using ARDoCo as a Dependency
 
-## Forking the project & submitting pull requests
+ARDoCo is a Maven project and can be embedded in your project by adding its dependencies. See the [main pom.xml](https://github.com/ardoco/ardoco/blob/main/pom.xml) for available modules and their coordinates.
 
-This project uses Sonarcloud to check code quality. There are Github Actions that automatically verify the build and
-generate a Sonarcloud-report. Additionally, pull requests are automatically checked. If the build fails or the Quality
-Gate is not passed, it is marked in the Pull Request and you need to fix the PR until it passes. Otherwise, the PR won’t
-get merged.
+## Prerequisites
 
-If you fork the project, make sure to create a Sonarcloud token to make sure everything works for you and the Sonarcloud
-check does not fail. You need to enable Sonarcloud for you and add a Sonarcloud token to the repository of the fork as
-secret.
+- **Java**: JDK 21 or higher
+- **Maven**: 3.9 or higher
+- **IDE**: IntelliJ IDEA, Eclipse, or VS Code with Java extensions
 
-Follow the following steps to do so:
+## Contributing to ARDoCo
 
-* Log into SonarCloud and click on your profile and then go to My Account and then Security. Alternatively go directly
-  to account/security.
-* Generate your access token for SonarCloud and copy it. The access token will be provided to the build pipeline as a
-  secret environment variable.
-* Go to your repository settings in GitHub, then to Secrets
-* Add a new secret with name SONAR_TOKEN and the value of the just generated access token.
+Before contributing, please acknowledge the [Code of Conduct](https://github.com/ardoco/ardoco/blob/main/core/CODE_OF_CONDUCT.md).
 
-### Formatter
+### Development Setup
 
-Please use the provided [formatter](https://github.com/ardoco/Core/blob/main/formatter.xml) when contributing.
+1. **Fork and Clone**:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/ardoco.git
+   cd ardoco
+   ```
 
-Additionally, please make use of the spotless-plugin for maven to format your code. You can run it via `mvn spotless:apply` ([more info about spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven)).
+2. **Build the Project**:
+   ```bash
+   mvn clean install
+   ```
 
+3. **Import into IDE**:
+   - Import as Maven project
+   - Ensure JDK 21 is configured
 
-### Nullness (JSpecify)
+### Code Quality Checks
 
-ARDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations.
+ARDoCo uses **SonarCloud** for code quality analysis. GitHub Actions automatically:
+- Verify builds
+- Generate SonarCloud reports
+- Check pull requests against Quality Gates
 
-- Default is non-null via `@NullMarked` generated during build.
-- Mark nullable references explicitly with `org.jspecify.annotations.Nullable`.
-- Do not use other `@Nullable` variants (e.g., `javax.annotation.Nullable`).
-- Do not commit `package-info.java`; these are auto-generated and ignored.
+Pull requests must pass the Quality Gate before merging.
 
-See the dedicated guide: [Nullness and JSpecify](jspecify).
+#### Setting Up SonarCloud for Your Fork
 
+If you fork the project, configure SonarCloud to ensure quality checks work:
 
-### Save Actions (Eclipse)
+1. **Generate Token**:
+   - Log into [SonarCloud](https://sonarcloud.io/)
+   - Navigate to: Profile → My Account → Security (or directly to `account/security`)
+   - Generate an access token and copy it
 
-Go to your Eclipse Workspace folder and open the
-file `.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs`.
-There, exchange all the `sp_cleanup.` properties to the following:
+2. **Add Token to GitHub**:
+   - Go to your fork's Settings → Secrets and variables → Actions
+   - Add a new repository secret:
+     - **Name**: `SONAR_TOKEN`
+     - **Value**: Your SonarCloud access token
 
-```
+### Code Formatting
+
+ARDoCo uses consistent code formatting enforced by Spotless:
+
+1. **Use the Provided Formatter**:
+   - Formatter configuration: [formatter.xml](https://github.com/ardoco/ardoco/blob/main/formatter.xml)
+   - Import this formatter profile into your IDE
+
+2. **Apply Formatting with Spotless**:
+   ```bash
+   mvn spotless:apply
+   ```
+
+   Run this before committing to ensure consistent formatting. More information: [Spotless Maven Plugin](https://github.com/diffplug/spotless/tree/main/plugin-maven)
+
+3. **Check Formatting**:
+   ```bash
+   mvn spotless:check
+   ```
+
+### Nullness Annotations (JSpecify)
+
+ARDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations:
+
+- **Default**: All references are non-null via `@NullMarked` (auto-generated during build)
+- **Nullable References**: Explicitly mark with `org.jspecify.annotations.Nullable`
+- **Avoid**: Do not use other `@Nullable` variants (e.g., `javax.annotation.Nullable`)
+- **Auto-Generated Files**: `package-info.java` files are auto-generated and git-ignored - do not commit them
+
+For detailed information, see the dedicated guide: [Nullness and JSpecify](jspecify)
+
+### Eclipse Save Actions (Optional)
+
+If using Eclipse, configure save actions for automatic code cleanup.
+
+**Instructions**:
+1. Go to your Eclipse workspace folder
+2. Open: `.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs`
+3. Replace all `sp_cleanup.*` properties with the configuration below
+
+<details>
+<summary>Eclipse Save Actions Configuration</summary>
+
+```properties
 sp_cleanup.add_default_serial_version_id=true
 sp_cleanup.add_generated_serial_version_id=false
 sp_cleanup.add_missing_annotations=true
@@ -120,3 +172,46 @@ sp_cleanup.use_this_for_non_static_method_access_only_if_necessary=true
 sp_cleanup.use_unboxing=true
 sp_cleanup.use_var=false
 ```
+</details>
+
+### Pull Request Workflow
+
+1. **Create a Branch**:
+   ```bash
+   git checkout -b feature/my-feature
+   ```
+
+2. **Make Changes**:
+   - Write your code
+   - Add tests if applicable
+   - Run formatting: `mvn spotless:apply`
+
+3. **Test Locally**:
+   ```bash
+   mvn clean verify
+   ```
+
+4. **Commit and Push**:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   git push origin feature/my-feature
+   ```
+
+5. **Open Pull Request**:
+   - Go to GitHub and create a PR from your branch
+   - Wait for automated checks (build, SonarCloud)
+   - Address any issues if checks fail
+
+6. **Code Review**:
+   - Respond to reviewer feedback
+   - Make requested changes
+   - Re-run formatting and tests
+
+## Next Steps
+
+- Explore the [Pipeline Architecture](pipeline) to understand ARDoCo's execution model
+- Learn about [Traceability Link Recovery](traceability-link-recovery) approaches
+- Read about [Inconsistency Detection](inconsistency-detection) capabilities
+- Check out [Intermediate Artifacts](intermediate-artifacts) to understand data models
+- Visit the [Home page](home) for more information about ARDoCo and its approaches

@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
 
   <name>ARDoCo Framework</name>
-  <description>This framework contains the code for defining the architecture, data structures, and interfaces of the ARDoCo approach as well as the common code.</description>
+  <description>Core framework containing the architecture, data structures, interfaces, and common code of the ARDoCo approach.</description>
 
   <modules>
     <module>common</module>

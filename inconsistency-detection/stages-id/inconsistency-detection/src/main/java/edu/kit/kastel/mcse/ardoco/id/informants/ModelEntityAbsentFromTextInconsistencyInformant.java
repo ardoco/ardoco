@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.List;
@@ -17,14 +17,14 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
-import edu.kit.kastel.mcse.ardoco.id.agents.UndocumentedModelElementInconsistencyAgent;
-import edu.kit.kastel.mcse.ardoco.id.types.MissingTextForModelElementInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.agents.ModelEntityAbsentFromTextInconsistencyAgent;
+import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 
 /**
- * This informant for the {@link UndocumentedModelElementInconsistencyAgent} implements the logic to find model elements that are undocumented. To do so, it
+ * This informant for the {@link ModelEntityAbsentFromTextInconsistencyAgent} implements the logic to find model elements that are undocumented. To do so, it
  * checks for each model element whether it is mentioned a minimum number of times (default: 1).
  */
-public class UndocumentedModelElementInconsistencyInformant extends Informant {
+public class ModelEntityAbsentFromTextInconsistencyInformant extends Informant {
 
     @Configurable
     private int minimumNeededTraceLinks = 1;
@@ -33,8 +33,8 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
     @Configurable
     private List<String> types = Lists.mutable.of("Component", "BasicComponent", "CompositeComponent");
 
-    public UndocumentedModelElementInconsistencyInformant(DataRepository dataRepository) {
-        super(UndocumentedModelElementInconsistencyInformant.class.getSimpleName(), dataRepository);
+    public ModelEntityAbsentFromTextInconsistencyInformant(DataRepository dataRepository) {
+        super(ModelEntityAbsentFromTextInconsistencyInformant.class.getSimpleName(), dataRepository);
     }
 
     public static boolean modelInstanceHasTargetedType(ModelEntity modelEntity, List<String> types) {
@@ -108,7 +108,7 @@ public class UndocumentedModelElementInconsistencyInformant extends Informant {
 
     private void createInconsistencies(MutableList<ModelEntity> candidateEntities, InconsistencyState inconsistencyState) {
         for (var candidate : candidateEntities) {
-            var inconsistency = new MissingTextForModelElementInconsistency(candidate);
+            var inconsistency = new ModelEntityAbsentFromTextInconsistency(candidate);
             inconsistencyState.addInconsistency(inconsistency);
         }
     }

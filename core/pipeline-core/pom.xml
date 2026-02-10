@@ -10,7 +10,7 @@
 
   <artifactId>pipeline-core</artifactId>
   <name>ARDoCo Pipeline Core</name>
-  <description>This module contains the pipeline definition for ARDoCo.</description>
+  <description>Core pipeline definition and orchestration for ARDoCo.</description>
 
   <dependencies>
     <dependency>
