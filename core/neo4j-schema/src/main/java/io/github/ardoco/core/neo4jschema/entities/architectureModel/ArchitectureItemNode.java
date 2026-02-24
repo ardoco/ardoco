@@ -15,11 +15,14 @@ import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationshi
 @Node("ArchitectureItem")
 public abstract class ArchitectureItemNode {
 
-    @Id
-    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+//    @Id
+//    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     protected String id;
 
     protected String name;
+
+    @Id
+    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
     protected String ardocoId;
 
     @Relationship(type = "TRACES_TO_CODE", direction = Relationship.Direction.OUTGOING)
@@ -28,6 +31,7 @@ public abstract class ArchitectureItemNode {
     public ArchitectureItemNode(String name, String ardocoId) {
         this.name = name;
         this.ardocoId = ardocoId;
+        this.id = ardocoId;
     }
 
     protected ArchitectureItemNode() {

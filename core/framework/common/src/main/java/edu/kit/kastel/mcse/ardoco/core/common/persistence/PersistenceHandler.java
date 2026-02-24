@@ -31,7 +31,7 @@ public interface PersistenceHandler {
      * Saves a collection of generic trace links.
      * The implementation should filter for supported types (e.g. ArchitectureCodeTraceLink).
      */
-    void saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks);
+    boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks);
 
     /**
      * Loads the specific Architecture-Code links from the database.

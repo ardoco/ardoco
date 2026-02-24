@@ -6,7 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.util.Properties;
 
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +45,6 @@ import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPers
 
 @Testcontainers
 @SpringBootTest(classes = Main.class)
-@Transactional // Rolls back DB changes after test completes
 class DocumentationPersistenceTest extends RunnerBaseTest {
 
     @Autowired
@@ -74,6 +76,11 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         props.setProperty("ner.useSUTime", "false");
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse");
         pipeline = new StanfordCoreNLP(props);
+    }
+
+    @AfterEach
+    void tearDown() {
+        textNodeRepository.deleteAll();
     }
 
     @Test
@@ -143,7 +150,8 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
                 (ImmutableSortedMap<String, String>) additionalConfigsMap, outputDir);
 
         testRunnerAssertions(runner);
-        Assertions.assertNotNull(runner.run());
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
     }
 
     @Test

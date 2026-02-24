@@ -92,12 +92,14 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public void saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-        this.traceLinkService.saveAllTraceLinks(traceLinks);
+    public boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        logger.info("Saving SamCodeTracelinks");
+        return this.traceLinkService.saveAllTraceLinks(traceLinks);
     }
 
     @Override
     public Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks() {
+        logger.info("Loading SamCodeTracelinks");
         return this.traceLinkService.loadAllArchitectureCodeTraceLinks();
     }
 

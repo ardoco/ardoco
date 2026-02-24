@@ -37,20 +37,19 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
         if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.getHandler().saveSamCodeTraceLinks(traceLinks);
+            return PersistenceBridge.getHandler().saveSamCodeTraceLinks(traceLinks);
         }
+        return false;
 
-        return this.samCodeTraceLinks.addAll(traceLinks);
+        // return this.samCodeTraceLinks.addAll(traceLinks);
     }
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         //        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
-        if (this.samCodeTraceLinks.isEmpty() && !loadedFromPersistence && PersistenceBridge.isAvailable()) {
+        if ((this.samCodeTraceLinks.isEmpty() || !loadedFromPersistence) && PersistenceBridge.isAvailable()) {
             Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadSamCodeTraceLinks();
-            if (loadedLinks != null && !loadedLinks.isEmpty()) {
-                this.samCodeTraceLinks.addAll(loadedLinks);
-            }
+            this.samCodeTraceLinks = Lists.mutable.withAll(loadedLinks);
             loadedFromPersistence = true;
         }
 

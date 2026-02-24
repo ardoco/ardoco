@@ -1,6 +1,7 @@
 /* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.repository.architectureModel;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -20,4 +21,7 @@ public interface ArchitectureModelRepository extends Neo4jRepository<Architectur
      */
     @Query("MATCH (m:ArchitectureModel {modelId: $modelId}) " + "OPTIONAL MATCH p=(m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT|PROVIDES_INTERFACE|REQUIRES_INTERFACE|HAS_METHOD*0..]->(n) " + "RETURN m, collect(nodes(p)), collect(relationships(p))")
     Optional<ArchitectureModelNode> findByModelId(@Param("modelId") String modelId);
+
+    @Override
+    List<ArchitectureModelNode> findAll();
 }

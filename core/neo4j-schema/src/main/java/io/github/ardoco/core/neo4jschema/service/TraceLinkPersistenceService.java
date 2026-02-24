@@ -1,10 +1,15 @@
 /* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +42,16 @@ public class TraceLinkPersistenceService {
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
-    public TraceLinkPersistenceService(ArchitectureItemRepository archRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
+    ArchitectureModelRepository archModelRepo;
+
+    public TraceLinkPersistenceService(ArchitectureItemRepository archRepo, ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
             ArchitectureModelMapper archMapper, CodeModelMapper codeMapper) {
         this.archRepo = archRepo;
         this.codeRepo = codeRepo;
         this.traceLinkRepo = traceLinkRepo;
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
+        this.archModelRepo = archModelRepo;
     }
 
     @Transactional
@@ -51,9 +59,52 @@ public class TraceLinkPersistenceService {
         saveGenericLink(traceLink);
     }
 
-    public void saveAllTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+    public boolean saveAllTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        saveGenericLinks(traceLinks);
+//        for (TraceLink<?, ?> link : traceLinks) {
+//            saveGenericLink(link);
+//        }
+        return true; // TODO: Implement proper error handling and return false if any save operation fails
+    }
+
+    private void saveGenericLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        // Collect all unique IDs that need to be queried
+        Set<String> archIds = new HashSet<>();
+        Set<String> codeIds = new HashSet<>();
+
         for (TraceLink<?, ?> link : traceLinks) {
-            saveGenericLink(link);
+            if (link instanceof ArchitectureCodeTraceLink actl) {
+                archIds.add(((ArchitectureItem) actl.getFirstEndpoint()).getId());
+                codeIds.add(((CodeItem) actl.getSecondEndpoint()).getId());
+            }
+        }
+
+        //Batch fetch all nodes in two queries
+        Map<String, ArchitectureItemNode> archMap = archRepo.findAllByArdocoIdIn(archIds)
+                .stream().collect(Collectors.toMap(ArchitectureItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
+
+        Map<String, CodeItemNode> codeMap = codeRepo.findAllByArdocoIdIn(codeIds)
+                .stream().collect(Collectors.toMap(CodeItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
+
+        // Process links in-memory
+        List<ArchitectureItemNode> updatedNodes = new ArrayList<>();
+        for (TraceLink<?, ?> link : traceLinks) {
+            if (link instanceof ArchitectureCodeTraceLink actl) {
+                ArchitectureItemNode archNode = archMap.get(((ArchitectureItem) actl.getFirstEndpoint()).getId());
+                CodeItemNode codeNode = codeMap.get(((CodeItem) actl.getSecondEndpoint()).getId());
+
+                if (archNode != null && codeNode != null) {
+                    // Use your existing Relationship class
+                    TraceLinkRelationship rel = new TraceLinkRelationship(codeNode, null, TraceLinkType.ARCHITECTURE_CODE);
+                    archNode.addTraceLink(rel);
+                    updatedNodes.add(archNode);
+                }
+            }
+        }
+
+        // Batch Save to avoid "Inferred Type" error
+        if (!updatedNodes.isEmpty()) {
+            archRepo.saveAll(updatedNodes);
         }
     }
 
@@ -61,11 +112,31 @@ public class TraceLinkPersistenceService {
         if (link instanceof ArchitectureCodeTraceLink) {
             ArchitectureItem architectureItem = (ArchitectureItem) link.getFirstEndpoint();
             CodeItem codeItem = (CodeItem) link.getSecondEndpoint();
-            var archNodeOpt = archRepo.findByArdocoId(architectureItem.getId());
-            var codeNodeOpt = codeRepo.findByArdocoId(codeItem.getId());
+            // var archNodeOpt = archRepo.findByArdocoId(architectureItem.getId());
+            var archNodes = archRepo.findByArdocoId(architectureItem.getId());
+            if (archNodes.size() > 1) {
+                logger.error("Found {} duplicate nodes for ID: {}. Printing details...",
+                        archNodes.size(), architectureItem.getId());
+                for (var node : archNodes) {
+                    logger.error("Node internal ID: {} | Property value: {}",
+                            node.getId(), node.getArdocoId());
+                }
+            } else {
+                logger.info("Found {} node(s) for ID: {}", archNodes.size(), architectureItem.getId());
+            }
 
-            if (archNodeOpt.isPresent() && codeNodeOpt.isPresent()) {
-                ArchitectureItemNode archNode = archNodeOpt.get();
+            var codeNodeOpt = codeRepo.findByArdocoId(codeItem.getId());
+//            if (codeNodeOpt.isPresent()) {
+//                CodeItemNode codeNode = codeNodeOpt.get();
+//                logger.info("Found CodeItemNode with ID: {} and name: {}", codeNode.getArdocoId(), codeNode.getName());
+//            } else {
+//                logger.warn("No CodeItemNode found for ID: {}", codeItem.getId());
+//            }
+
+//            if (archNodeOpt.isPresent() && codeNodeOpt.isPresent()) {
+//                ArchitectureItemNode archNode = archNodeOpt.get();
+            ArchitectureItemNode archNode = (ArchitectureItemNode) archNodes.getFirst();
+            if (codeNodeOpt.isPresent()) {
                 CodeItemNode codeNode = codeNodeOpt.get();
 
                 Double confidence = null;
@@ -97,6 +168,7 @@ public class TraceLinkPersistenceService {
                 }
             }
         }
+        logger.info("Loaded {} architecture code trace links.", links.size());
         return links;
     }
 }

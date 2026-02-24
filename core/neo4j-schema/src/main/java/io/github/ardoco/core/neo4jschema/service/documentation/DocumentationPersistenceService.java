@@ -38,11 +38,14 @@ public class DocumentationPersistenceService {
 
     @Transactional(readOnly = true)
     public Text loadPreprocessedText(String identifier) {
-        // We use the Mapper service to load and map
-        // Note: The logic for this is usually in the Mapper, but if you call it here:
-        TextNode textNode = textRepository.findByArdocoId(identifier);
-        if (textNode == null)
+        boolean exists = textRepository.existsByArdocoId(identifier);
+        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
+        if (!exists) {
+            logger.warn("No preprocessed text found for identifier: {}", identifier);
             return null;
+        }
+        TextNode textNode = textRepository.findByArdocoId(identifier);
+        logger.info("loaded documentation for document ID from neo4j: {}", identifier);
         DocumentationMapper mapper = new DocumentationMapper();
         return mapper.mapToDomain(textNode);
     }
