@@ -64,9 +64,6 @@ public class ArchitectureComponentNode extends ArchitectureItemNode implements C
         if (this.ardocoId != null && o.ardocoId != null) {
             return this.ardocoId.compareTo(o.ardocoId);
         }
-        if (this.id != null && o.id != null) {
-            return this.id.compareTo(o.id);
-        }
         if (this.name != null && o.name != null) {
             return this.name.compareTo(o.name);
         }

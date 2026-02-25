@@ -2,8 +2,13 @@
 package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +105,21 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks() {
         logger.info("Loading SamCodeTracelinks");
-        return this.traceLinkService.loadAllArchitectureCodeTraceLinks();
+        Set<ArchitectureCodeTraceLink> links =  this.traceLinkService.loadAllArchitectureCodeTraceLinks();
+        for (ArchitectureCodeTraceLink architectureCodeTraceLink : links) {
+            logger.info("Loaded ArchitectureCodeTraceLink: " + architectureCodeTraceLink);
+        }
+        return links;
+    }
+
+    @Override
+    public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
+        return false;
+    }
+
+    @Override
+    public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
+        return List.of();
     }
 
 }

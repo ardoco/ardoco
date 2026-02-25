@@ -44,10 +44,6 @@ public class ArchitectureInterfaceNode extends ArchitectureItemNode implements C
             return this.ardocoId.compareTo(o.ardocoId);
         }
 
-        if (this.id != null && o.id != null) {
-            return this.id.compareTo(o.id);
-        }
-
         if (this.name != null && o.name != null) {
             return this.name.compareTo(o.name);
         }

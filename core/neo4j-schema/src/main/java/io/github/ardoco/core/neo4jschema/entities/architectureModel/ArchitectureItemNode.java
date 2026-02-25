@@ -4,6 +4,8 @@ package io.github.ardoco.core.neo4jschema.entities.architectureModel;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
+
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -13,33 +15,33 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
 
 @Node("ArchitectureItem")
-public abstract class ArchitectureItemNode {
+public abstract class ArchitectureItemNode extends TraceableNode {
 
 //    @Id
 //    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    protected String id;
+//    protected String id;
 
     protected String name;
 
-    @Id
-    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    protected String ardocoId;
+//    @Id
+//    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
+//    protected String ardocoId;
 
-    @Relationship(type = "TRACES_TO_CODE", direction = Relationship.Direction.OUTGOING)
-    private Set<TraceLinkRelationship> traceLinks = new HashSet<>();
+//    @Relationship(type = "TRACES_TO_CODE", direction = Relationship.Direction.OUTGOING)
+//    private Set<TraceLinkRelationship> traceLinks = new HashSet<>();
 
     public ArchitectureItemNode(String name, String ardocoId) {
+        super(ardocoId);
         this.name = name;
-        this.ardocoId = ardocoId;
-        this.id = ardocoId;
+//        this.ardocoId = ardocoId;
     }
 
     protected ArchitectureItemNode() {
     }
 
-    public String getId() {
-        return id;
-    }
+//    public String getId() {
+//        return id;
+//    }
 
     public String getName() {
         return name;
@@ -49,11 +51,11 @@ public abstract class ArchitectureItemNode {
         return ardocoId;
     }
 
-    public void addTraceLink(TraceLinkRelationship link) {
-        this.traceLinks.add(link);
-    }
-
-    public Set<TraceLinkRelationship> getTraceLinks() {
-        return traceLinks;
-    }
+//    public void addTraceLink(TraceLinkRelationship link) {
+//        this.traceLinks.add(link);
+//    }
+//
+//    public Set<TraceLinkRelationship> getTraceLinks() {
+//        return traceLinks;
+//    }
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 
 import org.slf4j.Logger;
@@ -54,121 +55,93 @@ public class TraceLinkPersistenceService {
         this.archModelRepo = archModelRepo;
     }
 
-    @Transactional
-    public void saveTraceLinks(ArchitectureCodeTraceLink traceLink) {
-        saveGenericLink(traceLink);
-    }
-
     public boolean saveAllTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-        saveGenericLinks(traceLinks);
-//        for (TraceLink<?, ?> link : traceLinks) {
-//            saveGenericLink(link);
-//        }
+        for (TraceLink<?, ?> link : traceLinks) {
+            if (link instanceof ArchitectureCodeTraceLink) {
+                String archId = ((ArchitectureItem) link.getFirstEndpoint()).getId();
+                String codeId = ((CodeItem) link.getSecondEndpoint()).getId();
+                String codeName= ((CodeItem) link.getSecondEndpoint()).getName();
+                this.traceLinkRepo.createTraceLink(archId, codeId, TraceLinkType.ARCHITECTURE_CODE);
+                logger.info("Saving ArchitectureCodeTraceLink between ArchID: {} and CodeID: {} {}", archId, codeId, codeName);
+            }
+        }
+//        saveGenericLinks(traceLinks);
         return true; // TODO: Implement proper error handling and return false if any save operation fails
     }
 
-    private void saveGenericLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-        // Collect all unique IDs that need to be queried
-        Set<String> archIds = new HashSet<>();
-        Set<String> codeIds = new HashSet<>();
-
-        for (TraceLink<?, ?> link : traceLinks) {
-            if (link instanceof ArchitectureCodeTraceLink actl) {
-                archIds.add(((ArchitectureItem) actl.getFirstEndpoint()).getId());
-                codeIds.add(((CodeItem) actl.getSecondEndpoint()).getId());
-            }
-        }
-
-        //Batch fetch all nodes in two queries
-        Map<String, ArchitectureItemNode> archMap = archRepo.findAllByArdocoIdIn(archIds)
-                .stream().collect(Collectors.toMap(ArchitectureItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
-
-        Map<String, CodeItemNode> codeMap = codeRepo.findAllByArdocoIdIn(codeIds)
-                .stream().collect(Collectors.toMap(CodeItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
-
-        // Process links in-memory
-        List<ArchitectureItemNode> updatedNodes = new ArrayList<>();
-        for (TraceLink<?, ?> link : traceLinks) {
-            if (link instanceof ArchitectureCodeTraceLink actl) {
-                ArchitectureItemNode archNode = archMap.get(((ArchitectureItem) actl.getFirstEndpoint()).getId());
-                CodeItemNode codeNode = codeMap.get(((CodeItem) actl.getSecondEndpoint()).getId());
-
-                if (archNode != null && codeNode != null) {
-                    // Use your existing Relationship class
-                    TraceLinkRelationship rel = new TraceLinkRelationship(codeNode, null, TraceLinkType.ARCHITECTURE_CODE);
-                    archNode.addTraceLink(rel);
-                    updatedNodes.add(archNode);
-                }
-            }
-        }
-
-        // Batch Save to avoid "Inferred Type" error
-        if (!updatedNodes.isEmpty()) {
-            archRepo.saveAll(updatedNodes);
-        }
-    }
-
-    private void saveGenericLink(TraceLink<?, ?> link) {
-        if (link instanceof ArchitectureCodeTraceLink) {
-            ArchitectureItem architectureItem = (ArchitectureItem) link.getFirstEndpoint();
-            CodeItem codeItem = (CodeItem) link.getSecondEndpoint();
-            // var archNodeOpt = archRepo.findByArdocoId(architectureItem.getId());
-            var archNodes = archRepo.findByArdocoId(architectureItem.getId());
-            if (archNodes.size() > 1) {
-                logger.error("Found {} duplicate nodes for ID: {}. Printing details...",
-                        archNodes.size(), architectureItem.getId());
-                for (var node : archNodes) {
-                    logger.error("Node internal ID: {} | Property value: {}",
-                            node.getId(), node.getArdocoId());
-                }
-            } else {
-                logger.info("Found {} node(s) for ID: {}", archNodes.size(), architectureItem.getId());
-            }
-
-            var codeNodeOpt = codeRepo.findByArdocoId(codeItem.getId());
-//            if (codeNodeOpt.isPresent()) {
-//                CodeItemNode codeNode = codeNodeOpt.get();
-//                logger.info("Found CodeItemNode with ID: {} and name: {}", codeNode.getArdocoId(), codeNode.getName());
-//            } else {
-//                logger.warn("No CodeItemNode found for ID: {}", codeItem.getId());
+//    private void saveGenericLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+//        // Collect all unique IDs that need to be queried
+//        Set<String> archIds = new HashSet<>();
+//        Set<String> codeIds = new HashSet<>();
+//
+//        for (TraceLink<?, ?> link : traceLinks) {
+//            if (link instanceof ArchitectureCodeTraceLink actl) {
+//                archIds.add(((ArchitectureItem) actl.getFirstEndpoint()).getId());
+//                codeIds.add(((CodeItem) actl.getSecondEndpoint()).getId());
 //            }
+//        }
+//
+//        //Batch fetch all nodes in two queries
+//        Map<String, ArchitectureItemNode> archMap = archRepo.findAllByArdocoIdIn(archIds)
+//                .stream().collect(Collectors.toMap(ArchitectureItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
+//
+//        Map<String, CodeItemNode> codeMap = codeRepo.findAllByArdocoIdIn(codeIds)
+//                .stream().collect(Collectors.toMap(CodeItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
+//
+//        // Process links in-memory
+//        List<ArchitectureItemNode> updatedNodes = new ArrayList<>();
+//        for (TraceLink<?, ?> link : traceLinks) {
+//            if (link instanceof ArchitectureCodeTraceLink actl) {
+//                ArchitectureItemNode archNode = archMap.get(((ArchitectureItem) actl.getFirstEndpoint()).getId());
+//                CodeItemNode codeNode = codeMap.get(((CodeItem) actl.getSecondEndpoint()).getId());
+//
+//                if (archNode != null && codeNode != null) {
+//                    // Use your existing Relationship class
+//                    TraceLinkRelationship rel = new TraceLinkRelationship(codeNode, null, TraceLinkType.ARCHITECTURE_CODE);
+//                    archNode.addTraceLink(rel);
+//                    updatedNodes.add(archNode);
+//                }
+//            }
+//        }
+//
+//        // Batch Save to avoid "Inferred Type" error
+//        if (!updatedNodes.isEmpty()) {
+//            archRepo.saveAll(updatedNodes);
+//        }
+//    }
 
-//            if (archNodeOpt.isPresent() && codeNodeOpt.isPresent()) {
-//                ArchitectureItemNode archNode = archNodeOpt.get();
-            ArchitectureItemNode archNode = (ArchitectureItemNode) archNodes.getFirst();
-            if (codeNodeOpt.isPresent()) {
-                CodeItemNode codeNode = codeNodeOpt.get();
-
-                Double confidence = null;
-                // if (link instanceof ConfidentTraceLink ctl) { confidence = ctl.getProbability(); }
-
-                TraceLinkRelationship rel = new TraceLinkRelationship(codeNode, confidence, TraceLinkType.ARCHITECTURE_CODE);
-                archNode.addTraceLink(rel);
-                archRepo.save(archNode);
-            } else {
-                logger.warn("Skipping TraceLink save: Endpoint not found in DB.");
-            }
-        }
-    }
 
     @Transactional(readOnly = true)
     public Set<ArchitectureCodeTraceLink> loadAllArchitectureCodeTraceLinks() {
-        Set<ArchitectureCodeTraceLink> links = new HashSet<>();
-        List<ArchitectureItemNode> nodes = traceLinkRepo.findAllWithTraceLinks();
-
-        for (ArchitectureItemNode archNode : nodes) {
-            ArchitectureItem archItem = archMapper.mapItem(archNode);
-
-            for (TraceLinkRelationship rel : archNode.getTraceLinks()) {
-                if (TraceLinkType.ARCHITECTURE_CODE.equals(rel.getTraceLinkType())) {
-                    CodeItem codeItem = codeMapper.mapItem(rel.getTargetCodeItem());
-
-                    ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archItem, codeItem);
-                    links.add(link);
-                }
-            }
-        }
-        logger.info("Loaded {} architecture code trace links.", links.size());
-        return links;
+        return traceLinkRepo.findAllByRelationshipType(TraceLinkType.ARCHITECTURE_CODE).stream()
+                .filter(ArchitectureItemNode.class::isInstance)
+                .map(ArchitectureItemNode.class::cast)
+                .flatMap(archNode -> archNode.getOutgoingLinks().stream()
+                        .filter(rel -> rel.getTraceLinkType() == TraceLinkType.ARCHITECTURE_CODE)
+                        .filter(rel -> rel.getTargetNode() instanceof CodeItemNode)
+                        .map(rel -> new ArchitectureCodeTraceLink(
+                                archMapper.mapItem(archNode),
+                                codeMapper.mapItem((CodeItemNode) rel.getTargetNode())
+                        ))
+                )
+                .collect(Collectors.toSet());
+//        Set<ArchitectureCodeTraceLink> links = new HashSet<>();
+//        List<TraceableNode> nodes = traceLinkRepo.findAllByRelationshipType(TraceLinkType.ARCHITECTURE_CODE);
+//
+//        // TODO update the rest of this method
+//        for (ArchitectureItemNode archNode : nodes) {
+//            ArchitectureItem archItem = archMapper.mapItem(archNode);
+//
+//            for (TraceLinkRelationship rel : archNode.getTraceLinks()) {
+//                if (TraceLinkType.ARCHITECTURE_CODE.equals(rel.getTraceLinkType())) {
+//                    CodeItem codeItem = codeMapper.mapItem(rel.getTargetCodeItem());
+//
+//                    ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archItem, codeItem);
+//                    links.add(link);
+//                }
+//            }
+//        }
+//        logger.info("Loaded {} architecture code trace links.", links.size());
+//        return links;
     }
 }

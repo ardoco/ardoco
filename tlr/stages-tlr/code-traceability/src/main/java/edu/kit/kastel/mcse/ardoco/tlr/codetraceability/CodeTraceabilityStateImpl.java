@@ -58,12 +58,23 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public boolean addSadCodeTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        return this.transitiveTraceLinks.addAll(traceLinks);
+        if (PersistenceBridge.isAvailable()) {
+            return PersistenceBridge.getHandler().saveTransitiveTraceLinks(traceLinks);
+        }
+        return false;
+//        return this.transitiveTraceLinks.addAll(traceLinks);
     }
 
     @Override
     public ImmutableSet<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
-        return this.transitiveTraceLinks.toImmutableSet();
+//        return this.transitiveTraceLinks.toImmutableSet();
+        if (PersistenceBridge.isAvailable()) {
+            Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadedLinks = PersistenceBridge.getHandler().loadTransitiveTraceLinks();
+            this.transitiveTraceLinks = Lists.mutable.withAll(loadedLinks);
+            loadedFromPersistence = true;
+        }
+
+        return Sets.immutable.withAll(new LinkedHashSet<>(this.transitiveTraceLinks));
     }
 
 }

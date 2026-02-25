@@ -17,15 +17,14 @@ public class ArchitectureMethodNode extends ArchitectureItemNode implements Comp
     public int compareTo(ArchitectureMethodNode o) {
         if (this == o)
             return 0;
-        if (this.id == null || o.id == null) {
-            if (this.name == null && o.name == null)
-                return 0;
-            if (this.name == null)
-                return -1;
-            if (o.name == null)
-                return 1;
+
+        if (this.ardocoId != null && o.ardocoId != null) {
+            return this.ardocoId.compareTo(o.ardocoId);
+        }
+
+        if (this.name != null && o.name != null) {
             return this.name.compareTo(o.name);
         }
-        return this.id.compareTo(o.id);
+        return 0;
     }
 }

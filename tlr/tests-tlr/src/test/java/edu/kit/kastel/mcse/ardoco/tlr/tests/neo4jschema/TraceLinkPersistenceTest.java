@@ -7,6 +7,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
 import io.github.ardoco.core.neo4jschema.Main;
@@ -43,11 +44,6 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
 
     @Autowired
     private ArchitectureItemRepository archRepo;
-
-    @BeforeEach
-    void cleanDatabase() {
-        archRepo.deleteAll();
-    }
 
     @DynamicPropertySource
     static void neo4jProperties(DynamicPropertyRegistry registry) {

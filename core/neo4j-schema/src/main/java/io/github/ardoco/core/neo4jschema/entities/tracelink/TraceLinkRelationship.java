@@ -19,27 +19,27 @@ public class TraceLinkRelationship {
     private Double confidence;
 
     @TargetNode
-    private CodeItemNode targetCodeItem;
+    private TraceableNode targetNode;
 
     public TraceLinkRelationship() {
     }
 
     // Constructor with confidence
-    public TraceLinkRelationship(CodeItemNode targetCodeItem, Double confidence, TraceLinkType traceLinkType) {
-        this.targetCodeItem = targetCodeItem;
+    public TraceLinkRelationship(TraceableNode targetNode, Double confidence, TraceLinkType traceLinkType) {
+        this.targetNode = targetNode;
         this.confidence = confidence;
         this.traceLinkType = traceLinkType;
     }
 
     // Constructor without confidence (defaults to null)
-    public TraceLinkRelationship(CodeItemNode targetCodeItem, TraceLinkType traceLinkType) {
-        this.targetCodeItem = targetCodeItem;
+    public TraceLinkRelationship(TraceableNode targetNode, TraceLinkType traceLinkType) {
+        this.targetNode = targetNode;
         this.traceLinkType = traceLinkType;
         this.confidence = null;
     }
 
-    public CodeItemNode getTargetCodeItem() {
-        return targetCodeItem;
+    public TraceableNode getTargetNode() {
+        return this.targetNode;
     }
 
     // Returns Double (can be null)

@@ -4,9 +4,11 @@ package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 import java.util.Collection;
 import java.util.SortedSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
@@ -37,5 +39,9 @@ public interface PersistenceHandler {
      * Loads the specific Architecture-Code links from the database.
      */
     Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks();
+
+    boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
+
+    Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks();
 
 }
