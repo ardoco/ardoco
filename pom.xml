@@ -85,7 +85,7 @@
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.21.0</jackson.version>
-    <metrics.version>0.2.0</metrics.version>
+    <metrics.version>0.2.1</metrics.version>
   </properties>
 
   <dependencyManagement>
