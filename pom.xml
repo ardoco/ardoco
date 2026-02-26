@@ -84,7 +84,7 @@
     <mockito.version>5.21.0</mockito.version>
     <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
-    <jackson.version>2.21.0</jackson.version>
+    <jackson.version>2.21.1</jackson.version>
     <metrics.version>0.2.1</metrics.version>
   </properties>
 
