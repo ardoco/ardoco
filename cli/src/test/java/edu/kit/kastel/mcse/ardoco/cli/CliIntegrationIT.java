@@ -269,8 +269,9 @@ class CliIntegrationIT {
             BenchmarkProject project = BenchmarkProject.MEDIASTORE;
             logger.info("Testing ACM file type auto-detection on {}", project.getName());
 
-            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getModelFile().getAbsolutePath(), "--model-format", "PCM", "-c",
-                    project.getCodeFile().getAbsolutePath(), "-o", outputDir.toString() };
+            String[] args = { "-t", "sam-code", "-n", project.getName(), "-m", project.getModelFile().getAbsolutePath(), "--model-format", "PCM", "-c", project
+                    .getCodeFile()
+                    .getAbsolutePath(), "-o", outputDir.toString() };
 
             PluginManager pluginManager = new PluginManager();
             pluginManager.executePlugins(args);

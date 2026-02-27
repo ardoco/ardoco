@@ -114,9 +114,9 @@ public class PluginManager {
      * @return true if execution succeeded, false otherwise
      */
     public boolean executePlugins(String[] args) {
-        CommandLine cmd;
+        CommandLine commandLine;
         try {
-            cmd = parseCommandLine(args);
+            commandLine = parseCommandLine(args);
         } catch (ParseException e) {
             logger.error("Failed to parse command line: {}", e.getMessage());
             printUsage();
@@ -124,42 +124,42 @@ public class PluginManager {
         }
 
         // Show help if requested
-        if (cmd.hasOption("h") || args.length == 0) {
+        if (commandLine.hasOption("h") || args.length == 0) {
             printUsage();
             return true; // Help is not a failure
         }
 
         // Validate required common options
-        if (!cmd.hasOption("o")) {
+        if (!commandLine.hasOption("o")) {
             logger.error("Missing required option: output directory (-o/--output)");
             printUsage();
             return false;
         }
 
-        if (!cmd.hasOption("t")) {
+        if (!commandLine.hasOption("t")) {
             logger.error("Missing required option: task (-t/--task)");
             printUsage();
             return false;
         }
 
-        if (!cmd.hasOption("n")) {
+        if (!commandLine.hasOption("n")) {
             logger.error("Missing required option: project name (-n/--name)");
             printUsage();
             return false;
         }
 
         // Set up output directory
-        File outputDir = new File(cmd.getOptionValue("o"));
+        File outputDir = new File(commandLine.getOptionValue("o"));
         if (!outputDir.exists() && !outputDir.mkdirs()) {
             logger.error("Failed to create output directory: {}", outputDir.getAbsolutePath());
             return false;
         }
 
         // Get project name
-        String projectName = cmd.getOptionValue("n");
+        String projectName = commandLine.getOptionValue("n");
 
         // Execute the selected task
-        String taskValue = cmd.getOptionValue("t");
+        String taskValue = commandLine.getOptionValue("t");
         if (taskValue == null || taskValue.isBlank()) {
             logger.error("Task option provided but value is empty");
             return false;
@@ -167,24 +167,24 @@ public class PluginManager {
         String task = taskValue.toLowerCase();
 
         if (!taskNameToPlugin.containsKey(task)) {
-            logger.error("Unknown task: {}. Available tasks: {}", task, String.join(", ", taskNameToPlugin.keySet()));
+            var availableTasks = String.join(", ", taskNameToPlugin.keySet());
+            logger.error("Unknown task: {}. Available tasks: {}", task, availableTasks);
             return false;
         }
 
         TaskPlugin plugin = taskNameToPlugin.get(task);
 
-        if (!plugin.validateParameters(cmd)) {
-            logger.error("Parameter validation failed for task: {}", task);
+        if (checkForMissingOptions(plugin, commandLine, task)) {
             return false;
         }
 
         // Create execution context
-        TaskContext context = new TaskContext(cmd, projectName, outputDir, SortedMaps.immutable.empty());
+        TaskContext context = new TaskContext(projectName, outputDir, SortedMaps.immutable.empty());
 
         // Execute the plugin
         logger.info("Executing task: {}", task);
         try {
-            plugin.execute(context);
+            plugin.execute(commandLine, context);
         } catch (Exception e) {
             logger.error("Task execution failed: {}", e.getMessage(), e);
             return false;
@@ -193,6 +193,18 @@ public class PluginManager {
         // Cleanup temporary files
         cleanup(outputDir);
         return true;
+    }
+
+    private boolean checkForMissingOptions(TaskPlugin plugin, CommandLine commandLine, String task) {
+        var missingOptions = plugin.getRequiredOptions().select(it -> !commandLine.hasOption(it.getOpt()));
+        for (Option opt : missingOptions) {
+            logger.error("Missing required parameter for task '{}': {} (-{})", task, opt.getDescription(), opt.getOpt());
+        }
+        if (!missingOptions.isEmpty()) {
+            logger.error("Parameter validation failed for task: {}", task);
+            return true;
+        }
+        return false;
     }
 
     /**

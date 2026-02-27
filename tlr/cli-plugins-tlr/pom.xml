@@ -15,49 +15,18 @@
   <description>Task plugin implementations for the ARDoCo CLI, providing SAD-SAM, SAM-Code, and SAD-Code TLR functionality.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>com.google.auto.service</groupId>
-      <artifactId>auto-service</artifactId>
-      <version>1.1.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Google AutoService for ServiceLoader registration -->
-    <dependency>
-      <groupId>com.google.auto.service</groupId>
-      <artifactId>auto-service-annotations</artifactId>
-      <version>1.1.1</version>
-    </dependency>
     <!-- CLI API (provided scope - will be supplied by CLI at runtime) -->
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
       <artifactId>cli-api</artifactId>
-      <version>${ardoco.version}</version>
-      <scope>provided</scope>
+      <version>${revision}</version>
     </dependency>
 
     <!-- TLR Pipeline -->
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>pipeline-tlr</artifactId>
-      <version>${ardoco.version}</version>
-    </dependency>
-
-    <!-- Eclipse Collections -->
-    <dependency>
-      <groupId>org.eclipse.collections</groupId>
-      <artifactId>eclipse-collections</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.collections</groupId>
-      <artifactId>eclipse-collections-api</artifactId>
-    </dependency>
-
-    <!-- Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
+      <version>${revision}</version>
     </dependency>
   </dependencies>
 </project>
