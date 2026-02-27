@@ -102,11 +102,6 @@ public class PluginManager {
         options.addOption(opt);
     }
 
-    /** Pattern for temporary inconsistency detection files to clean up. */
-    private static final String PATTERN_INCONSISTENCY_DETECTION = "inconsistencyDetection_.*\\.txt";
-    /** Pattern for temporary trace links files to clean up. */
-    private static final String PATTERN_TRACE_LINKS = "traceLinks_.*\\.txt";
-
     /**
      * Executes plugins based on command-line arguments.
      *
@@ -190,8 +185,6 @@ public class PluginManager {
             return false;
         }
 
-        // Cleanup temporary files
-        cleanup(outputDir);
         return true;
     }
 
@@ -236,28 +229,6 @@ public class PluginManager {
         System.out.println("  java -jar ardoco-cli.jar -t sad-sam -n MyProject -d doc.txt -m model.repository -o ./output");
         System.out.println("  java -jar ardoco-cli.jar -t sam-code -n MyProject -m model.repository -c ./src -o ./output");
         System.out.println("  java -jar ardoco-cli.jar -t sad-code -n MyProject -d doc.txt -m model.repository -c ./src -o ./output");
-    }
-
-    /**
-     * Cleans up temporary files created during execution.
-     *
-     * @param outputDir the output directory
-     */
-    private void cleanup(File outputDir) {
-        String[] patternsToDelete = { PATTERN_INCONSISTENCY_DETECTION, PATTERN_TRACE_LINKS };
-
-        for (String pattern : patternsToDelete) {
-            File[] files = outputDir.listFiles((dir, name) -> name.matches(pattern));
-            if (files != null) {
-                for (File file : files) {
-                    if (file.delete()) {
-                        logger.debug("Deleted temporary file: {}", file.getName());
-                    } else {
-                        logger.warn("Failed to delete temporary file: {}", file.getAbsolutePath());
-                    }
-                }
-            }
-        }
     }
 
     /**
