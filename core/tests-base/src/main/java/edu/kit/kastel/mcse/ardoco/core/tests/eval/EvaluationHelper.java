@@ -20,10 +20,11 @@ public final class EvaluationHelper {
      */
     public static File loadFileFromResources(String resource) {
         InputStream is = EvaluationHelper.class.getResourceAsStream(resource);
+        String fileEnding = resource.indexOf('.') != -1 ? resource.substring(resource.lastIndexOf('.')) : "tmp";
         if (is == null)
             throw new IllegalArgumentException("Resource not found: " + resource);
         try {
-            File temporaryFile = File.createTempFile("ARDoCo", ".tmp");
+            File temporaryFile = File.createTempFile("ARDoCo", "." + fileEnding);
             temporaryFile.deleteOnExit();
             try (FileOutputStream fos = new FileOutputStream(temporaryFile)) {
                 try (is) {

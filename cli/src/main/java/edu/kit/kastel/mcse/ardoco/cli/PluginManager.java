@@ -189,7 +189,7 @@ public class PluginManager {
     }
 
     private boolean checkForMissingOptions(TaskPlugin plugin, CommandLine commandLine, String task) {
-        var missingOptions = plugin.getRequiredOptions().select(it -> !commandLine.hasOption(it.getOpt()));
+        var missingOptions = plugin.getRequiredOptions().select(it -> !commandLine.hasOption(it));
         for (Option opt : missingOptions) {
             logger.error("Missing required parameter for task '{}': {} (-{})", task, opt.getDescription(), opt.getOpt());
         }
