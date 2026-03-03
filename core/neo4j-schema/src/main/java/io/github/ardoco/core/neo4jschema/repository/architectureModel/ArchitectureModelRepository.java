@@ -22,6 +22,12 @@ public interface ArchitectureModelRepository extends Neo4jRepository<Architectur
     @Query("MATCH (m:ArchitectureModel {modelId: $modelId}) " + "OPTIONAL MATCH p=(m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT|PROVIDES_INTERFACE|REQUIRES_INTERFACE|HAS_METHOD*0..]->(n) " + "RETURN m, collect(nodes(p)), collect(relationships(p))")
     Optional<ArchitectureModelNode> findByModelId(@Param("modelId") String modelId);
 
+    @Query("MATCH (m:ArchitectureModel {modelId: $modelId}) " +
+            "OPTIONAL MATCH (m)-[:HAS_COMPONENT|HAS_INTERFACE]->(child) " +
+            "OPTIONAL MATCH (child)-[:HAS_INTERFACE|HAS_METHOD]->(grandchild) " +
+            "DETACH DELETE m, child, grandchild")
+    void deleteByModelId(@Param("modelId") String modelId);
+
     @Override
     List<ArchitectureModelNode> findAll();
 }

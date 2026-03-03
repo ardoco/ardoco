@@ -1,19 +1,30 @@
 /* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
+import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TransitiveChainQueryResult;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
+
+import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
+import org.springframework.data.neo4j.core.mapping.Neo4jMappingContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +34,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCo
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
 import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkRelationship;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
 import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeItemRepository;
@@ -43,72 +53,79 @@ public class TraceLinkPersistenceService {
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
-    ArchitectureModelRepository archModelRepo;
+    private final ArchitectureModelRepository archModelRepo;
+    private final DocumentationPersistenceService documentationService;
 
-    public TraceLinkPersistenceService(ArchitectureItemRepository archRepo, ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
-            ArchitectureModelMapper archMapper, CodeModelMapper codeMapper) {
+    private final Neo4jClient neo4jClient;
+    private final Neo4jMappingContext mappingContext;
+
+    public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, ArchitectureItemRepository archRepo, ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
+            ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, DocumentationPersistenceService documentationService) {
         this.archRepo = archRepo;
         this.codeRepo = codeRepo;
         this.traceLinkRepo = traceLinkRepo;
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
         this.archModelRepo = archModelRepo;
+        this.documentationService = documentationService;
+        this.neo4jClient = neo4jClient;
+        this.mappingContext = mappingContext;
     }
 
-    public boolean saveAllTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+    public boolean saveTracelinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
         for (TraceLink<?, ?> link : traceLinks) {
-            if (link instanceof ArchitectureCodeTraceLink) {
-                String archId = ((ArchitectureItem) link.getFirstEndpoint()).getId();
-                String codeId = ((CodeItem) link.getSecondEndpoint()).getId();
-                String codeName= ((CodeItem) link.getSecondEndpoint()).getName();
-                this.traceLinkRepo.createTraceLink(archId, codeId, TraceLinkType.ARCHITECTURE_CODE);
-                logger.info("Saving ArchitectureCodeTraceLink between ArchID: {} and CodeID: {} {}", archId, codeId, codeName);
+            if (link instanceof ArchitectureCodeTraceLink archCodeLink) { // is of type TraceLink<ArchitectureItem, CodeItem>
+                saveAtomicLink(archCodeLink, TraceLinkType.ARCHITECTURE_CODE);
+
+            } else if (link instanceof TransitiveTraceLink<?,?> transitive) { // is of type TraceLink<SentenceEntity, ? extends ModelEntity>
+                saveAtomicLink(transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE);
+                saveAtomicLink(transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE);
+
+                logger.info("Saved Transitive path components: {} -> {} -> {}",
+                        transitive.getFirstEndpoint().getId(),
+                        transitive.getFirstTraceLink().getSecondEndpoint().getId(),
+                        transitive.getSecondEndpoint().getId());
+
+                // TODO: Storing the transitive link explicitly is not really needed since we can always reconstruct the transitive link from the atomic links, this is only for completeness
+//                int sentenceNumber = Integer.parseInt(transitive.getFirstEndpoint().getId());
+//                String modelId = transitive.getSecondEndpoint().getId();
+//                this.traceLinkRepo.createSentenceTraceLink(sentenceNumber,modelId, TraceLinkType.TRANSITIVE);
             }
         }
-//        saveGenericLinks(traceLinks);
         return true; // TODO: Implement proper error handling and return false if any save operation fails
     }
 
-//    private void saveGenericLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-//        // Collect all unique IDs that need to be queried
-//        Set<String> archIds = new HashSet<>();
-//        Set<String> codeIds = new HashSet<>();
-//
-//        for (TraceLink<?, ?> link : traceLinks) {
-//            if (link instanceof ArchitectureCodeTraceLink actl) {
-//                archIds.add(((ArchitectureItem) actl.getFirstEndpoint()).getId());
-//                codeIds.add(((CodeItem) actl.getSecondEndpoint()).getId());
-//            }
-//        }
-//
-//        //Batch fetch all nodes in two queries
-//        Map<String, ArchitectureItemNode> archMap = archRepo.findAllByArdocoIdIn(archIds)
-//                .stream().collect(Collectors.toMap(ArchitectureItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
-//
-//        Map<String, CodeItemNode> codeMap = codeRepo.findAllByArdocoIdIn(codeIds)
-//                .stream().collect(Collectors.toMap(CodeItemNode::getArdocoId, n -> n, (n1, n2) -> n1));
-//
-//        // Process links in-memory
-//        List<ArchitectureItemNode> updatedNodes = new ArrayList<>();
-//        for (TraceLink<?, ?> link : traceLinks) {
-//            if (link instanceof ArchitectureCodeTraceLink actl) {
-//                ArchitectureItemNode archNode = archMap.get(((ArchitectureItem) actl.getFirstEndpoint()).getId());
-//                CodeItemNode codeNode = codeMap.get(((CodeItem) actl.getSecondEndpoint()).getId());
-//
-//                if (archNode != null && codeNode != null) {
-//                    // Use your existing Relationship class
-//                    TraceLinkRelationship rel = new TraceLinkRelationship(codeNode, null, TraceLinkType.ARCHITECTURE_CODE);
-//                    archNode.addTraceLink(rel);
-//                    updatedNodes.add(archNode);
-//                }
-//            }
-//        }
-//
-//        // Batch Save to avoid "Inferred Type" error
-//        if (!updatedNodes.isEmpty()) {
-//            archRepo.saveAll(updatedNodes);
-//        }
-//    }
+    // TODO:why do i retrieve 501 transitive tracelinks, when 70 are expected? there are duplicates in the query logic, but might this be because of duplicate models in the database
+
+    private String getArdocoIdForSentence(Sentence sentence) {
+        return String.valueOf(sentence.getSentenceNumber()) + sentence.getText().hashCode();
+    }
+
+    private void saveAtomicLink(TraceLink<?, ?> link, TraceLinkType type) {
+        var source = link.getFirstEndpoint();
+        var target = link.getSecondEndpoint();
+
+        if (source instanceof SentenceEntity sentence) {
+            logger.info("Saving Sentence-Architecture TraceLink: Sentence {} -> Target {}", sentence.getSentence().getSentenceNumber(), target.getId());
+//            traceLinkRepo.createSentenceTraceLink(
+//                    sentence.getSentenceNumber(),
+//                    target.getId(),
+//                    type
+//            );
+            traceLinkRepo.createTraceLink(
+                    getArdocoIdForSentence(sentence.getSentence()),
+                    target.getId(),
+                    type
+            );
+        } else {
+            traceLinkRepo.createTraceLink(
+                    source.getId(),
+                    target.getId(),
+                    type
+            );
+        }
+        //logger.info("Saved TraceLink of type {} between {} and {}", type, source.getId(), target.getId());
+    }
 
 
     @Transactional(readOnly = true)
@@ -125,23 +142,155 @@ public class TraceLinkPersistenceService {
                         ))
                 )
                 .collect(Collectors.toSet());
-//        Set<ArchitectureCodeTraceLink> links = new HashSet<>();
-//        List<TraceableNode> nodes = traceLinkRepo.findAllByRelationshipType(TraceLinkType.ARCHITECTURE_CODE);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<SentenceModelTraceLink> loadAllSentenceModelTraceLinks() {
+        return traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_ARCHITECTURE).stream()
+                .filter(SentenceNode.class::isInstance)
+                .map(SentenceNode.class::cast)
+                .flatMap(sentenceNode -> sentenceNode.getOutgoingLinks().stream()
+                        .filter(rel -> rel.getTraceLinkType() == TraceLinkType.SENTENCE_ARCHITECTURE)
+                        .filter(rel -> rel.getTargetNode() instanceof ArchitectureItemNode)
+                        .map(rel -> new SentenceModelTraceLink(
+                                new SentenceEntity(castSentenceNodeToEntity(sentenceNode)),
+                                archMapper.mapItem((ArchitectureItemNode) rel.getTargetNode())
+                        ))
+                )
+                .collect(Collectors.toSet());
+    }
+
+    private Sentence castSentenceNodeToEntity(SentenceNode sentenceNode) {
+        Text domainText = documentationService.loadPreprocessedText();
+        Sentence sentence = domainText.getSentences()
+                .detect(s -> s.getSentenceNumber() == sentenceNode.getSentenceNumber());
+        return sentence;
+    }
+
+    @Transactional(readOnly = true)
+    public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
+
+        Text domainText = documentationService.loadPreprocessedText();
+        if (domainText == null) {
+            logger.warn("No preprocessed text available, cannot load transitive trace links.");
+            return new HashSet<>();
+        }
+
+        var sentenceMapper = mappingContext.getRequiredMappingFunctionFor(SentenceNode.class);
+        var traceableMapper = mappingContext.getRequiredMappingFunctionFor(TraceableNode.class);
+
+        Collection<TransitiveChainQueryResult> chains = neo4jClient.query(
+                        "MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:Traceable)-[r2:TRACES_TO]->(end:Traceable) " +
+                                "WHERE r1.traceLinkType = $type1 AND r2.traceLinkType = $type2 " +
+                                "RETURN DISTINCT s, mid, end"
+                )
+                .bind(TraceLinkType.SENTENCE_ARCHITECTURE.name()).to("type1")
+                .bind(TraceLinkType.ARCHITECTURE_CODE.name()).to("type2")
+                .fetchAs(TransitiveChainQueryResult.class)
+                .mappedBy((typeSystem, record) -> {
+                    SentenceNode s = sentenceMapper.apply(typeSystem, record.get("s"));
+                    TraceableNode mid = traceableMapper.apply(typeSystem, record.get("mid"));
+                    TraceableNode end = traceableMapper.apply(typeSystem, record.get("end"));
+                    return new TransitiveChainQueryResult(s, mid, end);
+                })
+                .all();
+
+
+
+        return chains.stream()
+                .map(chain -> {
+                    Sentence domainSentence = domainText.getSentences()
+                            .detect(s -> s.getSentenceNumber() == chain.getSentence().getSentenceNumber());
+
+                    if (domainSentence == null) return Optional.<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>>empty();
+
+                    SentenceEntity sentenceEntity = new SentenceEntity(domainSentence);
+
+                    // Use your existing helper methods (Polymorphism/instanceof works here!)
+                    ArchitectureItem archMid = mapToArchitectureItem(chain.getArchitecture());
+                    CodeItem codeEnd = mapToCodeItem(chain.getCode());
+
+                    SentenceModelTraceLink link1 = new SentenceModelTraceLink(sentenceEntity, archMid);
+                    ArchitectureCodeTraceLink link2 = new ArchitectureCodeTraceLink(archMid, codeEnd);
+
+                    return TransitiveTraceLink.createTransitiveTraceLink(link1, link2);
+                })
+                .flatMap(Optional::stream)
+                .collect(Collectors.toSet());
+    }
+
+
+//    @Transactional(readOnly = true)
+//    public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
 //
-//        // TODO update the rest of this method
-//        for (ArchitectureItemNode archNode : nodes) {
-//            ArchitectureItem archItem = archMapper.mapItem(archNode);
 //
-//            for (TraceLinkRelationship rel : archNode.getTraceLinks()) {
-//                if (TraceLinkType.ARCHITECTURE_CODE.equals(rel.getTraceLinkType())) {
-//                    CodeItem codeItem = codeMapper.mapItem(rel.getTargetCodeItem());
+//        var singleLinks = traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_ARCHITECTURE);
+//        logger.info("Found {} single SENTENCE_ARCHITECTURE links in Neo4j", singleLinks.size());
 //
-//                    ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archItem, codeItem);
-//                    links.add(link);
-//                }
-//            }
-//        }
-//        logger.info("Loaded {} architecture code trace links.", links.size());
-//        return links;
+//        var singleLinks2 = traceLinkRepo.findAllByRelationshipType(TraceLinkType.ARCHITECTURE_CODE);
+//        logger.info("Found {} single ARCHITECTURE_CODE links in Neo4j", singleLinks2.size());
+//
+//        Set<ArchitectureCodeTraceLink> existingArchCodeLinks = loadAllArchitectureCodeTraceLinks();
+//        logger.info("Existing ARCHITECTURE_CODE links in Neo4j from method: {}", existingArchCodeLinks.size());
+//
+//        var chains = traceLinkRepo.findTransitiveChainsRaw(
+//                TraceLinkType.SENTENCE_ARCHITECTURE,
+//                TraceLinkType.ARCHITECTURE_CODE
+//        );
+//        logger.info("Found {} transitive chains in Neo4j", chains.size());
+//
+//
+////        Set<SentenceModelTraceLink> existingSentenceArchLinks = loadAllSentenceModelTraceLinks();
+////        logger.info("Existing SENTENCE_ARCHITECTURE links in Neo4j from method: {}", existingSentenceArchLinks.size());
+//
+//
+//
+////        chains = traceLinkRepo.findSentenceArchCodeChains();
+////        logger.info("Found {} potential transitive trace link chains in the database.", chains.size());
+//        Text domainText = documentationService.loadPreprocessedText();
+//
+//        logger.info("HI");
+//        return chains.stream()
+//                .map(chain -> {
+//
+//                    SentenceNode sNode = chain.getSentence();
+//                    TraceableNode midNode = chain.getArchitecture();
+//                    TraceableNode endNode = chain.getCode();
+//
+//
+//                    Sentence sentence = domainText.getSentences()
+//                            .detect(s -> s.getSentenceNumber() == sNode.getSentenceNumber());
+//                    SentenceEntity sentenceEntity = new SentenceEntity(sentence);
+//
+//                    ArchitectureItem archMid = mapToArchitectureItem(midNode);
+//                    CodeItem codeEnd = mapToCodeItem(endNode);
+//
+//                    SentenceModelTraceLink link1 = new SentenceModelTraceLink(sentenceEntity, archMid);
+//                    ArchitectureCodeTraceLink link2 = new ArchitectureCodeTraceLink(archMid, codeEnd);
+//
+//                    return TransitiveTraceLink.createTransitiveTraceLink(link1, link2);
+//                })
+//                .flatMap(Optional::stream)
+//                .collect(Collectors.toSet());
+//    }
+
+    /**
+     * Helper to handle the polymorphic mapping of TraceableNodes to Domain Entities.
+     */
+    private ArchitectureItem mapToArchitectureItem(TraceableNode node) {
+        if (node instanceof ArchitectureItemNode archNode) {
+            return archMapper.mapItem(archNode);
+        }
+        throw new IllegalStateException("Unexpected node type in transitive chain: " + node.getClass() + ", expected ArchitectureItemNode");
+    }
+
+    /**
+     * Helper to handle the polymorphic mapping of TraceableNodes to Domain Entities.
+     */
+    private CodeItem mapToCodeItem(TraceableNode node) {
+        if (node instanceof CodeItemNode codeNode) {
+            return codeMapper.mapItem(codeNode);
+        }
+        throw new IllegalStateException("Unexpected node type in transitive chain: " + node.getClass() + ", expected CodeItemNode");
     }
 }

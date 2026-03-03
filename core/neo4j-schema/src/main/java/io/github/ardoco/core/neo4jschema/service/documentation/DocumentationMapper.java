@@ -36,17 +36,14 @@ public class DocumentationMapper {
         // Global map to resolve dependencies later
         Map<Integer, Neo4jWord> globalWordMap = new HashMap<>();
 
-        // 1. Sort Sentences
         var sentenceNodes = new ArrayList<>(textNode.getSentences());
         sentenceNodes.sort(Comparator.comparingInt(SentenceNode::getSentenceNumber));
 
-        // 2. Convert Sentences (and Words)
         List<Neo4jSentence> sentences = new ArrayList<>();
         for (SentenceNode sNode : sentenceNodes) {
             sentences.add(mapSentence(sNode, globalWordMap));
         }
 
-        // 3. Link Dependencies (Bidirectional)
         linkDependencies(textNode, globalWordMap);
 
         return new Neo4jText(textNode.getArdocoId(), sentences);

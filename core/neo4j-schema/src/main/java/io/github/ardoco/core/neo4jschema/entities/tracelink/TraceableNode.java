@@ -1,6 +1,7 @@
 package io.github.ardoco.core.neo4jschema.entities.tracelink;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 

@@ -2,14 +2,19 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
+import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
+import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
 import io.github.ardoco.core.neo4jschema.Main;
 
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
@@ -56,19 +61,43 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
     void testArcotlPipelineWithNeo4j() throws InterruptedException {
         var runner = new Arcotl(projectName);
         var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, additionalConfigsMap, new File(
-                directory.toFile(), "output"));
+        runner.setUp(
+                new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
+                this.codeConfiguration,
+                additionalConfigsMap,
+                new File(directory.toFile(), "output")
+        );
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
         ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks = result.getSamCodeTraceLinks();
         System.out.println("Trace Links: " + traceLinks.size());
-        // print tracelinks
-
 
         Assertions.assertFalse(traceLinks.isEmpty());
         Assertions.assertEquals(164,traceLinks.size());
+    }
 
+    @Test
+    void testTransArcPipelineWithNeo4j() throws InterruptedException {
+        var runner = new Transarc(projectName);
+        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
+                additionalConfigsMap, new File(outputDir));
+
+        testRunnerAssertions(runner);
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
+
+        ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
+        DocumentationToModelToCodeTlrTask task = DocumentationToModelToCodeTlrTask.TEASTORE;
+        List<Pair<Integer, String>> expectedTraceLinks = task.getExpectedTraceLinks();
+
+
+        System.out.println("Transitive Trace Links: " + traceLinks.size());
+        System.out.println(" Expected Transitive Trace Links: " + expectedTraceLinks.size());
+
+        Assertions.assertFalse(traceLinks.isEmpty());
+        Assertions.assertEquals(expectedTraceLinks.size(), traceLinks.size());
     }
 }

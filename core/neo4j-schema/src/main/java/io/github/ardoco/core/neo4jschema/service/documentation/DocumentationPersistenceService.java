@@ -3,11 +3,15 @@ package io.github.ardoco.core.neo4jschema.service.documentation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import javax.annotation.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
@@ -36,18 +40,45 @@ public class DocumentationPersistenceService {
         return textRepository.existsByArdocoId(identifier);
     }
 
+    @Nullable
     @Transactional(readOnly = true)
     public Text loadPreprocessedText(String identifier) {
-        boolean exists = textRepository.existsByArdocoId(identifier);
-        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
-        if (!exists) {
+//        boolean exists = textRepository.existsByArdocoId(identifier);
+//        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
+//        if (!exists) {
+//            logger.warn("No preprocessed text found for identifier: {}", identifier);
+//            return null;
+//        }
+        Optional<TextNode> textNode = textRepository.findByArdocoId(identifier);
+        if (textNode.isEmpty()) {
             logger.warn("No preprocessed text found for identifier: {}", identifier);
             return null;
         }
-        TextNode textNode = textRepository.findByArdocoId(identifier);
+
         logger.info("loaded documentation for document ID from neo4j: {}", identifier);
         DocumentationMapper mapper = new DocumentationMapper();
+        return mapper.mapToDomain(textNode.get());
+    }
+
+    public Text loadPreprocessedTextBySentence(SentenceNode sentenceNode) {
+        TextNode textNode = textRepository.findTextBySentenceId(sentenceNode.getSentenceNumber());
+        DocumentationMapper mapper = new DocumentationMapper();
         return mapper.mapToDomain(textNode);
+    }
+
+    @Transactional(readOnly = true)
+    @Nullable
+    public Text loadPreprocessedText() {
+        return textRepository.findByArdocoId("PreprocessingData")
+                .map(new DocumentationMapper()::mapToDomain)
+                .orElseGet(() -> {
+                    logger.warn("No preprocessed text found in database!");
+                    return null; // Or return an empty Text object
+                });
+//        TextNode textNode = textRepository.findByArdocoId(PreprocessingData.ID);
+//        logger.info("loaded documentation for document ID from neo4j: {}", PreprocessingData.ID);
+//        DocumentationMapper mapper = new DocumentationMapper();
+//        return mapper.mapToDomain(textNode);
     }
 
     @Transactional

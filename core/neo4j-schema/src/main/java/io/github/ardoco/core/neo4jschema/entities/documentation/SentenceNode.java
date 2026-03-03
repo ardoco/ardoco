@@ -6,18 +6,11 @@ import java.util.List;
 
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 @Node("Sentence")
 public class SentenceNode extends TraceableNode {
-
-//    @Id
-//    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-//    private String id;
 
     private int sentenceNumber;
     private String text;
@@ -35,7 +28,8 @@ public class SentenceNode extends TraceableNode {
     private List<PhraseNode> rootPhrases = new ArrayList<>();
 
     public SentenceNode(int sentenceNumber, String text) {
-        super(java.util.UUID.randomUUID().toString()); // generate a unique ardocoId which will be used as the unique identifier in neo4j
+//        super(java.util.UUID.randomUUID().toString()); // generate a unique ardocoId which will be used as the unique identifier in neo4j
+        super(String.valueOf(sentenceNumber) + text.hashCode());
         this.sentenceNumber = sentenceNumber;
         this.text = text;
     }

@@ -15,5 +15,10 @@ public enum TraceLinkType {
     /**
      * Represents a link from a Sentence to a Code Model Item.
      */
-    SENTENCE_CODE
+    SENTENCE_CODE,
+
+    /**
+     * Represents a link from a Sentence to an Architecture Model Item.
+     */
+    SENTENCE_ARCHITECTURE
 }

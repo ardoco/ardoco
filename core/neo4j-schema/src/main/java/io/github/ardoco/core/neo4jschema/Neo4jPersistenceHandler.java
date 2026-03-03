@@ -2,6 +2,7 @@
 package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -99,27 +100,33 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
         logger.info("Saving SamCodeTracelinks");
-        return this.traceLinkService.saveAllTraceLinks(traceLinks);
+        return this.traceLinkService.saveTracelinks(traceLinks);
     }
 
     @Override
     public Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks() {
         logger.info("Loading SamCodeTracelinks");
         Set<ArchitectureCodeTraceLink> links =  this.traceLinkService.loadAllArchitectureCodeTraceLinks();
-        for (ArchitectureCodeTraceLink architectureCodeTraceLink : links) {
-            logger.info("Loaded ArchitectureCodeTraceLink: " + architectureCodeTraceLink);
-        }
+        logger.info("Loaded {} ArchitectureCodeTraceLinks", links.size());
         return links;
     }
 
     @Override
     public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        return false;
+        logger.info("Saving TransitiveTracelinks");
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
+        logger.info("Saving {} unique TransitiveTracelinks", uniqueLinks.size());
+        return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 
     @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
-        return List.of();
+        logger.info("Loading TransitiveTracelinks");
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> links =  this.traceLinkService.loadTransitiveTraceLinks();
+        for (TraceLink<SentenceEntity, ? extends ModelEntity> link : links) {
+            logger.info("Loaded ArchitectureCodeTraceLink: " + link);
+        }
+        return links;
     }
 
 }

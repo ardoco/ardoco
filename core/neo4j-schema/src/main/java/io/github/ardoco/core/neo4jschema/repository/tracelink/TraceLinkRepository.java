@@ -2,24 +2,23 @@
 package io.github.ardoco.core.neo4jschema.repository.tracelink;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
+
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TransitiveChainQueryResult;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.neo4j.driver.Record;
 
 
 @Repository
 public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, String> {
-
-//    /**
-//     * Fetches all ArchitectureNodes that have a trace link to code, including the relationship and the target code node.
-//     */
-//    @Query("MATCH (a:ArchitectureItem)-[r:TRACES_TO_CODE]->(c:CodeItem) RETURN a, collect(r), collect(c)")
-//    List<ArchitectureItemNode> findAllWithTraceLinks();
 
     /**
      * Finds all TraceableNodes that have a relationship of a specific TraceLinkType.
@@ -32,15 +31,14 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
 
     @Query("MATCH (n:Traceable {ardocoId: $id})-[r:TRACES_TO]-(neighbor:Traceable) " +
             "RETURN n, collect(r), collect(neighbor)")
-    TraceableNode findAllLinksForNode(@Param("id") String id);
+    Optional<TraceableNode> findAllLinksForNode(@Param("id") String id);
+
 
 //    @Query("MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId}) " +
-//            "MERGE (s)-[r:TRACES_TO]->(t) " +
-//            "SET r.confidence = $conf, r.traceLinkType = $type")
-//    void createTraceLink(String sourceId, String targetId, Double conf, TraceLinkType type); //TODO: check if tracelinktype as enum works in the query
-
+//            "MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t) " +
+//            "SET r.confidence = COALESCE($conf, -1.0)")
     @Query("MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId}) " +
-            "MERGE (s)-[r:TRACES_TO]->(t) " +
+            "MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t) " +
             "SET r.confidence = COALESCE($conf, -1.0), " +
             "    r.traceLinkType = $type")
     void createTraceLink(
@@ -53,4 +51,35 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
     default void createTraceLink(String sourceId, String targetId, TraceLinkType type) {
         createTraceLink(sourceId, targetId, -1.0, type);
     }
+
+    @Query("MATCH (s:Sentence {sentenceNumber: $sentenceNumber}), (t:Traceable {ardocoId: $targetId}) " +
+            "MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t) " + // Matching logic here
+            "SET r.confidence = COALESCE($conf, -1.0), " +
+            "    r.traceLinkType = $type")
+    void createSentenceTraceLink(
+            @Param("sentenceNumber") int sentenceNumber,
+            @Param("targetId") String targetId,
+            @Param("conf") Double conf,
+            @Param("type") TraceLinkType type
+    );
+
+    default void createSentenceTraceLink(int sentenceNumber, String targetId, TraceLinkType type) {
+        createSentenceTraceLink(sentenceNumber, targetId, -1.0, type);
+    }
+
+    @Query("MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:Traceable)-[r2:TRACES_TO]->(end:Traceable) " +
+            "WHERE r1.traceLinkType = $type1 AND r2.traceLinkType = $type2 " +
+            "RETURN s AS sentence, mid AS architecture, end AS code")
+    List<TransitiveChainQueryResult> findTransitiveChainsRaw(
+            @Param("type1") TraceLinkType type1,
+            @Param("type2") TraceLinkType type2
+    );
+
+    @Query("MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:ArchitectureItem)-[r2:TRACES_TO]->(end:CodeItem) " +
+            "WHERE r1.traceLinkType = 'SENTENCE_ARCHITECTURE' " +
+            "AND r2.traceLinkType = 'ARCHITECTURE_CODE' " +
+            "RETURN s, r1, mid, r2, end")
+    List<TransitiveChainQueryResult> findSentenceArchCodeChains();
+
+
 }

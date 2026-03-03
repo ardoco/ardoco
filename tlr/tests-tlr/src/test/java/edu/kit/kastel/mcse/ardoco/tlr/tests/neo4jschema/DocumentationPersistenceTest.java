@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Properties;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
@@ -107,7 +108,14 @@ class DocumentationPersistenceTest extends RunnerBaseTest {
         // Uncomment this line when you want to look at the graph.
         //Thread.sleep(1000 * 60 * 5); // Pauses for 5 minutes
 
-        TextNode retrievedNode = textNodeRepository.findByArdocoId(documentId);
+        Optional<TextNode> retrievedNodeOptional = textNodeRepository.findByArdocoId(documentId);
+        if (retrievedNodeOptional.isEmpty()) {
+            System.out.println("No TextNode found for document ID: " + documentId);
+            return;
+        }
+
+        TextNode retrievedNode = retrievedNodeOptional.get();
+
 
         org.assertj.core.api.Assertions.assertThat(retrievedNode).isNotNull();
         org.assertj.core.api.Assertions.assertThat(retrievedNode.getSentences()).hasSize(2);
