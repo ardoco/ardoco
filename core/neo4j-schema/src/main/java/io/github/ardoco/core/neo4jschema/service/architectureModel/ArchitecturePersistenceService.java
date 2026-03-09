@@ -39,10 +39,12 @@ public class ArchitecturePersistenceService {
     @Transactional
     public void saveArchitectureModel(ArchitectureModel model) {
         // fist check if model with same id exists and delete it
-        repository.findByModelId(model.getId()).ifPresent(existingModel -> {
-            logger.info("Deleting existing Architecture Model with ID: {}", model.getId());
-            repository.delete(existingModel);
-        });
+//        repository.findByModelId(model.getId()).ifPresent(existingModel -> {
+//            logger.info("Deleting existing Architecture Model with ID: {}", model.getId());
+//            repository.delete(existingModel);
+//        });
+        logger.info("Preparing database for Architecture Model: {}", model.getId());
+        repository.deleteByModelId(model.getId());
 
         logger.info("Start saving Architecture Model with ID: {}", model.getId());
         ArchitectureModelNode modelNode = new ArchitectureModelNode(model.getId(), model.getMetamodel().name());

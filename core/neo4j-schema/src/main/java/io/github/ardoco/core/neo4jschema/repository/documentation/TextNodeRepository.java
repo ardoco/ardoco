@@ -18,6 +18,12 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
 
     boolean existsByArdocoId(String ardocoId);
 
+    @Query("MATCH (t:Text {ardocoId: $ardocoId}) " +
+            "OPTIONAL MATCH (t)-[:HAS_SENTENCE]->(s) " +
+            "OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE*0..2]->(sub) " +
+            "DETACH DELETE t, s, sub")
+    Long deleteByArdocoId(@Param("ardocoId") String ardocoId);
+
     @Query("MATCH (t:Text)-[:HAS_SENTENCE]->(s:Sentence {ardocoId: $sentenceId}) RETURN t")
     TextNode findTextBySentenceId(@Param("sentenceNumber") int sentenceNumber);
 }

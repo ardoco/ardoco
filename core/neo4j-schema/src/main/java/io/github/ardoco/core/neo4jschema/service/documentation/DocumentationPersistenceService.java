@@ -83,6 +83,16 @@ public class DocumentationPersistenceService {
 
     @Transactional
     public void savePreprocessedText(Text domainText, String documentId) {
+        logger.info("Preparing database for Architecture Model: {}", documentId);
+
+        Optional<TextNode> existingNode = textRepository.findByArdocoId(documentId);
+        if (existingNode.isPresent()) {
+            logger.info("Existing documentation found for document ID: {}. It will be deleted and replaced.", documentId);
+            Long deletedCount = textRepository.deleteByArdocoId(documentId);
+            long numDeleted = (deletedCount != null) ? deletedCount : 0L;
+            logger.info("Deleted {} existing nodes for document ID: {}", numDeleted, documentId);
+        }
+
         TextNode textNode = new TextNode(documentId);
         Map<Integer, WordNode> wordIndexMap = new HashMap<>(); // Global Map: Position -> Node
         Map<Phrase, PhraseNode> phraseCache = new HashMap<>();

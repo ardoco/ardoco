@@ -11,12 +11,15 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
+/**
+ * This class represents a Sentence in the Neo4j schema.
+ * It implements the Sentence interface from the core API and is used to map data from the Neo4j database to the domain model.
+ */
 public class Neo4jSentence implements Sentence {
 
     private final int sentenceNumber;
     private final String text;
 
-    // Mutable during mapping phase, finalized via setters
     private List<Neo4jWord> words;
     private List<Phrase> phrases;
 
@@ -25,7 +28,6 @@ public class Neo4jSentence implements Sentence {
         this.text = text;
     }
 
-    // Setters used by Mapper
     public void setWords(List<Neo4jWord> words) {
         this.words = words;
     }
@@ -54,7 +56,6 @@ public class Neo4jSentence implements Sentence {
         return Lists.immutable.withAll(phrases);
     }
 
-    // Equals and HashCode implementations...
     @Override
     public boolean equals(Object o) {
         if (this == o)

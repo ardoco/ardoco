@@ -58,7 +58,11 @@ public class CodePersistenceService {
 
     @Transactional
     public void saveCodeModel(CodeModel model) {
+        logger.info("Preparing database for Architecture Model: {}", model.getId());
+        repository.deleteByModelId(model.getId());
+
         logger.info("saving code model");
+
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
         Map<String, CodeItemNode> cache = new HashMap<>();
 

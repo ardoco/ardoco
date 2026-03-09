@@ -90,6 +90,8 @@ public class TraceLinkPersistenceService {
 //                int sentenceNumber = Integer.parseInt(transitive.getFirstEndpoint().getId());
 //                String modelId = transitive.getSecondEndpoint().getId();
 //                this.traceLinkRepo.createSentenceTraceLink(sentenceNumber,modelId, TraceLinkType.TRANSITIVE);
+            } else if (link instanceof SentenceModelTraceLink sentenceArchLink) { // is of type TraceLink<SentenceEntity, ArchitectureItem>
+                saveAtomicLink(sentenceArchLink, TraceLinkType.SENTENCE_ARCHITECTURE);
             }
         }
         return true; // TODO: Implement proper error handling and return false if any save operation fails

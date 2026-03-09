@@ -9,7 +9,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
+
+import opennlp.tools.sentdetect.SentenceModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +130,21 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
             logger.info("Loaded ArchitectureCodeTraceLink: " + link);
         }
         return links;
+    }
+
+    @Override
+    public Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
+        logger.info("Loading SentenceModelTraceLinks");
+        Set<SentenceModelTraceLink> links =  this.traceLinkService.loadAllSentenceModelTraceLinks();
+        logger.info("Loaded {} SentenceModelTraceLinks", links.size());
+        return links;
+    }
+
+    @Override
+    public boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
+        logger.info("Saving {} unique SentenceModelTracelinks", uniqueLinks.size());
+        return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 
 }

@@ -12,6 +12,10 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.*;
 
+/**
+ * Adapter class for Phrase entities stored in Neo4j.
+ * This class implements the Phrase interface and provides methods to access the properties of a phrase.
+ */
 public class Neo4jPhrase implements Phrase {
 
     private final String text;
@@ -20,7 +24,6 @@ public class Neo4jPhrase implements Phrase {
     private final ImmutableList<Word> containedWords;
     private final ImmutableList<Phrase> subPhrases;
 
-    // Constructor takes resolved objects
     public Neo4jPhrase(String text, String phraseTypeStr, Neo4jSentence parentSentence, List<Neo4jWord> containedWords, List<Phrase> subPhrases) {
         this.text = text;
         this.phraseType = PhraseType.get(phraseTypeStr);
@@ -29,7 +32,6 @@ public class Neo4jPhrase implements Phrase {
         this.subPhrases = Lists.immutable.withAll(subPhrases);
     }
 
-    // ... Getters and logic (isSubphraseOf, etc.) same as before ...
     @Override
     public int getSentenceNumber() {
         return parentSentence.getSentenceNumber();
@@ -55,7 +57,6 @@ public class Neo4jPhrase implements Phrase {
         return subPhrases;
     }
 
-    // ... Copy remaining logic from previous Neo4jPhrase ...
     @Override
     public boolean isSuperphraseOf(Phrase other) {
         return this.getContainedWords().containsAll((Collection<?>) other.getContainedWords()) && this.getContainedWords().size() > other.getContainedWords()

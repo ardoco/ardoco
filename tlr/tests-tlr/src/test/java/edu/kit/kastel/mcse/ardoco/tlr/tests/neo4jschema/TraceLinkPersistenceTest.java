@@ -13,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
 import io.github.ardoco.core.neo4jschema.Main;
@@ -20,6 +21,7 @@ import io.github.ardoco.core.neo4jschema.Main;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,5 +101,22 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
 
         Assertions.assertFalse(traceLinks.isEmpty());
         Assertions.assertEquals(expectedTraceLinks.size(), traceLinks.size());
+    }
+
+    @Test
+    void testSwattrPipelineWithNeo4j() throws InterruptedException {
+        var runner = new Swattr(projectName);
+        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
+                (ImmutableSortedMap<String, String>) additionalConfigsMap, outputDir);
+
+        testRunnerAssertions(runner);
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
+
+        ImmutableList<TraceLink<SentenceEntity, ModelEntity>> links = result.getArchitectureTraceLinks();
+        System.out.println("Architecture Trace Links: " + links.size());
+        Assertions.assertEquals(20, links.size());
+
     }
 }

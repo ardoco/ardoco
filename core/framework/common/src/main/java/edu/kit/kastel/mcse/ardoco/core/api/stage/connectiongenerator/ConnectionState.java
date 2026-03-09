@@ -1,6 +1,9 @@
 /* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
@@ -13,6 +16,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * State interface for connection generation.
@@ -34,17 +40,24 @@ public interface ConnectionState extends IConfigurable {
      * @return list of trace links within this connection state
      */
     default ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinks() {
-        MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
-        for (var instanceLink : this.getInstanceLinks()) {
-            var textualInstance = instanceLink.getFirstEndpoint();
-            for (var nm : textualInstance.getNameMappings()) {
-                for (var word : nm.getWords()) {
-                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
-                    traceLinks.add(traceLink);
-                }
-            }
+//        MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
+//        for (var instanceLink : this.getInstanceLinks()) {
+//            var textualInstance = instanceLink.getFirstEndpoint();
+//            for (var nm : textualInstance.getNameMappings()) {
+//                for (var word : nm.getWords()) {
+//                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
+//                    traceLinks.add(traceLink);
+//                }
+//            }
+//        }
+//        return traceLinks.toImmutable();
+        //TODO: call neo4j here to retrieve tracelinks
+        if (PersistenceBridge.isAvailable()) {
+            Collection<? extends TraceLink<SentenceEntity, ModelEntity>> loadedLinks =
+                    PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
+            return Sets.immutable.withAll(new LinkedHashSet<>(loadedLinks));
         }
-        return traceLinks.toImmutable();
+        return Sets.immutable.empty();
     }
 
     /**

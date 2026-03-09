@@ -3,7 +3,13 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
+
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -14,6 +20,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+
+import org.eclipse.collections.api.set.MutableSet;
 
 /**
  * The connection state encapsulates all connections between the model extraction state and the recommendation state. These connections are stored in instance
@@ -65,6 +73,22 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                 var newTypeMappings = newInstanceLink.getFirstEndpoint().getTypeMappings();
                 existingInstanceLink.getFirstEndpoint().addMappings(newNameMappings, newTypeMappings);
             }
+        }
+
+        // call prepare tracelinks to persist them with the persistence bridge
+        MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
+        for (var instanceLink : this.getInstanceLinks()) {
+            var textualInstance = instanceLink.getFirstEndpoint();
+            for (var nm : textualInstance.getNameMappings()) {
+                for (var word : nm.getWords()) {
+                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
+                    traceLinks.add(traceLink);
+                }
+            }
+        }
+
+        if (PersistenceBridge.isAvailable()) {
+            PersistenceBridge.getHandler().saveSentenceModelTraceLinks(traceLinks);
         }
     }
 

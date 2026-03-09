@@ -10,13 +10,15 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
+/**
+ * This class serves as an adapter to convert Neo4j data into the Text interface expected by the rest of the ARDoCo application.
+ */
 public class Neo4jText implements Text {
 
-    private final String id; // kept just in case
+    private final String id; // keep just in case
     private final ImmutableList<Sentence> sentences;
     private final ImmutableList<Word> words;
 
-    // Constructor is now clean and data-driven
     public Neo4jText(String id, List<Neo4jSentence> sentences) {
         this.id = id;
         this.sentences = Lists.immutable.withAll(sentences);

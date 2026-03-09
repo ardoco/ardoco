@@ -9,6 +9,11 @@ import org.eclipse.collections.impl.factory.Multimaps;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.*;
 
+/**
+ * Adapter class that implements the Word interface and is backed by Neo4j data.
+ * This class is designed
+ * to be constructed with raw data (e.g., from a Neo4j query) rather than directly from Neo4j Nodes, to keep it decoupled from the database layer.
+ */
 public class Neo4jWord implements Word {
 
     private final int position;
