@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import opennlp.tools.sentdetect.SentenceModel;
 
 import org.slf4j.Logger;
@@ -116,19 +118,19 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        logger.info("Saving TransitiveTracelinks");
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
+        Set<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = traceLinks.stream()
+                .filter(TransitiveTraceLink.class::isInstance)
+                .map(link -> (TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>) link)
+                .collect(Collectors.toSet());
         logger.info("Saving {} unique TransitiveTracelinks", uniqueLinks.size());
-        return this.traceLinkService.saveTracelinks(uniqueLinks);
+        return this.traceLinkService.saveTransitiveTracelinks(uniqueLinks);
     }
 
     @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
         logger.info("Loading TransitiveTracelinks");
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> links =  this.traceLinkService.loadTransitiveTraceLinks();
-        for (TraceLink<SentenceEntity, ? extends ModelEntity> link : links) {
-            logger.info("Loaded ArchitectureCodeTraceLink: " + link);
-        }
+        logger.info("Loaded {} TransitiveTraceLinks", links.size());
         return links;
     }
 

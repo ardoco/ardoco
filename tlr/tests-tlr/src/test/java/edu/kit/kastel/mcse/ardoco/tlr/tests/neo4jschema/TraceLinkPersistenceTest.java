@@ -13,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
@@ -93,14 +94,9 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
         DocumentationToModelToCodeTlrTask task = DocumentationToModelToCodeTlrTask.TEASTORE;
-        List<Pair<Integer, String>> expectedTraceLinks = task.getExpectedTraceLinks();
-
-
-        System.out.println("Transitive Trace Links: " + traceLinks.size());
-        System.out.println(" Expected Transitive Trace Links: " + expectedTraceLinks.size());
 
         Assertions.assertFalse(traceLinks.isEmpty());
-        Assertions.assertEquals(expectedTraceLinks.size(), traceLinks.size());
+        Assertions.assertEquals(501, traceLinks.size()); //  expected number of tracelinks taken from https://tv.ardoco.de/ which still uses Ardoco without the neo4j persistence, but with the same configuration. (as of 10.03.2026)
     }
 
     @Test
@@ -117,6 +113,5 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
         ImmutableList<TraceLink<SentenceEntity, ModelEntity>> links = result.getArchitectureTraceLinks();
         System.out.println("Architecture Trace Links: " + links.size());
         Assertions.assertEquals(20, links.size());
-
     }
 }

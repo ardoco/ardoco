@@ -65,7 +65,7 @@ public final class TransitiveTraceLink<A extends Entity, B extends Entity> exten
             return false;
         }
         return Objects.equals(this.getFirstTraceLink(), other.getFirstTraceLink()) && //
-                Objects.equals(this.getSecondTraceLink(), other.getSecondTraceLink()) && //
-                Objects.equals(this.asPair(), other.asPair());
+                Objects.equals(this.getSecondTraceLink(), other.getSecondTraceLink()); //&& //
+//                Objects.equals(this.asPair(), other.asPair());
     }
 }

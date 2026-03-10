@@ -47,7 +47,6 @@ public interface PersistenceHandler {
      *
      * @param text      the preprocessed text to save
      * @param identifier the identifier for the preprocessed text which can also be used to load it later
-     * @return true if a model for the given metamodel is stored, false otherwise
      */
     void savePreprocessedText(Text text, String identifier);
 
