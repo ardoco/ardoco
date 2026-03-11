@@ -43,10 +43,8 @@ public class ArchitecturePersistenceService {
 //            logger.info("Deleting existing Architecture Model with ID: {}", model.getId());
 //            repository.delete(existingModel);
 //        });
-        logger.info("Preparing database for Architecture Model: {}", model.getId());
         repository.deleteByModelId(model.getId());
 
-        logger.info("Start saving Architecture Model with ID: {}", model.getId());
         ArchitectureModelNode modelNode = new ArchitectureModelNode(model.getId(), model.getMetamodel().name());
 
         Map<String, ArchitectureComponentNode> componentCache = new HashMap<>();
@@ -63,13 +61,11 @@ public class ArchitecturePersistenceService {
         }
 
         repository.save(modelNode);
-        logger.info("Finished saving Architecture Model with ID: {}", model.getId());
     }
 
     private ArchitectureComponentNode mapComponent(ArchitectureComponent domainComp, Map<String, ArchitectureComponentNode> compCache,
             Map<String, ArchitectureInterfaceNode> interfaceCache) {
 
-        logger.info("Mapping Architecture Component: {} (ID: {})", domainComp.getName(), domainComp.getId());
         if (compCache.containsKey(domainComp.getId())) {
             return compCache.get(domainComp.getId());
         }
@@ -96,7 +92,6 @@ public class ArchitecturePersistenceService {
     }
 
     private ArchitectureInterfaceNode mapInterface(ArchitectureInterface domainInterface, Map<String, ArchitectureInterfaceNode> ifaceCache) {
-        logger.info("Mapping Architecture Interface: {} (ID: {})", domainInterface.getName(), domainInterface.getId());
         if (ifaceCache.containsKey(domainInterface.getId())) {
             return ifaceCache.get(domainInterface.getId());
         }

@@ -55,7 +55,6 @@ public class DocumentationPersistenceService {
             return null;
         }
 
-        logger.info("loaded documentation for document ID from neo4j: {}", identifier);
         DocumentationMapper mapper = new DocumentationMapper();
         return mapper.mapToDomain(textNode.get());
     }
@@ -83,7 +82,6 @@ public class DocumentationPersistenceService {
 
     @Transactional
     public void savePreprocessedText(Text domainText, String documentId) {
-        logger.info("Preparing database for Architecture Model: {}", documentId);
 
         Optional<TextNode> existingNode = textRepository.findByArdocoId(documentId);
         if (existingNode.isPresent()) {

@@ -58,9 +58,7 @@ public class CodePersistenceService {
 
     @Transactional
     public void saveCodeModel(CodeModel model) {
-        logger.info("Preparing database for Architecture Model: {}", model.getId());
         repository.deleteByModelId(model.getId());
-
         logger.info("saving code model");
 
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
@@ -88,7 +86,6 @@ public class CodePersistenceService {
                 modelNode.addContent(mapToNode(item, cache));
             }
         }
-        logger.info("about to save code model");
         repository.save(modelNode);
     }
 

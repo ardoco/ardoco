@@ -9,6 +9,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -90,7 +91,8 @@ public interface PersistenceHandler {
     boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
 
     /**
-     * Loads a collection of transitive tracelinks between sentences and model entities.
+     * Loads a collection of transitive tracelinks between sentences and code model entities.
+     * As well as direct links between sentences and Code Model entities
      *
      * @return the loaded transitive tracelinks
      */
@@ -110,4 +112,8 @@ public interface PersistenceHandler {
      * @return true if the trace links were successfully saved, false otherwise
      */
     boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
+
+    boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies);
+
+    Collection<? extends Inconsistency> getInconsistencies();
 }

@@ -10,11 +10,12 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
-import opennlp.tools.sentdetect.SentenceModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,13 +105,13 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-        logger.info("Saving SamCodeTracelinks");
+        logger.info("Saving ArchitectureCodeTraceLinks");
         return this.traceLinkService.saveTracelinks(traceLinks);
     }
 
     @Override
     public Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks() {
-        logger.info("Loading SamCodeTracelinks");
+        logger.info("Loading ArchitectureCodeTraceLinks");
         Set<ArchitectureCodeTraceLink> links =  this.traceLinkService.loadAllArchitectureCodeTraceLinks();
         logger.info("Loaded {} ArchitectureCodeTraceLinks", links.size());
         return links;
@@ -118,27 +119,45 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        Set<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = traceLinks.stream()
+
+        // save real transitive tracelinks
+        Set<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> transitiveTraceLinks = traceLinks.stream()
                 .filter(TransitiveTraceLink.class::isInstance)
                 .map(link -> (TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>) link)
                 .collect(Collectors.toSet());
-        logger.info("Saving {} unique TransitiveTracelinks", uniqueLinks.size());
-        return this.traceLinkService.saveTransitiveTracelinks(uniqueLinks);
+        logger.info("Saving {} unique TransitiveTracelinks", transitiveTraceLinks.size());
+        this.traceLinkService.saveTransitiveTracelinks(transitiveTraceLinks);
+
+        Set<SentenceModelTraceLink> sentenceModelTraceLinks = traceLinks.stream()
+                .filter(SentenceModelTraceLink.class::isInstance)
+                .map(link -> (SentenceModelTraceLink) link)
+                .filter(link -> link.getSecondEndpoint() instanceof CodeItem)
+                .collect(Collectors.toSet());
+        logger.info("Saving {} unique SentenceCodeModelTracelinks", sentenceModelTraceLinks.size());
+        this.traceLinkService.saveTracelinks(sentenceModelTraceLinks);
+        return true;
     }
 
     @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
         logger.info("Loading TransitiveTracelinks");
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> links =  this.traceLinkService.loadTransitiveTraceLinks();
-        logger.info("Loaded {} TransitiveTraceLinks", links.size());
-        return links;
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks =  this.traceLinkService.loadTransitiveTraceLinks();
+        logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
+        Set<SentenceModelTraceLink> directLinks = this.loadSentenceModelTraceLinks();
+        logger.info("Loaded {} SentenceCodeModelTraceLinks", directLinks.size());
+        transitiveLinks.addAll(directLinks);
+        return transitiveLinks;
     }
 
     @Override
-    public Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
+    public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks");
-        Set<SentenceModelTraceLink> links =  this.traceLinkService.loadAllSentenceModelTraceLinks();
-        logger.info("Loaded {} SentenceModelTraceLinks", links.size());
+        Set<SentenceModelTraceLink> links =  this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
+        logger.info("Loaded {} SentenceArchitectureModelTraceLinks", links.size());
+        Set<SentenceModelTraceLink> codeLinks =  this.traceLinkService.loadAllSentenceCodeModelTraceLinks();
+        logger.info("Loaded {} SentenceCodeModelTraceLinks", codeLinks.size());
+        links.addAll(codeLinks);
+        logger.info("=> Loaded {} SentenceModelTraceLinks in total.", links.size());
         return links;
     }
 
@@ -147,6 +166,16 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
         logger.info("Saving {} unique SentenceModelTracelinks", uniqueLinks.size());
         return this.traceLinkService.saveTracelinks(uniqueLinks);
+    }
+
+    @Override
+    public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        return false;
+    }
+
+    @Override
+    public Collection<? extends Inconsistency> getInconsistencies() {
+        return List.of();
     }
 
 }

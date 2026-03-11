@@ -3,7 +3,6 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,7 +58,8 @@ public class TraceLinkPersistenceService {
     private final Neo4jClient neo4jClient;
     private final Neo4jMappingContext mappingContext;
 
-    public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, ArchitectureItemRepository archRepo, ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
+    public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext,
+            ArchitectureItemRepository archRepo, ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo,
             ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, DocumentationPersistenceService documentationService) {
         this.archRepo = archRepo;
         this.codeRepo = codeRepo;
@@ -83,8 +83,16 @@ public class TraceLinkPersistenceService {
 
                 // Storing the transitive link explicitly is not really needed since we can always reconstruct the transitive link from the atomic links, this is only for completeness
 
-            } else if (link instanceof SentenceModelTraceLink sentenceArchLink) { // is of type TraceLink<SentenceEntity, ArchitectureItem>
-                saveAtomicLink(sentenceArchLink, TraceLinkType.SENTENCE_ARCHITECTURE);
+            } else if (link instanceof SentenceModelTraceLink modelTraceLink) {// is of type TraceLink<SentenceEntity, ArchitectureItem>
+                // Check if the model is architecture or code
+                var second = modelTraceLink.getSecondEndpoint();
+                if (second instanceof ArchitectureItem) {
+                    saveAtomicLink(modelTraceLink, TraceLinkType.SENTENCE_ARCHITECTURE);
+                } else if (second instanceof CodeItem) {
+                    saveAtomicLink(modelTraceLink, TraceLinkType.SENTENCE_CODE);
+                } else {
+                    logger.warn("Unsupported trace link type for SentenceModelTraceLink with second endpoint of type {}. Skipping link: {}", second.getClass(), modelTraceLink);
+                }
             }
         }
         return true; // TODO: Implement proper error handling and return false if any save operation fails
@@ -146,7 +154,7 @@ public class TraceLinkPersistenceService {
     }
 
     @Transactional(readOnly = true)
-    public Set<SentenceModelTraceLink> loadAllSentenceModelTraceLinks() {
+    public Set<SentenceModelTraceLink> loadAllSentenceArchitectureModelTraceLinks() {
         Text domainText = documentationService.loadPreprocessedText();
         return traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_ARCHITECTURE).stream()
                 .filter(SentenceNode.class::isInstance)
@@ -157,6 +165,23 @@ public class TraceLinkPersistenceService {
                         .map(rel -> new SentenceModelTraceLink(
                                 new SentenceEntity(castSentenceNodeToEntity(sentenceNode, domainText)),
                                 archMapper.mapItem((ArchitectureItemNode) rel.getTargetNode())
+                        ))
+                )
+                .collect(Collectors.toSet());
+    }
+
+    @Transactional(readOnly = true)
+    public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks() {
+        Text domainText = documentationService.loadPreprocessedText();
+        return traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_CODE).stream()
+                .filter(SentenceNode.class::isInstance)
+                .map(SentenceNode.class::cast)
+                .flatMap(sentenceNode -> sentenceNode.getOutgoingLinks().stream()
+                        .filter(rel -> rel.getTraceLinkType() == TraceLinkType.SENTENCE_CODE)
+                        .filter(rel -> rel.getTargetNode() instanceof CodeItemNode)
+                        .map(rel -> new SentenceModelTraceLink(
+                                new SentenceEntity(castSentenceNodeToEntity(sentenceNode, domainText)),
+                                codeMapper.mapItem((CodeItemNode) rel.getTargetNode())
                         ))
                 )
                 .collect(Collectors.toSet());
@@ -206,8 +231,6 @@ public class TraceLinkPersistenceService {
                     if (domainSentence == null) return Optional.<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>>empty();
 
                     SentenceEntity sentenceEntity = new SentenceEntity(domainSentence);
-
-                    // Use your existing helper methods (Polymorphism/instanceof works here!)
                     ArchitectureItem archMid = mapToArchitectureItem(chain.getArchitecture());
                     CodeItem codeEnd = mapToCodeItem(chain.getCode());
 

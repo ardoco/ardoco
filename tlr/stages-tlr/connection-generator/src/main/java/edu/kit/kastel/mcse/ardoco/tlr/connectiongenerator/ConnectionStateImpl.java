@@ -2,8 +2,11 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
+import java.util.Collection;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
@@ -62,9 +65,17 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Override
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
+        boolean shouldPersist = PersistenceBridge.isAvailable() && modelEntity instanceof ArchitectureEntity;
+        MutableSet<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Sets.mutable.empty();
+
         var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
+
+            if (shouldPersist) {
+                linksToPersist.addAll(generateLinksFromInstance(recommendedModelInstance, modelEntity));
+            }
+
         } else {
             var optionalInstanceLink = this.instanceLinks.stream().filter(il -> il.equals(newInstanceLink)).findFirst();
             if (optionalInstanceLink.isPresent()) {
@@ -72,25 +83,32 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                 var newNameMappings = newInstanceLink.getFirstEndpoint().getNameMappings();
                 var newTypeMappings = newInstanceLink.getFirstEndpoint().getTypeMappings();
                 existingInstanceLink.getFirstEndpoint().addMappings(newNameMappings, newTypeMappings);
-            }
-        }
 
-        // call prepare tracelinks to persist them with the persistence bridge
-        MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
-        for (var instanceLink : this.getInstanceLinks()) {
-            var textualInstance = instanceLink.getFirstEndpoint();
-            for (var nm : textualInstance.getNameMappings()) {
-                for (var word : nm.getWords()) {
-                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
-                    traceLinks.add(traceLink);
+                if (shouldPersist) {
+                    for (var nm : newNameMappings) {
+                        linksToPersist.addAll(generateLinksFromNameMapping(nm, modelEntity));
+                    }
                 }
             }
         }
 
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.getHandler().saveSentenceModelTraceLinks(traceLinks);
+        if (!linksToPersist.isEmpty()) {
+            PersistenceBridge.getHandler().saveSentenceModelTraceLinks(linksToPersist);
         }
     }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {
+        return recommendedInstance.getNameMappings().stream()
+                .flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream())
+                .toList();
+    }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromNameMapping(NounMapping nm, ModelEntity modelEntity) {
+        return nm.getWords().stream()
+                .map(word -> new SentenceModelTraceLink(word.getSentence(), modelEntity))
+                .toList();
+    }
+
 
     /**
      * Checks if an instance link is already contained by the state.

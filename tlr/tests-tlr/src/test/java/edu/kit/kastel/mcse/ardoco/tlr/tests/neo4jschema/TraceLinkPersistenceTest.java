@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
@@ -93,10 +94,10 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
         Assertions.assertNotNull(result);
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
-        DocumentationToModelToCodeTlrTask task = DocumentationToModelToCodeTlrTask.TEASTORE;
-
         Assertions.assertFalse(traceLinks.isEmpty());
-        Assertions.assertEquals(501, traceLinks.size()); //  expected number of tracelinks taken from https://tv.ardoco.de/ which still uses Ardoco without the neo4j persistence, but with the same configuration. (as of 10.03.2026)
+
+        ImmutableList<TransitiveTraceLink<?,?>> realTransitiveTraceLinks = traceLinks.select(link -> link instanceof TransitiveTraceLink<?, ?>).collect(link -> (TransitiveTraceLink<?, ?>) link);
+        Assertions.assertEquals(501, realTransitiveTraceLinks.size()); //  expected number of tracelinks taken from https://tv.ardoco.de/ which still uses Ardoco without the neo4j persistence, but with the same configuration. (as of 10.03.2026)
     }
 
     @Test
@@ -113,5 +114,22 @@ public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
         ImmutableList<TraceLink<SentenceEntity, ModelEntity>> links = result.getArchitectureTraceLinks();
         System.out.println("Architecture Trace Links: " + links.size());
         Assertions.assertEquals(20, links.size());
+    }
+
+    @Test
+    void testArDoCodePipelineWithNeo4j() throws InterruptedException {
+        var runner = new Ardocode(projectName);
+        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        runner.setUp(new File(inputText), codeConfiguration, additionalConfigsMap, new File(outputDir));
+
+        testRunnerAssertions(runner);
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
+        ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> links = result.getSadCodeTraceLinks();
+
+        System.out.println("Trace Links: " + links.size());
+
+        Assertions.assertFalse(links.isEmpty());
+        Assertions.assertEquals(2674, links.size());
     }
 }

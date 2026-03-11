@@ -72,7 +72,6 @@ public class CodeModelMapper {
             rootItems.add(repository.getCodeItem(rootItemNode.getArdocoId()));
         }
 
-        logger.info("mapped model to domain with {} code items", repository.getRepository().size());
         if (Metamodel.CODE_WITH_COMPILATION_UNITS.name().equals(node.getMetamodel())) {
             return new CodeModelWithCompilationUnits(node.getModelId(), repository, rootItems);
         } else if (Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES.name().equals(node.getMetamodel())) {

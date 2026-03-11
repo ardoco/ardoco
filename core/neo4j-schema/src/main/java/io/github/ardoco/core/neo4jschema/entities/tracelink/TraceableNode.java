@@ -1,5 +1,7 @@
 package io.github.ardoco.core.neo4jschema.entities.tracelink;
 
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.InconsistencyNode;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -21,6 +23,9 @@ public abstract class TraceableNode {
     // Incoming links: "Someone else points to me"
     @Relationship(type = "TRACES_TO", direction = Relationship.Direction.INCOMING)
     protected Set<TraceLinkRelationship> incomingLinks = new HashSet<>();
+
+    @Relationship(type = "HAS_INCONSISTENCY", direction = Relationship.Direction.OUTGOING)
+    protected Set<InconsistencyNode> inconsistencies = new HashSet<>();
 
     protected TraceableNode () {
     }
