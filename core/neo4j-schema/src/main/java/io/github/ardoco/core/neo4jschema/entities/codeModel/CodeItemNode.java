@@ -4,6 +4,7 @@ package io.github.ardoco.core.neo4jschema.entities.codeModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -33,6 +34,11 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
     }
 
     protected CodeItemNode() {
+    }
+
+    @Override
+    public ArchitectureType getModelType() {
+        return ArchitectureType.CODE;
     }
 
     public void addContent(CodeItemNode child) {

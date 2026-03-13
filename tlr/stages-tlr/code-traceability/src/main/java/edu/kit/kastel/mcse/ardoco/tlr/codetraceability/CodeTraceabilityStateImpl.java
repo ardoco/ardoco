@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;

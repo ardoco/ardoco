@@ -52,5 +52,29 @@
           <artifactId>lombok</artifactId>
           <scope>provided</scope>
       </dependency>
-  </dependencies>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.testcontainers</groupId>
+          <artifactId>junit-jupiter</artifactId>
+      </dependency>
+
+      <dependency>
+          <groupId>org.testcontainers</groupId>
+          <artifactId>neo4j</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.testcontainers</groupId>
+          <artifactId>testcontainers</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.neo4j.driver</groupId>
+          <artifactId>neo4j-java-driver</artifactId>
+      </dependency>
+    </dependencies>
 </project>

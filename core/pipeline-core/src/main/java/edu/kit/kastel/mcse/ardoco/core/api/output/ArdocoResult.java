@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -340,7 +342,8 @@ public record ArdocoResult(DataRepository dataRepository) {
      * @return the Text
      */
     public Text getText() {
-        var preprocessingData = this.getPreprocessingData();
-        return preprocessingData.getText();
+//        var preprocessingData = this.getPreprocessingData();
+//        return preprocessingData.getText();
+       return DataRepositoryHelper.getAnnotatedText(this.dataRepository);
     }
 }

@@ -2,6 +2,9 @@
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.io.Serial;
+import java.util.List;
+
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -33,9 +36,13 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public boolean addInconsistency(Inconsistency inconsistency) {
+        if (PersistenceBridge.isAvailable()) {
+            return PersistenceBridge.getHandler().addInconsistencies(List.of(inconsistency));
+        }
         if (!inconsistencies.contains(inconsistency)) {
             return inconsistencies.add(inconsistency);
         }
+
         return false;
     }
 
@@ -46,6 +53,11 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public ImmutableList<Inconsistency> getInconsistencies() {
+        if (PersistenceBridge.isAvailable()) {
+            var loadedInconsistencies = PersistenceBridge.getHandler().getInconsistencies();
+            this.inconsistencies.clear();
+            this.inconsistencies.addAll(loadedInconsistencies);
+        }
         return inconsistencies.toImmutable();
     }
 

@@ -17,6 +17,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 
+import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,13 +45,16 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final ArchitecturePersistenceService architectureService;
     private final CodePersistenceService codeService;
     private final TraceLinkPersistenceService traceLinkService;
+    private final InconsistencyPersistenceService inconsistencyService;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
-            CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService) {
+            CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService,
+            InconsistencyPersistenceService inconsistencyService) {
         this.documentationService = documentationService;
         this.architectureService = architectureService;
         this.codeService = codeService;
         this.traceLinkService = traceLinkService;
+        this.inconsistencyService = inconsistencyService;
     }
 
     @Override
@@ -170,12 +175,15 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
-        return false;
+        logger.info("Saving {} inconsistencies", inconsistencies.size());
+        return this.inconsistencyService.addInconsistencies(inconsistencies);
     }
 
     @Override
     public Collection<? extends Inconsistency> getInconsistencies() {
-        return List.of();
-    }
+        Collection<? extends Inconsistency> inconsistencies = this.inconsistencyService.getInconsistencies();
+        logger.info("Loaded {} inconsistencies", inconsistencies.size());
+        return inconsistencies;
+     }
 
 }

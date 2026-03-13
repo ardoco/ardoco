@@ -268,9 +268,8 @@ public final class DataRepositoryHelper {
         // persist preprocessing data to neo4j
         if (PersistenceBridge.isAvailable()) {
             PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID);
-        } else {
-            dataRepository.addData(PreprocessingData.ID, preprocessingData);
         }
+        dataRepository.addData(PreprocessingData.ID, preprocessingData);
     }
 
     /**

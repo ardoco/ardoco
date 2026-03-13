@@ -4,6 +4,8 @@ package io.github.ardoco.core.neo4jschema.entities.architectureModel;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
+
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
@@ -26,7 +28,7 @@ public class ArchitectureComponentNode extends ArchitectureItemNode implements C
         this.type = type;
     }
 
-    protected ArchitectureComponentNode() {
+    public ArchitectureComponentNode() {
     }
 
     public void addSubcomponent(ArchitectureComponentNode component) {

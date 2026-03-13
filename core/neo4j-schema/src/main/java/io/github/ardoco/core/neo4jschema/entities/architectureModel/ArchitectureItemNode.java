@@ -4,6 +4,7 @@ package io.github.ardoco.core.neo4jschema.entities.architectureModel;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -49,6 +50,11 @@ public abstract class ArchitectureItemNode extends TraceableNode {
 
     public String getArdocoId() {
         return ardocoId;
+    }
+
+    @Override
+    public ArchitectureType getModelType() {
+        return ArchitectureType.ARCHITECTURE;
     }
 
 //    public void addTraceLink(TraceLinkRelationship link) {
