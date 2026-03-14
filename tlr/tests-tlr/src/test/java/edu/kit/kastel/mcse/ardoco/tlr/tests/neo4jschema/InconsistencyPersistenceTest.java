@@ -11,7 +11,10 @@ import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.id.execution.runner.InconsistencyDetection;
 import io.github.ardoco.core.neo4jschema.Main;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,9 +45,8 @@ public class InconsistencyPersistenceTest  extends RunnerBaseTest {
     @Test
     void testInconsistencyDetectionWithNeo4j() {
         var runner = new InconsistencyDetection(projectName);
-        File additionalConfigsFile = new File(additionalConfigs);
-        var additionalConfigsMap = ConfigurationHelper.loadAdditionalConfigs(additionalConfigsFile);
-        runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, additionalConfigsMap, outputDir);
+        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(true);
+        runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, configs, outputDir);
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
@@ -62,6 +64,38 @@ public class InconsistencyPersistenceTest  extends RunnerBaseTest {
 
         ImmutableList<InconsistentSentence> inconsistentSentences = result.getInconsistentSentences();
         System.out.println("Found a total of " + inconsistentSentences.size() + " inconsistent sentences."); //4
+    }
+
+    @Test
+    void testInconsistencyDetectionWithoutPersistence() {
+        var runner = new InconsistencyDetection(projectName);
+        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(false);
+        runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, configs, outputDir);
+
+        testRunnerAssertions(runner);
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
+        ImmutableList<Inconsistency> inconsistencies = result.getAllInconsistencies();
+        System.out.println("Found a total of " + inconsistencies.size() + " inconsistencies."); // 9
+        ImmutableList<TextInconsistency> textInconsistencies = result.getAllTextInconsistencies();
+        System.out.println("Found a total of " + textInconsistencies.size() + " text inconsistencies."); // 4 vs 24 on traceview website
+
+
+        ImmutableList<ModelInconsistency> modelInconsistencies = result.getAllModelInconsistencies();
+        Assertions.assertEquals(5, modelInconsistencies.size());
+        System.out.println("Found a total of " + modelInconsistencies.size() + " model inconsistencies."); // 5 (also 5 on traceview website)
+
+
+        ImmutableList<InconsistentSentence> inconsistentSentences = result.getInconsistentSentences();
+        System.out.println("Found a total of " + inconsistentSentences.size() + " inconsistent sentences."); //4
+    }
+
+    private ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled) {
+        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
+        additionalConfigs.putAll(configs.toSortedMap());
+        additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
+        return additionalConfigs.toImmutable();
     }
 
 }

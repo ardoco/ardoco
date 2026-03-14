@@ -40,9 +40,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
         if (PersistenceBridge.isAvailable()) {
             return PersistenceBridge.getHandler().saveSamCodeTraceLinks(traceLinks);
         }
-        return false;
-
-        // return this.samCodeTraceLinks.addAll(traceLinks);
+        return this.samCodeTraceLinks.addAll(traceLinks);
     }
 
     @Override
@@ -62,8 +60,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
         if (PersistenceBridge.isAvailable()) {
             return PersistenceBridge.getHandler().saveTransitiveTraceLinks(traceLinks);
         }
-        return false;
-//        return this.transitiveTraceLinks.addAll(traceLinks);
+        return this.transitiveTraceLinks.addAll(traceLinks);
     }
 
     @Override
