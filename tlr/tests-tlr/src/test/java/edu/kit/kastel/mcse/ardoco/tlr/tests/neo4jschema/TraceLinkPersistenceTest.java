@@ -2,216 +2,128 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
-import java.util.List;
-import java.util.SortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Arcotl;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Ardocode;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToModelToCodeTlrTask;
-import io.github.ardoco.core.neo4jschema.Main;
-
-import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
-
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.factory.SortedMaps;
-import org.eclipse.collections.api.map.sorted.MutableSortedMap;
-import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.Neo4jContainer;
-import org.testcontainers.junit.jupiter.Container;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
-import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
-import edu.kit.kastel.mcse.ardoco.tlr.execution.Arcotl;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.core.Neo4jClient;
 
-@Testcontainers
-@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = { "spring.neo4j.uri=bolt://localhost:7687",
-        "spring.neo4j.authentication.username=neo4j", "spring.neo4j.authentication.password=password", "spring.data.neo4j.repositories.type=imperative",
-        "spring.neo4j.pool.metrics-enabled=false" })
-public class TraceLinkPersistenceTest extends CodeRunnerBaseTest {
-    @Container
-    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5").withRandomPassword();
+public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
-    @Autowired
-    private ArchitectureItemRepository archRepo;
-
-    @DynamicPropertySource
-    static void neo4jProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.neo4j.uri", neo4j::getBoltUrl);
-        registry.add("spring.neo4j.authentication.username", () -> "neo4j");
-        registry.add("spring.neo4j.authentication.password", neo4j::getAdminPassword);
+    @Test
+    @DisplayName("Test Arcotl pipeline with Neo4j persistence")
+    void testArcotlPipelineWithNeo4j() {
+        runAndAssertArcotl(true);
     }
 
     @Test
-    void testArcotlPipelineWithNeo4j() throws InterruptedException {
+    @DisplayName("Test Arcotl pipeline without persistence")
+    void testArcotlPipelineWithoutPersistence() {
+        runAndAssertArcotl(false);
+    }
+
+    private void runAndAssertArcotl(boolean persistence) {
         var runner = new Arcotl(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(true);
-        runner.setUp(
-                new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
-                this.codeConfiguration,
-                configs,
-                new File(directory.toFile(), "output")
-        );
+        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration,
+                getConfigsWithPersistence(persistence), new File(directory.toFile(), "output"));
 
         testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
+        var result = runner.run();
         Assertions.assertNotNull(result);
-        ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks = result.getSamCodeTraceLinks();
-        System.out.println("Trace Links: " + traceLinks.size());
-
-        Assertions.assertFalse(traceLinks.isEmpty());
-        Assertions.assertEquals(164,traceLinks.size());
+        Assertions.assertEquals(164, result.getSamCodeTraceLinks().size());
     }
 
-    @Test
-    void testArcotlPipelineWithoutPersistence() throws InterruptedException {
-        var runner = new Arcotl(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(false);
-        runner.setUp(
-                new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
-                this.codeConfiguration,
-                configs,
-                new File(directory.toFile(), "output")
-        );
-
-        testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
-        Assertions.assertNotNull(result);
-        ImmutableList<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks = result.getSamCodeTraceLinks();
-        System.out.println("Trace Links: " + traceLinks.size());
-
-        Assertions.assertFalse(traceLinks.isEmpty());
-        Assertions.assertEquals(164,traceLinks.size());
-    }
-
-    @Test
-    void testTransArcPipelineWithNeo4j() throws InterruptedException {
+    private void runAndAssertTransarc(boolean persistence) {
         var runner = new Transarc(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(true);
         runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
-                configs, new File(outputDir));
+                getConfigsWithPersistence(persistence), new File(outputDir));
 
         testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
+        var result = runner.run();
         Assertions.assertNotNull(result);
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
         Assertions.assertFalse(traceLinks.isEmpty());
 
-        ImmutableList<TransitiveTraceLink<?,?>> realTransitiveTraceLinks = traceLinks.select(link -> link instanceof TransitiveTraceLink<?, ?>).collect(link -> (TransitiveTraceLink<?, ?>) link);
-        Assertions.assertEquals(501, realTransitiveTraceLinks.size()); //  expected number of tracelinks taken from https://tv.ardoco.de/ which still uses Ardoco without the neo4j persistence, but with the same configuration. (as of 10.03.2026)
-    }
-
-    void testTransArcPipelineWithoutPersistence() throws InterruptedException {
-        var runner = new Transarc(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(false);
-        runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
-                configs, new File(outputDir));
-
-        testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
-        Assertions.assertNotNull(result);
-
-        ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
-        Assertions.assertFalse(traceLinks.isEmpty());
-
-        ImmutableList<TransitiveTraceLink<?,?>> realTransitiveTraceLinks = traceLinks.select(link -> link instanceof TransitiveTraceLink<?, ?>).collect(link -> (TransitiveTraceLink<?, ?>) link);
-        Assertions.assertEquals(501, realTransitiveTraceLinks.size()); //  expected number of tracelinks taken from https://tv.ardoco.de/ which still uses Ardoco without the neo4j persistence, but with the same configuration. (as of 10.03.2026)
+        int transitiveCount = traceLinks.select(l -> l instanceof TransitiveTraceLink<?, ?>).size();
+        Assertions.assertEquals(501, transitiveCount);
     }
 
     @Test
-    void testSwattrPipelineWithNeo4j() throws InterruptedException {
+    @DisplayName("Test TransArc pipeline with Neo4j persistence")
+    void testTransArcPipelineWithNeo4j() {
+        runAndAssertTransarc(true);
+    }
+
+    @Test
+    @DisplayName("Test TransArc pipeline without persistence")
+    void testTransArcPipelineWithoutPersistence() {
+        runAndAssertTransarc(false);
+    }
+
+    private void runAndAssertSwattr(boolean persistence) {
         var runner = new Swattr(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(true);
-        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
-                configs, outputDir);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithPersistence(persistence),
+                outputDir);
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
 
-        ImmutableList<TraceLink<SentenceEntity, ModelEntity>> links = result.getArchitectureTraceLinks();
-        System.out.println("Architecture Trace Links: " + links.size());
-        Assertions.assertEquals(20, links.size());
+        int linkCount = result.getArchitectureTraceLinks().size();
+        Assertions.assertEquals(20, linkCount);
     }
 
     @Test
-    void testSwattrPipelineWithoutPersistence() throws InterruptedException {
-        var runner = new Swattr(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(false);
-        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM),
-                configs, outputDir);
-
-        testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
-        Assertions.assertNotNull(result);
-
-        ImmutableList<TraceLink<SentenceEntity, ModelEntity>> links = result.getArchitectureTraceLinks();
-        System.out.println("Architecture Trace Links: " + links.size());
-        Assertions.assertEquals(20, links.size());
+    @DisplayName("Test SWATTR pipeline with Neo4j persistence")
+    void testSwattrPipelineWithNeo4j() {
+        runAndAssertSwattr(true);
     }
 
     @Test
-    void testArDoCodePipelineWithNeo4j() throws InterruptedException {
+    @DisplayName("Test SWATTR pipeline without persistence")
+    void testSwattrPipelineWithoutPersistence() {
+        runAndAssertSwattr(false);
+    }
+
+    private void runAndAssertArdocode(boolean persistence) {
         var runner = new Ardocode(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(true);
-        runner.setUp(new File(inputText), codeConfiguration, configs, new File(outputDir));
+        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithPersistence(persistence), new File(outputDir));
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> links = result.getSadCodeTraceLinks();
 
-        System.out.println("Trace Links: " + links.size());
-
         Assertions.assertFalse(links.isEmpty());
         Assertions.assertEquals(2674, links.size());
     }
 
     @Test
-    void testArDoCodePipelineWithoutPersistence() throws InterruptedException {
-        var runner = new Ardocode(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(false);
-        runner.setUp(new File(inputText), codeConfiguration, configs, new File(outputDir));
-
-        testRunnerAssertions(runner);
-        ArdocoResult result = runner.run();
-        Assertions.assertNotNull(result);
-        ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> links = result.getSadCodeTraceLinks();
-
-        System.out.println("Trace Links: " + links.size());
-
-        Assertions.assertFalse(links.isEmpty());
-        Assertions.assertEquals(2674, links.size());
+    @DisplayName("Test ARDoCo pipeline with Neo4j persistence")
+    void testArDoCodePipelineWithNeo4j() {
+        runAndAssertArdocode(true);
     }
 
-    private ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled) {
-        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
-        additionalConfigs.putAll(configs.toSortedMap());
-        additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
-        return additionalConfigs.toImmutable();
+    @Test
+    @DisplayName("Test ARDoCo pipeline without persistence")
+    void testArDoCodePipelineWithoutPersistence() {
+        runAndAssertArdocode(false);
     }
 }

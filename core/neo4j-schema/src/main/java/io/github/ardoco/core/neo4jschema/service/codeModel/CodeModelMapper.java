@@ -142,12 +142,12 @@ public class CodeModelMapper {
         }
 
         // Set Child's Parent Reference
-        if (child instanceof CodeModule childModule && parent instanceof CodeModule parentModule) {
-            childModule.setParent(parentModule);
-        } else if (child instanceof Datatype childDt && parent instanceof CodeCompilationUnit parentCu) {
-            childDt.setCompilationUnit(parentCu);
-        } else if (child instanceof Datatype childDt && parent instanceof Datatype parentDt) {
-            childDt.setParentDatatype(parentDt);
+        switch (child) {
+        case CodeModule childModule when parent instanceof CodeModule parentModule -> childModule.setParent(parentModule);
+        case Datatype childDt when parent instanceof CodeCompilationUnit parentCu -> childDt.setCompilationUnit(parentCu);
+        case Datatype childDt when parent instanceof Datatype parentDt -> childDt.setParentDatatype(parentDt);
+        default -> {
+        }
         }
     }
 

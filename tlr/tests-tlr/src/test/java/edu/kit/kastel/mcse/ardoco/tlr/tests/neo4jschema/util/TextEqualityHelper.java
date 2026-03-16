@@ -1,7 +1,8 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
@@ -14,8 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 public class TextEqualityHelper {
 
     /**
-     * Deep compares two Text objects using JUnit Assertions.
-     * Checks Sentences, Words (including dependencies), and Phrases.
+     * Deep compares two Text objects using JUnit Assertions. Checks Sentences, Words (including dependencies), and Phrases.
      *
      * @param expected The original text (expected)
      * @param actual   The restored text (actual)
@@ -29,23 +29,25 @@ public class TextEqualityHelper {
         assertEquals(expected.getSentences().size(), actual.getSentences().size(), "Sentence count mismatch");
 
         for (int i = 0; i < expected.getSentences().size(); i++) {
-            Sentence sExpected = expected.getSentences().get(i);
-            Sentence sActual = actual.getSentences().get(i);
-
-            assertSentencesEqual(sExpected, sActual, i);
+            assertSentencesEqual(expected.getSentences().get(i), actual.getSentences().get(i), i);
         }
     }
 
     private static void assertSentencesEqual(Sentence expected, Sentence actual, int index) {
         assertEquals(expected.getSentenceNumber(), actual.getSentenceNumber(), () -> "Sentence number mismatch at index " + index);
-
         assertEquals(expected.getText(), actual.getText(), () -> "Sentence text mismatch at index " + index);
-
         assertEquals(expected.getWords().size(), actual.getWords().size(), () -> "Word count mismatch in sentence " + expected.getSentenceNumber());
 
         for (int i = 0; i < expected.getWords().size(); i++) {
-            assertWordsEqual(expected.getWords().get(i), actual.getWords().get(i));
+            assertWordsEqual(expected.getWords().get(i), actual.getWords().get(i), "Word");
         }
+
+        for (int i = 0; i < expected.getWords().size(); i++) {
+            assertWordsEqual(expected.getWords().get(i).getNextWord(), expected.getWords().get(i).getNextWord(), "Next word");
+            assertWordsEqual(expected.getWords().get(i).getPreWord(), expected.getWords().get(i).getPreWord(), "Previous word");
+        }
+
+
 
         assertEquals(expected.getPhrases().size(), actual.getPhrases().size(), () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
 
@@ -54,8 +56,16 @@ public class TextEqualityHelper {
         }
     }
 
-    private static void assertWordsEqual(Word expected, Word actual) {
-        String context = "Word mismatch (Sentence: " + expected.getSentenceNumber() + ", Pos: " + expected.getPosition() + ")";
+    private static void assertWordsEqual(Word expected, Word actual, String wordContext) {
+        if (expected == actual)
+            return;
+
+        if (expected == null || actual == null) {
+            assertEquals(expected, actual, wordContext + " - One of the words is null while the other is not");
+            return; // Both are null, considered equal
+        }
+
+        String context = wordContext + " mismatch (Sentence: " + expected.getSentenceNumber() + ", Pos: " + expected.getPosition() + ")";
 
         assertEquals(expected.getPosition(), actual.getPosition(), context + " - Position");
         assertEquals(expected.getSentenceNumber(), actual.getSentenceNumber(), context + " - Sentence Number");
@@ -82,7 +92,6 @@ public class TextEqualityHelper {
 
         assertEquals(expected.getPhraseType(), actual.getPhraseType(), context + " - Type");
         assertEquals(expected.getText(), actual.getText(), context + " - Text");
-
         assertEquals(expected.getContainedWords().size(), actual.getContainedWords().size(), context + " - Contained words count");
 
         for (int i = 0; i < expected.getContainedWords().size(); i++) {

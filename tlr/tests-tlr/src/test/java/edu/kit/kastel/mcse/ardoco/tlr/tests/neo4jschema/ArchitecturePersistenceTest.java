@@ -12,13 +12,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.Neo4jContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
@@ -27,34 +21,19 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-import edu.kit.kastel.mcse.ardoco.core.execution.RunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
 
-@Testcontainers
-@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = { "spring.neo4j.uri=bolt://localhost:7687",
-        "spring.neo4j.authentication.username=neo4j", "spring.neo4j.authentication.password=password", "spring.data.neo4j.repositories.type=imperative",
-        "spring.neo4j.pool.metrics-enabled=false" })
 @Transactional
-class ArchitecturePersistenceTest extends RunnerBaseTest {
+class ArchitecturePersistenceTest extends AbstractPersistenceTest {
 
     @Autowired
     private ArchitecturePersistenceService persistenceService;
 
-    @Container
-    static Neo4jContainer<?> neo4j = new Neo4jContainer<>("neo4j:5").withRandomPassword();
-
-    @DynamicPropertySource
-    static void neo4jProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.neo4j.uri", neo4j::getBoltUrl);
-        registry.add("spring.neo4j.authentication.username", () -> "neo4j");
-        registry.add("spring.neo4j.authentication.password", neo4j::getAdminPassword);
-    }
-
     @Test
-    @DisplayName("Should persist and restore an Architecture Model")
-    void testSaveAndLoadArchitecture() {
-        // 1. Create Dummy Data
+    @DisplayName("Should persist and restore manual dummy Architecture Model")
+    void testSaveAndLoadManualArchitecture() {
+
         var method1 = new ArchitectureMethod("login");
         var method2 = new ArchitectureMethod("logout");
         var methods = new TreeSet<>(List.of(method1, method2));
@@ -74,6 +53,8 @@ class ArchitecturePersistenceTest extends RunnerBaseTest {
         persistenceService.saveArchitectureModel(originalModel);
         var loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
 
+        assertArchitectureModelsEqual(originalModel, loadedModel);
+
         Assertions.assertThat(loadedModel).isNotNull();
         Assertions.assertThat(loadedModel.getContent()).hasSize(2); // Component + Interface
         Assertions.assertThat(loadedModel.getId()).isEqualTo(originalModel.getId());
@@ -92,12 +73,14 @@ class ArchitecturePersistenceTest extends RunnerBaseTest {
     }
 
     @Test
-    void testSaveAndLoadCodeModel2() {
+    @DisplayName("Should persist and restore a UML-extracted Architecture Model")
+    void testSaveAndLoadUmlArchitecture() {
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
         ArchitectureModel originalModel = extractor.extractModel();
+
         persistenceService.saveArchitectureModel(originalModel);
         ArchitectureModel loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
-        System.out.println("Hello from testSaveAndLoadCodeModel2");
+
         assertThat(loadedModel).isNotNull();
         assertArchitectureModelsEqual(originalModel, loadedModel);
     }
