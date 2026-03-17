@@ -99,6 +99,11 @@ public class TraceLinkPersistenceService {
     }
 
     public boolean saveTransitiveTracelinks(Collection<? extends TransitiveTraceLink<?,?>> traceLinks) {
+        if (traceLinks.isEmpty()) {
+            logger.info("No transitive trace links to save.");
+            return true;
+        }
+
         Collection<TraceLink<?, ?>> firstLinks = traceLinks.stream()
                 .map(TransitiveTraceLink::getFirstTraceLink)
                 .collect(Collectors.toSet());
@@ -156,6 +161,12 @@ public class TraceLinkPersistenceService {
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceArchitectureModelTraceLinks() {
         Text domainText = documentationService.loadPreprocessedText();
+
+        if (domainText == null) {
+            logger.warn("No preprocessed text available, cannot load sentence-architecture trace links.");
+            return new HashSet<>();
+        }
+
         return traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_ARCHITECTURE).stream()
                 .filter(SentenceNode.class::isInstance)
                 .map(SentenceNode.class::cast)
@@ -173,6 +184,12 @@ public class TraceLinkPersistenceService {
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks() {
         Text domainText = documentationService.loadPreprocessedText();
+
+        if (domainText == null) {
+            logger.warn("No preprocessed text available, cannot load sentence-code trace links.");
+            return new HashSet<>();
+        }
+
         return traceLinkRepo.findAllByRelationshipType(TraceLinkType.SENTENCE_CODE).stream()
                 .filter(SentenceNode.class::isInstance)
                 .map(SentenceNode.class::cast)
@@ -195,8 +212,13 @@ public class TraceLinkPersistenceService {
 
     @Transactional(readOnly = true)
     public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
-
         Text domainText = documentationService.loadPreprocessedText();
+
+        if (domainText == null) {
+            logger.warn("No preprocessed text available, cannot load sentence-code trace links.");
+            return new HashSet<>();
+        }
+
         if (domainText == null) {
             logger.warn("No preprocessed text available, cannot load transitive trace links.");
             return new HashSet<>();
@@ -221,7 +243,10 @@ public class TraceLinkPersistenceService {
                 })
                 .all();
 
-
+        if (chains.isEmpty()) {
+            logger.info("No transitive trace link chains found in the database.");
+            return new HashSet<>();
+        }
 
         return chains.stream()
                 .map(chain -> {

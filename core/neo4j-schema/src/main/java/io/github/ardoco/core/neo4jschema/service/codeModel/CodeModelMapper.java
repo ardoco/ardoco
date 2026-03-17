@@ -34,51 +34,80 @@ public class CodeModelMapper {
     public CodeModel mapToDomain(CodeModelNode node) {
         CodeItemRepository repository = new CodeItemRepository();
 
-        List<CodeItemNode> allNodes = flattenGraph(node.getContent());
+        // 1. Flatten the graph to find every single node involved (Recursive)
+        Set<CodeItemNode> allNodes = new HashSet<>();
+        collectAllNodes(node.getContent(), allNodes);
 
+        // 2. Instantiate all items (Empty shells with IDs)
         for (CodeItemNode itemNode : allNodes) {
             if (!repository.containsCodeItem(itemNode.getArdocoId())) {
                 createInstance(itemNode, repository);
             }
         }
 
-        // Link items
+        // 3. Second pass: Link content and cross-references
         for (CodeItemNode itemNode : allNodes) {
-            CodeItem parentItem = repository.getCodeItem(itemNode.getArdocoId());
-            if (parentItem == null)
-                continue;
+            CodeItem currentItem = repository.getCodeItem(itemNode.getArdocoId());
+            if (currentItem == null) continue;
 
-            // Link Content (Children)
+            // Link Containment (Hierarchy)
             for (CodeItemNode childNode : itemNode.getContent()) {
                 CodeItem childItem = repository.getCodeItem(childNode.getArdocoId());
                 if (childItem != null) {
-                    linkChildToParent(parentItem, childItem);
-                } else {
-                    logger.warn("Child item {} not found for parent {}", childNode.getArdocoId(), parentItem.getName());
+                    linkChildToParent(currentItem, childItem);
                 }
             }
 
-            // Link Datatype Relationships (Extends/Implements)
-            if (itemNode instanceof DatatypeNode dtNode && parentItem instanceof Datatype dtItem) {
+            // Link Type Relationships (Inheritance/References)
+            if (itemNode instanceof DatatypeNode dtNode && currentItem instanceof Datatype dtItem) {
                 linkDatatypes(dtItem, dtNode, repository);
             }
         }
 
         repository.init();
 
-        // 6. Construct CodeModel container
-        SortedSet<CodeItem> rootItems = new TreeSet<>();
-        for (CodeItemNode rootItemNode : node.getContent()) {
-            rootItems.add(repository.getCodeItem(rootItemNode.getArdocoId()));
+        // 4. Wrap in appropriate model container
+        SortedSet<CodeItem> roots = new TreeSet<>();
+        for (CodeItemNode rootNode : node.getContent()) {
+            roots.add(repository.getCodeItem(rootNode.getArdocoId()));
         }
 
-        if (Metamodel.CODE_WITH_COMPILATION_UNITS.name().equals(node.getMetamodel())) {
-            return new CodeModelWithCompilationUnits(node.getModelId(), repository, rootItems);
-        } else if (Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES.name().equals(node.getMetamodel())) {
-            return new CodeModelWithCompilationUnitsAndPackages(node.getModelId(), repository, rootItems);
-        }
+        Metamodel mm = Metamodel.valueOf(node.getMetamodel());
+        return mm == Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES
+                ? new CodeModelWithCompilationUnitsAndPackages(node.getModelId(), repository, roots)
+                : new CodeModelWithCompilationUnits(node.getModelId(), repository, roots);
+    }
 
-        throw new UnsupportedOperationException("Unknown CodeModel Metamodel: " + node.getMetamodel());
+    private void collectAllNodes(List<CodeItemNode> currentNodes, Set<CodeItemNode> visited) {
+        for (CodeItemNode node : currentNodes) {
+            if (node == null || !visited.add(node)) continue;
+
+            // Recurse into content
+            collectAllNodes(node.getContent(), visited);
+
+            // Recurse into Datatype links (Critical for cross-file references)
+            if (node instanceof DatatypeNode dt) {
+                collectAllNodes(new ArrayList<>(dt.getExtendedTypes()), visited);
+                collectAllNodes(new ArrayList<>(dt.getImplementedTypes()), visited);
+                collectAllNodes(new ArrayList<>(dt.getReferencedDatatypes()), visited);
+            }
+        }
+    }
+
+    private void linkDatatypes(Datatype domain, DatatypeNode node, CodeItemRepository repo) {
+        // We map OUTGOING relationships from the DB to the domain object's ID lists
+        domain.setExtendedTypes(mapNodesToTypes(node.getExtendedTypes(), repo));
+        domain.setImplementedTypes(mapNodesToTypes(node.getImplementedTypes(), repo));
+        domain.setDatatypeReference(mapNodesToTypes(node.getReferencedDatatypes(), repo));
+    }
+
+    private SortedSet<Datatype> mapNodesToTypes(Set<DatatypeNode> nodes, CodeItemRepository repo) {
+        SortedSet<Datatype> result = new TreeSet<>();
+        for (DatatypeNode n : nodes) {
+            CodeItem item = repo.getCodeItem(n.getArdocoId());
+            if (item instanceof Datatype dt) result.add(dt);
+        }
+        return result;
     }
 
     /**
@@ -151,21 +180,30 @@ public class CodeModelMapper {
         }
     }
 
-    private void linkDatatypes(Datatype domain, DatatypeNode node, CodeItemRepository repo) {
-        SortedSet<Datatype> extended = new TreeSet<>();
-        for (DatatypeNode extNode : node.getExtendedTypes()) {
-            CodeItem item = repo.getCodeItem(extNode.getArdocoId());
-            if (item instanceof Datatype dt)
-                extended.add(dt);
-        }
-        domain.setExtendedTypes(extended);
-
-        SortedSet<Datatype> implemented = new TreeSet<>();
-        for (DatatypeNode implNode : node.getImplementedTypes()) {
-            CodeItem item = repo.getCodeItem(implNode.getArdocoId());
-            if (item instanceof Datatype dt)
-                implemented.add(dt);
-        }
-        domain.setImplementedTypes(implemented);
-    }
+//    private void linkDatatypes(Datatype domain, DatatypeNode node, CodeItemRepository repo) {
+//        SortedSet<Datatype> extended = new TreeSet<>();
+//        for (DatatypeNode extNode : node.getExtendedTypes()) {
+//            CodeItem item = repo.getCodeItem(extNode.getArdocoId());
+//            if (item instanceof Datatype dt)
+//                extended.add(dt);
+//        }
+//        domain.setExtendedTypes(extended);
+//
+//        SortedSet<Datatype> implemented = new TreeSet<>();
+//        for (DatatypeNode implNode : node.getImplementedTypes()) {
+//            CodeItem item = repo.getCodeItem(implNode.getArdocoId());
+//            if (item instanceof Datatype dt)
+//                implemented.add(dt);
+//        }
+//        domain.setImplementedTypes(implemented);
+//
+//        SortedSet<Datatype> referenced = new TreeSet<>();
+//        for (DatatypeNode refNode : node.getReferencedDatatypes()) {
+//            CodeItem item = repo.getCodeItem(refNode.getArdocoId());
+//            if (item instanceof Datatype dt) {
+//                referenced.add(dt);
+//            }
+//        }
+//        domain.setDatatypeReference(referenced);
+//    }
 }

@@ -68,7 +68,7 @@ public class DocumentationPersistenceService {
     @Transactional(readOnly = true)
     @Nullable
     public Text loadPreprocessedText() {
-        return textRepository.findByArdocoId("PreprocessingData")
+        return textRepository.findByArdocoId("PreprocessingData") // TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
                 .map(new DocumentationMapper()::mapToDomain)
                 .orElseGet(() -> {
                     logger.warn("No preprocessed text found in database!");
@@ -96,7 +96,7 @@ public class DocumentationPersistenceService {
         Map<Phrase, PhraseNode> phraseCache = new HashMap<>();
 
         SentenceNode prevSentenceNode = null;
-
+        WordNode prevWordNode = null;
         for (Sentence domainSentence : domainText.getSentences()) {
             SentenceNode sentenceNode = new SentenceNode(domainSentence.getSentenceNumber(), domainSentence.getText());
             textNode.addSentence(sentenceNode);
@@ -105,7 +105,6 @@ public class DocumentationPersistenceService {
                 prevSentenceNode.setNextSentence(sentenceNode);
             }
 
-            WordNode prevWordNode = null;
             for (Word domainWord : domainSentence.getWords()) {
                 WordNode wordNode = new WordNode(domainWord.getPosition(), domainWord.getText(), domainWord.getLemma(), domainWord.getPosTag().toString());
 

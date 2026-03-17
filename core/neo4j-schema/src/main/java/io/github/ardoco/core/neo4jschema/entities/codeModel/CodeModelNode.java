@@ -2,7 +2,9 @@
 package io.github.ardoco.core.neo4jschema.entities.codeModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -23,6 +25,9 @@ public class CodeModelNode {
     @Relationship(type = "CONTAINS_CODE_ROOT", direction = Relationship.Direction.OUTGOING)
     private List<CodeItemNode> content = new ArrayList<>();
 
+    @Relationship(type = "HAS_REPOSITORY_ITEM", direction = Relationship.Direction.OUTGOING)
+    private Set<CodeItemNode> allRepositoryItems = new HashSet<>();
+
     public CodeModelNode(String modelId, String metamodel) {
         this.modelId = modelId;
         this.metamodel = metamodel;
@@ -33,6 +38,14 @@ public class CodeModelNode {
 
     public void addContent(CodeItemNode item) {
         this.content.add(item);
+    }
+
+    public void addRepositoryItem(CodeItemNode item) {
+        this.allRepositoryItems.add(item);
+    }
+
+    public Set<CodeItemNode> getAllRepositoryItems() {
+        return allRepositoryItems;
     }
 
     public String getModelId() {

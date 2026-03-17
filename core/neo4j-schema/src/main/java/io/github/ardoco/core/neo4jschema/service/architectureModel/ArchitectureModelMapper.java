@@ -80,7 +80,7 @@ public class ArchitectureModelMapper {
 
         String storedType = modelNode.getMetamodel();
         if (Metamodel.ARCHITECTURE_WITH_COMPONENTS.name().equals(storedType)) {
-            return new ArchitectureComponentModel(baseModel);
+            return new ArchitectureComponentModel(modelNode.getModelId(), baseModel);
         }
 
         return baseModel;

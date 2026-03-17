@@ -134,6 +134,9 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
      * @return sorted set of datatype references
      */
     public SortedSet<Datatype> getDatatypeReferences() {
+        if (this.datatypeReferencesIds == null) {
+            return new TreeSet<>();
+        }
         return this.datatypeReferencesIds.stream().map(id -> {
             CodeItem codeItem = this.codeItemRepository.getCodeItem(id);
             if (codeItem instanceof Datatype datatype) {

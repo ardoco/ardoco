@@ -36,6 +36,9 @@ import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureP
 import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
 
+/**
+ * Neo4j-based implementation of the PersistenceHandler interface. Delegates to specific services for each model type and trace links.
+ */
 @Service
 public class Neo4jPersistenceHandler implements PersistenceHandler {
 
@@ -169,7 +172,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
-        logger.info("Saving {} unique SentenceModelTracelinks", uniqueLinks.size());
+        logger.info("Saving {} SentenceModelTracelinks", uniqueLinks.size());
         return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 

@@ -86,6 +86,24 @@ public class CodePersistenceService {
                 modelNode.addContent(mapToNode(item, cache));
             }
         }
+
+        // iterate over cache and map relations for all nodes
+        for (Map.Entry<String, CodeItemNode> entry : cache.entrySet()) {
+            CodeItem item = itemRepository.getCodeItem(entry.getKey());
+
+            if (entry.getValue() instanceof DatatypeNode dtNode && item instanceof Datatype dt) {
+                for (Datatype ext : dt.getExtendedTypes()) {
+                    dtNode.addExtendedType((DatatypeNode) mapToNode(ext, cache));
+                }
+                for (Datatype impl : dt.getImplementedTypes()) {
+                    dtNode.addImplementedType((DatatypeNode) mapToNode(impl, cache));
+                }
+                for (Datatype dep : dt.getDatatypeReferences()) {
+                    dtNode.addReferencedDatatype((DatatypeNode) mapToNode(dep, cache));
+                }
+            }
+        }
+
         repository.save(modelNode);
     }
 
@@ -120,16 +138,6 @@ public class CodePersistenceService {
 
         for (CodeItem child : item.getContent()) {
             node.addContent(mapToNode(child, cache));
-        }
-
-        // Map Datatype Relations
-        if (item instanceof Datatype dt && node instanceof DatatypeNode dtNode) {
-            for (Datatype ext : dt.getExtendedTypes()) {
-                dtNode.addExtendedType((DatatypeNode) mapToNode(ext, cache));
-            }
-            for (Datatype impl : dt.getImplementedTypes()) {
-                dtNode.addImplementedType((DatatypeNode) mapToNode(impl, cache));
-            }
         }
 
         return node;

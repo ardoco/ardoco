@@ -77,6 +77,11 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     public Collection<? extends Inconsistency> getInconsistencies() {
         List<InconsistencyNode> nodes = inconsistencyRepository.findAllWithRelationships();
 
+        if (nodes.isEmpty()) {
+            logger.info("No inconsistencies found in the database.");
+            return List.of();
+        }
+
         return nodes.stream().map(node -> node.accept(this)) // Use Visitor pattern to map each database node
                 .toList();
     }

@@ -32,11 +32,10 @@ public class CodePersistenceTest extends AbstractPersistenceTest {
         System.out.println("----------------------------------------------------------");
 
         File codeFile = codeConfiguration.code();
-        Metamodel model = codeConfiguration.metamodel();
 
-        CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, model);
+        CodeModel extractedModel = CodeExtractor.readInCodeModel(codeFile, Metamodel.CODE_WITH_COMPILATION_UNITS);
         persistenceService.saveCodeModel(extractedModel);
-        CodeModel loadedModel = persistenceService.loadCodeModel(model);
+        CodeModel loadedModel = persistenceService.loadCodeModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         assertCodeModelsEqual(extractedModel, loadedModel);
     }
 }

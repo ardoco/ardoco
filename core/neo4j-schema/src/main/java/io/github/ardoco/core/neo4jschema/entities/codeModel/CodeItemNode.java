@@ -7,21 +7,13 @@ import java.util.List;
 import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 @Node("CodeItem")
 public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNode> {
 
-//    @Id
-//    @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-//    protected String id;
-
     private String name;
-//    private String ardocoId; // The domain ID
 
     // Generic containment relationship for all subtypes (Package->Class, Class->Method, etc.)
     @Relationship(type = "CONTAINS_CODE_ITEM", direction = Relationship.Direction.OUTGOING)
@@ -30,7 +22,6 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
     public CodeItemNode(String name, String ardocoId) {
         super(ardocoId);
         this.name = name;
-//        this.ardocoId = ardocoId;
     }
 
     protected CodeItemNode() {
