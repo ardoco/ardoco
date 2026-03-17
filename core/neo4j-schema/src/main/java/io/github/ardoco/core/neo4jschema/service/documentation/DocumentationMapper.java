@@ -105,15 +105,20 @@ public class DocumentationMapper {
         for (SentenceNode sNode : textNode.getSentences()) {
             for (WordNode wNode : sNode.getWords()) {
                 Neo4jWord source = globalWordMap.get(wNode.getPosition());
+                if (source == null) continue;
 
-                // If the WordNode has loaded relationships (requires @Query deep fetching in Repo)
-                if (wNode.getDependencies() != null) {
-                    for (DependencyRelationship rel : wNode.getDependencies()) {
-                        Neo4jWord target = globalWordMap.get(rel.getTargetWord().getPosition());
+                List<DependencyRelationship> deps = wNode.getDependencies();
+                if (deps != null && !deps.isEmpty()) {
+                    for (DependencyRelationship rel : deps) {
+                        // Critical: The targetWord in the relationship must be resolved to our Neo4jWord adapter
+                        WordNode targetNode = rel.getTargetWord();
+                        if (targetNode == null) continue;
+
+                        Neo4jWord target = globalWordMap.get(targetNode.getPosition());
 
                         try {
                             DependencyTag tag = DependencyTag.valueOf(rel.getDependencyType());
-                            if (source != null && target != null) {
+                            if (target != null) {
                                 source.addOutgoingDependency(tag, target);
                                 target.addIncomingDependency(tag, source);
                             }

@@ -12,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -50,12 +51,28 @@ public class TextEqualityHelper {
             assertWordsEqual(expected.getWords().get(i).getPreWord(), expected.getWords().get(i).getPreWord(), "Previous word");
         }
 
+        Comparator<Phrase> phraseComparator = Comparator.comparing(Phrase::getText)
+                .thenComparing(Phrase::getPhraseType) // Enums have a natural order based on definition
+                .thenComparing(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition());
 
+        List<? extends Phrase> expectedPhrases = expected.getPhrases().stream()
+                .sorted(phraseComparator)
+                .toList();
 
-        assertEquals(expected.getPhrases().size(), actual.getPhrases().size(), () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
+        List<? extends Phrase> actualPhrases = actual.getPhrases().stream()
+                .sorted(phraseComparator)
+                .toList();
 
-        for (int i = 0; i < expected.getPhrases().size(); i++) {
-            assertPhrasesEqual(expected.getPhrases().get(i), actual.getPhrases().get(i));
+        System.out.println("Expected Phrases: " + expectedPhrases);
+        // print type and text for actual phrases
+        expectedPhrases.forEach(p -> System.out.println("Phrase: " + p.getPhraseType() + " - " + p.getText()));
+        System.out.println("Actual Phrases: " + actualPhrases);
+        actualPhrases.forEach(p -> System.out.println("Phrase: " + p.getPhraseType() + " - " + p.getText()));
+
+        assertEquals(expectedPhrases.size(), actualPhrases.size(),  () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
+
+        for (int i = 0; i < expectedPhrases.size(); i++) {
+            assertPhrasesEqual(expectedPhrases.get(i),actualPhrases.get(i));
         }
     }
 

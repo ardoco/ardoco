@@ -1,17 +1,17 @@
 /* Licensed under MIT 2023-2026. */
 package io.github.ardoco.core.neo4jschema.service.documentation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import javax.annotation.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
@@ -43,13 +43,13 @@ public class DocumentationPersistenceService {
     @Nullable
     @Transactional(readOnly = true)
     public Text loadPreprocessedText(String identifier) {
-//        boolean exists = textRepository.existsByArdocoId(identifier);
-//        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
-//        if (!exists) {
-//            logger.warn("No preprocessed text found for identifier: {}", identifier);
-//            return null;
-//        }
-        Optional<TextNode> textNode = textRepository.findByArdocoId(identifier);
+        //        boolean exists = textRepository.existsByArdocoId(identifier);
+        //        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
+        //        if (!exists) {
+        //            logger.warn("No preprocessed text found for identifier: {}", identifier);
+        //            return null;
+        //        }
+        Optional<TextNode> textNode = textRepository.findByArdocoIdDeep(identifier);
         if (textNode.isEmpty()) {
             logger.warn("No preprocessed text found for identifier: {}", identifier);
             return null;
@@ -68,32 +68,33 @@ public class DocumentationPersistenceService {
     @Transactional(readOnly = true)
     @Nullable
     public Text loadPreprocessedText() {
-        return textRepository.findByArdocoId("PreprocessingData") // TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
-                .map(new DocumentationMapper()::mapToDomain)
-                .orElseGet(() -> {
+        return textRepository.findByArdocoIdDeep(
+                        "PreprocessingData") // TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
+                .map(new DocumentationMapper()::mapToDomain).orElseGet(() -> {
                     logger.warn("No preprocessed text found in database!");
                     return null; // Or return an empty Text object
                 });
-//        TextNode textNode = textRepository.findByArdocoId(PreprocessingData.ID);
-//        logger.info("loaded documentation for document ID from neo4j: {}", PreprocessingData.ID);
-//        DocumentationMapper mapper = new DocumentationMapper();
-//        return mapper.mapToDomain(textNode);
+        //        TextNode textNode = textRepository.findByArdocoId(PreprocessingData.ID);
+        //        logger.info("loaded documentation for document ID from neo4j: {}", PreprocessingData.ID);
+        //        DocumentationMapper mapper = new DocumentationMapper();
+        //        return mapper.mapToDomain(textNode);
     }
 
     @Transactional
     public void savePreprocessedText(Text domainText, String documentId) {
 
-        Optional<TextNode> existingNode = textRepository.findByArdocoId(documentId);
-        if (existingNode.isPresent()) {
-            logger.info("Existing documentation found for document ID: {}. It will be deleted and replaced.", documentId);
+        if (textRepository.existsByArdocoId(documentId)) {
             Long deletedCount = textRepository.deleteByArdocoId(documentId);
             long numDeleted = (deletedCount != null) ? deletedCount : 0L;
             logger.info("Deleted {} existing nodes for document ID: {}", numDeleted, documentId);
         }
 
         TextNode textNode = new TextNode(documentId);
-        Map<Integer, WordNode> wordIndexMap = new HashMap<>(); // Global Map: Position -> Node
-        Map<Phrase, PhraseNode> phraseCache = new HashMap<>();
+//        Map<Integer, WordNode> wordIndexMap = new HashMap<>(); // Global Map: Position -> Node
+//        Map<Phrase, PhraseNode> phraseCache = new HashMap<>();
+        int estimatedWordCount = domainText.getSentences().size() * 25;
+        Map<Integer, WordNode> wordIndexMap = new HashMap<>(estimatedWordCount); // Global Map: Position -> Node
+        Map<Phrase, PhraseNode> phraseCache = new HashMap<>(estimatedWordCount / 2);
 
         SentenceNode prevSentenceNode = null;
         WordNode prevWordNode = null;
@@ -105,10 +106,11 @@ public class DocumentationPersistenceService {
                 prevSentenceNode.setNextSentence(sentenceNode);
             }
 
+            List<WordNode> sentenceWords = new ArrayList<>(domainSentence.getWords().size());
             for (Word domainWord : domainSentence.getWords()) {
                 WordNode wordNode = new WordNode(domainWord.getPosition(), domainWord.getText(), domainWord.getLemma(), domainWord.getPosTag().toString());
 
-                sentenceNode.getWords().add(wordNode);
+                sentenceWords.add(wordNode);
                 wordIndexMap.put(domainWord.getPosition(), wordNode);
 
                 if (prevWordNode != null) {
@@ -116,10 +118,10 @@ public class DocumentationPersistenceService {
                 }
                 prevWordNode = wordNode;
             }
+            sentenceNode.setWords(sentenceWords);
 
             for (Phrase domainPhrase : domainSentence.getPhrases()) {
-                PhraseNode phraseNode = convertPhrase(domainPhrase, wordIndexMap, phraseCache);
-                sentenceNode.getRootPhrases().add(phraseNode);
+                sentenceNode.getRootPhrases().add(convertPhrase(domainPhrase, wordIndexMap, phraseCache));
             }
 
             prevSentenceNode = sentenceNode;

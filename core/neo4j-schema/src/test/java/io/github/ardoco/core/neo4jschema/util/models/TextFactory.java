@@ -32,6 +32,8 @@ public class TextFactory {
 
         w3.addOutgoingDependency(DependencyTag.NSUBJ, w2);
         w3.addOutgoingDependency(DependencyTag.OBJ, w4);
+        w2.addIncomingDependency(DependencyTag.NSUBJ, w2);
+        w4.addIncomingDependency(DependencyTag.OBJ, w3);
 
         Neo4jPhrase npSub = new Neo4jPhrase("login component", "NP", s0, List.of(w1, w2), List.of());
         Neo4jPhrase npRoot = new Neo4jPhrase("The login component", "NP", s0, List.of(w0, w1, w2), List.of(npSub));

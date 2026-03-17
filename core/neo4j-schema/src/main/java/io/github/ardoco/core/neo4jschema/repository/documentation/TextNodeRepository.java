@@ -18,11 +18,30 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
 
     boolean existsByArdocoId(String ardocoId);
 
-    @Query("MATCH (t:Text {ardocoId: $ardocoId}) " +
-            "OPTIONAL MATCH (t)-[:HAS_SENTENCE]->(s) " +
-            "OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE*0..2]->(sub) " +
-            "DETACH DELETE t, s, sub")
+    @Query("""
+        MATCH (t:Text {ardocoId: $ardocoId})
+        OPTIONAL MATCH (t)-[:HAS_SENTENCE]->(s)
+        OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE*0..5]->(child)
+        DETACH DELETE t, s, child
+    """)
     Long deleteByArdocoId(@Param("ardocoId") String ardocoId);
+
+    @Query("""
+    MATCH (t:Text {ardocoId: $ardocoId})
+    OPTIONAL MATCH (t)-[r1:HAS_SENTENCE]->(s:Sentence)
+    OPTIONAL MATCH (s)-[r2:CONTAINS_WORD]->(w:Word)
+    // Fetch Dependencies
+    OPTIONAL MATCH (w)-[r5:DEPENDENCY]->(target:Word)
+    OPTIONAL MATCH (s)-[r3:HAS_ROOT_PHRASE]->(rp:Phrase)
+    OPTIONAL MATCH (rp)-[r4:HAS_CHILD_PHRASE|CONTAINS_WORD*1..5]->(sub)
+    RETURN t, 
+           collect(r1), collect(s), 
+           collect(r2), collect(w), 
+           collect(r5), collect(target),
+           collect(r3), collect(rp),
+           collect(r4), collect(sub)
+    """)
+    Optional<TextNode> findByArdocoIdDeep(@Param("ardocoId") String ardocoId);
 
     @Query("MATCH (t:Text)-[:HAS_SENTENCE]->(s:Sentence {ardocoId: $sentenceId}) RETURN t")
     TextNode findTextBySentenceId(@Param("sentenceNumber") int sentenceNumber);
