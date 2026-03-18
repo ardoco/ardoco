@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +31,17 @@ public class DocumentationPersistenceService {
     private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
 
     private final TextNodeRepository textRepository;
+    private final Neo4jClient neo4jClient;
 
-    public DocumentationPersistenceService(TextNodeRepository textRepository) {
+    public DocumentationPersistenceService(TextNodeRepository textRepository, Neo4jClient neo4jClient) {
+        this.neo4jClient = neo4jClient;
         this.textRepository = textRepository;
+    }
+
+    @Transactional
+    public void deletePreprocessedText(String identifier) {
+        textRepository.deleteByArdocoIdFast(identifier);
+        logger.info("Deleted TextNode and all associated child nodes for: {}", identifier);
     }
 
     @Transactional(readOnly = true)
@@ -90,8 +99,6 @@ public class DocumentationPersistenceService {
         }
 
         TextNode textNode = new TextNode(documentId);
-//        Map<Integer, WordNode> wordIndexMap = new HashMap<>(); // Global Map: Position -> Node
-//        Map<Phrase, PhraseNode> phraseCache = new HashMap<>();
         int estimatedWordCount = domainText.getSentences().size() * 25;
         Map<Integer, WordNode> wordIndexMap = new HashMap<>(estimatedWordCount); // Global Map: Position -> Node
         Map<Phrase, PhraseNode> phraseCache = new HashMap<>(estimatedWordCount / 2);

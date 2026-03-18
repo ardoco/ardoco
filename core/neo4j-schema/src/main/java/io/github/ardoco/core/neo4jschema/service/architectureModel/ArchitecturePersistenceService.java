@@ -36,6 +36,23 @@ public class ArchitecturePersistenceService {
         this.mapper = mapper;
     }
 
+    /**
+     * Deletes a specific architecture model by its metamodel type.
+     * Note: This assumes one model per metamodel type.
+     */
+    @Transactional
+    public void deleteArchitectureModel(Metamodel metamodel) {
+        logger.info("Deleting Architecture Model for metamodel: {}", metamodel);
+        // Find the modelId associated with this metamodel first
+        List<ArchitectureModelNode> nodes = repository.findAll();
+        for (ArchitectureModelNode node : nodes) {
+            if (metamodel.name().equals(node.getMetamodel())) {
+                repository.deleteByModelId(node.getModelId());
+                logger.info("Deleted Architecture Model with ID: {}", node.getModelId());
+            }
+        }
+    }
+
     @Transactional
     public void saveArchitectureModel(ArchitectureModel model) {
         // fist check if model with same id exists and delete it

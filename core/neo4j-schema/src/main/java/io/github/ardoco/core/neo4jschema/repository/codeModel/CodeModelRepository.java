@@ -16,9 +16,8 @@ public interface CodeModelRepository extends Neo4jRepository<CodeModelNode, Stri
     Optional<CodeModelNode> findByModelId(@Param("modelId") String modelId);
 
     @Query("MATCH (m:CodeModel {modelId: $modelId}) " +
-            "OPTIONAL MATCH (m)-[:CONTAINS_CODE_ROOT]->(child) " +
-            "OPTIONAL MATCH (child)-[:CONTAINS_CODE_ITEM]->(grandchild) " +
-            "DETACH DELETE m, child, grandchild")
+            "OPTIONAL MATCH (m)-[r:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)" +
+            "DETACH DELETE m, n")
     void deleteByModelId(@Param("modelId") String modelId);
 
     @Query("MATCH (m:CodeModel {metamodel: $metamodel}) " +

@@ -1,5 +1,9 @@
 package io.github.ardoco.core.neo4jschema.util.models;
 
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
@@ -8,10 +12,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.InterfaceUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
-
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class CodeModelFactory {
 
@@ -24,19 +24,14 @@ public class CodeModelFactory {
         ClassUnit ldapClass = new ClassUnit("id_cls_ldap", repo, "LDAPAuthenticator", new TreeSet<>());
         ldapClass.setImplementedTypes(new TreeSet<>(List.of(authInterface)));
 
-        CodeCompilationUnit interfaceCU = new CodeCompilationUnit(
-                "id_cu_iface", repo, "IAuthenticator", new TreeSet<>(),
-                List.of("edu", "kit", "api"), "java", ProgrammingLanguage.JAVA
-        );
+        CodeCompilationUnit interfaceCU = new CodeCompilationUnit("id_cu_iface", repo, "IAuthenticator", new TreeSet<>(), List.of("edu", "kit", "api"), "java",
+                ProgrammingLanguage.JAVA);
         interfaceCU.addContent(authInterface);
         authInterface.setCompilationUnit(interfaceCU);
-        CodeCompilationUnit classCU = new CodeCompilationUnit(
-                "id_cu_cls", repo, "LDAPAuthenticator", new TreeSet<>(),
-                List.of("edu", "kit", "impl"), "java", ProgrammingLanguage.JAVA
-        );
+        CodeCompilationUnit classCU = new CodeCompilationUnit("id_cu_cls", repo, "LDAPAuthenticator", new TreeSet<>(), List.of("edu", "kit", "impl"), "java",
+                ProgrammingLanguage.JAVA);
         classCU.addContent(ldapClass);
         ldapClass.setCompilationUnit(classCU);
-
 
         CodePackage apiPkg = new CodePackage("id_pkg_api", repo, "edu.kit.api");
         apiPkg.addContent(interfaceCU);
@@ -50,20 +45,25 @@ public class CodeModelFactory {
         return new CodeModelWithCompilationUnitsAndPackages(modelId, repo, roots);
     }
 
-    public static CodeModelWithCompilationUnitsAndPackages createSimpleCodeModel() {
+    public static CodeModelWithCompilationUnitsAndPackages createEmptyCodeModel() {
         CodeItemRepository repository = new CodeItemRepository();
+        String modelId = "empty_code_model";
+        repository.init();
+        return new CodeModelWithCompilationUnitsAndPackages(modelId, repository, new TreeSet<>());
+    }
+
+    public static CodeModelWithCompilationUnitsAndPackages createSimpleCodeModel() {
         String modelId = "test_code_model";
+        return createSimpleCodeModel(modelId);
+
+    }
+
+    public static CodeModelWithCompilationUnitsAndPackages createSimpleCodeModel(String modelId) {
+        CodeItemRepository repository = new CodeItemRepository();
 
         CodePackage codePackage = new CodePackage("id_pkg_auth", repository, "edu.kit.auth");
-        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(
-                "id_cu_auth",
-                repository,
-                "AuthService",
-                new TreeSet<>(),
-                List.of("edu", "kit", "auth"),
-                "java",
-                ProgrammingLanguage.JAVA
-        );
+        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit("id_cu_auth", repository, "AuthService", new TreeSet<>(),
+                List.of("edu", "kit", "auth"), "java", ProgrammingLanguage.JAVA);
         ClassUnit clazz = new ClassUnit("id_cls_auth", repository, "AuthService", new TreeSet<>());
 
         codePackage.addContent(codeCompilationUnit);

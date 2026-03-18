@@ -56,6 +56,48 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
         this.inconsistencyRepository = inconsistencyRepository;
     }
 
+    @Transactional
+    public void deleteInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        if (inconsistencies == null || inconsistencies.isEmpty()) {
+            return;
+        }
+
+        List<String> modelIds = new ArrayList<>();
+        List<Integer> sentenceNumbers = new ArrayList<>();
+
+        for (Inconsistency inc : inconsistencies) {
+            if (inc instanceof ModelInconsistency mi) {
+                modelIds.add(mi.getModelInstanceUid());
+            } else if (inc instanceof TextInconsistency ti) {
+                sentenceNumbers.add(ti.getSentenceNumber());
+            }
+        }
+
+        if (!modelIds.isEmpty()) {
+            neo4jClient.query("""
+                    MATCH (t:Traceable)-[:HAS_INCONSISTENCY]->(i:Inconsistency:ModelInconsistency)
+                    WHERE t.ardocoId IN $ids
+                    DETACH DELETE i
+                    """).bind(modelIds).to("ids").run();
+        }
+
+        if (!sentenceNumbers.isEmpty()) {
+            neo4jClient.query("""
+                    MATCH (t:Sentence)-[:HAS_INCONSISTENCY]->(i:Inconsistency:TextInconsistency)
+                    WHERE t.sentenceNumber IN $nums
+                    DETACH DELETE i
+                    """).bind(sentenceNumbers).to("nums").run();
+        }
+
+        logger.info("Deleted {} inconsistencies ({} model-based, {} text-based).", inconsistencies.size(), modelIds.size(), sentenceNumbers.size());
+    }
+
+    @Transactional
+    public void deleteAllInconsistencies() {
+        neo4jClient.query("MATCH (n:Inconsistency) DETACH DELETE n").run();
+        logger.info("All inconsistencies cleared.");
+    }
+
     @Override
     public Inconsistency visit(ModelInconsistencyNode node) {
         TraceableNode modelNode = node.getTraceableNode();
@@ -125,7 +167,6 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
             }
         }
 
-        // Single Batch Save
         traceableNodeRepository.saveAll(nodesToSave);
         return true;
     }

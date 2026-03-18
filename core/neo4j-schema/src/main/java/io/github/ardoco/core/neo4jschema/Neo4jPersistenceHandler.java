@@ -21,6 +21,7 @@ import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
@@ -36,6 +37,8 @@ import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureP
 import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Neo4j-based implementation of the PersistenceHandler interface. Delegates to specific services for each model type and trace links.
  */
@@ -49,10 +52,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final CodePersistenceService codeService;
     private final TraceLinkPersistenceService traceLinkService;
     private final InconsistencyPersistenceService inconsistencyService;
+    private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService,
-            InconsistencyPersistenceService inconsistencyService) {
+            InconsistencyPersistenceService inconsistencyService, Neo4jClient neo4jClient) {
+        this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
         this.codeService = codeService;
@@ -127,8 +132,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-
-        // save real transitive tracelinks
         Set<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> transitiveTraceLinks = traceLinks.stream()
                 .filter(TransitiveTraceLink.class::isInstance)
                 .map(link -> (TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>) link)
@@ -188,5 +191,61 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         logger.info("Loaded {} inconsistencies", inconsistencies.size());
         return inconsistencies;
      }
+
+    @Override
+    @Transactional
+    public void deleteModel(Metamodel metamodel) {
+        logger.info("Starting cascading deletion for model: {}", metamodel);
+
+        if (metamodel.isArchitectureModel()) {
+            neo4jClient.query("MATCH (i:Inconsistency)-[:BELONGS_TO]->(:ArchitectureItem) DETACH DELETE i").run();
+            neo4jClient.query("MATCH (n) WHERE n:SentenceModelTraceLink OR n:ArchitectureCodeTraceLink DETACH DELETE n").run();
+            architectureService.deleteArchitectureModel(metamodel);
+        } else if (metamodel.isCodeModel()) {
+            neo4jClient.query("MATCH (i:Inconsistency)-[:BELONGS_TO]->(:CodeItem) DETACH DELETE i").run();
+            neo4jClient.query("MATCH (n) WHERE n:SentenceModelTraceLink OR n:ArchitectureCodeTraceLink DETACH DELETE n").run();
+            codeService.deleteCodeModel(metamodel);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deletePreprocessedText(String identifier) {
+        logger.info("Starting cascading deletion for text: {}", identifier);
+
+        neo4jClient.query("""
+        MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)-[r:TRACES_TO]->()
+        DETACH DELETE r
+        """).bind(identifier).to("id").run();
+        neo4jClient.query("""
+        MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
+        DETACH DELETE i
+        """)
+                .bind(identifier).to("id").run();
+        documentationService.deletePreprocessedText(identifier);
+    }
+
+    @Override
+    public void deleteAllData() {
+        neo4jClient.query("MATCH (n) DETACH DELETE n ").run();
+    }
+
+    @Override
+    public void deleteTraceLinks(Class<? extends TraceLink<?, ?>> traceLinkType) {
+        logger.info("Deleting all trace links of type: {}", traceLinkType.getSimpleName());
+        traceLinkService.deleteTraceLinksByType(traceLinkType);
+    }
+
+    @Override
+    public void deleteInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        logger.info("Deleting {} specific inconsistencies", inconsistencies.size());
+        inconsistencyService.deleteInconsistencies(inconsistencies);
+    }
+
+    @Override
+    public void clearInconsistencies() {
+        logger.info("Clearing all inconsistencies from persistence");
+        inconsistencyService.deleteAllInconsistencies();
+    }
 
 }

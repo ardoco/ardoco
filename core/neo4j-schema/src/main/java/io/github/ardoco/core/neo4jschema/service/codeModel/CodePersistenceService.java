@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,25 @@ public class CodePersistenceService {
 
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
+    private final Neo4jClient neo4jClient;
 
-    public CodePersistenceService(CodeModelRepository repository, CodeModelMapper mapper) {
+    public CodePersistenceService(CodeModelRepository repository, CodeModelMapper mapper, Neo4jClient neo4jClient) {
+        this.neo4jClient = neo4jClient;
         this.repository = repository;
         this.mapper = mapper;
     }
+
+    @Transactional
+    public void deleteCodeModel(Metamodel metamodel) {
+        neo4jClient.query("""
+        MATCH (m:CodeModel {metamodel: $mt})
+        OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)
+        DETACH DELETE m, child
+        """)
+                .bind(metamodel.name()).to("mt")
+                .run();
+    }
+
 
     @Transactional(readOnly = true)
     public SortedSet<Metamodel> getStoredCodeModelMetamodels() {

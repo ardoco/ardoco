@@ -113,7 +113,54 @@ public interface PersistenceHandler {
      */
     boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
 
+    /**
+     * Saves a collection of inconsistencies.
+     *
+     * @param inconsistencies the inconsistencies to save
+     *
+     * @return true if the inconsistencies were successfully saved, false otherwise
+     */
     boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies);
 
+    /**
+     * Retrieves all inconsistencies from persistence.
+     *
+     * @return a collection of all inconsistencies
+     */
     Collection<? extends Inconsistency> getInconsistencies();
+
+    /**
+     * Removes all data associated with a specific metamodel.
+     * @param metamodel the metamodel to clear
+     */
+    void deleteModel(Metamodel metamodel);
+
+    /**
+     * Deletes a specific preprocessed text.
+     * @param identifier the identifier of the text to remove
+     */
+    void deletePreprocessedText(String identifier);
+
+    /**
+     * Wipes the entire persistence storage (useful for fresh starts/tests).
+     */
+    void deleteAllData();
+
+    /**
+     * Deletes all trace links of a specific type.
+     * @param traceLinkType the class of the trace link to remove
+     */
+    void deleteTraceLinks(Class<? extends TraceLink<?, ?>> traceLinkType);
+
+    /**
+     * Deletes the given inconsistencies from persistence.
+     *
+     * @param inconsistencies the inconsistencies to delete
+     */
+    void deleteInconsistencies(Collection<? extends Inconsistency> inconsistencies);
+
+    /**
+     * Removes all stored inconsistencies.
+     */
+    void clearInconsistencies();
 }

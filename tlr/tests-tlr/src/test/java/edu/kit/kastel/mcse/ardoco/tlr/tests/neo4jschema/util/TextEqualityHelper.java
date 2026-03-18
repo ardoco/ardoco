@@ -4,6 +4,9 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.Comparator;
+import java.util.List;
+
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
@@ -11,10 +14,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 
 public class TextEqualityHelper {
 
@@ -55,24 +54,14 @@ public class TextEqualityHelper {
                 .thenComparing(Phrase::getPhraseType) // Enums have a natural order based on definition
                 .thenComparing(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition());
 
-        List<? extends Phrase> expectedPhrases = expected.getPhrases().stream()
-                .sorted(phraseComparator)
-                .toList();
+        List<? extends Phrase> expectedPhrases = expected.getPhrases().stream().sorted(phraseComparator).toList();
 
-        List<? extends Phrase> actualPhrases = actual.getPhrases().stream()
-                .sorted(phraseComparator)
-                .toList();
+        List<? extends Phrase> actualPhrases = actual.getPhrases().stream().sorted(phraseComparator).toList();
 
-        System.out.println("Expected Phrases: " + expectedPhrases);
-        // print type and text for actual phrases
-        expectedPhrases.forEach(p -> System.out.println("Phrase: " + p.getPhraseType() + " - " + p.getText()));
-        System.out.println("Actual Phrases: " + actualPhrases);
-        actualPhrases.forEach(p -> System.out.println("Phrase: " + p.getPhraseType() + " - " + p.getText()));
-
-        assertEquals(expectedPhrases.size(), actualPhrases.size(),  () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
+        assertEquals(expectedPhrases.size(), actualPhrases.size(), () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
 
         for (int i = 0; i < expectedPhrases.size(); i++) {
-            assertPhrasesEqual(expectedPhrases.get(i),actualPhrases.get(i));
+            assertPhrasesEqual(expectedPhrases.get(i), actualPhrases.get(i));
         }
     }
 
@@ -118,8 +107,7 @@ public class TextEqualityHelper {
         List<Word> actual_words = actual.getContainedWords().toSortedList();
 
         for (int i = 0; i < expected_words.size(); i++) {
-            assertEquals(expected_words.get(i).getPosition(), actual_words.get(i).getPosition(),
-                    context + " - Contained word position mismatch at index " + i);
+            assertEquals(expected_words.get(i).getPosition(), actual_words.get(i).getPosition(), context + " - Contained word position mismatch at index " + i);
         }
 
         assertEquals(expected.getSubphrases().size(), actual.getSubphrases().size(), context + " - Subphrase count");
