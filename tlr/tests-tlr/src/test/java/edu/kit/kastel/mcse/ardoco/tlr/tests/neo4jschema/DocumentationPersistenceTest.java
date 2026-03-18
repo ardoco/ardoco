@@ -82,7 +82,7 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
         // Assert - Domain Mapping
         DocumentationMapper mapper = new DocumentationMapper();
-        Text restoredText = mapper.mapToDomain(retrievedNode);
+        Text restoredText = mapper.toDomain(retrievedNode);
 
         assertThat(restoredText.getSentences()).hasSize(2);
 

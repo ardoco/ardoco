@@ -18,39 +18,34 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
 
     boolean existsByArdocoId(String ardocoId);
 
-    @Query("""
-        MATCH (t:Text {ardocoId: $ardocoId})
-        OPTIONAL MATCH (t)-[:HAS_SENTENCE]->(s)
-        OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE*0..5]->(child)
-        DETACH DELETE t, s, child
-    """)
-    Long deleteByArdocoId(@Param("ardocoId") String ardocoId);
-
+    /**
+     * Consolidated Fast Delete.
+     * DETACH DELETE ensures we clean up TraceLinks and Inconsistencies pointing to these nodes.
+     */
     @Query("""
         MATCH (t:Text {ardocoId: $ardocoId})
         OPTIONAL MATCH (t)-[:HAS_SENTENCE]->(s:Sentence)
-        OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE|HAS_CHILD_PHRASE*0..5]->(content)
-        DETACH DELETE t, s, content
+        OPTIONAL MATCH (s)-[r:TRACES_TO]->()
+        OPTIONAL MATCH (s)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
+        OPTIONAL MATCH (s)-[:CONTAINS_WORD|HAS_ROOT_PHRASE|HAS_CHILD_PHRASE*0..15]->(content)
+        DETACH DELETE t, s, r, i, content
     """)
     void deleteByArdocoIdFast(@Param("ardocoId") String ardocoId);
 
+    /**
+     * Optimized Deep Fetch.
+     * Using a single path match where possible improves Cypher performance.
+     */
     @Query("""
-    MATCH (t:Text {ardocoId: $ardocoId})
-    OPTIONAL MATCH (t)-[r1:HAS_SENTENCE]->(s:Sentence)
-    OPTIONAL MATCH (s)-[r2:CONTAINS_WORD]->(w:Word)
-    // Fetch Dependencies
-    OPTIONAL MATCH (w)-[r5:DEPENDENCY]->(target:Word)
-    OPTIONAL MATCH (s)-[r3:HAS_ROOT_PHRASE]->(rp:Phrase)
-    OPTIONAL MATCH (rp)-[r4:HAS_CHILD_PHRASE|CONTAINS_WORD*1..5]->(sub)
-    RETURN t, 
-           collect(r1), collect(s), 
-           collect(r2), collect(w), 
-           collect(r5), collect(target),
-           collect(r3), collect(rp),
-           collect(r4), collect(sub)
+        MATCH (t:Text {ardocoId: $ardocoId})
+        OPTIONAL MATCH (t)-[r1:HAS_SENTENCE]->(s:Sentence)
+        OPTIONAL MATCH (s)-[r2:CONTAINS_WORD]->(w:Word)
+        OPTIONAL MATCH (w)-[r3:DEPENDENCY]->(target:Word)
+        OPTIONAL MATCH (s)-[r4:HAS_ROOT_PHRASE]->(rp:Phrase)
+        OPTIONAL MATCH (rp)-[r5:HAS_CHILD_PHRASE|CONTAINS_WORD*1..6]->(sub)
+        RETURN t, collect(r1), collect(s), collect(r2), collect(w), 
+               collect(r3), collect(target), collect(r4), collect(rp), collect(r5), collect(sub)
     """)
     Optional<TextNode> findByArdocoIdDeep(@Param("ardocoId") String ardocoId);
 
-    @Query("MATCH (t:Text)-[:HAS_SENTENCE]->(s:Sentence {ardocoId: $sentenceId}) RETURN t")
-    TextNode findTextBySentenceId(@Param("sentenceNumber") int sentenceNumber);
 }

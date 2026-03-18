@@ -213,15 +213,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public void deletePreprocessedText(String identifier) {
         logger.info("Starting cascading deletion for text: {}", identifier);
 
-        neo4jClient.query("""
-        MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)-[r:TRACES_TO]->()
-        DETACH DELETE r
-        """).bind(identifier).to("id").run();
-        neo4jClient.query("""
-        MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
-        DETACH DELETE i
-        """)
-                .bind(identifier).to("id").run();
+
         documentationService.deletePreprocessedText(identifier);
     }
 

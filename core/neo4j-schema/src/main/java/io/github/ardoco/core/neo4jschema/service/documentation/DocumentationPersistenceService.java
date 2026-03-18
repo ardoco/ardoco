@@ -1,28 +1,15 @@
 /* Licensed under MIT 2023-2026. */
 package io.github.ardoco.core.neo4jschema.service.documentation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-import io.github.ardoco.core.neo4jschema.entities.documentation.PhraseNode;
-import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
-import io.github.ardoco.core.neo4jschema.entities.documentation.WordNode;
 import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
 
 @Service
@@ -31,152 +18,63 @@ public class DocumentationPersistenceService {
     private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
 
     private final TextNodeRepository textRepository;
-    private final Neo4jClient neo4jClient;
+    private final DocumentationMapper mapper;
 
-    public DocumentationPersistenceService(TextNodeRepository textRepository, Neo4jClient neo4jClient) {
-        this.neo4jClient = neo4jClient;
+    public DocumentationPersistenceService(TextNodeRepository textRepository, DocumentationMapper mapper) {
         this.textRepository = textRepository;
+        this.mapper = mapper;
     }
 
+    /**
+     * Deletes a preprocessed TextNode and all its associated child nodes from the Neo4j database based on the provided identifier. Moreover, this method also
+     * deletes all TraceLinks and Inconsistencies that point to the sentences of the TextNode.
+     *
+     * @param identifier The identifier used to locate the TextNode in the database for deletion.
+     */
     @Transactional
     public void deletePreprocessedText(String identifier) {
         textRepository.deleteByArdocoIdFast(identifier);
         logger.info("Deleted TextNode and all associated child nodes for: {}", identifier);
     }
 
+    /**
+     * Checks if a preprocessed TextNode exists in the Neo4j database for the given identifier. This method performs a simple existence check using the
+     * TextNodeRepository, which is optimized for this purpose.
+     *
+     * @param identifier The identifier to check for the existence of a corresponding TextNode in the database.
+     * @return true if a TextNode with the given identifier exists, false otherwise.
+     */
     @Transactional(readOnly = true)
     public boolean hasPreprocessedText(String identifier) {
         return textRepository.existsByArdocoId(identifier);
     }
 
-    @Nullable
+    /**
+     * Loads a preprocessed Text from the Neo4j database based on the provided identifier. This method performs a deep fetch of the TextNode and its related
+     * entities to reconstruct the domain Text object. If no TextNode is found for the given identifier, it returns null.
+     *
+     * @param identifier The identifier used to locate the TextNode in the database
+     * @return The domain Text object reconstructed from the TextNode, or null if no matching TextNode is found.
+     */
     @Transactional(readOnly = true)
+    @Nullable
     public Text loadPreprocessedText(String identifier) {
-        //        boolean exists = textRepository.existsByArdocoId(identifier);
-        //        logger.info("Checking existence of preprocessed text for identifier {}: {}", identifier, exists);
-        //        if (!exists) {
-        //            logger.warn("No preprocessed text found for identifier: {}", identifier);
-        //            return null;
-        //        }
-        Optional<TextNode> textNode = textRepository.findByArdocoIdDeep(identifier);
-        if (textNode.isEmpty()) {
-            logger.warn("No preprocessed text found for identifier: {}", identifier);
-            return null;
-        }
-
-        DocumentationMapper mapper = new DocumentationMapper();
-        return mapper.mapToDomain(textNode.get());
+        return textRepository.findByArdocoIdDeep(identifier).map(mapper::toDomain).orElse(null);
     }
 
-    public Text loadPreprocessedTextBySentence(SentenceNode sentenceNode) {
-        TextNode textNode = textRepository.findTextBySentenceId(sentenceNode.getSentenceNumber());
-        DocumentationMapper mapper = new DocumentationMapper();
-        return mapper.mapToDomain(textNode);
-    }
-
-    @Transactional(readOnly = true)
-    @Nullable
-    public Text loadPreprocessedText() {
-        return textRepository.findByArdocoIdDeep(
-                        "PreprocessingData") // TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
-                .map(new DocumentationMapper()::mapToDomain).orElseGet(() -> {
-                    logger.warn("No preprocessed text found in database!");
-                    return null; // Or return an empty Text object
-                });
-        //        TextNode textNode = textRepository.findByArdocoId(PreprocessingData.ID);
-        //        logger.info("loaded documentation for document ID from neo4j: {}", PreprocessingData.ID);
-        //        DocumentationMapper mapper = new DocumentationMapper();
-        //        return mapper.mapToDomain(textNode);
-    }
-
+    /**
+     * Saves the provided domain Text object into the Neo4j database. This method first deletes any existing TextNode associated with the given documentId to
+     * ensure that stale data is not retained. Then, it converts the domain Text into a TextNode entity using the DocumentationMapper and persists it using the
+     * TextNodeRepository.
+     *
+     * @param domainText The domain Text object to be saved into the database.
+     * @param documentId The identifier to associate with the saved TextNode entity, used for future retrieval and deletion operations.
+     */
     @Transactional
     public void savePreprocessedText(Text domainText, String documentId) {
-
-        if (textRepository.existsByArdocoId(documentId)) {
-            Long deletedCount = textRepository.deleteByArdocoId(documentId);
-            long numDeleted = (deletedCount != null) ? deletedCount : 0L;
-            logger.info("Deleted {} existing nodes for document ID: {}", numDeleted, documentId);
-        }
-
-        TextNode textNode = new TextNode(documentId);
-        int estimatedWordCount = domainText.getSentences().size() * 25;
-        Map<Integer, WordNode> wordIndexMap = new HashMap<>(estimatedWordCount); // Global Map: Position -> Node
-        Map<Phrase, PhraseNode> phraseCache = new HashMap<>(estimatedWordCount / 2);
-
-        SentenceNode prevSentenceNode = null;
-        WordNode prevWordNode = null;
-        for (Sentence domainSentence : domainText.getSentences()) {
-            SentenceNode sentenceNode = new SentenceNode(domainSentence.getSentenceNumber(), domainSentence.getText());
-            textNode.addSentence(sentenceNode);
-
-            if (prevSentenceNode != null) {
-                prevSentenceNode.setNextSentence(sentenceNode);
-            }
-
-            List<WordNode> sentenceWords = new ArrayList<>(domainSentence.getWords().size());
-            for (Word domainWord : domainSentence.getWords()) {
-                WordNode wordNode = new WordNode(domainWord.getPosition(), domainWord.getText(), domainWord.getLemma(), domainWord.getPosTag().toString());
-
-                sentenceWords.add(wordNode);
-                wordIndexMap.put(domainWord.getPosition(), wordNode);
-
-                if (prevWordNode != null) {
-                    prevWordNode.setNextWord(wordNode);
-                }
-                prevWordNode = wordNode;
-            }
-            sentenceNode.setWords(sentenceWords);
-
-            for (Phrase domainPhrase : domainSentence.getPhrases()) {
-                sentenceNode.getRootPhrases().add(convertPhrase(domainPhrase, wordIndexMap, phraseCache));
-            }
-
-            prevSentenceNode = sentenceNode;
-        }
-
-        createDependencyLinks(domainText, wordIndexMap);
-
+        this.deletePreprocessedText(documentId); // Ensure old data is removed before saving new data
+        TextNode textNode = mapper.toEntity(domainText, documentId);
         textRepository.save(textNode);
-        logger.info("Saved documentation for document ID to neo4j: {}", documentId);
     }
 
-    private void createDependencyLinks(Text domainText, Map<Integer, WordNode> wordMap) {
-        for (Word word : domainText.words()) {
-            WordNode sourceNode = wordMap.get(word.getPosition());
-            if (sourceNode == null)
-                continue;
-
-            for (DependencyTag tag : DependencyTag.values()) {
-                for (Word target : word.getOutgoingDependencyWordsWithType(tag)) {
-                    WordNode targetNode = wordMap.get(target.getPosition());
-                    if (targetNode != null) {
-                        // Assuming addDependency(type, target) exists on WordNode
-                        sourceNode.addDependency(tag.name(), targetNode);
-                    }
-                }
-            }
-        }
-    }
-
-    private PhraseNode convertPhrase(Phrase domainPhrase, Map<Integer, WordNode> wordMap, Map<Phrase, PhraseNode> phraseCache) {
-        if (phraseCache.containsKey(domainPhrase)) {
-            return phraseCache.get(domainPhrase);
-        }
-
-        PhraseNode phraseNode = new PhraseNode(domainPhrase.getText(), domainPhrase.getPhraseType().toString());
-        phraseCache.put(domainPhrase, phraseNode);
-
-        for (Word containedWord : domainPhrase.getContainedWords()) {
-            if (wordMap.containsKey(containedWord.getPosition())) {
-                phraseNode.addContainedWord(wordMap.get(containedWord.getPosition()));
-            }
-        }
-
-        for (Phrase subPhrase : domainPhrase.getSubphrases()) {
-            PhraseNode childNode = convertPhrase(subPhrase, wordMap, phraseCache);
-            phraseNode.addChildPhrase(childNode);
-        }
-
-        return phraseNode;
-    }
 }

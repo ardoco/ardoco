@@ -156,7 +156,7 @@ public class TraceLinkPersistenceService {
 
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceArchitectureModelTraceLinks() {
-        Text domainText = documentationService.loadPreprocessedText();
+        Text domainText = documentationService.loadPreprocessedText("PreprocessingData");
 
         if (domainText == null) {
             logger.warn("No preprocessed text available, cannot load sentence-architecture trace links.");
@@ -177,8 +177,8 @@ public class TraceLinkPersistenceService {
     }
 
     @Transactional(readOnly = true)
-    public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks() {
-        Text domainText = documentationService.loadPreprocessedText();
+    public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks() {//TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
+        Text domainText = documentationService.loadPreprocessedText("PreprocessingData");
 
         if (domainText == null) {
             logger.warn("No preprocessed text available, cannot load sentence-code trace links.");
@@ -205,7 +205,7 @@ public class TraceLinkPersistenceService {
 
     @Transactional(readOnly = true)
     public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
-        Text domainText = documentationService.loadPreprocessedText();
+        Text domainText = documentationService.loadPreprocessedText("PreprocessingData");
 
         if (domainText == null) {
             logger.warn("No preprocessed text available, cannot load sentence-code trace links.");
