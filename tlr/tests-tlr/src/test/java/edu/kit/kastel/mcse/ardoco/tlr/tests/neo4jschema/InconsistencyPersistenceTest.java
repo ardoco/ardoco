@@ -16,19 +16,18 @@ import edu.kit.kastel.mcse.ardoco.id.execution.runner.InconsistencyDetection;
 public class InconsistencyPersistenceTest extends AbstractPersistenceTest {
 
     @Test
-    void testInconsistencyDetectionWithNeo4j() {
+    void testInconsistencyDetectionWithNeo4j() throws Exception {
         executeInconsistencyTest(true);
     }
 
     @Test
-    void testInconsistencyDetectionWithoutPersistence() {
+    void testInconsistencyDetectionWithoutPersistence() throws Exception {
         executeInconsistencyTest(false);
     }
 
-    private void executeInconsistencyTest(boolean persistence) {
+    private void executeInconsistencyTest(boolean persistence) throws Exception {
         var runner = new InconsistencyDetection(projectName);
-        ImmutableSortedMap<String, String> configs = getConfigsWithPersistence(persistence);
-        System.out.println("Configs: " + configs);
+        ImmutableSortedMap<String, String> configs = getInconsistencyConfigsWithPersistence(persistence);
         runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, configs, outputDir);
 
         testRunnerAssertions(runner);
@@ -36,15 +35,15 @@ public class InconsistencyPersistenceTest extends AbstractPersistenceTest {
         Assertions.assertNotNull(result);
         ImmutableList<Inconsistency> inconsistencies = result.getAllInconsistencies();
         System.out.println("Found a total of " + inconsistencies.size() + " inconsistencies."); // 9
-        Assertions.assertEquals(9, inconsistencies.size());
+        Assertions.assertEquals(29, inconsistencies.size());
 
         ImmutableList<TextInconsistency> textInconsistencies = result.getAllTextInconsistencies();
-        System.out.println("Found a total of " + textInconsistencies.size() + " text inconsistencies."); // 4 vs 24 on traceview website
-        Assertions.assertEquals(4, textInconsistencies.size());
+        System.out.println("Found a total of " + textInconsistencies.size() + " text inconsistencies."); // 24 on traceview website
+        Assertions.assertEquals(24, textInconsistencies.size());
 
         ImmutableList<ModelInconsistency> modelInconsistencies = result.getAllModelInconsistencies();
         Assertions.assertEquals(5, modelInconsistencies.size());
-        System.out.println("Found a total of " + modelInconsistencies.size() + " model inconsistencies."); // 5 (also 5 on traceview website)
+        System.out.println("Found a total of " + modelInconsistencies.size() + " model inconsistencies."); // 5 on traceview website)
 
         ImmutableList<InconsistentSentence> inconsistentSentences = result.getInconsistentSentences();
         System.out.println("Found a total of " + inconsistentSentences.size() + " inconsistent sentences."); //4
