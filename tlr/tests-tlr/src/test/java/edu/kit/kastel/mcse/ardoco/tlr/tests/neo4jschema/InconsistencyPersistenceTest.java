@@ -33,20 +33,14 @@ public class InconsistencyPersistenceTest extends AbstractPersistenceTest {
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
-        ImmutableList<Inconsistency> inconsistencies = result.getAllInconsistencies();
-        System.out.println("Found a total of " + inconsistencies.size() + " inconsistencies."); // 9
+        ImmutableList<Inconsistency> inconsistencies = result.getAllInconsistencies(); // 9
         Assertions.assertEquals(29, inconsistencies.size());
 
-        ImmutableList<TextInconsistency> textInconsistencies = result.getAllTextInconsistencies();
-        System.out.println("Found a total of " + textInconsistencies.size() + " text inconsistencies."); // 24 on traceview website
+        ImmutableList<TextInconsistency> textInconsistencies = result.getAllTextInconsistencies(); // 24 on traceview website
         Assertions.assertEquals(24, textInconsistencies.size());
 
         ImmutableList<ModelInconsistency> modelInconsistencies = result.getAllModelInconsistencies();
-        Assertions.assertEquals(5, modelInconsistencies.size());
-        System.out.println("Found a total of " + modelInconsistencies.size() + " model inconsistencies."); // 5 on traceview website)
-
-        ImmutableList<InconsistentSentence> inconsistentSentences = result.getInconsistentSentences();
-        System.out.println("Found a total of " + inconsistentSentences.size() + " inconsistent sentences."); //4
+        Assertions.assertEquals(5, modelInconsistencies.size()); // 5 on traceview website
     }
 
 }

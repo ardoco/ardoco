@@ -7,6 +7,18 @@ The component is designed to be used in conjunction with other components of the
 Neo4j is a graph database. It stores data as nodes, relationships and properties. [Official Documentation](https://neo4j.com/docs/)
 The idea of using neo4j in Ardoco is to model the architecture model, code model and documentation model as graphs as well as the tracelinks and inconsistencies between them in order to apply Machine Learning methods to it.
 
+## Configuration options for the Neo4j database
+The connection to the Neo4j database is configured via environment variables, which can be set in a .env file located in the project root.
+This allows the neo4j module to be easily switched on or off. Moreover the deployment location can be changed without code changes.
+
+``ARDOCO_PERSISTENCE_NEO4J_ENABLED:`` A boolean flag (true/false). Defaults to true. When set to true, the Neo4jBridgeActivator is initialized and plugs the handler into the ArDoCo Core. When false, the persistence layer remains inactive, allowing ArDoCo to run without a database connection.
+Once Ardoco is running with this flag set to true, individual Runners can still choose to not use the persistence layer by setting the `PersistenceBridge::usePersistence` flag to false in their run configuration. This allows for flexible usage of the persistence layer on a per-run basis.
+
+
+``SPRING_NEO4J_URI``: The connection string for the database (e.g., bolt://localhost:7687 for local Docker or a remote IP for deployed instances). Defaults to bolt://localhost:7687.
+
+``SPRING_NEO4J_AUTHENTICATION_USERNAME`` & ``SPRING_NEO4J_AUTHENTICATION_PASSWORD``: The credentials for database access.
+
 ## Architecture
 The architecture of the Neo4j-Schema component has a layered architecture. The main layers are:
 1. Neo4jPersistenceHandler Class: provides the main entry point for interacting with the Neo4j database and the neo4j-schema module in general. 
@@ -60,7 +72,7 @@ Like this other components of Ardoco can interact with the neo4j database via th
 
 #### Usage of the Neo4jPersistenceHandler
 
-#### Configuration options for the Neo4j database
+
 
 ## Schema
 ### Preprocessed Text

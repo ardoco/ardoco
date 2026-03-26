@@ -3,6 +3,7 @@ package io.github.ardoco.core.neo4jschema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
@@ -12,6 +13,7 @@ import jakarta.annotation.PostConstruct;
  * This bean automatically registers the Neo4j implementation with the static PersistenceBridge in the ARDoCo core module when the Spring Context starts.
  */
 @Component
+@ConditionalOnProperty(name = "ardoco.persistence.neo4j.enabled", havingValue = "true")
 public class Neo4jBridgeActivator {
     private static final Logger logger = LoggerFactory.getLogger(Neo4jBridgeActivator.class);
 

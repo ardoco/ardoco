@@ -79,25 +79,14 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         additionalConfigs.putAll(configs.toSortedMap());
         additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
         return additionalConfigs.toImmutable();
-
-//        this.getClass().getResourceAsStream("teastore/inconsistencyConfig.txt").transferTo(Files.newOutputStream(inconsistencyConfig.toPath()));
-//        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(inconsistencyConfig.getAbsolutePath()));
-//
-//        MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
-//        additionalConfigs.putAll(configs.toSortedMap());
-//        additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
-//        return additionalConfigs.toImmutable();
     }
 
     protected ImmutableSortedMap<String, String> getInconsistencyConfigsWithPersistence(boolean enabled) throws Exception {
-        //        var inconsistencyConfig = new File(directory.toFile(), "inconsistencyConfig.txt");
-
         var resource = getClass().getResource("/teastore/inconsistencyConfig.txt");
         if (resource == null) {
             throw new FileNotFoundException("Could not find config in resources");
         }
         ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(resource.toURI()));
-
         MutableSortedMap<String, String> additionalConfigs = configs.toSortedMap();
         additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
         return additionalConfigs.toImmutable();
