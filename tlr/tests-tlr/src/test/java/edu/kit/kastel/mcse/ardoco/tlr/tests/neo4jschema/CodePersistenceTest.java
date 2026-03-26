@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
+import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 
 @Transactional
 public class CodePersistenceTest extends AbstractPersistenceTest {

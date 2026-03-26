@@ -2,9 +2,7 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import io.github.ardoco.core.neo4jschema.repository.inconsistencies.TextInconsistencyNodeRepository;
 
@@ -31,8 +29,8 @@ import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.inconsistencies.InconsistencyNodeRepository;
-import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureModelMapper;
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodeModelMapper;
+import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
+import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 
 @Service
 public class InconsistencyPersistenceService implements InconsistencyNodeVisitor<Inconsistency> {

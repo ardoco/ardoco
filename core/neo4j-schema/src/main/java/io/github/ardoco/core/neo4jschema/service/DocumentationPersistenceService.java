@@ -1,5 +1,7 @@
 /* Licensed under MIT 2023-2026. */
-package io.github.ardoco.core.neo4jschema.service.documentation;
+package io.github.ardoco.core.neo4jschema.service;
+
+import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

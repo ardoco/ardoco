@@ -28,9 +28,9 @@ import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
-import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
+import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
+import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 
 /**
  * Neo4j-based implementation of the PersistenceHandler interface. Delegates to specific services for each model type and trace links.

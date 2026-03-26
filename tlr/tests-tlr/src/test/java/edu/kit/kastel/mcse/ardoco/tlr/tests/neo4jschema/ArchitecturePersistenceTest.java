@@ -22,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInter
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
-import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
+import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 
 @Transactional
 class ArchitecturePersistenceTest extends AbstractPersistenceTest {

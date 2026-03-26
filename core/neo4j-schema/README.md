@@ -8,9 +8,59 @@ Neo4j is a graph database. It stores data as nodes, relationships and properties
 The idea of using neo4j in Ardoco is to model the architecture model, code model and documentation model as graphs as well as the tracelinks and inconsistencies between them in order to apply Machine Learning methods to it.
 
 ## Architecture
-The architecture of the Neo4j-Schema component is based on the following main classes:
-### Neo4jPersistenceHandler
-The Neo4jPersistenceHandler class acts as the 
+The architecture of the Neo4j-Schema component has a layered architecture. The main layers are:
+1. Neo4jPersistenceHandler Class: provides the main entry point for interacting with the Neo4j database and the neo4j-schema module in general. 
+    It provides methods for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
+2. Services: provides services for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
+3. Mappers: provides functionality for converting between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j.
+3. Repositories: provides repositories for interacting with the Neo4j database. 
+
+### Data Representation:
+The database schema is modelled as a graph. The modelled nodes and relationships of the graph can be found in the entities package.
+Each class in the entities package ending with `Node` represents a node in the graph.
+The classes each class ending with `Relationship` represent a relationship with additional properties in the graph. 
+This only applies to the TraceLinkRelationship and the DependencyRelationship, which represents relationships between individual words.
+All other relationships in the graph are represented as simple relationships which are directly annotated in the node classes with @Relationship.
+
+Note: When creating Relationships in Neo4j, they are directed. However, in ArDoCo, tracelinks are undirected.
+The relationships in neo4j can be traversed in both directions at the same speed. 
+Thus, instead of creating two relationships for each tracelink, I created only one relationship to minimize the number of relationships needed.
+
+In neo4j a node can have multiple labels, meaning inheritance can be represented in the graph by giving a node multiple labels.
+The structure of the architecture model represented in the neo4j graph is similar to the structure of the architecture model in architectural model in ArDoCo including inheritance. 
+This means every node in the architecture model has the `ArchitectureItem` label, and depending on the type of architecture item, it also has for example a `ArchitectureComponent`, `ArchitectureInterface` or `ArchitectureMethod` label.
+Similarly, the structure of the code model represented in the neo4j graph is similar to the structure of the code model in ArDoCo. 
+This means every node in the code model has the `CodeItem` label, and depending on the type of code item, it also has for example a `CodeComponent`, `CodeInterface` or `CodeMethod` label.
+Similar goes for the preprocessed text.
+Corresponing to the `Entity` class in ArDoCo, there is a `Traceable` label in the graph which is given to all nodes which can be traced. 
+This means all meaning all nodes with the labels `CodeItem`, `ArchitectureItem` or `Sentence` automatically also wear the `Traceable` label.
+This additional label allows to better define Tracelinkrelationships, which can be established between any two nodes with the `Traceable` label without having to define a separate relationship for all tracelink combinations.
+
+#### Mapping between ArDoCo and Neo4j
+To map between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j, each of the 
+models has a corresponding mapper class which provides methods for converting a model or text from ArDoCo to neo4j and vice versa.
+
+For the text, the original TextImpl, SentenceImpl, WordImpl and PhraseImpl classes in `corenlp\TextImpl.java` have an object from NLP Processing as a field, 
+which is not stored in neo4j. Thus, instead of repopulating these classes, I created new adapter 
+classes `Neo4jText`, `Neo4jSentence`, `Neo4jWord` and `Neo4jPhrase` which also implement the Text, Sentence, Word and Phrase interfaces,
+but do not have the NLP Processing object as a field.
+
+For the classes of the architecture model and code model, I reused the same classes as in ArDoCo, but added a constructor to them which allows to
+pass a predefined id to them instead of generating a new id to keep the same id as before saving the models to neo4j.
+
+
+
+### Integration of Neo4j-Schema in Ardoco
+Neo4j-Schema uses spring boot and spring data neo4j to interact with the neo4j database.
+As soon as the spring boot application is started the Neo4jBridgeActivator class is activated.
+This class populates the PersistenceBridge in Ardoco Core with an instance of the Neo4jPersistenceHandler class, which provides the main entry point for interacting with the neo4j database and the neo4j-schema module in general.
+The PersistenceBridge is a singleton class which provides a bridge between the Ardoco Core and the persistence layer, which in this case is the neo4j database.
+Like this other components of Ardoco can interact with the neo4j database via the PersistenceBridge without having to know about the neo4j-schema module.
+
+
+#### Usage of the Neo4jPersistenceHandler
+
+#### Configuration options for the Neo4j database
 
 ## Schema
 ### Preprocessed Text

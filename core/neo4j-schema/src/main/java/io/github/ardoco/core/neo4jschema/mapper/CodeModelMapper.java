@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.service.codeModel;
+package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -20,7 +20,6 @@ public class CodeModelMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(CodeModelMapper.class);
 
-    // --- 1. REGISTRY FOR NODE FACTORIES ---
     private static final Map<Class<? extends CodeItem>, BiFunction<CodeItem, String, CodeItemNode>> NODE_FACTORIES = Map.of(
             CodePackage.class, (item, id) -> new CodePackageNode(((CodePackage) item).getName(), id),
             CodeCompilationUnit.class, (item, id) -> {
@@ -32,8 +31,6 @@ public class CodeModelMapper {
             CodeAssembly.class, (item, id) -> new CodeAssemblyNode(((CodeAssembly) item).getName(), id, ((CodeAssembly) item).getLanguage()),
             ControlElement.class, (item, id) -> new ControlElementNode(((ControlElement) item).getName(), id)
     );
-
-    // --- 2. DOMAIN -> NODE (Persistence) ---
 
     public CodeModelNode toNode(CodeModel model) {
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
@@ -60,10 +57,8 @@ public class CodeModelMapper {
         return modelNode;
     }
 
-    // --- 3. NODE -> DOMAIN (Restoration) ---
-
     /**
-     * Variant A: Maps a single CodeItemNode. Useful for restoring specific TraceLink endpoints.
+     *  Maps a single CodeItemNode. Useful for restoring specific TraceLink endpoints.
      */
     public CodeItem toDomain(CodeItemNode node) {
         CodeItemRepository localRepo = new CodeItemRepository();
@@ -73,7 +68,7 @@ public class CodeModelMapper {
     }
 
     /**
-     * Variant B: Maps an entire CodeModel tree.
+     *  Maps an entire CodeModel tree.
      */
     public CodeModel toDomain(CodeModelNode node) {
         CodeItemRepository repository = new CodeItemRepository();
@@ -106,7 +101,6 @@ public class CodeModelMapper {
         return finalizeCodeModel(node, repository);
     }
 
-    // --- 4. SHARED INTERNAL HELPERS ---
 
     private void linkDomainHierarchy(CodeItem parent, CodeItem child) {
         if (parent instanceof CodeModule pm) pm.addContent(child);

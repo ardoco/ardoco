@@ -1,8 +1,10 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.service.codeModel;
+package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.List;
 import java.util.SortedSet;
+
+import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.service.architectureModel;
+package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

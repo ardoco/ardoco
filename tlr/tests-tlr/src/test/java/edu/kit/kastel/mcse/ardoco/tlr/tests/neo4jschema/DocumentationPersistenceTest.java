@@ -20,8 +20,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl
 import edu.stanford.nlp.pipeline.CoreDocument;
 import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationMapper;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
+import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
+import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 
 class DocumentationPersistenceTest extends AbstractPersistenceTest {
 

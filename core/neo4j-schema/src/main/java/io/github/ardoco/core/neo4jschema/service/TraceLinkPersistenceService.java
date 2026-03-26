@@ -36,9 +36,8 @@ import io.github.ardoco.core.neo4jschema.repository.architectureModel.Architectu
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeItemRepository;
 import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
-import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitectureModelMapper;
-import io.github.ardoco.core.neo4jschema.service.codeModel.CodeModelMapper;
-import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
+import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
+import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 
 @Service
 public class TraceLinkPersistenceService {
