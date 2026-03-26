@@ -142,9 +142,9 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
 
-        persistenceHandler.saveSamCodeTraceLinks(List.of(link));
+        persistenceHandler.saveTraceLinks(List.of(link));
 
-        var loaded = persistenceHandler.loadSamCodeTraceLinks();
+        var loaded = persistenceHandler.loadArchitectureCodeTraceLinks();
         Assertions.assertTrue(loaded.stream().noneMatch(l -> l.getFirstEndpoint().getId().equals("ghost_id")));
     }
 
@@ -161,8 +161,8 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
 
-        persistenceHandler.saveSamCodeTraceLinks(List.of(link));
-        var loadedLinks = persistenceHandler.loadSamCodeTraceLinks();
+        persistenceHandler.saveTraceLinks(List.of(link));
+        var loadedLinks = persistenceHandler.loadArchitectureCodeTraceLinks();
 
         Assertions.assertFalse(loadedLinks.isEmpty());
         Assertions.assertTrue(loadedLinks.stream()
@@ -194,7 +194,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         var transitiveLink = TransitiveTraceLink.createTransitiveTraceLink(link1, link2)
                 .orElseThrow(() -> new IllegalStateException("Failed to create transitive link - IDs didn't match"));
 
-        persistenceHandler.saveTransitiveTraceLinks(List.of(transitiveLink));
+        persistenceHandler.saveTraceLinks(List.of(transitiveLink));
         var loaded = persistenceHandler.loadTransitiveTraceLinks();
 
         Assertions.assertFalse(loaded.isEmpty(), "Transitive link should be persisted");
@@ -214,7 +214,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         SentenceModelTraceLink link = new SentenceModelTraceLink(sentence, codeItem);
 
-        persistenceHandler.saveSentenceModelTraceLinks(List.of(link));
+        persistenceHandler.saveTraceLinks(List.of(link));
         var loaded = persistenceHandler.loadSentenceModelTraceLinks();
 
         Assertions.assertFalse(loaded.isEmpty());
@@ -267,7 +267,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
 
-        Assertions.assertNull(persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
+        Assertions.assertThrows(IllegalArgumentException.class, ()->persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
         Assertions.assertNotNull(persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
 
         Long archItemsCount = neo4jClient.query("MATCH (n:ArchitectureItem) RETURN count(n)").fetchAs(Long.class).one().get();
@@ -283,12 +283,12 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
 
         var link = new ArchitectureCodeTraceLink(archModel.getEndpoints().get(0), codeModel.getEndpoints().get(0));
-        persistenceHandler.saveSamCodeTraceLinks(List.of(link));
+        persistenceHandler.saveTraceLinks(List.of(link));
         Long codeItemsCountBefore = neo4jClient.query("MATCH (n:CodeItem) RETURN count(n)").fetchAs(Long.class).one().get();
 
         persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
 
-        var links = persistenceHandler.loadSamCodeTraceLinks();
+        var links = persistenceHandler.loadArchitectureCodeTraceLinks();
         Assertions.assertTrue(links.isEmpty(), "TraceLink should have been deleted when its endpoint model was removed.");
         Long archItemsCount = neo4jClient.query("MATCH (n:ArchitectureItem) RETURN count(n)").fetchAs(Long.class).one().get();
         Assertions.assertEquals(0L, archItemsCount, "Architecture items were not cleaned up!");
@@ -339,11 +339,10 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         var archItem = archModel.getEndpoints().get(0);
         var link1 = new SentenceModelTraceLink(text.getSentences().get(0), archItem);
         var link2 = new ArchitectureCodeTraceLink(archItem, codeModel.getEndpoints().get(0));
-        persistenceHandler.saveSentenceModelTraceLinks(List.of(link1));
-        persistenceHandler.saveSamCodeTraceLinks(List.of(link2));
+        persistenceHandler.saveTraceLinks(List.of(link1, link2));
 
         persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
-        Assertions.assertTrue(persistenceHandler.loadSamCodeTraceLinks().isEmpty(), "Arch-Code link should be gone");
+        Assertions.assertTrue(persistenceHandler.loadArchitectureCodeTraceLinks().isEmpty(), "Arch-Code link should be gone");
         Assertions.assertTrue(persistenceHandler.loadSentenceModelTraceLinks().isEmpty(), "Sentence-Arch link should be gone");
         Assertions.assertTrue(persistenceHandler.loadTransitiveTraceLinks().isEmpty(), "Transitive reconstruction should fail");
     }

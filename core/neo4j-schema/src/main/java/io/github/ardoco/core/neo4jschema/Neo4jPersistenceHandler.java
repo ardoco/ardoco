@@ -3,41 +3,34 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
-import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
-
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
-
-import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
+import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.architectureModel.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.codeModel.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.documentation.DocumentationPersistenceService;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Neo4j-based implementation of the PersistenceHandler interface. Delegates to specific services for each model type and trace links.
@@ -55,8 +48,8 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
-            CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService,
-            InconsistencyPersistenceService inconsistencyService, Neo4jClient neo4jClient) {
+            CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
+            Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
@@ -73,21 +66,19 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         } else if (metamodel.isCodeModel() && model instanceof CodeModel codeModel) {
             codeService.saveCodeModel(codeModel);
         } else {
-            logger.warn("Unknown model type for persistence: " + model.getClass().getName());
+            throw new IllegalArgumentException("Unknown model type for persistence: " + model.getClass().getName());
         }
     }
 
     @Override
-    public Model loadModel(Metamodel metamodel) {
+    public Model loadModel(Metamodel metamodel) throws IllegalArgumentException {
         logger.info("Loading model of type: " + metamodel);
         if (metamodel.isCodeModel()) {
             return codeService.loadCodeModel(metamodel);
         } else if (metamodel.isArchitectureModel()) {
             return architectureService.loadArchitectureModel(metamodel);
-        } else {
-            logger.warn("Unknown metamodel type for loading: " + metamodel);
-            return null;
         }
+        throw new IllegalArgumentException("Unknown metamodel: " + metamodel.name());
     }
 
     @Override
@@ -100,14 +91,19 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public void savePreprocessedText(Text text, String identifier) {
-        this.documentationService.savePreprocessedText(text, identifier);
         logger.info("Saving preprocessed text for " + identifier);
+        this.documentationService.savePreprocessedText(text, identifier);
     }
 
     @Override
     public Text loadPreprocessedText(String identifier) {
         logger.info("Loading preprocessed text for " + identifier);
-        return this.documentationService.loadPreprocessedText(identifier);
+
+        Text text = this.documentationService.loadPreprocessedText(identifier).orElse(null);
+        if (text == null) {
+            logger.warn("No preprocessed text found for identifier: " + identifier);
+        }
+        return text;
     }
 
     @Override
@@ -117,66 +113,42 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
-        logger.info("Saving ArchitectureCodeTraceLinks");
-        return this.traceLinkService.saveTracelinks(traceLinks);
+    public boolean saveTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        logger.info("Saving {} Transitive/Sentence-Model/ArchitectureCode Tracelinks", traceLinks.size());
+        Set<TraceLink<?, ?>> uniqueLinks = new HashSet<>(traceLinks);
+        return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 
     @Override
-    public Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks() {
-        logger.info("Loading ArchitectureCodeTraceLinks");
-        Set<ArchitectureCodeTraceLink> links =  this.traceLinkService.loadAllArchitectureCodeTraceLinks();
+    public Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks() {
+        logger.info("Loading ArchitectureCodeTraceLinks from neo4j");
+        Set<ArchitectureCodeTraceLink> links = this.traceLinkService.loadAllArchitectureCodeTraceLinks();
         logger.info("Loaded {} ArchitectureCodeTraceLinks", links.size());
         return links;
     }
 
     @Override
-    public boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        Set<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> transitiveTraceLinks = traceLinks.stream()
-                .filter(TransitiveTraceLink.class::isInstance)
-                .map(link -> (TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>) link)
-                .collect(Collectors.toSet());
-        logger.info("Saving {} unique TransitiveTracelinks", transitiveTraceLinks.size());
-        this.traceLinkService.saveTransitiveTracelinks(transitiveTraceLinks);
-
-        Set<SentenceModelTraceLink> sentenceModelTraceLinks = traceLinks.stream()
-                .filter(SentenceModelTraceLink.class::isInstance)
-                .map(link -> (SentenceModelTraceLink) link)
-                .filter(link -> link.getSecondEndpoint() instanceof CodeItem)
-                .collect(Collectors.toSet());
-        logger.info("Saving {} unique SentenceCodeModelTracelinks", sentenceModelTraceLinks.size());
-        this.traceLinkService.saveTracelinks(sentenceModelTraceLinks);
-        return true;
-    }
-
-    @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
-        logger.info("Loading TransitiveTracelinks");
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks =  this.traceLinkService.loadTransitiveTraceLinks();
+        logger.info("Loading TransitiveTraceLinks from neo4j");
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks("PreprocessingData");
         logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
+
         Set<SentenceModelTraceLink> directLinks = this.loadSentenceModelTraceLinks();
         logger.info("Loaded {} SentenceCodeModelTraceLinks", directLinks.size());
+
         transitiveLinks.addAll(directLinks);
         return transitiveLinks;
     }
 
     @Override
     public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
-        logger.info("Loading SentenceModelTraceLinks");
-        Set<SentenceModelTraceLink> links =  this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
+        logger.info("Loading SentenceModelTraceLinks from neo4j");
+        Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks("PreprocessingData");
         logger.info("Loaded {} SentenceArchitectureModelTraceLinks", links.size());
-        Set<SentenceModelTraceLink> codeLinks =  this.traceLinkService.loadAllSentenceCodeModelTraceLinks();
+        Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks("PreprocessingData");
         logger.info("Loaded {} SentenceCodeModelTraceLinks", codeLinks.size());
         links.addAll(codeLinks);
-        logger.info("=> Loaded {} SentenceModelTraceLinks in total.", links.size());
         return links;
-    }
-
-    @Override
-    public boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> uniqueLinks = new HashSet<>(traceLinks);
-        logger.info("Saving {} SentenceModelTracelinks", uniqueLinks.size());
-        return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 
     @Override
@@ -187,23 +159,26 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public Collection<? extends Inconsistency> getInconsistencies() {
+        logger.info("Loading inconsistencies from neo4j");
         Collection<? extends Inconsistency> inconsistencies = this.inconsistencyService.getInconsistencies();
         logger.info("Loaded {} inconsistencies", inconsistencies.size());
         return inconsistencies;
-     }
+    }
 
     @Override
     @Transactional
     public void deleteModel(Metamodel metamodel) {
-        logger.info("Starting cascading deletion for model: {}", metamodel);
+        logger.info("Starting  deletion for model: {}", metamodel);
 
         if (metamodel.isArchitectureModel()) {
-            neo4jClient.query("MATCH (i:Inconsistency)-[:BELONGS_TO]->(:ArchitectureItem) DETACH DELETE i").run();
-            neo4jClient.query("MATCH (n) WHERE n:SentenceModelTraceLink OR n:ArchitectureCodeTraceLink DETACH DELETE n").run();
+            inconsistencyService.deleteInconsistenciesOfArchitectureItems();
+            traceLinkService.deleteTraceLinksByType(TraceLinkType.ARCHITECTURE_CODE);
+            traceLinkService.deleteTraceLinksByType(TraceLinkType.SENTENCE_ARCHITECTURE);
             architectureService.deleteArchitectureModel(metamodel);
         } else if (metamodel.isCodeModel()) {
-            neo4jClient.query("MATCH (i:Inconsistency)-[:BELONGS_TO]->(:CodeItem) DETACH DELETE i").run();
-            neo4jClient.query("MATCH (n) WHERE n:SentenceModelTraceLink OR n:ArchitectureCodeTraceLink DETACH DELETE n").run();
+            inconsistencyService.deleteInconsistenciesOfCodeItems();
+            traceLinkService.deleteTraceLinksByType(TraceLinkType.ARCHITECTURE_CODE);
+            traceLinkService.deleteTraceLinksByType(TraceLinkType.SENTENCE_CODE);
             codeService.deleteCodeModel(metamodel);
         }
     }
@@ -211,21 +186,16 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     @Transactional
     public void deletePreprocessedText(String identifier) {
-        logger.info("Starting cascading deletion for text: {}", identifier);
-
-
+        inconsistencyService.deleteTextInconsistencies();
+        traceLinkService.deleteTraceLinksByType(TraceLinkType.SENTENCE_CODE);
+        traceLinkService.deleteTraceLinksByType(TraceLinkType.SENTENCE_ARCHITECTURE);
         documentationService.deletePreprocessedText(identifier);
+        logger.info("Starting cascading deletion for text: {}", identifier);
     }
 
     @Override
     public void deleteAllData() {
         neo4jClient.query("MATCH (n) DETACH DELETE n ").run();
-    }
-
-    @Override
-    public void deleteTraceLinks(Class<? extends TraceLink<?, ?>> traceLinkType) {
-        logger.info("Deleting all trace links of type: {}", traceLinkType.getSimpleName());
-        traceLinkService.deleteTraceLinksByType(traceLinkType);
     }
 
     @Override
@@ -235,8 +205,8 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public void clearInconsistencies() {
-        logger.info("Clearing all inconsistencies from persistence");
+    public void deleteAllInconsistencies() {
+        logger.info("Deleting all inconsistencies from persistence");
         inconsistencyService.deleteAllInconsistencies();
     }
 

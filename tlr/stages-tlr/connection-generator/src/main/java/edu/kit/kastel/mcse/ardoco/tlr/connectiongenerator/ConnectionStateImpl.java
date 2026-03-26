@@ -93,7 +93,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
         }
 
         if (!linksToPersist.isEmpty()) {
-            PersistenceBridge.getHandler().saveSentenceModelTraceLinks(linksToPersist);
+            PersistenceBridge.getHandler().saveTraceLinks(linksToPersist);
         }
     }
 

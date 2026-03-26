@@ -3,6 +3,15 @@ This component provides functionality to save and load architecture models, code
 Moreover it provides functionality to insert and retrieve tracelinks and inconsistencies.
 The component is designed to be used in conjunction with other components of the Ardoco Core, such as the Architecture Model and Code Model components.
 
+## Neo4j
+Neo4j is a graph database. It stores data as nodes, relationships and properties. [Official Documentation](https://neo4j.com/docs/)
+The idea of using neo4j in Ardoco is to model the architecture model, code model and documentation model as graphs as well as the tracelinks and inconsistencies between them in order to apply Machine Learning methods to it.
+
+## Architecture
+The architecture of the Neo4j-Schema component is based on the following main classes:
+### Neo4jPersistenceHandler
+The Neo4jPersistenceHandler class acts as the 
+
 ## Schema
 ### Preprocessed Text
 The graph for representing a preprocessed text follows a structure similar to the one provided by TextImpl.java, SentenceImpl.java, WordImpl.java and PhraseImpl.java

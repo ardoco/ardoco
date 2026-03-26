@@ -27,9 +27,11 @@ public abstract class InconsistencyNode {
     public InconsistencyNode(String reason, String type) {
         this.reason = reason;
         this.type = type;
+        traceableNode = null;
     }
 
     public InconsistencyNode() {
+        traceableNode = null;
     }
 
     public abstract <T> T accept(InconsistencyNodeVisitor<T> visitor);

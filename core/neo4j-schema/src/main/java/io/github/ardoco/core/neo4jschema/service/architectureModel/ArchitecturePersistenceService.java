@@ -1,32 +1,19 @@
 /* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.architectureModel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureComponentNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureInterfaceNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureMethodNode;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 
 @Service
 public class ArchitecturePersistenceService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ArchitecturePersistenceService.class);
 
     private final ArchitectureModelRepository repository;
     private final ArchitectureModelMapper mapper;
@@ -37,116 +24,65 @@ public class ArchitecturePersistenceService {
     }
 
     /**
-     * Deletes a specific architecture model by its metamodel type.
-     * Note: This assumes one model per metamodel type.
+     * Deletes a specific architecture model by its metamodel type. Note: This assumes one model per metamodel type. If multiple models exist for the same
+     * metamodel, it will delete all of them. If no model is found for the given metamodel, it does nothing.
+     *
+     * @param metamodel The metamodel type of the architecture model(s) to be deleted from the database.
      */
     @Transactional
     public void deleteArchitectureModel(Metamodel metamodel) {
-        logger.info("Deleting Architecture Model for metamodel: {}", metamodel);
-        // Find the modelId associated with this metamodel first
         List<ArchitectureModelNode> nodes = repository.findAll();
         for (ArchitectureModelNode node : nodes) {
             if (metamodel.name().equals(node.getMetamodel())) {
                 repository.deleteByModelId(node.getModelId());
-                logger.info("Deleted Architecture Model with ID: {}", node.getModelId());
             }
         }
     }
 
+    /**
+     * Saves the given architecture model. This method first deletes any existing model with the same ID to ensure that stale data is not retained. Then, it
+     * converts the domain model into a node entity using the ArchitectureModelMapper and persists it using the ArchitectureModelRepository.
+     *
+     * @param model The domain ArchitectureModel object to be saved into the database.
+     */
     @Transactional
     public void saveArchitectureModel(ArchitectureModel model) {
-        // fist check if model with same id exists and delete it
-//        repository.findByModelId(model.getId()).ifPresent(existingModel -> {
-//            logger.info("Deleting existing Architecture Model with ID: {}", model.getId());
-//            repository.delete(existingModel);
-//        });
         repository.deleteByModelId(model.getId());
-
-        ArchitectureModelNode modelNode = new ArchitectureModelNode(model.getId(), model.getMetamodel().name());
-
-        Map<String, ArchitectureComponentNode> componentCache = new HashMap<>();
-        Map<String, ArchitectureInterfaceNode> interfaceCache = new HashMap<>();
-
-        for (ArchitectureItem item : model.getContent()) {
-            if (item instanceof ArchitectureComponent comp) {
-                ArchitectureComponentNode compNode = mapComponent(comp, componentCache, interfaceCache);
-                modelNode.addComponent(compNode);
-            } else if (item instanceof ArchitectureInterface iface) {
-                ArchitectureInterfaceNode ifaceNode = mapInterface(iface, interfaceCache);
-                modelNode.addInterface(ifaceNode);
-            }
-        }
-
+        ArchitectureModelNode modelNode = mapper.toNode(model);
         repository.save(modelNode);
     }
 
-    private ArchitectureComponentNode mapComponent(ArchitectureComponent domainComp, Map<String, ArchitectureComponentNode> compCache,
-            Map<String, ArchitectureInterfaceNode> interfaceCache) {
-
-        if (compCache.containsKey(domainComp.getId())) {
-            return compCache.get(domainComp.getId());
-        }
-
-        ArchitectureComponentNode node = new ArchitectureComponentNode(domainComp.getName(), domainComp.getType().orElse(null), domainComp.getId());
-        compCache.put(domainComp.getId(), node);
-
-        // Map Subcomponents (Recursion)
-        for (ArchitectureComponent sub : domainComp.getSubcomponents()) {
-            node.addSubcomponent(mapComponent(sub, compCache, interfaceCache));
-        }
-
-        // Map Provided Interfaces
-        for (ArchitectureInterface iface : domainComp.getProvidedInterfaces()) {
-            node.addProvidedInterface(mapInterface(iface, interfaceCache));
-        }
-
-        // Map Required Interfaces
-        for (ArchitectureInterface iface : domainComp.getRequiredInterfaces()) {
-            node.addRequiredInterface(mapInterface(iface, interfaceCache));
-        }
-
-        return node;
-    }
-
-    private ArchitectureInterfaceNode mapInterface(ArchitectureInterface domainInterface, Map<String, ArchitectureInterfaceNode> ifaceCache) {
-        if (ifaceCache.containsKey(domainInterface.getId())) {
-            return ifaceCache.get(domainInterface.getId());
-        }
-
-        ArchitectureInterfaceNode node = new ArchitectureInterfaceNode(domainInterface.getName(), domainInterface.getType().orElse(null), domainInterface
-                .getId());
-        ifaceCache.put(domainInterface.getId(), node);
-
-        for (ArchitectureMethod method : domainInterface.getMethodSignatures()) {
-            ArchitectureMethodNode methodNode = new ArchitectureMethodNode(method.getName(), method.getId());
-            node.addMethodSignature(methodNode);
-        }
-
-        return node;
-    }
-
+    /**
+     * Loads an architecture model from the database based on the provided metamodel type.
+     *
+     * @param metamodel The metamodel type used to locate the ArchitectureModelNode in the database. This method assumes that there is at most one model per
+     *                  metamodel type.
+     * @return If multiple models exist for the same metamodel, it will return the first one found. If no model is found for the given metamodel, it returns
+     * null.
+     */
     @Transactional(readOnly = true)
     public ArchitectureModel loadArchitectureModel(Metamodel metamodel) {
         List<ArchitectureModelNode> nodes = repository.findAll();
         for (ArchitectureModelNode node : nodes) {
             if (node.getMetamodel() != null && node.getMetamodel().equals(metamodel.name())) {
-                return mapper.mapToDomain(node);
+                return mapper.toDomain(node);
             }
         }
-        logger.warn("No Architecture Model found for type: " + metamodel);
-        return null;
+        throw new IllegalArgumentException("No Architecture Model found for type: " + metamodel.name());
     }
 
+    /**
+     * Retrieves a sorted set of all metamodel types for which architecture models are currently stored in the database.
+     *
+     * @return A sorted set of Metamodel enums representing the types of architecture models available in the database. If no models are stored, it returns an
+     * empty set.
+     */
     @Transactional(readOnly = true)
     public SortedSet<Metamodel> getStoredArchitectureModelMetamodels() {
         SortedSet<Metamodel> available = new java.util.TreeSet<>();
         List<ArchitectureModelNode> archNodes = repository.findAll();
         for (ArchitectureModelNode node : archNodes) {
-            try {
-                available.add(Metamodel.valueOf(node.getMetamodel()));
-            } catch (IllegalArgumentException e) {
-                logger.warn("Unknown metamodel found in stored Architecture Models: " + node.getMetamodel());
-            }
+            available.add(Metamodel.valueOf(node.getMetamodel()));
         }
         return available;
     }

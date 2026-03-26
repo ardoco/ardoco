@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -38,7 +37,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().saveSamCodeTraceLinks(traceLinks);
+            return PersistenceBridge.getHandler().saveTraceLinks(traceLinks);
         }
         return this.samCodeTraceLinks.addAll(traceLinks);
     }
@@ -47,7 +46,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         //        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
         if ((this.samCodeTraceLinks.isEmpty() || !loadedFromPersistence) && PersistenceBridge.isAvailable()) {
-            Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadSamCodeTraceLinks();
+            Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadArchitectureCodeTraceLinks();
             this.samCodeTraceLinks = Lists.mutable.withAll(loadedLinks);
             loadedFromPersistence = true;
         }
@@ -58,7 +57,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     @Override
     public boolean addSadCodeTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().saveTransitiveTraceLinks(traceLinks);
+            return PersistenceBridge.getHandler().saveTraceLinks(traceLinks);
         }
         return this.transitiveTraceLinks.addAll(traceLinks);
     }

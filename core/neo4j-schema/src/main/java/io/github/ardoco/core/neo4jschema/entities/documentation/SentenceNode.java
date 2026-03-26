@@ -13,7 +13,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 @Node("Sentence")
 public class SentenceNode extends TraceableNode {
 
-    private int sentenceNumber;
+    private Integer sentenceNumber;
     private String text;
 
     // Ordered sequence of sentences

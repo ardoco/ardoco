@@ -1,177 +1,82 @@
 /* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service.codeModel;
 
-import java.util.*;
+import java.util.List;
+import java.util.SortedSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
+import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
 import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
 
 @Service
 public class CodePersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CodePersistenceService.class);
-
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
-    private final Neo4jClient neo4jClient;
 
-    public CodePersistenceService(CodeModelRepository repository, CodeModelMapper mapper, Neo4jClient neo4jClient) {
-        this.neo4jClient = neo4jClient;
+    public CodePersistenceService(CodeModelRepository repository, CodeModelMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
+    /**
+     * Deletes a specific code model by its metamodel type. Note: This assumes one model per metamodel type.
+     *
+     * @param metamodel The metamodel type of the code model(s) to be deleted from the database.
+     */
     @Transactional
     public void deleteCodeModel(Metamodel metamodel) {
-        neo4jClient.query("""
-        MATCH (m:CodeModel {metamodel: $mt})
-        OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)
-        DETACH DELETE m, child
-        """)
-                .bind(metamodel.name()).to("mt")
-                .run();
+        repository.deleteByMetamodel(metamodel.name());
     }
 
-
+    /**
+     * Retrieves a sorted set of all metamodel types for which code models are currently stored in the database. If any unknown metamodel types are encountered
+     * (i.e., those that cannot be mapped to the Metamodel enum), a warning is logged, and those entries are skipped.
+     *
+     * @return A SortedSet of Metamodel enum values representing the types of code models available in the database.
+     */
     @Transactional(readOnly = true)
     public SortedSet<Metamodel> getStoredCodeModelMetamodels() {
         SortedSet<Metamodel> available = new java.util.TreeSet<>();
         List<CodeModelNode> archNodes = repository.findAll();
         for (CodeModelNode node : archNodes) {
-            try {
-                available.add(Metamodel.valueOf(node.getMetamodel()));
-            } catch (IllegalArgumentException e) {
-                logger.warn("Unknown metamodel found in stored Code Models: " + node.getMetamodel());
-            }
+            available.add(Metamodel.valueOf(node.getMetamodel()));
         }
         return available;
     }
 
+    /**
+     * Loads a code model from the database based on the provided metamodel type. If multiple models exist for the same metamodel, it returns the first one
+     * found. If no model is found for the given metamodel, it returns null.
+     *
+     * @param metamodel The metamodel type used to locate the CodeModelNode in the database.
+     * @return The fist CodeModel found for the given metamodel type, or null if no such model exists.
+     */
     @Transactional(readOnly = true)
-    public CodeModel loadCodeModel(Metamodel metamodel) {
-
+    public CodeModel loadCodeModel(Metamodel metamodel) throws IllegalArgumentException {
         List<CodeModelNode> nodes = repository.findAll();
         for (CodeModelNode node : nodes) {
             if (node.getMetamodel().equals(metamodel.name())) {
-                return mapper.mapToDomain(node);
+                return mapper.toDomain(node);
             }
         }
-        logger.warn("No Code Model found for type: " + metamodel);
-        return null;
-    }
-
-    @Transactional
-    public void saveCodeModel(CodeModel model) {
-        repository.deleteByModelId(model.getId());
-        logger.info("saving code model");
-
-        CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
-        Map<String, CodeItemNode> cache = new HashMap<>();
-
-        CodeModel.CodeModelDto dto = model.createCodeModelDto();
-        List<String> contentIds = dto.content();
-        CodeItemRepository itemRepository = dto.codeItemRepository();
-
-        List<CodeItem> contentItems = itemRepository.getCodeItemsByIds(contentIds);
-        Set<String> modelContentIdSet = new HashSet<>(contentIds);
-
-        if (model instanceof CodeModelWithCompilationUnitsAndPackages) {
-            for (CodeItem item : contentItems) {
-                if (isRootInModel(item, modelContentIdSet)) {
-                    modelNode.addContent(mapToNode(item, cache));
-                }
-            }
-        } else if (model instanceof CodeModelWithCompilationUnits) {
-            for (CodeItem item : contentItems) {
-                modelNode.addContent(mapToNode(item, cache));
-            }
-        } else {
-            for (CodeItem item : contentItems) {
-                modelNode.addContent(mapToNode(item, cache));
-            }
-        }
-
-        // iterate over cache and map relations for all nodes
-        for (Map.Entry<String, CodeItemNode> entry : cache.entrySet()) {
-            CodeItem item = itemRepository.getCodeItem(entry.getKey());
-
-            if (entry.getValue() instanceof DatatypeNode dtNode && item instanceof Datatype dt) {
-                for (Datatype ext : dt.getExtendedTypes()) {
-                    dtNode.addExtendedType((DatatypeNode) mapToNode(ext, cache));
-                }
-                for (Datatype impl : dt.getImplementedTypes()) {
-                    dtNode.addImplementedType((DatatypeNode) mapToNode(impl, cache));
-                }
-                for (Datatype dep : dt.getDatatypeReferences()) {
-                    dtNode.addReferencedDatatype((DatatypeNode) mapToNode(dep, cache));
-                }
-            }
-        }
-
-        repository.save(modelNode);
+        throw new IllegalArgumentException("Unknown metamodel: " + metamodel.name());
     }
 
     /**
-     * Checks if the given code item is a "Root" relative to the set of IDs in the model.
-     * An item is a root if it has no parent, or if its parent is not part of the modelContentIdSet.
+     * Saves the given code model. This method first deletes any existing model with the same ID to ensure that stale data is not retained.
+     *
+     * @param model The domain CodeModel object to be saved into the database.
      */
-    private boolean isRootInModel(CodeItem item, Set<String> modelContentIdSet) {
-        if (item instanceof CodeModule cm) {
-            if (cm.hasParent() && modelContentIdSet.contains(cm.getParent().getId())) {
-                return false;
-            }
-        }
-
-        else if (item instanceof Datatype dt) {
-            if (dt.getCompilationUnit() != null && modelContentIdSet.contains(dt.getCompilationUnit().getId())) {
-                return false;
-            }
-            if (dt.getParentDatatype() != null && modelContentIdSet.contains(dt.getParentDatatype().getId())) {
-                return false;
-            }
-        }
-        return true;
+    @Transactional
+    public void saveCodeModel(CodeModel model) {
+        repository.deleteByModelId(model.getId());
+        CodeModelNode modelNode = mapper.toNode(model);
+        repository.save(modelNode);
     }
 
-    private CodeItemNode mapToNode(CodeItem item, Map<String, CodeItemNode> cache) {
-        if (cache.containsKey(item.getId()))
-            return cache.get(item.getId());
-
-        CodeItemNode node = createNode(item);
-        cache.put(item.getId(), node);
-
-        for (CodeItem child : item.getContent()) {
-            node.addContent(mapToNode(child, cache));
-        }
-
-        return node;
-    }
-
-    private CodeItemNode createNode(CodeItem item) {
-        if (item instanceof CodePackage p) {
-            return new CodePackageNode(p.getName(), p.getId());
-        } else if (item instanceof CodeCompilationUnit c) {
-            return new CodeCompilationUnitNode(c.getName(), c.getId(), c.getExtension(), c.getLanguage().name(), c.getPathElements());
-        } else if (item instanceof ClassUnit c) {
-            return new ClassUnitNode(c.getName(), c.getId());
-        } else if (item instanceof InterfaceUnit i) {
-            return new InterfaceUnitNode(i.getName(), i.getId());
-        } else if (item instanceof CodeAssembly a) {
-            return new CodeAssemblyNode(a.getName(), a.getId(), a.getLanguage());
-        } else if (item instanceof ControlElement c) {
-            return new ControlElementNode(c.getName(), c.getId());
-        }
-        throw new IllegalArgumentException("Unsupported CodeItem: " + item.getClass().getSimpleName());
-    }
 }

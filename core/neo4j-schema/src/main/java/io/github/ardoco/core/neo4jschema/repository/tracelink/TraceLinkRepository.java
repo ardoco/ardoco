@@ -29,14 +29,7 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
             "RETURN source, collect(r), collect(target)")
     List<TraceableNode> findAllByRelationshipType(@Param("type") TraceLinkType type);
 
-    @Query("MATCH (n:Traceable {ardocoId: $id})-[r:TRACES_TO]-(neighbor:Traceable) " +
-            "RETURN n, collect(r), collect(neighbor)")
-    Optional<TraceableNode> findAllLinksForNode(@Param("id") String id);
 
-
-//    @Query("MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId}) " +
-//            "MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t) " +
-//            "SET r.confidence = COALESCE($conf, -1.0)")
     @Query("MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId}) " +
             "MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t) " +
             "SET r.confidence = COALESCE($conf, -1.0), " +
@@ -63,23 +56,10 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
             @Param("type") TraceLinkType type
     );
 
-    default void createSentenceTraceLink(int sentenceNumber, String targetId, TraceLinkType type) {
-        createSentenceTraceLink(sentenceNumber, targetId, -1.0, type);
-    }
 
-    @Query("MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:Traceable)-[r2:TRACES_TO]->(end:Traceable) " +
-            "WHERE r1.traceLinkType = $type1 AND r2.traceLinkType = $type2 " +
-            "RETURN s AS sentence, mid AS architecture, end AS code")
-    List<TransitiveChainQueryResult> findTransitiveChainsRaw(
-            @Param("type1") TraceLinkType type1,
-            @Param("type2") TraceLinkType type2
-    );
+    @Query("MATCH ()-[r:TRACES_TO]->()  DETACH DELETE r")
+    void deleteAllTraceLinks();
 
-    @Query("MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:ArchitectureItem)-[r2:TRACES_TO]->(end:CodeItem) " +
-            "WHERE r1.traceLinkType = 'SENTENCE_ARCHITECTURE' " +
-            "AND r2.traceLinkType = 'ARCHITECTURE_CODE' " +
-            "RETURN s, r1, mid, r2, end")
-    List<TransitiveChainQueryResult> findSentenceArchCodeChains();
-
-
+    @Query("MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = $type DELETE r")
+    void deleteLinksByType(@Param("type") TraceLinkType type);
 }

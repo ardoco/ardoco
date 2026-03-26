@@ -34,7 +34,7 @@ public interface PersistenceHandler {
      * @param metamodel the metamodel
      * @return the loaded model
      */
-    Model loadModel(Metamodel metamodel);
+    Model loadModel(Metamodel metamodel) throws IllegalArgumentException;
 
     /**
      * Retrieves the set of metamodels for which a model is stored in persistence.
@@ -68,27 +68,20 @@ public interface PersistenceHandler {
     boolean hasPreprocessedText(String identifier);
 
     /**
-     * Saves a collection of generic trace links.
-     * The implementation should filter for supported types (e.g. ArchitectureCodeTraceLink).
+     * Saves a collection of tracelinks
      *
      * @param traceLinks the trace links to save
+     * @return true if the trace links were successfully saved, false otherwise
      */
-    boolean saveSamCodeTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks);
+    boolean saveTraceLinks(Collection<? extends TraceLink<?,?>> traceLinks);
 
     /**
      * Loads the specific Architecture-Code links from the database.
      *
      * @return the loaded Architecture-Code tracelinks
      */
-    Collection<ArchitectureCodeTraceLink> loadSamCodeTraceLinks();
+    Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks();
 
-    /**
-     * Saves a collection of transitive tracelinks between sentences and model entities.
-     *
-     * @param traceLinks the trace links to save
-     * @return true if the trace links were successfully saved, false otherwise
-     */
-    boolean saveTransitiveTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
 
     /**
      * Loads a collection of transitive tracelinks between sentences and code model entities.
@@ -104,14 +97,6 @@ public interface PersistenceHandler {
      * @return the loaded trace links
      */
     Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks();
-
-    /**
-     * Saves a collection of tracelinks between sentences and model entities.
-     *
-     * @param traceLinks the trace links to save
-     * @return true if the trace links were successfully saved, false otherwise
-     */
-    boolean saveSentenceModelTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks);
 
     /**
      * Saves a collection of inconsistencies.
@@ -141,16 +126,6 @@ public interface PersistenceHandler {
      */
     void deletePreprocessedText(String identifier);
 
-    /**
-     * Wipes the entire persistence storage (useful for fresh starts/tests).
-     */
-    void deleteAllData();
-
-    /**
-     * Deletes all trace links of a specific type.
-     * @param traceLinkType the class of the trace link to remove
-     */
-    void deleteTraceLinks(Class<? extends TraceLink<?, ?>> traceLinkType);
 
     /**
      * Deletes the given inconsistencies from persistence.
@@ -162,5 +137,10 @@ public interface PersistenceHandler {
     /**
      * Removes all stored inconsistencies.
      */
-    void clearInconsistencies();
+    void deleteAllInconsistencies();
+
+    /**
+     * Wipes the entire persistence storage (useful for fresh starts/tests).
+     */
+    void deleteAllData();
 }

@@ -82,6 +82,7 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
         // Assert - Domain Mapping
         DocumentationMapper mapper = new DocumentationMapper();
+//        Text restoredText = mapper.toDomain(retrievedNode);
         Text restoredText = mapper.toDomain(retrievedNode);
 
         assertThat(restoredText.getSentences()).hasSize(2);
@@ -101,7 +102,7 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
         Text originalText = provider.getAnnotatedText();
 
         persistenceService.savePreprocessedText(originalText, InputTextData.ID);
-        Text loadedText = persistenceService.loadPreprocessedText(InputTextData.ID);
+        Text loadedText = persistenceService.loadPreprocessedText(InputTextData.ID).orElse(null);
 
         TextEqualityHelper.assertTextsEqual(originalText, loadedText);
     }

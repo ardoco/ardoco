@@ -2,11 +2,14 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import io.github.ardoco.core.neo4jschema.repository.inconsistencies.TextInconsistencyNodeRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,29 +42,85 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     private final TraceableNodeRepository traceableNodeRepository;
     private final SentenceNodeRepository sentenceNodeRepository;
     private final InconsistencyNodeRepository inconsistencyRepository;
+    private final TextInconsistencyNodeRepository textInconsistencyRepository;
 
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
-    private final Neo4jClient neo4jClient;
-
     public InconsistencyPersistenceService(SentenceNodeRepository sentenceNodeRepository, ArchitectureModelMapper archMapper, CodeModelMapper codeMapper,
-            Neo4jClient neo4jClient, TraceableNodeRepository traceableNodeRepository, InconsistencyNodeRepository inconsistencyRepository) {
+            TraceableNodeRepository traceableNodeRepository, InconsistencyNodeRepository inconsistencyRepository,
+            TextInconsistencyNodeRepository textInconsistencyRepository) {
 
-        this.neo4jClient = neo4jClient;
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
         this.traceableNodeRepository = traceableNodeRepository;
         this.sentenceNodeRepository = sentenceNodeRepository;
         this.inconsistencyRepository = inconsistencyRepository;
+        this.textInconsistencyRepository = textInconsistencyRepository;
+    }
+    @Transactional
+    public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        if (inconsistencies == null || inconsistencies.isEmpty()) {
+            return false;
+        }
+
+        List<InconsistencyNode> nodesToSave = new ArrayList<>();
+
+        for (Inconsistency inconsistency : inconsistencies) {
+            String reason = inconsistency.getReason();
+
+            if (inconsistency instanceof ModelInconsistency mi) {
+                String uid = mi.getModelInstanceUid();
+                if (!inconsistencyRepository.existsModelInconsistency(uid, reason)) {
+                    this.traceableNodeRepository.findByArdocoId(uid).ifPresentOrElse(parent -> {
+                        ModelInconsistencyNode modelNode = new ModelInconsistencyNode(uid, reason);
+                        modelNode.setTraceableNode(parent);
+                        nodesToSave.add(modelNode);
+                    }, () -> logger.warn("No TraceableNode found in Neo4j for Ardoco ID: {}. Skipping inconsistency with reason: {}", uid, reason));
+                }
+
+            } else if (inconsistency instanceof TextInconsistency ti) {
+                // Keep your debug print
+                System.out.println("Text inconsistency: " + ti.getSentenceNumber() + " - " + reason);
+
+                int num = ti.getSentenceNumber();
+                String type = ti.getType();
+
+                if (!inconsistencyRepository.existsTextInconsistency(num, reason, type)) {
+
+                    this.sentenceNodeRepository.findBySentenceNumber(num).ifPresentOrElse(parent -> {
+                        // Keep your debug print
+                        System.out.println("Found TraceableNode for sentence number: " + num);
+
+                        String name = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.name() : "unknown";
+                        double conf = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.confidence() : -1.0;
+                        var textNode = new TextInconsistencyNode(name, num, conf, reason, type);
+                        textNode.setTraceableNode(parent);
+                        nodesToSave.add(textNode);
+                    }, () -> logger.warn("No TraceableNode found in Neo4j for SentenceNumber: {}. Skipping inconsistency with reason: {}", num, reason));
+                }
+            } else {
+                logger.warn("Unknown inconsistency type encountered: {}. Skipping this inconsistency with reason: {}",
+                        inconsistency.getClass().getName(), reason);
+            }
+        }
+
+        if (!nodesToSave.isEmpty()) {
+            inconsistencyRepository.saveAll(nodesToSave);
+            logger.info("Successfully persisted {} new unique inconsistencies.", nodesToSave.size());
+        }
+
+        return true;
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<? extends Inconsistency> getInconsistencies() {
+        return inconsistencyRepository.findAllWithRelationships().stream().map(node -> node.accept(this)) // Use Visitor pattern to map each database node
+                .toList();
     }
 
     @Transactional
     public void deleteInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
-        if (inconsistencies == null || inconsistencies.isEmpty()) {
-            return;
-        }
-
         List<String> modelIds = new ArrayList<>();
         List<Integer> sentenceNumbers = new ArrayList<>();
 
@@ -74,112 +133,54 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
         }
 
         if (!modelIds.isEmpty()) {
-            neo4jClient.query("""
-                    MATCH (t:Traceable)-[:HAS_INCONSISTENCY]->(i:Inconsistency:ModelInconsistency)
-                    WHERE t.ardocoId IN $ids
-                    DETACH DELETE i
-                    """).bind(modelIds).to("ids").run();
+            inconsistencyRepository.deleteByModelUids(modelIds);
         }
-
         if (!sentenceNumbers.isEmpty()) {
-            neo4jClient.query("""
-                    MATCH (t:Sentence)-[:HAS_INCONSISTENCY]->(i:Inconsistency:TextInconsistency)
-                    WHERE t.sentenceNumber IN $nums
-                    DETACH DELETE i
-                    """).bind(sentenceNumbers).to("nums").run();
+            inconsistencyRepository.deleteBySentenceNumbers(sentenceNumbers);
         }
-
         logger.info("Deleted {} inconsistencies ({} model-based, {} text-based).", inconsistencies.size(), modelIds.size(), sentenceNumbers.size());
+    }
+
+    /**
+     * Deletes all inconsistencies that are associated with architecture items.
+     */
+    public void deleteInconsistenciesOfArchitectureItems() {
+        inconsistencyRepository.deleteInconsistenciesForArchitectureItems();
+    }
+
+    /**
+     * Deletes all inconsistencies that are associated with code items.
+     */
+    public void deleteInconsistenciesOfCodeItems() {
+        inconsistencyRepository.deleteInconsistenciesForCodeItems();
+    }
+
+    public void deleteTextInconsistencies() {
+        textInconsistencyRepository.deleteAllTextInconsistencies();
     }
 
     @Transactional
     public void deleteAllInconsistencies() {
-        neo4jClient.query("MATCH (n:Inconsistency) DETACH DELETE n").run();
-        logger.info("All inconsistencies cleared.");
+        inconsistencyRepository.deleteAll();
     }
 
     @Override
     public Inconsistency visit(ModelInconsistencyNode node) {
         TraceableNode modelNode = node.getTraceableNode();
-
         if (modelNode == null) {
-            logger.error("InconsistencyNode with ID {} is missing its TraceableNode link!", node.getId());
-            throw new IllegalStateException("Database integrity error: Inconsistency node is not linked to any TraceableNode.");
+            throw new IllegalStateException("Orphaned Inconsistency: " + node.getId());
         }
 
-        ModelEntity modelEntity = mapModelNodeToModel(modelNode);
+        ModelEntity modelEntity = (modelNode.getModelType() == ArchitectureType.ARCHITECTURE) ?
+                archMapper.mapItem((ArchitectureItemNode) modelNode) :
+                codeMapper.toDomain((CodeItemNode) modelNode);
+
         return new ModelEntityAbsentFromTextInconsistency(modelEntity);
     }
 
     @Override
     public Inconsistency visit(TextInconsistencyNode node) {
         return new Neo4jTextInconsistency(node.getName(), node.getSentenceNumber(), node.getConfidence());
-    }
-
-    public Collection<? extends Inconsistency> getInconsistencies() {
-        List<InconsistencyNode> nodes = inconsistencyRepository.findAllWithRelationships();
-
-        if (nodes.isEmpty()) {
-            logger.info("No inconsistencies found in the database.");
-            return List.of();
-        }
-
-        return nodes.stream().map(node -> node.accept(this)) // Use Visitor pattern to map each database node
-                .toList();
-    }
-
-    @Transactional
-    public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
-        List<TraceableNode> nodesToSave = new ArrayList<>();
-
-        for (Inconsistency inconsistency : inconsistencies) {
-            if (inconsistency instanceof ModelInconsistency modelInconsistency) {
-                String ardocoId = modelInconsistency.getModelInstanceUid();
-                TraceableNode modelNode = this.traceableNodeRepository.findByArdocoId(ardocoId)
-                        .orElseThrow(() -> new IllegalArgumentException("No TraceableNode found in Neo4j database for Ardoco ID: " + ardocoId));
-                if (!modelNode.getModelType().isModel()) {
-                    throw new IllegalArgumentException(
-                            "TraceableNode with Ardoco ID: " + ardocoId + " is not a model node, but has model type: " + modelNode.getModelType());
-                }
-                ModelInconsistencyNode modelInconsistencyNode = new ModelInconsistencyNode(modelInconsistency.getModelInstanceUid(),
-                        modelInconsistency.getReason());
-                modelInconsistencyNode.setTraceableNode(modelNode);
-                modelNode.addInconsistency(modelInconsistencyNode);
-                nodesToSave.add(modelNode);
-            } else if (inconsistency instanceof TextInconsistency textInconsistency) {
-                int sentenceNumber = textInconsistency.getSentenceNumber();
-                TraceableNode modelNode = this.sentenceNodeRepository.findBySentenceNumber(sentenceNumber)
-                        .orElseThrow(() -> new IllegalArgumentException("No TraceableNode found in Neo4j database for SentenceNumber: " + sentenceNumber));
-
-                String name = "unknown";
-                double confidence = 0.0;
-
-                if (inconsistency instanceof TextEntityAbsentFromModelInconsistency teamInconsistency) {
-                    name = teamInconsistency.name();
-                    confidence = teamInconsistency.confidence();
-                }
-
-                TextInconsistencyNode modelInconsistencyNode = new TextInconsistencyNode(name, sentenceNumber, confidence, textInconsistency.getReason(),
-                        textInconsistency.getType());
-                modelInconsistencyNode.setTraceableNode(modelNode);
-                modelNode.addInconsistency(modelInconsistencyNode);
-                nodesToSave.add(modelNode);
-            }
-        }
-
-        traceableNodeRepository.saveAll(nodesToSave);
-        return true;
-    }
-
-    private ModelEntity mapModelNodeToModel(TraceableNode modelNode) {
-        if (modelNode.getModelType() == ArchitectureType.ARCHITECTURE) {
-            ArchitectureItemNode architectureItemNode = (ArchitectureItemNode) modelNode;
-            return archMapper.mapItem(architectureItemNode);
-        } else if (modelNode.getModelType() == ArchitectureType.CODE) {
-            CodeItemNode codeNode = (CodeItemNode) modelNode;
-            return codeMapper.mapItem(codeNode);
-        }
-        throw new IllegalArgumentException("Unknown model node type for mapping: " + modelNode.getClass().getName());
     }
 
 }
