@@ -104,6 +104,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
         }
 
         if (!nodesToSave.isEmpty()) {
+            logger.info("About to save inconsistencys");
             inconsistencyRepository.saveAll(nodesToSave);
             logger.info("Successfully persisted {} new unique inconsistencies.", nodesToSave.size());
         }

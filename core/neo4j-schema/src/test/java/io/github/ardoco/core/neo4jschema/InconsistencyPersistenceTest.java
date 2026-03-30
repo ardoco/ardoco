@@ -20,8 +20,10 @@ import io.github.ardoco.core.neo4jschema.util.FakeArchitectureEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
-@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class)
+@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = "ardoco.persistence.neo4j.enabled=true")
+@Import({Neo4jBridgeActivator.class, Neo4jInitializer.class})
 class InconsistencyPersistenceTest extends AbstractNeo4jTest{
 
     @Autowired

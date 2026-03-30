@@ -112,3 +112,9 @@ TODO: explain how we handle the fact that tracelinks are undirected in ArDoCo bu
 The image below shows an example of how tracelinks are represented in the graph.
 ![Tracelinks.png](Tracelinks.png)
 
+
+
+## Future Work
+- Improve speed of retrieving models from the database
+- Improve speed of inconsistency saving and retrieving
+

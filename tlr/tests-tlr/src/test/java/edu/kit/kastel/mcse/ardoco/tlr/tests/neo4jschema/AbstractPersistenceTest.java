@@ -3,11 +3,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.HashMap;
-
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
@@ -15,26 +10,22 @@ import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.Neo4jContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
+import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 @Testcontainers
-@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = {
-        "spring.data.neo4j.repositories.type=imperative",
-        "spring.neo4j.pool.metrics-enabled=false"
-})
+@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = { "spring.data.neo4j.repositories.type=imperative",
+        "ardoco.persistence.neo4j.enabled=true", "spring.neo4j.pool.metrics-enabled=false" })
 public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
 
     @Container
@@ -59,12 +50,9 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         System.out.println("----------------------------------------------------------");
     }
 
-
     @AfterEach
     void clearDatabase() {
-        try (var driver = GraphDatabase.driver(neo4j.getBoltUrl(),
-                AuthTokens.basic("neo4j", neo4j.getAdminPassword()));
-                Session session = driver.session()) {
+        try (var driver = GraphDatabase.driver(neo4j.getBoltUrl(), AuthTokens.basic("neo4j", neo4j.getAdminPassword())); Session session = driver.session()) {
 
             session.run("MATCH (n) DETACH DELETE n");
         }
