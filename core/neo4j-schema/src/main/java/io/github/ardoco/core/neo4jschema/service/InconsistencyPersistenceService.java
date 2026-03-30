@@ -28,7 +28,6 @@ import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.inconsistencies.InconsistencyNodeRepository;
-import io.github.ardoco.core.neo4jschema.repository.inconsistencies.TextInconsistencyNodeRepository;
 
 @Service
 public class InconsistencyPersistenceService implements InconsistencyNodeVisitor<Inconsistency> {
@@ -38,21 +37,17 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     private final TraceableNodeRepository traceableNodeRepository;
     private final SentenceNodeRepository sentenceNodeRepository;
     private final InconsistencyNodeRepository inconsistencyRepository;
-    private final TextInconsistencyNodeRepository textInconsistencyRepository;
 
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
     public InconsistencyPersistenceService(SentenceNodeRepository sentenceNodeRepository, ArchitectureModelMapper archMapper, CodeModelMapper codeMapper,
-            TraceableNodeRepository traceableNodeRepository, InconsistencyNodeRepository inconsistencyRepository,
-            TextInconsistencyNodeRepository textInconsistencyRepository) {
-
+            TraceableNodeRepository traceableNodeRepository, InconsistencyNodeRepository inconsistencyRepository) {
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
         this.traceableNodeRepository = traceableNodeRepository;
         this.sentenceNodeRepository = sentenceNodeRepository;
         this.inconsistencyRepository = inconsistencyRepository;
-        this.textInconsistencyRepository = textInconsistencyRepository;
     }
 
     /**
@@ -140,6 +135,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     /**
      * Deletes all inconsistencies that are associated with architecture items.
      */
+    @Transactional
     public void deleteInconsistenciesOfArchitectureItems() {
         inconsistencyRepository.deleteInconsistenciesForArchitectureItems();
     }
@@ -147,14 +143,22 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     /**
      * Deletes all inconsistencies that are associated with code items.
      */
+    @Transactional
     public void deleteInconsistenciesOfCodeItems() {
         inconsistencyRepository.deleteInconsistenciesForCodeItems();
     }
 
+    /**
+     * Deletes all inconsistencies that are associated with sentences in the text.
+     */
+    @Transactional
     public void deleteTextInconsistencies() {
-        textInconsistencyRepository.deleteAllTextInconsistencies();
+        inconsistencyRepository.deleteTextInconsistencies();
     }
 
+    /**
+     * Deletes all inconsistencies from the database, regardless of their type or association. Use with caution, as this will remove all inconsistency data.
+     */
     @Transactional
     public void deleteAllInconsistencies() {
         inconsistencyRepository.deleteAll();

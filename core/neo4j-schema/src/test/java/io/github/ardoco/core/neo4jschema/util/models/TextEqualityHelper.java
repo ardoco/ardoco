@@ -55,7 +55,6 @@ public class TextEqualityHelper {
                 .thenComparing(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition());
 
         List<? extends Phrase> expectedPhrases = expected.getPhrases().stream().sorted(phraseComparator).toList();
-
         List<? extends Phrase> actualPhrases = actual.getPhrases().stream().sorted(phraseComparator).toList();
 
         assertEquals(expectedPhrases.size(), actualPhrases.size(), () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());

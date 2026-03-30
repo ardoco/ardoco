@@ -37,6 +37,9 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
     @Query("MATCH (i:Inconsistency)<-[:HAS_INCONSISTENCY]-(:CodeItem) DETACH DELETE i")
     void deleteInconsistenciesForCodeItems();
 
+    @Query("MATCH (n:TextInconsistency) DETACH DELETE n")
+    void deleteTextInconsistencies();
+
     @Query("""
             MATCH (parent:Traceable {ardocoId: $ardocoId})
             CREATE (parent)-[:HAS_INCONSISTENCY]->(i:ModelInconsistency:Inconsistency {

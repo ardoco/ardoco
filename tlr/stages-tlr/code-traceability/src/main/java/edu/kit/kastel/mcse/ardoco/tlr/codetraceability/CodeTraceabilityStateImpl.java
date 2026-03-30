@@ -4,6 +4,9 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
+
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -44,7 +47,6 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
-        //        return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
         if ((this.samCodeTraceLinks.isEmpty() || !loadedFromPersistence) && PersistenceBridge.isAvailable()) {
             Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadArchitectureCodeTraceLinks();
             this.samCodeTraceLinks = Lists.mutable.withAll(loadedLinks);
@@ -64,10 +66,11 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
-//        return this.transitiveTraceLinks.toImmutableSet();
         if (PersistenceBridge.isAvailable()) {
-            Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadedLinks = PersistenceBridge.getHandler().loadTransitiveTraceLinks();
-            this.transitiveTraceLinks = Lists.mutable.withAll(loadedLinks);
+            Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = PersistenceBridge.getHandler().loadTransitiveTraceLinks();
+            Collection<SentenceModelTraceLink> directLinks = PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
+            this.transitiveTraceLinks = Lists.mutable.withAll(transitiveLinks);
+            this.transitiveTraceLinks.addAll(directLinks);
             loadedFromPersistence = true;
         }
 

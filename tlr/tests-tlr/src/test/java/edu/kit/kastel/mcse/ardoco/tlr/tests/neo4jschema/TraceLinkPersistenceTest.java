@@ -4,7 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 import java.io.File;
 
 import org.eclipse.collections.api.list.ImmutableList;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.neo4j.core.Neo4jClient;
 
 public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 

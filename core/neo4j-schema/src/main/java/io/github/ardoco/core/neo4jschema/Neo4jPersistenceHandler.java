@@ -132,11 +132,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         logger.info("Loading TransitiveTraceLinks from neo4j");
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks("PreprocessingData");
         logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
-
-        Set<SentenceModelTraceLink> directLinks = this.loadSentenceModelTraceLinks();
-        logger.info("Loaded {} SentenceCodeModelTraceLinks", directLinks.size());
-
-        transitiveLinks.addAll(directLinks);
         return transitiveLinks;
     }
 
@@ -144,10 +139,9 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks from neo4j");
         Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks("PreprocessingData");
-        logger.info("Loaded {} SentenceArchitectureModelTraceLinks", links.size());
         Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks("PreprocessingData");
-        logger.info("Loaded {} SentenceCodeModelTraceLinks", codeLinks.size());
         links.addAll(codeLinks);
+        logger.info("Loaded {} SentenceModelTraceLinks", links.size());
         return links;
     }
 

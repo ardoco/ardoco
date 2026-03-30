@@ -19,8 +19,6 @@ public class Neo4jInitializer {
 
     @PostConstruct
     public void initializeNeo4j() {
-        logger.info("Initializing Neo4j Indexes...");
-
         execute("CREATE INDEX sentence_num_idx IF NOT EXISTS FOR (s:Sentence) ON (s.sentenceNumber)");
         execute("CREATE INDEX traceable_id_idx IF NOT EXISTS FOR (t:Traceable) ON (t.ardocoId)");
         execute("CREATE INDEX inconsistency_reason_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.reason)");

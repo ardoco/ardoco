@@ -99,7 +99,6 @@ public class DocumentationMapper {
                 (String) data.get("text")
         );
 
-        // 1. Map Words into a local lookup (O(1) access for phrases)
         List<Map<String, Object>> wordsData = (List<Map<String, Object>>) data.get("words");
         Map<Integer, WordNode> wordLookup = new HashMap<>();
         for (Map<String, Object> w : wordsData) {
@@ -133,8 +132,6 @@ public class DocumentationMapper {
             hierarchyMap.put(id, (List<String>) pMap.get("childIds"));
         }
 
-        // 3. Recursive Stitching
-        // We iterate through all phrases and attach their children
         for (String parentId : phraseLookup.keySet()) {
             PhraseNode parentNode = phraseLookup.get(parentId);
             List<String> childrenIds = hierarchyMap.get(parentId);
@@ -149,7 +146,6 @@ public class DocumentationMapper {
             }
         }
 
-        // 4. Attach only the top-level Roots to the Sentence
         List<PhraseNode> rootPhrases = rootPhraseIds.stream()
                 .map(phraseLookup::get)
                 .filter(java.util.Objects::nonNull)

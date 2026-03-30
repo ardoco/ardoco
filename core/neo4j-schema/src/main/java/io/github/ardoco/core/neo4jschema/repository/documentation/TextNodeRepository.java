@@ -25,7 +25,6 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
             """)
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
-    // Get only the Text metadata (ID, etc.) without any relationships
     @Query("MATCH (t:Text{ardocoId: $id}) RETURN t")
     Optional<TextNode> findTextById(@Param("id") String id);
 }

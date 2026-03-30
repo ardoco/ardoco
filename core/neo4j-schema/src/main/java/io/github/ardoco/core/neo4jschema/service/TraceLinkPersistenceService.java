@@ -32,60 +32,66 @@ import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TransitiveChainQueryResult;
-import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureItemRepository;
-import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
-import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeItemRepository;
-import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
 import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
+import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
 
 @Service
 public class TraceLinkPersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(TraceLinkPersistenceService.class);
 
-    private final ArchitectureItemRepository archRepo;
-    private final CodeItemRepository codeRepo;
     private final TraceLinkRepository traceLinkRepo;
-
-    private final ArchitectureModelMapper archMapper;
-    private final CodeModelMapper codeMapper;
-
-    private final ArchitectureModelRepository archModelRepo;
     private final DocumentationPersistenceService documentationService;
 
     private final Neo4jClient neo4jClient;
     private final Neo4jMappingContext mappingContext;
 
-    public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, ArchitectureItemRepository archRepo,
-            ArchitectureModelRepository archModelRepo, CodeItemRepository codeRepo, TraceLinkRepository traceLinkRepo, ArchitectureModelMapper archMapper,
-            CodeModelMapper codeMapper, DocumentationPersistenceService documentationService) {
-        this.archRepo = archRepo;
-        this.codeRepo = codeRepo;
+    private final ArchitectureModelMapper archMapper;
+    private final CodeModelMapper codeMapper;
+
+    public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, TraceLinkRepository traceLinkRepo,
+            ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, DocumentationPersistenceService documentationService) {
         this.traceLinkRepo = traceLinkRepo;
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
-        this.archModelRepo = archModelRepo;
         this.documentationService = documentationService;
         this.neo4jClient = neo4jClient;
         this.mappingContext = mappingContext;
     }
 
+    /**
+     * Deletes all trace links of a specific type from the database. TraceLinkType. If no links of the specified type exist, it does nothing.
+     *
+     * @param type The TraceLinkType for which all corresponding trace links should be deleted from the database.
+     */
     @Transactional
     public void deleteTraceLinksByType(TraceLinkType type) {
         traceLinkRepo.deleteLinksByType(type);
     }
 
+    /**
+     * Deletes all trace links from the database, regardless of their type.
+     */
     @Transactional
     public void deleteAllTraceLinks() {
         traceLinkRepo.deleteAllTraceLinks();
     }
 
+    /**
+     * Saves a collection of trace links to the database. It assumes that the elements between which the links exist are already present in the database. For
+     * each trace link, it determines the appropriate TraceLinkType based on the link's class and the types of its endpoints, then creates and saves the
+     * corresponding relationships in the Neo4j database. If a trace link cannot be mapped to a known type, it is skipped.
+     *
+     * @param traceLinks A collection of trace links to be saved into the database. This collection can contain different types of trace links, such as
+     *                   ArchitectureCodeTraceLink, SentenceModelTraceLink or TransitiveTracelink
+     * @return true if the trace links were processed (even if some were skipped due to unknown types)
+     */
     public boolean saveTracelinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
         for (TraceLink<?, ?> link : traceLinks) {
             resolveAndSave(link);
         }
-        return true; // TODO: Implement proper error handling and return false if any save operation fails
+        return true;
     }
 
     private void resolveAndSave(TraceLink<?, ?> link) {
@@ -166,6 +172,13 @@ public class TraceLinkPersistenceService {
 
     }
 
+    /**
+     * Loads all ArchitectureCodeTraceLinks from the database. It retrieves all trace links of type ARCHITECTURE_CODE, maps the source and target nodes to their
+     * corresponding domain entities using the provided mappers, and returns a set of ArchitectureCodeTraceLink objects.
+     *
+     * @return A set of ArchitectureCodeTraceLink objects representing all architecture-code trace links currently stored in the database. If no such links
+     * exist, it returns an empty set.
+     */
     @Transactional(readOnly = true)
     public Set<ArchitectureCodeTraceLink> loadAllArchitectureCodeTraceLinks() {
         return loadLinks(TraceLinkType.ARCHITECTURE_CODE, ArchitectureItemNode.class, (archNode, target) -> {
@@ -176,19 +189,48 @@ public class TraceLinkPersistenceService {
         });
     }
 
+    /**
+     * Loads all SentenceModelTraceLinks of type SENTENCE_ARCHITECTURE from the database for the given text ID. Note: the loaded architecture items won't have
+     * their relationships to other architecture items loaded, as this method is optimized for loading sentence links and not for reconstructing the full
+     * architecture model.
+     *
+     * @param textId The identifier of the preprocessed text for which the sentence-architecture trace links should be loaded. This ID is used to retrieve the
+     *               corresponding Text object, which is necessary to map the SentenceNodes to SentenceEntities. If no Text is found for the given ID, it
+     *               returns an empty set.
+     * @return A set of SentenceModelTraceLink objects representing all sentence-architecture trace links currently stored in the database.
+     */
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceArchitectureModelTraceLinks(String textId) {
         return loadSentenceLinks(textId, TraceLinkType.SENTENCE_ARCHITECTURE, ArchitectureItemNode.class,
                 (sEntity, target) -> new SentenceModelTraceLink(sEntity, archMapper.mapItem((ArchitectureItemNode) target)));
     }
 
+    /**
+     * Loads all SentenceModelTraceLinks of type SENTENCE_CODE from the database for the given text ID. Note: the loaded code items won't have their
+     * relationships to other architecture items loaded, as this method is optimized for loading sentence links and not for reconstructing the full architecture
+     * model.
+     *
+     * @param textId The identifier of the preprocessed text for which the sentence-architecture trace links should be loaded. This ID is used to retrieve the
+     *               corresponding Text object, which is necessary to map the SentenceNodes to SentenceEntities. If no Text is found for the given ID, it
+     *               returns an empty set.
+     * @return A set of SentenceModelTraceLink objects representing all sentence-code trace links currently stored in the database.
+     */
     @Transactional(readOnly = true)
-    public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks(
-            String textId) {//TODO: this requires that the preprocessing data is always stored with this ID, which is not ideal. Consider a more flexible approach.
+    public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks(String textId) {
         return loadSentenceLinks(textId, TraceLinkType.SENTENCE_CODE, CodeItemNode.class,
                 (sEntity, target) -> new SentenceModelTraceLink(sEntity, codeMapper.toDomain((CodeItemNode) target)));
     }
 
+    /**
+     * Loads all transitive trace links from sentences over architecture items to code items from the database for the given text ID. This method executes a
+     * custom Cypher query to retrieve all chains of trace links that connect sentences to architecture items and then to code items.
+     *
+     * @param textId The identifier of the preprocessed text for which the transitive trace links should be loaded. This ID is used to retrieve the
+     *               corresponding Text object, which is necessary to map the SentenceNodes to SentenceEntities. If no Text is found for the given ID, it
+     *               returns an empty set.
+     * @return A set of TransitiveTraceLink objects representing all transitive trace links from sentences to architecture items to code items currently stored
+     * in the database. If no such links exist, it returns an empty set.
+     */
     @Transactional(readOnly = true)
     public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks(String textId) {
         Text domainText = documentationService.loadPreprocessedText(textId).orElse(null);

@@ -32,10 +32,8 @@ public class DocumentationPersistenceService {
     private final DocumentationMapper documentationMapper;
     private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
     private final Neo4jClient neo4jClient;
-    private final SentenceNodeRepository sentenceRepository;
 
-    public DocumentationPersistenceService(TextNodeRepository textRepository, DocumentationMapper mapper, Neo4jClient neo4jClient, SentenceNodeRepository sentenceNodeRepository) {
-        this.sentenceRepository = sentenceNodeRepository;
+    public DocumentationPersistenceService(TextNodeRepository textRepository, DocumentationMapper mapper, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.textRepository = textRepository;
         this.documentationMapper = mapper;
