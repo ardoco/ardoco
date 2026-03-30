@@ -25,6 +25,7 @@ public class Neo4jInitializer {
         execute("CREATE INDEX traceable_id_idx IF NOT EXISTS FOR (t:Traceable) ON (t.ardocoId)");
         execute("CREATE INDEX inconsistency_reason_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.reason)");
         execute("CREATE INDEX sentence_lookup_idx IF NOT EXISTS FOR (s:Sentence) ON (s.sentenceNumber);");
+        execute("CREATE INDEX inconsistency_id_idx FOR (i:Inconsistency) ON (i.id);");
 
         logger.info("Neo4j Indexes initialized successfully.");
     }

@@ -92,7 +92,76 @@ public class DocumentationMapper {
         return new Neo4jText(textNode.getArdocoId(), sentences);
     }
 
-    private Neo4jSentence mapSentenceToDomain(SentenceNode sNode, Map<Integer, Neo4jWord> globalWordMap) {
+
+    public SentenceNode convertMapToSentenceNode(Map<String, Object> data) {
+        SentenceNode sNode = new SentenceNode(
+                ((Number) data.get("sentenceNumber")).intValue(),
+                (String) data.get("text")
+        );
+
+        // 1. Map Words into a local lookup (O(1) access for phrases)
+        List<Map<String, Object>> wordsData = (List<Map<String, Object>>) data.get("words");
+        Map<Integer, WordNode> wordLookup = new HashMap<>();
+        for (Map<String, Object> w : wordsData) {
+            WordNode wn = new WordNode(
+                    ((Number) w.get("position")).intValue(),
+                    (String) w.get("text"), (String) w.get("lemma"), (String) w.get("posTag")
+            );
+            wordLookup.put(wn.getPosition(), wn);
+        }
+        sNode.setWords(new ArrayList<>(wordLookup.values()));
+
+        List<String> rootPhraseIds = (List<String>) data.get("rootPhraseIds");
+        List<Map<String, Object>> phrasesData = (List<Map<String, Object>>) data.get("phrases");
+
+        Map<String, PhraseNode> phraseLookup = new HashMap<>();
+        Map<String, List<String>> hierarchyMap = new HashMap<>();
+
+        for (Map<String, Object> pMap : phrasesData) {
+            String id = (String) pMap.get("id");
+            PhraseNode pNode = new PhraseNode((String) pMap.get("text"), (String) pMap.get("phraseType"));
+
+            // Link Words to this specific Phrase
+            List<Object> wordPos = (List<Object>) pMap.get("containedWords");
+            if (wordPos != null) {
+                for (Object pos : wordPos) {
+                    WordNode wn = wordLookup.get(((Number) pos).intValue());
+                    if (wn != null) pNode.addContainedWord(wn);
+                }
+            }
+            phraseLookup.put(id, pNode);
+            hierarchyMap.put(id, (List<String>) pMap.get("childIds"));
+        }
+
+        // 3. Recursive Stitching
+        // We iterate through all phrases and attach their children
+        for (String parentId : phraseLookup.keySet()) {
+            PhraseNode parentNode = phraseLookup.get(parentId);
+            List<String> childrenIds = hierarchyMap.get(parentId);
+
+            if (childrenIds != null) {
+                for (String childId : childrenIds) {
+                    PhraseNode childNode = phraseLookup.get(childId);
+                    if (childNode != null) {
+                        parentNode.addChildPhrase(childNode);
+                    }
+                }
+            }
+        }
+
+        // 4. Attach only the top-level Roots to the Sentence
+        List<PhraseNode> rootPhrases = rootPhraseIds.stream()
+                .map(phraseLookup::get)
+                .filter(java.util.Objects::nonNull)
+                .toList();
+
+        sNode.setRootPhrases(new ArrayList<>(rootPhrases));
+        return sNode;
+    }
+
+
+
+    public Neo4jSentence mapSentenceToDomain(SentenceNode sNode, Map<Integer, Neo4jWord> globalWordMap) {
         Neo4jSentence sentence = new Neo4jSentence(sNode.getSentenceNumber(), sNode.getText());
 
         // Map Words

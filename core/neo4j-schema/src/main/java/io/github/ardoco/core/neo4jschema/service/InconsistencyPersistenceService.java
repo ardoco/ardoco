@@ -78,18 +78,12 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
                 }
 
             } else if (inconsistency instanceof TextInconsistency ti) {
-                // Keep your debug print
-                System.out.println("Text inconsistency: " + ti.getSentenceNumber() + " - " + reason);
-
                 int num = ti.getSentenceNumber();
                 String type = ti.getType();
 
                 if (!inconsistencyRepository.existsTextInconsistency(num, reason, type)) {
 
                     this.sentenceNodeRepository.findBySentenceNumber(num).ifPresentOrElse(parent -> {
-                        // Keep your debug print
-                        System.out.println("Found TraceableNode for sentence number: " + num);
-
                         String name = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.name() : "unknown";
                         double conf = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.confidence() : -1.0;
                         var textNode = new TextInconsistencyNode(name, num, conf, reason, type);
