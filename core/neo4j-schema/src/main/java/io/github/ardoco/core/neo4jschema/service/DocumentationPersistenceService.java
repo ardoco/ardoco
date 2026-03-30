@@ -63,8 +63,10 @@ public class DocumentationPersistenceService {
     @Transactional(readOnly = true)
     public Optional<Text> loadPreprocessedText(String identifier) {
         TextNode meta = textRepository.findTextById(identifier).orElse(null);
-        if (meta == null)
+        if (meta == null) {
+            logger.info("No preprocessed text found for id: " + identifier);
             return Optional.empty();
+        }
 
         Map<Integer, Neo4jWord> globalWordMap = new HashMap<>();
         List<Neo4jSentence> allDomainSentences = new ArrayList<>();
@@ -145,23 +147,6 @@ public class DocumentationPersistenceService {
         return Optional.of(new Neo4jText(identifier, allDomainSentences));
     }
 
-    private List<Neo4jSentence> fetchAllSentences(String id, Map<Integer, Neo4jWord> wordMap) {
-        List<Neo4jSentence> allSentences = new ArrayList<>();
-        int skip = 0;
-        List<Map<String, Object>> rows;
-
-        do {
-            rows = sentenceRepository.findPagedSentenceData(id, skip, 100);
-            for (var row : rows) {
-                var data = (Map<String, Object>) row.get("sentenceData");
-                SentenceNode node = documentationMapper.convertMapToSentenceNode(data);
-                allSentences.add(documentationMapper.mapSentenceToDomain(node, wordMap));
-            }
-            skip += 100;
-        } while (!rows.isEmpty());
-
-        return allSentences;
-    }
 
     /**
      * Saves the provided domain Text object into the Neo4j database. This method first deletes any existing TextNode associated with the given documentId to

@@ -23,9 +23,9 @@ Once Ardoco is running with this flag set to true, individual Runners can still 
 The architecture of the Neo4j-Schema component has a layered architecture. The main layers are:
 1. Neo4jPersistenceHandler Class: provides the main entry point for interacting with the Neo4j database and the neo4j-schema module in general. 
     It provides methods for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
-2. Services: provides services for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
-3. Mappers: provides functionality for converting between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j.
-3. Repositories: provides repositories for interacting with the Neo4j database. 
+2. Services: services for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
+3. Mappers: provide functionality for converting between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j.
+3. Repositories: repositories for interacting with the Neo4j database. 
 
 ### Data Representation:
 The database schema is modelled as a graph. The modelled nodes and relationships of the graph can be found in the entities package.
@@ -103,12 +103,6 @@ Transitive Tracelinks are not explicitly represented in the graph, but can be in
 For example, if there is a tracelink between an architecture component and a code component, and there is a tracelink between the code component and a sentence, 
 we can infer that there is a transitive tracelink between the architecture component and the sentence.
 
-
-Since neo4j only allows to have directed relationships, 
-TODO: explain how we handle the fact that tracelinks are undirected in ArDoCo but neo4j only allows directed relationships.
-
-
-
 The image below shows an example of how tracelinks are represented in the graph.
 ![Tracelinks.png](Tracelinks.png)
 
@@ -117,4 +111,6 @@ The image below shows an example of how tracelinks are represented in the graph.
 ## Future Work
 - Improve speed of retrieving models from the database
 - Improve speed of inconsistency saving and retrieving
+- Currently, the getTransistiveTracelinks() method only retrieves transitive tracelinks from Sentence to Code with an architecture item as intermediate node.
+In case other types of transitive tracelinks are needed the loadTransitiveTraceLinks() Method in the TraceLinkPersistenceService class needs to be extended.
 

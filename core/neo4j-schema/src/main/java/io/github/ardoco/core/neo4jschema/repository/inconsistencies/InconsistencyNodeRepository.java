@@ -37,4 +37,29 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
     @Query("MATCH (i:Inconsistency)<-[:HAS_INCONSISTENCY]-(:CodeItem) DETACH DELETE i")
     void deleteInconsistenciesForCodeItems();
 
+    @Query("""
+            MATCH (parent:Traceable {ardocoId: $ardocoId})
+            CREATE (parent)-[:HAS_INCONSISTENCY]->(i:ModelInconsistency:Inconsistency {
+                id: randomUUID(),
+                modelArdocoId: $uid, 
+                reason: $reason,
+                type: "TextEntityAbsentFromModel"
+            })
+            """)
+    void saveModelInconsistency(@Param("ardocoId") String parentArdocoId, @Param("uid") String uid, @Param("reason") String reason);
+
+    @Query("""
+            MATCH (s:Sentence {sentenceNumber: $num})
+            CREATE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {
+                id: randomUUID(),
+                name: $name, 
+                sentenceNumber: $num, 
+                confidence: $conf, 
+                reason: $reason, 
+                type: $type
+            })
+            """)
+    void saveTextInconsistency(@Param("num") int num, @Param("name") String name, @Param("conf") double conf, @Param("reason") String reason,
+            @Param("type") String type);
+
 }

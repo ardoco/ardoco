@@ -59,5 +59,12 @@ public abstract class TraceableNode {
 
     public abstract ArchitectureType getModelType();
 
+    public void setArdocoId(String ardocoId) {
+        this.ardocoId = ardocoId;
+    }
+
+     public String getArdocoId() {
+        return ardocoId;
+    }
 
 }

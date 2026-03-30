@@ -73,7 +73,6 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest{
                 null
         );
 
-
         persistenceService.addInconsistencies(List.of(textInconsistency));
         var results = persistenceService.getInconsistencies();
 
