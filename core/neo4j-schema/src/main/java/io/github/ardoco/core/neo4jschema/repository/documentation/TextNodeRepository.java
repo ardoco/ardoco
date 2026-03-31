@@ -13,8 +13,6 @@ import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 @Repository
 public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
 
-    Optional<TextNode> findByArdocoId(String ardocoId);
-
     boolean existsByArdocoId(String ardocoId);
 
     @Query("""
@@ -26,5 +24,8 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
     @Query("MATCH (t:Text{ardocoId: $id}) RETURN t")
-    Optional<TextNode> findTextById(@Param("id") String id);
+    Optional<TextNode> findByArdocoId(@Param("id") String id);
+
+    @Query("MATCH (t:Text) RETURN t")
+    Optional<TextNode> findTextNode();
 }

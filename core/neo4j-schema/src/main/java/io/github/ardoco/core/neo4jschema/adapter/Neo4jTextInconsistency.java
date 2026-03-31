@@ -1,16 +1,20 @@
 package io.github.ardoco.core.neo4jschema.adapter;
 
-import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
-
-import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.eclipse.collections.api.collection.ImmutableCollection;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 
-import java.util.Locale;
-import java.util.Objects;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 
+/**
+ * This class serves as an adapter to convert a TextInconsistencyNode from the Neo4j database into a TextInconsistency that can be used in the Ardoco framework.
+ * The original TextEntityAbsentFromModelInconsistency could not be used directly because it requires a field MissingElementInconsistencyCandidate which is not
+ * available in the Neo4j database and would require additional effort to construct.
+ *
+ */
 public class Neo4jTextInconsistency implements TextInconsistency {
 
     private static final String INCONSISTENCY_TYPE_NAME = "TextEntityAbsentFromModel";
@@ -24,8 +28,6 @@ public class Neo4jTextInconsistency implements TextInconsistency {
         this.sentenceNumber = sentenceNumber;
         this.confidence = confidence;
     }
-
-
 
     @Override
     public int getSentenceNumber() {

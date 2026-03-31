@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Node("CodeCompilationUnit")
 public class CodeCompilationUnitNode extends CodeItemNode {
 
-    private String extension; // File extension (probably type) TODO
+    private String extension; // File extension
     private String language; // Enum stored as String
     private List<String> pathElements;
 

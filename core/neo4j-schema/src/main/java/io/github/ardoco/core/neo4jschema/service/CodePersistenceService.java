@@ -2,6 +2,7 @@
 package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
@@ -59,14 +60,14 @@ public class CodePersistenceService {
      * @return The fist CodeModel found for the given metamodel type, or null if no such model exists.
      */
     @Transactional(readOnly = true)
-    public CodeModel loadCodeModel(Metamodel metamodel) throws IllegalArgumentException {
+    public Optional<CodeModel> loadCodeModel(Metamodel metamodel) {
         List<CodeModelNode> nodes = repository.findAll();
         for (CodeModelNode node : nodes) {
             if (node.getMetamodel().equals(metamodel.name())) {
-                return mapper.toDomain(node);
+                return Optional.of(mapper.toDomain(node));
             }
         }
-        throw new IllegalArgumentException("Unknown metamodel: " + metamodel.name());
+        return Optional.empty();
     }
 
     /**

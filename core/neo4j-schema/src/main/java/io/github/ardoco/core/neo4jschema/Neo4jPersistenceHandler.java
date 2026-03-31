@@ -3,6 +3,8 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,7 +35,8 @@ import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 
 /**
- * Neo4j-based implementation of the PersistenceHandler interface. Delegates to specific services for each model type and trace links.
+ * Neo4j-based implementation of the PersistenceHandler interface.
+ * Delegates the demands to specific services for each model type and trace links.
  */
 @Service
 public class Neo4jPersistenceHandler implements PersistenceHandler {
@@ -71,14 +74,14 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public Model loadModel(Metamodel metamodel) throws IllegalArgumentException {
+    public Model loadModel(Metamodel metamodel) {
         logger.info("Loading model of type: " + metamodel);
         if (metamodel.isCodeModel()) {
-            return codeService.loadCodeModel(metamodel);
+            return codeService.loadCodeModel(metamodel).orElse(null);
         } else if (metamodel.isArchitectureModel()) {
-            return architectureService.loadArchitectureModel(metamodel);
+            return architectureService.loadArchitectureModel(metamodel).orElse(null);
         }
-        throw new IllegalArgumentException("Unknown metamodel: " + metamodel.name());
+        return null;
     }
 
     @Override
@@ -130,7 +133,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
         logger.info("Loading TransitiveTraceLinks from neo4j");
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks("PreprocessingData");
+        Optional<String> preprocessedTextId = documentationService.getPreprocessedTextId();
+        if (preprocessedTextId.isEmpty()) {
+            logger.info("No preprocessed text found, no TransitiveTraceLinks found");
+            return Set.of();
+        }
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks(preprocessedTextId.get());
         logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
         return transitiveLinks;
     }
@@ -138,8 +146,13 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks from neo4j");
-        Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks("PreprocessingData");
-        Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks("PreprocessingData");
+        Optional<String> preprocessedTextId = documentationService.getPreprocessedTextId();
+        if (preprocessedTextId.isEmpty()) {
+            logger.info("No preprocessed text found, no SentenceModelTraceLinks found");
+            return Set.of();
+        }
+        Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks(preprocessedTextId.get());
+        Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks(preprocessedTextId.get());
         links.addAll(codeLinks);
         logger.info("Loaded {} SentenceModelTraceLinks", links.size());
         return links;
@@ -163,7 +176,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Transactional
     public void deleteModel(Metamodel metamodel) {
         logger.info("Starting  deletion for model: {}", metamodel);
-
         if (metamodel.isArchitectureModel()) {
             inconsistencyService.deleteInconsistenciesOfArchitectureItems();
             traceLinkService.deleteTraceLinksByType(TraceLinkType.ARCHITECTURE_CODE);

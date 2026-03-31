@@ -10,16 +10,6 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 @Node("Datatype")
 public abstract class DatatypeNode extends CodeItemNode {
 
-    @Relationship(type = "EXTENDS", direction = Relationship.Direction.INCOMING)
-    private Set<DatatypeNode> extendedTypesIncoming = new HashSet<>();
-
-    @Relationship(type = "IMPLEMENTS", direction = Relationship.Direction.INCOMING)
-    private Set<DatatypeNode> implementedTypesIncoming = new HashSet<>();
-
-    @Relationship(type= "REFERENCES_DATATYPE", direction = Relationship.Direction.INCOMING)
-    private Set<DatatypeNode> referencedDatatypesIncoming = new HashSet<>();
-
-
     @Relationship(type = "EXTENDS", direction = Relationship.Direction.OUTGOING)
     private Set<DatatypeNode> extendedTypes = new HashSet<>();
 
@@ -46,18 +36,6 @@ public abstract class DatatypeNode extends CodeItemNode {
 
     public void addReferencedDatatype(DatatypeNode type) {
         referencedDatatypes.add(type);
-    }
-
-    public void setExtendedTypes(Set<DatatypeNode> extendedTypes) {
-        this.extendedTypes = extendedTypes;
-    }
-
-    public void setImplementedTypes(Set<DatatypeNode> implementedTypes) {
-        this.implementedTypes = implementedTypes;
-    }
-
-    public void setReferencedDatatypes(Set<DatatypeNode> referencedDatatypes) {
-        this.referencedDatatypes = referencedDatatypes;
     }
 
     public Set<DatatypeNode> getExtendedTypes() {

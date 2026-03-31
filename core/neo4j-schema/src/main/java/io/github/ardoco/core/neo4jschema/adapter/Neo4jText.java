@@ -15,7 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
  */
 public class Neo4jText implements Text {
 
-    private final String id; // keep just in case
+    private final String id;
     private final ImmutableList<Sentence> sentences;
     private final ImmutableList<Word> words;
 

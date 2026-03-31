@@ -154,7 +154,7 @@ public class ArchitectureModelMapper {
         ArchitectureComponentNode node = new ArchitectureComponentNode(domainComp.getName(), domainComp.getType().orElse(null), domainComp.getId());
         compCache.put(domainComp.getId(), node);
 
-        // Map Subcomponents (Recursion)
+        // recursively map Subcomponents
         for (ArchitectureComponent sub : domainComp.getSubcomponents()) {
             node.addSubcomponent(mapComponentToNode(sub, compCache, interfaceCache));
         }

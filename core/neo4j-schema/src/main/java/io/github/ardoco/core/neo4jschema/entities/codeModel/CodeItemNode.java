@@ -15,7 +15,6 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
 
     private String name;
 
-    // Generic containment relationship for all subtypes (Package->Class, Class->Method, etc.)
     @Relationship(type = "CONTAINS_CODE_ITEM", direction = Relationship.Direction.OUTGOING)
     private List<CodeItemNode> content = new ArrayList<>();
 

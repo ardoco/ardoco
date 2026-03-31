@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 /**
@@ -26,7 +25,7 @@ public final class ModelStates implements PipelineStepData {
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
 
-    // TODO: think about wether the currently implemented caching of neo4j persisted models is fine or whether we should do it differently
+    // TODO: think about whether the currently implemented caching of neo4j persisted models is fine or whether we should do it differently
     // If a Metamodel is in this set, it must be re-loaded from the DB
     private final Set<Metamodel> dirtyMetamodels = new HashSet<>();
 
@@ -63,23 +62,17 @@ public final class ModelStates implements PipelineStepData {
     public Model getModel(Metamodel id) {
         boolean isPersistentType = id.isArchitectureModel() || id.isCodeModel();
         boolean persistenceAvailable = PersistenceBridge.isAvailable();
+        boolean needsLoading = !this.models.containsKey(id) || this.dirtyMetamodels.contains(id);
 
-        // dirty check
-        if (this.dirtyMetamodels.contains(id) && isPersistentType && persistenceAvailable) {
+        if (needsLoading && isPersistentType && persistenceAvailable) {
             Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            this.models.put(id, loaded);    // Update Cache
-            this.dirtyMetamodels.remove(id); // Mark Clean
+            this.models.put(id, loaded);
+            this.dirtyMetamodels.remove(id);
             return loaded;
         }
 
         if (this.models.containsKey(id)) {
             return this.models.get(id);
-        }
-
-        if (isPersistentType && persistenceAvailable) {
-            Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            this.models.put(id, loaded); // Fill Cache
-            return loaded;
         }
 
         throw new IllegalArgumentException("Model with id " + id.toString() + " not found");

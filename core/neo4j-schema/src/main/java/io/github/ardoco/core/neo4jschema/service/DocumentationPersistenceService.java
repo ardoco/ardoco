@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
@@ -28,9 +26,43 @@ import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeReposi
 @Service
 public class DocumentationPersistenceService {
 
+    private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
+
+    private static final String PAGED_SENTENCE_QUERY = """
+            MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)
+            WHERE s.sentenceNumber >= $skip AND s.sentenceNumber < ($skip + $limit)
+    
+            OPTIONAL MATCH (s)-[:CONTAINS_WORD]->(w:Word)
+            WITH s, collect(DISTINCT w) AS words
+    
+            OPTIONAL MATCH (s)-[:HAS_ROOT_PHRASE]->(root:Phrase)
+            OPTIONAL MATCH (root)-[:HAS_CHILD_PHRASE*0..]->(p:Phrase)
+    
+            WITH s, words, 
+                 collect(DISTINCT elementId(root)) AS rootIds, 
+                 collect(DISTINCT p) AS allPhrases
+    
+            RETURN s {.*, 
+                      words: [word IN words | word {.*}], 
+                      rootPhraseIds: rootIds,
+                      phrases: [phrase IN allPhrases | phrase { 
+                          .*, 
+                          id: elementId(phrase),
+                          childIds: [(phrase)-[:HAS_CHILD_PHRASE]->(child) | elementId(child)],
+                          containedWords: [(phrase)-[:CONTAINS_WORD]->(cw:Word) | cw.position]
+                      }]
+                     } AS sentenceData
+            ORDER BY s.sentenceNumber ASC
+            """;
+
+    private static final String DEPENDENCY_QUERY = """
+            MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(:Sentence)-[:CONTAINS_WORD]->(source:Word)
+            MATCH (source)-[rel:DEPENDENCY]->(target:Word)
+            RETURN source.position AS sourcePos, target.position AS targetPos, rel.dependencyType AS type
+            """;
+
     private final TextNodeRepository textRepository;
     private final DocumentationMapper documentationMapper;
-    private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
     private final Neo4jClient neo4jClient;
 
     public DocumentationPersistenceService(TextNodeRepository textRepository, DocumentationMapper mapper, Neo4jClient neo4jClient) {
@@ -60,7 +92,7 @@ public class DocumentationPersistenceService {
      */
     @Transactional(readOnly = true)
     public Optional<Text> loadPreprocessedText(String identifier) {
-        TextNode meta = textRepository.findTextById(identifier).orElse(null);
+        TextNode meta = textRepository.findByArdocoId(identifier).orElse(null);
         if (meta == null) {
             logger.info("No preprocessed text found for id: " + identifier);
             return Optional.empty();
@@ -75,34 +107,7 @@ public class DocumentationPersistenceService {
         boolean hasMore = true;
 
         while (hasMore) {
-            String pagedCypher = """
-                    MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)
-                    WHERE s.sentenceNumber >= $skip AND s.sentenceNumber < ($skip + $limit)
-                    
-                    OPTIONAL MATCH (s)-[:CONTAINS_WORD]->(w:Word)
-                    WITH s, collect(DISTINCT w) AS words
-                    
-                    OPTIONAL MATCH (s)-[:HAS_ROOT_PHRASE]->(root:Phrase)
-                    OPTIONAL MATCH (root)-[:HAS_CHILD_PHRASE*0..]->(p:Phrase)
-                    
-                    WITH s, words, 
-                         collect(DISTINCT elementId(root)) AS rootIds, 
-                         collect(DISTINCT p) AS allPhrases
-                    
-                    RETURN s {.*, 
-                              words: [word IN words | word {.*}], 
-                              rootPhraseIds: rootIds,
-                              phrases: [phrase IN allPhrases | phrase { 
-                                  .*, 
-                                  id: elementId(phrase),
-                                  childIds: [(phrase)-[:HAS_CHILD_PHRASE]->(child) | elementId(child)],
-                                  containedWords: [(phrase)-[:CONTAINS_WORD]->(cw:Word) | cw.position]
-                              }]
-                             } AS sentenceData
-                    ORDER BY s.sentenceNumber ASC
-                    """;
-
-            var rows = neo4jClient.query(pagedCypher).bind(identifier).to("id").bind(currentSkip).to("skip").bind(pageSize).to("limit").fetch().all();
+            var rows = neo4jClient.query(PAGED_SENTENCE_QUERY).bind(identifier).to("id").bind(currentSkip).to("skip").bind(pageSize).to("limit").fetch().all();
 
             if (rows.isEmpty()) {
                 hasMore = false;
@@ -117,13 +122,7 @@ public class DocumentationPersistenceService {
         }
 
         // Fetch dependencies between words
-        String cypher = """
-                MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(:Sentence)-[:CONTAINS_WORD]->(source:Word)
-                MATCH (source)-[rel:DEPENDENCY]->(target:Word)
-                RETURN source.position AS sourcePos, target.position AS targetPos, rel.dependencyType AS type
-                """;
-
-        neo4jClient.query(cypher).bind(identifier).to("id").fetch().all().forEach(row -> {
+        neo4jClient.query(DEPENDENCY_QUERY).bind(identifier).to("id").fetch().all().forEach(row -> {
             Integer sPos = ((Long) row.get("sourcePos")).intValue();
             Integer tPos = ((Long) row.get("targetPos")).intValue();
             String type = (String) row.get("type");
@@ -144,7 +143,6 @@ public class DocumentationPersistenceService {
 
         return Optional.of(new Neo4jText(identifier, allDomainSentences));
     }
-
 
     /**
      * Saves the provided domain Text object into the Neo4j database. This method first deletes any existing TextNode associated with the given documentId to
@@ -171,6 +169,11 @@ public class DocumentationPersistenceService {
     @Transactional
     public void deletePreprocessedText(String identifier) {
         textRepository.deleteByArdocoId(identifier);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<String> getPreprocessedTextId() {
+        return textRepository.findTextNode().map(TextNode::getArdocoId);
     }
 
 }

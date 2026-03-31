@@ -2,6 +2,7 @@
 package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
@@ -63,14 +64,14 @@ public class ArchitecturePersistenceService {
      * null.
      */
     @Transactional(readOnly = true)
-    public ArchitectureModel loadArchitectureModel(Metamodel metamodel) {
+    public Optional<ArchitectureModel> loadArchitectureModel(Metamodel metamodel) {
         List<ArchitectureModelNode> nodes = repository.findAll();
         for (ArchitectureModelNode node : nodes) {
-            if (node.getMetamodel() != null && node.getMetamodel().equals(metamodel.name())) {
-                return mapper.toDomain(node);
+            if (node.getMetamodel().equals(metamodel.name())) {
+                return Optional.of(mapper.toDomain(node));
             }
         }
-        throw new IllegalArgumentException("No Architecture Model found for type: " + metamodel.name());
+        return Optional.empty();
     }
 
     /**

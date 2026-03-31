@@ -8,11 +8,6 @@ public enum TraceLinkType {
     ARCHITECTURE_CODE,
 
     /**
-     * Represents a Transitive Trace Link (e.g., Sentence -> Architecture -> Code, flattened).
-     */
-    TRANSITIVE,
-
-    /**
      * Represents a link from a Sentence to a Code Model Item.
      */
     SENTENCE_CODE,

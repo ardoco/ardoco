@@ -4,8 +4,6 @@ package io.github.ardoco.core.neo4jschema.entities.architectureModel;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
-
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 

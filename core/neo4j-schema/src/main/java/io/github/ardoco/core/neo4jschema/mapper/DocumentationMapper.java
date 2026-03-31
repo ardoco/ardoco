@@ -160,7 +160,6 @@ public class DocumentationMapper {
     public Neo4jSentence mapSentenceToDomain(SentenceNode sNode, Map<Integer, Neo4jWord> globalWordMap) {
         Neo4jSentence sentence = new Neo4jSentence(sNode.getSentenceNumber(), sNode.getText());
 
-        // Map Words
         var wordNodes = new ArrayList<>(sNode.getWords());
         wordNodes.sort(Comparator.comparingInt(WordNode::getPosition));
 

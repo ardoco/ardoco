@@ -267,7 +267,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
 
-        Assertions.assertThrows(IllegalArgumentException.class, ()->persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
+        Assertions.assertNull(persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
         Assertions.assertNotNull(persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
 
         Long archItemsCount = neo4jClient.query("MATCH (n:ArchitectureItem) RETURN count(n)").fetchAs(Long.class).one().get();

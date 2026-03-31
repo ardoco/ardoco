@@ -10,11 +10,12 @@ import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.text.*;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
+import edu.kit.kastel.mcse.ardoco.core.api.text.PhraseType;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 /**
- * Adapter class for Phrase entities stored in Neo4j.
- * This class implements the Phrase interface and provides methods to access the properties of a phrase.
+ * Adapter class for Phrase entities stored in Neo4j. This class implements the Phrase interface and provides methods to access the properties of a phrase.
  */
 public class Neo4jPhrase implements Phrase {
 

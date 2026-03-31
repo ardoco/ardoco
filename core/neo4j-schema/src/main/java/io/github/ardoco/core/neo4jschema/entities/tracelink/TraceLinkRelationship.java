@@ -6,8 +6,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
 
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
-
 @RelationshipProperties
 public class TraceLinkRelationship {
 
@@ -24,14 +22,27 @@ public class TraceLinkRelationship {
     public TraceLinkRelationship() {
     }
 
-    // Constructor with confidence
+        /**
+        * Creates a TraceLinkRelationship with the specified target node, confidence value, and trace link type.
+        *
+        * @param targetNode the target node of the trace link relationship
+        * @param confidence the confidence value associated with the trace link relationship
+        * @param traceLinkType the type of the trace link relationship
+        */
     public TraceLinkRelationship(TraceableNode targetNode, Double confidence, TraceLinkType traceLinkType) {
         this.targetNode = targetNode;
         this.confidence = confidence;
         this.traceLinkType = traceLinkType;
     }
 
-    // Constructor without confidence (defaults to null)
+
+    /**
+     * Creates a TraceLinkRelationship with the specified target node and trace link type, without setting a confidence value.
+     * The confidence will be set to null, indicating that it is not defined.
+     *
+     * @param targetNode the target node of the trace link relationship
+     * @param traceLinkType the type of the trace link relationship
+     */
     public TraceLinkRelationship(TraceableNode targetNode, TraceLinkType traceLinkType) {
         this.targetNode = targetNode;
         this.traceLinkType = traceLinkType;
@@ -42,7 +53,7 @@ public class TraceLinkRelationship {
         return this.targetNode;
     }
 
-    // Returns Double (can be null)
+
     public Double getConfidence() {
         return confidence;
     }

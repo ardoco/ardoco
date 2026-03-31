@@ -7,12 +7,14 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.factory.Multimaps;
 
-import edu.kit.kastel.mcse.ardoco.core.api.text.*;
+import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
+import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 /**
  * Adapter class that implements the Word interface and is backed by Neo4j data.
- * This class is designed
- * to be constructed with raw data (e.g., from a Neo4j query) rather than directly from Neo4j Nodes, to keep it decoupled from the database layer.
  */
 public class Neo4jWord implements Word {
 
@@ -21,29 +23,18 @@ public class Neo4jWord implements Word {
     private final String lemma;
     private final POSTag posTag;
     private final Neo4jSentence parentSentence;
-
+    private final MutableListMultimap<DependencyTag, Word> outgoingDependencies = Multimaps.mutable.list.empty();
+    private final MutableListMultimap<DependencyTag, Word> incomingDependencies = Multimaps.mutable.list.empty();
     private Neo4jWord nextWord;
     private Neo4jWord preWord;
     private Phrase phrase;
 
-    private final MutableListMultimap<DependencyTag, Word> outgoingDependencies = Multimaps.mutable.list.empty();
-    private final MutableListMultimap<DependencyTag, Word> incomingDependencies = Multimaps.mutable.list.empty();
-
-    // Constructor takes raw data, not Nodes
     public Neo4jWord(int position, String text, String lemma, String posTagStr, Neo4jSentence parentSentence) {
         this.position = position;
         this.text = text;
         this.lemma = lemma;
         this.posTag = POSTag.get(posTagStr);
         this.parentSentence = parentSentence;
-    }
-
-    public void setNextWord(Neo4jWord nextWord) {
-        this.nextWord = nextWord;
-    }
-
-    public void setPreWord(Neo4jWord preWord) {
-        this.preWord = preWord;
     }
 
     public void addOutgoingDependency(DependencyTag tag, Neo4jWord target) {
@@ -54,7 +45,6 @@ public class Neo4jWord implements Word {
         this.incomingDependencies.put(tag, source);
     }
 
-    // ... Getters ...
     @Override
     public int getPosition() {
         return position;
@@ -90,15 +80,22 @@ public class Neo4jWord implements Word {
         return preWord;
     }
 
+    public void setPreWord(Neo4jWord preWord) {
+        this.preWord = preWord;
+    }
+
     @Override
     public Word getNextWord() {
         return nextWord;
     }
 
+    public void setNextWord(Neo4jWord nextWord) {
+        this.nextWord = nextWord;
+    }
+
     @Override
     public Phrase getPhrase() {
         if (this.phrase == null) {
-            // Logic to find phrase (same as before)
             this.phrase = findDeepestPhrase(parentSentence.getPhrases(), this);
         }
         return this.phrase;
@@ -124,7 +121,6 @@ public class Neo4jWord implements Word {
         return this.incomingDependencies.get(dependencyTag).toImmutable();
     }
 
-    // compareTo, equals, hashCode ...
     @Override
     public int compareTo(Word o) {
         if (this.equals(o))

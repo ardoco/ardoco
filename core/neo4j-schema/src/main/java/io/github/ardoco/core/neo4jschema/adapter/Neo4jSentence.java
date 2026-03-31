@@ -12,8 +12,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 /**
- * This class represents a Sentence in the Neo4j schema.
- * It implements the Sentence interface from the core API and is used to map data from the Neo4j database to the domain model.
+ * This class represents a Sentence in the Neo4j schema. It implements the Sentence interface from the core API and is used to map data from the Neo4j database
+ * to the domain model.
  */
 public class Neo4jSentence implements Sentence {
 
@@ -28,14 +28,6 @@ public class Neo4jSentence implements Sentence {
         this.text = text;
     }
 
-    public void setWords(List<Neo4jWord> words) {
-        this.words = words;
-    }
-
-    public void setPhrases(List<Phrase> phrases) {
-        this.phrases = phrases;
-    }
-
     @Override
     public int getSentenceNumber() {
         return sentenceNumber;
@@ -46,6 +38,10 @@ public class Neo4jSentence implements Sentence {
         return Lists.immutable.withAll(words);
     }
 
+    public void setWords(List<Neo4jWord> words) {
+        this.words = words;
+    }
+
     @Override
     public String getText() {
         return text;
@@ -54,6 +50,10 @@ public class Neo4jSentence implements Sentence {
     @Override
     public ImmutableList<Phrase> getPhrases() {
         return Lists.immutable.withAll(phrases);
+    }
+
+    public void setPhrases(List<Phrase> phrases) {
+        this.phrases = phrases;
     }
 
     @Override

@@ -14,6 +14,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
+import org.eclipse.jgit.annotations.Nullable;
+
 /**
  * Interface defining persistence operations.
  * Implemented by the neo4j-schema module.
@@ -23,7 +25,7 @@ public interface PersistenceHandler {
     /**
      * Saves the given model for the given metamodel.
      *
-     * @param metamodel the metamodel
+     * @param metamodel the metamodel (this will be used to identify the model when loading it later)
      * @param model     the model to save
      */
     void saveModel(Metamodel metamodel, Model model);
@@ -31,10 +33,11 @@ public interface PersistenceHandler {
     /**
      * Loads the model for the given metamodel from persistence.
      *
-     * @param metamodel the metamodel
-     * @return the loaded model
+     * @param metamodel the metamodel which should be loaded
+     * @return the loaded model or null if no model for the given metamodel is stored
      */
-    Model loadModel(Metamodel metamodel) throws IllegalArgumentException;
+    @Nullable
+    Model loadModel(Metamodel metamodel);
 
     /**
      * Retrieves the set of metamodels for which a model is stored in persistence.
@@ -57,6 +60,7 @@ public interface PersistenceHandler {
      * @param identifier the identifier for the preprocessed text
      * @return the loaded preprocessed text
      */
+    @Nullable
     Text loadPreprocessedText(String identifier);
 
     /**

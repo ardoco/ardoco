@@ -90,7 +90,6 @@ public final class DataRepositoryHelper {
      * @return the text
      */
     public static Text getAnnotatedText(DataRepository dataRepository) {
-        //TODO: retrieve preprocessed text from neo4j
         if (PersistenceBridge.isAvailable()) {
             return PersistenceBridge.getHandler().loadPreprocessedText(PreprocessingData.ID);
         }
@@ -116,7 +115,6 @@ public final class DataRepositoryHelper {
      * @return the text
      */
     public static SimpleText getSimpleText(DataRepository dataRepository) {
-        // TODO: retrieve preprocessed text from neo4j
         return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow().getText();
     }
 
@@ -280,7 +278,6 @@ public final class DataRepositoryHelper {
      */
     public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
         dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
-        // TODO: persist neo4j preprocessing data to neo4j here
 
     }
 }

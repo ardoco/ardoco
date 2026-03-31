@@ -10,7 +10,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import jakarta.annotation.PostConstruct;
 
 /**
- * This bean automatically registers the Neo4j implementation with the static PersistenceBridge in the ARDoCo core module when the Spring Context starts.
+ * This component automatically registers the Neo4j implementation with the static PersistenceBridge
+ * in the ARDoCo core module when the Spring Context starts.
  */
 @Component
 @ConditionalOnProperty(name = "ardoco.persistence.neo4j.enabled", havingValue = "true")

@@ -20,7 +20,7 @@ public class CodeModelNode {
     private String id;
 
     private String modelId;
-    private String metamodel; // Stores the specific class type (e.g., "CODE_WITH_COMPILATION_UNITS")
+    private String metamodel; //(e.g., "CODE_WITH_COMPILATION_UNITS")
 
     @Relationship(type = "CONTAINS_CODE_ROOT", direction = Relationship.Direction.OUTGOING)
     private List<CodeItemNode> content = new ArrayList<>();

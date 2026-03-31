@@ -51,7 +51,7 @@ class ArchitecturePersistenceTest extends AbstractPersistenceTest {
 
         var originalModel = new ArchitectureModelWithComponentsAndInterfaces(items);
         persistenceService.saveArchitectureModel(originalModel);
-        var loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
+        var loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel()).get();
 
         assertArchitectureModelsEqual(originalModel, loadedModel);
 
@@ -79,7 +79,7 @@ class ArchitecturePersistenceTest extends AbstractPersistenceTest {
         ArchitectureModel originalModel = extractor.extractModel();
 
         persistenceService.saveArchitectureModel(originalModel);
-        ArchitectureModel loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel());
+        ArchitectureModel loadedModel = persistenceService.loadArchitectureModel(originalModel.getMetamodel()).get();
 
         assertThat(loadedModel).isNotNull();
         assertArchitectureModelsEqual(originalModel, loadedModel);

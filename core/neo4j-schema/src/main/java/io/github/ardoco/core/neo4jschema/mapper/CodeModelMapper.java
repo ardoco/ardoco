@@ -18,9 +18,7 @@ import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
 @Component
 public class CodeModelMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(CodeModelMapper.class);
-
-    private static final Map<Class<? extends CodeItem>, BiFunction<CodeItem, String, CodeItemNode>> NODE_FACTORIES = Map.of(
+       private static final Map<Class<? extends CodeItem>, BiFunction<CodeItem, String, CodeItemNode>> NODE_FACTORIES = Map.of(
             CodePackage.class, (item, id) -> new CodePackageNode(((CodePackage) item).getName(), id),
             CodeCompilationUnit.class, (item, id) -> {
                 var c = (CodeCompilationUnit) item;

@@ -16,7 +16,6 @@ public class SentenceNode extends TraceableNode {
     private int sentenceNumber;
     private String text;
 
-    // Ordered sequence of sentences
     @Relationship(type = "NEXT_SENTENCE", direction = Relationship.Direction.OUTGOING)
     private SentenceNode nextSentence;
 
@@ -24,12 +23,10 @@ public class SentenceNode extends TraceableNode {
     @Relationship(type = "CONTAINS_WORD", direction = Relationship.Direction.OUTGOING)
     private List<WordNode> words = new ArrayList<>();
 
-    // Root phrases (Constituency Parse)
     @Relationship(type = "HAS_ROOT_PHRASE", direction = Relationship.Direction.OUTGOING)
     private List<PhraseNode> rootPhrases = new ArrayList<>();
 
     public SentenceNode(int sentenceNumber, String text) {
-//        super(java.util.UUID.randomUUID().toString()); // generate a unique ardocoId which will be used as the unique identifier in neo4j
         super(String.valueOf(sentenceNumber) + text.hashCode());
         this.sentenceNumber = sentenceNumber;
         this.text = text;

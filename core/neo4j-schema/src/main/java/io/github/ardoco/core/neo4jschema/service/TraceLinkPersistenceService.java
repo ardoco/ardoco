@@ -41,6 +41,12 @@ public class TraceLinkPersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(TraceLinkPersistenceService.class);
 
+    private static final String TRANSITIVE_QUERY = """
+            MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:Traceable)-[r2:TRACES_TO]->(end:Traceable)
+            WHERE r1.traceLinkType = $type1 AND r2.traceLinkType = $type2
+            RETURN DISTINCT s, mid, end
+            """;
+
     private final TraceLinkRepository traceLinkRepo;
     private final DocumentationPersistenceService documentationService;
 
@@ -132,8 +138,6 @@ public class TraceLinkPersistenceService {
         traceLinkRepo.createTraceLink(sourceId, targetId, type);
     }
 
-    // ------------- Loading Tracelinks ----------------------------
-
     /**
      * Generic helper to load links from the graph and map them.
      */
@@ -157,7 +161,6 @@ public class TraceLinkPersistenceService {
             BiFunction<SentenceEntity, TraceableNode, SentenceModelTraceLink> mapper) {
         Text domainText = documentationService.loadPreprocessedText(textId).orElse(null);
         if (domainText == null) {
-            logger.info("Could not find domain text for ID: {}", textId);
             return new HashSet<>();
         }
         return loadLinks(type, SentenceNode.class, (sNode, targetNode) -> {
@@ -243,11 +246,7 @@ public class TraceLinkPersistenceService {
         var sentenceMapper = mappingContext.getRequiredMappingFunctionFor(SentenceNode.class);
         var traceableMapper = mappingContext.getRequiredMappingFunctionFor(TraceableNode.class);
 
-        return neo4jClient.query("""
-                        MATCH (s:Sentence)-[r1:TRACES_TO]->(mid:Traceable)-[r2:TRACES_TO]->(end:Traceable)
-                        WHERE r1.traceLinkType = $type1 AND r2.traceLinkType = $type2
-                        RETURN DISTINCT s, mid, end
-                        """)
+        return neo4jClient.query(TRANSITIVE_QUERY)
                 .bind(TraceLinkType.SENTENCE_ARCHITECTURE.name())
                 .to("type1")
                 .bind(TraceLinkType.ARCHITECTURE_CODE.name())
