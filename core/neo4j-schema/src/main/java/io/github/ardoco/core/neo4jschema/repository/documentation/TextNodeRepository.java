@@ -25,7 +25,4 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
 
     @Query("MATCH (t:Text{ardocoId: $id}) RETURN t")
     Optional<TextNode> findByArdocoId(@Param("id") String id);
-
-    @Query("MATCH (t:Text) RETURN t")
-    Optional<TextNode> findTextNode();
 }

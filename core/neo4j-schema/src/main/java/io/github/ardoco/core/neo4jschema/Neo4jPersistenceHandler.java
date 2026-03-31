@@ -132,11 +132,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
         logger.info("Loading TransitiveTraceLinks from neo4j");
-        Optional<String> preprocessedTextId = documentationService.getPreprocessedTextId();
-        if (preprocessedTextId.isEmpty()) {
-            logger.info("No preprocessed text found, no TransitiveTraceLinks found");
-            return Set.of();
-        }
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks();
         logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
         return transitiveLinks;
@@ -145,11 +140,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks from neo4j");
-        Optional<String> preprocessedTextId = documentationService.getPreprocessedTextId();
-        if (preprocessedTextId.isEmpty()) {
-            logger.info("No preprocessed text found, no SentenceModelTraceLinks found");
-            return Set.of();
-        }
         Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
         Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks();
         links.addAll(codeLinks);

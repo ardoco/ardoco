@@ -171,9 +171,4 @@ public class DocumentationPersistenceService {
         textRepository.deleteByArdocoId(identifier);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<String> getPreprocessedTextId() {
-        return textRepository.findTextNode().map(TextNode::getArdocoId);
-    }
-
 }
