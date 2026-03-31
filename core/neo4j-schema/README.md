@@ -1,54 +1,59 @@
 # Neo4j-Schema
 This component provides functionality to save and load architecture models, code models and preprocessed texts in a Neo4j graph database.
-Moreover it provides functionality to insert and retrieve tracelinks and inconsistencies.
+Moreover, it provides functionality to insert and retrieve tracelinks and inconsistencies.
 The component is designed to be used in conjunction with other components of the Ardoco Core, such as the Architecture Model and Code Model components.
 
-## Neo4j
-Neo4j is a graph database. It stores data as nodes, relationships and properties. [Official Documentation](https://neo4j.com/docs/)
-The idea of using neo4j in Ardoco is to model the architecture model, code model and documentation model as graphs as well as the tracelinks and inconsistencies between them in order to apply Machine Learning methods to it.
+## 1. Overview
+The idea of using neo4j in Ardoco is to model the architecture model, code model and documentation model as graphs as well as the tracelinks and 
+inconsistencies between them in order to apply Machine Learning methods to it.
+The documentation of neo4j can be found here: [Official Documentation](https://neo4j.com/docs/). 
+Neo4j stores  data as nodes, relationships and properties.
 
-## Configuration options for the Neo4j database
-The connection to the Neo4j database is configured via environment variables, which can be set in a .env file located in the project root.
-This allows the neo4j module to be easily switched on or off. Moreover the deployment location can be changed without code changes.
+## 2. Configuration options
+The connection to the Neo4j database is configured via environment variables, which can be set in a `.env` file located in the project root.
+This allows the neo4j module to be easily switched on or off. Moreover, the deployment location can be changed without code changes.
 
-``ARDOCO_PERSISTENCE_NEO4J_ENABLED:`` A boolean flag (true/false). Defaults to true. When set to true, the Neo4jBridgeActivator is initialized and plugs the handler into the ArDoCo Core. When false, the persistence layer remains inactive, allowing ArDoCo to run without a database connection.
-Once Ardoco is running with this flag set to true, individual Runners can still choose to not use the persistence layer by setting the `PersistenceBridge::usePersistence` flag to false in their run configuration. This allows for flexible usage of the persistence layer on a per-run basis.
+- ``ARDOCO_PERSISTENCE_NEO4J_ENABLED:`` A boolean flag  to enable/ disable the Neo4j bridge. Defaults to true.
+- ``SPRING_NEO4J_URI``: The connection URI for the neo4j instance. Defaults to bolt://localhost:7687.
+- ``SPRING_NEO4J_AUTHENTICATION_USERNAME``: Username for database authentication.
+- ``SPRING_NEO4J_AUTHENTICATION_PASSWORD``: Password for database authentication.
 
+Note:
+Even when globally enabled, individual Runners can bypass the persistence layer by setting the 
+`PersistenceBridge::usePersistence` flag to false in their specific configuration.
 
-``SPRING_NEO4J_URI``: The connection string for the database (e.g., bolt://localhost:7687 for local Docker or a remote IP for deployed instances). Defaults to bolt://localhost:7687.
+## 3. Architecture
+The architecture of the Neo4j-Schema follows a layered architecture pattern:
+1. `Neo4jPersistenceHandler` The central entry point into the neo4j-module for saving, loading, and deleting models, text, tracelinks, and inconsistencies.
+2. **Services**:Domain-specific logic for managing persistence operations.
+3. **Mappers**: Classes responsible for converting ArDoCo domain objects into Neo4j entities and vice versa.
+4. **Repositories**: Spring Data Neo4j interfaces for database interaction.
 
-``SPRING_NEO4J_AUTHENTICATION_USERNAME`` & ``SPRING_NEO4J_AUTHENTICATION_PASSWORD``: The credentials for database access.
+### Integration of Neo4j-Schema in Ardoco
+Neo4j-Schema uses spring boot and spring data neo4j to interact with the neo4j database.
+As soon as the spring boot application is started the `Neo4jBridgeActivator` class is activated.
+This class registers the `Neo4jPersistenceHandler` into the ArDoCo Core `PersistenceBridge` singleton. 
+This allows other ArDoCo components to interact with the database without direct knowledge of the Neo4j-Schema module.
 
-## Architecture
-The architecture of the Neo4j-Schema component has a layered architecture. The main layers are:
-1. Neo4jPersistenceHandler Class: provides the main entry point for interacting with the Neo4j database and the neo4j-schema module in general. 
-    It provides methods for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
-2. Services: services for saving, loading and deleting architecture models, code models and preprocessed texts, as well as for inserting, retrieving and deleting tracelinks and inconsistencies.
-3. Mappers: provide functionality for converting between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j.
-3. Repositories: repositories for interacting with the Neo4j database. 
+## 4. Data Representation & Schema
+A visualization of the graph schema can be found at the end of this file.
 
-### Data Representation:
-The database schema is modelled as a graph. The modelled nodes and relationships of the graph can be found in the entities package.
-Each class in the entities package ending with `Node` represents a node in the graph.
-The classes each class ending with `Relationship` represent a relationship with additional properties in the graph. 
-This only applies to the TraceLinkRelationship and the DependencyRelationship, which represents relationships between individual words.
-All other relationships in the graph are represented as simple relationships which are directly annotated in the node classes with @Relationship.
+### 4.1 Nodes
+- **Traceable:** A core label given to all nodes that can participate in a tracelink. This means all meaning all nodes with the labels `CodeItem`, `ArchitectureItem` or `Sentence` automatically also wear the `Traceable` label. 
+- This additional label allows to better define TracelinkRelationships, which can be established between any two nodes with the `Traceable` label without having to define a separate relationship for all tracelink combinations.
 
-Note: When creating Relationships in Neo4j, they are directed. However, in ArDoCo, tracelinks are undirected.
-The relationships in neo4j can be traversed in both directions at the same speed. 
-Thus, instead of creating two relationships for each tracelink, I created only one relationship to minimize the number of relationships needed.
+- Inheritance like in the ardoco models is represented through multiple labels. For example, a node may have both `ArchitectureItem` and `ArchitectureComponent` labels.
 
-In neo4j a node can have multiple labels, meaning inheritance can be represented in the graph by giving a node multiple labels.
-The structure of the architecture model represented in the neo4j graph is similar to the structure of the architecture model in architectural model in ArDoCo including inheritance. 
-This means every node in the architecture model has the `ArchitectureItem` label, and depending on the type of architecture item, it also has for example a `ArchitectureComponent`, `ArchitectureInterface` or `ArchitectureMethod` label.
-Similarly, the structure of the code model represented in the neo4j graph is similar to the structure of the code model in ArDoCo. 
-This means every node in the code model has the `CodeItem` label, and depending on the type of code item, it also has for example a `CodeComponent`, `CodeInterface` or `CodeMethod` label.
-Similar goes for the preprocessed text.
-Corresponing to the `Entity` class in ArDoCo, there is a `Traceable` label in the graph which is given to all nodes which can be traced. 
-This means all meaning all nodes with the labels `CodeItem`, `ArchitectureItem` or `Sentence` automatically also wear the `Traceable` label.
-This additional label allows to better define Tracelinkrelationships, which can be established between any two nodes with the `Traceable` label without having to define a separate relationship for all tracelink combinations.
+- The modelled nodes and relationships of the graph can be found in the entities package. Each class in the entities package ending with `Node` represents a node in the graph.
 
-#### Mapping between ArDoCo and Neo4j
+### 4.2  Relationships
+- **Directionality:** While Neo4j relationships are directed, ArDoCo tracelinks are conceptually undirected. 
+To minimize the number of relationships needed, only one relationship is created per link, as it can be traversed in both directions at equal speed in neo4j.
+- The classes each class ending with `Relationship` represent a relationship with additional properties in the graph.
+- **TRACES_TO - Relationship**: Connects Traceable nodes and includes properties for traceLinkType and confidence.
+- **HAS_INCONSISTENCY - Relationship**: Connects Traceable nodes to InconsistencyNode types (Text or Model inconsistencies).
+
+### 4.3 Mapping between ArDoCo and Neo4j
 To map between the representation of the architecture model, code model and preprocessed text in ArDoCo and the representation in neo4j, each of the 
 models has a corresponding mapper class which provides methods for converting a model or text from ArDoCo to neo4j and vice versa.
 
@@ -61,43 +66,62 @@ For the classes of the architecture model and code model, I reused the same clas
 pass a predefined id to them instead of generating a new id to keep the same id as before saving the models to neo4j.
 
 
+## 5. Performance Optimizations
+- **Pagination**: DocumentationPersistenceService uses manual pagination to retrieve sentences in batches (default size: 100), avoiding large individual query overhead.
+- **Direct Persistence**: InconsistencyPersistenceService optimizes save operations by persisting data directly rather than mapping to a Java object first.
+- **Caching**: ModelStates.java implements a cache to avoid redundant database fetches after the initial load.
 
-### Integration of Neo4j-Schema in Ardoco
-Neo4j-Schema uses spring boot and spring data neo4j to interact with the neo4j database.
-As soon as the spring boot application is started the Neo4jBridgeActivator class is activated.
-This class populates the PersistenceBridge in Ardoco Core with an instance of the Neo4jPersistenceHandler class, which provides the main entry point for interacting with the neo4j database and the neo4j-schema module in general.
-The PersistenceBridge is a singleton class which provides a bridge between the Ardoco Core and the persistence layer, which in this case is the neo4j database.
-Like this other components of Ardoco can interact with the neo4j database via the PersistenceBridge without having to know about the neo4j-schema module.
-
-
-#### Usage of the Neo4jPersistenceHandler
-To store the models, the models are saved with their Metamodeltype. Only one model per Metamodeltype can be stored in the database. If a model of the same type is already stored, it will be overwritten.
-Thus, to load a model, it is enough specify the metamodel for which a model should be loaded. This is important to keep the method signature 
-of the getModel(Metamodel metamodel) method in ModelStates.java unchanged.
-
-To not have to retrieve the whole model from the database every time when getting a model, ModelStates.java has a cache for the models. 
-When a model is loaded from the database, it is stored in the cache after it has been loaded for the first time from the database.
-
-To store annotated Text, the text is saved with the same id with which it is stored in the dataRepository when saved with putPreprocessingData() in DataRepositoryHelper.java.
-To restore tracelinks involving Sentences/ the Text, the preprocessed text is needed to map the SentenceNodes to the sentences in ArDoCo. 
-Currently, it is assumed that there is only one preprocessed text stored in the database, 
-thus the getPreprocessedText() method in Neo4jPersistenceHandler does not have any parameters.
-
-
-
-
-### Tests
+## 6.  Tests
 Tests in the neo4j-schema module directly primarily test the Neo4jPersistenceHandler class and the neo4j-schema module in general.
 
-Tests in tlr/tests-tlr/.../neo4jschema test the end-to-end Runners for Tracelink and Inconsistency retrieval. 
-To verify whether the pipelines which use the neo4j-schema module work as expected, the tests in tlr/tests-tlr/.../neo4jschema check whether 
+Tests in` tlr/tests-tlr/.../neo4jschema` test the end-to-end Runners for Tracelink and Inconsistency retrieval. 
+To verify whether the pipelines which use the neo4j-schema module work as expected, these tests check whether 
 the number of expected tracelinks and inconsistencies match with the number of tracelinks and inconsistencies retrieved of the traceview-website.
 Currently, these numbers are hardcoded in the tests.
 
+### 6.1 Debugging Neo4j Tests
+In order to debug Neo4j tests it may help to look at the visual representation of the graph. To do so, you can use the Neo4j Browser.
+
+To access the Neo4j Browser, you can follow these steps:
+
+1. Select the test you want to debug in your IDE and set a breakpoint where you want to inspect the graph.
+2. In order to get the connection details for the Neo4j Browser, you can for example add a print statement in your test to output
+   the connection details (e.g., URI, username, password) when the test runs. For example, you can add the following code snippet to the beginning of
+   your test method:
+```
+        // --- VISUALIZATION BLOCK ---
+        System.out.println("----------------------------------------------------------");
+        System.out.println("neo4j browser: " + neo4jContainer.getHttpUrl()); // e.g., http://localhost:32789
+        System.out.println("password:      " + neo4jContainer.getAdminPassword());
+        System.out.println("Connect URL:   " + neo4jContainer.getBoltUrl());
+        System.out.println("----------------------------------------------------------");
+```
+3. Run the test in debug mode. When the execution hits the breakpoint, it will pause, allowing you to inspect the state of the application.
+4. Open the Neo4j Browser in your web browser by navigating to the Connected URL printed in the console (e.g., http://localhost:32789).
+5. Log in to the Neo4j Browser using the username (usually "neo4j") and the password printed in the console.
+6. Once logged in, you can execute Cypher queries to explore the graph.
+
+## 7. Implementation Remarks & Future Work
+
+### Future Work
+- Improve speed of retrieving models from the database
+- Improve speed of inconsistency saving and retrieving
+- Currently, the `getTransistiveTracelinks()` method only retrieves transitive tracelinks from Sentence to Code with an architecture item as intermediate node.
+  In case other types of transitive tracelinks are needed the `loadTransitiveTraceLinks()` Method in the TraceLinkPersistenceService class needs to be extended.
+
+### Further Implementation Remarks
+The class `ConnectionstateImpl.java` in ArDoCo has a `getTraceLinks()` method and a `addToLinks()` method which work together for SentenceModelTracelinks.
+However, only for SentenceArchitecture tracelinks, getTraceLinks returns the actual final SentenceArchitecture tracelinks.
+SentenceCode tracelinks from this method will get further processed by `ArchitectureLinkToCodeLinkTransformerInformant.java` and
+then saved in the CodeTraceAbilityState. Thus, in `connectionstateImpl.java`, `addToLinks()` only adds SentenceArchitecture tracelinks to neo4j, but not SentenceCode tracelinks.
+Similarly, `getTraceLinks()` only retrieves SentenceArchitecture tracelinks from neo4j.
+
+To store the models, the models are saved with their Metamodeltype. Only one model per Metamodeltype can be stored in the database. If a model of the same type is already stored, it will be overwritten.
+Thus, to load a model, it is enough specify the metamodel for which a model should be loaded. This is important to keep the method signature
+of the `getModel(Metamodel metamodel)` method in ModelStates.java unchanged.
 
 
-
-## Schema
+## 8. Visualization of the Graph Structure
 ### Preprocessed Text
 The graph for representing a preprocessed text follows a structure similar to the one provided by TextImpl.java, SentenceImpl.java, WordImpl.java and PhraseImpl.java
 in ArDoCo.
@@ -143,23 +167,6 @@ TextInconsistencies:
 ModelInconsistencies:
 ![MEAT.png](MEAT.png)
 
-
-## Optimizations
-To optimize the speed of retrieving the preprocessedText, the DocumentationService.java uses pagination to retrieve the sentences of the preprocessed text in batches.
-To optimize the speed of saving inconsistencies, the InconsistencyPersistenceService.java saves the inconsistencies directly without mapping it to a Java Object Node first.
-
-## Future Work
-- Improve speed of retrieving models from the database
-- Improve speed of inconsistency saving and retrieving
-- Currently, the getTransistiveTracelinks() method only retrieves transitive tracelinks from Sentence to Code with an architecture item as intermediate node.
-In case other types of transitive tracelinks are needed the loadTransitiveTraceLinks() Method in the TraceLinkPersistenceService class needs to be extended.
-
-## Remarks
-The class ConnectionstateImpl.java in ArDoCo has a getTraceLinks() method and a addToLinks() method which work together for SentenceModelTracelinks. 
-However, only for SentenceArchitecture tracelinks, getTraceLinks returns the actual final SentenceArchitecture tracelinks.
-SentenceCode tracelinks from this method will get further processed by ArchitectureLinkToCodeLinkTransformerInformant.java and 
-then saved in the CodeTraceAbilityState. Thus, in connectionstateImpl.java, addToLinks() only adds SentenceArchitecture tracelinks to neo4j, but not SentenceCode tracelinks.
-Similarly, getTraceLinks() only retrieves SentenceArchitecture tracelinks from neo4j.
 
 
 

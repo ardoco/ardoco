@@ -3,7 +3,6 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -138,7 +137,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
             logger.info("No preprocessed text found, no TransitiveTraceLinks found");
             return Set.of();
         }
-        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks(preprocessedTextId.get());
+        Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks();
         logger.info("Loaded {} TransitiveTraceLinks", transitiveLinks.size());
         return transitiveLinks;
     }
@@ -151,8 +150,8 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
             logger.info("No preprocessed text found, no SentenceModelTraceLinks found");
             return Set.of();
         }
-        Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks(preprocessedTextId.get());
-        Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks(preprocessedTextId.get());
+        Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
+        Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks();
         links.addAll(codeLinks);
         logger.info("Loaded {} SentenceModelTraceLinks", links.size());
         return links;
