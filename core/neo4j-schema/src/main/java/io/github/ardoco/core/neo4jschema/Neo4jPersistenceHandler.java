@@ -3,7 +3,6 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -27,11 +26,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
-import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
-import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 
 /**
  * Neo4j-based implementation of the PersistenceHandler interface.

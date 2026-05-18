@@ -22,25 +22,24 @@ public class TraceLinkRelationship {
     public TraceLinkRelationship() {
     }
 
-        /**
-        * Creates a TraceLinkRelationship with the specified target node, confidence value, and trace link type.
-        *
-        * @param targetNode the target node of the trace link relationship
-        * @param confidence the confidence value associated with the trace link relationship
-        * @param traceLinkType the type of the trace link relationship
-        */
+    /**
+     * Creates a TraceLinkRelationship with the specified target node, confidence value, and trace link type.
+     *
+     * @param targetNode    the target node of the trace link relationship
+     * @param confidence    the confidence value associated with the trace link relationship
+     * @param traceLinkType the type of the trace link relationship
+     */
     public TraceLinkRelationship(TraceableNode targetNode, Double confidence, TraceLinkType traceLinkType) {
         this.targetNode = targetNode;
         this.confidence = confidence;
         this.traceLinkType = traceLinkType;
     }
 
-
     /**
      * Creates a TraceLinkRelationship with the specified target node and trace link type, without setting a confidence value.
      * The confidence will be set to null, indicating that it is not defined.
      *
-     * @param targetNode the target node of the trace link relationship
+     * @param targetNode    the target node of the trace link relationship
      * @param traceLinkType the type of the trace link relationship
      */
     public TraceLinkRelationship(TraceableNode targetNode, TraceLinkType traceLinkType) {
@@ -52,7 +51,6 @@ public class TraceLinkRelationship {
     public TraceableNode getTargetNode() {
         return this.targetNode;
     }
-
 
     public Double getConfidence() {
         return confidence;

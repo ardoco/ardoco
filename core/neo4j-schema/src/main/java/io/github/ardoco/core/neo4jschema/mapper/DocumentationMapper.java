@@ -8,16 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jPhrase;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jSentence;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jText;
@@ -92,20 +91,13 @@ public class DocumentationMapper {
         return new Neo4jText(textNode.getArdocoId(), sentences);
     }
 
-
     public SentenceNode convertMapToSentenceNode(Map<String, Object> data) {
-        SentenceNode sNode = new SentenceNode(
-                ((Number) data.get("sentenceNumber")).intValue(),
-                (String) data.get("text")
-        );
+        SentenceNode sNode = new SentenceNode(((Number) data.get("sentenceNumber")).intValue(), (String) data.get("text"));
 
         List<Map<String, Object>> wordsData = (List<Map<String, Object>>) data.get("words");
         Map<Integer, WordNode> wordLookup = new HashMap<>();
         for (Map<String, Object> w : wordsData) {
-            WordNode wn = new WordNode(
-                    ((Number) w.get("position")).intValue(),
-                    (String) w.get("text"), (String) w.get("lemma"), (String) w.get("posTag")
-            );
+            WordNode wn = new WordNode(((Number) w.get("position")).intValue(), (String) w.get("text"), (String) w.get("lemma"), (String) w.get("posTag"));
             wordLookup.put(wn.getPosition(), wn);
         }
         sNode.setWords(new ArrayList<>(wordLookup.values()));
@@ -125,7 +117,8 @@ public class DocumentationMapper {
             if (wordPos != null) {
                 for (Object pos : wordPos) {
                     WordNode wn = wordLookup.get(((Number) pos).intValue());
-                    if (wn != null) pNode.addContainedWord(wn);
+                    if (wn != null)
+                        pNode.addContainedWord(wn);
                 }
             }
             phraseLookup.put(id, pNode);
@@ -146,16 +139,11 @@ public class DocumentationMapper {
             }
         }
 
-        List<PhraseNode> rootPhrases = rootPhraseIds.stream()
-                .map(phraseLookup::get)
-                .filter(java.util.Objects::nonNull)
-                .toList();
+        List<PhraseNode> rootPhrases = rootPhraseIds.stream().map(phraseLookup::get).filter(java.util.Objects::nonNull).toList();
 
         sNode.setRootPhrases(new ArrayList<>(rootPhrases));
         return sNode;
     }
-
-
 
     public Neo4jSentence mapSentenceToDomain(SentenceNode sNode, Map<Integer, Neo4jWord> globalWordMap) {
         Neo4jSentence sentence = new Neo4jSentence(sNode.getSentenceNumber(), sNode.getText());
@@ -208,13 +196,15 @@ public class DocumentationMapper {
         for (SentenceNode sNode : textNode.getSentences()) {
             for (WordNode wNode : sNode.getWords()) {
                 Neo4jWord source = globalWordMap.get(wNode.getPosition());
-                if (source == null) continue;
+                if (source == null)
+                    continue;
 
                 List<DependencyRelationship> deps = wNode.getDependencies();
                 if (deps != null && !deps.isEmpty()) {
                     for (DependencyRelationship rel : deps) {
                         WordNode targetNode = rel.getTargetWord();
-                        if (targetNode == null) continue;
+                        if (targetNode == null)
+                            continue;
 
                         Neo4jWord target = globalWordMap.get(targetNode.getPosition());
 
@@ -265,13 +255,13 @@ public class DocumentationMapper {
         }
 
         for (Phrase subPhrase : domainPhrase.getSubphrases()) {
-            if (subPhrase == domainPhrase) continue;
+            if (subPhrase == domainPhrase)
+                continue;
             PhraseNode childNode = mapPhraseToNode(subPhrase, wordMap, phraseCache);
             phraseNode.addChildPhrase(childNode);
         }
 
         return phraseNode;
     }
-
 
 }

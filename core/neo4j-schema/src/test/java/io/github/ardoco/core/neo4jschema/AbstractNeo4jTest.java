@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema;
 
 import org.springframework.test.context.DynamicPropertyRegistry;

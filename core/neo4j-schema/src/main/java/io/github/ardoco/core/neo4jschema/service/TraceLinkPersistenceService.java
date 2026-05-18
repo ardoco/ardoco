@@ -9,8 +9,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
@@ -35,6 +33,7 @@ import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TransitiveChainQueryResult;
 import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
+import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
 import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
 
 @Service
@@ -178,7 +177,7 @@ public class TraceLinkPersistenceService {
      * corresponding domain entities using the provided mappers, and returns a set of ArchitectureCodeTraceLink objects.
      *
      * @return A set of ArchitectureCodeTraceLink objects representing all architecture-code trace links currently stored in the database. If no such links
-     * exist, it returns an empty set.
+     *         exist, it returns an empty set.
      */
     @Transactional(readOnly = true)
     public Set<ArchitectureCodeTraceLink> loadAllArchitectureCodeTraceLinks() {
@@ -199,8 +198,8 @@ public class TraceLinkPersistenceService {
      */
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceArchitectureModelTraceLinks() {
-        return loadSentenceLinks(TraceLinkType.SENTENCE_ARCHITECTURE, ArchitectureItemNode.class,
-                (sEntity, target) -> new SentenceModelTraceLink(sEntity, archMapper.mapItem((ArchitectureItemNode) target)));
+        return loadSentenceLinks(TraceLinkType.SENTENCE_ARCHITECTURE, ArchitectureItemNode.class, (sEntity, target) -> new SentenceModelTraceLink(sEntity,
+                archMapper.mapItem((ArchitectureItemNode) target)));
     }
 
     /**
@@ -212,8 +211,8 @@ public class TraceLinkPersistenceService {
      */
     @Transactional(readOnly = true)
     public Set<SentenceModelTraceLink> loadAllSentenceCodeModelTraceLinks() {
-        return loadSentenceLinks(TraceLinkType.SENTENCE_CODE, CodeItemNode.class,
-                (sEntity, target) -> new SentenceModelTraceLink(sEntity, codeMapper.toDomain((CodeItemNode) target)));
+        return loadSentenceLinks(TraceLinkType.SENTENCE_CODE, CodeItemNode.class, (sEntity, target) -> new SentenceModelTraceLink(sEntity, codeMapper.toDomain(
+                (CodeItemNode) target)));
     }
 
     /**
@@ -221,7 +220,7 @@ public class TraceLinkPersistenceService {
      * custom Cypher query to retrieve all chains of trace links that connect sentences to architecture items and then to code items.
      *
      * @return A set of TransitiveTraceLink objects representing all transitive trace links from sentences to architecture items to code items currently stored
-     * in the database. If no such links exist, it returns an empty set.
+     *         in the database. If no such links exist, it returns an empty set.
      */
     @Transactional(readOnly = true)
     public Set<TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
@@ -234,8 +233,8 @@ public class TraceLinkPersistenceService {
                 .bind(TraceLinkType.ARCHITECTURE_CODE.name())
                 .to("type2")
                 .fetchAs(TransitiveChainQueryResult.class)
-                .mappedBy((typeSystem, record) -> new TransitiveChainQueryResult(sentenceMapper.apply(typeSystem, record.get("s")),
-                        traceableMapper.apply(typeSystem, record.get("mid")), traceableMapper.apply(typeSystem, record.get("end"))))
+                .mappedBy((typeSystem, record) -> new TransitiveChainQueryResult(sentenceMapper.apply(typeSystem, record.get("s")), traceableMapper.apply(
+                        typeSystem, record.get("mid")), traceableMapper.apply(typeSystem, record.get("end"))))
                 .all()
                 .stream()
                 .map(this::createTransitiveLink)
@@ -250,8 +249,8 @@ public class TraceLinkPersistenceService {
         ArchitectureItem archMid = mapToArchitectureItem(chain.getArchitecture());
         CodeItem codeEnd = mapToCodeItem(chain.getCode());
 
-        var transitiveLink = TransitiveTraceLink.createTransitiveTraceLink(new SentenceModelTraceLink(sentenceEntity, archMid),
-                new ArchitectureCodeTraceLink(archMid, codeEnd));
+        var transitiveLink = TransitiveTraceLink.createTransitiveTraceLink(new SentenceModelTraceLink(sentenceEntity, archMid), new ArchitectureCodeTraceLink(
+                archMid, codeEnd));
 
         return transitiveLink.map(link -> (TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>) link);
     }

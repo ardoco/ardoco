@@ -19,8 +19,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.CoreNLPP
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.TextImpl;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
-import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
 import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
+import io.github.ardoco.core.neo4jschema.repository.documentation.TextNodeRepository;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 
 class DocumentationPersistenceTest extends AbstractPersistenceTest {
@@ -82,7 +82,7 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
         // Assert - Domain Mapping
         DocumentationMapper mapper = new DocumentationMapper();
-//        Text restoredText = mapper.toDomain(retrievedNode);
+        //        Text restoredText = mapper.toDomain(retrievedNode);
         Text restoredText = mapper.toDomain(retrievedNode);
 
         assertThat(restoredText.getSentences()).hasSize(2);

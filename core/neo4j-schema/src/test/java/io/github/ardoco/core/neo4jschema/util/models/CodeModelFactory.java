@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.util.models;
 
 import java.util.List;
@@ -62,8 +63,8 @@ public class CodeModelFactory {
         CodeItemRepository repository = new CodeItemRepository();
 
         CodePackage codePackage = new CodePackage("id_pkg_auth", repository, "edu.kit.auth");
-        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit("id_cu_auth", repository, "AuthService", new TreeSet<>(),
-                List.of("edu", "kit", "auth"), "java", ProgrammingLanguage.JAVA);
+        CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit("id_cu_auth", repository, "AuthService", new TreeSet<>(), List.of("edu", "kit",
+                "auth"), "java", ProgrammingLanguage.JAVA);
         ClassUnit clazz = new ClassUnit("id_cls_auth", repository, "AuthService", new TreeSet<>());
 
         codePackage.addContent(codeCompilationUnit);

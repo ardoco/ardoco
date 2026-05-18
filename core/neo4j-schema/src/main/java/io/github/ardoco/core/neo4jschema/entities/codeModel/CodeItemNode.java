@@ -4,11 +4,11 @@ package io.github.ardoco.core.neo4jschema.entities.codeModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
-
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
+
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
 @Node("CodeItem")
 public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNode> {

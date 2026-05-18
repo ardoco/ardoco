@@ -1,10 +1,8 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.io.Serial;
 import java.util.List;
-
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -13,6 +11,7 @@ import org.eclipse.collections.api.list.MutableList;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
 public class InconsistencyStateImpl extends AbstractState implements InconsistencyState {

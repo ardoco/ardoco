@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema;
 
 import java.util.List;
@@ -166,11 +167,10 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         Assertions.assertFalse(loadedLinks.isEmpty());
         Assertions.assertTrue(loadedLinks.stream()
-                .anyMatch(l -> l.getFirstEndpoint().getId().equals(archEntity.getId()) && l.getSecondEndpoint()
-                        .getId()
-                        .equals(codeEntity.getId()) && l.getFirstEndpoint().getName().equals(archEntity.getName()) && l.getSecondEndpoint()
+                .anyMatch(l -> l.getFirstEndpoint().getId().equals(archEntity.getId()) && l.getSecondEndpoint().getId().equals(codeEntity.getId()) && l
+                        .getFirstEndpoint()
                         .getName()
-                        .equals(codeEntity.getName())));
+                        .equals(archEntity.getName()) && l.getSecondEndpoint().getName().equals(codeEntity.getName())));
     }
 
     @Test

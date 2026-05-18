@@ -1,14 +1,15 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.util.models;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
 
 public class ArchitectureModelFactory {
 
@@ -23,29 +24,17 @@ public class ArchitectureModelFactory {
         var dataMethods = new TreeSet<>(List.of(fetchDataMethod));
         var dataInterface = new ArchitectureInterface("IDataStore", "id_iface_data", dataMethods);
 
-        var dbDriver = new ArchitectureComponent(
-                "DatabaseDriver", "id_comp_db_driver",
-                new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "Driver"
-        );
+        var dbDriver = new ArchitectureComponent("DatabaseDriver", "id_comp_db_driver", new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "Driver");
 
-
-        var authComponent = new ArchitectureComponent(
-                "AuthService",
-                "id_comp_auth",
-                new TreeSet<>(), // No subcomponents
+        var authComponent = new ArchitectureComponent("AuthService", "id_comp_auth", new TreeSet<>(), // No subcomponents
                 new TreeSet<>(List.of(authInterface)), // Provides IAuth
                 new TreeSet<>(List.of(dataInterface)), // Requires IDataStore (Dependency)
-                "Service"
-        );
+                "Service");
 
-        var persistenceComponent = new ArchitectureComponent(
-                "PersistenceLayer",
-                "id_comp_persistence",
-                new TreeSet<>(List.of(dbDriver)), // Has a subcomponent
+        var persistenceComponent = new ArchitectureComponent("PersistenceLayer", "id_comp_persistence", new TreeSet<>(List.of(dbDriver)), // Has a subcomponent
                 new TreeSet<>(List.of(dataInterface)), // Provides IDataStore
                 new TreeSet<>(), // No requirements
-                "Component"
-        );
+                "Component");
 
         List<ArchitectureItem> allItems = new ArrayList<>();
         allItems.add(authComponent);

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.execution.runner.InconsistencyDetection;

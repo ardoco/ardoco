@@ -31,22 +31,22 @@ public class DocumentationPersistenceService {
     private static final String PAGED_SENTENCE_QUERY = """
             MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)
             WHERE s.sentenceNumber >= $skip AND s.sentenceNumber < ($skip + $limit)
-    
+
             OPTIONAL MATCH (s)-[:CONTAINS_WORD]->(w:Word)
             WITH s, collect(DISTINCT w) AS words
-    
+
             OPTIONAL MATCH (s)-[:HAS_ROOT_PHRASE]->(root:Phrase)
             OPTIONAL MATCH (root)-[:HAS_CHILD_PHRASE*0..]->(p:Phrase)
-    
-            WITH s, words, 
-                 collect(DISTINCT elementId(root)) AS rootIds, 
+
+            WITH s, words,
+                 collect(DISTINCT elementId(root)) AS rootIds,
                  collect(DISTINCT p) AS allPhrases
-    
-            RETURN s {.*, 
-                      words: [word IN words | word {.*}], 
+
+            RETURN s {.*,
+                      words: [word IN words | word {.*}],
                       rootPhraseIds: rootIds,
-                      phrases: [phrase IN allPhrases | phrase { 
-                          .*, 
+                      phrases: [phrase IN allPhrases | phrase {
+                          .*,
                           id: elementId(phrase),
                           childIds: [(phrase)-[:HAS_CHILD_PHRASE]->(child) | elementId(child)],
                           containedWords: [(phrase)-[:CONTAINS_WORD]->(cw:Word) | cw.position]

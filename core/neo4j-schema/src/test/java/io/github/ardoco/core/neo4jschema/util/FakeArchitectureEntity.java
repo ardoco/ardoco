@@ -1,9 +1,12 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.util;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
+import java.util.Optional;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
-import java.util.Optional;
+
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 
 public class FakeArchitectureEntity extends ArchitectureEntity {
     private final String type;
@@ -20,7 +23,8 @@ public class FakeArchitectureEntity extends ArchitectureEntity {
 
     @Override
     public ImmutableList<String> getTypeParts() {
-        if (type == null) return Lists.immutable.empty();
+        if (type == null)
+            return Lists.immutable.empty();
         return Lists.immutable.with(type.split(" "));
     }
 }

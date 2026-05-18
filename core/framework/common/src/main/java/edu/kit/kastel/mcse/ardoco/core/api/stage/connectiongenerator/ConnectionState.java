@@ -1,25 +1,20 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-
-import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * State interface for connection generation.
@@ -48,7 +43,6 @@ public interface ConnectionState extends IConfigurable {
             var persistedLinks = PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
             traceLinks.addAll(persistedLinks);
         }
-
 
         for (var instanceLink : this.getInstanceLinks()) {
             var textualInstance = instanceLink.getFirstEndpoint();

@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 
-import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
+import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
 import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
 
 @Service
@@ -61,7 +60,7 @@ public class ArchitecturePersistenceService {
      * @param metamodel The metamodel type used to locate the ArchitectureModelNode in the database. This method assumes that there is at most one model per
      *                  metamodel type.
      * @return If multiple models exist for the same metamodel, it will return the first one found. If no model is found for the given metamodel, it returns
-     * null.
+     *         null.
      */
     @Transactional(readOnly = true)
     public Optional<ArchitectureModel> loadArchitectureModel(Metamodel metamodel) {
@@ -78,7 +77,7 @@ public class ArchitecturePersistenceService {
      * Retrieves a sorted set of all metamodel types for which architecture models are currently stored in the database.
      *
      * @return A sorted set of Metamodel enums representing the types of architecture models available in the database. If no models are stored, it returns an
-     * empty set.
+     *         empty set.
      */
     @Transactional(readOnly = true)
     public SortedSet<Metamodel> getStoredArchitectureModelMetamodels() {

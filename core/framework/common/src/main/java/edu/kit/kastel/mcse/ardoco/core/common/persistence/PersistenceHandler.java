@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 import java.util.Collection;
 import java.util.SortedSet;
 
+import org.eclipse.jgit.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
@@ -13,8 +15,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-
-import org.eclipse.jgit.annotations.Nullable;
 
 /**
  * Interface defining persistence operations.
@@ -49,7 +49,7 @@ public interface PersistenceHandler {
     /**
      * Saves the preprocessed text for the given identifier.
      *
-     * @param text      the preprocessed text to save
+     * @param text       the preprocessed text to save
      * @param identifier the identifier for the preprocessed text which can also be used to load it later
      */
     void savePreprocessedText(Text text, String identifier);
@@ -77,7 +77,7 @@ public interface PersistenceHandler {
      * @param traceLinks the trace links to save
      * @return true if the trace links were successfully saved, false otherwise
      */
-    boolean saveTraceLinks(Collection<? extends TraceLink<?,?>> traceLinks);
+    boolean saveTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks);
 
     /**
      * Loads the specific Architecture-Code links from the database.
@@ -85,7 +85,6 @@ public interface PersistenceHandler {
      * @return the loaded Architecture-Code tracelinks
      */
     Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks();
-
 
     /**
      * Loads a collection of transitive tracelinks between sentences and code model entities.
@@ -120,16 +119,17 @@ public interface PersistenceHandler {
 
     /**
      * Removes all data associated with a specific metamodel.
+     * 
      * @param metamodel the metamodel to clear
      */
     void deleteModel(Metamodel metamodel);
 
     /**
      * Deletes a specific preprocessed text.
+     * 
      * @param identifier the identifier of the text to remove
      */
     void deletePreprocessedText(String identifier);
-
 
     /**
      * Deletes the given inconsistencies from persistence.

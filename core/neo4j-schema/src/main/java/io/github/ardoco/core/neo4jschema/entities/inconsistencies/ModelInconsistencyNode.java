@@ -1,14 +1,14 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.inconsistencies;
 
-import org.springframework.data.neo4j.core.schema.Node;
-
 import java.util.Objects;
+
+import org.springframework.data.neo4j.core.schema.Node;
 
 @Node("ModelInconsistency")
 public class ModelInconsistencyNode extends InconsistencyNode {
 
     private static final String INCONSISTENCY_TYPE_NAME = "TextEntityAbsentFromModel";
-
 
     private String modelArdocoId;
 

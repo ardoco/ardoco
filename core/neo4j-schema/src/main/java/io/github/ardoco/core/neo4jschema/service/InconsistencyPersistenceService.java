@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
@@ -96,11 +97,13 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
      * Retrieves all inconsistencies from the database and maps them to their corresponding domain objects.
      *
      * @return A collection of Inconsistency objects representing all inconsistencies currently stored in the database. This collection can contain both
-     * model-based and text-based inconsistencies.
+     *         model-based and text-based inconsistencies.
      */
     @Transactional(readOnly = true)
     public Collection<? extends Inconsistency> getInconsistencies() {
-        return inconsistencyRepository.findAllWithRelationships().stream().map(node -> node.accept(this)) // Use Visitor pattern to map each database node
+        return inconsistencyRepository.findAllWithRelationships()
+                .stream()
+                .map(node -> node.accept(this)) // Use Visitor pattern to map each database node
                 .toList();
     }
 

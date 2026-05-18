@@ -4,9 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
-
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -17,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;

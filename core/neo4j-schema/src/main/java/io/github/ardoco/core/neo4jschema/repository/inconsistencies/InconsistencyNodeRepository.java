@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.repository.inconsistencies;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
             MATCH (parent:Traceable {ardocoId: $ardocoId})
             CREATE (parent)-[:HAS_INCONSISTENCY]->(i:ModelInconsistency:Inconsistency {
                 id: randomUUID(),
-                modelArdocoId: $uid, 
+                modelArdocoId: $uid,
                 reason: $reason,
                 type: "TextEntityAbsentFromModel"
             })
@@ -55,10 +56,10 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
             MATCH (s:Sentence {sentenceNumber: $num})
             CREATE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {
                 id: randomUUID(),
-                name: $name, 
-                sentenceNumber: $num, 
-                confidence: $conf, 
-                reason: $reason, 
+                name: $name,
+                sentenceNumber: $num,
+                confidence: $conf,
+                reason: $reason,
                 type: $type
             })
             """)

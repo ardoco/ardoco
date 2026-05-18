@@ -41,8 +41,7 @@ public class CodeModelEqualityHelper {
         Map<String, CodeItem> itemsExpected = repoExpected.getRepository();
         Map<String, CodeItem> itemsActual = repoActual.getRepository();
 
-                assertEquals(itemsExpected.size(), itemsActual.size(),
-                        "Repository size mismatch (Total items count)");
+        assertEquals(itemsExpected.size(), itemsActual.size(), "Repository size mismatch (Total items count)");
 
         for (String id : itemsExpected.keySet()) {
             assertTrue(itemsActual.containsKey(id), () -> "Item " + id + " missing in restored model.");

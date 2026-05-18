@@ -3,11 +3,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
 
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;

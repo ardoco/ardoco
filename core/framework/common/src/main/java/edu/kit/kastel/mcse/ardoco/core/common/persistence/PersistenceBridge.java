@@ -1,11 +1,10 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
-import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
-
-import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
-
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+
+import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
+import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 
 /**
  * This class serves as a holder for a concrete implementation of the persistence handler
@@ -44,7 +43,6 @@ public class PersistenceBridge extends AbstractConfigurable {
     public static boolean isAvailable() {
         return usePersistenceStatic && handler != null;
     }
-
 
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {

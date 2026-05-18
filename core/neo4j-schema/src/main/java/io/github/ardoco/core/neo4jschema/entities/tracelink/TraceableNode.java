@@ -1,15 +1,15 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.tracelink;
 
-import io.github.ardoco.core.neo4jschema.entities.inconsistencies.InconsistencyNode;
-
-import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.HashSet;
-import java.util.Set;
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.InconsistencyNode;
 
 @Node("Traceable")
 public abstract class TraceableNode {
@@ -23,13 +23,12 @@ public abstract class TraceableNode {
     @Relationship(type = "HAS_INCONSISTENCY", direction = Relationship.Direction.OUTGOING)
     protected Set<InconsistencyNode> inconsistencies = new HashSet<>();
 
-    protected TraceableNode () {
+    protected TraceableNode() {
     }
 
     protected TraceableNode(String ardocoId) {
         this.ardocoId = ardocoId;
     }
-
 
     public void addOutgoingTraceLink(TraceLinkRelationship link) {
         this.outgoingLinks.add(link);
@@ -53,7 +52,7 @@ public abstract class TraceableNode {
         this.ardocoId = ardocoId;
     }
 
-     public String getArdocoId() {
+    public String getArdocoId() {
         return ardocoId;
     }
 

@@ -20,7 +20,7 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
      */
     @Query("""
             MATCH (source:Traceable)-[r:TRACES_TO]->(target:Traceable)
-            WHERE r.traceLinkType = $type 
+            WHERE r.traceLinkType = $type
             RETURN source, collect(r), collect(target)
             """)
     List<TraceableNode> findAllByRelationshipType(@Param("type") TraceLinkType type);
@@ -28,7 +28,7 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
     @Query("""
             MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId})
             MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t)
-            SET r.confidence = COALESCE($conf, -1.0), 
+            SET r.confidence = COALESCE($conf, -1.0),
                 r.traceLinkType = $type
             """)
     void createTraceLink(@Param("sourceId") String sourceId, @Param("targetId") String targetId, @Param("conf") Double conf, @Param("type") TraceLinkType type);

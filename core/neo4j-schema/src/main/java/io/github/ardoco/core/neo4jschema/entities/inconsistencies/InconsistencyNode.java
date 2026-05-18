@@ -1,6 +1,7 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema.entities.inconsistencies;
 
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
+import java.util.Objects;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -8,7 +9,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import java.util.Objects;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
 @Node("Inconsistency")
 public abstract class InconsistencyNode {
@@ -47,7 +48,6 @@ public abstract class InconsistencyNode {
     public String getId() {
         return id;
     }
-
 
     public String getReason() {
         return reason;

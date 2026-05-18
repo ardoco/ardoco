@@ -4,11 +4,11 @@ package io.github.ardoco.core.neo4jschema.entities.documentation;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
-import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
-
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
+
+import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
+import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 
 @Node("Sentence")
 public class SentenceNode extends TraceableNode {

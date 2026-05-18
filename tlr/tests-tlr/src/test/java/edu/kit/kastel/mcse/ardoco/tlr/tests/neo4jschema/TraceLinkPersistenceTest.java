@@ -20,7 +20,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
-
 public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     @Test
@@ -37,8 +36,8 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     private void runAndAssertArcotl(boolean persistence) {
         var runner = new Arcotl(projectName);
-        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration,
-                getConfigsWithPersistence(persistence), new File(directory.toFile(), "output"));
+        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, getConfigsWithPersistence(
+                persistence), new File(directory.toFile(), "output"));
 
         testRunnerAssertions(runner);
         var result = runner.run();

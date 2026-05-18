@@ -1,30 +1,27 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
 import java.util.Collection;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
-
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.set.MutableSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
-
-import org.eclipse.collections.api.set.MutableSet;
 
 /**
  * The connection state encapsulates all connections between the model extraction state and the recommendation state. These connections are stored in instance
@@ -98,17 +95,12 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     }
 
     private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {
-        return recommendedInstance.getNameMappings().stream()
-                .flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream())
-                .toList();
+        return recommendedInstance.getNameMappings().stream().flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream()).toList();
     }
 
     private Collection<SentenceModelTraceLink> generateLinksFromNameMapping(NounMapping nm, ModelEntity modelEntity) {
-        return nm.getWords().stream()
-                .map(word -> new SentenceModelTraceLink(word.getSentence(), modelEntity))
-                .toList();
+        return nm.getWords().stream().map(word -> new SentenceModelTraceLink(word.getSentence(), modelEntity)).toList();
     }
-
 
     /**
      * Checks if an instance link is already contained by the state.

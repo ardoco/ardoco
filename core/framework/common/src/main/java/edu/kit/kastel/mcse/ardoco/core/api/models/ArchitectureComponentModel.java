@@ -30,7 +30,7 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
      * Creates a new ArchitectureComponentModel with the specified id.
      * This constructor is used for restoring models with a specific id from persistence.
      *
-     * @param id the identifier of the model
+     * @param id                the identifier of the model
      * @param architectureModel the architecture model
      */
     public ArchitectureComponentModel(String id, ArchitectureModel architectureModel) {

@@ -16,7 +16,7 @@ public abstract class DatatypeNode extends CodeItemNode {
     @Relationship(type = "IMPLEMENTS", direction = Relationship.Direction.OUTGOING)
     private Set<DatatypeNode> implementedTypes = new HashSet<>();
 
-    @Relationship(type= "REFERENCES_DATATYPE", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "REFERENCES_DATATYPE", direction = Relationship.Direction.OUTGOING)
     private Set<DatatypeNode> referencedDatatypes = new HashSet<>();
 
     protected DatatypeNode(String name, String ardocoId) {

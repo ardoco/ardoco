@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 
-import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
+import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
 
 @Service

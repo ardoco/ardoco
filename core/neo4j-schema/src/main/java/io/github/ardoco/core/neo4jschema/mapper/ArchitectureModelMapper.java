@@ -137,8 +137,8 @@ public class ArchitectureModelMapper {
             required.add(mapInterfaceToDomain(ifaceNode, ifaceCache));
         }
 
-        ArchitectureComponent domainComponent = new ArchitectureComponent(node.getName(), node.getArdocoId(), subcomponents, provided, required,
-                node.getType());
+        ArchitectureComponent domainComponent = new ArchitectureComponent(node.getName(), node.getArdocoId(), subcomponents, provided, required, node
+                .getType());
 
         compCache.put(node.getArdocoId(), domainComponent);
         return domainComponent;
@@ -177,8 +177,8 @@ public class ArchitectureModelMapper {
             return ifaceCache.get(domainInterface.getId());
         }
 
-        ArchitectureInterfaceNode node = new ArchitectureInterfaceNode(domainInterface.getName(), domainInterface.getType().orElse(null),
-                domainInterface.getId());
+        ArchitectureInterfaceNode node = new ArchitectureInterfaceNode(domainInterface.getName(), domainInterface.getType().orElse(null), domainInterface
+                .getId());
         ifaceCache.put(domainInterface.getId(), node);
 
         for (ArchitectureMethod method : domainInterface.getMethodSignatures()) {

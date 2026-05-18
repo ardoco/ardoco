@@ -1,11 +1,13 @@
+/* Licensed under MIT 2026. */
 package io.github.ardoco.core.neo4jschema;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
+
 import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 @ConditionalOnProperty(name = "ardoco.persistence.neo4j.enabled", havingValue = "true")
@@ -23,7 +25,6 @@ public class Neo4jInitializer {
         execute("CREATE INDEX traceable_id_idx IF NOT EXISTS FOR (t:Traceable) ON (t.ardocoId)");
         execute("CREATE INDEX inconsistency_reason_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.reason)");
         execute("CREATE INDEX inconsistency_id_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.id);");
-
 
         logger.info("Neo4j Indexes initialized successfully.");
     }
