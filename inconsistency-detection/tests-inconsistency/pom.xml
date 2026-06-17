@@ -59,6 +59,12 @@
       <version>${revision}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>connection-generator-ner</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
