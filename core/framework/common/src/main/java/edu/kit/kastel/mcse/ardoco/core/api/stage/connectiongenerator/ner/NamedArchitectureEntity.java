@@ -52,6 +52,8 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
 
     @Override
     public String toString() {
-        return "NamedArchitectureEntity{" + "name='" + name + '\'' + ", alternativeNames=" + alternativeNames + '}';
+        return "NamedArchitectureEntity{" + "name='" + name + '\'' + ", alternativeNames=" + alternativeNames + ", occurrences=" + occurrences.stream()
+                .map(NamedArchitectureEntityOccurrence::getSentenceNumber)
+                .toList() + '}';
     }
 }
