@@ -7,6 +7,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
@@ -21,8 +22,21 @@ public class NerConnectionGenerator extends AbstractExecutionStage {
         super(List.of(new NerAgent(dataRepository, llm), new NerConnectionAgent(dataRepository)), NerConnectionGenerator.class.getSimpleName(), dataRepository);
     }
 
+    private NerConnectionGenerator(DataRepository dataRepository, LargeLanguageModel llm, ArchitectureComponent currentHoldBack) {
+        super(List.of(new NerAgent(dataRepository, llm, currentHoldBack), new NerConnectionAgent(dataRepository)), NerConnectionGenerator.class.getSimpleName(),
+                dataRepository);
+    }
+
     public static NerConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository, LargeLanguageModel llm) {
         var connectionGenerator = new NerConnectionGenerator(dataRepository, llm);
+        connectionGenerator.applyConfiguration(additionalConfigs);
+        return connectionGenerator;
+    }
+
+    public static NerConnectionGenerator get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository, LargeLanguageModel llm,
+            ArchitectureComponent currentHoldBack) {
+        //TODO Frage: ist das schlechter stil? sollte ich die methode eher getWithHoldback nennen? oder das ganz anders umsetzen? Ich muss den holdBack halt irgendwie zum NerInformant durchreichen...
+        var connectionGenerator = new NerConnectionGenerator(dataRepository, llm, currentHoldBack);
         connectionGenerator.applyConfiguration(additionalConfigs);
         return connectionGenerator;
     }

@@ -24,6 +24,8 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.AnonymousRunner;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractPipelineStep;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
@@ -49,8 +51,7 @@ public class ArtemisHoldBackRunResultsProducer {
     public ArdocoResult produceBaseRunResults(InconsistencyDetectionTask goldStandardProject) {
         prepareDetectionInputs(goldStandardProject);
 
-        HoldBackArCoTLModelProvider holdBackArCoTLModelProvider = new HoldBackArCoTLModelProvider(this.inputModel);
-        return new ArdocoResult(this.run(goldStandardProject, holdBackArCoTLModelProvider));
+        return new ArdocoResult(this.run(goldStandardProject));
     }
 
     /**
@@ -67,13 +68,13 @@ public class ArtemisHoldBackRunResultsProducer {
 
         HoldBackArCoTLModelProvider holdBackArCoTLModelProvider = new HoldBackArCoTLModelProvider(this.inputModel);
 
-        DataRepository baseRunData = this.run(goldStandardProject, holdBackArCoTLModelProvider);
+        DataRepository baseRunData = this.run(goldStandardProject);
         runs.put(null, new ArdocoResult(baseRunData));
 
         for (int i = 0; i < holdBackArCoTLModelProvider.numberOfActualInstances(); i++) {
             holdBackArCoTLModelProvider.setCurrentHoldBackIndex(i);
             var currentHoldBack = holdBackArCoTLModelProvider.getCurrentHoldBack();
-            DataRepository currentRunData = this.run(goldStandardProject, holdBackArCoTLModelProvider);
+            DataRepository currentRunData = this.run(goldStandardProject, currentHoldBack);
             var result = new ArdocoResult(currentRunData);
             runs.put(currentHoldBack, result);
             writeArtemisResultToFile(goldStandardProject, result, currentHoldBack);
@@ -83,13 +84,23 @@ public class ArtemisHoldBackRunResultsProducer {
     }
 
     /**
-     * Runs the part that is specific to each run.
+     * Runs the Artemis approach without any held-back elements.
      *
-     * @param goldStandardProject            the current project
-     * @param holdElementsBackModelConnector the model connector with the held-back model element
+     * @param goldStandardProject the current project
      * @return the data repository that is produced
      */
-    protected DataRepository run(InconsistencyDetectionTask goldStandardProject, HoldBackArCoTLModelProvider holdElementsBackModelConnector) {
+    protected DataRepository run(InconsistencyDetectionTask goldStandardProject) {
+        return this.run(goldStandardProject, null);
+    }
+
+    /**
+     * Runs the part that is specific to each run.
+     *
+     * @param goldStandardProject the current project
+     * @param currentHoldBack     the held-back model element
+     * @return the data repository that is produced
+     */
+    protected DataRepository run(InconsistencyDetectionTask goldStandardProject, ArchitectureComponent currentHoldBack) {
         return new AnonymousRunner(goldStandardProject.name()) {
             @Override
             public List<AbstractPipelineStep> initializePipelineSteps(DataRepository dataRepository) {
@@ -102,8 +113,10 @@ public class ArtemisHoldBackRunResultsProducer {
                 DataRepositoryHelper.putInputText(dataRepository, text);
 
                 pipelineSteps.add(SimpleTextPreprocessingAgent.get(additionalConfigs, dataRepository));
-                pipelineSteps.add(holdElementsBackModelConnector.get(additionalConfigs, dataRepository));
-                pipelineSteps.add(NerConnectionGenerator.get(additionalConfigs, dataRepository, llm));
+                pipelineSteps.add(ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs,
+                        (new ArchitectureConfiguration(goldStandardProject.getArchitectureModelFile(ModelFormat.PCM), ModelFormat.PCM).withMetamodel(
+                                Metamodel.ARCHITECTURE_WITH_COMPONENTS)), null));
+                pipelineSteps.add(NerConnectionGenerator.get(additionalConfigs, dataRepository, llm, currentHoldBack));
 
                 return pipelineSteps;
             }

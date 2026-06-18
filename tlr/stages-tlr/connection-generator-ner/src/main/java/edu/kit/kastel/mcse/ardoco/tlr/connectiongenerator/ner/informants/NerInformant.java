@@ -9,9 +9,11 @@ import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
@@ -30,10 +32,18 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 public class NerInformant extends Informant {
 
     private final LargeLanguageModel llm;
+    @Nullable
+    private ArchitectureComponent currentHoldback;
 
     public NerInformant(DataRepository dataRepository, LargeLanguageModel llm) {
         super(NerInformant.class.getSimpleName(), dataRepository);
         this.llm = llm;
+    }
+
+    public NerInformant(DataRepository dataRepository, LargeLanguageModel llm, ArchitectureComponent currentHoldBack) {
+        super(NerInformant.class.getSimpleName(), dataRepository);
+        this.llm = llm;
+        this.currentHoldback = currentHoldBack;
     }
 
     @Override
@@ -105,6 +115,9 @@ public class NerInformant extends Informant {
         var model = modelStatesData.getModel(metamodel);
         for (var endpoint : model.getEndpoints()) {
             String endpointName = endpoint.getName();
+            if (currentHoldback != null && currentHoldback.getId().equals(endpoint.getId())) {
+                continue;
+            }
             NamedEntityType namedEntityType = getNamedEntityType(endpoint);
             possibleEntities.get(namedEntityType).add(endpointName);
         }
@@ -127,60 +140,60 @@ public class NerInformant extends Informant {
     private TwoPartPrompt getPrompt() {
         String taskPrompt = """
                 Identify all architecturally relevant software components that are explicitly named in the following text.
-
+                
                 For each identified component, provide:
                 - The primary name (as it appears in the text)
                 - All alternative names or abbreviations used for the same component in the text (case-insensitive)
                 - All full lines where the component is mentioned (directly or via clear context)
-
+                
                 Rules for identifying components:
-
+                
                 1. Only include explicit modular software components with distinct technical responsibilities. These may include:
                    - services (e.g., UserService)
                    - APIs (e.g., PaymentAPI)
                    - adapters, handlers, managers, routers, engines
                    - infrastructure components (e.g., Media Server, Presentation Conversion Pipeline)
                    - client-side or server-side subsystems (e.g., electron client, backend server)
-
+                
                 2. Exclude domain-level entities, even if capitalized — such as business data objects, file types, or general functionalities — unless used as part of a named technical unit.
                    Do not include non-technical concepts even if mentioned with verbs like "convert", "generate", or "store" — these are often subject-side actions unless framed as components.
-
+                
                    Examples of domain terms (do not include):
                    - image — "Each item includes an image."
                    - recommendation — "Recommendations are generated..."
                    - file — "Uploads include a JSON file."
                    - session — "Each session is stored separately."
                    - presentation — "Uploaded presentations go through conversion..."
-
-
+                
+                
                    Include only when wrapped in named software components that perform active, modular responsibilities (if explicitly named and described).
-
+                
                 3. DO include technical subsystems described with proper software roles, and clearly scoped:
                    - (Web) server — if described as a component implementing client-server communication or event dispatching
                    - (Web) client — if described as rendering or subscribing to events/data
                    - Media Server / MS — as a media streaming component implementing SFU/MCU
-
+                
                 4. Do not include:
                    - Package, class, or namespace names (e.g., common.util, x.y.z)
                    - Interfaces (unless directly implemented and deployed)
                    - General use of technologies or third-party tools like "React" or "Spring" unless internally wrapped as system components
-
+                
                 5. A component is valid if:
                    a) Its name includes a functional suffix or architecture-relevant term (Service, Client, Engine, Manager, Adapter, Server, Router, Converter, etc.)
                    OR
                    b) The text clearly describes it as implementing a technical function within the system (e.g., routing requests, synchronizing state, managing media streams)
-
+                
                 6. Reverse pronoun references are allowed only when strongly tied to a previously named component across adjacent lines.
                    Do not infer vague or implied components through generic phrases like:
                    - it handles the process
                    - this system
                    - the module
-
+                
                 7. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
-
+                
                 8. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
-
-
+                
+                
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
         String formattingPrompt = """
@@ -189,7 +202,7 @@ public class NerInformant extends Informant {
                 - "type": "COMPONENT"
                 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
                 - "occurrences": a list of lines where the component appears or is referenced.
-
+                
                 Output should be a JSON array (and nothing else!), like:
                 [
                     {
@@ -200,7 +213,7 @@ public class NerInformant extends Informant {
                     },
                     ...
                 ]
-
+                
                 Example:
                 [
                     {

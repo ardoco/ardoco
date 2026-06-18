@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents;
 
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerInformant;
@@ -17,5 +18,9 @@ public class NerAgent extends PipelineAgent {
      */
     public NerAgent(DataRepository dataRepository, LargeLanguageModel llm) {
         super(List.of(new NerInformant(dataRepository, llm)), NerAgent.class.getSimpleName(), dataRepository);
+    }
+
+    public NerAgent(DataRepository dataRepository, LargeLanguageModel llm, ArchitectureComponent currentHoldBack) {
+        super(List.of(new NerInformant(dataRepository, llm, currentHoldBack)), NerAgent.class.getSimpleName(), dataRepository);
     }
 }

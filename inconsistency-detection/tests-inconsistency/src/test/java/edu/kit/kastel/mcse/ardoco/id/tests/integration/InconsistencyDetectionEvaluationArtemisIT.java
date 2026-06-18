@@ -7,7 +7,6 @@ import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelpe
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -20,7 +19,6 @@ import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.MutableSet;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -34,9 +32,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.ArtemisHoldBackRunResultsProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
@@ -124,10 +121,13 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
             MutableSet<Integer> expectedSentences = goldStandard.getSentencesWithElement(heldBackElement).toSet();
 
-            var connectionState = result.getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
-            var namedArchitectureEntities = connectionState.getNamedArchitectureEntities();
-
-            Set<Integer> detectedSentences = getDetectedSentences(namedArchitectureEntities, heldBackElement);
+            Set<Integer> detectedSentences = result.getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS)
+                    .getTraceLinks()
+                    .stream()
+                    .filter(tl -> tl.getSecondEndpoint().getId().equals(heldBackElement.getId()))
+                    .map(TraceLink::getFirstEndpoint)
+                    .map(NamedArchitectureEntityOccurrence::getSentenceNumber)
+                    .collect(Collectors.toSet());
 
             var calculator = ClassificationMetricsCalculator.getInstance();
             var evaluationResult = calculator.calculateMetrics(detectedSentences, expectedSentences,
@@ -136,55 +136,6 @@ class InconsistencyDetectionEvaluationArtemisIT {
         }
 
         return results;
-    }
-
-    private static Set<Integer> getDetectedSentences(ImmutableSortedSet<NamedArchitectureEntity> namedArchitectureEntities, ArchitectureItem heldBackElement) {
-        var similarityUtils = SimilarityUtils.getInstance();
-
-        var possibleHeldBackEntities = namedArchitectureEntities.stream().filter(e -> { //code hier ist vom NerConnectionInformant "geklaut"
-            // Stage 1: Similarity Metrics
-            if (similarityUtils.areWordsSimilar(e.getName(), heldBackElement.getName()) || similarityUtils.areWordsSimilar(heldBackElement.getName(),
-                    e.getName())) {
-                return true;
-            }
-            for (var alternativeName : e.getAlternativeNames()) {
-                if (similarityUtils.areWordsSimilar(alternativeName, heldBackElement.getName()) || similarityUtils.areWordsSimilar(heldBackElement.getName(),
-                        alternativeName)) {
-                    return true;
-                }
-            }
-
-            // Stage 2: Weak Similarity
-            var nameParts = Lists.mutable.with(e.getName().split("\\s"));
-            nameParts.addAll(Lists.mutable.with(e.getName().split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])")));
-            if (similarityUtils.areWordsOfListsSimilar(nameParts.toImmutable(), heldBackElement.getNameParts()) || similarityUtils.areWordsOfListsSimilar(
-                    heldBackElement.getNameParts(), nameParts.toImmutable())) {
-                return true;
-            }
-
-            // TODO also use embedding similarity to get all rightful matches
-
-            // TODO this should be deprecated if we use embeddings (currently we use this for: "kurento" and "Kurento Media Server"); can be deleted if embeddings work
-            for (var part : e.getName().split("\\s")) {
-                if (similarityUtils.areWordsSimilar(part, heldBackElement.getName()) || similarityUtils.areWordsSimilar(heldBackElement.getName(), part)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }).toList();
-
-        List<NamedArchitectureEntityOccurrence> occurrences = new ArrayList<>();
-
-        if (possibleHeldBackEntities.isEmpty()) {
-            logger.warn("No match found for heldBackElement: {}", heldBackElement.getName());
-        } else if (possibleHeldBackEntities.size() > 1) {
-            logger.warn("Multiple matches found for heldBackElement: {} -> {}", heldBackElement.getName(), possibleHeldBackEntities);
-        } else {
-            occurrences = possibleHeldBackEntities.getFirst().getOccurrences();
-        }
-
-        return occurrences.stream().map(NamedArchitectureEntityOccurrence::getSentenceNumber).collect(Collectors.toSet());
     }
 
     private SingleClassificationResult<String> calculateMeatEvaluationResults(InconsistencyDetectionTask project, ArdocoResult result) {
