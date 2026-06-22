@@ -32,6 +32,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
@@ -127,7 +128,15 @@ class InconsistencyDetectionEvaluationArtemisIT {
                     .filter(tl -> tl.getSecondEndpoint().getId().equals(heldBackElement.getId()))
                     .map(TraceLink::getFirstEndpoint)
                     .map(NamedArchitectureEntityOccurrence::getSentenceNumber)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toSet()); // = TP
+
+            detectedSentences.addAll(result.getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS)
+                    .getUnlinkedNamedArchitectureEntities()
+                    .stream()
+                    .map(NamedArchitectureEntity::getOccurrences)
+                    .flatMap(Collection::stream)
+                    .map(NamedArchitectureEntityOccurrence::getSentenceNumber)
+                    .collect(Collectors.toSet())); // = FP
 
             var calculator = ClassificationMetricsCalculator.getInstance();
             var evaluationResult = calculator.calculateMetrics(detectedSentences, expectedSentences,
