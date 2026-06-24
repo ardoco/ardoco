@@ -53,7 +53,7 @@ public class NerInformant extends Informant {
         var text = DataRepositoryHelper.getSimpleText(dataRepository);
         SoftwareArchitectureDocumentation sad = new SoftwareArchitectureDocumentation(text.getText());
 
-        var chatModel = llm.createUncached();
+        var chatModel = llm.create();
 
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         for (var metamodel : modelStatesData.getMetamodels()) {
