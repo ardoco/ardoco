@@ -221,12 +221,12 @@ class InconsistencyDetectionEvaluationArtemisIT {
         StringBuilder outputBuilder = new StringBuilder();
         outputBuilder.append("###").append(LINE_SEPARATOR);
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResults = metrics.calculateAverages(results, null)
+        var microAverageResults = metrics.calculateAverages(results, null)
                 .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
+                .filter(it -> it.getType() == AggregationType.MICRO_AVERAGE)
                 .findFirst()
                 .get();
-        var resultString = createResultLogString("### OVERALL RESULTS ###" + LINE_SEPARATOR + "Weighted" + " Average", weightedAverageResults);
+        var resultString = createResultLogString("### OVERALL RESULTS ###" + LINE_SEPARATOR + "Micro" + " Average", microAverageResults);
         outputBuilder.append(resultString);
         outputBuilder.append(LINE_SEPARATOR);
         return outputBuilder.toString();
