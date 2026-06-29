@@ -178,10 +178,11 @@ public class NerInformant extends Informant {
                    - Interfaces (unless directly implemented and deployed)
                    - General use of technologies or third-party tools like "React" or "Spring" unless internally wrapped as system components
                 
-                5. A component is valid if:
-                   a) Its name includes a functional suffix or architecture-relevant term (Service, Client, Engine, Manager, Adapter, Server, Router, Converter, etc.)
-                   OR
-                   b) The text clearly describes it as implementing a technical function within the system (e.g., routing requests, synchronizing state, managing media streams)
+                5. A component is valid only if both conditions hold:
+                    a) The entity is presented as a distinct architectural unit with a defined boundary.
+                    b) The entity participates in the system architecture as an independently described service, application, server, client, subsystem, engine, pipeline, processor, gateway, adapter, or similarly scoped runtime unit.
+                
+                Possessing technical responsibilities alone is not sufficient.
                 
                 6. Reverse pronoun references are allowed only when strongly tied to a previously named component across adjacent lines.
                    Do not infer vague or implied components through generic phrases like:
@@ -199,6 +200,12 @@ public class NerInformant extends Informant {
                 8. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
                 
                 9. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
+                
+                10. Exclude implementation-level and organizational constructs. An entity is only a component if the text presents it as a distinct architectural unit rather than an internal element of another unit.
+                
+                11. Respect architectural containment. If an entity is described as existing within, belonging to, or operating as part of another named component, do not extract it unless it is itself described as a separate architectural unit. Prefer higher-level architectural units over their internal implementation elements.
+                
+                12. APIs, technologies, and products are not components by default. References to APIs, frameworks, databases, protocols, middleware, web servers, application servers, or third-party products should only be extracted when the text explicitly models them as architectural units of the analyzed system.
                 
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
