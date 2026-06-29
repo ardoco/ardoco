@@ -189,10 +189,16 @@ public class NerInformant extends Informant {
                    - this system
                    - the module
                 
-                7. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
+                7. A sentence may be assigned to a component only if the sentence itself contains:
+                    - the component name,
+                    - a known alias/abbreviation of the component,
+                    - or a clear and unambiguous pronoun/reference to that component.
                 
-                8. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
+                    Do not extend component descriptions across subsequent sentences that lack such a reference, even if they appear immediately after a component description.
                 
+                8. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
+                
+                9. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
                 
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
