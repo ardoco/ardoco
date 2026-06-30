@@ -35,9 +35,6 @@
 // $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
 
 parser grammar Python3Parser;
-@header {
-package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
-}
 options {
     superClass = Python3ParserBase;
     tokenVocab = Python3Lexer;
