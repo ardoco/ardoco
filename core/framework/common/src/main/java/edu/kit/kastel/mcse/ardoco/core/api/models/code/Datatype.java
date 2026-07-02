@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -33,6 +33,10 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     @JsonProperty
     private String parentDatatypeId;
     @JsonProperty
+    private int startLine = -1;
+    @JsonProperty
+    private int endLine = -1;
+    @JsonProperty
     private List<String> extendedDataTypesIds;
     @JsonProperty
     private List<String> implementedDataTypesIds;
@@ -54,6 +58,38 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         this.extendedDataTypesIds = new ArrayList<>();
         this.implementedDataTypesIds = new ArrayList<>();
         this.datatypeReferencesIds = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new datatype with the specified name and source location.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the datatype
+     * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
+     * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
+     */
+    public Datatype(CodeItemRepository codeItemRepository, String name, int startLine, int endLine) {
+        this(codeItemRepository, name);
+        this.startLine = startLine;
+        this.endLine = endLine;
+    }
+
+    /**
+     * Returns the 1-indexed start line of this datatype in its source file, or -1 if unknown.
+     *
+     * @return the start line
+     */
+    public int getStartLine() {
+        return startLine;
+    }
+
+    /**
+     * Returns the 1-indexed end line of this datatype in its source file, or -1 if unknown.
+     *
+     * @return the end line
+     */
+    public int getEndLine() {
+        return endLine;
     }
 
     /**

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -37,6 +37,23 @@ public final class InterfaceUnit extends Datatype {
      */
     public InterfaceUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Creates a new interface unit with the specified name, content, and source location.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the interface unit
+     * @param content            the content of the interface unit
+     * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
+     * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
+     */
+    public InterfaceUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, int startLine, int endLine) {
+        super(codeItemRepository, name, startLine, endLine);
         this.content = new ArrayList<>();
         for (var codeItem : content) {
             this.content.add(codeItem.getId());
