@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
 import java.util.SortedSet;
@@ -35,6 +35,6 @@ public class FileMapper extends AbstractCppCodeItemMapper {
     private CodeItem buildFileCodeAssembly(ElementIdentifier identifier) {
         Element file = this.elementRegistry.getFile(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        return new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language.name());
+        return CodeAssembly.fromRelativePath(this.codeItemRepository, content, this.language.name(), file.getPath());
     }
 }
