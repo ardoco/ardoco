@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -64,8 +64,8 @@ public class JavaElementExtractor extends ElementExtractor {
     }
 
     @Override
-    protected CommonTokenStream buildTokens(Path file) throws IOException {
-        CharStream stream = CharStreams.fromPath(file);
+    protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
+        CharStream stream = CharStreams.fromReader(java.nio.file.Files.newBufferedReader(absoluteFile), relativeFile.toString());
         JavaLexer lexer = new JavaLexer(stream);
         return new CommonTokenStream(lexer);
     }

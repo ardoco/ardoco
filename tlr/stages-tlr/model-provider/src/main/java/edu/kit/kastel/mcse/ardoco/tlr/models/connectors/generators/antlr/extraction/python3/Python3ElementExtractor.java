@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -65,8 +65,8 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     @Override
-    protected CommonTokenStream buildTokens(Path file) throws IOException {
-        CharStream charStream = CharStreams.fromPath(file);
+    protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
+        CharStream charStream = CharStreams.fromReader(java.nio.file.Files.newBufferedReader(absoluteFile), relativeFile.toString());
         Python3Lexer lexer = new Python3Lexer(charStream);
         return new CommonTokenStream(lexer);
     }
@@ -287,7 +287,7 @@ public class Python3ElementExtractor extends ElementExtractor {
             PackageElement packageElement = new PackageElement(packageName, packagePath, parentIdentifier);
             elementRegistry.addPackage(packageElement);
         } else {
-            packageName = packagePath.substring(0, packagePath.length() - 1);
+            packageName = packagePath.isEmpty() ? "" : packagePath.substring(0, packagePath.length() - 1);
             PackageElement packageElement = new PackageElement(packageName, packagePath);
             elementRegistry.addPackage(packageElement);
         }
