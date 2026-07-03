@@ -19,8 +19,12 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 @Deterministic
 public enum LargeLanguageModel {
     // OPENAI
+    GPT_5_5("GPT-5.5", () -> createOpenAiModel("gpt-5.5-2026-04-23", 1.0)),
     GPT_4_O("GPT-4o", () -> createOpenAiModel("gpt-4o-2024-08-06")), //
     GPT_4_1("GPT-4.1", () -> createOpenAiModel("gpt-4.1-2025-04-14")), //
+    GPT_5_4_NANO("GPT-5.4 nano", () -> createOpenAiModel("gpt-5.4-nano-2026-03-17")),
+    GPT_5_4_MINI("GPT-5.4 mini", () -> createOpenAiModel("gpt-5.4-mini-2026-03-17")),
+    GPT_5_4("GPT-5.4", () -> createOpenAiModel("gpt-5.4-2026-03-05")),
     GPT_5("GPT-5", () -> createOpenAiModel("gpt-5-2025-08-07", 1.0)), //
     OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), () -> createOpenAiModel(Environment.getEnv("OPENAI_MODEL_NAME"))), //
     // OLLAMA
