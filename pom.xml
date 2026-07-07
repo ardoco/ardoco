@@ -77,8 +77,8 @@
 
     <!-- Versions -->
     <slf4j.version>2.0.18</slf4j.version>
+    <junit.version>6.1.0</junit.version>
     <spotless.version>3.6.0</spotless.version>
-    <junit.version>6.0.3</junit.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
     <mockito.version>5.23.0</mockito.version>
