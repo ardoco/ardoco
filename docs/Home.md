@@ -13,7 +13,7 @@ ARDoCo is actively developed by researchers of the [Modelling for Continuous Sof
 **Website**: [ardoco.de](https://ardoco.de) | **GitHub**: [github.com/ardoco](https://github.com/ardoco)
 
 Before contributing, please read the [Quickstart Guide](quickstart) and the developer note on [Nullness and JSpecify](jspecify).
-For a developer-focused repository map, architecture notes, and operational guidance, see the [OpenWiki documentation](openwiki/quickstart).
+For a developer-focused repository map, architecture notes, and operational guidance, see the [OpenWiki documentation](openwiki/quickstart.md).
 
 <!-- JavaDocs can be found [here](https://ardoco.github.io/Core-Docs/). -->
 
