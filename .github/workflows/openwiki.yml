@@ -25,19 +25,21 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin main --quiet
-          COUNT=$(git rev-list --count --since="7 days ago" origin/main)
-          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          if [ "$COUNT" -gt 0 ]; then
+          TOTAL_COUNT=$(git rev-list --count --since="7 days ago" origin/main)
+          RELEVANT_COUNT=$(git rev-list --count --since="7 days ago" origin/main -- . ':(exclude)openwiki/**')
+          echo "count=$RELEVANT_COUNT" >> "$GITHUB_OUTPUT"
+          echo "total_count=$TOTAL_COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$RELEVANT_COUNT" -gt 0 ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Detected $COUNT commit(s) on main in last 7 days."
+            echo "Detected $RELEVANT_COUNT relevant commit(s) on main in last 7 days (total commits: $TOTAL_COUNT)."
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No commits on main in last 7 days."
+            echo "No relevant commits on main in last 7 days (ignoring openwiki/** updates; total commits: $TOTAL_COUNT)."
           fi
 
       - name: Stop early when no changes
         if: steps.recent_commits.outputs.changed != 'true'
-        run: echo "Skipping OpenWiki update because main has no recent commits."
+        run: echo "Skipping OpenWiki update because main has no relevant recent commits (openwiki/** only changes are ignored)."
 
       - name: Set up Node.js
         if: steps.recent_commits.outputs.changed == 'true'
