@@ -165,9 +165,8 @@ The `TraceLinkCombiner` (`/tlr/stages-tlr/code-traceability/src/main/java/.../in
 
 ## Testing
 
-Integration tests for each approach are in `/tlr/tests-tlr/src/test/java/.../execution/runner/`:
-- `SwattrTest.java`, `ArdocodeTest.java`, `ArcotlTest.java`, `TransarcTest.java`
-
+Integration tests for each approach are in `/tlr/tests-tlr/src/test/java/.../tests/integration/`:
+- `SwattrIT.java`, `ArdocodeIT.java`, `ArcotlIT.java`, `TransarcIT.java`
 These tests evaluate against benchmark datasets and measure precision, recall, and F1 scores against expected results.
 
 ## Choosing an Approach

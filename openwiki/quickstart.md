@@ -44,8 +44,8 @@ mvn clean verify     # Full build with tests
 ```xml
 <dependencies>
   <dependency>
-    <groupId>io.github.ardoco</groupId>
-    <artifactId>parent</artifactId> <!-- or a specific subproject -->
+    <groupId>io.github.ardoco.core</groupId>
+    <artifactId>pipeline-core</artifactId> <!-- or another published module such as io.github.ardoco.tlr:pipeline-tlr -->
     <version>VERSION</version>
   </dependency>
 </dependencies>

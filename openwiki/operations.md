@@ -30,12 +30,12 @@ The root POM (`/pom.xml`) defines `io.github.ardoco:parent` as the parent for al
 ### Key Dependencies (from root POM)
 
 - **Stanford CoreNLP** 4.5.10 — NLP preprocessing
-- **Jackson** 2.21.0 — JSON serialization (via BOM)
+- **Jackson** 2.21.3 — JSON serialization (via BOM)
 - **Eclipse Collections** 13.0.0 — mutable collection types
-- **JavaParser** 3.28.0 — code parsing
-- **JUnit** 6.0.2 — testing
-- **Mockito** 5.21.0 — mocking
-- **SLF4J** 2.0.17 — logging
+- **JavaParser** 3.28.2 — code parsing
+- **JUnit** 6.0.3 — testing
+- **Mockito** 5.23.0 — mocking
+- **SLF4J** 2.0.18 — logging
 
 ## Code Formatting
 
@@ -48,7 +48,7 @@ mvn spotless:apply   # Apply formatting before committing
 mvn spotless:check    # Check formatting (runs in CI)
 ```
 
-Formatter configuration: `/formatter.xml` (import this profile into your IDE). Import order: `/spotless.importorder`.
+Formatter configuration: `{module}/formatter.xml` (import this profile into your IDE). Import order: `{module}/spotless.importorder`.
 
 ### JSpecify Nullness Annotations
 
