@@ -2,11 +2,12 @@ name: Documentation
 
 on:
   push:
-    branches: 
+    branches:
       - main
     tags: "v**"
     paths:
       - 'docs/**'
+      - 'openwiki/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -22,14 +23,17 @@ jobs:
           repository: ${{ github.repository }}.wiki
           path: wiki
           token: ${{ secrets.SDQ_TOKEN }}
-          
+
       - name: Remove contents in Wiki
         working-directory: wiki
         run: ls -A1 | grep -v '.git' | xargs rm -r
-      
+
       - name: Copy Wiki from Docs folder
-        run: cp -r ./docs/. ./wiki
-          
+        run: |
+          cp -r ./docs/. ./wiki
+          mkdir -p ./wiki/openwiki
+          cp -r ./openwiki/. ./wiki/openwiki
+
       - name: Deploy 🚀
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
