@@ -31,8 +31,19 @@ jobs:
       - name: Copy Wiki from Docs folder
         run: |
           cp -r ./docs/. ./wiki
+
+          # Keep the original OpenWiki folder in the wiki repository.
           mkdir -p ./wiki/openwiki
           cp -r ./openwiki/. ./wiki/openwiki
+
+          # Create rendered wiki pages in the root namespace because subfolder
+          # links can resolve to file view instead of wiki page view.
+          for file in ./openwiki/*.md; do
+            base="$(basename "$file" .md)"
+            target="./wiki/OpenWiki-${base}.md"
+
+            sed -E 's/\]\(([a-z0-9-]+)\.md(#[^)]+)?\)/](OpenWiki-\1\2)/g' "$file" > "$target"
+          done
 
       - name: Deploy 🚀
         uses: stefanzweifel/git-auto-commit-action@v7
