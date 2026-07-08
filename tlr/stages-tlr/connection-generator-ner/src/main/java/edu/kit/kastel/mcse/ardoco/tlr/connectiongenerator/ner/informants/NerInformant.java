@@ -159,11 +159,11 @@ public class NerInformant extends Informant {
                    Do not include non-technical concepts even if mentioned with verbs like "convert", "generate", or "store" — these are often subject-side actions unless framed as components.
                 
                    Examples of domain terms (do not include):
-                   - image — "Each item includes an image."
-                   - recommendation — "Recommendations are generated..."
-                   - file — "Uploads include a JSON file."
-                   - session — "Each session is stored separately."
-                   - presentation — "Uploaded presentations go through conversion..."
+                   - thumbnail — "Each item includes a thumbnail."
+                   - suggestion — "Suggestions are generated..."
+                   - document — "Uploads include a JSON document."
+                   - interaction — "Each interaction is stored separately."
+                   - slideshow — "Uploaded slideshows go through conversion..."
                 
                 
                    Include only when wrapped in named software components that perform active, modular responsibilities (if explicitly named and described).
@@ -197,15 +197,19 @@ public class NerInformant extends Informant {
                 
                     Do not extend component descriptions across subsequent sentences that lack such a reference, even if they appear immediately after a component description.
                 
-                8. Do not create implied components from action nouns (e.g., "conversion", "delivery", "recommendation") unless these are mentioned as named, distinct architectural elements.
+                8. Do not create implied components from action nouns (e.g., "validation", "authentication", "routing") unless these are mentioned as named, distinct architectural elements.
                 
-                9. If an external technology (e.g., MongoDB, Redis, etc.) is used in a custom component (e.g., our RedisPublisher, or MongoSyncService), include that named component — not the technology itself.
+                9. If an external technology (e.g., PostgreSQL, Apache Kafka, etc.) is used in a custom component (e.g., our PostgresSyncService, or KafkaEventPublisher), include that named component — not the technology itself.
                 
-                10. Exclude implementation-level and organizational constructs. An entity is only a component if the text presents it as a distinct architectural unit rather than an internal element of another unit.
+                10. Exclude implementation-level and organizational constructs.
+                    An entity is only a component if the text presents it as a distinct architectural unit rather than an internal element of another unit.
                 
-                11. Respect architectural containment. If an entity is described as existing within, belonging to, or operating as part of another named component, do not extract it unless it is itself described as a separate architectural unit. Prefer higher-level architectural units over their internal implementation elements.
+                11. Respect architectural containment.
+                    If an entity is described as existing within, belonging to, or operating as part of another named component, do not extract it unless it is itself described as a separate architectural unit.
+                    Prefer higher-level architectural units over their internal implementation elements.
                 
-                12. APIs, technologies, and products are not components by default. References to APIs, frameworks, databases, protocols, middleware, web servers, application servers, or third-party products should only be extracted when the text explicitly models them as architectural units of the analyzed system.
+                12. APIs, technologies, and products are not components by default.
+                    References to APIs, frameworks, databases, protocols, middleware, web servers, application servers, or third-party products should only be extracted when the text explicitly models them as architectural units of the analyzed system.
                 
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per component).
                 """;
