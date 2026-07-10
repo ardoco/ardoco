@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -27,6 +27,8 @@ public final class CodeCompilationUnit extends CodeModule {
     private String extension;
     @JsonProperty
     private ProgrammingLanguage language;
+    @JsonProperty
+    private List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
@@ -47,11 +49,12 @@ public final class CodeCompilationUnit extends CodeModule {
      * @param language           the programming language
      */
     public CodeCompilationUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
-            String extension, ProgrammingLanguage language) {
+            String extension, ProgrammingLanguage language, List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.language = language;
+        this.importedModuleNames = importedModuleNames;
     }
 
     /**
@@ -113,6 +116,15 @@ public final class CodeCompilationUnit extends CodeModule {
      */
     public List<String> getPathElements() {
         return new ArrayList<>(this.pathElements);
+    }
+
+    /**
+     * Returns the list of imported module/package names for this compilation unit.
+     *
+     * @return list of imported module names
+     */
+    public List<String> getImportedModuleNames() {
+        return this.importedModuleNames != null ? new ArrayList<>(this.importedModuleNames) : List.of();
     }
 
     /**
