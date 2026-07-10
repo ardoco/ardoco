@@ -28,6 +28,9 @@ public final class CodeAssembly extends CodeModule {
     @JsonProperty
     private String extension;
 
+    @JsonProperty
+    private List<String> importedModuleNames;
+
     /**
      * Default constructor for Jackson.
      */
@@ -63,11 +66,12 @@ public final class CodeAssembly extends CodeModule {
      * @param extension          the file extension (without leading dot)
      */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language, List<String> pathElements,
-            String extension) {
+            String extension, List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.language = language;
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
+        this.importedModuleNames = new ArrayList<>(importedModuleNames);
     }
 
     public String getLanguage() {
@@ -103,5 +107,14 @@ public final class CodeAssembly extends CodeModule {
      */
     public boolean hasFilePath() {
         return this.pathElements != null;
+    }
+
+    /**
+     * Returns the list of imported module/package names for this assembly (file-level imports).
+     *
+     * @return list of imported module names
+     */
+    public List<String> getImportedModuleNames() {
+        return this.importedModuleNames != null ? new ArrayList<>(this.importedModuleNames) : List.of();
     }
 }

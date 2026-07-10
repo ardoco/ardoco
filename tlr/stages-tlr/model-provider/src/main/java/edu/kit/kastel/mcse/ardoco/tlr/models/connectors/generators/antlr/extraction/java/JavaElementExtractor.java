@@ -83,7 +83,17 @@ public class JavaElementExtractor extends ElementExtractor {
     }
 
     public void visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
-        ElementIdentifier identifier = addCompilationUnit(ctx);
+        List<String> imports = new ArrayList<>();
+        for (JavaParser.ImportDeclarationContext importCtx : ctx.importDeclaration()) {
+            if (importCtx.qualifiedName() != null) {
+                String name = importCtx.qualifiedName().getText();
+                if (importCtx.MUL() != null) {
+                    name = name + ".*";
+                }
+                imports.add(name);
+            }
+        }
+        ElementIdentifier identifier = addCompilationUnit(ctx, imports);
         for (JavaParser.TypeDeclarationContext typeDeclarationContext : ctx.typeDeclaration()) {
             if (typeDeclarationContext.classDeclaration() != null) {
                 visitClassDeclaration(typeDeclarationContext.classDeclaration(), identifier);
@@ -273,7 +283,7 @@ public class JavaElementExtractor extends ElementExtractor {
         elementRegistry.addInterface(interfaceElement);
     }
 
-    private ElementIdentifier addCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+    private ElementIdentifier addCompilationUnit(JavaParser.CompilationUnitContext ctx, List<String> imports) {
         Type type = Type.COMPILATIONUNIT;
         Element compilationUnit = null;
         String path = PathExtractor.extractPath(ctx);
@@ -287,6 +297,9 @@ public class JavaElementExtractor extends ElementExtractor {
             compilationUnit = new Element(name, path, type, packageIdentifier);
         } else {
             compilationUnit = new Element(name, path, type);
+        }
+        for (String imp : imports) {
+            compilationUnit.addImport(imp);
         }
         elementRegistry.addCompilationUnit(compilationUnit);
         return identifier;

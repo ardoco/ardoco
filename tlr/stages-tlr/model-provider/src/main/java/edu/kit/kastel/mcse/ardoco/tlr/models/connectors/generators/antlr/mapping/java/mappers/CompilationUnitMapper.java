@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
 
         PackageElement pack = elementRegistry.getPackage(compilationUnit.getParentIdentifier());
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(), content, pathElements, pack.getName(),
-                this.language);
+                this.language, compilationUnit.getImports());
         codeCompilationUnit.setComment(compilationUnit.getComment());
         return codeCompilationUnit;
     }

@@ -41,7 +41,8 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper {
         int lastSlash = path.lastIndexOf('/');
         List<String> pathElements = lastSlash >= 0 ? Arrays.asList(path.substring(0, lastSlash).split("/")) : List.of();
         String extension = path.substring(path.lastIndexOf('.') + 1);
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name(), pathElements, extension);
+        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name(), pathElements, extension, module
+                .getImports());
         codeAssembly.setComment(module.getComment());
         return codeAssembly;
     }

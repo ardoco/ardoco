@@ -41,6 +41,6 @@ public class FileMapper extends AbstractCppCodeItemMapper {
         int lastSlash = path.lastIndexOf('/');
         List<String> pathElements = lastSlash >= 0 ? Arrays.asList(path.substring(0, lastSlash).split("/")) : List.of();
         String extension = path.substring(path.lastIndexOf('.') + 1);
-        return new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language.name(), pathElements, extension);
+        return new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language.name(), pathElements, extension, file.getImports());
     }
 }

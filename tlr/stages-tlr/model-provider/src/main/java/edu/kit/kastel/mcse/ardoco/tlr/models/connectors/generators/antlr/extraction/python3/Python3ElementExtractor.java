@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
@@ -34,6 +35,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 @SuppressWarnings("java:S100")
 public class Python3ElementExtractor extends ElementExtractor {
     private final Python3ElementStorageRegistry elementRegistry;
+    private final LinkedHashMap<String, List<String>> pendingImportsByPath = new LinkedHashMap<>();
 
     public Python3ElementExtractor() {
         super();
@@ -163,7 +165,33 @@ public class Python3ElementExtractor extends ElementExtractor {
     public void visitSimple_stmt(Python3Parser.Simple_stmtContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.expr_stmt() != null) {
             visitExpr_stmt(ctx.expr_stmt(), parentIdentifier);
+        } else if (ctx.import_stmt() != null) {
+            visitImport_stmt(ctx.import_stmt());
         }
+    }
+
+    public void visitImport_stmt(Python3Parser.Import_stmtContext ctx) {
+        List<String> importedNames = new ArrayList<>();
+        if (ctx.import_name() != null) {
+            for (Python3Parser.Dotted_as_nameContext dotted : ctx.import_name().dotted_as_names().dotted_as_name()) {
+                importedNames.add(dotted.dotted_name().getText());
+            }
+        } else if (ctx.import_from() != null) {
+            Python3Parser.Import_fromContext from = ctx.import_from();
+            String base = from.dotted_name() != null ? from.dotted_name().getText() : "";
+            if (from.import_as_names() != null) {
+                for (Python3Parser.Import_as_nameContext name : from.import_as_names().import_as_name()) {
+                    importedNames.add(base.isEmpty() ? name.name(0).getText() : base + "." + name.name(0).getText());
+                }
+            } else if (!base.isEmpty()) {
+                importedNames.add(base);
+            }
+        }
+        String importPath = PathExtractor.extractPath(ctx);
+        if (!pendingImportsByPath.containsKey(importPath)) {
+            pendingImportsByPath.put(importPath, new ArrayList<>());
+        }
+        pendingImportsByPath.get(importPath).addAll(importedNames);
     }
 
     public void visitExpr_stmt(Python3Parser.Expr_stmtContext ctx, ElementIdentifier parentIdentifier) {
@@ -262,6 +290,10 @@ public class Python3ElementExtractor extends ElementExtractor {
         String packageName = addPackage(packagePath);
         ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
         Element module = new Element(name, path, type, parentIdentifier);
+        List<String> imports = pendingImportsByPath.containsKey(path) ? pendingImportsByPath.get(path) : List.of();
+        for (String imp : imports) {
+            module.addImport(imp);
+        }
         elementRegistry.addModule(module);
     }
 
