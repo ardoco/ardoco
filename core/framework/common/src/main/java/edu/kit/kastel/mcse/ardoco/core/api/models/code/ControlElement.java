@@ -2,6 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -20,6 +22,8 @@ public final class ControlElement extends ComputationalObject {
     private int startLine = -1;
     @JsonProperty
     private int endLine = -1;
+    @JsonProperty
+    private List<String> calleeNames;
 
     /**
      * Default constructor for Jackson.
@@ -47,10 +51,11 @@ public final class ControlElement extends ComputationalObject {
      * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
      * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
      */
-    public ControlElement(CodeItemRepository codeItemRepository, String name, int startLine, int endLine) {
+    public ControlElement(CodeItemRepository codeItemRepository, String name, int startLine, int endLine, List<String> calleeNames) {
         super(codeItemRepository, name);
         this.startLine = startLine;
         this.endLine = endLine;
+        this.calleeNames = new ArrayList<>(calleeNames);
     }
 
     /**
@@ -69,5 +74,9 @@ public final class ControlElement extends ComputationalObject {
      */
     public int getEndLine() {
         return endLine;
+    }
+
+    public List<String> getCalleeNames() {
+        return this.calleeNames != null ? List.copyOf(calleeNames) : List.of();
     }
 }

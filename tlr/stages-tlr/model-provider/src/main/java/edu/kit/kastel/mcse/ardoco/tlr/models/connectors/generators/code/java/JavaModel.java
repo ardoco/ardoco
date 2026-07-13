@@ -291,7 +291,22 @@ public final class JavaModel {
     private ControlElement extractMethod(MethodDeclaration methodDeclaration, CompilationUnit compilationUnit) {
         int startLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition());
         int endLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition() + methodDeclaration.getLength());
-        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine);
+        List<String> calleeNames = new ArrayList<>();
+        methodDeclaration.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodInvocation node) {
+                calleeNames.add(node.getName().getIdentifier());
+                return true;
+            }
+
+            @Override
+            public boolean visit(ClassInstanceCreation node) {
+                calleeNames.add(node.getType().toString());
+                return true;
+            }
+        });
+        ControlElement controlElement = new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine, calleeNames);
+        return controlElement;
     }
 
     private static List<String> getPackageNames(Name name) {
