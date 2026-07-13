@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
 import java.nio.file.Path;
@@ -235,11 +235,11 @@ public final class JavaModel {
         Map<ASTNode, Datatype> codeTypes = new LinkedHashMap<>();
         Set<TypeDeclaration> typeDeclarations = TypeDeclarationFinder.find(compilationUnit);
         for (TypeDeclaration typeDeclaration : typeDeclarations) {
-            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration));
+            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration, compilationUnit));
         }
         Set<EnumDeclaration> enumDeclarations = EnumDeclarationFinder.find(compilationUnit);
         for (EnumDeclaration enumDeclaration : enumDeclarations) {
-            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration));
+            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration, compilationUnit));
         }
         for (var entry : codeTypes.entrySet()) {
             ASTNode node = entry.getKey();
@@ -251,17 +251,17 @@ public final class JavaModel {
         return codeTypes.values().stream().toList();
     }
 
-    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration) {
+    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration, CompilationUnit compilationUnit) {
         String name = enumDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration);
+        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration, compilationUnit);
         ClassUnit codeClassifier = new ClassUnit(codeItemRepository, name, declaredMethods);
         addClassifier(codeClassifier, enumDeclaration);
         return codeClassifier;
     }
 
-    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration) {
+    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration, CompilationUnit compilationUnit) {
         String name = typeDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration);
+        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration, compilationUnit);
         Datatype codeType;
         if (typeDeclaration.isInterface()) {
             InterfaceUnit codeInterface = new InterfaceUnit(codeItemRepository, name, declaredMethods);
@@ -275,17 +275,32 @@ public final class JavaModel {
         return codeType;
     }
 
-    private SortedSet<ControlElement> extractMethods(ASTNode node) {
+    private SortedSet<ControlElement> extractMethods(ASTNode node, CompilationUnit compilationUnit) {
         SortedSet<ControlElement> declaredMethods = new TreeSet<>();
         Set<MethodDeclaration> methodDeclarations = MethodDeclarationFinder.find(node);
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
-            declaredMethods.add(extractMethod(methodDeclaration));
+            declaredMethods.add(extractMethod(methodDeclaration, compilationUnit));
         }
         return declaredMethods;
     }
 
-    private ControlElement extractMethod(MethodDeclaration methodDeclaration) {
-        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier());
+    private ControlElement extractMethod(MethodDeclaration methodDeclaration, CompilationUnit compilationUnit) {
+        List<String> calleeNames = new ArrayList<>();
+        methodDeclaration.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodInvocation node) {
+                calleeNames.add(node.getName().getIdentifier());
+                return true;
+            }
+
+            @Override
+            public boolean visit(ClassInstanceCreation node) {
+                calleeNames.add(node.getType().toString());
+                return true;
+            }
+        });
+        ControlElement controlElement = new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), calleeNames);
+        return controlElement;
     }
 
     private static List<String> getPackageNames(Name name) {

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -10,6 +10,7 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaParser;
@@ -55,8 +56,8 @@ public class JavaElementExtractor extends ElementExtractor {
     protected List<Path> getFiles(String directoryPath) {
         Path dir = Path.of(directoryPath);
         List<Path> javaFiles = new ArrayList<>();
-        try {
-            javaFiles.addAll(Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).toList());
+        try (var files = Files.walk(dir)) {
+            javaFiles.addAll(files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).toList());
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }
@@ -192,16 +193,17 @@ public class JavaElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
+        List<String> calleeNames = new ArrayList<>();
         if (ctx.methodBody() != null && ctx.methodBody().block() != null && ctx.methodBody().block().blockStatement() != null) {
             for (JavaParser.BlockStatementContext blockStatementContext : ctx.methodBody().block().blockStatement()) {
                 if (blockStatementContext.localVariableDeclaration() != null) {
                     visitLocalVariableDeclaration(blockStatementContext.localVariableDeclaration(), identifier);
                 }
             }
-
+            collectCallNamesFromTree(ctx.methodBody().block(), calleeNames);
         }
 
-        addFunction(name, path, parentIdentifier, startLine, endLine);
+        addFunction(name, path, parentIdentifier, startLine, endLine, calleeNames);
         return identifier;
     }
 
@@ -271,10 +273,29 @@ public class JavaElementExtractor extends ElementExtractor {
         elementRegistry.addClass(classElement);
     }
 
-    private void addFunction(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
+    private void addFunction(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> calleeNames) {
         Type type = Type.FUNCTION;
         Element method = new Element(name, path, type, parentIdentifier, startLine, endLine);
+        for (String callee : calleeNames) {
+            method.addCalleeName(callee);
+        }
         elementRegistry.addFunction(method);
+    }
+
+    private void collectCallNamesFromTree(ParseTree tree, List<String> names) {
+        if (tree instanceof JavaParser.MethodCallExpressionContext mc && mc.methodCall().identifier() != null) {
+            names.add(mc.methodCall().identifier().getText());
+        } else if (tree instanceof JavaParser.MemberReferenceExpressionContext mr && mr.methodCall() != null && mr.methodCall().identifier() != null) {
+            names.add(mr.methodCall().identifier().getText());
+        } else if (tree instanceof JavaParser.ObjectCreationExpressionContext oc && oc.creator() != null && oc.creator().createdName() != null && !oc.creator()
+                .createdName()
+                .identifier()
+                .isEmpty()) {
+            names.add(oc.creator().createdName().identifier(0).getText());
+        }
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            collectCallNamesFromTree(tree.getChild(i), names);
+        }
     }
 
     private void addInterface(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {

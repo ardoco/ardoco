@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser;
@@ -153,12 +154,14 @@ public class Python3ElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
+        List<String> calleeNames = new ArrayList<>();
         if (ctx.block() != null && ctx.block().stmt() != null) {
             for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
                 visitStmt(stmt, identifier);
             }
+            collectCallNamesFromTree(ctx.block(), calleeNames);
         }
-        addFunctionElement(name, path, parentIdentifier, startLine, endLine);
+        addFunctionElement(name, path, parentIdentifier, startLine, endLine, calleeNames);
         return identifier;
     }
 
@@ -271,10 +274,47 @@ public class Python3ElementExtractor extends ElementExtractor {
         elementRegistry.addVariable(variable);
     }
 
-    private void addFunctionElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
+    private void addFunctionElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> calleeNames) {
         Type type = Type.FUNCTION;
         Element function = new Element(name, path, type, parentIdentifier, startLine, endLine);
+        for (String callee : calleeNames) {
+            function.addCalleeName(callee);
+        }
         elementRegistry.addFunction(function);
+    }
+
+    private void collectCallNamesFromTree(ParseTree tree, List<String> names) {
+        if (tree instanceof Python3Parser.Atom_exprContext atomExpr) {
+            collectCallNamesFromAtomExpr(atomExpr, names);
+        }
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            collectCallNamesFromTree(tree.getChild(i), names);
+        }
+    }
+
+    private void collectCallNamesFromAtomExpr(Python3Parser.Atom_exprContext atomExpr, List<String> names) {
+        if (atomExpr.trailer() == null || atomExpr.trailer().isEmpty()) {
+            return;
+        }
+        List<Python3Parser.TrailerContext> trailers = atomExpr.trailer();
+        for (int i = 0; i < trailers.size(); i++) {
+            Python3Parser.TrailerContext trailer = trailers.get(i);
+            if (trailer.getChildCount() > 0 && "(".equals(trailer.getChild(0).getText())) {
+                if (i > 0) {
+                    // obj.method() — the preceding trailer is ".method"
+                    Python3Parser.TrailerContext prev = trailers.get(i - 1);
+                    if (prev.name() != null) {
+                        names.add(prev.name().getText());
+                    }
+                } else {
+                    // bare call: helper() — atom is the function name
+                    Python3Parser.AtomContext atom = atomExpr.atom();
+                    if (atom != null && atom.name() != null) {
+                        names.add(atom.name().getText());
+                    }
+                }
+            }
+        }
     }
 
     private void addClassElement(String name, String path, ElementIdentifier parentIdentifier, List<String> childClassOf, int startLine, int endLine) {

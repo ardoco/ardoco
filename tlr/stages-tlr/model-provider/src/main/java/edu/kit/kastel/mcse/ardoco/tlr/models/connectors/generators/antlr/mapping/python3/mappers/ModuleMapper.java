@@ -1,8 +1,6 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeAssembly;
@@ -37,12 +35,7 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper {
     private CodeAssembly buildCodeAssembly(ElementIdentifier identifier) {
         Element module = elementRegistry.getModule(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        String path = module.getPath();
-        int lastSlash = path.lastIndexOf('/');
-        List<String> pathElements = lastSlash >= 0 ? Arrays.asList(path.substring(0, lastSlash).split("/")) : List.of();
-        String extension = path.substring(path.lastIndexOf('.') + 1);
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name(), pathElements, extension, module
-                .getImports());
+        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name(), module.getImports());
         codeAssembly.setComment(module.getComment());
         return codeAssembly;
     }

@@ -16,6 +16,7 @@ public class Element {
     private int startLine;
     private int endLine;
     private String comment;
+    private List<String> calleeNames = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
     public Element(String name, String path, Type type) {
@@ -62,6 +63,7 @@ public class Element {
         this.startLine = elementToCopy.getStartLine();
         this.endLine = elementToCopy.getEndLine();
         this.comment = elementToCopy.getComment();
+        this.calleeNames = new ArrayList<>(elementToCopy.getCalleeNames());
         this.imports = new ArrayList<>(elementToCopy.getImports());
     }
 
@@ -117,6 +119,16 @@ public class Element {
 
     public List<String> getImports() {
         return List.copyOf(imports);
+    }
+
+    public void addCalleeName(String calleeName) {
+        if (!calleeNames.contains(calleeName)) {
+            calleeNames.add(calleeName);
+        }
+    }
+
+    public List<String> getCalleeNames() {
+        return List.copyOf(calleeNames);
     }
 
     @Override
