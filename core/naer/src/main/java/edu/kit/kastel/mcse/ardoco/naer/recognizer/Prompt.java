@@ -1,18 +1,17 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract base class representing a prompt for named entity recognition.
@@ -49,15 +48,14 @@ public abstract class Prompt {
     /**
      * Appends a list of possible named entities that could be mentioned in the SAD, grouped by their types, to the existing prompt.
      *
-     * @param possibleEntities a map containing named entity types as keys and sets of entity names
-     *                         as values. Each type represents a category (e.g., COMPONENT, INTERFACE),
-     *                         and each set contains the names of entities belonging to that type.
-     *                         Must not be null or contain null keys/values.
+     * @param possibleEntities a map containing named entity types as keys and sets of entity names as values. Each type represents a category (e.g., COMPONENT,
+     *                         INTERFACE, ...), and each set contains the names of entities belonging to that type. Must not be null or contain null
+     *                         keys/values.
      * @throws IllegalStateException if the prompt has already been modified (addPossibleEntities can only be called once)
      */
     public void addPossibleEntities(Map<NamedEntityType, Set<String>> possibleEntities) {
         if (modified) {
-			// TODO we need to refactor the modification of the prompt!
+            // TODO we need to refactor the modification of the prompt!
             throw new IllegalStateException("Cannot modify prompt after already modified.");
         }
 
@@ -68,6 +66,9 @@ public abstract class Prompt {
         for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
             NamedEntityType type = entry.getKey();
             Set<String> names = entry.getValue();
+            if (names.isEmpty()) {
+                continue;
+            }
 
             sb.append(type.toString().toLowerCase()).append(" entities: ");
             sb.append(String.join(", ", names));
