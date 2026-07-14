@@ -58,6 +58,9 @@ public abstract class Prompt {
             // TODO we need to refactor the modification of the prompt!
             throw new IllegalStateException("Cannot modify prompt after already modified.");
         }
+        if (possibleEntities.isEmpty()) {
+            return;
+        }
 
         modified = true;
 
