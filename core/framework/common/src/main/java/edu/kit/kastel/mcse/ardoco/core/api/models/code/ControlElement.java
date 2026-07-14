@@ -70,4 +70,22 @@ public final class ControlElement extends ComputationalObject {
     public int getEndLine() {
         return endLine;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ControlElement that) || !super.equals(o)) {
+            return false;
+        }
+        return this.startLine == that.startLine && this.endLine == that.endLine;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + this.startLine;
+        return 31 * result + this.endLine;
+    }
 }
