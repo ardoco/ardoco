@@ -94,7 +94,7 @@ public abstract sealed class ArchitectureModel extends Model permits Architectur
     }
 
     /**
-     * Data transfer object for an architecture model.
+     * DTO for an architecture model.
      *
      * @param id                         unique identifier of the model
      * @param architectureItemRepository container holding all architecture items and root content IDs
