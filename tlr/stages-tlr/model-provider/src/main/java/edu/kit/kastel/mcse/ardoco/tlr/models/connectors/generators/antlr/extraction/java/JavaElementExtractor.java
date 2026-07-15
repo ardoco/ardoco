@@ -56,8 +56,8 @@ public class JavaElementExtractor extends ElementExtractor {
     protected List<Path> getFiles(String directoryPath) {
         Path dir = Path.of(directoryPath);
         List<Path> javaFiles = new ArrayList<>();
-        try {
-            javaFiles.addAll(Files.walk(dir).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).toList());
+        try (var files = Files.walk(dir)) {
+            javaFiles.addAll(files.filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".java")).toList());
         } catch (IOException e) {
             logger.error("I/O operation failed", e);
         }

@@ -41,12 +41,13 @@ public final class CodeCompilationUnit extends CodeModule {
     /**
      * Creates a new CodeCompilationUnit.
      *
-     * @param codeItemRepository the code item repository
-     * @param name               the name of the compilation unit
-     * @param content            the content of the compilation unit
-     * @param pathElements       the path elements
-     * @param extension          the file extension
-     * @param language           the programming language
+     * @param codeItemRepository  the code item repository
+     * @param name                the name of the compilation unit
+     * @param content             the content of the compilation unit
+     * @param pathElements        the path elements
+     * @param extension           the file extension
+     * @param language            the programming language
+     * @param importedModuleNames the names of imported modules declared in this compilation unit
      */
     public CodeCompilationUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
             String extension, ProgrammingLanguage language, List<String> importedModuleNames) {
@@ -54,7 +55,7 @@ public final class CodeCompilationUnit extends CodeModule {
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.language = language;
-        this.importedModuleNames = importedModuleNames;
+        this.importedModuleNames = new ArrayList<>(importedModuleNames);
     }
 
     /**

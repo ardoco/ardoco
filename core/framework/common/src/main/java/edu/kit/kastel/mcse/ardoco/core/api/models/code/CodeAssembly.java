@@ -50,13 +50,21 @@ public final class CodeAssembly extends CodeModule {
         super(codeItemRepository, name, content);
     }
 
+    /**
+     * Constructs a new CodeAssembly with language information.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the assembly
+     * @param content            the content of the assembly
+     * @param language           the programming language
+     */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
         super(codeItemRepository, name, content);
         this.language = language;
     }
 
     /**
-     * Constructs a new CodeAssembly with language and file path information.
+     * Constructs a new CodeAssembly with language, file path, and import information.
      *
      * @param codeItemRepository the code item repository
      * @param name               the name of the assembly
@@ -95,6 +103,11 @@ public final class CodeAssembly extends CodeModule {
         return new CodeAssembly(codeItemRepository, name, content, language, pathElements, extension, importedModuleNames);
     }
 
+    /**
+     * Returns the programming language of this assembly.
+     *
+     * @return the language string
+     */
     public String getLanguage() {
         return language;
     }
