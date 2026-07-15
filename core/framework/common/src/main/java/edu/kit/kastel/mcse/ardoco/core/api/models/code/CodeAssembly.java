@@ -66,12 +66,12 @@ public final class CodeAssembly extends CodeModule {
     /**
      * Constructs a new CodeAssembly with language, file path, and import information.
      *
-     * @param codeItemRepository the code item repository
-     * @param name               the name of the assembly
-     * @param content            the content of the assembly
-     * @param language           the programming language
-     * @param pathElements       the directory path segments leading to this file
-     * @param extension          the file extension (without leading dot)
+     * @param codeItemRepository  the code item repository
+     * @param name                the name of the assembly
+     * @param content             the content of the assembly
+     * @param language            the programming language
+     * @param pathElements        the directory path segments leading to this file
+     * @param extension           the file extension (without leading dot)
      * @param importedModuleNames the list of imported module/package names for this assembly
      */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language, List<String> pathElements,
@@ -86,10 +86,10 @@ public final class CodeAssembly extends CodeModule {
     /**
      * Creates a CodeAssembly from a relative path string (forward-slash separated, including extension).
      *
-     * @param codeItemRepository the code item repository
-     * @param content            the content of the assembly
-     * @param language           the programming language
-     * @param relativePath       relative path string, e.g. {@code "src/foo/Bar.cpp"}
+     * @param codeItemRepository  the code item repository
+     * @param content             the content of the assembly
+     * @param language            the programming language
+     * @param relativePath        relative path string, e.g. {@code "src/foo/Bar.cpp"}
      * @param importedModuleNames the list of imported module/package names for this assembly
      * @return a new CodeAssembly with name, pathElements, and extension derived from the path
      */

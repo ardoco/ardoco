@@ -85,7 +85,7 @@ public final class ControlElement extends ComputationalObject {
     public List<String> getCalleeNames() {
         return this.calleeNames != null ? List.copyOf(calleeNames) : List.of();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
