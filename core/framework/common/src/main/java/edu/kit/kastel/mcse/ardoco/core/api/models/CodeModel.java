@@ -39,6 +39,20 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     }
 
     /**
+     * Creates a new code model with the specified id, code item repository, and content IDs.
+     *
+     * @param id                 the model id
+     * @param codeItemRepository the code item repository
+     * @param content            list of code item IDs
+     */
+    protected CodeModel(String id, CodeItemRepository codeItemRepository, List<String> content) {
+        super(id);
+        this.initialized = true;
+        this.codeItemRepository = codeItemRepository;
+        this.content = new ArrayList<>(content);
+    }
+
+    /**
      * Creates a new code model with the specified code item repository and content.
      *
      * @param codeItemRepository the code item repository
@@ -106,6 +120,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     /**
      * Data transfer object for the code model. Contains a {@link CodeItemRepository} and a list of content identifiers.
      *
+     * @param id                 the model id
      * @param codeItemRepository the repository of code items
      * @param content            the list of content identifiers
      */

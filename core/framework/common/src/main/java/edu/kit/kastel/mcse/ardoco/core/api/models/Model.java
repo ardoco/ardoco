@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.List;
@@ -12,7 +12,23 @@ import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
  */
 public abstract sealed class Model permits ArchitectureModel, CodeModel {
 
-    private final String id = IdentifierProvider.createId();
+    private final String id;
+
+    /**
+     * Creates a new model with a generated id.
+     */
+    protected Model() {
+        this.id = IdentifierProvider.createId();
+    }
+
+    /**
+     * Creates a new model with the specified id.
+     *
+     * @param id the model id
+     */
+    protected Model(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return this.id;

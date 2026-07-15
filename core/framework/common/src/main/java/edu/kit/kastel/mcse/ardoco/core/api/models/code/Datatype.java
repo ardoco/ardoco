@@ -223,7 +223,7 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
             return true;
         }
         if (!(o instanceof Datatype datatype) || !super.equals(o) || !Objects.equals(this.compilationUnitId, datatype.compilationUnitId) || !Objects.equals(
-                this.parentDatatypeId, datatype.parentDatatypeId)) {
+                this.parentDatatypeId, datatype.parentDatatypeId) || this.startLine != datatype.startLine || this.endLine != datatype.endLine) {
             return false;
         }
         if (!Objects.equals(this.extendedDataTypesIds, datatype.extendedDataTypesIds)) {
@@ -240,6 +240,8 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         int result = super.hashCode();
         result = 31 * result + (this.compilationUnitId != null ? this.compilationUnitId.hashCode() : 0);
         result = 31 * result + (this.parentDatatypeId != null ? this.parentDatatypeId.hashCode() : 0);
+        result = 31 * result + this.startLine;
+        result = 31 * result + this.endLine;
         result = 31 * result + (this.extendedDataTypesIds != null ? this.extendedDataTypesIds.hashCode() : 0);
         result = 31 * result + (this.implementedDataTypesIds != null ? this.implementedDataTypesIds.hashCode() : 0);
         return 31 * result + (this.datatypeReferencesIds != null ? this.datatypeReferencesIds.hashCode() : 0);
