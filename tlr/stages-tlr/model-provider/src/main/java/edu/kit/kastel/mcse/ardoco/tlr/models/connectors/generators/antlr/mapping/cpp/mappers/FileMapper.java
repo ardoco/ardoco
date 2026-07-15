@@ -1,8 +1,6 @@
 /* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.cpp.mappers;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeAssembly;
@@ -37,10 +35,6 @@ public class FileMapper extends AbstractCppCodeItemMapper {
     private CodeItem buildFileCodeAssembly(ElementIdentifier identifier) {
         Element file = this.elementRegistry.getFile(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        String path = file.getPath();
-        int lastSlash = path.lastIndexOf('/');
-        List<String> pathElements = lastSlash >= 0 ? Arrays.asList(path.substring(0, lastSlash).split("/")) : List.of();
-        String extension = path.substring(path.lastIndexOf('.') + 1);
-        return new CodeAssembly(this.codeItemRepository, file.getName(), content, this.language.name(), pathElements, extension, file.getImports());
+        return CodeAssembly.fromRelativePath(this.codeItemRepository, content, this.language.name(), file.getPath(), file.getImports());
     }
 }

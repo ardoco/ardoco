@@ -47,7 +47,7 @@ public class CppElementExtractor extends ElementExtractor {
 
     @Override
     protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
-        CharStream stream = CharStreams.fromReader(java.nio.file.Files.newBufferedReader(absoluteFile), relativeFile.toString());
+        CharStream stream = CharStreams.fromReader(Files.newBufferedReader(absoluteFile), relativeFile.toString());
         CPP14Lexer lexer = new CPP14Lexer(stream);
         return new CommonTokenStream(lexer);
     }

@@ -69,7 +69,7 @@ public class Python3ElementExtractor extends ElementExtractor {
 
     @Override
     protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
-        CharStream charStream = CharStreams.fromReader(java.nio.file.Files.newBufferedReader(absoluteFile), relativeFile.toString());
+        CharStream charStream = CharStreams.fromReader(Files.newBufferedReader(absoluteFile), relativeFile.toString());
         Python3Lexer lexer = new Python3Lexer(charStream);
         return new CommonTokenStream(lexer);
     }

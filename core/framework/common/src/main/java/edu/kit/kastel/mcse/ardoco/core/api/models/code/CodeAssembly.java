@@ -64,6 +64,7 @@ public final class CodeAssembly extends CodeModule {
      * @param language           the programming language
      * @param pathElements       the directory path segments leading to this file
      * @param extension          the file extension (without leading dot)
+     * @param importedModuleNames the list of imported module/package names for this assembly
      */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language, List<String> pathElements,
             String extension, List<String> importedModuleNames) {
@@ -72,6 +73,26 @@ public final class CodeAssembly extends CodeModule {
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.importedModuleNames = new ArrayList<>(importedModuleNames);
+    }
+
+    /**
+     * Creates a CodeAssembly from a relative path string (forward-slash separated, including extension).
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            the content of the assembly
+     * @param language           the programming language
+     * @param relativePath       relative path string, e.g. {@code "src/foo/Bar.cpp"}
+     * @param importedModuleNames the list of imported module/package names for this assembly
+     * @return a new CodeAssembly with name, pathElements, and extension derived from the path
+     */
+    public static CodeAssembly fromRelativePath(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content, String language,
+            String relativePath, List<String> importedModuleNames) {
+        int lastSlash = relativePath.lastIndexOf('/');
+        int lastDot = relativePath.lastIndexOf('.');
+        String name = relativePath.substring(lastSlash + 1, lastDot > lastSlash ? lastDot : relativePath.length());
+        List<String> pathElements = lastSlash >= 0 ? List.of(relativePath.substring(0, lastSlash).split("/")) : List.of();
+        String extension = lastDot > lastSlash ? relativePath.substring(lastDot + 1) : "";
+        return new CodeAssembly(codeItemRepository, name, content, language, pathElements, extension, importedModuleNames);
     }
 
     public String getLanguage() {
