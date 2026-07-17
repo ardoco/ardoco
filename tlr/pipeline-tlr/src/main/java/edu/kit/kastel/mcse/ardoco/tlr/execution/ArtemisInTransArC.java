@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
 
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.ComponentNerStrategy;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -56,7 +58,7 @@ public class ArtemisInTransArC extends ArdocoRunner {
                 architectureConfigurationWithMetamodel, codeConfigurationWithMetamodel);
         this.getArdoco().addPipelineStep(modelProviderAgent);
 
-        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
+        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer, new ComponentNerStrategy());
         this.getArdoco().addPipelineStep(nerConnectionGenerator);
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
