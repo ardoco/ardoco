@@ -22,6 +22,9 @@ abstract class Python3LexerBase extends Lexer {
 
     @Override
     public void emit(Token t) {
+        if (t.getType() == Python3Lexer.COMMENT) {
+            ((WritableToken) t).setChannel(HIDDEN);
+        }
         super.setToken(t);
         tokens.offer(t);
     }
