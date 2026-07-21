@@ -194,7 +194,10 @@ public class Python3ElementExtractor extends ElementExtractor {
         int endLine = ctx.getStop().getLine();
 
         if (varNames.size() != values.size()) {
-            throw new IllegalArgumentException("The number of variable names and values does not match");
+            // If the number of variables and values does not match, we cannot reliably extract them.
+            // This can happen in tuple unpacking with mismatching sizes or multiple assignments with different structures.
+            logger.warn("Skipping extraction of the following variables because the number of variable names and values does not match: " + varNames);
+            return;
         }
 
         for (int i = 0; i < varNames.size(); i++) {
