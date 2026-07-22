@@ -44,7 +44,28 @@ public enum EvaluationProject {
             "/benchmark/jabref/text_2021/jabref.txt", //
             "https://github.com/ardoco/jabref.git", //
             "6269698cae437610ec79c38e6dd611eef7e88afe", //
-            "/benchmark/jabref/model_2023/code/codeModel.acm");
+            "/benchmark/jabref/model_2023/code/codeModel.acm"), //
+
+    ZENGARDEN(//
+            "/benchmark/zengarden/notAvailable", //
+            "/benchmark/zengarden/text_2014/zengarden.txt",//
+            "todo_add_as_ardoco_repo",//
+            "todo_add_code_commit",//
+            "/benchmark/zengarden/model_2014/code/codeModel.acm"),//
+
+    SCONS(//
+            "/benchmark/scons/notAvailable", //
+            "/benchmark/scons/text_2024/scons.txt",//
+            "todo_add_as_ardoco_repo",//
+            "todo_add_code_commit",//
+            "/benchmark/scons/model_2024/code/codeModel.acm"),//
+
+    BEETS(//
+            "/benchmark/beets/notAvailable", //
+            "/benchmark/beets/text_2013/beets.txt",//
+            "todo_add_as_ardoco_repo",//
+            "todo_add_code_commit",//
+            "/benchmark/beets/model_2013/code/codeModel.acm");//
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
