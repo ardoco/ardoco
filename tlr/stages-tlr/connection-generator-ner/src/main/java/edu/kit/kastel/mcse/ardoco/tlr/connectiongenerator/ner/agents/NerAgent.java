@@ -3,10 +3,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents;
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerInformant;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class NerAgent extends PipelineAgent {
@@ -15,12 +15,10 @@ public class NerAgent extends PipelineAgent {
      *
      * @param dataRepository the data repository
      * @param llm            the large language model to use for named entity recognition
+     * @param strategy       the strategy to use for named entity recognition
      */
-    public NerAgent(DataRepository dataRepository, LargeLanguageModel llm) {
-        super(List.of(new NerInformant(dataRepository, llm)), NerAgent.class.getSimpleName(), dataRepository);
+    public NerAgent(DataRepository dataRepository, LargeLanguageModel llm, NerStrategy strategy) {
+        super(List.of(new NerInformant(dataRepository, llm, strategy)), NerAgent.class.getSimpleName(), dataRepository);
     }
 
-    public NerAgent(DataRepository dataRepository, LargeLanguageModel llm, ArchitectureComponent currentHoldBack) {
-        super(List.of(new NerInformant(dataRepository, llm, currentHoldBack)), NerAgent.class.getSimpleName(), dataRepository);
-    }
 }
