@@ -29,15 +29,12 @@ public enum ClassSadCodeTlrTask implements TlrTask {
     /**
      * Get the expected trace links from the gold standard file.
      * <p>
-     * The pairs in the list contain the sentence number (starting at 1) and the code element ID (path to the file/package). If a ID ends with a slash, it is a
-     * package, otherwise it is a file.
-     * <p>
-     * <b>IMPORTANT</b> you may need to unroll the gold standard.
+     * The pairs in the list contain the sentence number (starting at 1) and the code element ID.
      *
      * @return a list of pairs where each pair contains the sentence number and the code element ID
      */
     @Override
-    public List<Pair<Integer, String>> getExpectedTraceLinks() { //TODO das ggf ins interface als default impl. ode riwo hin wo es passt...
+    public List<Pair<Integer, String>> getExpectedTraceLinks() {
         File file = EvaluationHelper.loadFileFromResources(goldStandardPath);
 
         List<String> goldLinks;
