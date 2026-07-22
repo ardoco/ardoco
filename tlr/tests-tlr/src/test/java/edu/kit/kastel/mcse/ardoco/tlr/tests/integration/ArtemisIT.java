@@ -1,4 +1,3 @@
-/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import java.util.ArrayList;
@@ -16,84 +15,79 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
-import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ClassArtemisEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ComponentArtemisEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ClassArtemisEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ComponentArtemisEvaluation;
 
-class ArtemisIT extends AbstractArdocoIT {
+public class ArtemisIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
 
     @BeforeAll
     static void beforeAll() {
         Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
+        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
+    }
+
+    private static <T extends Enum<T>> Stream<Arguments> llmsXProjects(T[] projects) {
+        List<Arguments> result = new ArrayList<>();
+        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
+            for (T project : projects) {
+                result.add(Arguments.of(project, llm));
+            }
+        }
+        return result.stream();
+    }
+
+    private static Stream<Arguments> llmsXComponentProjects() {
+        return llmsXProjects(ComponentArtemisEvaluationProject.values());
+    }
+
+    private static Stream<Arguments> llmsXClassProjects() {
+        return llmsXProjects(ClassArtemisEvaluationProject.values());
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate ArTEMiS (SAD-SAM TLR with NER)")
+    @DisplayName("Evaluate Component Decision ArTEMiS (SAD-SAM TLR with NER)")
     @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource("llmsXprojects")
-    void evaluateSadSamTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
-        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
-        if (checkLlmProvision()) {
-            logger.info("Skipping evaluation of ArTEMiS as the LLM provider is not properly set");
-            return;
-        }
-
-        var evaluation = new ArtemisEvaluation(project, llm);
+    @MethodSource({ "llmsXComponentProjects" })
+    void evaluateComponentSadSamTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        var evaluation = new ComponentArtemisEvaluation(project, llm);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
     }
 
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate ArTEMiS (SAD-SAM TLR with NER) Multi")
+    @DisplayName("Evaluate Component Decision ArTEMiS (SAD-SAM TLR with NER) Multi")
     @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource("llmsXprojects")
-    void evaluateSadSamTlrMultipleIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
-        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
-        if (checkLlmProvision()) {
-            logger.info("Skipping evaluation of ArTEMiS as the LLM provider is not properly set");
-            return;
-        }
+    @MethodSource("llmsXComponentProjects")
+    void evaluateComponentSadSamTlrMultipleIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        logger.warn(
+                "Currently, multiple-runs evaluation is not meaningful because Artemis uses a cached LLM. To make it meaningful, switch to a non-cached LLM.");
 
         List<SingleClassificationResult<String>> results = Lists.mutable.empty();
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
             logger.info("Eval run {}/{} [{},{}]", i, NUMBER_OF_RUNS, project, llm);
-            var result = runTraceLinkEvaluation(project, llm);
+            var evaluation = new ComponentArtemisEvaluation(project, llm);
+            var result = evaluation.runTraceLinkEvaluation();
             Assertions.assertNotNull(result);
             results.add(result);
         }
         averageAndLog(results);
     }
 
-    public SingleClassificationResult<String> runTraceLinkEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llm) {
-        var evaluation = new ArtemisEvaluation(project, llm);
-        ArdocoRunner artemis = evaluation.createArtemis();
-        ArdocoResult result = artemis.run();
+    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
+    @DisplayName("Evaluate Class Decision ArTEMiS (SAD-Code TLR with NER)")
+    @ParameterizedTest(name = "{0} ({1})")
+    @MethodSource("llmsXClassProjects")
+    void evaluateClassSadCodeTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        var evaluation = new ClassArtemisEvaluation(project, llm);
+        var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
-
-        var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-        return evaluation.calculateEvaluationResults(result, goldStandard);
-    }
-
-    private static boolean checkLlmProvision() {
-        // TODO maybe make this more flexible for other settings
-        return Environment.getEnv("OPENAI_API_KEY") == null;
-    }
-
-    private static Stream<Arguments> llmsXprojects() {
-        List<Arguments> result = new ArrayList<>();
-        for (LargeLanguageModel llm : LargeLanguageModel.values()) {
-            if (llm.isGeneric())
-                continue;
-            for (ArtemisEvaluationProject codeProject : ArtemisEvaluationProject.values()) {
-                result.add(Arguments.of(codeProject, llm));
-            }
-        }
-        return result.stream();
     }
 
 }

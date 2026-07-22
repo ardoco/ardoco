@@ -1,29 +1,12 @@
-/* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.approach;
 
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ExpectedResults;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.task.DocumentationToArchitectureModelTlrTask;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.task.TlrTask;
 
-public enum ArtemisEvaluationProject {
-    MEDIASTORE(DocumentationToArchitectureModelTlrTask.MEDIASTORE, new ExpectedResults(.420, .420, .420, .420, .420, .420)),//
-    TEASTORE(DocumentationToArchitectureModelTlrTask.TEASTORE, new ExpectedResults(.420, .420, .420, .420, .420, .420)),//
-    TEAMMATES(DocumentationToArchitectureModelTlrTask.TEAMMATES, new ExpectedResults(.420, .420, .420, .420, .420, .420)),//
-    BIGBLUEBUTTON(DocumentationToArchitectureModelTlrTask.BIGBLUEBUTTON, new ExpectedResults(.420, .420, .420, .420, .420, .420)),//
-    JABREF(DocumentationToArchitectureModelTlrTask.JABREF, new ExpectedResults(.420, .420, .420, .420, .420, .420));
+public interface ArtemisEvaluationProject {
+    TlrTask getTlrTask();
 
-    private final DocumentationToArchitectureModelTlrTask tlrTask;
-    private final ExpectedResults expectedResults;
+    ExpectedResults getExpectedResults();
 
-    ArtemisEvaluationProject(DocumentationToArchitectureModelTlrTask tlrTask, ExpectedResults expectedResults) {
-        this.tlrTask = tlrTask;
-        this.expectedResults = expectedResults;
-    }
-
-    public DocumentationToArchitectureModelTlrTask getTlrTask() {
-        return tlrTask;
-    }
-
-    public ExpectedResults getExpectedResults() {
-        return expectedResults;
-    }
+    String getName();
 }
