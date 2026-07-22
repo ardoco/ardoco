@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 

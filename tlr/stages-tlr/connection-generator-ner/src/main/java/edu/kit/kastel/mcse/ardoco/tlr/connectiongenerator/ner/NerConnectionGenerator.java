@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents.NerAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.agents.NerConnectionAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class NerConnectionGenerator extends AbstractExecutionStage {

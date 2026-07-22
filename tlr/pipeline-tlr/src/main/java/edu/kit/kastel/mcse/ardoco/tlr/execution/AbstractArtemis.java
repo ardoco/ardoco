@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;

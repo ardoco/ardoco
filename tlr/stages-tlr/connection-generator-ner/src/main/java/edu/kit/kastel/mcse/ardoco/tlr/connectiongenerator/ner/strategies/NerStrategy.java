@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
+package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies;
 
 import java.util.Map;
 import java.util.Set;

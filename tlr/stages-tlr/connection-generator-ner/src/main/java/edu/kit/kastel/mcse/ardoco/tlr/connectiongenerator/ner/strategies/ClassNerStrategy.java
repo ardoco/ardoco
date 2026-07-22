@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
+package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;

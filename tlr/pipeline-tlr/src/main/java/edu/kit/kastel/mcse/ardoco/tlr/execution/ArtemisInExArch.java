@@ -3,7 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
 
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.ComponentNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.ComponentNerStrategy;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 

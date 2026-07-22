@@ -6,8 +6,8 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.ClassNerStrategy;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.ClassNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
