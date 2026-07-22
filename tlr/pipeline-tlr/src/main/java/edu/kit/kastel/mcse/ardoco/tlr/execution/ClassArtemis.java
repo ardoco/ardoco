@@ -46,7 +46,7 @@ public class ClassArtemis extends AbstractArtemis {
     * */
 
     @Override
-    protected NerStrategy getNerStrategy() {
+    public NerStrategy getNerStrategy() {
         return new ClassNerStrategy();
     }
 

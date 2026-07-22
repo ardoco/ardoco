@@ -4,10 +4,11 @@ import java.io.File;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants.NerStrategy;
@@ -30,6 +31,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgen
  * </p>
  */
 public abstract class AbstractArtemis extends ArdocoRunner {
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractArtemis.class);
 
     public AbstractArtemis(String projectName) {
         super(projectName);
@@ -37,7 +39,6 @@ public abstract class AbstractArtemis extends ArdocoRunner {
 
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel llmForNer) {
-        //TODO use record ArtemisConfiguration?? andere nutzen das halt nicht...
         if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration.metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
@@ -53,8 +54,6 @@ public abstract class AbstractArtemis extends ArdocoRunner {
 
     private void definePipeline(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
-        Ardoco ardoco = this.getArdoco();
-
         addPreprocessingPipelineStep(inputText, additionalConfigs);
 
         addModelProviderPipelineStep(additionalConfigs, llmForNer, architectureConfiguration, codeConfiguration);
@@ -98,7 +97,7 @@ public abstract class AbstractArtemis extends ArdocoRunner {
      *
      * @return the NER strategy for this ArTEMiS runner
      */
-    protected abstract NerStrategy getNerStrategy();
+    public abstract NerStrategy getNerStrategy();
 
     /**
      * Adds optional post-processing pipeline steps.
@@ -110,6 +109,7 @@ public abstract class AbstractArtemis extends ArdocoRunner {
      * @param llmForNer         the large language model used for named entity recognition
      */
     protected void addPostProcessingPipelineSteps(ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
-        //base case
+        //base case = nothing to do
+        logger.info("No post-processing pipeline step(s) added.");
     }
 }
