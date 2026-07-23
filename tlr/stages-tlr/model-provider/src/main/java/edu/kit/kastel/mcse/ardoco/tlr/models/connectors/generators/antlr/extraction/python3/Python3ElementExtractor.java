@@ -173,22 +173,29 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
     }
 
+    private void visitImport_name(Python3Parser.Import_nameContext ctx, List<String> importedNames) {
+        for (Python3Parser.Dotted_as_nameContext dotted : ctx.dotted_as_names().dotted_as_name()) {
+            importedNames.add(dotted.dotted_name().getText());
+        }
+    }
+
+    private void visitImport_from(Python3Parser.Import_fromContext ctx, List<String> importedNames) {
+        String base = ctx.dotted_name() != null ? ctx.dotted_name().getText() : "";
+        if (ctx.import_as_names() != null) {
+            for (Python3Parser.Import_as_nameContext name : ctx.import_as_names().import_as_name()) {
+                importedNames.add(base.isEmpty() ? name.name(0).getText() : base + "." + name.name(0).getText());
+            }
+        } else if (!base.isEmpty()) {
+            importedNames.add(base);
+        }
+    }
+
     public void visitImport_stmt(Python3Parser.Import_stmtContext ctx) {
         List<String> importedNames = new ArrayList<>();
         if (ctx.import_name() != null) {
-            for (Python3Parser.Dotted_as_nameContext dotted : ctx.import_name().dotted_as_names().dotted_as_name()) {
-                importedNames.add(dotted.dotted_name().getText());
-            }
+            visitImport_name(ctx.import_name(), importedNames);
         } else if (ctx.import_from() != null) {
-            Python3Parser.Import_fromContext from = ctx.import_from();
-            String base = from.dotted_name() != null ? from.dotted_name().getText() : "";
-            if (from.import_as_names() != null) {
-                for (Python3Parser.Import_as_nameContext name : from.import_as_names().import_as_name()) {
-                    importedNames.add(base.isEmpty() ? name.name(0).getText() : base + "." + name.name(0).getText());
-                }
-            } else if (!base.isEmpty()) {
-                importedNames.add(base);
-            }
+            visitImport_from(ctx.import_from(), importedNames);
         }
         String importPath = PathExtractor.extractPath(ctx);
         if (!pendingImportsByPath.containsKey(importPath)) {
@@ -285,14 +292,26 @@ public class Python3ElementExtractor extends ElementExtractor {
 
     private void collectCallNamesFromTree(ParseTree tree, List<String> names) {
         if (tree instanceof Python3Parser.Atom_exprContext atomExpr) {
-            collectCallNamesFromAtomExpr(atomExpr, names);
+            visitAtom_expr(atomExpr, names);
         }
         for (int i = 0; i < tree.getChildCount(); i++) {
             collectCallNamesFromTree(tree.getChild(i), names);
         }
     }
 
-    private void collectCallNamesFromAtomExpr(Python3Parser.Atom_exprContext atomExpr, List<String> names) {
+    private void collectCallNameFromTrailer(Python3Parser.TrailerContext trailer, List<String> names) {
+        if (trailer.name() != null) {
+            names.add(trailer.name().getText());
+        }
+    }
+
+    private void collectCallNameFromAtom(Python3Parser.AtomContext atom, List<String> names) {
+        if (atom.name() != null) {
+            names.add(atom.name().getText());
+        }
+    }
+
+    private void visitAtom_expr(Python3Parser.Atom_exprContext atomExpr, List<String> names) {
         if (atomExpr.trailer() == null || atomExpr.trailer().isEmpty()) {
             return;
         }
@@ -301,17 +320,9 @@ public class Python3ElementExtractor extends ElementExtractor {
             Python3Parser.TrailerContext trailer = trailers.get(i);
             if (trailer.getChildCount() > 0 && "(".equals(trailer.getChild(0).getText())) {
                 if (i > 0) {
-                    // obj.method() — the preceding trailer is ".method"
-                    Python3Parser.TrailerContext prev = trailers.get(i - 1);
-                    if (prev.name() != null) {
-                        names.add(prev.name().getText());
-                    }
+                    collectCallNameFromTrailer(trailers.get(i - 1), names);
                 } else {
-                    // bare call: helper() — atom is the function name
-                    Python3Parser.AtomContext atom = atomExpr.atom();
-                    if (atom != null && atom.name() != null) {
-                        names.add(atom.name().getText());
-                    }
+                    collectCallNameFromAtom(atomExpr.atom(), names);
                 }
             }
         }

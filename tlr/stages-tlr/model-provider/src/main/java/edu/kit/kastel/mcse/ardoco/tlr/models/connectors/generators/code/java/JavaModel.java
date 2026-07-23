@@ -235,11 +235,11 @@ public final class JavaModel {
         Map<ASTNode, Datatype> codeTypes = new LinkedHashMap<>();
         Set<TypeDeclaration> typeDeclarations = TypeDeclarationFinder.find(compilationUnit);
         for (TypeDeclaration typeDeclaration : typeDeclarations) {
-            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration, compilationUnit));
+            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration));
         }
         Set<EnumDeclaration> enumDeclarations = EnumDeclarationFinder.find(compilationUnit);
         for (EnumDeclaration enumDeclaration : enumDeclarations) {
-            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration, compilationUnit));
+            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration));
         }
         for (var entry : codeTypes.entrySet()) {
             ASTNode node = entry.getKey();
@@ -251,17 +251,17 @@ public final class JavaModel {
         return codeTypes.values().stream().toList();
     }
 
-    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration, CompilationUnit compilationUnit) {
+    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration) {
         String name = enumDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration, compilationUnit);
+        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration);
         ClassUnit codeClassifier = new ClassUnit(codeItemRepository, name, declaredMethods);
         addClassifier(codeClassifier, enumDeclaration);
         return codeClassifier;
     }
 
-    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration, CompilationUnit compilationUnit) {
+    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration) {
         String name = typeDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration, compilationUnit);
+        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration);
         Datatype codeType;
         if (typeDeclaration.isInterface()) {
             InterfaceUnit codeInterface = new InterfaceUnit(codeItemRepository, name, declaredMethods);
@@ -275,16 +275,16 @@ public final class JavaModel {
         return codeType;
     }
 
-    private SortedSet<ControlElement> extractMethods(ASTNode node, CompilationUnit compilationUnit) {
+    private SortedSet<ControlElement> extractMethods(ASTNode node) {
         SortedSet<ControlElement> declaredMethods = new TreeSet<>();
         Set<MethodDeclaration> methodDeclarations = MethodDeclarationFinder.find(node);
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
-            declaredMethods.add(extractMethod(methodDeclaration, compilationUnit));
+            declaredMethods.add(extractMethod(methodDeclaration));
         }
         return declaredMethods;
     }
 
-    private ControlElement extractMethod(MethodDeclaration methodDeclaration, CompilationUnit compilationUnit) {
+    private ControlElement extractMethod(MethodDeclaration methodDeclaration) {
         List<String> calleeNames = new ArrayList<>();
         methodDeclaration.accept(new ASTVisitor() {
             @Override
@@ -299,8 +299,7 @@ public final class JavaModel {
                 return true;
             }
         });
-        ControlElement controlElement = new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), calleeNames);
-        return controlElement;
+        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), calleeNames);
     }
 
     private static List<String> getPackageNames(Name name) {
