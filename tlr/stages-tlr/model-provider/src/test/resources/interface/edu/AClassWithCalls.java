@@ -2,6 +2,7 @@ package edu;
 
 public class TestClass {
     public void method() {
+        /* empty for test purposes */
     }
 }
 
@@ -14,5 +15,6 @@ public class AClassWithCalls {
     }
 
     private void helper() {
+        /* empty for test purposes */
     }
 }

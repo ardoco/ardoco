@@ -54,6 +54,7 @@ public class Element {
     }
 
     public Element(Element elementToCopy) {
+        Objects.requireNonNull(elementToCopy);
         this.identifier = new ElementIdentifier(elementToCopy.getIdentifier().name(), elementToCopy.getIdentifier().path(), elementToCopy.getIdentifier()
                 .type());
         if (elementToCopy.getParentIdentifier() != null) {

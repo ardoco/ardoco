@@ -305,8 +305,7 @@ public final class JavaModel {
                 return true;
             }
         });
-        ControlElement controlElement = new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine, calleeNames);
-        return controlElement;
+        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine, calleeNames);
     }
 
     private static List<String> getPackageNames(Name name) {
