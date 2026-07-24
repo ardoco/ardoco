@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.Arrays;
@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.PackageElement;
@@ -45,6 +46,9 @@ public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(), content, pathElements, pack.getName(),
                 this.language);
         codeCompilationUnit.setComment(compilationUnit.getComment());
+        for (Datatype type : codeCompilationUnit.getAllDataTypes()) {
+            type.setCompilationUnit(codeCompilationUnit);
+        }
         return codeCompilationUnit;
     }
 

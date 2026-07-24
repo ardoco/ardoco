@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -52,6 +52,26 @@ public final class CodeCompilationUnit extends CodeModule {
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.language = language;
+    }
+
+    /**
+     * Creates a CodeCompilationUnit from a relative path string (forward-slash separated, including extension).
+     *
+     * @param codeItemRepository  the code item repository
+     * @param content             the content of the compilation unit
+     * @param language            the programming language
+     * @param relativePath        relative path string, e.g. {@code "src/foo/Bar.py"}
+     * @param importedModuleNames the names of imported modules declared in this compilation unit
+     * @return a new CodeCompilationUnit with name, pathElements, and extension derived from the path
+     */
+    public static CodeCompilationUnit fromRelativePath(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content,
+            ProgrammingLanguage language, String relativePath, List<String> importedModuleNames) {
+        int lastSlash = relativePath.lastIndexOf('/');
+        int lastDot = relativePath.lastIndexOf('.');
+        String name = relativePath.substring(lastSlash + 1, lastDot > lastSlash ? lastDot : relativePath.length());
+        List<String> pathElements = lastSlash >= 0 ? List.of(relativePath.substring(0, lastSlash).split("/")) : List.of();
+        String extension = lastDot > lastSlash ? relativePath.substring(lastDot + 1) : "";
+        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, extension, language, importedModuleNames);
     }
 
     /**
