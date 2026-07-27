@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 
@@ -13,7 +14,7 @@ import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 public class ClassNerStrategy implements NerStrategy {
 
     @Override
-    public Prompt getPrompt() {
+    public Prompt getPrompt(DataRepository dataRepository) {
         String taskPrompt = """
                 Identify all classes that are explicitly named in the following text.
                 

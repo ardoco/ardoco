@@ -22,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 public class ComponentNerStrategy implements NerStrategy {
 
     @Override
-    public Prompt getPrompt() {
+    public Prompt getPrompt(DataRepository dataRepository) {
         String taskPrompt = """
                 Identify all architecturally relevant software components that are explicitly named in the following text.
                 
@@ -132,11 +132,12 @@ public class ComponentNerStrategy implements NerStrategy {
                     }
                 ]
                 """;
+
+        taskPrompt += getPossibleEntities(dataRepository);
         return new TwoPartPrompt(taskPrompt, formattingPrompt);
     }
 
-    @Override
-    public Map<NamedEntityType, Set<String>> getPossibleEntities(DataRepository dataRepository) {
+    private StringBuilder getPossibleEntities(DataRepository dataRepository) {
         Map<NamedEntityType, Set<String>> possibleEntities = new EnumMap<>(NamedEntityType.class);
         possibleEntities.put(NamedEntityType.COMPONENT, new TreeSet<>());
 
@@ -147,7 +148,21 @@ public class ComponentNerStrategy implements NerStrategy {
             possibleEntities.get(NamedEntityType.COMPONENT).add(Objects.requireNonNull(endpointName));
         }
 
-        return possibleEntities;
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n\nAs support, here is a list of entities that could be mentioned in the text:\n");
+        for (Map.Entry<NamedEntityType, Set<String>> entry : possibleEntities.entrySet()) {
+            NamedEntityType type = entry.getKey();
+            Set<String> names = entry.getValue();
+            if (names.isEmpty()) {
+                continue;
+            }
+            sb.append(type.toString().toLowerCase()).append(" entities: ");
+            sb.append(String.join(", ", names));
+            sb.append("\n");
+        }
+        sb.append("\n");
+
+        return sb;
     }
 
     @Override

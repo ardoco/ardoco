@@ -1,12 +1,9 @@
 /* Licensed under MIT 2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -18,10 +15,10 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
-import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.NamedEntityRecognizer;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 @Deterministic("Currently not fully deterministic due to NAER.")
@@ -45,18 +42,17 @@ public class NerInformant extends Informant {
 
         var chatModel = llm.create();
 
-        var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(strategy.getPrompt()).build();
-        var possibleEntities = strategy.getPossibleEntities(dataRepository);
-        var namedArchitectureEntities = recognizeNamedArchitectureEntities(namedEntityRecognizer, sad, possibleEntities);
+        var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(strategy.getPrompt(dataRepository)).build();
+        var namedArchitectureEntities = recognizeNamedArchitectureEntities(namedEntityRecognizer, sad);
 
         var nerConnectionState = nerConnectionStates.getNerConnectionState(strategy.getMetamodel());
         nerConnectionState.addNamedEntities(namedArchitectureEntities);
     }
 
     private static Set<NamedArchitectureEntity> recognizeNamedArchitectureEntities(NamedEntityRecognizer namedEntityRecognizer,
-            SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities) {
+            SoftwareArchitectureDocumentation sad) {
         // TODO This is not fully deterministic .. as the hashset has a random order. This should be fixed in NAER.
-        var namedEntities = namedEntityRecognizer.recognize(sad, possibleEntities);
+        var namedEntities = namedEntityRecognizer.recognize(sad);
 
         MutableList<NamedEntity> namedEntitiesList = Lists.mutable.ofAll(namedEntities);
         // Sort the named entities by their name to ensure a deterministic order

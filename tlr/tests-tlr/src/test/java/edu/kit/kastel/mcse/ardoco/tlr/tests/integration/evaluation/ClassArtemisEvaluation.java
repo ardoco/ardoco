@@ -21,6 +21,7 @@ public class ClassArtemisEvaluation extends AbstractArtemisEvaluation {
         super(project, llmForNer);
     }
 
+    @Override
     public AbstractArtemis createArtemis() {
         String projectName = project.getName();
 

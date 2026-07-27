@@ -26,7 +26,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgen
  * </p>
  * <p>
  * Subclasses are responsible for providing the model provider pipeline step by implementing
- * {@link #addModelProviderPipelineStep(ImmutableSortedMap, LargeLanguageModel, ArchitectureConfiguration, CodeConfiguration)}. They may also override
+ * {@link #addModelProviderPipelineStep(ImmutableSortedMap, ArchitectureConfiguration, CodeConfiguration)}. They may also override
  * {@link #addPostProcessingPipelineSteps(ImmutableSortedMap, LargeLanguageModel)} to append further processing steps.
  * </p>
  */
@@ -37,26 +37,28 @@ public abstract class AbstractArtemis extends ArdocoRunner {
         super(projectName);
     }
 
+    //TODO 2 add javadoc (with output dir)
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel llmForNer) {
+        setOutputDirectory(outputDir);
+        setUp(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llmForNer);
+    }
+
+    //TODO 2 add javadoc (without output dir)
+    public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
+            ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
         if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration.metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
         definePipeline(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llmForNer);
-        setOutputDirectory(outputDir);
         isSetUp = true;
-    }
-
-    public void setUp(String inputTextLocation, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
-            ImmutableSortedMap<String, String> additionalConfigs, String outputDirectory, LargeLanguageModel llmForNer) {
-        setUp(new File(inputTextLocation), architectureConfiguration, codeConfiguration, additionalConfigs, new File(outputDirectory), llmForNer);
     }
 
     private void definePipeline(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
-        addPreprocessingPipelineStep(inputText, additionalConfigs);
+        addPreprocessingPipelineStep(inputText, additionalConfigs); //todo 1 rename from pipelineStep to stages/agents see https://github.com/ardoco/ardoco/wiki/pipeline)
 
-        addModelProviderPipelineStep(additionalConfigs, llmForNer, architectureConfiguration, codeConfiguration);
+        addModelProviderPipelineStep(additionalConfigs, architectureConfiguration, codeConfiguration);
 
         addNerPipelineStep(additionalConfigs, llmForNer);
 
@@ -79,11 +81,10 @@ public abstract class AbstractArtemis extends ArdocoRunner {
      * </p>
      *
      * @param additionalConfigs         the additional configuration
-     * @param llmForNer                 the large language model used for named entity recognition
      * @param architectureConfiguration the architecture model configuration, or {@code null}
      * @param codeConfiguration         the code model configuration, or {@code null}
      */
-    protected abstract void addModelProviderPipelineStep(ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
+    protected abstract void addModelProviderPipelineStep(ImmutableSortedMap<String, String> additionalConfigs,
             @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration);
 
     private void addNerPipelineStep(ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {

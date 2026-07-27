@@ -1,11 +1,10 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies;
 
-import java.util.Map;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
 
 /**
@@ -20,26 +19,15 @@ import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
  * </p>
  */
 public interface NerStrategy {
+    Logger logger = LoggerFactory.getLogger(NerStrategy.class);
+
     /**
      * Returns the prompt used for NER.
      *
+     * @param dataRepository the data repository
      * @return the prompt defining the recognition task and expected output format
      */
-    Prompt getPrompt();
-
-    /**
-     * Returns additional entities that can support the NER process.
-     * <p>
-     * The default implementation does not provide any additional entities. Implementations may override this method to supply known entities extracted from
-     * available models, allowing the recognizer to use model information as additional context.
-     * </p>
-     *
-     * @param dataRepository the data repository containing the current pipeline data
-     * @return a mapping from entity types to possible entity names, or an empty map if no additional entities are provided
-     */
-    default Map<NamedEntityType, Set<String>> getPossibleEntities(DataRepository dataRepository) {
-        return Map.of();
-    }
+    Prompt getPrompt(DataRepository dataRepository);
 
     /**
      * Returns the metamodel supported by this NER strategy.

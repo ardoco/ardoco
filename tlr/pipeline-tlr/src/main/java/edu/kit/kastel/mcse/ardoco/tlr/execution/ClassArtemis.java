@@ -11,7 +11,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies.NerStra
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 /**
  * ArTEMiS runner for recovering trace links for class design decisions.
@@ -26,8 +25,7 @@ public class ClassArtemis extends AbstractArtemis {
     }
 
     @Override
-    protected void addModelProviderPipelineStep(ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
-            @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
+    protected void addModelProviderPipelineStep(ImmutableSortedMap<String, String> additionalConfigs, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
         CodeConfiguration codeConfigurationWithMetamodel = Objects.requireNonNull(codeConfiguration).withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         ModelProviderAgent modelProviderAgent = ModelProviderAgent.getModelProviderAgent(this.getArdoco().getDataRepository(), additionalConfigs, null,
                 codeConfigurationWithMetamodel);
