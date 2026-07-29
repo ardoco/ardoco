@@ -26,7 +26,7 @@ public class ModelProviderAgent extends PipelineAgent {
      * @param architectureConfiguration the architecture configuration
      * @param codeConfiguration         the code configuration
      */
-    public ModelProviderAgent(DataRepository data, ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
+    public ModelProviderAgent(DataRepository data, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
         super(informants(data, architectureConfiguration, codeConfiguration), ModelProviderAgent.class.getSimpleName(), data);
     }
 
