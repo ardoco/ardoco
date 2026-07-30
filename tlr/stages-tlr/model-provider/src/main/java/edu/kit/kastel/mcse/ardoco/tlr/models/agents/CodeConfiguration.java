@@ -10,7 +10,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.AllLanguagesExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 
-public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel metamodel) {
+import org.jspecify.annotations.Nullable;
+
+public record CodeConfiguration(File code, CodeConfigurationType type, @Nullable Metamodel metamodel) {
 
     public CodeConfiguration(File code, CodeConfigurationType type) {
         this(code, type, null);

@@ -10,7 +10,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 
-public record ArchitectureConfiguration(File architectureFile, ModelFormat type, Metamodel metamodel) {
+import org.jspecify.annotations.Nullable;
+
+public record ArchitectureConfiguration(File architectureFile, ModelFormat type, @Nullable Metamodel metamodel) {
     public ArchitectureConfiguration(File architectureFile, ModelFormat type) {
         this(architectureFile, type, null);
     }
