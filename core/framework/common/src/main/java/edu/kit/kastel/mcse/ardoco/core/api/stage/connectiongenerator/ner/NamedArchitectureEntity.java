@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+
+import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
+
 public class NamedArchitectureEntity implements Comparable<NamedArchitectureEntity> {
 
     private final List<NamedArchitectureEntityOccurrence> occurrences;
@@ -55,5 +61,40 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
         return "NamedArchitectureEntity{" + "name='" + name + '\'' + ", alternativeNames=" + alternativeNames + ", occurrences=" + occurrences.stream()
                 .map(NamedArchitectureEntityOccurrence::getSentenceNumber)
                 .toList() + '}';
+    }
+
+    /**
+     * Returns the parts of the primary name.
+     *
+     * @return the split primary name
+     */
+    public ImmutableList<String> getNameParts() {
+        return splitIdentifierIntoParts(this.getName()).toImmutable();
+    }
+
+    /**
+     * Returns the parts of the primary and alternative names.
+     *
+     * @return the distinct split parts of all names
+     */
+    public ImmutableList<String> getAllNameParts() {
+        MutableList<String> allParts = Lists.mutable.empty();
+
+        allParts.addAllIterable(splitIdentifierIntoParts(this.name));
+
+        for (String alternativeName : this.alternativeNames) {
+            allParts.addAllIterable(splitIdentifierIntoParts(alternativeName));
+        }
+
+        return allParts.distinct().toImmutable();
+    }
+
+    private MutableList<String> splitIdentifierIntoParts(String identifier) {
+        String splitName = CommonUtilities.splitCases(identifier);
+        var names = Lists.mutable.with(splitName.split(" "));
+        if (names.size() > 1) {
+            names.add(identifier);
+        }
+        return names;
     }
 }
