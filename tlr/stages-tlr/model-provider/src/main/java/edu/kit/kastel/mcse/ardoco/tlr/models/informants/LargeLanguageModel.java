@@ -74,11 +74,7 @@ public enum LargeLanguageModel {
     }
 
     private ChatModelProvider createProvider() {
-        return new ChatModelProvider(LlmConfiguration.builder(platform)
-                .modelName(modelName)
-                .seed(SEED)
-                .temperature(temperature)
-                .build());
+        return new ChatModelProvider(LlmConfiguration.builder(platform).modelName(modelName).seed(SEED).temperature(temperature).build());
     }
 
     private static int loadSeed() {
