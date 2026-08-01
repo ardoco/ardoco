@@ -404,6 +404,9 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
+          <!-- Pin the version: unversioned, Maven resolves the latest (1.8.0), whose CI-friendly
+               interpolator throws an NPE (mojohaus/flatten-maven-plugin#523). -->
+          <version>1.7.3</version>
           <configuration>
             <updatePomFile>true</updatePomFile>
             <flattenMode>resolveCiFriendliesOnly</flattenMode>
