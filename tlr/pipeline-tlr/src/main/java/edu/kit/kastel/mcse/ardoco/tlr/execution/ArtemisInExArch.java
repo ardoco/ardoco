@@ -18,6 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -37,6 +38,7 @@ public class ArtemisInExArch extends ArdocoRunner {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.configure();
         definePipeline(inputText, codeConfiguration, additionalConfigs, llmForExArch, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt, llmForNer);
         setOutputDirectory(outputDir);

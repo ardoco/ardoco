@@ -1,9 +1,6 @@
 /* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +34,6 @@ public enum LargeLanguageModel {
     private static final Logger logger = LoggerFactory.getLogger(LargeLanguageModel.class);
 
     private static final int SEED = loadSeed();
-    private static final CacheManager CACHE_MANAGER = createCacheManager();
 
     private final String humanReadableName;
     private final ChatModelPlatform platform;
@@ -57,7 +53,7 @@ public enum LargeLanguageModel {
 
     public ChatModel create() {
         ChatModelProvider provider = createProvider();
-        Cache<ChatCacheKey> cache = CACHE_MANAGER.getCache(this, provider.cacheParameters());
+        Cache<ChatCacheKey> cache = CacheManager.getDefaultInstance().getCache(this, provider.cacheParameters());
         return new CachingChatModel(provider.createChatModel(), cache);
     }
 
@@ -87,18 +83,6 @@ public enum LargeLanguageModel {
             return Integer.parseInt(seedEnv);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid SEED environment variable: " + seedEnv, e);
-        }
-    }
-
-    private static CacheManager createCacheManager() {
-        String cacheDir = Environment.getEnv("LLM_CACHE_DIR");
-        if (cacheDir == null) {
-            cacheDir = ".cache-llm/";
-        }
-        try {
-            return new CacheManager(Path.of(cacheDir));
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not initialize LLM cache directory: " + cacheDir, e);
         }
     }
 }
