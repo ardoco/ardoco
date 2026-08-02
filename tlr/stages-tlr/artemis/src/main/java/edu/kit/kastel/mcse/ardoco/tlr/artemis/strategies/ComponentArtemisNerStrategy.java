@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.strategies;
+package edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -13,16 +13,9 @@ import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 
-/**
- * NER strategy for identifying architecturally relevant software components in text.
- * <p>
- * This strategy is used by the component-decision ArTEMiS approach to recover trace links between text and architectural components.
- * </p>
- */
-public class ComponentNerStrategy implements NerStrategy {
-
+public class ComponentArtemisNerStrategy implements ArtemisNerStrategy {
     @Override
-    public Prompt getPrompt(DataRepository dataRepository) {
+    public Prompt createPrompt(DataRepository dataRepository) {
         String taskPrompt = """
                 Identify all architecturally relevant software components that are explicitly named in the following text.
                 
@@ -168,5 +161,10 @@ public class ComponentNerStrategy implements NerStrategy {
     @Override
     public Metamodel getMetamodel() {
         return Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+    }
+
+    @Override
+    public NamedEntityType getNamedEntityType() {
+        return NamedEntityType.COMPONENT;
     }
 }

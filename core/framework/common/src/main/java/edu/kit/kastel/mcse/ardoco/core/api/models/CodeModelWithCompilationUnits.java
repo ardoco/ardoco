@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
@@ -48,6 +49,14 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
             entities.addAll(codeItem.getAllCompilationUnits());
         }
         return entities;
+    }
+
+    public List<Datatype> getClasses() {
+        List<CodeCompilationUnit> entities = new ArrayList<>();
+        for (CodeItem codeItem : this.getContent()) {
+            entities.addAll(codeItem.getAllCompilationUnits());
+        }
+        return entities.stream().map(CodeCompilationUnit::getAllDataTypes).flatMap(List::stream).toList();
     }
 
     /**

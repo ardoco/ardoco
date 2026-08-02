@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.ardoco.tlr</groupId>
+        <artifactId>stages-tlr</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>artemis</artifactId>
+    <name>ArTEMiS</name>
+    <description>ArTEMiS (Architecture Traceability with Entity Matching via Semantic inference) uses Named Entity Recognition to detect architecturally
+        relevant entities in text (e.g., components, classes, ...) to hunt trace links.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.ardoco.core</groupId>
+            <artifactId>common</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.ardoco.tlr</groupId>
+            <artifactId>model-provider</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.ardoco.tlr</groupId>
+            <artifactId>text-preprocessing</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.ardoco</groupId>
+            <artifactId>named-architecture-entity-recognition</artifactId>
+            <version>2.1.0-SNAPSHOT</version><!-- 2.1.0-SNAPSHOT für weiterentwicklung sonst 2.0.0-->
+        </dependency>
+    </dependencies>
+</project>

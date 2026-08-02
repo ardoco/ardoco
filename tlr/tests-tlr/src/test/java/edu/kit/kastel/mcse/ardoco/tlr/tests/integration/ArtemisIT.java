@@ -52,26 +52,35 @@ public class ArtemisIT extends AbstractArdocoIT {
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate Component Decision ArTEMiS (SAD-SAM TLR with NER)")
+    @DisplayName("Evaluate Component ArTEMiS TLR")
     @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource({ "llmsXComponentProjects" })
-    void evaluateComponentSadSamTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+    @MethodSource("llmsXComponentProjects")
+    void evaluateComponentArtemisTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
         var evaluation = new ComponentArtemisEvaluation(project, llm);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
     }
 
+    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
+    @DisplayName("Evaluate Class ArTEMiS TLR")
+    @ParameterizedTest(name = "{0} ({1})")
+    @MethodSource("llmsXClassProjects")
+    void evaluateClassArtemisTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        var evaluation = new ClassArtemisEvaluation(project, llm);
+        var result = evaluation.runTraceLinkEvaluation();
+        Assertions.assertNotNull(result);
+    }
+
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate Component Decision ArTEMiS (SAD-SAM TLR with NER) Multi")
+    @DisplayName("Evaluate Component ArTEMiS TLR Multi")
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXComponentProjects")
-    void evaluateComponentSadSamTlrMultipleIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
-        logger.warn(
-                "Currently, multiple-runs evaluation is not meaningful because Artemis uses a cached LLM. To make it meaningful, switch to a non-cached LLM.");
+    void evaluateComponentArtemisTlrMultipleIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        logger.warn("Currently, multiple-runs evaluation is not meaningful if the LLM is cached.");
 
         List<SingleClassificationResult<String>> results = Lists.mutable.empty();
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
-            logger.info("Eval run {}/{} [{},{}]", i, NUMBER_OF_RUNS, project, llm);
+            logger.info("Eval run {}/{} [{},{}]", i + 1, NUMBER_OF_RUNS, project, llm);
             var evaluation = new ComponentArtemisEvaluation(project, llm);
             var result = evaluation.runTraceLinkEvaluation();
             Assertions.assertNotNull(result);
@@ -79,15 +88,4 @@ public class ArtemisIT extends AbstractArdocoIT {
         }
         averageAndLog(results);
     }
-
-    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate Class Decision ArTEMiS (SAD-Code TLR with NER)")
-    @ParameterizedTest(name = "{0} ({1})")
-    @MethodSource("llmsXClassProjects")
-    void evaluateClassSadCodeTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
-        var evaluation = new ClassArtemisEvaluation(project, llm);
-        var result = evaluation.runTraceLinkEvaluation();
-        Assertions.assertNotNull(result);
-    }
-
 }

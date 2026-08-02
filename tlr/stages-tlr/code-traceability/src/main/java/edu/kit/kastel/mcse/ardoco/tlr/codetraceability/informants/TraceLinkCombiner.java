@@ -3,6 +3,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.io.Serial;
 
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStates;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -17,7 +21,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
@@ -43,7 +46,7 @@ public class TraceLinkCombiner extends Informant {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(this.getDataRepository());
 
         var swattrConnectionState = this.getDataRepository().getData(ConnectionStates.ID, ConnectionStates.class);
-        var artemisConnectionState = this.getDataRepository().getData(NerConnectionStates.ID, NerConnectionStates.class);
+        var artemisConnectionState = this.getDataRepository().getData(ArtemisTraceabilityStates.ID, ArtemisTraceabilityStates.class);
 
         if (codeTraceabilityState == null || modelStatesData == null || (swattrConnectionState.isEmpty() && artemisConnectionState.isEmpty())) {
             return;
@@ -62,7 +65,7 @@ public class TraceLinkCombiner extends Informant {
 
             codeTraceabilityState.addSadCodeTraceLinks(transitiveTraceLinks);
         } else if (artemisConnectionState.isPresent()) {
-            var connectionState = artemisConnectionState.get().getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            var connectionState = artemisConnectionState.get().getState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT));
             var nerSamTraceLinks = connectionState.getTraceLinks();
 
             ImmutableSet<? extends TraceLink<SentenceEntity, ? extends Entity>> sadSamTraceLinks = nerSamTraceLinks.collect(traceLink -> {

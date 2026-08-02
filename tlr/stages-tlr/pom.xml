@@ -14,10 +14,10 @@
   <modules>
     <module>code-traceability</module>
     <module>connection-generator</module>
-    <module>connection-generator-ner</module>
     <module>model-provider</module>
     <module>recommendation-generator</module>
     <module>text-extraction</module>
     <module>text-preprocessing</module>
+    <module>artemis</module>
   </modules>
 </project>
