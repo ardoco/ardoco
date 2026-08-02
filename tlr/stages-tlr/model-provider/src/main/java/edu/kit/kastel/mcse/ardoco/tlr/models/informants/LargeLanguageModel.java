@@ -10,6 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.llm.cache.Cache;
 import edu.kit.kastel.mcse.ardoco.llm.cache.CacheManager;
 import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheKey;
+import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheParameter;
 import edu.kit.kastel.mcse.ardoco.llm.chat.CachingChatModel;
 import edu.kit.kastel.mcse.ardoco.llm.chat.ChatModelPlatform;
 import edu.kit.kastel.mcse.ardoco.llm.chat.ChatModelProvider;
@@ -53,7 +54,10 @@ public enum LargeLanguageModel {
 
     public ChatModel create() {
         ChatModelProvider provider = createProvider();
-        Cache<ChatCacheKey> cache = CacheManager.getDefaultInstance().getCache(this, provider.cacheParameters());
+        // Include the platform in the cache identity so that different backends that resolve to the same model
+        // name (e.g. OPENAI_GENERIC and OLLAMA_GENERIC both pointing at "llama3") do not share a cache file.
+        ChatCacheParameter cacheParameter = new ChatCacheParameter(platform.name() + "_" + provider.modelName(), provider.seed(), provider.temperature());
+        Cache<ChatCacheKey> cache = CacheManager.getDefaultInstance().getCache(this, cacheParameter);
         return new CachingChatModel(provider.createChatModel(), cache);
     }
 
@@ -66,7 +70,7 @@ public enum LargeLanguageModel {
     }
 
     public boolean isOpenAi() {
-        return this.name().startsWith("GPT_");
+        return platform == ChatModelPlatform.OPENAI;
     }
 
     private ChatModelProvider createProvider() {
