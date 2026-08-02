@@ -16,9 +16,8 @@ sentenceID,codeID
 28,LazyAction
 29,ListAction
 30,_ActionAction
-31,_Null`.
+31,_Null
 33,ListAction
-33,Action?
 34,ListAction
 34,CommandAction
 34,FunctionAction

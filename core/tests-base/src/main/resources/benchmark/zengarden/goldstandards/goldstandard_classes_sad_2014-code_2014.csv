@@ -3,7 +3,6 @@ sentenceID,codeID
 23,PdMessage
 23,MessageElement
 24,PdMessage
-25,PdMessage
 27,MessageObject
 27,MessageAdd
 29,PdMessage
@@ -14,7 +13,8 @@ sentenceID,codeID
 34,PdMessage
 36,MessageElement
 37,MessageElement
-38,PdElement
+38,MessageElement
+38,PdMessage
 39,MessageElement
 45,MessageObject
 49,MessageObject

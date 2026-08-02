@@ -3,6 +3,8 @@ sentenceID,codeID
 20,Item
 20,Album
 21,Library
+21,Item
+21,Album
 22,Library
 23,Library
 24,Library
@@ -16,6 +18,7 @@ sentenceID,codeID
 33,Item
 34,Item
 35,Item
+36,Library
 37,Query
 38,Query
 38,Album
@@ -26,6 +29,7 @@ sentenceID,codeID
 42,Item
 43,Item
 44,Item
+44,Library
 45,Item
 46,Item
 47,Item
@@ -56,15 +60,15 @@ sentenceID,codeID
 70,Album
 71,Album
 72,Album
-73,Queries
+73,Query
 74,Album
 74,Item
 74,Library
-74,Queries
-75,Queries
+74,Query
+75,Query
 75,Album
 75,Item
-76,Queries
+76,Query
 76,Album
 76,Item
 77,Album
@@ -78,6 +82,7 @@ sentenceID,codeID
 83,CollectionQuery
 83,Album
 83,Item
+83,Query
 84,Query
 85,AndQuery
 85,Query
@@ -85,7 +90,9 @@ sentenceID,codeID
 87,Library
 89,Library
 90,Library
+98,Item
 106,Item
 107,Item
 108,Item
 112,Library
+113,Album
