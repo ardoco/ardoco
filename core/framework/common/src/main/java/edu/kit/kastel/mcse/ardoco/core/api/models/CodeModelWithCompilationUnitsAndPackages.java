@@ -15,6 +15,7 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
  */
 @Deterministic
 public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
+
     private final CodeModelWithCompilationUnits codeModel;
 
     /**
@@ -35,6 +36,17 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
      */
     public CodeModelWithCompilationUnitsAndPackages(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
+        this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
+    }
+
+    /**
+     * Creates a new code model from a repository and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            the code items
+     */
+    public CodeModelWithCompilationUnitsAndPackages(String id, CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, content);
         this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
     }
 

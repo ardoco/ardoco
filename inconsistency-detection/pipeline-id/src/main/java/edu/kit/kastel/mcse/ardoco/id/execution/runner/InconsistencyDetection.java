@@ -7,6 +7,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
@@ -28,6 +29,7 @@ public class InconsistencyDetection extends ArdocoRunner {
             File outputDir) {
         definePipeline(inputText, inputModelArchitecture, inputModelFormat, additionalConfigs);
         setOutputDirectory(outputDir);
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // configure persistence bridge
         isSetUp = true;
     }
 

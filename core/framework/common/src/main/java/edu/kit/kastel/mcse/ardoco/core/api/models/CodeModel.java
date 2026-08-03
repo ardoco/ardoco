@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -45,6 +45,24 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @param content            set of code items
      */
     protected CodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        this.initialized = true;
+        this.codeItemRepository = codeItemRepository;
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Creates a new code model with the specified code item repository and content and id.
+     * This is used for restoring models with a specific id from persistence.
+     *
+     * @param id                 the identifier of the model
+     * @param codeItemRepository the code item repository
+     * @param content            set of code items
+     */
+    protected CodeModel(String id, CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        super(id);
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
         this.content = new ArrayList<>();

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -34,6 +34,18 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
      */
     public CodeModelWithCompilationUnits(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
+    }
+
+    /**
+     * Creates a new code model from a repository, content and an id.
+     * This constructor is
+     *
+     * @param id                 the model id
+     * @param codeItemRepository the code item repository
+     * @param content            the code items
+     */
+    public CodeModelWithCompilationUnits(String id, CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, content);
     }
 
     /**

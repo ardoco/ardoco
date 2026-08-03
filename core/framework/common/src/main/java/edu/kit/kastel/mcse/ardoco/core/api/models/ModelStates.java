@@ -1,12 +1,15 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 /**
@@ -21,6 +24,10 @@ public final class ModelStates implements PipelineStepData {
     @Serial
     private static final long serialVersionUID = -603436842247064371L;
     private final SortedMap<Metamodel, Model> models = new TreeMap<>();
+
+    // TODO: think about whether the currently implemented caching of neo4j persisted models is fine or whether we should do it differently
+    // If a Metamodel is in this set, it must be re-loaded from the DB
+    private final Set<Metamodel> dirtyMetamodels = new HashSet<>();
 
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
@@ -38,6 +45,11 @@ public final class ModelStates implements PipelineStepData {
      * @param model the {@link Model}
      */
     public void addModel(Metamodel id, Model model) {
+        // store the model in neo4j
+        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
+            PersistenceBridge.getHandler().saveModel(id, model);
+            this.dirtyMetamodels.add(id);
+        }
         this.models.put(id, model);
     }
 
@@ -48,7 +60,22 @@ public final class ModelStates implements PipelineStepData {
      * @return the corresponding {@link Model}
      */
     public Model getModel(Metamodel id) {
-        return this.models.get(id);
+        boolean isPersistentType = id.isArchitectureModel() || id.isCodeModel();
+        boolean persistenceAvailable = PersistenceBridge.isAvailable();
+        boolean needsLoading = !this.models.containsKey(id) || this.dirtyMetamodels.contains(id);
+
+        if (needsLoading && isPersistentType && persistenceAvailable) {
+            Model loaded = PersistenceBridge.getHandler().loadModel(id);
+            this.models.put(id, loaded);
+            this.dirtyMetamodels.remove(id);
+            return loaded;
+        }
+
+        if (this.models.containsKey(id)) {
+            return this.models.get(id);
+        }
+
+        throw new IllegalArgumentException("Model with id " + id.toString() + " not found");
     }
 
 }

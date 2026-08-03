@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -47,6 +47,22 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
      */
     public CodeModule(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+        this.parentId = null;
+    }
+
+    /**
+     * Creates a new code module with the specified name and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code module
+     * @param content            the content of the code module
+     */
+    public CodeModule(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
         this.content = new ArrayList<>();
         for (var codeItem : content) {
             this.content.add(codeItem.getId());

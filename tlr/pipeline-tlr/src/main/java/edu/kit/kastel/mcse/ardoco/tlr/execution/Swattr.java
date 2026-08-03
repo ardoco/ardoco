@@ -6,6 +6,7 @@ import java.io.File;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
@@ -34,6 +35,7 @@ public class Swattr extends ArdocoRunner {
         }
         definePipeline(inputText, architectureConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // configure persistence bridge
         isSetUp = true;
     }
 

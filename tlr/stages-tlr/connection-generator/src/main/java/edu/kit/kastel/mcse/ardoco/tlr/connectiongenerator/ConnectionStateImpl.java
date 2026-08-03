@@ -1,17 +1,25 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
+import java.util.Collection;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.set.MutableSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -54,9 +62,17 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Override
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
+        boolean shouldPersist = PersistenceBridge.isAvailable() && modelEntity instanceof ArchitectureEntity;
+        MutableSet<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Sets.mutable.empty();
+
         var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
+
+            if (shouldPersist) {
+                linksToPersist.addAll(generateLinksFromInstance(recommendedModelInstance, modelEntity));
+            }
+
         } else {
             var optionalInstanceLink = this.instanceLinks.stream().filter(il -> il.equals(newInstanceLink)).findFirst();
             if (optionalInstanceLink.isPresent()) {
@@ -64,8 +80,26 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                 var newNameMappings = newInstanceLink.getFirstEndpoint().getNameMappings();
                 var newTypeMappings = newInstanceLink.getFirstEndpoint().getTypeMappings();
                 existingInstanceLink.getFirstEndpoint().addMappings(newNameMappings, newTypeMappings);
+
+                if (shouldPersist) {
+                    for (var nm : newNameMappings) {
+                        linksToPersist.addAll(generateLinksFromNameMapping(nm, modelEntity));
+                    }
+                }
             }
         }
+
+        if (!linksToPersist.isEmpty()) {
+            PersistenceBridge.getHandler().saveTraceLinks(linksToPersist);
+        }
+    }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {
+        return recommendedInstance.getNameMappings().stream().flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream()).toList();
+    }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromNameMapping(NounMapping nm, ModelEntity modelEntity) {
+        return nm.getWords().stream().map(word -> new SentenceModelTraceLink(word.getSentence(), modelEntity)).toList();
     }
 
     /**

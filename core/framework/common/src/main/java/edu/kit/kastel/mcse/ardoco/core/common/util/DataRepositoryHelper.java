@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
@@ -13,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 
@@ -74,6 +75,9 @@ public final class DataRepositoryHelper {
      * @return true, if there is {@link Text} within the {@link DataRepository}; else, false
      */
     public static boolean hasAnnotatedText(DataRepository dataRepository) {
+        if (PersistenceBridge.isAvailable()) {
+            return PersistenceBridge.getHandler().hasPreprocessedText(PreprocessingData.ID);
+        }
         return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).isPresent();
     }
 
@@ -86,6 +90,9 @@ public final class DataRepositoryHelper {
      * @return the text
      */
     public static Text getAnnotatedText(DataRepository dataRepository) {
+        if (PersistenceBridge.isAvailable()) {
+            return PersistenceBridge.getHandler().loadPreprocessedText(PreprocessingData.ID);
+        }
         return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow().getText();
     }
 
@@ -256,6 +263,10 @@ public final class DataRepositoryHelper {
      * @param preprocessingData the preprocessingData
      */
     public static void putPreprocessingData(DataRepository dataRepository, PreprocessingData preprocessingData) {
+        // persist preprocessing data to neo4j
+        if (PersistenceBridge.isAvailable()) {
+            PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID);
+        }
         dataRepository.addData(PreprocessingData.ID, preprocessingData);
     }
 
@@ -267,5 +278,6 @@ public final class DataRepositoryHelper {
      */
     public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
         dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
+
     }
 }

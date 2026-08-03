@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -31,5 +31,16 @@ public final class ControlElement extends ComputationalObject {
      */
     public ControlElement(CodeItemRepository codeItemRepository, String name) {
         super(codeItemRepository, name);
+    }
+
+    /**
+     * Creates a new control element with the specified name.
+     *
+     * @param id                 the id of the control element
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the control element
+     */
+    public ControlElement(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name);
     }
 }

@@ -1,0 +1,19 @@
+/* Licensed under MIT 2026. */
+package io.github.ardoco.core.neo4jschema.entities.tracelink;
+
+public enum TraceLinkType {
+    /**
+     * Represents a direct link between an Architecture Model Item and a Code Model Item.
+     */
+    ARCHITECTURE_CODE,
+
+    /**
+     * Represents a link from a Sentence to a Code Model Item.
+     */
+    SENTENCE_CODE,
+
+    /**
+     * Represents a link from a Sentence to an Architecture Model Item.
+     */
+    SENTENCE_ARCHITECTURE
+}

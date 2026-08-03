@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 /**
@@ -16,5 +16,9 @@ public enum Metamodel {
 
     public boolean isArchitectureModel() {
         return this.name().startsWith("ARCHITECTURE");
+    }
+
+    public boolean isCodeModel() {
+        return this.name().startsWith("CODE");
     }
 }

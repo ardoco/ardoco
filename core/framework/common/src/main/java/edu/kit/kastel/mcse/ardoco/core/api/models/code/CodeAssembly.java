@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -37,6 +37,11 @@ public final class CodeAssembly extends CodeModule {
      */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, name, content);
+    }
+
+    public CodeAssembly(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
+        super(id, codeItemRepository, name, content);
+        this.language = language;
     }
 
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {

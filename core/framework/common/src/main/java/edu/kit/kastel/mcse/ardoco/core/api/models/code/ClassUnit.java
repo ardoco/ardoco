@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -20,7 +20,7 @@ public final class ClassUnit extends Datatype {
     private static final long serialVersionUID = 354013115794534271L;
 
     @JsonProperty
-    private final List<String> content;
+    private List<String> content;
 
     /**
      * Default constructor for Jackson.
@@ -43,6 +43,33 @@ public final class ClassUnit extends Datatype {
         this.content = new ArrayList<>();
         for (var codeItem : content) {
             this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Creates a new class unit with the specified name and content.
+     *
+     * @param id                 the identifier of the class unit
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the class unit
+     * @param content            the content of the class unit
+     */
+    public ClassUnit(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Adds a code item to the content of this class unit.
+     *
+     * @param item the code item to add
+     */
+    public void addContent(CodeItem item) {
+        if (!this.content.contains(item.getId())) {
+            this.content.add(item.getId());
         }
     }
 

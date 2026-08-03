@@ -143,6 +143,7 @@
       </activation>
       <modules>
         <module>framework</module>
+        <module>neo4j-schema</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
       </modules>
@@ -190,6 +191,7 @@
       </activation>
       <modules>
         <module>framework</module>
+        <module>neo4j-schema</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
       </modules>

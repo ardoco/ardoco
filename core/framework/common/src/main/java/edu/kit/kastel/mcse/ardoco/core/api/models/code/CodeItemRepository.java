@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -33,15 +33,15 @@ public class CodeItemRepository implements Serializable {
         return new TreeMap<>(this.repository);
     }
 
-    void addCodeItem(CodeItem codeItem) {
+    public void addCodeItem(CodeItem codeItem) {
         this.repository.put(codeItem.getId(), codeItem);
     }
 
-    boolean containsCodeItem(String id) {
+    public boolean containsCodeItem(String id) {
         return this.repository.containsKey(id);
     }
 
-    CodeItem getCodeItem(String id) {
+    public CodeItem getCodeItem(String id) {
         if (id == null) {
             return null;
         }

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
 import org.eclipse.collections.api.factory.Sets;
@@ -6,11 +6,13 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -35,11 +37,24 @@ public interface ConnectionState extends IConfigurable {
      */
     default ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
+
+        // only architecture links are saved to persistence, since the code links still get processed further during the pipeline.
+        if (PersistenceBridge.isAvailable()) {
+            var persistedLinks = PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
+            traceLinks.addAll(persistedLinks);
+        }
+
         for (var instanceLink : this.getInstanceLinks()) {
             var textualInstance = instanceLink.getFirstEndpoint();
+            ModelEntity target = instanceLink.getSecondEndpoint();
+
+            if (PersistenceBridge.isAvailable() && target instanceof ArchitectureEntity) {
+                continue;
+            }
+
             for (var nm : textualInstance.getNameMappings()) {
                 for (var word : nm.getWords()) {
-                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
+                    var traceLink = new SentenceModelTraceLink(word.getSentence(), target);
                     traceLinks.add(traceLink);
                 }
             }
