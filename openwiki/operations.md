@@ -1,3 +1,15 @@
+---
+type: "Reference"
+title: "Operations"
+description: "Build system, code quality, CI/CD workflows, monorepo sync scripts, environment configuration, and external services for ARDoCo."
+openwiki:
+  roles: [operations, delivery]
+  change_kinds: [build, ci, dependencies]
+  source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml]
+  invariants: ["flatten-maven-plugin pinned to 1.7.3 due to upstream NPE in 1.8.0", "JDK 21+ and Maven 3.9+ required", "Docs/openwiki paths do not trigger Maven verify"]
+  validation_commands: ["mvn clean verify", "mvn spotless:check"]
+---
+
 # Operations
 
 This page covers build system, code quality, CI, monorepo sync, environment configuration, and external services.
@@ -17,6 +29,10 @@ mvn clean verify      # Full build with tests, no install
 mvn clean package     # Build without tests
 ```
 
+### Build Gotcha: Pinned `flatten-maven-plugin`
+
+The root `pom.xml` pins `org.codehaus.mojo:flatten-maven-plugin` to `1.7.3`. Do **not** remove this pin or let it upgrade to the unversioned "latest" resolution (1.8.0). The 1.8.0 release has an upstream bug (`mojohaus/flatten-maven-plugin#523`) whose CI-friendly interpolator throws an NPE against ARDoCo's CI-friendly POM. The plugin runs with `flattenMode=resolveCiFriendliesOnly` to resolve the `${revision}`-style version placeholders.
+
 ### Module Structure
 
 The root POM (`/pom.xml`) defines `io.github.ardoco:parent` as the parent for all modules. Each module has its own POM that aggregates submodules:
@@ -33,9 +49,11 @@ The root POM (`/pom.xml`) defines `io.github.ardoco:parent` as the parent for al
 - **Jackson** 2.21.3 — JSON serialization (via BOM)
 - **Eclipse Collections** 13.0.0 — mutable collection types
 - **JavaParser** 3.28.2 — code parsing
-- **JUnit** 6.0.3 — testing
+- **JUnit** 6.1.1 — testing
 - **Mockito** 5.23.0 — mocking
 - **SLF4J** 2.0.18 — logging
+
+LLM-based TLR stages (`tlr/stages-tlr/model-provider/`) additionally depend on the `dev.langchain4j:langchain4j-bom` and `org.apache.opennlp:opennlp-tools` (currently 2.5.10, pinned in `core/framework/common/pom.xml`). OpenNLP's `PorterStemmer` is used by ArCoTL name comparison (`NameComparisonUtils.java`), which also reuses the Stanford CoreNLP pipeline for tokenization.
 
 ## Code Formatting
 
@@ -69,9 +87,10 @@ Located in `/.github/workflows/`:
 
 | Workflow | File | Purpose |
 |----------|------|---------|
-| Maven Verify | `verify.yml` | Runs Maven verify on push/PR (uses reusable `ardoco/actions` workflow) |
+| Maven Verify | `verify.yml` | Runs Maven verify on push/PR via the reusable `ardoco/actions` workflow. Ignores `docs/**` and `openwiki/**` paths so docs-only changes skip the build |
 | Format Check | `format.yml` | Checks code formatting via Spotless |
-| Docs | `docs.yml` | Documentation-related checks |
+| Docs | `docs.yml` | Publishes `/docs` and `/openwiki` to the GitHub Wiki; renders each `/openwiki/*.md` as `OpenWiki-<name>.md` in the wiki root namespace |
+| OpenWiki Update | `openwiki.yml` | Scheduled weekly run of `openwiki --update` that opens a PR with documentation changes; requires `contents: write` and `pull-requests: write` permissions |
 
 Each module also has its own CI workflows under `{module}/.github/workflows/` for the standalone repositories.
 
