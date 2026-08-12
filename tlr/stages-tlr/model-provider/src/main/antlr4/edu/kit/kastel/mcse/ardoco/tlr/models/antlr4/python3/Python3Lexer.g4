@@ -180,7 +180,7 @@ IDIV_ASSIGN        : '//=';
 
 SKIP_: ( SPACES | LINE_JOINING) -> skip;
 
-COMMENT: '#' ~[\r\n\f]*;
+COMMENT: '#' ~[\r\n\f]* -> channel(HIDDEN);
 
 UNKNOWN_CHAR: .;
 

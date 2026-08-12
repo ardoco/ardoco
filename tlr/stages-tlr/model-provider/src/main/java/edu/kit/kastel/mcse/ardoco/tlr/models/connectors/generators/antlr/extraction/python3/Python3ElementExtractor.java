@@ -114,11 +114,15 @@ public class Python3ElementExtractor extends ElementExtractor {
             visitFuncdef(ctx.funcdef(), parentIdentifier);
         } else if (ctx.classdef() != null) {
             visitClassdef(ctx.classdef(), parentIdentifier);
+        } else if (ctx.async_stmt() != null && ctx.async_stmt().funcdef() != null) {
+            visitFuncdef(ctx.async_stmt().funcdef(), parentIdentifier);
         } else if (ctx.decorated() != null) {
             if (ctx.decorated().classdef() != null) {
                 visitClassdef(ctx.decorated().classdef(), parentIdentifier);
             } else if (ctx.decorated().funcdef() != null) {
                 visitFuncdef(ctx.decorated().funcdef(), parentIdentifier);
+            } else if (ctx.decorated().async_funcdef() != null && ctx.decorated().async_funcdef().funcdef() != null) {
+                visitFuncdef(ctx.decorated().async_funcdef().funcdef(), parentIdentifier);
             }
         }
     }
