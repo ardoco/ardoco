@@ -27,7 +27,7 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
      * @param id the model id
      */
     protected Model(String id) {
-        this.id = id;
+        this.id = id != null ? id : IdentifierProvider.createId();
     }
 
     public String getId() {
