@@ -95,9 +95,7 @@ public abstract sealed class ArchitectureModel extends Model permits Architectur
                     collectItem(method, repository);
                 }
             }
-            case ArchitectureMethod method -> {
-                repository.put(method.getId(), new MethodDto(method.getId(), method.getName()));
-            }
+            case ArchitectureMethod method -> repository.put(method.getId(), new MethodDto(method.getId(), method.getName()));
         }
     }
 

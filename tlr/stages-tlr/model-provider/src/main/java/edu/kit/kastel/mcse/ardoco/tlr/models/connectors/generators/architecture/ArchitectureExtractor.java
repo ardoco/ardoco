@@ -36,8 +36,4 @@ public abstract class ArchitectureExtractor extends Extractor {
             logger.warn("An exception occurred when writing the architecture model.", e);
         }
     }
-
-    private String getArchitectureModelFileString() {
-        return path + File.separator + ARCHITECTURE_MODEL_FILE_NAME;
-    }
 }
