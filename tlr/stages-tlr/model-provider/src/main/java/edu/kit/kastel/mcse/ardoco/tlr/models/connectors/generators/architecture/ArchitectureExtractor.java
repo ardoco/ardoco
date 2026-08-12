@@ -37,16 +37,6 @@ public abstract class ArchitectureExtractor extends Extractor {
         }
     }
 
-    /**
-     * Writes the architecture model to the default location, i.e., to the folder of the model file with the name "architectureModel.aam"
-     *
-     * @param architectureModel the architecture model to write
-     */
-    public void writeOutArchitectureModel(ArchitectureModel architectureModel) {
-        File file = new File(getArchitectureModelFileString());
-        writeOutArchitectureModel(architectureModel, file);
-    }
-
     private String getArchitectureModelFileString() {
         return path + File.separator + ARCHITECTURE_MODEL_FILE_NAME;
     }
