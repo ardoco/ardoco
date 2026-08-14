@@ -78,7 +78,7 @@
     <!-- Versions -->
     <slf4j.version>2.0.18</slf4j.version>
     <junit.version>6.1.1</junit.version>
-    <spotless.version>3.6.0</spotless.version>
+    <spotless.version>3.9.0</spotless.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
     <mockito.version>5.23.0</mockito.version>
@@ -404,6 +404,9 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
+          <!-- Pin the version: unversioned, Maven resolves the latest (1.8.0), whose CI-friendly
+               interpolator throws an NPE (mojohaus/flatten-maven-plugin#523). -->
+          <version>1.7.3</version>
           <configuration>
             <updatePomFile>true</updatePomFile>
             <flattenMode>resolveCiFriendliesOnly</flattenMode>

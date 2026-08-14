@@ -1,3 +1,17 @@
+---
+type: "Reference"
+title: "TLR Approaches"
+description: "Traceability Link Recovery approaches (SWATTR, ArDoCode, ArCoTL, TransArC, ExArch, ArTEMiS), their runner pipeline compositions, stage modules, and the ArCoTL heuristic computation tree."
+openwiki:
+  roles: [domain, architecture, workflow]
+  change_kinds: [lifecycle, public-api]
+  source_paths: [tlr/pipeline-tlr/src/main/java, tlr/stages-tlr]
+  symbols: [Swattr, Ardocode, Arcotl, Transarc, ExArch, Artemis, ArCoTLInformant, TraceLinkGenerator, TraceLinkCombiner, NerConnectionGenerator]
+  invariants: ["Each approach is an ArdocoRunner whose definePipeline wires stages from stages-tlr", "Transitive SAD->Code links combine SAD->SAM and SAM->Code links via TraceLinkCombiner"]
+  test_paths: [tlr/tests-tlr/src/test/java]
+  validation_commands: ["mvn -pl tlr clean verify"]
+---
+
 # TLR Approaches
 
 ARDoCo provides multiple Traceability Link Recovery (TLR) approaches that connect different types of software artifacts. This page documents each approach, its pipeline composition, and the underlying stage modules.

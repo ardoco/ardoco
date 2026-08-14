@@ -1,3 +1,16 @@
+---
+type: "Reference"
+title: "Architecture"
+description: "ARDoCo pipeline composite pattern (stage → agent → informant), DataRepository blackboard, intermediate artifacts (Text, SAM, Code Model), execution runners, and configuration system."
+openwiki:
+  roles: [architecture, domain]
+  change_kinds: [lifecycle, public-api]
+  source_paths: [core/framework/common/src/main/java, core/pipeline-core/src/main/java]
+  symbols: [AbstractPipelineStep, Pipeline, AbstractExecutionStage, PipelineAgent, Informant, DataRepository, Ardoco, ArdocoRunner, AbstractConfigurable]
+  invariants: ["Pipeline components communicate only through the DataRepository", "All configurable fields are overridable via @Configurable"]
+  validation_commands: ["mvn -pl core clean verify"]
+---
+
 # Architecture
 
 This page covers ARDoCo's pipeline architecture, data model, and intermediate artifacts. For the original wiki pages, see [Pipeline.md](../docs/Pipeline.md) and [Intermediate-Artifacts.md](../docs/Intermediate-Artifacts.md).

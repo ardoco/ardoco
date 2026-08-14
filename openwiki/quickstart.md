@@ -1,3 +1,14 @@
+---
+type: "Reference"
+title: "ARDoCo — OpenWiki Quickstart"
+description: "Entry point to the ARDoCo OpenWiki: repository overview, build prerequisites, documentation map, and links to architecture, TLR, inconsistency detection, and operations pages."
+openwiki:
+  roles: [repository, architecture]
+  source_paths: [pom.xml, README.md]
+  invariants: ["Monorepo of core, tlr, and inconsistency-detection modules under parent io.github.ardoco:parent"]
+  validation_commands: ["mvn clean install"]
+---
+
 # ARDoCo — OpenWiki Quickstart
 
 Welcome to the OpenWiki documentation for **ARDoCo** (Automating Requirements and Documentation Comprehension). This page is your entry point. Start here, then follow the links below to dive deeper.
@@ -73,8 +84,23 @@ ARDoCo supports local NLP preprocessing (via Stanford CoreNLP) or a remote micro
 | [Inconsistency Detection](inconsistency-detection.md) | TEAM and MEAT inconsistency types, detection pipeline, configuration options |
 | [Operations](operations.md) | Build system, code formatting, JSpecify nullness, CI, monorepo sync scripts, external services |
 
+## Task Routing
+
+When changing a specific area, start at the listed page and use the focused validation command. All commands run from the repository root.
+
+| Change area / intent | Wiki page | Source entry points | Key symbols / types | Focused tests | Minimal validation |
+|----------------------|----------|---------------------|---------------------|---------------|--------------------|
+| Add or modify a pipeline stage/agent/informant | [Architecture](architecture.md) | `core/framework/common/.../pipeline/`, `tlr/stages-tlr/` | `AbstractPipelineStep`, `AbstractExecutionStage`, `PipelineAgent`, `Informant`, `DataRepository` | `core/tests-base` architecture tests | `mvn -pl core clean verify` |
+| Add or change a TLR approach / runner | [TLR Approaches](tlr-approaches.md) | `tlr/pipeline-tlr/.../execution/`, `tlr/stages-tlr/` | `Swattr`, `Arcotl`, `Transarc`, `ArCoTLInformant`, `TraceLinkGenerator` | `tlr/tests-tlr` integration tests (`*IT.java`) | `mvn -pl tlr clean verify` |
+| Modify ArCoTL heuristics or transitive linking | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/code-traceability/.../arcotl/`, `.../informants/TraceLinkCombiner.java` | `TraceLinkGenerator`, `TraceLinkCombiner` | `tlr/tests-tlr` integration tests | `mvn -pl tlr/stages-tlr/code-traceability clean verify` |
+| Change LLM/NER-based TLR (ExArch, ArTEMiS) | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/`, `tlr/stages-tlr/connection-generator-ner/` | `LlmArchitectureProviderInformant`, `NerConnectionGenerator`, `NerAgent` | `tlr/tests-tlr` integration tests | `mvn -pl tlr clean verify` |
+| Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/inconsistency-detection/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `TextEntityAbsentFromModelInconsistencyAgent`, `ModelEntityAbsentFromTextInconsistencyAgent` | `tests-inconsistency` integration tests | `mvn -pl inconsistency-detection clean verify` |
+| Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` | `mvn spotless:check && mvn clean verify` |
+| Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureItem`, `CodeItem`, `Entity` | `core/tests-base` | `mvn -pl core/framework/common clean verify` |
+
 ## Existing Wiki Documentation
 
+<!-- openwiki: broken internal link [../docs] file "../docs" does not exist. Fix the href or restore the target, then delete this comment. -->
 The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) with source files in [`/docs`](../docs). This OpenWiki serves as an opinionated map and synthesis over those docs, with added source-level detail for developers and agents.
 
 ## External Repositories
