@@ -58,7 +58,7 @@ public final class CodeAssembly extends CodeModule {
     }
 
     /**
-     * Constructs a new CodeAssembly with language, file path, and import information.
+     * Constructs a new CodeAssembly with language, and import information.
      *
      * @param codeItemRepository  the code item repository
      * @param name                the name of the assembly

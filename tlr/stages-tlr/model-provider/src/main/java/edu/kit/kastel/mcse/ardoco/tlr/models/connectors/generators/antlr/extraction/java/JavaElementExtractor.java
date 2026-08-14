@@ -291,7 +291,8 @@ public class JavaElementExtractor extends ElementExtractor {
                 .createdName()
                 .identifier()
                 .isEmpty()) {
-            names.add(oc.creator().createdName().identifier(0).getText());
+            List<JavaParser.IdentifierContext> ids = oc.creator().createdName().identifier();
+            names.add(ids.get(ids.size() - 1).getText());
         }
         for (int i = 0; i < tree.getChildCount(); i++) {
             collectCallNamesFromTree(tree.getChild(i), names);
