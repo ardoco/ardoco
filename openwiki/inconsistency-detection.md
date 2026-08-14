@@ -1,3 +1,17 @@
+---
+type: "Reference"
+title: "Inconsistency Detection"
+description: "TEAM and MEAT inconsistency detection between SAD and SAM, the InconsistencyChecker stage, state management, and evaluation/testing infrastructure."
+openwiki:
+  roles: [domain, architecture, workflow, testing]
+  change_kinds: [lifecycle]
+  source_paths: [inconsistency-detection/pipeline-id/src/main/java, inconsistency-detection/stages-id/inconsistency-detection/src/main/java]
+  symbols: [InconsistencyChecker, TextEntityAbsentFromModelInconsistencyAgent, ModelEntityAbsentFromTextInconsistencyAgent, InconsistencyStatesImpl, InconsistencyStateImpl]
+  invariants: ["InconsistencyChecker runs after the SWATTR connection pipeline", "TEAM flags text entities with no trace link; MEAT flags model entities with insufficient trace links"]
+  test_paths: [inconsistency-detection/stages-id/inconsistency-detection/src/test/java, inconsistency-detection/tests-inconsistency/src/test/java]
+  validation_commands: ["mvn -pl inconsistency-detection clean verify"]
+---
+
 # Inconsistency Detection
 
 ARDoCo's Inconsistency Detection (ID) identifies discrepancies between software architecture documentation (SAD) and architecture models (SAM). It uses trace link recovery results as a bridge: after establishing trace links, it identifies "orphan" elements on both sides.
