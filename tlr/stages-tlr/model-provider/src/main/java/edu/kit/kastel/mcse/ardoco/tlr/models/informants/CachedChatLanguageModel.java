@@ -20,6 +20,7 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.output.TokenUsage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
@@ -33,6 +34,8 @@ public class CachedChatLanguageModel implements ChatModel {
 
     private final ChatModel chatLanguageModel;
     private final String cacheKey;
+
+    private TokenUsage cumulativeTokenUsage = new TokenUsage(0, 0, 0);
 
     private SortedMap<String, String> cache = new TreeMap<>();
 
@@ -60,6 +63,7 @@ public class CachedChatLanguageModel implements ChatModel {
             return ChatResponse.builder().aiMessage(new AiMessage(cache.get(cleanEndings(messages.toString())))).build();
         }
         ChatResponse response = chatLanguageModel.chat(messages);
+        accumulateTokenUsage(response.tokenUsage());
         cache.put(cleanEndings(messages.toString()), cleanEndings(response.aiMessage().text()));
         try {
             createObjectMapper().writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
@@ -72,6 +76,24 @@ public class CachedChatLanguageModel implements ChatModel {
     @Override
     public synchronized ChatResponse chat(ChatRequest chatRequest) {
         return chat(chatRequest.messages());
+    }
+
+    private void accumulateTokenUsage(TokenUsage tokenUsage) {
+        if (tokenUsage == null) {
+            logger.warn("LLM response did not report token usage (provider returned none)");
+            return;
+        }
+        TokenUsage sanitized = new TokenUsage(nullToZero(tokenUsage.inputTokenCount()), nullToZero(tokenUsage.outputTokenCount()), nullToZero(tokenUsage
+                .totalTokenCount()));
+        cumulativeTokenUsage = cumulativeTokenUsage.add(sanitized);
+        logger.info("LLM token usage (this call): input={} output={} total={}", sanitized.inputTokenCount(), sanitized.outputTokenCount(), sanitized
+                .totalTokenCount());
+        logger.info("LLM token usage (cumulative for {}): input={} output={} total={}", cacheKey, cumulativeTokenUsage.inputTokenCount(), cumulativeTokenUsage
+                .outputTokenCount(), cumulativeTokenUsage.totalTokenCount());
+    }
+
+    private static int nullToZero(Integer value) {
+        return value == null ? 0 : value;
     }
 
     private String cleanEndings(String text) {

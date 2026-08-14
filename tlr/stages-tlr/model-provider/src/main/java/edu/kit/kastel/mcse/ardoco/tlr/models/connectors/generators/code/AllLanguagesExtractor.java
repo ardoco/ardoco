@@ -15,10 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaExtractor;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.ShellExtractor;
 
 @Deterministic
 public final class AllLanguagesExtractor extends CodeExtractor {
@@ -28,9 +26,8 @@ public final class AllLanguagesExtractor extends CodeExtractor {
 
     public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
-        this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguage.SHELL,
-                new ShellExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguage.PYTHON3, new Python3Extractor(codeItemRepository, path),
-                ProgrammingLanguage.CPP, new CppExtractor(codeItemRepository, path));
+        this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguage.PYTHON3,
+                new Python3Extractor(codeItemRepository, path));
     }
 
     @Override

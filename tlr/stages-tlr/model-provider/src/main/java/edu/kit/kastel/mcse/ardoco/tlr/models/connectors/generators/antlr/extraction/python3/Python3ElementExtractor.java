@@ -236,7 +236,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         int endLine = ctx.getStop().getLine();
 
         if (varNames.size() != values.size()) {
-            throw new IllegalArgumentException("The number of variable names and values does not match");
+            return;
         }
 
         for (int i = 0; i < varNames.size(); i++) {

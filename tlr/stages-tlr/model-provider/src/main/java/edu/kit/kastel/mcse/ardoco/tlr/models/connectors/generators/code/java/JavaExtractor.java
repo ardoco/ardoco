@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
 import java.net.URI;
@@ -67,7 +67,8 @@ public final class JavaExtractor extends CodeExtractor {
         final String[] encodings = new String[sources.length];
         Arrays.fill(encodings, StandardCharsets.UTF_8.toString());
         final SortedMap<String, CompilationUnit> compilationUnits = new TreeMap<>();
-        parser.setEnvironment(new String[0], new String[0], new String[0], false);
+        final String sourceRoot = dir.toAbsolutePath().normalize().toString();
+        parser.setEnvironment(new String[0], new String[] { sourceRoot }, null, true);
         parser.createASTs(sources, encodings, new String[0], new FileASTRequestor() {
             @Override
             public void acceptAST(final String sourceFilePath, final CompilationUnit ast) {
@@ -86,7 +87,6 @@ public final class JavaExtractor extends CodeExtractor {
         parser.setStatementsRecovery(true);
         parser.setCompilerOptions(Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion,
                 JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, javaCoreVersion));
-        parser.setResolveBindings(false);
         return parser;
     }
 

@@ -18,7 +18,7 @@ class JavaExtractorTest {
         JavaElementStorageRegistry manager = (JavaElementStorageRegistry) javaExtractor.getElementExtractor().getElements();
 
         // Assertions
-        Assertions.assertEquals(4, manager.getVariables().size());
+        Assertions.assertEquals(5, manager.getVariables().size());
         Assertions.assertEquals(4, manager.getFunctions().size());
         Assertions.assertEquals(8, manager.getClasses().size());
         Assertions.assertEquals(4, manager.getInterfaces().size());

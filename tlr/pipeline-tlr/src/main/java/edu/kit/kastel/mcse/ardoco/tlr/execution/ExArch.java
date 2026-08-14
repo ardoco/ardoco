@@ -61,7 +61,7 @@ public class ExArch extends ArdocoRunner {
         arDoCo.addPipelineStep(TextPreprocessingAgent.get(additionalConfigs, dataRepository));
 
         ModelProviderAgent arCoTLModelProviderAgent = ModelProviderAgent.getModelProviderAgent(dataRepository, additionalConfigs, null, codeConfiguration
-                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS));
+                .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
         arDoCo.addPipelineStep(arCoTLModelProviderAgent);
 
         LlmArchitectureProviderAgent llmArchitectureProviderAgent = new LlmArchitectureProviderAgent(dataRepository, largeLanguageModel,

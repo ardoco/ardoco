@@ -48,6 +48,9 @@ class JavaExtractorTest {
         Assertions.assertTrue(caller.getCalleeNames().contains("TestClass"));
         Assertions.assertTrue(caller.getCalleeNames().contains("method"));
 
+        Assertions.assertTrue(caller.getCalleeNames().contains("ArrayList"));
+        Assertions.assertFalse(caller.getCalleeNames().stream().anyMatch(name -> name.contains(".") || name.contains("<")));
+
         ControlElement helper = allMethods.stream().filter(m -> "helper".equals(m.getName())).findFirst().orElseThrow();
         Assertions.assertTrue(helper.getCalleeNames().isEmpty());
     }

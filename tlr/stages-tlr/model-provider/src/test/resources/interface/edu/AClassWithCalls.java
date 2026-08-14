@@ -12,6 +12,7 @@ public class AClassWithCalls {
         helper();
         TestClass other = new TestClass();
         other.method();
+        java.util.List<String> list = new java.util.ArrayList<String>();
     }
 
     private void helper() {

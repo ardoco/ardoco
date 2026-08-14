@@ -38,6 +38,7 @@ public abstract class ElementExtractor {
         for (Path file : files) {
             Path absolute = file.toAbsolutePath().normalize();
             Path relative = root.relativize(absolute);
+            logger.warn("Processing file: {}", relative);
             extractContent(absolute, relative);
         }
     }

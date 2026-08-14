@@ -88,10 +88,10 @@ public final class JavaModel {
             ITypeBinding binding = javaClassifier.binding();
             ITypeBinding[] implInterfacesBindings = binding.getInterfaces();
             List<JavaInterface> javaImplInterfaces = Arrays.stream(implInterfacesBindings)
-                    .map(implInterfaceBinding -> javaInterfaces.stream()
+                    .flatMap(implInterfaceBinding -> javaInterfaces.stream()
                             .filter(javaInterface -> javaInterface.binding().getErasure().isEqualTo(implInterfaceBinding.getErasure()))
                             .findFirst()
-                            .orElseThrow())
+                            .stream())
                     .toList();
             SortedSet<Datatype> codeImplInterfaces = new TreeSet<>();
             for (JavaInterface javaImplInterface : javaImplInterfaces) {
@@ -106,10 +106,10 @@ public final class JavaModel {
             ITypeBinding binding = javaInterface.binding();
             ITypeBinding[] extendedInterfacesBindings = binding.getInterfaces();
             List<JavaInterface> javaExtendedInterfaces = Arrays.stream(extendedInterfacesBindings)
-                    .map(extendedInterfaceBinding -> javaInterfaces.stream()
+                    .flatMap(extendedInterfaceBinding -> javaInterfaces.stream()
                             .filter(otherJavaInterface -> otherJavaInterface.binding().getErasure().isEqualTo(extendedInterfaceBinding.getErasure()))
                             .findFirst()
-                            .orElseThrow())
+                            .stream())
                     .toList();
             SortedSet<Datatype> codeExtendedInterfaces = new TreeSet<>();
             for (JavaInterface javaExtendedInterface : javaExtendedInterfaces) {
@@ -126,12 +126,14 @@ public final class JavaModel {
             if (null == superclassBinding) {
                 continue;
             }
-            JavaClassifier javaSuperclass = javaClassifiers.stream()
+            Optional<JavaClassifier> javaSuperclass = javaClassifiers.stream()
                     .filter(otherJavaClass -> otherJavaClass.binding().getErasure().isEqualTo(superclassBinding.getErasure()))
-                    .findFirst()
-                    .orElseThrow();
+                    .findFirst();
+            if (javaSuperclass.isEmpty()) {
+                continue;
+            }
             SortedSet<Datatype> superclasses = new TreeSet<>();
-            superclasses.add(javaSuperclass.codeClassifier());
+            superclasses.add(javaSuperclass.get().codeClassifier());
             javaClassifier.codeClassifier().setExtendedTypes(superclasses);
         }
     }
@@ -301,7 +303,9 @@ public final class JavaModel {
 
             @Override
             public boolean visit(ClassInstanceCreation node) {
-                calleeNames.add(node.getType().toString());
+                ITypeBinding typeBinding = node.getType().resolveBinding();
+                String typeName = (null != typeBinding) ? typeBinding.getErasure().getName() : node.getType().toString();
+                calleeNames.add(typeName);
                 return true;
             }
         });
