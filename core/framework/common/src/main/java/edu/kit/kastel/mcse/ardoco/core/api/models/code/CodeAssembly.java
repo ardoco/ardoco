@@ -58,6 +58,22 @@ public final class CodeAssembly extends CodeModule {
     }
 
     /**
+     * Constructs a new CodeAssembly with language, and import information.
+     *
+     * @param codeItemRepository  the code item repository
+     * @param name                the name of the assembly
+     * @param content             the content of the assembly
+     * @param language            the programming language
+     * @param importedModuleNames the names of imported modules declared in this assembly
+     */
+    public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language,
+            List<String> importedModuleNames) {
+        super(codeItemRepository, name, content);
+        this.language = language;
+        this.importedModuleNames = new ArrayList<>(importedModuleNames);
+    }
+
+    /**
      * Returns the programming language of this assembly.
      *
      * @return the language string
