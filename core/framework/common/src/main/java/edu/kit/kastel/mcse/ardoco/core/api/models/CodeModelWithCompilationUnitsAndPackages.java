@@ -23,7 +23,7 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
      * @param codeModelDto the code model Dto
      */
     public CodeModelWithCompilationUnitsAndPackages(CodeModelDto codeModelDto) {
-        super(codeModelDto.codeItemRepository(), codeModelDto.content());
+        super(codeModelDto.id(), codeModelDto.codeItemRepository(), codeModelDto.content());
         this.codeModel = new CodeModelWithCompilationUnits(codeModelDto);
     }
 

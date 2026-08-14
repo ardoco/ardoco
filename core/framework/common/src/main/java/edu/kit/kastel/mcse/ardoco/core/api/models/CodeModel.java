@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -39,6 +39,20 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     }
 
     /**
+     * Creates a new code model with the specified id, code item repository, and content IDs.
+     *
+     * @param id                 the model id
+     * @param codeItemRepository the code item repository
+     * @param content            list of code item IDs
+     */
+    protected CodeModel(String id, CodeItemRepository codeItemRepository, List<String> content) {
+        super(id);
+        this.initialized = true;
+        this.codeItemRepository = codeItemRepository;
+        this.content = new ArrayList<>(content);
+    }
+
+    /**
      * Creates a new code model with the specified code item repository and content.
      *
      * @param codeItemRepository the code item repository
@@ -59,7 +73,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @return code model DTO
      */
     public CodeModelDto createCodeModelDto() {
-        return new CodeModelDto(codeItemRepository, getContentIds());
+        return new CodeModelDto(getId(), codeItemRepository, getContentIds());
     }
 
     private List<String> getContentIds() {
@@ -106,10 +120,11 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     /**
      * Data transfer object for the code model. Contains a {@link CodeItemRepository} and a list of content identifiers.
      *
+     * @param id                 the model id
      * @param codeItemRepository the repository of code items
      * @param content            the list of content identifiers
      */
-    public record CodeModelDto(@JsonProperty CodeItemRepository codeItemRepository, @JsonProperty List<String> content) {
+    public record CodeModelDto(@JsonProperty String id, @JsonProperty CodeItemRepository codeItemRepository, @JsonProperty List<String> content) {
         /**
          * Returns the code item repository, initializing it if necessary.
          *

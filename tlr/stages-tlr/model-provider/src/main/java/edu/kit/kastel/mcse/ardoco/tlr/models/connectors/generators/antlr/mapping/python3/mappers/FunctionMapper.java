@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
@@ -34,7 +34,7 @@ public class FunctionMapper extends AbstractPython3CodeItemMapper {
     private CodeItem buildControlElement(ElementIdentifier identifier) {
         Element function = this.elementRegistry.getFunction(identifier);
 
-        ControlElement controlElement = new ControlElement(codeItemRepository, function.getName());
+        ControlElement controlElement = new ControlElement(codeItemRepository, function.getName(), function.getStartLine(), function.getEndLine());
         controlElement.setComment(function.getComment());
         return controlElement;
     }
