@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
@@ -80,9 +80,7 @@ public abstract class ElementStorageRegistry {
     public List<Element> getAllElements() {
         List<Element> elements = new ArrayList<>();
         for (ElementStorage<?> storage : storages.values()) {
-            for (Element element : storage.getElements()) {
-                elements.add(new Element(element));
-            }
+            elements.addAll(storage.getElements());
         }
         return elements;
     }
