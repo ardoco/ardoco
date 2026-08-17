@@ -103,10 +103,40 @@ Standardized representation of source code based on the [Knowledge Discovery Mod
 | Category | Classes |
 |----------|---------|
 | **Module** | `CodeCompilationUnit` (source file), `CodePackage` (namespace), `CodeAssembly` (runnable unit) |
-| **Datatype** | `ClassUnit` (class), `InterfaceUnit` (interface); supports `implementedTypes` and `extendedTypes` relationships |
+| **Datatype** | `Datatype` (sealed base) → `ClassUnit` (class), `InterfaceUnit` (interface); supports `implementedTypes` and `extendedTypes` relationships |
 | **ComputationalObject** | `ControlElement` (callable methods) |
 
 All code elements inherit from `CodeItem` (which extends `Entity`).
+
+### Source line ranges and content ownership
+
+`Datatype` and `ControlElement` carry 1-indexed source line ranges to locate each element in its
+source file:
+
+- `getStartLine()` / `getEndLine()` return the inclusive start and end line, or `-1` when the
+  position is unknown (e.g. elements deserialized from older models, or constructs without a
+  concrete source span).
+- The fields are `@JsonProperty`-serialized, so line ranges round-trip through the persisted
+  `CodeModel`/`CodeModelDto`.
+
+Two related structural changes were folded in with the line-range work:
+
+- **`content` ownership** — `ClassUnit` and `InterfaceUnit` no longer declare their own
+  `content` list or `getContent()`/`getContentIds()`/`getAllDataTypes()`. That responsibility moved
+  up to `Datatype` (`.../api/models/code/Datatype.java`), which stores content IDs and provides
+  `getContent()`, `getContentIds()` (via `@JsonGetter("content")`), and `getAllDataTypes()`. The
+  sealed `Datatype` is now the single source of truth; `ClassUnit`/`InterfaceUnit` only add
+  type-specific constructors.
+- **Model id persistence** — `Model` (`.../api/models/Model.java`) gained a protected
+  `Model(String id)` constructor (a `null` id falls back to `IdentifierProvider.createId()`), and
+  `CodeModel.CodeModelDto` now carries an `id` field so a deserialized `CodeModel` retains its
+  original id rather than being regenerated. `equals`/`hashCode` on `Datatype` and `ControlElement`
+  now incorporate `startLine`/`endLine` (and, for `Datatype`, `content`), so identity follows the
+  new fields.
+
+When extending the code model, add new fields on the appropriate base (`Datatype` for class-like
+members, `ControlElement` for callables), keep them `@JsonProperty`-annotated, and update the
+corresponding `equals`/`hashCode` so deserialized instances stay identity-stable.
 
 ### Entity Hierarchy
 

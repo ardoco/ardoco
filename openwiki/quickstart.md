@@ -97,11 +97,12 @@ When changing a specific area, start at the listed page and use the focused vali
 | Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/inconsistency-detection/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `TextEntityAbsentFromModelInconsistencyAgent`, `ModelEntityAbsentFromTextInconsistencyAgent` | `tests-inconsistency` integration tests | `mvn -pl inconsistency-detection clean verify` |
 | Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` | `mvn spotless:check && mvn clean verify` |
 | Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureItem`, `CodeItem`, `Entity` | `core/tests-base` | `mvn -pl core/framework/common clean verify` |
+| Code model data model (line ranges, content, id) | [Architecture](architecture.md) | `core/framework/common/.../api/models/code/`, `.../api/models/Model.java`, `.../api/models/CodeModel.java` | `Datatype`, `ClassUnit`, `InterfaceUnit`, `ControlElement`, `Model`, `CodeModelDto` | `tlr/stages-tlr/model-provider` mapper/extractor tests | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Code model extraction / ANTLR mappers / legacy JavaModel | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/.../antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `tlr/stages-tlr/model-provider` tests | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
 
 ## Existing Wiki Documentation
 
-<!-- openwiki: broken internal link [../docs] file "../docs" does not exist. Fix the href or restore the target, then delete this comment. -->
-The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) with source files in [`/docs`](../docs). This OpenWiki serves as an opinionated map and synthesis over those docs, with added source-level detail for developers and agents.
+The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) with source files in [`/docs`](../docs/Home.md). This OpenWiki serves as an opinionated map and synthesis over those docs, with added source-level detail for developers and agents.
 
 ## External Repositories
 
