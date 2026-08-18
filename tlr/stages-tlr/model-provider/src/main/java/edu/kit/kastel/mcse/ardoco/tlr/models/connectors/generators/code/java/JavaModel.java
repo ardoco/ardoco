@@ -150,6 +150,19 @@ public final class JavaModel {
         }
     }
 
+    /**
+     * Returns the fully-qualified names of all imports declared in the given AST
+     * compilation unit.
+     */
+    private static List<String> extractImportedModuleNames(CompilationUnit astUnit) {
+        @SuppressWarnings("unchecked") List<ImportDeclaration> imports = astUnit.imports();
+        List<String> importedNames = new ArrayList<>();
+        for (ImportDeclaration importDeclaration : imports) {
+            importedNames.add(importDeclaration.getName().getFullyQualifiedName());
+        }
+        return importedNames;
+    }
+
     private static List<ITypeBinding> getReferencedBindings(AbstractTypeDeclaration abstractTypeDeclaration) {
         @SuppressWarnings("unchecked") List<BodyDeclaration> bodyDeclarations = abstractTypeDeclaration.bodyDeclarations();
         List<Type> referencedTypes = new ArrayList<>();
@@ -190,8 +203,9 @@ public final class JavaModel {
                 Name fullName = packageDeclaration.getName();
                 packageNames = getPackageNames(fullName);
             }
+            List<String> importedModuleNames = extractImportedModuleNames(compilationUnit);
             CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements,
-                    extension, ProgrammingLanguage.JAVA);
+                    extension, ProgrammingLanguage.JAVA, importedModuleNames);
             codeCompilationUnits.add(codeCompilationUnit);
             if (null != packageDeclaration) {
                 CodePackage codePackage = getPackage(packageNames, codeCompilationUnit);
@@ -277,7 +291,21 @@ public final class JavaModel {
     private ControlElement extractMethod(MethodDeclaration methodDeclaration, CompilationUnit compilationUnit) {
         int startLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition());
         int endLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition() + methodDeclaration.getLength());
-        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine);
+        List<String> calleeNames = new ArrayList<>();
+        methodDeclaration.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodInvocation node) {
+                calleeNames.add(node.getName().getIdentifier());
+                return true;
+            }
+
+            @Override
+            public boolean visit(ClassInstanceCreation node) {
+                calleeNames.add(node.getType().toString());
+                return true;
+            }
+        });
+        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine, calleeNames);
     }
 
     private static List<String> getPackageNames(Name name) {

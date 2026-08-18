@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.SortedSet;
@@ -35,7 +35,7 @@ public class ModuleMapper extends AbstractPython3CodeItemMapper {
     private CodeAssembly buildCodeAssembly(ElementIdentifier identifier) {
         Element module = elementRegistry.getModule(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
-        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name());
+        CodeAssembly codeAssembly = new CodeAssembly(codeItemRepository, module.getName(), content, this.language.name(), module.getImports());
         codeAssembly.setComment(module.getComment());
         return codeAssembly;
     }

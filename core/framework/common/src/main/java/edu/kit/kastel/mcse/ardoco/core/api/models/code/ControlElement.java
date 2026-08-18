@@ -2,6 +2,9 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -18,8 +21,12 @@ public final class ControlElement extends ComputationalObject {
 
     @JsonProperty
     private int startLine = -1;
+
     @JsonProperty
     private int endLine = -1;
+
+    @JsonProperty
+    private List<String> calleeNames;
 
     /**
      * Default constructor for Jackson.
@@ -46,11 +53,13 @@ public final class ControlElement extends ComputationalObject {
      * @param name               the name of the control element
      * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
      * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
+     * @param calleeNames        the names of the callees of this control element
      */
-    public ControlElement(CodeItemRepository codeItemRepository, String name, int startLine, int endLine) {
+    public ControlElement(CodeItemRepository codeItemRepository, String name, int startLine, int endLine, List<String> calleeNames) {
         super(codeItemRepository, name);
         this.startLine = startLine;
         this.endLine = endLine;
+        this.calleeNames = calleeNames != null ? new ArrayList<>(calleeNames) : new ArrayList<>();
     }
 
     /**
@@ -71,6 +80,15 @@ public final class ControlElement extends ComputationalObject {
         return endLine;
     }
 
+    /**
+     * Returns the names of the callees of this control element.
+     *
+     * @return unmodifiable list of callee names
+     */
+    public List<String> getCalleeNames() {
+        return this.calleeNames != null ? List.copyOf(calleeNames) : List.of();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -79,13 +97,15 @@ public final class ControlElement extends ComputationalObject {
         if (!(o instanceof ControlElement that) || !super.equals(o)) {
             return false;
         }
-        return this.startLine == that.startLine && this.endLine == that.endLine;
+        return this.startLine == that.startLine && this.endLine == that.endLine && Objects.equals(this.calleeNames, that.calleeNames);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + this.startLine;
-        return 31 * result + this.endLine;
+        result = 31 * result + this.endLine;
+        result = 31 * result + (this.calleeNames != null ? this.calleeNames.hashCode() : 0);
+        return result;
     }
 }
