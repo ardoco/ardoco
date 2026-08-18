@@ -235,11 +235,11 @@ public final class JavaModel {
         Map<ASTNode, Datatype> codeTypes = new LinkedHashMap<>();
         Set<TypeDeclaration> typeDeclarations = TypeDeclarationFinder.find(compilationUnit);
         for (TypeDeclaration typeDeclaration : typeDeclarations) {
-            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration));
+            codeTypes.put(typeDeclaration, processTypeDeclaration(typeDeclaration, compilationUnit));
         }
         Set<EnumDeclaration> enumDeclarations = EnumDeclarationFinder.find(compilationUnit);
         for (EnumDeclaration enumDeclaration : enumDeclarations) {
-            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration));
+            codeTypes.put(enumDeclaration, processEnumDeclaration(enumDeclaration, compilationUnit));
         }
         for (var entry : codeTypes.entrySet()) {
             ASTNode node = entry.getKey();
@@ -251,40 +251,46 @@ public final class JavaModel {
         return codeTypes.values().stream().toList();
     }
 
-    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration) {
+    private ClassUnit processEnumDeclaration(EnumDeclaration enumDeclaration, CompilationUnit compilationUnit) {
         String name = enumDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration);
-        ClassUnit codeClassifier = new ClassUnit(codeItemRepository, name, declaredMethods);
+        SortedSet<ControlElement> declaredMethods = extractMethods(enumDeclaration, compilationUnit);
+        int startLine = compilationUnit.getLineNumber(enumDeclaration.getStartPosition());
+        int endLine = compilationUnit.getLineNumber(enumDeclaration.getStartPosition() + enumDeclaration.getLength());
+        ClassUnit codeClassifier = new ClassUnit(codeItemRepository, name, declaredMethods, startLine, endLine);
         addClassifier(codeClassifier, enumDeclaration);
         return codeClassifier;
     }
 
-    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration) {
+    private Datatype processTypeDeclaration(TypeDeclaration typeDeclaration, CompilationUnit compilationUnit) {
         String name = typeDeclaration.getName().getIdentifier();
-        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration);
+        SortedSet<ControlElement> declaredMethods = extractMethods(typeDeclaration, compilationUnit);
+        int startLine = compilationUnit.getLineNumber(typeDeclaration.getStartPosition());
+        int endLine = compilationUnit.getLineNumber(typeDeclaration.getStartPosition() + typeDeclaration.getLength());
         Datatype codeType;
         if (typeDeclaration.isInterface()) {
-            InterfaceUnit codeInterface = new InterfaceUnit(codeItemRepository, name, declaredMethods);
+            InterfaceUnit codeInterface = new InterfaceUnit(codeItemRepository, name, declaredMethods, startLine, endLine);
             addInterface(codeInterface, typeDeclaration);
             codeType = codeInterface;
         } else {
-            ClassUnit classifier = new ClassUnit(codeItemRepository, name, declaredMethods);
+            ClassUnit classifier = new ClassUnit(codeItemRepository, name, declaredMethods, startLine, endLine);
             addClassifier(classifier, typeDeclaration);
             codeType = classifier;
         }
         return codeType;
     }
 
-    private SortedSet<ControlElement> extractMethods(ASTNode node) {
+    private SortedSet<ControlElement> extractMethods(ASTNode node, CompilationUnit compilationUnit) {
         SortedSet<ControlElement> declaredMethods = new TreeSet<>();
         Set<MethodDeclaration> methodDeclarations = MethodDeclarationFinder.find(node);
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
-            declaredMethods.add(extractMethod(methodDeclaration));
+            declaredMethods.add(extractMethod(methodDeclaration, compilationUnit));
         }
         return declaredMethods;
     }
 
-    private ControlElement extractMethod(MethodDeclaration methodDeclaration) {
+    private ControlElement extractMethod(MethodDeclaration methodDeclaration, CompilationUnit compilationUnit) {
+        int startLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition());
+        int endLine = compilationUnit.getLineNumber(methodDeclaration.getStartPosition() + methodDeclaration.getLength());
         List<String> calleeNames = new ArrayList<>();
         methodDeclaration.accept(new ASTVisitor() {
             @Override
@@ -299,7 +305,7 @@ public final class JavaModel {
                 return true;
             }
         });
-        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), calleeNames);
+        return new ControlElement(codeItemRepository, methodDeclaration.getName().getIdentifier(), startLine, endLine, calleeNames);
     }
 
     private static List<String> getPackageNames(Name name) {

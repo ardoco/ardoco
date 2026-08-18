@@ -1,14 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
@@ -19,9 +14,6 @@ public final class InterfaceUnit extends Datatype {
 
     @Serial
     private static final long serialVersionUID = 7746781256077022392L;
-
-    @JsonProperty
-    private List<String> content;
 
     @SuppressWarnings("unused")
     private InterfaceUnit() {
@@ -36,46 +28,20 @@ public final class InterfaceUnit extends Datatype {
      * @param content            the content of the interface unit
      */
     public InterfaceUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
-        super(codeItemRepository, name);
-        this.content = new ArrayList<>();
-        for (var codeItem : content) {
-            this.content.add(codeItem.getId());
-        }
+        super(codeItemRepository, name, content);
     }
 
     /**
-     * Returns the content IDs of this interface unit.
+     * Creates a new interface unit with the specified name, content, and source location.
      *
-     * @return list of content IDs
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the interface unit
+     * @param content            the content of the interface unit
+     * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
+     * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
      */
-    @JsonGetter("content")
-    public List<String> getContentIds() {
-        return new ArrayList<>(this.content);
-    }
-
-    /**
-     * Returns the content of this interface unit as a list of code items.
-     *
-     * @return list of code items
-     */
-    @Override
-    public List<CodeItem> getContent() {
-        return this.codeItemRepository.getCodeItemsByIds(this.content);
-    }
-
-    /**
-     * Returns all data types contained in this interface unit.
-     *
-     * @return list of all data types
-     */
-    @Override
-    public List<Datatype> getAllDataTypes() {
-        List<Datatype> result = new ArrayList<>();
-        result.add(this);
-        for (CodeItem codeItem : this.getContent()) {
-            result.addAll(codeItem.getAllDataTypes());
-        }
-        return result;
+    public InterfaceUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, int startLine, int endLine) {
+        super(codeItemRepository, name, content, startLine, endLine);
     }
 
     @Override
@@ -83,16 +49,6 @@ public final class InterfaceUnit extends Datatype {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof InterfaceUnit that) || !super.equals(o)) {
-            return false;
-        }
-
-        return Objects.equals(this.content, that.content);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        return 31 * result + (this.content != null ? this.content.hashCode() : 0);
+        return o instanceof InterfaceUnit && super.equals(o);
     }
 }

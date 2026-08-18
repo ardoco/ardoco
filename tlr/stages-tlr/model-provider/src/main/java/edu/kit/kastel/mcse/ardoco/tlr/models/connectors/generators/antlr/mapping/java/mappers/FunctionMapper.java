@@ -33,7 +33,7 @@ public class FunctionMapper extends AbstractJavaCodeItemMapper {
     private CodeItem buildControlElement(ElementIdentifier identifier) {
         Element function = this.elementRegistry.getFunction(identifier);
 
-        ControlElement controlElement = new ControlElement(codeItemRepository, function.getName(), function.getCalleeNames());
+        ControlElement controlElement = new ControlElement(codeItemRepository, function.getName(), function.getStartLine(), function.getEndLine(), function.getCalleeNames());
         controlElement.setComment(function.getComment());
         return controlElement;
     }

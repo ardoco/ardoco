@@ -116,8 +116,17 @@ Extracts architecture models (PCM, UML) and code models (Java, C++, Python).
 - **Agents**: `ModelProviderAgent`, `LlmArchitectureProviderAgent` (generates SAM from text via LLM)
 - **Informants**: `ModelProviderInformant`, `LlmArchitectureProviderInformant`
 - **Configurations**: `ArchitectureConfiguration` (PCM/UML), `CodeConfiguration` (Java/C++/Python)
-- **Code extraction**: Uses ANTLR-based parsers under `connectors/generators/antlr/`
-- **Output**: `ArchitectureModel` or `CodeModel` stored in `ModelStates`
+- **Code extraction**: Uses ANTLR-based parsers under `connectors/generators/antlr/` (current path
+  for Java, C++, and Python) plus the Eclipse-JDT-based legacy extractor under
+  `connectors/generators/code/java/JavaModel.java`
+- **Line numbers**: Extractors populate the code model's 1-indexed `startLine`/`endLine` ranges.
+  The ANTLR language mappers read them from the parsed `Element` (`getStartLine()`/`getEndLine()`)
+  and pass them into the `ClassUnit`/`InterfaceUnit`/`ControlElement` constructors
+  (`.../antlr/mapping/{cpp,java,python3}/mappers/ClassMapper.java`, `FunctionMapper.java`,
+  `InterfaceMapper.java`). The legacy `JavaModel` derives them from the JDT `CompilationUnit`
+  via `compilationUnit.getLineNumber(...)`.
+- **Output**: `ArchitectureModel` or `CodeModel` (see the [Code Model](architecture.md#code-model)
+  section in Architecture) stored in `ModelStates`
 
 ### 4. Recommendation Generator (`recommendation-generator/`)
 
