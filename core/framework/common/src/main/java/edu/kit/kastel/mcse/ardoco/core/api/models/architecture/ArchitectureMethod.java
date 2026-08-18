@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.architecture;
 
 import java.io.Serial;
@@ -22,6 +22,16 @@ public final class ArchitectureMethod extends ArchitectureItem {
      */
     public ArchitectureMethod(String name) {
         super(name);
+    }
+
+    /**
+     * Creates a new ArchitectureMethod with a specific identifier.
+     *
+     * @param name the name of the method
+     * @param id   the unique identifier
+     */
+    public ArchitectureMethod(String name, String id) {
+        super(name, id);
     }
 
     /**
