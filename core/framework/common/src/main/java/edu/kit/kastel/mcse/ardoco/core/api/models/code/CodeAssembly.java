@@ -70,7 +70,7 @@ public final class CodeAssembly extends CodeModule {
             List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.language = language;
-        this.importedModuleNames = new ArrayList<>(importedModuleNames);
+        this.importedModuleNames = importedModuleNames != null ? new ArrayList<>(importedModuleNames) : new ArrayList<>();
     }
 
     /**
