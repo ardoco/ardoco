@@ -21,7 +21,7 @@ public final class ControlElement extends ComputationalObject {
 
     @JsonProperty
     private int startLine = -1;
-    
+
     @JsonProperty
     private int endLine = -1;
 
