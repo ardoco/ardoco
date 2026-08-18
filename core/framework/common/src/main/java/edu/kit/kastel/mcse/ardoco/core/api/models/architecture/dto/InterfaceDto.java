@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package edu.kit.kastel.mcse.ardoco.core.api.models.dto;
+package edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto;
 
 import java.util.SortedSet;
 

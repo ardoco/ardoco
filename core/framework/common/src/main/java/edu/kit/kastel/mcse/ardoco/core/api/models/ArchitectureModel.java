@@ -12,12 +12,12 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.ArchitectureItemDto;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.ArchitectureItemRepository;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.ArchitectureModelDto;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.ComponentDto;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.InterfaceDto;
-import edu.kit.kastel.mcse.ardoco.core.api.models.dto.MethodDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.ArchitectureItemDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.ArchitectureItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.ArchitectureModelDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.ComponentDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.InterfaceDto;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.dto.MethodDto;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
