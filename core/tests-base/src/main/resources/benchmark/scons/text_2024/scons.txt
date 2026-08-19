@@ -246,7 +246,8 @@ It's only responsible for walking the dependency graph and deciding when a given
 A `Node` is ready for evaluation when all of its children (if any) are up-to-date.
 As part of determining a `Node's` current list of children, the `Node` and its source files may be scanned for implicit dependencies.
 The second part is the `Task` class, which handles a `Node` after the `Taskmaster` has decided it's ready for evaluation.
-It controls whether or not the must be checked or whether the `Node` should always be "built."  The `Task` class is intended to be sub-classed by the wrapping interface to provide custom behavior, such as whether or not a message should be printed if a target is up-to-date, how exceptions should be handled, _etc_.
+It controls whether or not the must be checked or whether the `Node` should always be "built".
+The `Task` class is intended to be sub-classed by the wrapping interface to provide custom behavior, such as whether or not a message should be printed if a target is up-to-date, how exceptions should be handled, _etc_.
 * `Taskmaster`.
 * `Taskmaster.py`.
 * `Stats`.
