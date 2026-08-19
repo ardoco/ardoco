@@ -6,6 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
+
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyState;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -24,7 +29,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistentSentence;
@@ -244,17 +248,17 @@ public record ArdocoResult(DataRepository dataRepository) {
     }
 
     /**
-     * Returns the internal {@link NerConnectionState} for the model with the given metamodel or null if there is none.
+     * Returns the internal {@link ArtemisConnectionState} for the model with the given artemisTarget or null if there is none.
      *
-     * @param metamodel the metamodel to get the connection state for
-     * @return the connection state or null if there is no {@link ConnectionState} for the given metamodel
+     * @param artemisTarget the artemis target to get the connection state for
+     * @return the state or null if there is no connection state for the given artemisTarget
      */
-    public NerConnectionState getNerConnectionState(Metamodel metamodel) {
-        if (DataRepositoryHelper.hasNerConnectionStates(this.dataRepository)) {
-            var connectionStates = DataRepositoryHelper.getNerConnectionStates(this.dataRepository);
-            return connectionStates.getNerConnectionState(metamodel);
+    public ArtemisConnectionState getArtemisConnectionState(ArtemisTarget artemisTarget) {
+        if (DataRepositoryHelper.hasArtemisConnectionStates(this.dataRepository)) {
+            var states = DataRepositoryHelper.getArtemisConnectionStates(this.dataRepository);
+            return states.getState(artemisTarget);
         }
-        logger.warn("No NerConnectionState found.");
+        logger.warn("No ArtemisConnectionState found.");
         return null;
     }
 

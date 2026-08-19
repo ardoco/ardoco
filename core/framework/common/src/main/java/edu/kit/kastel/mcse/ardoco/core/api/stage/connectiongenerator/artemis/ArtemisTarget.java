@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.tlr.artemis.states;
+package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis;
 
 import java.io.Serial;
 import java.io.Serializable;

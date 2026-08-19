@@ -1,6 +1,5 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -15,8 +14,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityState;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -32,8 +31,8 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
         this.llmForNer = Objects.requireNonNull(llmForNer);
     }
 
-    private static ArtemisTraceabilityState getArtemisTraceabilityState(ArdocoResult result, ArtemisNerStrategy strategy) {
-        ArtemisTraceabilityStates states = result.dataRepository().getData(ArtemisTraceabilityStates.ID, ArtemisTraceabilityStatesImpl.class).orElseThrow();
+    private static ArtemisConnectionState getArtemisTraceabilityState(ArdocoResult result, ArtemisNerStrategy strategy) {
+        ArtemisConnectionStates states = result.dataRepository().getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class).orElseThrow();
         return states.getState(strategy.getTarget());
     }
 
@@ -77,7 +76,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
 
     public SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard,
             ArtemisNerStrategy strategy) {
-        ArtemisTraceabilityState state = getArtemisTraceabilityState(result, strategy);
+        ArtemisConnectionState state = getArtemisTraceabilityState(result, strategy);
         System.out.println("unlinked: " + state.getUnlinkedNamedEntities());
         var traceLinksAsStrings = getTraceLinksAsStrings(state);
         var goldStandardAsStrings = enrollGoldStandard(goldStandard, result, strategy.getMetamodel()).stream()
@@ -98,7 +97,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
 
     protected abstract ArtemisNerStrategy getStrategy();
 
-    protected abstract MutableSortedSet<String> getTraceLinksAsStrings(ArtemisTraceabilityState state);
+    protected abstract MutableSortedSet<String> getTraceLinksAsStrings(ArtemisConnectionState state);
 
     protected abstract ArdocoRunner createArtemisRunner();
 }

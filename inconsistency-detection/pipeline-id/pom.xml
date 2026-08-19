@@ -43,6 +43,16 @@
       <artifactId>text-preprocessing</artifactId>
       <version>${revision}</version>
     </dependency>
+      <dependency>
+          <groupId>io.github.ardoco.tlr</groupId>
+          <artifactId>artemis</artifactId>
+          <version>${revision}</version>
+      </dependency>
+      <dependency>
+          <groupId>io.github.ardoco.id</groupId>
+          <artifactId>artemis-inconsistency-detection</artifactId>
+          <version>${revision}</version>
+      </dependency>
   </dependencies>
 
   <profiles>

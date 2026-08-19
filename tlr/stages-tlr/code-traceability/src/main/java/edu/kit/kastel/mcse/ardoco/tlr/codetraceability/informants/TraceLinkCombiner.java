@@ -4,8 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 import java.io.Serial;
 
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTarget;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
@@ -46,7 +46,7 @@ public class TraceLinkCombiner extends Informant {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(this.getDataRepository());
 
         var swattrConnectionState = this.getDataRepository().getData(ConnectionStates.ID, ConnectionStates.class);
-        var artemisConnectionState = this.getDataRepository().getData(ArtemisTraceabilityStates.ID, ArtemisTraceabilityStates.class);
+        var artemisConnectionState = this.getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisConnectionStates.class);
 
         if (codeTraceabilityState == null || modelStatesData == null || (swattrConnectionState.isEmpty() && artemisConnectionState.isEmpty())) {
             return;

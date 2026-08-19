@@ -11,8 +11,9 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
@@ -21,7 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
  * Traceability state for one ArTEMiS target, e.g. components, classes, or functions.
  */
 @Deterministic
-public class ArtemisTraceabilityStateImpl extends AbstractState implements ArtemisTraceabilityState {
+public class ArtemisTraceabilityStateImpl extends AbstractState implements ArtemisConnectionState {
 
     @Serial
     private static final long serialVersionUID = 1L;

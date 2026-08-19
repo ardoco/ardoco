@@ -130,7 +130,7 @@ public class ComponentArtemisNerStrategy implements ArtemisNerStrategy {
         return new TwoPartPrompt(taskPrompt, formattingPrompt);
     }
 
-    private StringBuilder getPossibleEntities(DataRepository dataRepository) {
+    protected StringBuilder getPossibleEntities(DataRepository dataRepository) {
         Map<NamedEntityType, Set<String>> possibleEntities = new EnumMap<>(NamedEntityType.class);
         possibleEntities.put(NamedEntityType.COMPONENT, new TreeSet<>());
 

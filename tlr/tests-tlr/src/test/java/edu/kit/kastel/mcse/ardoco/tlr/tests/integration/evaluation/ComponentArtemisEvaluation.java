@@ -8,7 +8,7 @@ import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
@@ -44,7 +44,7 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
     }
 
     @Override
-    protected MutableSortedSet<String> getTraceLinksAsStrings(ArtemisTraceabilityState state) {
+    protected MutableSortedSet<String> getTraceLinksAsStrings(ArtemisConnectionState state) {
         return state.getTraceLinks()
                 .stream()
                 .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().getId())

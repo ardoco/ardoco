@@ -1,5 +1,5 @@
 /* Licensed under MIT 2025. */
-package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
+package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis;
 
 import java.util.List;
 import java.util.Objects;

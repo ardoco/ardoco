@@ -7,7 +7,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
@@ -183,20 +183,20 @@ public final class DataRepositoryHelper {
      * @param dataRepository the DataRepository to access
      * @return true, if there is {@link ConnectionStates} within the {@link DataRepository}; else, false
      */
-    public static boolean hasNerConnectionStates(DataRepository dataRepository) {
-        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).isPresent();
+    public static boolean hasArtemisConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStates.class).isPresent();
     }
 
     /**
-     * Returns the {@link NerConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and
+     * Returns the {@link ArtemisConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and
      * throw an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
      * {@link #hasConnectionStates(DataRepository)}
      *
      * @param dataRepository the DataRepository to access
      * @return the state
      */
-    public static NerConnectionStates getNerConnectionStates(DataRepository dataRepository) {
-        return dataRepository.getData(NerConnectionStates.ID, NerConnectionStates.class).orElseThrow();
+    public static ArtemisConnectionStates getArtemisConnectionStates(DataRepository dataRepository) {
+        return dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStates.class).orElseThrow();
     }
 
     /**

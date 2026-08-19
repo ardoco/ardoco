@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.agents.ArtemisNerAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTarget;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStates;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -32,7 +32,7 @@ public class ArtemisNer extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
-        var existingStates = getDataRepository().getData(ArtemisTraceabilityStates.ID, ArtemisTraceabilityStatesImpl.class);
+        var existingStates = getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class);
         if (existingStates.isPresent()) {
             for (ArtemisNerStrategy strategy : strategies) {
                 existingStates.get().getState(strategy.getTarget());
@@ -41,6 +41,6 @@ public class ArtemisNer extends AbstractExecutionStage {
         }
 
         List<ArtemisTarget> targets = strategies.stream().map(ArtemisNerStrategy::getTarget).toList();
-        getDataRepository().addData(ArtemisTraceabilityStates.ID, ArtemisTraceabilityStatesImpl.build(targets));
+        getDataRepository().addData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.build(targets));
     }
 }

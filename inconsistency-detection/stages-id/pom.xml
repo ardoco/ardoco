@@ -13,5 +13,6 @@
   <description>Individual stages and components for Inconsistency Detection (ID).</description>
   <modules>
     <module>inconsistency-detection</module>
+    <module>artemis-inconsistency-detection</module>
   </modules>
 </project>
