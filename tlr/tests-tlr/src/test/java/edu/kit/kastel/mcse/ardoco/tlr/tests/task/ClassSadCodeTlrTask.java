@@ -54,6 +54,9 @@ public enum ClassSadCodeTlrTask implements TlrTask {
             }
             int sentenceId = Integer.parseInt(parts[0].trim());
             String modelElementId = parts[1].trim();
+            if (modelElementId.contains(".")){ //in the goldstandard we sometimes have the classname like this: "Environment.Base" but the real name of the class in this case would be "Base"
+                modelElementId = modelElementId.substring(modelElementId.lastIndexOf(".") + 1);
+            }
             expectedLinks.add(new Pair<>(sentenceId, modelElementId));
         }
 

@@ -57,6 +57,12 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
         if (namedEntity.getName().equalsIgnoreCase(modelEndpoint.getName())) {
             return true;
         }
+        
+        for (var alternativeName : namedEntity.getAlternativeNames()) {
+            if (alternativeName.equalsIgnoreCase(modelEndpoint.getName())) {
+                return true;
+            }
+        }
 
         /*if (areStronglySimilar(similarityUtils, namedEntity, modelEndpoint)) {
             return true;
