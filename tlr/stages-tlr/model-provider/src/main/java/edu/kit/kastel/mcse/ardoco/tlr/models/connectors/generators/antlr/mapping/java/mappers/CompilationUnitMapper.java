@@ -44,7 +44,7 @@ public class CompilationUnitMapper extends AbstractJavaCodeItemMapper {
 
         PackageElement pack = elementRegistry.getPackage(compilationUnit.getParentIdentifier());
         CodeCompilationUnit codeCompilationUnit = new CodeCompilationUnit(codeItemRepository, compilationUnit.getName(), content, pathElements, pack.getName(),
-                this.language);
+                this.language, compilationUnit.getImports());
         codeCompilationUnit.setComment(compilationUnit.getComment());
         for (Datatype type : codeCompilationUnit.getAllDataTypes()) {
             type.setCompilationUnit(codeCompilationUnit);

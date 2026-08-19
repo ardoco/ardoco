@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser;
@@ -34,6 +36,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
 @SuppressWarnings("java:S100")
 public class Python3ElementExtractor extends ElementExtractor {
     private final Python3ElementStorageRegistry elementRegistry;
+    private final LinkedHashMap<String, List<String>> pendingImportsByPath = new LinkedHashMap<>();
 
     public Python3ElementExtractor() {
         super();
@@ -151,19 +154,54 @@ public class Python3ElementExtractor extends ElementExtractor {
         int startLine = ctx.getStart().getLine();
         int endLine = ctx.getStop().getLine();
 
+        List<String> calleeNames = new ArrayList<>();
         if (ctx.block() != null && ctx.block().stmt() != null) {
             for (Python3Parser.StmtContext stmt : ctx.block().stmt()) {
                 visitStmt(stmt, identifier);
             }
+            collectCallNamesFromTree(ctx.block(), calleeNames);
         }
-        addFunctionElement(name, path, parentIdentifier, startLine, endLine);
+        addFunctionElement(name, path, parentIdentifier, startLine, endLine, calleeNames);
         return identifier;
     }
 
     public void visitSimple_stmt(Python3Parser.Simple_stmtContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.expr_stmt() != null) {
             visitExpr_stmt(ctx.expr_stmt(), parentIdentifier);
+        } else if (ctx.import_stmt() != null) {
+            visitImport_stmt(ctx.import_stmt());
         }
+    }
+
+    private void visitImport_name(Python3Parser.Import_nameContext ctx, List<String> importedNames) {
+        for (Python3Parser.Dotted_as_nameContext dotted : ctx.dotted_as_names().dotted_as_name()) {
+            importedNames.add(dotted.dotted_name().getText());
+        }
+    }
+
+    private void visitImport_from(Python3Parser.Import_fromContext ctx, List<String> importedNames) {
+        String base = ctx.dotted_name() != null ? ctx.dotted_name().getText() : "";
+        if (ctx.import_as_names() != null) {
+            for (Python3Parser.Import_as_nameContext name : ctx.import_as_names().import_as_name()) {
+                importedNames.add(base.isEmpty() ? name.name(0).getText() : base + "." + name.name(0).getText());
+            }
+        } else if (!base.isEmpty()) {
+            importedNames.add(base);
+        }
+    }
+
+    public void visitImport_stmt(Python3Parser.Import_stmtContext ctx) {
+        List<String> importedNames = new ArrayList<>();
+        if (ctx.import_name() != null) {
+            visitImport_name(ctx.import_name(), importedNames);
+        } else if (ctx.import_from() != null) {
+            visitImport_from(ctx.import_from(), importedNames);
+        }
+        String importPath = PathExtractor.extractPath(ctx);
+        if (!pendingImportsByPath.containsKey(importPath)) {
+            pendingImportsByPath.put(importPath, new ArrayList<>());
+        }
+        pendingImportsByPath.get(importPath).addAll(importedNames);
     }
 
     public void visitExpr_stmt(Python3Parser.Expr_stmtContext ctx, ElementIdentifier parentIdentifier) {
@@ -243,10 +281,51 @@ public class Python3ElementExtractor extends ElementExtractor {
         elementRegistry.addVariable(variable);
     }
 
-    private void addFunctionElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine) {
+    private void addFunctionElement(String name, String path, ElementIdentifier parentIdentifier, int startLine, int endLine, List<String> calleeNames) {
         Type type = Type.FUNCTION;
         Element function = new Element(name, path, type, parentIdentifier, startLine, endLine);
+        for (String callee : calleeNames) {
+            function.addCalleeName(callee);
+        }
         elementRegistry.addFunction(function);
+    }
+
+    private void collectCallNamesFromTree(ParseTree tree, List<String> names) {
+        if (tree instanceof Python3Parser.Atom_exprContext atomExpr) {
+            visitAtom_expr(atomExpr, names);
+        }
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            collectCallNamesFromTree(tree.getChild(i), names);
+        }
+    }
+
+    private void collectCallNameFromTrailer(Python3Parser.TrailerContext trailer, List<String> names) {
+        if (trailer.name() != null) {
+            names.add(trailer.name().getText());
+        }
+    }
+
+    private void collectCallNameFromAtom(Python3Parser.AtomContext atom, List<String> names) {
+        if (atom.name() != null) {
+            names.add(atom.name().getText());
+        }
+    }
+
+    private void visitAtom_expr(Python3Parser.Atom_exprContext atomExpr, List<String> names) {
+        if (atomExpr.trailer() == null || atomExpr.trailer().isEmpty()) {
+            return;
+        }
+        List<Python3Parser.TrailerContext> trailers = atomExpr.trailer();
+        for (int i = 0; i < trailers.size(); i++) {
+            Python3Parser.TrailerContext trailer = trailers.get(i);
+            if (trailer.getChildCount() > 0 && "(".equals(trailer.getChild(0).getText())) {
+                if (i > 0) {
+                    collectCallNameFromTrailer(trailers.get(i - 1), names);
+                } else {
+                    collectCallNameFromAtom(atomExpr.atom(), names);
+                }
+            }
+        }
     }
 
     private void addClassElement(String name, String path, ElementIdentifier parentIdentifier, List<String> childClassOf, int startLine, int endLine) {
@@ -262,6 +341,10 @@ public class Python3ElementExtractor extends ElementExtractor {
         String packageName = addPackage(packagePath);
         ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
         Element module = new Element(name, path, type, parentIdentifier);
+        List<String> imports = pendingImportsByPath.containsKey(path) ? pendingImportsByPath.get(path) : List.of();
+        for (String imp : imports) {
+            module.addImport(imp);
+        }
         elementRegistry.addModule(module);
     }
 

@@ -1,6 +1,8 @@
 /* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.mappers;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
