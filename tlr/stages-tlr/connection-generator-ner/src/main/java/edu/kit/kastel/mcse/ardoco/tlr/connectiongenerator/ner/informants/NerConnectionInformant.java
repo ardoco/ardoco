@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.informants;
 
 import java.util.LinkedHashMap;
@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -22,9 +20,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConn
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingConfiguration;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingCreator;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingPlatform;
 import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
 
 @Deterministic
@@ -39,6 +39,7 @@ public class NerConnectionInformant extends Informant {
     private ModelStates modelStatesData;
     private final Map<ModelEntity, List<Embedding>> modelEntityEmbeddings = new LinkedHashMap<>();
     private final Map<NamedArchitectureEntity, List<Embedding>> namedArchitectureEntityEmbeddings = new LinkedHashMap<>();
+    private EmbeddingCreator embeddingCreator;
 
     public NerConnectionInformant(DataRepository dataRepository) {
         super(NerConnectionInformant.class.getSimpleName(), dataRepository);
@@ -161,13 +162,16 @@ public class NerConnectionInformant extends Informant {
     }
 
     private List<Embedding> embed(List<String> names) {
-        var openaiApiKey = Environment.getEnv("OPENAI_API_KEY");
-        if (openaiApiKey == null) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set. Please set it to use the OpenAI embedding model.");
+        var vectors = getEmbeddingCreator().calculateEmbeddings(names);
+        return vectors.stream().map(Embedding::from).toList();
+    }
+
+    private EmbeddingCreator getEmbeddingCreator() {
+        if (embeddingCreator == null) {
+            // The cache directory is configured by the runner (see LlmCache); this uses the default cache manager.
+            embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI).modelName("text-embedding-3-large").build());
         }
-        var embeddingModel = new OpenAiEmbeddingModel.OpenAiEmbeddingModelBuilder().modelName("text-embedding-3-large").apiKey(openaiApiKey).build();
-        var segments = names.stream().map(TextSegment::from).toList();
-        return embeddingModel.embedAll(segments).content();
+        return embeddingCreator;
     }
 
     private ImmutableList<String> getNameParts(String name) {

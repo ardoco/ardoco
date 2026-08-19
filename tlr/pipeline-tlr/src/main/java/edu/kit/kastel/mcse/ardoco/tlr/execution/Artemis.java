@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGener
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -31,6 +32,7 @@ public class Artemis extends ArdocoRunner {
         if (architectureConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.configure();
         definePipeline(inputText, architectureConfiguration, additionalConfigs, llmForNer);
         setOutputDirectory(outputDir);
         isSetUp = true;
