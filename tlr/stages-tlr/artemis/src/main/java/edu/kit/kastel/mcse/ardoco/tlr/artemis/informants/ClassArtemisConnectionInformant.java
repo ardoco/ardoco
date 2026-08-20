@@ -64,22 +64,6 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
             }
         }
 
-        /*if (areStronglySimilar(similarityUtils, namedEntity, modelEndpoint)) {
-            return true;
-        }
-
-        if (areWeaklySimilarIncludingAlternativeNameParts(similarityUtils, namedEntity, modelEndpoint)) {
-            return true;
-        }
-
-        logger.debug("Trying to match using embeddings for the NAE: {}", namedEntity.getName());
-        var namedEntityEmbeddings = getNamedArchitectureEntityEmbeddings(namedEntity);
-        var modelEndpointEmbeddings = getModelEndpointEmbeddings(modelEndpoint);
-        if (embeddingsAreSimilar(namedEntityEmbeddings, modelEndpointEmbeddings)) {
-            logger.debug("^ similarity for {} <-> {}", namedEntity.getName(), modelEndpoint.getName());
-            return true;
-        }*/
-
         return false;
     }
 }
