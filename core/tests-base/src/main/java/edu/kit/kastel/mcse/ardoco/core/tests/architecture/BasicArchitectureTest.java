@@ -25,6 +25,10 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 
 public class BasicArchitectureTest {
+    private BasicArchitectureTest() {
+        throw new IllegalAccessError("Utility class should not be instantiated");
+    }
+
     @ArchTest
     public static final ArchRule configurableFieldsOnlyInConfigurableClasses = fields().that()
             .areAnnotatedWith(Configurable.class)
