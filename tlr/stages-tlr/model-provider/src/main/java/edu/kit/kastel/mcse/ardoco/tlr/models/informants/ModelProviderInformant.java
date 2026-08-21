@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.io.File;
@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -22,9 +23,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 public final class ModelProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
-    private final Extractor extractor;
-    private final File fromFile;
-    private final Metamodel metamodel;
+    private final @Nullable Extractor extractor;
+    private final @Nullable File fromFile;
+    private final @Nullable Metamodel metamodel;
 
     // Needed for Configuration Generation
     private ModelProviderInformant() {
@@ -53,7 +54,7 @@ public final class ModelProviderInformant extends Informant {
      * @param dataRepository the data repository
      * @param extractor      the model connector
      */
-    public ModelProviderInformant(DataRepository dataRepository, Extractor extractor) {
+    public ModelProviderInformant(DataRepository dataRepository, @Nullable Extractor extractor) {
         super("Extractor " + (extractor == null ? "File" : extractor.getClass().getSimpleName()), dataRepository);
         this.extractor = extractor;
         this.fromFile = null;

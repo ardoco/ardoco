@@ -1,5 +1,7 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
@@ -19,5 +21,6 @@ public interface NerConnectionStates extends PipelineStepData {
      * @param metamodel the metamodel
      * @return the connection state
      */
+    @Nullable
     NerConnectionState getNerConnectionState(Metamodel metamodel);
 }

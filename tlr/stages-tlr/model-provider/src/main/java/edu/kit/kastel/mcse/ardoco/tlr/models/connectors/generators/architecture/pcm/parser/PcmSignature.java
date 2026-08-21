@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.parser;
 
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.fuchss.xmlobjectmapper.annotation.XMLClass;
 import org.fuchss.xmlobjectmapper.annotation.XMLList;
 import org.fuchss.xmlobjectmapper.annotation.XMLValue;
+import org.jspecify.annotations.Nullable;
 
 @XMLClass
 public final class PcmSignature {
@@ -23,7 +24,7 @@ public final class PcmSignature {
     @XMLList(name = "parameters__OperationSignature", elementType = PcmParameter.class)
     private List<PcmParameter> parameters;
 
-    private PcmDatatype returnType;
+    private @Nullable PcmDatatype returnType;
 
     PcmSignature() {
         // NOP
@@ -37,7 +38,7 @@ public final class PcmSignature {
         return entityName;
     }
 
-    public PcmDatatype getReturnType() {
+    public @Nullable PcmDatatype getReturnType() {
         return returnType;
     }
 

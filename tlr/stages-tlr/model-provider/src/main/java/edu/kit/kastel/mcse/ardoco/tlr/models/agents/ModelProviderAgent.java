@@ -1,10 +1,11 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
@@ -25,12 +26,13 @@ public class ModelProviderAgent extends PipelineAgent {
      * @param architectureConfiguration the architecture configuration
      * @param codeConfiguration         the code configuration
      */
-    public ModelProviderAgent(DataRepository data, ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
+    public ModelProviderAgent(DataRepository data, @Nullable ArchitectureConfiguration architectureConfiguration,
+            @Nullable CodeConfiguration codeConfiguration) {
         super(informants(data, architectureConfiguration, codeConfiguration), ModelProviderAgent.class.getSimpleName(), data);
     }
 
-    private static List<? extends Informant> informants(DataRepository data, ArchitectureConfiguration architectureConfiguration,
-            CodeConfiguration codeConfiguration) {
+    private static List<? extends Informant> informants(DataRepository data, @Nullable ArchitectureConfiguration architectureConfiguration,
+            @Nullable CodeConfiguration codeConfiguration) {
         List<Informant> informants = new ArrayList<>();
         if (architectureConfiguration != null) {
             informants.add(new ModelProviderInformant(data, architectureConfiguration.extractor()));
@@ -50,7 +52,7 @@ public class ModelProviderAgent extends PipelineAgent {
     }
 
     public static ModelProviderAgent getModelProviderAgent(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
-            ArchitectureConfiguration architectureConfiguration, CodeConfiguration codeConfiguration) {
+            @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
         if (architectureConfiguration == null && codeConfiguration == null) {
             throw new IllegalArgumentException("At least one configuration must be provided");
         }

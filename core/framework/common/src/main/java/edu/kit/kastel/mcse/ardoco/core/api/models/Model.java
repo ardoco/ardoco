@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.core.api.models;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 
@@ -26,7 +28,7 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
      *
      * @param id the model id
      */
-    protected Model(String id) {
+    protected Model(@Nullable String id) {
         this.id = id != null ? id : IdentifierProvider.createId();
     }
 

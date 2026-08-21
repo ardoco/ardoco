@@ -12,6 +12,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +235,7 @@ public record ArdocoResult(DataRepository dataRepository) {
      * @param metamodel the metamodel to get the connection state for
      * @return the connection state or null if there is no {@link ConnectionState} for the given metamodel
      */
-    public ConnectionState getConnectionState(Metamodel metamodel) {
+    public @Nullable ConnectionState getConnectionState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasConnectionStates(this.dataRepository)) {
             var connectionStates = DataRepositoryHelper.getConnectionStates(this.dataRepository);
             return connectionStates.getConnectionState(metamodel);
@@ -249,7 +250,7 @@ public record ArdocoResult(DataRepository dataRepository) {
      * @param metamodel the metamodel to get the connection state for
      * @return the connection state or null if there is no {@link ConnectionState} for the given metamodel
      */
-    public NerConnectionState getNerConnectionState(Metamodel metamodel) {
+    public @Nullable NerConnectionState getNerConnectionState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasNerConnectionStates(this.dataRepository)) {
             var connectionStates = DataRepositoryHelper.getNerConnectionStates(this.dataRepository);
             return connectionStates.getNerConnectionState(metamodel);
@@ -264,7 +265,7 @@ public record ArdocoResult(DataRepository dataRepository) {
      * @param metamodel the metamodel to get the inconsistency state for
      * @return the inconsistency state or null if there is no {@link InconsistencyState} for the given metamodel
      */
-    public InconsistencyState getInconsistencyState(Metamodel metamodel) {
+    public @Nullable InconsistencyState getInconsistencyState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasInconsistencyStates(this.dataRepository)) {
             var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(this.dataRepository);
             return inconsistencyStates.getInconsistencyState(metamodel);
@@ -278,7 +279,7 @@ public record ArdocoResult(DataRepository dataRepository) {
      *
      * @return the {@link CodeTraceabilityState} or null if there is no {@link CodeTraceabilityState}
      */
-    public CodeTraceabilityState getCodeTraceabilityState() {
+    public @Nullable CodeTraceabilityState getCodeTraceabilityState() {
         if (DataRepositoryHelper.hasCodeTraceabilityState(this.dataRepository)) {
             return DataRepositoryHelper.getCodeTraceabilityState(this.dataRepository);
         }
