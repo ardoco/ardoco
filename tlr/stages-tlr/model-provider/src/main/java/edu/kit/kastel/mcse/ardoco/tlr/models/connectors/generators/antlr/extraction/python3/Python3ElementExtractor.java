@@ -68,8 +68,8 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     @Override
-    protected CommonTokenStream buildTokens(Path file) throws IOException {
-        CharStream charStream = CharStreams.fromPath(file);
+    protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
+        CharStream charStream = CharStreams.fromReader(Files.newBufferedReader(absoluteFile), relativeFile.toString());
         Python3Lexer lexer = new Python3Lexer(charStream);
         return new CommonTokenStream(lexer);
     }
@@ -349,46 +349,33 @@ public class Python3ElementExtractor extends ElementExtractor {
     }
 
     private String addPackage(String packagePath) {
-        List<PackageElement> packageElements = elementRegistry.getPackages();
-        String closestParentName = "";
-        String closestParentPath = "";
-        String packageName = "";
-
-        for (PackageElement packageElement : packageElements) {
+        for (PackageElement packageElement : elementRegistry.getPackages()) {
             if (packageElement.getPath().equals(packagePath)) {
                 return packageElement.getName();
             }
-            if (packagePath.startsWith(packageElement.getPath()) && packageElement.getPath().length() > closestParentPath.length()) {
-                closestParentName = packageElement.getName();
-                closestParentPath = packageElement.getPath();
-            }
         }
 
-        if (!closestParentPath.isEmpty()) {
-            ElementIdentifier parentIdentifier = new ElementIdentifier(closestParentName, closestParentPath, Type.PACKAGE);
-            packageName = packagePath.substring(closestParentPath.length(), packagePath.length() - 1);
-            PackageElement packageElement = new PackageElement(packageName, packagePath, parentIdentifier);
-            elementRegistry.addPackage(packageElement);
+        String parentPath = resolveParentPath(packagePath);
+        if (!parentPath.isEmpty()) {
+            String parentName = addPackage(parentPath);
+            String packageName = packagePath.substring(parentPath.length(), packagePath.length() - 1);
+            ElementIdentifier parentIdentifier = new ElementIdentifier(parentName, parentPath, Type.PACKAGE);
+            elementRegistry.addPackage(new PackageElement(packageName, packagePath, parentIdentifier));
+            return packageName;
         } else {
-            packageName = packagePath.substring(0, packagePath.length() - 1);
-            PackageElement packageElement = new PackageElement(packageName, packagePath);
-            elementRegistry.addPackage(packageElement);
+            String packageName = packagePath.isEmpty() ? "" : packagePath.substring(0, packagePath.length() - 1);
+            elementRegistry.addPackage(new PackageElement(packageName, packagePath));
+            return packageName;
         }
-
-        updatePackageParentIdentifiers(packageName, packagePath);
-
-        return packageName;
     }
 
-    private void updatePackageParentIdentifiers(String packageName, String packagePath) {
-        List<PackageElement> packageElements = elementRegistry.getPackages();
-        for (PackageElement packageElement : packageElements) {
-            if (packageElement.getPath().startsWith(packagePath) && packageElement.getPath().length() > packagePath.length()) {
-                ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
-                packageElement.updateParentIdentifier(parentIdentifier);
-                packageElement.updateShortName(packageElement.getPath().substring(packagePath.length(), packageElement.getPath().length() - 1));
-            }
+    private String resolveParentPath(String packagePath) {
+        if (packagePath.isEmpty()) {
+            return "";
         }
+        String withoutTrailingSlash = packagePath.substring(0, packagePath.length() - 1);
+        int lastSlash = withoutTrailingSlash.lastIndexOf('/');
+        return lastSlash < 0 ? "" : withoutTrailingSlash.substring(0, lastSlash + 1);
     }
 
 }

@@ -1,10 +1,11 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeModule;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -39,6 +40,11 @@ public class PackageMapper extends AbstractJavaCodeItemMapper {
 
         CodePackage codePackage = new CodePackage(codeItemRepository, packageElement.getShortName(), content);
         codePackage.setComment(packageElement.getComment());
+        for (CodeItem child : content) {
+            if (child instanceof CodeModule childModule) {
+                childModule.setParent(codePackage);
+            }
+        }
         return codePackage;
     }
 }

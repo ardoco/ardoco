@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeAssembly;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 
@@ -25,21 +25,31 @@ class Python3ModelMapperTest {
     }
 
     @Test
-    void importsArePopulatedOnAssemblies() {
+    void importsArePopulatedOnCompilationUnits() {
         CodeItemRepository repository = new CodeItemRepository();
         Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
         CodeModel codeModel = extractor.extractModel();
 
-        CodeAssembly abcAssembly = allAssemblies(codeModel).filter(a -> "APyAbstractBaseClass".equals(a.getName())).findFirst().orElseThrow();
-        Assertions.assertTrue(abcAssembly.getImportedModuleNames().contains("abc.ABC"));
-        Assertions.assertTrue(abcAssembly.getImportedModuleNames().contains("abc.abstractmethod"));
+        CodeCompilationUnit abcUnit = allCompilationUnits(codeModel).filter(u -> "APyAbstractBaseClass".equals(u.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(abcUnit.getImportedModuleNames().contains("abc.ABC"));
+        Assertions.assertTrue(abcUnit.getImportedModuleNames().contains("abc.abstractmethod"));
 
-        CodeAssembly dataclassAssembly = allAssemblies(codeModel).filter(a -> "APyDataClass".equals(a.getName())).findFirst().orElseThrow();
-        Assertions.assertTrue(dataclassAssembly.getImportedModuleNames().contains("dataclasses.dataclass"));
+        CodeCompilationUnit dataclassUnit = allCompilationUnits(codeModel).filter(u -> "APyDataClass".equals(u.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(dataclassUnit.getImportedModuleNames().contains("dataclasses.dataclass"));
     }
 
-    private static Stream<CodeAssembly> allAssemblies(CodeModel codeModel) {
-        return codeModel.getAllPackages().stream().flatMap(p -> p.getContent().stream()).filter(CodeAssembly.class::isInstance).map(CodeAssembly.class::cast);
+    @Test
+    void compilationUnitsHaveParentPackage() {
+        CodeItemRepository repository = new CodeItemRepository();
+        Python3Extractor extractor = new Python3Extractor(repository, "src/test/resources/python/interface/edu/");
+        CodeModel codeModel = extractor.extractModel();
+
+        Assertions.assertFalse(allCompilationUnits(codeModel).findAny().isEmpty());
+        Assertions.assertTrue(allCompilationUnits(codeModel).allMatch(u -> u.hasParent()));
+    }
+
+    private static Stream<CodeCompilationUnit> allCompilationUnits(CodeModel codeModel) {
+        return codeModel.getEndpoints().stream().filter(CodeCompilationUnit.class::isInstance).map(CodeCompilationUnit.class::cast);
     }
 
 }

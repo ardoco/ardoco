@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp;
 
 import java.io.IOException;
@@ -46,8 +46,8 @@ public class CppElementExtractor extends ElementExtractor {
     }
 
     @Override
-    protected CommonTokenStream buildTokens(Path file) throws IOException {
-        CharStream stream = CharStreams.fromPath(file);
+    protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
+        CharStream stream = CharStreams.fromReader(Files.newBufferedReader(absoluteFile), relativeFile.toString());
         CPP14Lexer lexer = new CPP14Lexer(stream);
         return new CommonTokenStream(lexer);
     }

@@ -65,8 +65,8 @@ public class JavaElementExtractor extends ElementExtractor {
     }
 
     @Override
-    protected CommonTokenStream buildTokens(Path file) throws IOException {
-        CharStream stream = CharStreams.fromPath(file);
+    protected CommonTokenStream buildTokens(Path absoluteFile, Path relativeFile) throws IOException {
+        CharStream stream = CharStreams.fromReader(Files.newBufferedReader(absoluteFile), relativeFile.toString());
         JavaLexer lexer = new JavaLexer(stream);
         return new CommonTokenStream(lexer);
     }
@@ -312,10 +312,10 @@ public class JavaElementExtractor extends ElementExtractor {
         String name = PathExtractor.extractNameFromPath(ctx);
         ElementIdentifier identifier = new ElementIdentifier(name, path, type);
         if (ctx.packageDeclaration() != null && ctx.packageDeclaration().qualifiedName() != null) {
-            String packageName = ctx.packageDeclaration().qualifiedName().getText();
             String packagePath = path.substring(0, path.lastIndexOf("/") + 1);
+            String packageName = resolveNameFromPath(packagePath);
+            addPackage(packageName, packagePath);
             ElementIdentifier packageIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
-            addPackage(packageIdentifier);
             compilationUnit = new Element(name, path, type, packageIdentifier);
         } else {
             compilationUnit = new Element(name, path, type);
@@ -327,30 +327,37 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    private void addPackage(ElementIdentifier packageIdentifier) {
-        List<PackageElement> packageElements = elementRegistry.getPackages();
-        String closestParentName = "";
-        String closestParentPath = "";
-        String packagePath = packageIdentifier.path();
-        String packageName = packageIdentifier.name();
-        for (PackageElement packageElement : packageElements) {
-            String existingPackagePath = packageElement.getPath();
-            if (packagePath.startsWith(existingPackagePath) && existingPackagePath.length() > closestParentPath.length()) {
-                closestParentPath = existingPackagePath;
-                closestParentName = packageElement.getName();
+    private void addPackage(String packageName, String packagePath) {
+        for (PackageElement packageElement : elementRegistry.getPackages()) {
+            if (packageElement.getPath().equals(packagePath)) {
+                return;
             }
         }
 
-        if (!closestParentPath.isEmpty()) {
-            ElementIdentifier parentIdentifier = new ElementIdentifier(closestParentName, closestParentPath, Type.PACKAGE);
-            PackageElement newPackage = new PackageElement(packageName, packagePath, parentIdentifier);
-            elementRegistry.addPackage(newPackage);
+        String parentPath = resolveParentPath(packagePath);
+        if (!parentPath.isEmpty()) {
+            String parentName = resolveNameFromPath(parentPath);
+            addPackage(parentName, parentPath);
+            ElementIdentifier parentIdentifier = new ElementIdentifier(parentName, parentPath, Type.PACKAGE);
+            elementRegistry.addPackage(new PackageElement(packageName, packagePath, parentIdentifier));
         } else {
-            PackageElement newPackage = new PackageElement(packageName, packagePath);
-            elementRegistry.addPackage(newPackage);
+            elementRegistry.addPackage(new PackageElement(packageName, packagePath));
         }
+    }
 
-        updatePackageParentIdentifiers(packageName, packagePath);
+    private String resolveParentPath(String packagePath) {
+        if (packagePath.isEmpty()) {
+            return "";
+        }
+        String withoutTrailingSlash = packagePath.substring(0, packagePath.length() - 1);
+        int lastSlash = withoutTrailingSlash.lastIndexOf('/');
+        return lastSlash < 0 ? "" : withoutTrailingSlash.substring(0, lastSlash + 1);
+    }
+
+    private String resolveNameFromPath(String path) {
+        String withoutTrailingSlash = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
+        int lastSlash = withoutTrailingSlash.lastIndexOf('/');
+        return lastSlash < 0 ? withoutTrailingSlash : withoutTrailingSlash.substring(lastSlash + 1);
     }
 
     private String getExtendsClass(JavaParser.ClassDeclarationContext ctx) {
@@ -390,15 +397,4 @@ public class JavaElementExtractor extends ElementExtractor {
         return implementedInterfaces;
     }
 
-    private void updatePackageParentIdentifiers(String packageName, String packagePath) {
-        List<PackageElement> packageElements = elementRegistry.getPackages();
-        for (PackageElement packageElement : packageElements) {
-            String otherPath = packageElement.getPath();
-            if (otherPath.startsWith(packagePath) && otherPath.length() > packagePath.length()) {
-                ElementIdentifier parentIdentifier = new ElementIdentifier(packageName, packagePath, Type.PACKAGE);
-                packageElement.updateParentIdentifier(parentIdentifier);
-                packageElement.updateShortName(otherPath.substring(packagePath.length(), otherPath.length() - 1));
-            }
-        }
-    }
 }
