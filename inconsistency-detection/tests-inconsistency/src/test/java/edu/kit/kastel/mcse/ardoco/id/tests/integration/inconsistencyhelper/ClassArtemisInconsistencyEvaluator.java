@@ -48,7 +48,18 @@ public class ClassArtemisInconsistencyEvaluator implements ArtemisInconsistencyE
                 .stream()
                 .map(NamedArchitectureEntity::getOccurrences)
                 .flatMap(java.util.Collection::stream)
-                .map(occ -> occ.getSentenceNumber() + "," + occ.getName())
+                .map(occ -> {
+                    String className = Objects.requireNonNull(occ.getName());
+                    int dot = className.lastIndexOf('.');
+                    int slash = className.lastIndexOf('/');
+                    int index = Math.max(dot, slash);
+
+                    if (index >= 0) {
+                        className = className.substring(index + 1);
+                    }
+                    return occ.getSentenceNumber() + "," + className;
+
+                })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
