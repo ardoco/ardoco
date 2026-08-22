@@ -45,7 +45,7 @@ public class ClassArtemisEvaluation extends AbstractArtemisEvaluation {
     protected MutableSortedSet<String> getTraceLinksAsStrings(ArtemisConnectionState state) {
         return state.getTraceLinks()
                 .stream()
-                .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint())
+                .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().toString().toLowerCase())
                 .collect(org.eclipse.collections.impl.collector.Collectors2.toSortedSet());
     }
 }

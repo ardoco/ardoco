@@ -1,5 +1,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -80,7 +81,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
         System.out.println("unlinked: " + state.getUnlinkedNamedEntities());
         var traceLinksAsStrings = getTraceLinksAsStrings(state);
         var goldStandardAsStrings = enrollGoldStandard(goldStandard, result, strategy.getMetamodel()).stream()
-                .map(pair -> pair.first() + " -> " + pair.second())
+                .map(pair -> pair.first() + " -> " + pair.second().toLowerCase())
                 .collect(Collectors.toCollection(TreeSet::new));
 
         int confusionMatrixSum = getConfusionMatrixSum(result, strategy.getMetamodel());
