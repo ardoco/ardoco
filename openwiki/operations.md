@@ -104,28 +104,6 @@ Each module also has its own CI workflows under `{module}/.github/workflows/` fo
 
 Snapshots are published to Sonatype Central Snapshots repository (`/pom.xml` `distributionManagement`). Release builds use the `central-publishing-maven-plugin`.
 
-## Monorepo Sync Scripts
-
-This repository is a **monorepo** containing three modules that are also maintained as standalone repositories. The scripts `pull.sh` and `push.sh` sync between them.
-
-### `pull.sh` — Pull from standalone repos into monorepo
-
-```bash
-./pull.sh main
-```
-
-Clones each standalone repo (`ardoco/core`, `ardoco/tlr`, `ardoco/inconsistency-detection`) from the specified branch, then copies their contents into the monorepo subdirectories. After running, use `git add` and `git commit` to finalize.
-
-### `push.sh` — Push monorepo subdirectories to standalone repos
-
-```bash
-./push.sh main
-```
-
-For each module, clones the standalone repo, replaces its contents with the monorepo subdirectory contents, commits with message `"Sync from monorepo - <branch>"`, and pushes.
-
-Both scripts use temporary directories under `/tmp/` and clean up automatically.
-
 ## Environment Configuration
 
 All environment variables are documented in [`/sample.env`](../sample.env). Key configuration areas:

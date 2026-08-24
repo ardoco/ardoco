@@ -21,7 +21,7 @@ The project is developed by the [MCSE group](https://mcse.kastel.kit.edu) at KAS
 
 ## Repository Overview
 
-This is a **monorepo** containing three major modules, each of which is also maintained as a standalone repository and synced via `pull.sh` / `push.sh`:
+This is a **monorepo** containing three major modules. The standalone `ardoco/core`, `ardoco/tlr`, and `ardoco/inconsistency-detection` repositories are archived; the project now lives only in this monorepo:
 
 | Module | Path | Maven Coordinates | Purpose |
 |--------|------|-------------------|---------|
@@ -97,7 +97,7 @@ When changing a specific area, start at the listed page and use the focused vali
 | Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/inconsistency-detection/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `TextEntityAbsentFromModelInconsistencyAgent`, `ModelEntityAbsentFromTextInconsistencyAgent` | `tests-inconsistency` integration tests | `mvn -pl inconsistency-detection clean verify` |
 | Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` | `mvn spotless:check && mvn clean verify` |
 | Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureItem`, `CodeItem`, `Entity` | `core/tests-base` | `mvn -pl core/framework/common clean verify` |
-| Code model data model (line ranges, content, id) | [Architecture](architecture.md) | `core/framework/common/.../api/models/code/`, `.../api/models/Model.java`, `.../api/models/CodeModel.java` | `Datatype`, `ClassUnit`, `InterfaceUnit`, `ControlElement`, `Model`, `CodeModelDto` | `tlr/stages-tlr/model-provider` mapper/extractor tests | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Code model data model (line ranges, content, id, imports, callees) | [Architecture](architecture.md) | `core/framework/common/.../api/models/code/`, `.../api/models/Model.java`, `.../api/models/CodeModel.java` | `Datatype`, `ClassUnit`, `InterfaceUnit`, `ControlElement` (`calleeNames`), `CodeCompilationUnit` (`importedModuleNames`), `CodeAssembly` (`importedModuleNames`), `Model`, `CodeModelDto` | `tlr/stages-tlr/model-provider` mapper/extractor tests (`JavaControlExtractorTest`, `JavaModelMapperTest`, `Python3ModelMapperTest`, `JavaExtractorTest`) | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
 | Code model extraction / ANTLR mappers / legacy JavaModel | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/.../antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `tlr/stages-tlr/model-provider` tests | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
 
 ## Existing Wiki Documentation

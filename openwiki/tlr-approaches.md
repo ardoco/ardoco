@@ -119,6 +119,23 @@ Extracts architecture models (PCM, UML) and code models (Java, C++, Python).
 - **Code extraction**: Uses ANTLR-based parsers under `connectors/generators/antlr/` (current path
   for Java, C++, and Python) plus the Eclipse-JDT-based legacy extractor under
   `connectors/generators/code/java/JavaModel.java`
+- **Module imports & function callees**: Each extractor now populates two cross-element
+  relationships on the code model (see [Architecture — Module imports and function
+  callees](architecture.md#module-imports-and-function-callees)). File-level imports flow into
+  `CodeCompilationUnit.importedModuleNames` / `CodeAssembly.importedModuleNames` (Java JDT via
+  `JavaModel.extractImportedModuleNames`; Java/Python ANTLR4 via the parsed `Element.getImports()`
+  threaded through `CompilationUnitMapper`/`FileMapper`; Python's mapper is `CompilationUnitMapper`,
+  renamed from `ModuleMapper` because a Python module maps to a code compilation unit, not an
+  assembly). Method-level callees flow into `ControlElement.calleeNames` (Java JDT collects
+  ` MethodInvocation` + `ClassInstanceCreation` names; ANTLR4 Java/Python/C++ `FunctionMapper`s read
+  `Element.getCalleeNames()`). Round-tripped fixtures: `AClassWithCalls.java`,
+  `APyModuleWithCalls.py`.
+- **Architecture model serialization**: `ArchitectureExtractor.writeOutArchitectureModel(model,
+  file)` serializes an `ArchitectureModel` to a conventional `.aam` file (e.g.
+  `architectureModel.aam`) via `ArchitectureModel.createArchitectureModelDto()`, which flattens
+  the component/interface/method tree into the id-keyed `ArchitectureModelDto` in
+  `core/.../api/models/architecture/dto/`. This lets the extracted architecture model be cached and
+  reused across runs.
 - **Line numbers**: Extractors populate the code model's 1-indexed `startLine`/`endLine` ranges.
   The ANTLR language mappers read them from the parsed `Element` (`getStartLine()`/`getEndLine()`)
   and pass them into the `ClassUnit`/`InterfaceUnit`/`ControlElement` constructors
