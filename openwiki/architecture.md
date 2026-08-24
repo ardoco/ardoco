@@ -94,6 +94,16 @@ Unified representation of architecture models independent of original modeling l
 
 **Hierarchy**: Component → provides/requires → Interface → contains → ArchitectureMethod
 
+#### Architecture Model Serialization
+
+Architecture models can be serialized to a stable JSON form for caching and reuse. `ArchitectureModel.createArchitectureModelDto()` (`.../api/models/ArchitectureModel.java`) walks the component/interface/method tree and produces an `ArchitectureModelDto` — a flat, id-keyed repository of DTOs plus the list of root content ids.
+
+- **DTO package**: `core/framework/common/.../api/models/architecture/dto/` — `ArchitectureModelDto` (record: `id`, `ArchitectureItemRepository`), `ArchitectureItemRepository` (record: `repository` map, `content` id list), and the sealed `ArchitectureItemDto` permitted set `ComponentDto`, `InterfaceDto`, `MethodDto`. Each DTO stores only ids for its children (`subcomponentIds`, `providedInterfacesIds`, `requiredInterfacesIds`, `methodSignatureIds`), so the graph is reconstructed by id lookup.
+- **`ArchitectureMethod`** gained a `(name, id)` constructor so a deserialized method retains its original identifier rather than regenerating one.
+- **Writer**: `ArchitectureExtractor.writeOutArchitectureModel(model, file)` (`tlr/stages-tlr/model-provider/.../generators/architecture/ArchitectureExtractor.java`) serializes via `JsonHandling.createObjectMapper()` to the conventional `.aam` file (e.g. `architectureModel.aam`).
+
+When extending the architecture model, add any new item kind to the `ArchitectureItemDto` sealed permits list and handle it in `ArchitectureModel.collectItem` so it round-trips through serialization.
+
 ### Code Model
 
 Standardized representation of source code based on the [Knowledge Discovery Model (KDM)](https://www.omg.org/spec/KDM/1.3/PDF).
@@ -102,11 +112,21 @@ Standardized representation of source code based on the [Knowledge Discovery Mod
 
 | Category | Classes |
 |----------|---------|
-| **Module** | `CodeCompilationUnit` (source file), `CodePackage` (namespace), `CodeAssembly` (runnable unit) |
+| **Module** | `CodeCompilationUnit` (source file; carries `pathElements`, `extension`, `language`, `importedModuleNames`), `CodePackage` (namespace), `CodeAssembly` (runnable unit; carries `language` and `importedModuleNames`) |
 | **Datatype** | `Datatype` (sealed base) → `ClassUnit` (class), `InterfaceUnit` (interface); supports `implementedTypes` and `extendedTypes` relationships |
-| **ComputationalObject** | `ControlElement` (callable methods) |
+| **ComputationalObject** | `ControlElement` (callable methods; carries `startLine`/`endLine` and `calleeNames`) |
 
 All code elements inherit from `CodeItem` (which extends `Entity`).
+
+#### Module imports and function callees
+
+The code model records two cross-element relationships introduced for call-graph and import analysis:
+
+- **Imports** — `CodeCompilationUnit` and `CodeAssembly` each expose `getImportedModuleNames()`, a `@JsonProperty`-serialized `List<String>` of fully-qualified module/package names declared at the file/assembly level. `CodeCompilationUnit.fromRelativePath(...)` is the canonical factory for ANTLR-based extractors; it derives `name`, `pathElements`, and `extension` from a forward-slash relative path (e.g. `src/foo/Bar.py`) and accepts the import list.
+- **Callees** — `ControlElement` exposes `getCalleeNames()`, a `@JsonProperty`-serialized `List<String>` of method/class names invoked within the callable's body (e.g. `helper`, `TestClass`, `method` for a `caller()` that calls `helper()` and `new TestClass().method()`).
+
+<!-- openwiki: broken internal link [tlr-approaches.md#2-model-provider-modelprovider] heading anchor "2-model-provider-modelprovider" does not exist in "tlr-approaches.md". Fix the href or restore the target, then delete this comment. -->
+Both fields default to empty lists, round-trip through the persisted `CodeModel`/`CodeModelDto`, and are populated by every code extractor: the Eclipse-JDT `JavaModel` and the ANTLR4 Java/Python/C++ extractors and mappers (see [TLR Approaches — Model Provider](tlr-approaches.md#2-model-provider-modelprovider)). When adding a new code-extraction backend, populate `importedModuleNames` on the `CodeCompilationUnit`/`CodeAssembly` and `calleeNames` on each `ControlElement` so the call-graph relationships are consistent across languages.
 
 ### Source line ranges and content ownership
 
@@ -131,8 +151,9 @@ Two related structural changes were folded in with the line-range work:
   `Model(String id)` constructor (a `null` id falls back to `IdentifierProvider.createId()`), and
   `CodeModel.CodeModelDto` now carries an `id` field so a deserialized `CodeModel` retains its
   original id rather than being regenerated. `equals`/`hashCode` on `Datatype` and `ControlElement`
-  now incorporate `startLine`/`endLine` (and, for `Datatype`, `content`), so identity follows the
-  new fields.
+  incorporate `startLine`/`endLine` (and, for `Datatype`, `content`); `ControlElement` further
+  folds in `calleeNames`, and `CodeCompilationUnit` folds in `importedModuleNames`, so identity
+  follows these new relationship fields and deserialized instances stay identity-stable.
 
 When extending the code model, add new fields on the appropriate base (`Datatype` for class-like
 members, `ControlElement` for callables), keep them `@JsonProperty`-annotated, and update the
