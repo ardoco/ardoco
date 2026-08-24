@@ -55,7 +55,7 @@ public final class CodeCompilationUnit extends CodeModule {
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.language = language;
-        this.importedModuleNames = new ArrayList<>(importedModuleNames);
+        this.importedModuleNames = importedModuleNames != null ? new ArrayList<>(importedModuleNames) : new ArrayList<>();
     }
 
     /**
@@ -205,7 +205,7 @@ public final class CodeCompilationUnit extends CodeModule {
             return true;
         }
         if (!(o instanceof CodeCompilationUnit that) || !super.equals(o) || !Objects.equals(this.pathElements, that.pathElements) || !Objects.equals(
-                this.extension, that.extension)) {
+                this.extension, that.extension) || !Objects.equals(this.importedModuleNames, that.importedModuleNames)) {
             return false;
         }
         return Objects.equals(this.language, that.language);
@@ -216,6 +216,7 @@ public final class CodeCompilationUnit extends CodeModule {
         int result = super.hashCode();
         result = 31 * result + (this.pathElements != null ? this.pathElements.hashCode() : 0);
         result = 31 * result + (this.extension != null ? this.extension.hashCode() : 0);
-        return 31 * result + (this.language != null ? this.language.hashCode() : 0);
+        result = 31 * result + (this.language != null ? this.language.hashCode() : 0);
+        return 31 * result + (this.importedModuleNames != null ? this.importedModuleNames.hashCode() : 0);
     }
 }

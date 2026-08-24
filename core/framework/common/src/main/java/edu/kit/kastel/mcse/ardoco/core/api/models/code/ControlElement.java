@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -20,8 +21,10 @@ public final class ControlElement extends ComputationalObject {
 
     @JsonProperty
     private int startLine = -1;
+
     @JsonProperty
     private int endLine = -1;
+
     @JsonProperty
     private List<String> calleeNames;
 
@@ -56,7 +59,7 @@ public final class ControlElement extends ComputationalObject {
         super(codeItemRepository, name);
         this.startLine = startLine;
         this.endLine = endLine;
-        this.calleeNames = new ArrayList<>(calleeNames);
+        this.calleeNames = calleeNames != null ? new ArrayList<>(calleeNames) : new ArrayList<>();
     }
 
     /**
@@ -94,7 +97,7 @@ public final class ControlElement extends ComputationalObject {
         if (!(o instanceof ControlElement that) || !super.equals(o)) {
             return false;
         }
-        return this.startLine == that.startLine && this.endLine == that.endLine && this.calleeNames.equals(that.calleeNames);
+        return this.startLine == that.startLine && this.endLine == that.endLine && Objects.equals(this.calleeNames, that.calleeNames);
     }
 
     @Override
@@ -102,6 +105,7 @@ public final class ControlElement extends ComputationalObject {
         int result = super.hashCode();
         result = 31 * result + this.startLine;
         result = 31 * result + this.endLine;
-        return 31 * result + this.calleeNames.hashCode();
+        result = 31 * result + (this.calleeNames != null ? this.calleeNames.hashCode() : 0);
+        return result;
     }
 }

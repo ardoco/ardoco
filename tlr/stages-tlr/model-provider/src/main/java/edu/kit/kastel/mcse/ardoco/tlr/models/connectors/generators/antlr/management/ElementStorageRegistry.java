@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -85,7 +87,7 @@ public abstract class ElementStorageRegistry {
         return elements;
     }
 
-    public Element getElement(ElementIdentifier identifier) {
+    public @Nullable Element getElement(ElementIdentifier identifier) {
         for (ElementStorage<?> storage : storages.values()) {
             Element element = storage.getElement(identifier);
             if (element != null) {
@@ -119,17 +121,19 @@ public abstract class ElementStorageRegistry {
         }
     }
 
-    protected <T extends Element> T getElement(ElementIdentifier identifier, Class<T> clazz) {
+    protected <T extends Element> @Nullable T getElement(ElementIdentifier identifier, Class<T> clazz) {
         if (identifier.type() == null || !verifyAllowed(identifier.type(), clazz)) {
             return null;
         }
         ElementStorage<T> storage = getTypedStorage(identifier.type());
+        assert storage != null;
         return storage.getElement(identifier);
     }
 
     protected <T extends Element> List<T> getElements(Type type, Class<T> clazz) {
         if (hasStorage(type, clazz)) {
             ElementStorage<T> storage = getStorage(type, clazz);
+            assert storage != null;
             return storage.getElements();
         }
         return new ArrayList<>();
@@ -138,14 +142,16 @@ public abstract class ElementStorageRegistry {
     protected <T extends Element> boolean containsElement(Type type, T element) {
         if (hasStorage(type)) {
             ElementStorage<T> storage = getTypedStorage(type);
+            assert storage != null;
             return storage.contains(element);
         }
         return false;
     }
 
-    protected <T extends Element> List<T> getContentOfIdentifier(Type type, ElementIdentifier identifier) {
+    protected <T extends Element> @Nullable List<T> getContentOfIdentifier(Type type, ElementIdentifier identifier) {
         if (hasStorage(type)) {
             ElementStorage<T> storage = getTypedStorage(type);
+            assert storage != null;
             return storage.getContentOfIdentifier(identifier);
         }
         return new ArrayList<>();
@@ -160,13 +166,13 @@ public abstract class ElementStorageRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Element> ElementStorage<T> getTypedStorage(Type type) {
+    private <T extends Element> @Nullable ElementStorage<T> getTypedStorage(Type type) {
         Class<T> clazz = (Class<T>) typeOfClass.get(type);
         return getStorage(type, clazz);
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Element> ElementStorage<T> getStorage(Type type, Class<T> clazz) {
+    private <T extends Element> @Nullable ElementStorage<T> getStorage(Type type, Class<T> clazz) {
         if (hasStorage(type, clazz)) {
             return (ElementStorage<T>) storages.get(type);
         }
@@ -177,7 +183,7 @@ public abstract class ElementStorageRegistry {
         return typeOfClass.get(type) != null && typeOfClass.get(type).equals(clazz);
     }
 
-    private <T extends Element> boolean hasStorage(Type type, T element) {
+    private <T extends Element> boolean hasStorage(Type type, @Nullable T element) {
         return element != null && storages.containsKey(type) && storages.get(type).getClassType().equals(element.getClass());
     }
 
@@ -191,7 +197,7 @@ public abstract class ElementStorageRegistry {
         }
     }
 
-    private boolean hasNotBeenAdded(ElementIdentifier identifier, List<ElementIdentifier> identifiers) {
+    private boolean hasNotBeenAdded(@Nullable ElementIdentifier identifier, List<ElementIdentifier> identifiers) {
         return identifier != null && !identifiers.contains(identifier);
     }
 }

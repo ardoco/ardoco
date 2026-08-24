@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a structural element in the code. Contains information about the
  * name, path, parent in the tree, start and end line, and comment.
@@ -68,7 +70,7 @@ public class Element {
         this.imports = new ArrayList<>(elementToCopy.getImports());
     }
 
-    public ElementIdentifier getParentIdentifier() {
+    public @Nullable ElementIdentifier getParentIdentifier() {
         return this.identifierOfParent;
     }
 
