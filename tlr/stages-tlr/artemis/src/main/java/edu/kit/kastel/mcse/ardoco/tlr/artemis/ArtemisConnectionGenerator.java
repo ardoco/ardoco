@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Art
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.agents.ArtemisTraceabilityAgent;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.agents.ArtemisConnectionAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
@@ -17,7 +17,7 @@ public class ArtemisConnectionGenerator extends AbstractExecutionStage {
     private final List<ArtemisNerStrategy> strategies;
 
     public ArtemisConnectionGenerator(DataRepository dataRepository, List<ArtemisNerStrategy> strategies) {
-        super(strategies.stream().map(strategy -> new ArtemisTraceabilityAgent(dataRepository, strategy)).toList(),
+        super(strategies.stream().map(strategy -> new ArtemisConnectionAgent(dataRepository, strategy)).toList(),
                 ArtemisConnectionGenerator.class.getSimpleName(), dataRepository);
         this.strategies = List.copyOf(strategies);
     }

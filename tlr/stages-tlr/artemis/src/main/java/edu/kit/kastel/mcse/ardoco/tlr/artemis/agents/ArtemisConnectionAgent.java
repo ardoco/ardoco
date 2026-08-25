@@ -10,10 +10,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.ClassArtemisConnectionI
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.ComponentArtemisConnectionInformant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
-public class ArtemisTraceabilityAgent extends PipelineAgent {
+public class ArtemisConnectionAgent extends PipelineAgent {
 
-    public ArtemisTraceabilityAgent(DataRepository dataRepository, ArtemisNerStrategy strategy) {
-        super(List.of(createInformant(dataRepository, strategy)), strategy.getId() + "TraceabilityAgent", dataRepository);
+    public ArtemisConnectionAgent(DataRepository dataRepository, ArtemisNerStrategy strategy) {
+        super(List.of(createInformant(dataRepository, strategy)), strategy.getId() + "ConnectionAgent", dataRepository);
     }
 
     private static Informant createInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {
