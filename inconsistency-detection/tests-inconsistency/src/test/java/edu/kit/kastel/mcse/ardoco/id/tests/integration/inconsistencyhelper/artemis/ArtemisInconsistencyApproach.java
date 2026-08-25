@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
+package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
 
 import java.util.List;
 
@@ -19,7 +19,8 @@ public enum ArtemisInconsistencyApproach {
         }
     },
 
-    CLASS("Class", false, true, false) {
+    CLASS("Class", false, true, false) {//TODO supportsholdback wird hier gerade ignoriert...
+
         @Override
         public List<ArtemisNerStrategy> createStrategies() {
             return List.of(new ClassArtemisNerStrategy());

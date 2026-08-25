@@ -1,5 +1,4 @@
-/* Licensed under MIT 2026. */
-package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
+package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
 
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.createResultLogString;
 
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.list.MutableList;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
@@ -42,14 +40,14 @@ public final class ArtemisInconsistencyEvaluationWriter {
     }
 
     public static void writeTeamResult(ArtemisInconsistencyTask project, ArtemisInconsistencyApproach approach,
-            MutableList<SingleClassificationResult<String>> results, Map<ArchitectureItem, ArdocoResult> runs) {
+            MutableList<SingleClassificationResult<String>> results, Map<ArtemisEvaluationRun, ArdocoResult> runs) {
         StringBuilder builder = createHeader(project, approach, "TEAM");
 
         int resultIndex = 0;
         for (var run : runs.entrySet()) {
-            ArchitectureItem heldBackElement = run.getKey();
+            ArtemisEvaluationRun evaluationRun = run.getKey();
 
-            if (heldBackElement == null) {
+            if (evaluationRun.isBaseRun()) {
                 builder.append("Base run").append(LINE_SEPARATOR);
                 builder.append("--------").append(LINE_SEPARATOR);
                 builder.append("No model element was held back.").append(LINE_SEPARATOR).append(LINE_SEPARATOR);
@@ -59,8 +57,8 @@ public final class ArtemisInconsistencyEvaluationWriter {
             var result = results.get(resultIndex);
             resultIndex++;
 
-            builder.append("Held-back model element: ").append(heldBackElement.getName()).append(LINE_SEPARATOR);
-            builder.append("ID: ").append(heldBackElement.getId()).append(LINE_SEPARATOR);
+            builder.append("Evaluation run: ").append(evaluationRun.displayName()).append(LINE_SEPARATOR);
+            builder.append("ID: ").append(evaluationRun.id()).append(LINE_SEPARATOR);
             builder.append(String.format(java.util.Locale.ENGLISH, "Precision: %.3f, Recall: %.3f, F1: %.3f, Accuracy: %.3f, Phi: %.3f", result.getPrecision(),
                     result.getRecall(), result.getF1(), result.getAccuracy(), result.getPhiCoefficient()));
             builder.append(LINE_SEPARATOR);

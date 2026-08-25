@@ -1,5 +1,4 @@
-/* Licensed under MIT 2026. */
-package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
+package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -58,18 +57,19 @@ public class ComponentArtemisInconsistencyEvaluator implements ArtemisInconsiste
     }
 
     @Override
-    public ImmutableList<SingleClassificationResult<String>> evaluateTeam(ComponentArtemisInconsistencyTask project, Map<ArchitectureItem, ArdocoResult> runs) {
+    public ImmutableList<SingleClassificationResult<String>> evaluateTeam(ComponentArtemisInconsistencyTask project,
+            Map<ArtemisEvaluationRun, ArdocoResult> runs) {
         MutableList<SingleClassificationResult<String>> results = Lists.mutable.empty();
 
         var goldStandard = project.getGoldstandardForArchitectureModel(createComponentModel(project));
 
         for (var run : runs.entrySet()) {
-            ArchitectureItem heldBackElement = run.getKey();
-            ArdocoResult result = run.getValue();
-
-            if (heldBackElement == null) {
+            if (!(run.getKey() instanceof HeldBackArchitectureItemRun heldBackRun)) {
                 continue;
             }
+
+            ArchitectureItem heldBackElement = heldBackRun.item();
+            ArdocoResult result = run.getValue();
 
             MutableSet<String> expectedSentences = goldStandard.getSentencesWithElement(heldBackElement)
                     .toSet()
