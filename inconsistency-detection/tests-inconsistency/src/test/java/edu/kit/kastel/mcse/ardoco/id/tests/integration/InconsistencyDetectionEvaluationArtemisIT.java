@@ -6,9 +6,17 @@ import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelpe
 
 import java.util.Map;
 
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ClassArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ComponentArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ClassHoldBackArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ComponentHoldBackArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.SingleArtemisInconsistencyRunProducer;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,13 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisEvaluationRun;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyApproach;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluationWriter;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyRunProducer;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ClassArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ComponentArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.*;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ComponentArtemisInconsistencyTask;
@@ -49,7 +51,10 @@ class InconsistencyDetectionEvaluationArtemisIT {
     //@EnumSource(ComponentArtemisInconsistencyTask.class) //use this for all evaluation projects
     @Order(1)
     void componentMeatInconsistencyIT(ComponentArtemisInconsistencyTask project) {
-        runMeatEvaluation(project, ArtemisInconsistencyApproach.COMPONENT, new ComponentArtemisInconsistencyEvaluator());
+        var configuration = ArtemisInconsistencyEvaluationConfiguration.component();
+        var producer = new SingleArtemisInconsistencyRunProducer<ComponentArtemisInconsistencyTask>(LLM, configuration);
+
+        runMeatEvaluation(project, configuration, producer, new ComponentArtemisInconsistencyEvaluator());
     }
 
     @DisplayName("Evaluate ArTEMiS Component TEAM inconsistency detection")
@@ -57,7 +62,10 @@ class InconsistencyDetectionEvaluationArtemisIT {
     @EnumSource(ComponentArtemisInconsistencyTask.class)
     @Order(2)
     void componentTeamInconsistencyIT(ComponentArtemisInconsistencyTask project) {
-        runTeamEvaluation(project, ArtemisInconsistencyApproach.COMPONENT, new ComponentArtemisInconsistencyEvaluator());
+        var configuration = ArtemisInconsistencyEvaluationConfiguration.component();
+        var producer = new ComponentHoldBackArtemisInconsistencyRunProducer(LLM);
+
+        runTeamEvaluation(project, configuration, producer, new ComponentArtemisInconsistencyEvaluator(), " TEAM");
     }
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection")
@@ -65,7 +73,10 @@ class InconsistencyDetectionEvaluationArtemisIT {
     @EnumSource(value = ClassArtemisInconsistencyTask.class, names = { "TEAMMATES" })
     @Order(3)
     void classTeamInconsistencyIT(ClassArtemisInconsistencyTask project) {
-        runTeamEvaluation(project, ArtemisInconsistencyApproach.CLASS, new ClassArtemisInconsistencyEvaluator());
+        var configuration = ArtemisInconsistencyEvaluationConfiguration.clazz();
+        var producer = new SingleArtemisInconsistencyRunProducer<ClassArtemisInconsistencyTask>(LLM, configuration);
+
+        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), " TEAM");
     }
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection using holdbacks")
@@ -77,45 +88,36 @@ class InconsistencyDetectionEvaluationArtemisIT {
         int numberOfHeldBackClassesPerRun = 2;
         long seed = 42L;
 
-        logger.info("Start ArTEMiS Class TEAM holdback evaluation for project {}", project.getEvaluationProject().name());
+        var configuration = ArtemisInconsistencyEvaluationConfiguration.clazz();
+        var producer = new ClassHoldBackArtemisInconsistencyRunProducer(LLM, numberOfRuns, numberOfHeldBackClassesPerRun, seed);
 
-        var approach = ArtemisInconsistencyApproach.CLASS;
-        var producer = new ArtemisInconsistencyRunProducer(LLM, approach);
-        Map<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceClassHoldBackTeamRuns(project, numberOfRuns, numberOfHeldBackClassesPerRun, seed);
-
-        evaluateAndWriteTeamResults(project, approach, new ClassArtemisInconsistencyEvaluator(), runs, " TEAM holdback");
+        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), " TEAM holdback");
     }
 
-    private <T extends ArtemisInconsistencyTask> void runMeatEvaluation(T project, ArtemisInconsistencyApproach approach,
-            ArtemisInconsistencyEvaluator<T> evaluator) {
-        Assumptions.assumeTrue(approach.supportsMeat(), () -> approach + " does not support MEAT evaluation");
+    private <T extends ArtemisInconsistencyTask> void runMeatEvaluation(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
+            SingleArtemisInconsistencyRunProducer<T> producer, ArtemisInconsistencyEvaluator<T> evaluator) {
+        logger.info("Start ArTEMiS MEAT evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.displayName());
 
-        logger.info("Start ArTEMiS MEAT evaluation for project {} using approach {}", project.getEvaluationProject().name(), approach);
-
-        var producer = new ArtemisInconsistencyRunProducer(LLM, approach);
         ArdocoResult baseRun = producer.produceBaseRun(project);
 
         Assertions.assertNotNull(baseRun, "Base run must not be null");
 
         SingleClassificationResult<String> result = evaluator.evaluateMeat(project, baseRun);
 
-        logExplicitResults(logger, project.getEvaluationProject().name() + " " + approach.getDisplayName() + " MEAT", result);
-        ArtemisInconsistencyEvaluationWriter.writeMeatResult(project, approach, result);
+        logExplicitResults(logger, project.getEvaluationProject().name() + " " + configuration.displayName() + " MEAT", result);
+        ArtemisInconsistencyEvaluationWriter.writeMeatResult(project, configuration, result);
     }
 
-    private <T extends ArtemisInconsistencyTask> void runTeamEvaluation(T project, ArtemisInconsistencyApproach approach,
-            ArtemisInconsistencyEvaluator<T> evaluator) {
-        Assumptions.assumeTrue(approach.supportsTeam(), () -> approach + " does not support TEAM evaluation");
+    private <T extends ArtemisInconsistencyTask> void runTeamEvaluation(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
+            ArtemisInconsistencyRunProducer<T> producer, ArtemisInconsistencyEvaluator<T> evaluator, String logSuffix) {
+        logger.info("Start ArTEMiS TEAM evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.displayName());
 
-        logger.info("Start ArTEMiS TEAM evaluation for project {} using approach {}", project.getEvaluationProject().name(), approach);
+        Map<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceRuns(project);
 
-        var producer = new ArtemisInconsistencyRunProducer(LLM, approach);
-        Map<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceTeamRuns(project);
-
-        evaluateAndWriteTeamResults(project, approach, evaluator, runs, " TEAM");
+        evaluateAndWriteTeamResults(project, configuration, evaluator, runs, logSuffix);
     }
 
-    private <T extends ArtemisInconsistencyTask> void evaluateAndWriteTeamResults(T project, ArtemisInconsistencyApproach approach,
+    private <T extends ArtemisInconsistencyTask> void evaluateAndWriteTeamResults(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
             ArtemisInconsistencyEvaluator<T> evaluator, Map<ArtemisEvaluationRun, ArdocoResult> runs, String logSuffix) {
         Assertions.assertNotNull(runs, "Runs must not be null");
         Assertions.assertFalse(runs.isEmpty(), "Runs must not be empty");
@@ -129,7 +131,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
                 .findFirst()
                 .orElseThrow();
 
-        logResults(logger, project.getEvaluationProject().name() + " " + approach.getDisplayName() + logSuffix, microAverage);
-        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, approach, results, runs);
+        logResults(logger, project.getEvaluationProject().name() + " " + configuration.displayName() + logSuffix, microAverage);
+        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs);
     }
 }

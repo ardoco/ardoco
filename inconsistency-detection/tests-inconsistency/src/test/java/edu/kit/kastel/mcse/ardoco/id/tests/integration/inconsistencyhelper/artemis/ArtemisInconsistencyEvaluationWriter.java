@@ -10,6 +10,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
+
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
@@ -29,19 +31,20 @@ public final class ArtemisInconsistencyEvaluationWriter {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void writeMeatResult(ArtemisInconsistencyTask project, ArtemisInconsistencyApproach approach, SingleClassificationResult<String> result) {
-        StringBuilder builder = createHeader(project, approach, "MEAT");
+    public static void writeMeatResult(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration,
+            SingleClassificationResult<String> result) {
+        StringBuilder builder = createHeader(project, configuration, "MEAT");
         builder.append(createResultLogString("MEAT inconsistencies", result));
         builder.append(LINE_SEPARATOR);
         appendConfusionSets(builder, result);
 
-        String fileName = "MEAT_" + approach.name().toLowerCase() + "_" + project.getEvaluationProject().name() + ".txt";
+        String fileName = "MEAT_" + configuration.outputName() + "_" + project.getEvaluationProject().name() + ".txt";
         write(fileName, builder);
     }
 
-    public static void writeTeamResult(ArtemisInconsistencyTask project, ArtemisInconsistencyApproach approach,
+    public static void writeTeamResult(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration,
             MutableList<SingleClassificationResult<String>> results, Map<ArtemisEvaluationRun, ArdocoResult> runs) {
-        StringBuilder builder = createHeader(project, approach, "TEAM");
+        StringBuilder builder = createHeader(project, configuration, "TEAM");
 
         int resultIndex = 0;
         for (var run : runs.entrySet()) {
@@ -76,16 +79,16 @@ public final class ArtemisInconsistencyEvaluationWriter {
         builder.append("### OVERALL RESULTS ###").append(LINE_SEPARATOR);
         builder.append(createResultLogString("Micro Average", microAverage));
 
-        String fileName = "TEAM_" + approach.name().toLowerCase() + "_" + project.getEvaluationProject().name() + ".txt";
+        String fileName = "TEAM_" + configuration.outputName() + "_" + project.getEvaluationProject().name() + ".txt";
         write(fileName, builder);
     }
 
-    private static StringBuilder createHeader(ArtemisInconsistencyTask project, ArtemisInconsistencyApproach approach, String kind) {
+    private static StringBuilder createHeader(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration, String kind) {
         StringBuilder builder = new StringBuilder();
         builder.append("### ")
                 .append(project.getEvaluationProject().name())
                 .append(" / ")
-                .append(approach.getDisplayName())
+                .append(configuration.displayName())
                 .append(" / ")
                 .append(kind)
                 .append(" ###");

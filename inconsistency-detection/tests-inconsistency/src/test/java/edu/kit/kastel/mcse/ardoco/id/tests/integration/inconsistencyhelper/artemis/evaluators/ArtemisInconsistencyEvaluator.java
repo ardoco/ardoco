@@ -1,6 +1,8 @@
-package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
+package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.util.Map;
+
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
