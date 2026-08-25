@@ -90,7 +90,7 @@ Located in `/.github/workflows/`:
 | Maven Verify | `verify.yml` | Runs Maven verify on push/PR via the reusable `ardoco/actions` workflow. Ignores `docs/**` and `openwiki/**` paths so docs-only changes skip the build |
 | Format Check | `format.yml` | Checks code formatting via Spotless |
 | Docs | `docs.yml` | Publishes `/docs` and `/openwiki` to the GitHub Wiki; renders each `/openwiki/*.md` as `OpenWiki-<name>.md` in the wiki root namespace |
-| OpenWiki Update | `openwiki.yml` | Scheduled weekly run of `openwiki --update` that opens a PR with documentation changes; requires `contents: write` and `pull-requests: write` permissions |
+| OpenWiki Update | `openwiki.yml` | Weekly (Monday 06:00 UTC) / `workflow_dispatch` run that delegates to the shared `ardoco/actions/.github/workflows/openwiki.yml@main` reusable workflow, passing the `OPENROUTER_API_KEY` secret; the call site still declares `contents: write` and `pull-requests: write` permissions. The reusable workflow performs the commit-relevance check, installs OpenWiki, runs `openwiki --update`, and opens the update PR |
 
 Each module also has its own CI workflows under `{module}/.github/workflows/` for the standalone repositories.
 
