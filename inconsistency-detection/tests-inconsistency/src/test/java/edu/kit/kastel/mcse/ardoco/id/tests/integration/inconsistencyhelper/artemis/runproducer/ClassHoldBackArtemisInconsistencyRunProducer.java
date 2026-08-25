@@ -2,12 +2,8 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.arte
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.*;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.BaseEvaluationRun;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackClassesRun;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
@@ -22,6 +18,11 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.AnonymousRunner;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractPipelineStep;
 import edu.kit.kastel.mcse.ardoco.id.ArtemisInconsistencyChecker;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluationConfiguration;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.HoldbackClassArtemisConnectionInformant;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.BaseEvaluationRun;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackClassesRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassSadCodeTlrTask;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
@@ -45,18 +46,64 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
         this.seed = seed;
     }
 
-    private static Set<String> getClassesFromTlrGoldStandard(ClassArtemisInconsistencyTask project) {
+    private static Map<String, Long> getClassesFromTlrGoldStandard(ClassArtemisInconsistencyTask project) {
         return ClassSadCodeTlrTask.valueOf(project.name())
                 .getExpectedTraceLinks()
                 .stream()
                 .map(Pair::second)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .toList()
+                .stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
-    private static List<String> selectRandomClasses(Set<String> candidateClasses, int numberOfHeldBackClassesPerRun, long seed) {
-        var shuffledClasses = new ArrayList<>(candidateClasses);
+    private static List<String> selectRandomClasses(Map<String, Long> candidateClasses, int numberOfHeldBackClassesPerRun, long seed) {
+        var shuffledClasses = new ArrayList<>(candidateClasses.keySet());
         Collections.shuffle(shuffledClasses, new Random(seed));
         return shuffledClasses.stream().limit(numberOfHeldBackClassesPerRun).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static List<String> selectRandomClassesWeighted(Map<String, Long> candidateClasses, int numberOfHeldBackClassesPerRun, long seed) {
+        var random = new Random(seed);
+        var remaining = new HashMap<>(candidateClasses);
+        var selected = new ArrayList<String>();
+
+        int numberToSelect = Math.min(numberOfHeldBackClassesPerRun, remaining.size());
+
+        // alpha controls how strongly rare classes are preferred.
+        // alpha = 0.0 -> all classes have equal probability
+        // alpha = 0.5 -> moderate preference for rare classes
+        // alpha = 1.0 -> strong preference for rare classes
+        double alpha = 0.5;
+
+        for (int i = 0; i < numberToSelect; i++) {
+
+            // Calculate the total weight of all remaining classes.
+            // Rare classes get a higher weight:
+            // weight = 1 / occurrences^alpha
+            double totalWeight = remaining.values().stream().mapToDouble(occurrences -> 1.0 / Math.pow(occurrences, alpha)).sum();
+
+            // Pick a random point within the total weight range.
+            double target = random.nextDouble() * totalWeight;
+
+            String selectedClass = null;
+
+            // Walk through the classes and find the class
+            // whose cumulative weight contains the random target.
+            for (var entry : remaining.entrySet()) {
+                double weight = 1.0 / Math.pow(entry.getValue(), alpha);
+                target -= weight;
+
+                if (target < 0) {
+                    selectedClass = entry.getKey();
+                    break;
+                }
+            }
+
+            selected.add(selectedClass);
+            remaining.remove(selectedClass);
+        }
+
+        return selected;
     }
 
     @Override
@@ -73,7 +120,7 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
         }
 
         for (int runIndex = 0; runIndex < numberOfRuns; runIndex++) {
-            var heldBackClasses = selectRandomClasses(candidateClasses, numberOfHeldBackClassesPerRun, seed + runIndex);
+            var heldBackClasses = selectRandomClassesWeighted(candidateClasses, numberOfHeldBackClassesPerRun, seed + runIndex);
             var runData = runClassHoldBackTeam(project, heldBackClasses);
             runs.put(new HeldBackClassesRun(heldBackClasses, runIndex), new ArdocoResult(runData));
         }
