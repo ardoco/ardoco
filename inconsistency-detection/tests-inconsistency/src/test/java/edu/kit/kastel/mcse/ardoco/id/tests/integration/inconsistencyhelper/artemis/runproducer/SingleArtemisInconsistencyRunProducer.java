@@ -20,7 +20,7 @@ public final class SingleArtemisInconsistencyRunProducer<T extends ArtemisIncons
     }
 
     public ArdocoResult produceBaseRun(T project) {
-        var runData = ArtemisInconsistencyRunSupport.run(project, llm, configuration.strategies(), configuration.outputName(), "base");
+        var runData = ArtemisInconsistencyRunSupport.run(project, llm, configuration.strategies(), configuration.name(), "base");
         return new ArdocoResult(runData);
     }
 

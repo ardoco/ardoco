@@ -110,7 +110,7 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
     public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(ClassArtemisInconsistencyTask project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
 
-        var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.outputName(), "base");
+        var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.name(), "base");
         runs.put(new BaseEvaluationRun(), new ArdocoResult(baseRunData));
 
         var candidateClasses = getClassesFromTlrGoldStandard(project);

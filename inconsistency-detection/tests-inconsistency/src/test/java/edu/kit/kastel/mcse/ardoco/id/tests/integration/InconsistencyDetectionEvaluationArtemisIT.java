@@ -65,7 +65,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var configuration = ArtemisInconsistencyEvaluationConfiguration.component();
         var producer = new ComponentHoldBackArtemisInconsistencyRunProducer(LLM);
 
-        runTeamEvaluation(project, configuration, producer, new ComponentArtemisInconsistencyEvaluator(), " TEAM");
+        runTeamEvaluation(project, configuration, producer, new ComponentArtemisInconsistencyEvaluator(), "_TEAM");
     }
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection")
@@ -76,7 +76,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var configuration = ArtemisInconsistencyEvaluationConfiguration.clazz();
         var producer = new SingleArtemisInconsistencyRunProducer<ClassArtemisInconsistencyTask>(LLM, configuration);
 
-        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), " TEAM");
+        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), "_TEAM");
     }
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection using holdbacks")
@@ -91,12 +91,12 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var configuration = ArtemisInconsistencyEvaluationConfiguration.clazz();
         var producer = new ClassHoldBackArtemisInconsistencyRunProducer(LLM, numberOfRuns, numberOfHeldBackClassesPerRun, seed);
 
-        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), " TEAM holdback");
+        runTeamEvaluation(project, configuration, producer, new ClassArtemisInconsistencyEvaluator(), "_TEAM holdback");
     }
 
     private <T extends ArtemisInconsistencyTask> void runMeatEvaluation(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
             SingleArtemisInconsistencyRunProducer<T> producer, ArtemisInconsistencyEvaluator<T> evaluator) {
-        logger.info("Start ArTEMiS MEAT evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.displayName());
+        logger.info("Start ArTEMiS MEAT evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.name());
 
         ArdocoResult baseRun = producer.produceBaseRun(project);
 
@@ -104,13 +104,13 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
         SingleClassificationResult<String> result = evaluator.evaluateMeat(project, baseRun);
 
-        logExplicitResults(logger, project.getEvaluationProject().name() + " " + configuration.displayName() + " MEAT", result);
+        logExplicitResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + " MEAT", result);
         ArtemisInconsistencyEvaluationWriter.writeMeatResult(project, configuration, result);
     }
 
     private <T extends ArtemisInconsistencyTask> void runTeamEvaluation(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
             ArtemisInconsistencyRunProducer<T> producer, ArtemisInconsistencyEvaluator<T> evaluator, String logSuffix) {
-        logger.info("Start ArTEMiS TEAM evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.displayName());
+        logger.info("Start ArTEMiS TEAM evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.name());
 
         Map<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceRuns(project);
 
@@ -131,7 +131,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
                 .findFirst()
                 .orElseThrow();
 
-        logResults(logger, project.getEvaluationProject().name() + " " + configuration.displayName() + logSuffix, microAverage);
-        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs);
+        logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, microAverage);
+        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs, logSuffix);
     }
 }

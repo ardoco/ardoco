@@ -32,7 +32,7 @@ public final class ComponentHoldBackArtemisInconsistencyRunProducer implements A
     public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(ComponentArtemisInconsistencyTask project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
 
-        var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.outputName(), "base");
+        var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.name(), "base");
         runs.put(new BaseEvaluationRun(), new ArdocoResult(baseRunData));
 
         var modelProvider = new HoldBackArCoTLModelProvider(project.getArchitectureConfiguration().orElseThrow().architectureFile());
@@ -42,7 +42,7 @@ public final class ComponentHoldBackArtemisInconsistencyRunProducer implements A
             ArchitectureComponent heldBackComponent = modelProvider.getCurrentHoldBack();
 
             var strategies = createStrategiesWithoutComponent(heldBackComponent);
-            var runData = ArtemisInconsistencyRunSupport.run(project, llm, strategies, CONFIGURATION.outputName(), heldBackComponent.getName());
+            var runData = ArtemisInconsistencyRunSupport.run(project, llm, strategies, CONFIGURATION.name(), heldBackComponent.getName());
 
             runs.put(new HeldBackArchitectureItemRun(heldBackComponent), new ArdocoResult(runData));
         }

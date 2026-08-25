@@ -10,12 +10,11 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
-
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
@@ -38,12 +37,12 @@ public final class ArtemisInconsistencyEvaluationWriter {
         builder.append(LINE_SEPARATOR);
         appendConfusionSets(builder, result);
 
-        String fileName = "MEAT_" + configuration.outputName() + "_" + project.getEvaluationProject().name() + ".txt";
+        String fileName = "MEAT_" + configuration.name() + "_" + project.getEvaluationProject().name() + ".txt";
         write(fileName, builder);
     }
 
     public static void writeTeamResult(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration,
-            MutableList<SingleClassificationResult<String>> results, Map<ArtemisEvaluationRun, ArdocoResult> runs) {
+            MutableList<SingleClassificationResult<String>> results, Map<ArtemisEvaluationRun, ArdocoResult> runs, String logSuffix) {
         StringBuilder builder = createHeader(project, configuration, "TEAM");
 
         int resultIndex = 0;
@@ -79,7 +78,7 @@ public final class ArtemisInconsistencyEvaluationWriter {
         builder.append("### OVERALL RESULTS ###").append(LINE_SEPARATOR);
         builder.append(createResultLogString("Micro Average", microAverage));
 
-        String fileName = "TEAM_" + configuration.outputName() + "_" + project.getEvaluationProject().name() + ".txt";
+        String fileName = "TEAM_" + configuration.name() + logSuffix + "_" + project.getEvaluationProject().name() + ".txt";
         write(fileName, builder);
     }
 
@@ -88,7 +87,7 @@ public final class ArtemisInconsistencyEvaluationWriter {
         builder.append("### ")
                 .append(project.getEvaluationProject().name())
                 .append(" / ")
-                .append(configuration.displayName())
+                .append(configuration.name())
                 .append(" / ")
                 .append(kind)
                 .append(" ###");
