@@ -4,7 +4,7 @@ sentenceID,codeID
 19,CommandAction
 19,FunctionAction
 20,ListAction
-20,Action,
+20,Action
 20,Executor
 21,Action
 22,ActionBase
