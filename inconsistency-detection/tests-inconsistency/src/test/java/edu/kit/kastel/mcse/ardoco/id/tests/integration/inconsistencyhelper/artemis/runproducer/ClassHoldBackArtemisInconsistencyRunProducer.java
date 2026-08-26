@@ -24,7 +24,7 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.BaseEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackClassesRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
-import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassSadCodeTlrTask;
+//import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassSadCodeTlrTask;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
@@ -47,8 +47,7 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
     }
 
     private static Map<String, Long> getClassesFromTlrGoldStandard(ClassArtemisInconsistencyTask project) {
-        return ClassSadCodeTlrTask.valueOf(project.name())
-                .getExpectedTraceLinks()
+        return project.getExpectedTraceLinks()
                 .stream()
                 .map(Pair::second)
                 .toList()

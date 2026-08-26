@@ -1,6 +1,7 @@
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +19,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
-import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassSadCodeTlrTask;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
@@ -60,7 +60,7 @@ public class ClassArtemisInconsistencyEvaluator implements ArtemisInconsistencyE
 
         assertBaseRunExists(runs);
 
-        var tlrGoldStandard = ClassSadCodeTlrTask.valueOf(project.name()).getExpectedTraceLinks();
+        var tlrGoldStandard = project.getExpectedTraceLinks();
 
         for (var run : runs.entrySet()) {
             if (!(run.getKey() instanceof HeldBackClassesRun heldBackClassesRun)) {
