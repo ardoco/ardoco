@@ -21,6 +21,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -30,6 +32,8 @@ import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.RecommendationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.TextStatePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 
 /**
@@ -46,17 +50,21 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final CodePersistenceService codeService;
     private final TraceLinkPersistenceService traceLinkService;
     private final InconsistencyPersistenceService inconsistencyService;
+    private final TextStatePersistenceService textStateService;
+    private final RecommendationPersistenceService recommendationService;
     private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
-            Neo4jClient neo4jClient) {
+            TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
         this.codeService = codeService;
         this.traceLinkService = traceLinkService;
         this.inconsistencyService = inconsistencyService;
+        this.textStateService = textStateService;
+        this.recommendationService = recommendationService;
     }
 
     @Override
@@ -202,6 +210,24 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public void deleteAllInconsistencies() {
         logger.info("Deleting all inconsistencies from persistence");
         inconsistencyService.deleteAllInconsistencies();
+    }
+
+    @Override
+    public void saveNounMapping(NounMapping nounMapping) {
+        logger.debug("Saving NounMapping {}", nounMapping.getArdocoId());
+        this.textStateService.saveNounMapping(nounMapping);
+    }
+
+    @Override
+    public void deleteNounMapping(String ardocoId) {
+        logger.debug("Deleting NounMapping {}", ardocoId);
+        this.textStateService.deleteNounMapping(ardocoId);
+    }
+
+    @Override
+    public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+        logger.debug("Saving RecommendedInstance {}", recommendedInstance.getId());
+        this.recommendationService.saveRecommendedInstance(recommendedInstance, metamodel);
     }
 
 }

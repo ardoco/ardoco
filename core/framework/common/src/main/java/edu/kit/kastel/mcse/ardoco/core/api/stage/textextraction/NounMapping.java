@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import java.io.Serializable;
@@ -16,6 +16,15 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  * Represents a mapping of noun phrases or words to a concept (name, type, or both).
  */
 public interface NounMapping extends Serializable {
+
+    /**
+     * Returns a stable identifier for this mapping.
+     * Used for Neo4j persistence upserts and for preserving identity across merges.
+     *
+     * @return the unique ardoco id
+     */
+    String getArdocoId();
+
     /**
      * Returns the surface forms (occurrences) of this mapping.
      *

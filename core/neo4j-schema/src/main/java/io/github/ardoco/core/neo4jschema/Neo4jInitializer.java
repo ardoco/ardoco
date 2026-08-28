@@ -22,6 +22,9 @@ public class Neo4jInitializer {
     @PostConstruct
     public void initializeNeo4j() {
         execute("CREATE INDEX sentence_num_idx IF NOT EXISTS FOR (s:Sentence) ON (s.sentenceNumber)");
+        execute("CREATE INDEX word_position_idx IF NOT EXISTS FOR (w:Word) ON (w.position)");
+        execute("CREATE INDEX nounmapping_id_idx IF NOT EXISTS FOR (n:NounMapping) ON (n.ardocoId)");
+        execute("CREATE INDEX recommendedinstance_id_idx IF NOT EXISTS FOR (r:RecommendedInstance) ON (r.ardocoId)");
         execute("CREATE INDEX traceable_id_idx IF NOT EXISTS FOR (t:Traceable) ON (t.ardocoId)");
         execute("CREATE INDEX inconsistency_reason_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.reason)");
         execute("CREATE INDEX inconsistency_id_idx IF NOT EXISTS FOR (i:Inconsistency) ON (i.id);");

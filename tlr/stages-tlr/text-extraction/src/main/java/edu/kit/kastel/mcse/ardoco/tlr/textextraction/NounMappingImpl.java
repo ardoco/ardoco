@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
@@ -24,6 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
+import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -37,9 +38,10 @@ public class NounMappingImpl implements NounMapping {
     protected static final AtomicLong CREATION_TIME_COUNTER = new AtomicLong(0);
 
     @Serial
-    private static final long serialVersionUID = -1848153982944207492L;
+    private static final long serialVersionUID = -5128471930482617301L;
 
     private static final AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
+    private final String ardocoId;
     private final Long earliestCreationTime;
     private final MutableSortedSet<Word> words;
     private MutableSortedSet<Phrase> phrases;
@@ -50,7 +52,7 @@ public class NounMappingImpl implements NounMapping {
     private boolean isDefinedAsCompound;
 
     /**
-     * Instantiates a new noun mapping. A new creation time will be generated.
+     * Instantiates a new noun mapping. A new creation time and ardoco id will be generated.
      *
      * @param words          the list of words for this nounmapping
      * @param kind           the kind of mapping
@@ -61,11 +63,11 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms) {
-        this(CREATION_TIME_COUNTER.incrementAndGet(), words, kind, claimant, probability, referenceWords, surfaceForms);
+        this(IdentifierProvider.createId(), CREATION_TIME_COUNTER.incrementAndGet(), words, kind, claimant, probability, referenceWords, surfaceForms);
     }
 
     /**
-     * Constructor. A new creation time will be generated.
+     * Constructor. A new creation time and ardoco id will be generated.
      *
      * @param words          the words
      * @param distribution   the distribution map (kind to confidence)
@@ -73,14 +75,36 @@ public class NounMappingImpl implements NounMapping {
      * @param surfaceForms   the surface forms
      * @param reference      the String reference
      */
-
     public NounMappingImpl(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms, String reference) {
-        this(CREATION_TIME_COUNTER.incrementAndGet(), words, distribution, referenceWords, surfaceForms, reference);
+        this(IdentifierProvider.createId(), CREATION_TIME_COUNTER.incrementAndGet(), words, distribution, referenceWords, surfaceForms, reference);
     }
 
     /**
-     * Constructor
+     * Constructor used when identity should be preserved (e.g. after a merge).
+     *
+     * @param ardocoId             stable id to keep across merges
+     * @param earliestCreationTime the earliest creation time
+     * @param words                the words
+     * @param distribution         the distribution map (kind to confidence)
+     * @param referenceWords       the reference words
+     * @param surfaceForms         the surface forms
+     * @param reference            the String reference
+     */
+    public NounMappingImpl(String ardocoId, Long earliestCreationTime, ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
+            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
+        this.ardocoId = Objects.requireNonNull(ardocoId);
+        this.earliestCreationTime = earliestCreationTime;
+        this.words = words.toSortedSet();
+        this.distribution = distribution.toSortedMap();
+        this.referenceWords = referenceWords.toList();
+        this.surfaceForms = surfaceForms.toList();
+        this.reference = reference;
+        this.isDefinedAsCompound = false;
+    }
+
+    /**
+     * Constructor that keeps a given creation time but assigns a fresh ardoco id.
      *
      * @param earliestCreationTime the earliest creation time
      * @param words                the words
@@ -89,21 +113,13 @@ public class NounMappingImpl implements NounMapping {
      * @param surfaceForms         the surface forms
      * @param reference            the String reference
      */
-
     public NounMappingImpl(Long earliestCreationTime, ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
             ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
-        this.earliestCreationTime = earliestCreationTime;
-        this.words = words.toSortedSet();
-        this.distribution = distribution.toSortedMap();
-        this.referenceWords = referenceWords.toList();
-        this.surfaceForms = surfaceForms.toList();
-        this.reference = reference;
-        this.isDefinedAsCompound = false;
-
+        this(IdentifierProvider.createId(), earliestCreationTime, words, distribution, referenceWords, surfaceForms, reference);
     }
 
     /**
-     * Instantiates a new noun mapping.
+     * Instantiates a new noun mapping with a given creation time and a fresh ardoco id.
      *
      * @param earliestCreationTime the earliest creation time
      * @param words                the list of words for this nounmapping
@@ -115,13 +131,23 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(Long earliestCreationTime, ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability,
             ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms) {
-        this(earliestCreationTime, words.toSortedSet().toImmutable(), SortedMaps.immutable.empty(), referenceWords, surfaceForms, calculateReference(
+        this(IdentifierProvider.createId(), earliestCreationTime, words, kind, claimant, probability, referenceWords, surfaceForms);
+    }
+
+    private NounMappingImpl(String ardocoId, Long earliestCreationTime, ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability,
+            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms) {
+        this(ardocoId, earliestCreationTime, words.toSortedSet().toImmutable(), SortedMaps.immutable.empty(), referenceWords, surfaceForms, calculateReference(
                 referenceWords));
 
         Objects.requireNonNull(claimant);
         this.distribution.putIfAbsent(MappingKind.NAME, new Confidence(DEFAULT_AGGREGATOR));
         this.distribution.putIfAbsent(MappingKind.TYPE, new Confidence(DEFAULT_AGGREGATOR));
         this.addKindWithProbability(kind, claimant, probability);
+    }
+
+    @Override
+    public String getArdocoId() {
+        return this.ardocoId;
     }
 
     @Override
@@ -200,7 +226,8 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public String toString() {
-        return "NounMapping [" + "distribution=" + this.distribution.keyValuesView().collect(entry -> entry.getOne() + ":" + entry.getTwo()).makeString(",") + //
+        return "NounMapping [" + "ardocoId=" + this.ardocoId + //
+                ", distribution=" + this.distribution.keyValuesView().collect(entry -> entry.getOne() + ":" + entry.getTwo()).makeString(",") + //
                 ", reference=" + this.getReference() + //
                 ", node=" + String.join(", ", this.surfaceForms) + //
                 ", position=" + String.join(", ", this.getWords().collect(word -> String.valueOf(word.getPosition()))) + //
@@ -225,6 +252,25 @@ public class NounMappingImpl implements NounMapping {
             }
         }
         return earliest == Long.MAX_VALUE ? null : earliest;
+    }
+
+    /**
+     * Returns the ardoco id of the mapping with the earliest creation time.
+     * Used so merges keep a stable Neo4j identity.
+     */
+    public static String ardocoIdOfEarliest(NounMapping... nounMappings) {
+        NounMappingImpl earliest = null;
+        for (var mapping : nounMappings) {
+            if (mapping instanceof NounMappingImpl impl) {
+                if (earliest == null || impl.earliestCreationTime() < earliest.earliestCreationTime()) {
+                    earliest = impl;
+                }
+            }
+        }
+        if (earliest == null) {
+            return IdentifierProvider.createId();
+        }
+        return earliest.getArdocoId();
     }
 
     public Long earliestCreationTime() {

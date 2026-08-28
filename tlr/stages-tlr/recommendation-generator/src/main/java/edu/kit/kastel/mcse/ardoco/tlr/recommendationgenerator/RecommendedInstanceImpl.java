@@ -13,10 +13,12 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
@@ -41,6 +43,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     private final Confidence internalConfidence;
     private final MutableList<NounMapping> typeMappings;
     private final MutableList<NounMapping> nameMappings;
+    private Metamodel metamodel;
 
     private RecommendedInstanceImpl(String name, String type) {
         super(name, UUID.randomUUID().toString());
@@ -53,16 +56,22 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
 
     @Override
     public void onNounMappingDeletion(NounMapping deletedNounMapping, NounMapping replacement) {
+        boolean replaced = false;
         if (this.nameMappings.remove(deletedNounMapping)) {
             if (replacement == null) {
                 throw new IllegalArgumentException("Replacement cannot be null");
             }
             this.nameMappings.add(replacement);
+            replaced = true;
         } else if (this.typeMappings.remove(deletedNounMapping)) {
             if (replacement == null) {
                 throw new IllegalArgumentException("Replacement cannot be null");
             }
             this.typeMappings.add(replacement);
+            replaced = true;
+        }
+        if (replaced) {
+            persistIfEnabled();
         }
     }
 
@@ -82,6 +91,10 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
 
         this.nameMappings.addAll(nameNodes.castToCollection());
         this.typeMappings.addAll(typeNodes.castToCollection());
+    }
+
+    void setMetamodel(Metamodel metamodel) {
+        this.metamodel = metamodel;
     }
 
     private static double calculateMappingProbability(ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings) {
@@ -144,6 +157,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     public void addMappings(ImmutableList<NounMapping> nameMapping, ImmutableList<NounMapping> typeMapping) {
         nameMapping.forEach(this::addName);
         typeMapping.forEach(this::addType);
+        persistIfEnabled();
     }
 
     /**
@@ -195,6 +209,13 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     @Override
     public void addProbability(Claimant claimant, double probability) {
         this.internalConfidence.addAgentConfidence(claimant, probability);
+        persistIfEnabled();
+    }
+
+    private void persistIfEnabled() {
+        if (this.metamodel != null && PersistenceBridge.shouldPersistRecommendations()) {
+            PersistenceBridge.getHandler().saveRecommendedInstance(this, this.metamodel);
+        }
     }
 
     @Override

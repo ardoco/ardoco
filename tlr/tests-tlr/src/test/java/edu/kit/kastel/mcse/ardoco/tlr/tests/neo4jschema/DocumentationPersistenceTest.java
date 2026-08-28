@@ -48,11 +48,11 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
         persistenceService.savePreprocessedText(domainText, documentId);
 
-        // --- VISUALIZATION BLOCK ---
+        // --- VISUALIZATION BLOCK (Neo4j Desktop) ---
         System.out.println("----------------------------------------------------------");
-        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
-        System.out.println("password:      " + neo4j.getAdminPassword());
-        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
+        System.out.println("neo4j browser: " + NEO4J_BROWSER);
+        System.out.println("password:      " + NEO4J_PASSWORD);
+        System.out.println("Connect URL:   " + NEO4J_BOLT);
         System.out.println("----------------------------------------------------------");
 
         // Uncomment this line when you want to look at the graph.

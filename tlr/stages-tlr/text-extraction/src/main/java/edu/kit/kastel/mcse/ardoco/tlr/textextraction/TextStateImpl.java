@@ -16,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.PhraseMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Comparators;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
@@ -119,6 +120,7 @@ public class TextStateImpl extends AbstractState implements TextState {
         }
         this.nounMappings.add(nounMapping);
         this.nounMappings.sortThis(ORDER_NOUNMAPPING);
+        persistNounMapping(nounMapping);
 
         for (PhraseMapping phraseMapping : this.phraseMappings) {
             SortedIterable<Phrase> phrases = phraseMapping.getPhrases();
@@ -145,6 +147,7 @@ public class TextStateImpl extends AbstractState implements TextState {
         }
 
         this.nounMappings.remove(nounMapping);
+        deletePersistedNounMapping(nounMapping);
         DataRepositorySyncer.onNounMappingDeletion(dataRepository, nounMapping, replacement);
     }
 
@@ -166,6 +169,18 @@ public class TextStateImpl extends AbstractState implements TextState {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // handle additional configuration
+    }
+
+    private static void persistNounMapping(NounMapping nounMapping) {
+        if (PersistenceBridge.shouldPersistTextState()) {
+            PersistenceBridge.getHandler().saveNounMapping(nounMapping);
+        }
+    }
+
+    private static void deletePersistedNounMapping(NounMapping nounMapping) {
+        if (PersistenceBridge.shouldPersistTextState()) {
+            PersistenceBridge.getHandler().deleteNounMapping(nounMapping.getArdocoId());
+        }
     }
 
     private static final Comparator<NounMapping> ORDER_NOUNMAPPING = (n1, n2) -> {

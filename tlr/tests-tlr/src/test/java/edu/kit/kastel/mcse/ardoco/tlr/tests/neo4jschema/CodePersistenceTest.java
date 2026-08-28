@@ -24,11 +24,11 @@ public class CodePersistenceTest extends AbstractPersistenceTest {
     @Test
     @DisplayName("Should persist and restore a Code Model")
     void testSaveAndLoadCodeModel() {
-        // --- VISUALIZATION BLOCK ---
+        // --- VISUALIZATION BLOCK (Neo4j Desktop) ---
         System.out.println("----------------------------------------------------------");
-        System.out.println("neo4j browser: " + neo4j.getHttpUrl()); // e.g., http://localhost:32789
-        System.out.println("password:      " + neo4j.getAdminPassword());
-        System.out.println("Connect URL:   " + neo4j.getBoltUrl());
+        System.out.println("neo4j browser: " + NEO4J_BROWSER);
+        System.out.println("password:      " + NEO4J_PASSWORD);
+        System.out.println("Connect URL:   " + NEO4J_BOLT);
         System.out.println("----------------------------------------------------------");
 
         File codeFile = codeConfiguration.code();

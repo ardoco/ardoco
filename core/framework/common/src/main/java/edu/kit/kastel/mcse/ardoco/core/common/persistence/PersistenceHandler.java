@@ -12,6 +12,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -147,4 +149,26 @@ public interface PersistenceHandler {
      * Wipes the entire persistence storage (useful for fresh starts/tests).
      */
     void deleteAllData();
+
+    /**
+     * Saves (upserts) a TextState noun mapping. Write-only: does not replace in-memory TextState.
+     *
+     * @param nounMapping the mapping to persist
+     */
+    void saveNounMapping(NounMapping nounMapping);
+
+    /**
+     * Deletes a persisted noun mapping by its stable ardoco id.
+     *
+     * @param ardocoId the mapping id
+     */
+    void deleteNounMapping(String ardocoId);
+
+    /**
+     * Saves (upserts) a recommended instance. Write-only: does not replace in-memory RecommendationState.
+     *
+     * @param recommendedInstance the recommended instance
+     * @param metamodel           the metamodel bucket this instance belongs to
+     */
+    void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel);
 }

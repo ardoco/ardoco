@@ -163,8 +163,10 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
 
         String mergedReference = mergedReferenceWords.collect(Word::getText).makeString(" ");
 
-        return new NounMappingImpl(NounMappingImpl.earliestCreationTime(firstNounMapping, secondNounMapping), mergedWords.toSortedSet().toImmutable(),
-                mergedDistribution.toImmutable(), mergedReferenceWords.toImmutable(), mergedSurfaceForms.toImmutable(), mergedReference);
+        // Keep the ardocoId of the chronologically earlier mapping so Neo4j upserts stay stable across merges.
+        return new NounMappingImpl(NounMappingImpl.ardocoIdOfEarliest(firstNounMapping, secondNounMapping), NounMappingImpl.earliestCreationTime(firstNounMapping,
+                secondNounMapping), mergedWords.toSortedSet().toImmutable(), mergedDistribution.toImmutable(), mergedReferenceWords.toImmutable(),
+                mergedSurfaceForms.toImmutable(), mergedReference);
     }
 
     @Override

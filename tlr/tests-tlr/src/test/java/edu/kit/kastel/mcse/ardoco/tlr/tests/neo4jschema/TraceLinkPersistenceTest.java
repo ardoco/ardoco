@@ -20,6 +20,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
+/**
+ * End-to-end checks that TLR pipelines write (or skip) Neo4j persistence correctly.
+ *
+ * <p><b>Inspection vs cleanup:</b> after a persistence-enabled run,
+ * {@link AbstractPersistenceTest#pauseForNeo4jInspection()} keeps data visible in Browser
+ * for {@code -Dardoco.neo4j.pauseSeconds=N} seconds. When the test method ends,
+ * the base class {@code @AfterEach} clears the entire Neo4j graph so test results are
+ * not left stored in Desktop.
+ */
 public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     @Test
@@ -42,6 +51,12 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
         testRunnerAssertions(runner);
         var result = runner.run();
         Assertions.assertNotNull(result);
+
+        // Pause while data is still in Neo4j; @AfterEach clears after this method returns.
+        if (persistence) {
+            pauseForNeo4jInspection();
+        }
+
         Assertions.assertEquals(164, result.getSamCodeTraceLinks().size());
     }
 
@@ -53,6 +68,11 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
         testRunnerAssertions(runner);
         var result = runner.run();
         Assertions.assertNotNull(result);
+
+        // Timed pause (Maven-friendly). Enabled only via -Dardoco.neo4j.pauseSeconds=N
+        if (persistence) {
+            pauseForNeo4jInspection();
+        }
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
         Assertions.assertFalse(traceLinks.isEmpty());
@@ -82,6 +102,13 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
 
+        // After SWATTR writes SAD↔SAM links, optionally pause for Browser inspection.
+        // Example: "-Dardoco.neo4j.pauseSeconds=300" → wait 5 minutes, then @AfterEach clears.
+        // Without that property the call is a no-op; graph is still cleared after the test.
+        if (persistence) {
+            pauseForNeo4jInspection();
+        }
+
         int linkCount = result.getArchitectureTraceLinks().size();
         Assertions.assertEquals(20, linkCount);
     }
@@ -105,6 +132,11 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
+
+        if (persistence) {
+            pauseForNeo4jInspection();
+        }
+
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> links = result.getSadCodeTraceLinks();
 
         Assertions.assertFalse(links.isEmpty());
