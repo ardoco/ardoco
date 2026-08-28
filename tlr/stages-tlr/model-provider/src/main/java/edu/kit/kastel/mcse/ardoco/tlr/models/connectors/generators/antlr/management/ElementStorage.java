@@ -1,8 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.ElementIdentifier;
@@ -14,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
  */
 public class ElementStorage<T extends Element> {
     private final Class<T> classType;
-    private List<T> elements;
+    private final List<T> elements;
 
     public ElementStorage(List<T> elements, Class<T> classType) {
         this.elements = elements;
@@ -30,7 +32,7 @@ public class ElementStorage<T extends Element> {
         return classType;
     }
 
-    public void addElement(T element) {
+    public void addElement(@Nullable T element) {
         if (element == null || elements.contains(element)) {
             return;
         }
@@ -43,7 +45,7 @@ public class ElementStorage<T extends Element> {
         }
     }
 
-    public T getElement(ElementIdentifier identifier) {
+    public @Nullable T getElement(ElementIdentifier identifier) {
         for (T element : elements) {
             if (isElementWithIdentifier(element, identifier)) {
                 return element;
@@ -88,11 +90,11 @@ public class ElementStorage<T extends Element> {
         return elementsWithoutParentIdentifier;
     }
 
-    private boolean isElementWithIdentifier(T element, ElementIdentifier identifier) {
+    private boolean isElementWithIdentifier(T element, @Nullable ElementIdentifier identifier) {
         return identifier != null && element.getIdentifier().equals(identifier);
     }
 
-    private boolean isElementWithParentIdentifier(T element, ElementIdentifier parentIdentifier) {
+    private boolean isElementWithParentIdentifier(T element, @Nullable ElementIdentifier parentIdentifier) {
         return (parentIdentifier == null && element.getParentIdentifier() == null) || (element.getParentIdentifier() != null && element.getParentIdentifier()
                 .equals(parentIdentifier));
     }

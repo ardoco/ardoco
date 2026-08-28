@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,11 +34,17 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     @JsonProperty
     private String parentDatatypeId;
     @JsonProperty
+    private int startLine = -1;
+    @JsonProperty
+    private int endLine = -1;
+    @JsonProperty
     private List<String> extendedDataTypesIds;
     @JsonProperty
     private List<String> implementedDataTypesIds;
     @JsonProperty
     private List<String> datatypeReferencesIds;
+    @JsonProperty
+    private List<String> content;
 
     Datatype() {
         // Jackson
@@ -48,12 +55,50 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
      *
      * @param codeItemRepository the code item repository
      * @param name               the name of the datatype
+     * @param content            the content of the datatype
      */
-    public Datatype(CodeItemRepository codeItemRepository, String name) {
+    public Datatype(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, name);
         this.extendedDataTypesIds = new ArrayList<>();
         this.implementedDataTypesIds = new ArrayList<>();
         this.datatypeReferencesIds = new ArrayList<>();
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
+     * Creates a new datatype with the specified name and source location.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the datatype
+     * @param content            the content of the datatype
+     * @param startLine          the 1-indexed start line in the source file, or -1 if unknown
+     * @param endLine            the 1-indexed end line in the source file, or -1 if unknown
+     */
+    public Datatype(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, int startLine, int endLine) {
+        this(codeItemRepository, name, content);
+        this.startLine = startLine;
+        this.endLine = endLine;
+    }
+
+    /**
+     * Returns the 1-indexed start line of this datatype in its source file, or -1 if unknown.
+     *
+     * @return the start line
+     */
+    public int getStartLine() {
+        return startLine;
+    }
+
+    /**
+     * Returns the 1-indexed end line of this datatype in its source file, or -1 if unknown.
+     *
+     * @return the end line
+     */
+    public int getEndLine() {
+        return endLine;
     }
 
     /**
@@ -131,6 +176,41 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     }
 
     /**
+     * Returns the content of this datatype as a list of code items.
+     *
+     * @return list of code items
+     */
+    @Override
+    public List<CodeItem> getContent() {
+        return this.codeItemRepository.getCodeItemsByIds(this.content);
+    }
+
+    /**
+     * Returns the content IDs of this datatype.
+     *
+     * @return list of content IDs
+     */
+    @JsonGetter("content")
+    public List<String> getContentIds() {
+        return new ArrayList<>(this.content);
+    }
+
+    /**
+     * Returns all data types contained in this datatype.
+     *
+     * @return list of all data types
+     */
+    @Override
+    public List<Datatype> getAllDataTypes() {
+        List<Datatype> result = new ArrayList<>();
+        result.add(this);
+        for (CodeItem codeItem : this.getContent()) {
+            result.addAll(codeItem.getAllDataTypes());
+        }
+        return result;
+    }
+
+    /**
      * Sets the compilation unit for this datatype.
      *
      * @param compilationUnit the compilation unit to set
@@ -187,7 +267,7 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
             return true;
         }
         if (!(o instanceof Datatype datatype) || !super.equals(o) || !Objects.equals(this.compilationUnitId, datatype.compilationUnitId) || !Objects.equals(
-                this.parentDatatypeId, datatype.parentDatatypeId)) {
+                this.parentDatatypeId, datatype.parentDatatypeId) || this.startLine != datatype.startLine || this.endLine != datatype.endLine) {
             return false;
         }
         if (!Objects.equals(this.extendedDataTypesIds, datatype.extendedDataTypesIds)) {
@@ -196,7 +276,10 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         if (!Objects.equals(this.implementedDataTypesIds, datatype.implementedDataTypesIds)) {
             return false;
         }
-        return Objects.equals(this.datatypeReferencesIds, datatype.datatypeReferencesIds);
+        if (!Objects.equals(this.datatypeReferencesIds, datatype.datatypeReferencesIds)) {
+            return false;
+        }
+        return Objects.equals(this.content, datatype.content);
     }
 
     @Override
@@ -204,8 +287,11 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         int result = super.hashCode();
         result = 31 * result + (this.compilationUnitId != null ? this.compilationUnitId.hashCode() : 0);
         result = 31 * result + (this.parentDatatypeId != null ? this.parentDatatypeId.hashCode() : 0);
+        result = 31 * result + this.startLine;
+        result = 31 * result + this.endLine;
         result = 31 * result + (this.extendedDataTypesIds != null ? this.extendedDataTypesIds.hashCode() : 0);
         result = 31 * result + (this.implementedDataTypesIds != null ? this.implementedDataTypesIds.hashCode() : 0);
-        return 31 * result + (this.datatypeReferencesIds != null ? this.datatypeReferencesIds.hashCode() : 0);
+        result = 31 * result + (this.datatypeReferencesIds != null ? this.datatypeReferencesIds.hashCode() : 0);
+        return 31 * result + (this.content != null ? this.content.hashCode() : 0);
     }
 }

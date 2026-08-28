@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class Python3CodeItemMapperCollection extends CodeItemMapperCollection {
         this.mappers = List.of(//
                 new FunctionMapper(repository, this, elementRegistry),//
                 new ClassMapper(repository, this, elementRegistry),//
-                new ModuleMapper(repository, this, elementRegistry),//
+                new CompilationUnitMapper(repository, this, elementRegistry),//
                 new PackageMapper(repository, this, elementRegistry)//
         );
     }

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -27,6 +27,8 @@ public final class CodeCompilationUnit extends CodeModule {
     private String extension;
     @JsonProperty
     private ProgrammingLanguage language;
+    @JsonProperty
+    private List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
@@ -39,19 +41,41 @@ public final class CodeCompilationUnit extends CodeModule {
     /**
      * Creates a new CodeCompilationUnit.
      *
-     * @param codeItemRepository the code item repository
-     * @param name               the name of the compilation unit
-     * @param content            the content of the compilation unit
-     * @param pathElements       the path elements
-     * @param extension          the file extension
-     * @param language           the programming language
+     * @param codeItemRepository  the code item repository
+     * @param name                the name of the compilation unit
+     * @param content             the content of the compilation unit
+     * @param pathElements        the path elements
+     * @param extension           the file extension
+     * @param language            the programming language
+     * @param importedModuleNames the names of imported modules declared in this compilation unit
      */
     public CodeCompilationUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
-            String extension, ProgrammingLanguage language) {
+            String extension, ProgrammingLanguage language, List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
         this.language = language;
+        this.importedModuleNames = importedModuleNames != null ? new ArrayList<>(importedModuleNames) : new ArrayList<>();
+    }
+
+    /**
+     * Creates a CodeCompilationUnit from a relative path string (forward-slash separated, including extension).
+     *
+     * @param codeItemRepository  the code item repository
+     * @param content             the content of the compilation unit
+     * @param language            the programming language
+     * @param relativePath        relative path string, e.g. {@code "src/foo/Bar.py"}
+     * @param importedModuleNames the names of imported modules declared in this compilation unit
+     * @return a new CodeCompilationUnit with name, pathElements, and extension derived from the path
+     */
+    public static CodeCompilationUnit fromRelativePath(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content,
+            ProgrammingLanguage language, String relativePath, List<String> importedModuleNames) {
+        int lastSlash = relativePath.lastIndexOf('/');
+        int lastDot = relativePath.lastIndexOf('.');
+        String name = relativePath.substring(lastSlash + 1, lastDot > lastSlash ? lastDot : relativePath.length());
+        List<String> pathElements = lastSlash >= 0 ? List.of(relativePath.substring(0, lastSlash).split("/")) : List.of();
+        String extension = lastDot > lastSlash ? relativePath.substring(lastDot + 1) : "";
+        return new CodeCompilationUnit(codeItemRepository, name, content, pathElements, extension, language, importedModuleNames);
     }
 
     /**
@@ -116,6 +140,15 @@ public final class CodeCompilationUnit extends CodeModule {
     }
 
     /**
+     * Returns the list of imported module/package names for this compilation unit.
+     *
+     * @return list of imported module names
+     */
+    public List<String> getImportedModuleNames() {
+        return this.importedModuleNames != null ? new ArrayList<>(this.importedModuleNames) : List.of();
+    }
+
+    /**
      * Returns the full path of this compilation unit.
      *
      * @return the path
@@ -172,7 +205,7 @@ public final class CodeCompilationUnit extends CodeModule {
             return true;
         }
         if (!(o instanceof CodeCompilationUnit that) || !super.equals(o) || !Objects.equals(this.pathElements, that.pathElements) || !Objects.equals(
-                this.extension, that.extension)) {
+                this.extension, that.extension) || !Objects.equals(this.importedModuleNames, that.importedModuleNames)) {
             return false;
         }
         return Objects.equals(this.language, that.language);
@@ -183,6 +216,7 @@ public final class CodeCompilationUnit extends CodeModule {
         int result = super.hashCode();
         result = 31 * result + (this.pathElements != null ? this.pathElements.hashCode() : 0);
         result = 31 * result + (this.extension != null ? this.extension.hashCode() : 0);
-        return 31 * result + (this.language != null ? this.language.hashCode() : 0);
+        result = 31 * result + (this.language != null ? this.language.hashCode() : 0);
+        return 31 * result + (this.importedModuleNames != null ? this.importedModuleNames.hashCode() : 0);
     }
 }

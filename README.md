@@ -39,9 +39,3 @@ For more information about the setup, the project structure, or the architecture
 	</dependency>
 </dependencies>
 ```
-
-## Relevant repositories
-The following is an excerpt of repositories that use this framework and implement the different approaches and pipelines of ARDoCo:
-* [ardoco/core](https://github.com/ardoco/core): implementing the core of the approach
-* [ardoco/tlr](https://github.com/ardoco/tlr): implementing different traceability link recovery approaches
-* [ardoco/inconsistency-detection](https://github.com/ardoco/inconsistency-detection): implementing inconsistency detection approaches

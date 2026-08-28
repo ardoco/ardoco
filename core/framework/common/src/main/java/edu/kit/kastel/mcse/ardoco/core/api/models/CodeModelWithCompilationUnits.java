@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
      * @param codeModelDto the code model Dto
      */
     public CodeModelWithCompilationUnits(CodeModelDto codeModelDto) {
-        super(codeModelDto.codeItemRepository(), codeModelDto.content());
+        super(codeModelDto.id(), codeModelDto.codeItemRepository(), codeModelDto.content());
     }
 
     /**

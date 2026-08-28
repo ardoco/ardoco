@@ -2,11 +2,12 @@ name: Documentation
 
 on:
   push:
-    branches: 
+    branches:
       - main
     tags: "v**"
     paths:
       - 'docs/**'
+      - 'openwiki/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -14,22 +15,36 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.SDQ_TOKEN }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: ${{ github.repository }}.wiki
           path: wiki
           token: ${{ secrets.SDQ_TOKEN }}
-          
+
       - name: Remove contents in Wiki
         working-directory: wiki
         run: ls -A1 | grep -v '.git' | xargs rm -r
-      
+
       - name: Copy Wiki from Docs folder
-        run: cp -r ./docs/. ./wiki
-          
+        run: |
+          cp -r ./docs/. ./wiki
+
+          # Keep the original OpenWiki folder in the wiki repository.
+          mkdir -p ./wiki/openwiki
+          cp -r ./openwiki/. ./wiki/openwiki
+
+          # Create rendered wiki pages in the root namespace because subfolder
+          # links can resolve to file view instead of wiki page view.
+          for file in ./openwiki/*.md; do
+            base="$(basename "$file" .md)"
+            target="./wiki/OpenWiki-${base}.md"
+
+            sed -E 's/\]\(([a-z0-9-]+)\.md(#[^)]+)?\)/](OpenWiki-\1\2)/g' "$file" > "$target"
+          done
+
       - name: Deploy 🚀
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
