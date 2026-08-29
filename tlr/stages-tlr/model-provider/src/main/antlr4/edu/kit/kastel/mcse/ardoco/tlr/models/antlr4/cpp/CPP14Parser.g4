@@ -24,9 +24,6 @@
 // $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
 
 parser grammar CPP14Parser;
-@header {
-package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp;
-}
 
 options {
     superClass = CPP14ParserBase;
