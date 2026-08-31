@@ -22,9 +22,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
 @JsonSubTypes({ //
         @JsonSubTypes.Type(value = CodeModule.class, name = "CodeModule"),//
         @JsonSubTypes.Type(value = ComputationalObject.class, name = "ComputationalObject"), //
-        @JsonSubTypes.Type(value = Datatype.class, name = "Datatype") //
+        @JsonSubTypes.Type(value = Datatype.class, name = "Datatype"), //
+        @JsonSubTypes.Type(value = NonSourceFile.class, name = "NonSourceFile") //
 })
-public abstract sealed class CodeItem extends CodeEntity permits CodeModule, ComputationalObject, Datatype {
+public abstract sealed class CodeItem extends CodeEntity permits CodeModule, ComputationalObject, Datatype, NonSourceFile {
 
     @Serial
     private static final long serialVersionUID = 7089107378955018027L;

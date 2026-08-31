@@ -9,9 +9,12 @@ import java.util.SortedSet;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.NonSourceFile;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
@@ -65,6 +68,18 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         for (var codeItem : content) {
             this.content.add(codeItem.getId());
         }
+    }
+
+    public List<Datatype> getClasses() {
+        List<CodeCompilationUnit> entities = new ArrayList<>();
+        for (CodeItem codeItem : this.getContent()) {
+            entities.addAll(codeItem.getAllCompilationUnits());
+        }
+        return entities.stream().map(CodeCompilationUnit::getAllDataTypes).flatMap(List::stream).toList();
+    }
+
+    public List<CodeItem> getNonSourceFiles() {
+        return this.codeItemRepository.getRepository().values().stream().filter(codeItem -> codeItem instanceof NonSourceFile).toList();
     }
 
     /**

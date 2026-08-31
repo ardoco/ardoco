@@ -51,14 +51,6 @@ public final class CodeModelWithCompilationUnits extends CodeModel {
         return entities;
     }
 
-    public List<Datatype> getClasses() {
-        List<CodeCompilationUnit> entities = new ArrayList<>();
-        for (CodeItem codeItem : this.getContent()) {
-            entities.addAll(codeItem.getAllCompilationUnits());
-        }
-        return entities.stream().map(CodeCompilationUnit::getAllDataTypes).flatMap(List::stream).toList();
-    }
-
     /**
      * Returns the content of this code model.
      *

@@ -1,6 +1,7 @@
 /* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.NonSourceFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.cpp.CppExtractor;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.ShellExtractor;
 
@@ -26,8 +31,10 @@ public final class AllLanguagesExtractor extends CodeExtractor {
 
     public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
-        this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), ProgrammingLanguage.SHELL,
-                new ShellExtractor(codeItemRepository, path, metamodelToExtract));
+        this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), //
+                ProgrammingLanguage.SHELL, new ShellExtractor(codeItemRepository, path, metamodelToExtract), //
+                ProgrammingLanguage.PYTHON3, new Python3Extractor(codeItemRepository, path), //
+                ProgrammingLanguage.CPP, new CppExtractor(codeItemRepository, path));
     }
 
     @Override
@@ -44,6 +51,8 @@ public final class AllLanguagesExtractor extends CodeExtractor {
                 codeEndpoints.addAll(model.getContent());
             }
 
+            addNonSourceFiles(codeEndpoints);
+
             switch (this.metamodelToExtract) {
                 case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository,
                         codeEndpoints);
@@ -53,4 +62,28 @@ public final class AllLanguagesExtractor extends CodeExtractor {
         }
         return this.codeModel;
     }
+
+    private void addNonSourceFiles(SortedSet<CodeItem> codeEndpoints) {
+        Path rootPath = Path.of(this.path).toAbsolutePath().normalize();
+        SortedSet<String> knownCompilationUnitPaths = new TreeSet<>();
+        for (CodeItem codeEndpoint : codeEndpoints) {
+            for (CodeCompilationUnit compilationUnit : codeEndpoint.getAllCompilationUnits()) {
+                knownCompilationUnitPaths.add(compilationUnit.getPath());
+            }
+        }
+
+        var predictions = fileTypePredictor.predictFileTypesFromFolderRecursively(rootPath);
+        for (var prediction : predictions.entrySet()) {
+            Path absolutePath = prediction.getKey().toAbsolutePath().normalize();
+            String relativePath = rootPath.relativize(absolutePath).toString().replace('\\', '/');
+            if (knownCompilationUnitPaths.contains(relativePath)) {
+                continue;
+            }
+
+            NonSourceFile nonSourceFile = NonSourceFile.fromRelativePath(this.codeItemRepository, relativePath, prediction.getValue().label());
+
+            codeEndpoints.add(nonSourceFile);
+        }
+    }
+
 }
