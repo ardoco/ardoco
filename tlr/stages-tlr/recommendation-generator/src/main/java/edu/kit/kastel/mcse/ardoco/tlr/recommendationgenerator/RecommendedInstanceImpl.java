@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import java.io.Serial;
@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -52,7 +53,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     @Override
-    public void onNounMappingDeletion(NounMapping deletedNounMapping, NounMapping replacement) {
+    public void onNounMappingDeletion(NounMapping deletedNounMapping, @Nullable NounMapping replacement) {
         if (this.nameMappings.remove(deletedNounMapping)) {
             if (replacement == null) {
                 throw new IllegalArgumentException("Replacement cannot be null");

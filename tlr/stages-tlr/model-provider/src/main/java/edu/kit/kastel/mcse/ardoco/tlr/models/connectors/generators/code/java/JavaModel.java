@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.*;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
@@ -323,7 +324,7 @@ public final class JavaModel {
         return packageNames;
     }
 
-    private CodePackage getPackage(List<String> packageNames, CodeCompilationUnit codeCompilationUnit) {
+    private @Nullable CodePackage getPackage(List<String> packageNames, CodeCompilationUnit codeCompilationUnit) {
         if (packageNames.isEmpty()) {
             return null;
         }

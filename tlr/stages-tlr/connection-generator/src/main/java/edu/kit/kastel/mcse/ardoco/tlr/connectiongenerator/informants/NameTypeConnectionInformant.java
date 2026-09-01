@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.List;
@@ -8,6 +8,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
@@ -184,8 +185,8 @@ public class NameTypeConnectionInformant extends Informant {
      * @param typeMappings        the type mappings
      */
     private void addRecommendedInstanceIfNodeNotNull(//
-            Word currentWord, TextState textExtractionState, Entity entity, ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings,
-            RecommendationState recommendationState) {
+            Word currentWord, TextState textExtractionState, @Nullable Entity entity, ImmutableList<NounMapping> nameMappings,
+            ImmutableList<NounMapping> typeMappings, RecommendationState recommendationState) {
         var nounMappingsByCurrentWord = textExtractionState.getNounMappingsByWord(currentWord);
         if (entity != null && nounMappingsByCurrentWord != null) {
             for (NounMapping nmapping : nounMappingsByCurrentWord) {
@@ -205,7 +206,7 @@ public class NameTypeConnectionInformant extends Informant {
      * @param word                the node for name identification
      * @return the unique matching instance
      */
-    private Entity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, Word word, Model model) {
+    private @Nullable Entity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, @Nullable Word word, Model model) {
         if (textExtractionState == null || similarTypes == null || word == null) {
             return null;
         }

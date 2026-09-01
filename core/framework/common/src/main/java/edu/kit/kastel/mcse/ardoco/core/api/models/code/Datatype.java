@@ -9,6 +9,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -30,9 +32,9 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     private static final long serialVersionUID = -1925023806648753973L;
 
     @JsonProperty
-    private String compilationUnitId;
+    private @Nullable String compilationUnitId;
     @JsonProperty
-    private String parentDatatypeId;
+    private @Nullable String parentDatatypeId;
     @JsonProperty
     private int startLine = -1;
     @JsonProperty
@@ -42,7 +44,7 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     @JsonProperty
     private List<String> implementedDataTypesIds;
     @JsonProperty
-    private List<String> datatypeReferencesIds;
+    private @Nullable List<String> datatypeReferencesIds;
     @JsonProperty
     private List<String> content;
 
@@ -106,7 +108,7 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
      *
      * @return the compilation unit, or null if not set
      */
-    public CodeCompilationUnit getCompilationUnit() {
+    public @Nullable CodeCompilationUnit getCompilationUnit() {
         CodeItem codeItem = this.codeItemRepository.getCodeItem(this.compilationUnitId);
         if (codeItem instanceof CodeCompilationUnit codeCompilationUnit) {
             return codeCompilationUnit;
@@ -119,7 +121,7 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
      *
      * @return the parent datatype, or null if not set
      */
-    public Datatype getParentDatatype() {
+    public @Nullable Datatype getParentDatatype() {
         CodeItem codeItem = this.codeItemRepository.getCodeItem(this.parentDatatypeId);
         if (codeItem instanceof Datatype datatype) {
             return datatype;
