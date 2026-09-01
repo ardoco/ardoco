@@ -46,28 +46,6 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
         var evaluationResults = calculateEvaluationResults(result, goldStandard, strategy);
 
-        /*System.out.println("-----------------"); //for debugging...
-        System.out.println("FN:---------------\n" + evaluationResults.getFalseNegatives()
-                .stream()
-                .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.substring(0, s.indexOf(" -> ")))))
-                .collect(Collectors.joining(",\n")));
-        System.out.println("FP:---------------\n" + evaluationResults.getFalsePositives()
-                .stream()
-                .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.substring(0, s.indexOf(" -> ")))))
-                .collect(Collectors.joining(",\n")));*/
-        /*System.out.println("FN:---------------\n" + evaluationResults.getFalseNegatives().stream().map(s -> {
-            Matcher m = Pattern.compile("->\\s*(\\S+)").matcher(s);
-            return m.find()
-                    ? m.replaceFirst("-> " + runner.getArdoco().getDataRepository().getData("ModelStatesData", ModelStates.class).get().getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS).getEndpoints().stream().dropWhile(e -> !e.getId().equalsIgnoreCase(m.group(1))).findFirst().get().getName())
-                    : s;
-        }).sorted(Comparator.comparingInt(s -> Integer.parseInt(s.substring(0, s.indexOf(" -> "))))).collect(Collectors.joining(",\n")));
-        System.out.println("FP:---------------\n" + evaluationResults.getFalsePositives().stream().map(s -> {
-            Matcher m = Pattern.compile("->\\s*(\\S+)").matcher(s);
-            return m.find()
-                    ? m.replaceFirst("-> " + runner.getArdoco().getDataRepository().getData("ModelStatesData", ModelStates.class).get().getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS).getEndpoints().stream().dropWhile(e -> !e.getId().equalsIgnoreCase(m.group(1))).findFirst().get().getName())
-                    : s;
-        }).sorted(Comparator.comparingInt(s -> Integer.parseInt(s.substring(0, s.indexOf(" -> "))))).collect(Collectors.joining(",\n")));*/
-
         var expectedResults = project.getExpectedResults();
         logExtendedResultsWithExpected(project.getName(), evaluationResults, expectedResults);
         compareResults(evaluationResults, expectedResults);
