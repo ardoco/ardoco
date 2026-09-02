@@ -2,10 +2,11 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.arte
 
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
+
 import org.jspecify.annotations.NonNull;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.ClassArtemisConnectionInformant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
@@ -19,7 +20,7 @@ public class HoldbackClassArtemisConnectionInformant extends ClassArtemisConnect
     }
 
     @Override
-    protected @NonNull List<Datatype> getClasses(@NonNull CodeModelWithCompilationUnits codeModel) {
+    protected List<ClassUnit> getClasses(@NonNull CodeModelWithCompilationUnits codeModel) {
         return super.getClasses(codeModel).stream().filter(clazz -> !heldBackClassNames.contains(clazz.getName())).toList();
     }
 

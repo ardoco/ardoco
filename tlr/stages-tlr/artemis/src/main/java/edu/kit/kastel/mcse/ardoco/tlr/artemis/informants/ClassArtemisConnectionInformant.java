@@ -7,7 +7,7 @@ import org.eclipse.collections.api.factory.Lists;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -20,7 +20,7 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
         super(dataRepository, strategy);
     }
 
-    protected List<Datatype> getClasses(CodeModelWithCompilationUnits codeModel) {
+    protected List<ClassUnit> getClasses(CodeModelWithCompilationUnits codeModel) {
         return codeModel.getClasses();
     }
 
