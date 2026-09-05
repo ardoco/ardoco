@@ -65,7 +65,21 @@ public enum EvaluationProject {
             "/benchmark/beets/text_2013/beets.txt",//
             "todo_add_as_ardoco_repo",//
             "todo_add_code_commit",//
-            "/benchmark/beets/model_2013/code/codeModel.acm");//
+            "/benchmark/beets/model_2013/code/codeModel.acm"),//
+
+    ROD(//
+            "/benchmark/rod/notAvailable", //
+            "/benchmark/rod/text_2013/rod.txt",//
+            "todo_add_as_ardoco_repo",//
+            "todo_add_code_commit",//
+            "/benchmark/rod/model_2013/code/codeModel.acm"),//
+
+    CORONAWARNAPP(//
+            "/benchmark/coronawarnapp/notAvailable", //
+            "/benchmark/coronawarnapp/text_2023/coronawarnapp.txt",//
+            "todo_add_as_ardoco_repo",//
+            "todo_add_code_commit",//
+            "/benchmark/coronawarnapp/model_2023/code/codeModel.acm");//
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
@@ -96,8 +110,7 @@ public enum EvaluationProject {
     }
 
     /**
-     * Get the code model for this project. The code will be cloned from
-     * the repository and the folder will be returned.
+     * Get the code model for this project. The code will be cloned from the repository and the folder will be returned.
      *
      * @return the folder containing the code
      * @see #getCodeDirectoryWithoutCloning()
@@ -121,7 +134,7 @@ public enum EvaluationProject {
 
     /**
      * Get the location where the code for this project will be stored.
-     * 
+     *
      * @return the location of the code
      * @see #getCodeDirectory()
      */

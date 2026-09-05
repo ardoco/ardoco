@@ -21,8 +21,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ClassArtemisEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ComponentArtemisEvaluationProject;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.DatafileArtemisEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ClassArtemisEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ComponentArtemisEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileArtemisEvaluation;
 
 public class ArtemisIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
@@ -51,6 +53,11 @@ public class ArtemisIT extends AbstractArdocoIT {
         return llmsXProjects(ClassArtemisEvaluationProject.values());
     }
 
+    private static Stream<Arguments> llmsXDatafileProjects() {
+        //return llmsXProjects(new DatafileArtemisEvaluationProject[] { DatafileArtemisEvaluationProject.CWA });
+        return llmsXProjects(DatafileArtemisEvaluationProject.values());
+    }
+
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
     @DisplayName("Evaluate Component ArTEMiS TLR")
     @ParameterizedTest(name = "{0} ({1})")
@@ -67,6 +74,16 @@ public class ArtemisIT extends AbstractArdocoIT {
     @MethodSource("llmsXClassProjects")
     void evaluateClassArtemisTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
         var evaluation = new ClassArtemisEvaluation(project, llm);
+        var result = evaluation.runTraceLinkEvaluation();
+        Assertions.assertNotNull(result);
+    }
+
+    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
+    @DisplayName("Evaluate Datafile ArTEMiS TLR")
+    @ParameterizedTest(name = "{0} ({1})")
+    @MethodSource("llmsXDatafileProjects")
+    void evaluateDatafileArtemisTlrIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        var evaluation = new DatafileArtemisEvaluation(project, llm);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
     }

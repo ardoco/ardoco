@@ -5,6 +5,7 @@ import java.util.List;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ClassArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.DatafileArtemisNerStrategy;
 
 public record ArtemisInconsistencyEvaluationConfiguration(String name, List<ArtemisNerStrategy> strategies) {
     public ArtemisInconsistencyEvaluationConfiguration {
@@ -17,5 +18,9 @@ public record ArtemisInconsistencyEvaluationConfiguration(String name, List<Arte
 
     public static ArtemisInconsistencyEvaluationConfiguration clazz() {
         return new ArtemisInconsistencyEvaluationConfiguration("Class", List.of(new ClassArtemisNerStrategy()));
+    }
+
+    public static ArtemisInconsistencyEvaluationConfiguration datafile() {
+        return new ArtemisInconsistencyEvaluationConfiguration("Datafile", List.of(new DatafileArtemisNerStrategy()));
     }
 }

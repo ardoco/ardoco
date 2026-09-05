@@ -4,26 +4,26 @@ import java.io.File;
 import java.util.List;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.DatafileArtemisNerStrategy;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ClassArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
 
-public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
+public class DatafileArtemisEvaluation extends AbstractArtemisEvaluation {
 
-    private final ArtemisNerStrategy strategy = new ComponentArtemisNerStrategy();
+    private final ArtemisNerStrategy strategy = new DatafileArtemisNerStrategy();
 
-    public ComponentArtemisEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llmForNer) {
+    public DatafileArtemisEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llmForNer) {
         super(project, llmForNer);
     }
 
@@ -36,14 +36,13 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
     protected ArdocoRunner createArtemisRunner() {
         String projectName = project.getName();
         File documentationFile = project.getTlrTask().getEvaluationProject().getTextFile();
-        File outputDirectory = new File("target", projectName + "-component-artemis-output");
+        File outputDirectory = new File("target", projectName + "-datafile-artemis-output");
         outputDirectory.mkdirs();
 
-        ModelFormat architectureModelFormat = ModelFormat.PCM;
-        ArchitectureConfiguration architectureConfiguration = new ArchitectureConfiguration(
-                project.getTlrTask().getEvaluationProject().getArchitectureModel(architectureModelFormat), architectureModelFormat);
+        CodeConfiguration codeConfiguration = new CodeConfiguration(project.getTlrTask().getEvaluationProject().getCodeModelFromResources(),
+                CodeConfiguration.CodeConfigurationType.ACM_FILE);
 
-        return ArtemisEvaluationRunnerFactory.createRunner(projectName, documentationFile, architectureConfiguration, null, SortedMaps.immutable.empty(),
+        return ArtemisEvaluationRunnerFactory.createRunner(projectName, documentationFile, null, codeConfiguration, SortedMaps.immutable.empty(),
                 outputDirectory, llmForNer, List.of(strategy));
     }
 
@@ -51,7 +50,7 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
     protected MutableSortedSet<String> getTraceLinksAsStrings(ArtemisConnectionState state) {
         return state.getTraceLinks()
                 .stream()
-                .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().getId().toLowerCase())
+                .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().toString().toLowerCase())
                 .collect(org.eclipse.collections.impl.collector.Collectors2.toSortedSet());
     }
 
@@ -59,7 +58,7 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
     protected int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel) {
         var text = result.getSimplePreprocessingData().getText();
         int sentences = text.getLines().size();
-        int components = result.getModelState(metamodel).getEndpoints().size();
-        return sentences * components;
+        int files = ((CodeModel)result.getModelState(metamodel)).getCodeFiles().size();
+        return sentences * files;
     }
 }

@@ -3,6 +3,10 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import java.io.File;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
@@ -47,5 +51,13 @@ public class ClassArtemisEvaluation extends AbstractArtemisEvaluation {
                 .stream()
                 .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + " -> " + tl.getSecondEndpoint().toString().toLowerCase())
                 .collect(org.eclipse.collections.impl.collector.Collectors2.toSortedSet());
+    }
+
+    @Override
+    protected int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel) {
+        var text = result.getSimplePreprocessingData().getText();
+        int sentences = text.getLines().size();
+        int classes = ((CodeModel)result.getModelState(metamodel)).getClasses().size();
+        return sentences * classes;
     }
 }

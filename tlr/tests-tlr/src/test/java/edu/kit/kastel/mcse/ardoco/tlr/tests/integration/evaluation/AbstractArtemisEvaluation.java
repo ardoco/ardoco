@@ -67,12 +67,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
         return calculator.calculateMetrics(traceLinksAsStrings, goldStandardAsStrings, confusionMatrixSum);
     }
 
-    private int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel) {
-        var text = result.getSimplePreprocessingData().getText();
-        int sentences = text.getLines().size();
-        int modelElements = result.getModelState(metamodel).getEndpoints().size();
-        return sentences * modelElements;
-    }
+    protected abstract int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel);
 
     protected abstract ArtemisNerStrategy getStrategy();
 
