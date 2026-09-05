@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.NonSourceFile;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 
 /**
@@ -26,6 +26,8 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
 
     protected List<String> content;
 
+    protected List<CodeFile> codeFiles;
+
     private boolean initialized;
 
     /**
@@ -35,9 +37,21 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @param content            list of code item IDs
      */
     protected CodeModel(CodeItemRepository codeItemRepository, List<String> content) {
+        this(codeItemRepository, content, List.of());
+    }
+
+    /**
+     * Creates a new code model with the specified code item repository, content IDs, and code files.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            list of code item IDs
+     * @param codeFiles          list of code files
+     */
+    protected CodeModel(CodeItemRepository codeItemRepository, List<String> content, List<CodeFile> codeFiles) {
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
         this.content = new ArrayList<>(content);
+        this.codeFiles = new ArrayList<>(codeFiles);
     }
 
     /**
@@ -48,10 +62,23 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @param content            list of code item IDs
      */
     protected CodeModel(String id, CodeItemRepository codeItemRepository, List<String> content) {
+        this(id, codeItemRepository, content, List.of());
+    }
+
+    /**
+     * Creates a new code model with the specified id, code item repository, content IDs, and code files.
+     *
+     * @param id                 the model id
+     * @param codeItemRepository the code item repository
+     * @param content            list of code item IDs
+     * @param codeFiles          list of code files
+     */
+    protected CodeModel(String id, CodeItemRepository codeItemRepository, List<String> content, List<CodeFile> codeFiles) {
         super(id);
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
         this.content = new ArrayList<>(content);
+        this.codeFiles = new ArrayList<>(codeFiles);
     }
 
     /**
@@ -61,12 +88,24 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @param content            set of code items
      */
     protected CodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
+        this(codeItemRepository, content, List.of());
+    }
+
+    /**
+     * Creates a new code model with the specified code item repository, content, and code files.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            set of code items
+     * @param codeFiles          list of code files
+     */
+    protected CodeModel(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content, List<CodeFile> codeFiles) {
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
         this.content = new ArrayList<>();
         for (var codeItem : content) {
             this.content.add(codeItem.getId());
         }
+        this.codeFiles = new ArrayList<>(codeFiles);
     }
 
     /**
@@ -78,8 +117,14 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         return this.codeItemRepository.getAllClassUnits();
     }
 
-    public List<NonSourceFile> getNonSourceFiles() { //TODO will be depricated soon
-        return this.codeItemRepository.getRepository().values().stream().filter(NonSourceFile.class::isInstance).map(NonSourceFile.class::cast).toList();
+    /**
+     * Returns the files contained in this code model.
+     *
+     * @return list of code files
+     */
+    public List<CodeFile> getCodeFiles() {
+        this.initialize();
+        return new ArrayList<>(this.codeFiles);
     }
 
     /**
@@ -88,7 +133,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
      * @return code model DTO
      */
     public CodeModelDto createCodeModelDto() {
-        return new CodeModelDto(getId(), codeItemRepository, getContentIds());
+        return new CodeModelDto(getId(), codeItemRepository, getContentIds(), getCodeFiles());
     }
 
     private List<String> getContentIds() {
@@ -133,13 +178,15 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
     }
 
     /**
-     * Data transfer object for the code model. Contains a {@link CodeItemRepository} and a list of content identifiers.
+     * Data transfer object for the code model. Contains a {@link CodeItemRepository}, a list of content identifiers, and all code files.
      *
      * @param id                 the model id
      * @param codeItemRepository the repository of code items
      * @param content            the list of content identifiers
+     * @param codeFiles          the list of code files
      */
-    public record CodeModelDto(@JsonProperty String id, @JsonProperty CodeItemRepository codeItemRepository, @JsonProperty List<String> content) {
+    public record CodeModelDto(@JsonProperty String id, @JsonProperty CodeItemRepository codeItemRepository, @JsonProperty List<String> content,
+                               @JsonProperty List<CodeFile> codeFiles) {
         /**
          * Returns the code item repository, initializing it if necessary.
          *

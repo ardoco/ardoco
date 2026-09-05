@@ -15,17 +15,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
 
 /**
- * Abstract base class for items in the code model.
- * Provides methods to access content and relationships between code elements.
+ * Abstract base class for items in the code model. Provides methods to access content and relationships between code elements.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({ //
         @JsonSubTypes.Type(value = CodeModule.class, name = "CodeModule"),//
         @JsonSubTypes.Type(value = ComputationalObject.class, name = "ComputationalObject"), //
-        @JsonSubTypes.Type(value = Datatype.class, name = "Datatype"), //
-        @JsonSubTypes.Type(value = NonSourceFile.class, name = "NonSourceFile") //
+        @JsonSubTypes.Type(value = Datatype.class, name = "Datatype") //
 })
-public abstract sealed class CodeItem extends CodeEntity permits CodeModule, ComputationalObject, Datatype, NonSourceFile {
+public abstract sealed class CodeItem extends CodeEntity permits CodeModule, ComputationalObject, Datatype {
 
     @Serial
     private static final long serialVersionUID = 7089107378955018027L;

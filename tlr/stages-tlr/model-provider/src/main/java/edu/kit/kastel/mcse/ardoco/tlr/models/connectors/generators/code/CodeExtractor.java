@@ -5,6 +5,15 @@ import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMa
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +45,38 @@ public abstract class CodeExtractor extends Extractor {
 
     @Override
     public abstract CodeModel extractModel();
+
+    protected List<CodeFile> extractCodeFiles(SortedSet<CodeItem> codeEndpoints) { //TODO in the future this method should be used by all Extractors (not only the AllLanguagesExtractor)
+        //code files with reference to compilationUnit:
+        List<CodeFile> codeFiles = new ArrayList<>();
+        for (CodeItem codeEndpoint : codeEndpoints) {
+            for (CodeCompilationUnit compilationUnit : codeEndpoint.getAllCompilationUnits()) {
+                codeFiles.add(CodeFile.fromRelativePath(compilationUnit.getPath(), compilationUnit));
+            }
+        }
+
+        // code files without reference to compilationUnit:
+        Path rootPath = Path.of(this.path).toAbsolutePath().normalize();
+        SortedSet<String> knownCompilationUnitPaths = new TreeSet<>();
+        for (CodeItem codeEndpoint : codeEndpoints) {
+            for (CodeCompilationUnit compilationUnit : codeEndpoint.getAllCompilationUnits()) {
+                knownCompilationUnitPaths.add(compilationUnit.getPath());
+            }
+        }
+
+        var predictions = fileTypePredictor.predictFileTypesFromFolderRecursively(rootPath);
+        for (var prediction : predictions.entrySet()) {
+            Path absolutePath = prediction.getKey().toAbsolutePath().normalize();
+            String relativePath = rootPath.relativize(absolutePath).toString().replace('\\', '/');
+            if (knownCompilationUnitPaths.contains(relativePath)) {
+                continue;
+            }
+
+            codeFiles.add(CodeFile.fromRelativePath(relativePath));
+        }
+
+        return codeFiles;
+    }
 
     public void writeOutCodeModel(CodeModel codeModel, File outputFile) {
         ObjectMapper objectMapper = createObjectMapper();
