@@ -26,7 +26,7 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
 
     @Override
     protected void process() {
-        var state = getTraceabilityState();
+        var state = getConnectionState();
         var codeModel = (CodeModelWithCompilationUnits) getModelStatesData().getModel(strategy.getMetamodel());
         var classes = getClasses(codeModel);
         //var modelEndpointsClasses = ((List<CodeCompilationUnit>)modelEndpoints).stream().map(CodeCompilationUnit::getAllDataTypes).flatMap(List::stream).toList(); //bzw so

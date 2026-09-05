@@ -13,35 +13,35 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
 /**
- * Container state for all ArTEMiS traceability states of one pipeline run.
+ * Container state for all ArTEMiS connection states of one pipeline run.
  */
 @Deterministic
-public class ArtemisTraceabilityStatesImpl extends AbstractState implements ArtemisConnectionStates {
+public class ArtemisConnectionStatesImpl extends AbstractState implements ArtemisConnectionStates {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final Map<ArtemisTarget, ArtemisConnectionState> states = new LinkedHashMap<>();
 
-    public ArtemisTraceabilityStatesImpl() {
+    public ArtemisConnectionStatesImpl() {
         super();
     }
 
-    private ArtemisTraceabilityStatesImpl(Collection<ArtemisTarget> targets) {
+    private ArtemisConnectionStatesImpl(Collection<ArtemisTarget> targets) {
         this();
         for (ArtemisTarget target : targets) {
-            addState(target, new ArtemisTraceabilityStateImpl());
+            addState(target, new ArtemisConnectionStateImpl());
         }
     }
 
-    public static ArtemisTraceabilityStatesImpl build(Collection<ArtemisTarget> targets) {
-        return new ArtemisTraceabilityStatesImpl(targets);
+    public static ArtemisConnectionStatesImpl build(Collection<ArtemisTarget> targets) {
+        return new ArtemisConnectionStatesImpl(targets);
     }
 
     @Override
     public ArtemisConnectionState getState(ArtemisTarget target) {
         Objects.requireNonNull(target);
-        return this.states.computeIfAbsent(target, ignored -> new ArtemisTraceabilityStateImpl());
+        return this.states.computeIfAbsent(target, ignored -> new ArtemisConnectionStateImpl());
     }
 
     public void addState(ArtemisTarget target, ArtemisConnectionState state) {

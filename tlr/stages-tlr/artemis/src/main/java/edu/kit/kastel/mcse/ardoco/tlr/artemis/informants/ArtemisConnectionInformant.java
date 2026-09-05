@@ -27,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
 public abstract class ArtemisConnectionInformant extends Informant {
@@ -44,8 +44,8 @@ public abstract class ArtemisConnectionInformant extends Informant {
         this.strategy = strategy;
     }
 
-    protected ArtemisConnectionState getTraceabilityState() {
-        ArtemisConnectionStates states = dataRepository.getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class).orElseThrow();
+    protected ArtemisConnectionState getConnectionState() {
+        ArtemisConnectionStates states = dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.class).orElseThrow();
         return states.getState(strategy.getTarget());
     }
 

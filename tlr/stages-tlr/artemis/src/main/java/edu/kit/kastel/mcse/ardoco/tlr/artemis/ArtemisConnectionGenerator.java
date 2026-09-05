@@ -9,7 +9,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Art
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.agents.ArtemisConnectionAgent;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
 public class ArtemisConnectionGenerator extends AbstractExecutionStage {
@@ -31,7 +31,7 @@ public class ArtemisConnectionGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() { //TODO fix duplicated code bad-smell!
-        var existingStates = getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class);
+        var existingStates = getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.class);
         if (existingStates.isPresent()) {
             for (ArtemisNerStrategy strategy : strategies) {
                 existingStates.get().getState(strategy.getTarget());
@@ -40,6 +40,6 @@ public class ArtemisConnectionGenerator extends AbstractExecutionStage {
         }
 
         List<ArtemisTarget> targets = strategies.stream().map(ArtemisNerStrategy::getTarget).toList();
-        getDataRepository().addData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.build(targets));
+        getDataRepository().addData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.build(targets));
     }
 }

@@ -8,7 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsiste
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.id.states.ArtemisInconsistencyStatesImpl;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
 public abstract class ArtemisInconsistencyInformant extends Informant {
@@ -28,8 +28,8 @@ public abstract class ArtemisInconsistencyInformant extends Informant {
         return this.strategy.getTarget();
     }
 
-    protected ArtemisConnectionState getArtemisTraceabilityState() { //TODO in the future: remove these here and put in ArdocoResult
-        var states = getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class).orElseThrow();
+    protected ArtemisConnectionState getArtemisConnectionState() { //TODO in the future: remove these here and put in ArdocoResult
+        var states = getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.class).orElseThrow();
         return states.getState(getTarget());
     }
 

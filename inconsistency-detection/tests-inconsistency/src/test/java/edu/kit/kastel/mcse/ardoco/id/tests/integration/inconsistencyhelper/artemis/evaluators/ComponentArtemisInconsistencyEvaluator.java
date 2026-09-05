@@ -92,15 +92,15 @@ public class ComponentArtemisInconsistencyEvaluator implements ArtemisInconsiste
     }
 
     private Set<String> collectDetectedTeamSentencesForHeldBackElement(ArdocoResult result, ArchitectureItem heldBackElement) {
-        var artemisTraceabilityState = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT));
+        var artemisConnectionState = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT));
 
-        Set<String> sentencesMentioningHeldBackElement = artemisTraceabilityState.getTraceLinks()
+        Set<String> sentencesMentioningHeldBackElement = artemisConnectionState.getTraceLinks()
                 .stream()
                 .filter(traceLink -> traceLink.getSecondEndpoint().getId().equals(heldBackElement.getId()))
                 .map(tl -> tl.getFirstEndpoint().getSentenceNumber() + "," + tl.getSecondEndpoint().getName())
                 .collect(Collectors.toSet());
 
-        Set<String> unlinkedEntitySentences = artemisTraceabilityState.getUnlinkedNamedEntities()
+        Set<String> unlinkedEntitySentences = artemisConnectionState.getUnlinkedNamedEntities()
                 .stream()
                 .map(NamedArchitectureEntity::getOccurrences)
                 .flatMap(java.util.Collection::stream)

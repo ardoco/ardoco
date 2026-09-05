@@ -6,7 +6,7 @@ import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
 public interface ArtemisConnectionStates extends PipelineStepData {
 
-    String ID = "ArtemisTraceabilityStates";
+    String ID = "ArtemisConnectionStates";
 
     ArtemisConnectionState getState(ArtemisTarget target);
 

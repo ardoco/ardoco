@@ -22,7 +22,7 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
     protected void process() {
         var similarityUtils = SimilarityUtils.getInstance();
 
-        var state = getTraceabilityState();
+        var state = getConnectionState();
         var modelEndpoints = getModelStatesData().getModel(strategy.getMetamodel()).getEndpoints();
 
         var namedEntities = state.getNamedEntities();

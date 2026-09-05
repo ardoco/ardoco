@@ -102,9 +102,9 @@ public class ClassArtemisInconsistencyEvaluator implements ArtemisInconsistencyE
     }
 
     private Set<String> collectDetectedClassTeamSentences(ArdocoResult result) {
-        var artemisTraceabilityState = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.CODE_WITH_COMPILATION_UNITS, NamedEntityType.CLASS));
+        var artemisConnectionState = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.CODE_WITH_COMPILATION_UNITS, NamedEntityType.CLASS));
 
-        return artemisTraceabilityState.getUnlinkedNamedEntities()
+        return artemisConnectionState.getUnlinkedNamedEntities()
                 .stream()
                 .map(NamedArchitectureEntity::getOccurrences)
                 .flatMap(java.util.Collection::stream)

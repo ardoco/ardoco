@@ -13,7 +13,7 @@ public class ArtemisTeamInconsistencyInformant extends ArtemisInconsistencyInfor
 
     @Override
     public void process() {
-        var traceabilityState = getArtemisTraceabilityState();
+        var traceabilityState = getArtemisConnectionState();
         var inconsistencyState = getArtemisInconsistencyState();
 
         for (var namedEntity : traceabilityState.getUnlinkedNamedEntities()) {

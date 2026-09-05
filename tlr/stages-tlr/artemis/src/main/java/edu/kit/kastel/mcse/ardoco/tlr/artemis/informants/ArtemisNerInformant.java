@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.NamedEntityRecognizer;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisTraceabilityStatesImpl;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
@@ -62,7 +62,7 @@ public class ArtemisNerInformant extends Informant {
 
     @Override
     protected void process() {
-        var states = dataRepository.getData(ArtemisConnectionStates.ID, ArtemisTraceabilityStatesImpl.class).orElseThrow();
+        var states = dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.class).orElseThrow();
         var state = states.getState(strategy.getTarget());
 
         var text = DataRepositoryHelper.getSimpleText(dataRepository);

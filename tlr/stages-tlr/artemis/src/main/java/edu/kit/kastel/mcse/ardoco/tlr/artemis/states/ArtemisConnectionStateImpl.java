@@ -19,10 +19,10 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
 /**
- * Traceability state for one ArTEMiS target, e.g. components, classes, or functions.
+ * Connection state for one ArTEMiS target, e.g. components, classes, or functions.
  */
 @Deterministic
-public class ArtemisTraceabilityStateImpl extends AbstractState implements ArtemisConnectionState {
+public class ArtemisConnectionStateImpl extends AbstractState implements ArtemisConnectionState {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -31,7 +31,7 @@ public class ArtemisTraceabilityStateImpl extends AbstractState implements Artem
     private final MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks;
     private final SortedSet<NamedArchitectureEntity> unlinkedNamedEntities;
 
-    public ArtemisTraceabilityStateImpl() {
+    public ArtemisConnectionStateImpl() {
         super();
         namedEntities = SortedSets.mutable.empty();
         traceLinks = Lists.mutable.empty();
