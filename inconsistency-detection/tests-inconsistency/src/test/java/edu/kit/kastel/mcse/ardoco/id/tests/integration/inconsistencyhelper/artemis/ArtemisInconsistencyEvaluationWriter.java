@@ -68,15 +68,15 @@ public final class ArtemisInconsistencyEvaluationWriter {
             builder.append(LINE_SEPARATOR);
         }
 
-        var microAverage = ClassificationMetricsCalculator.getInstance()
+        var weightedAverageResult = ClassificationMetricsCalculator.getInstance()
                 .calculateAverages(results, null)
                 .stream()
-                .filter(it -> it.getType() == AggregationType.MICRO_AVERAGE)
+                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()
                 .orElseThrow();
 
         builder.append("### OVERALL RESULTS ###").append(LINE_SEPARATOR);
-        builder.append(createResultLogString("Micro Average", microAverage));
+        builder.append(createResultLogString("Weighted Average", weightedAverageResult));
 
         String fileName = "TEAM_" + configuration.name() + logSuffix + "_" + project.getEvaluationProject().name() + ".txt";
         write(fileName, builder);

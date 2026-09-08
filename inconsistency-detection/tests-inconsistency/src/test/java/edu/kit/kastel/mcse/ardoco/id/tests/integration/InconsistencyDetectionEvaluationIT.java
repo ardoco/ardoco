@@ -88,10 +88,10 @@ class InconsistencyDetectionEvaluationIT {
         var results = this.calculateEvaluationResults(project, runs);
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var microAverage = metrics.calculateAverages(results, null).stream().filter(it -> it.getType() == AggregationType.MICRO_AVERAGE).findFirst().get();
+        var weightedAverageResult = metrics.calculateAverages(results, null).stream().filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE).findFirst().get();
 
-        this.logResultsMissingModelInconsistency(project, microAverage, project.getExpectedMissingModelInconsistencyResults());
-        this.checkResults(microAverage, project.getExpectedMissingModelInconsistencyResults());
+        this.logResultsMissingModelInconsistency(project, weightedAverageResult, project.getExpectedMissingModelInconsistencyResults());
+        this.checkResults(weightedAverageResult, project.getExpectedMissingModelInconsistencyResults());
 
         this.writeOutResults(project, results, runs);
     }

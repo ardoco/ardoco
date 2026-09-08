@@ -139,13 +139,13 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var results = Lists.mutable.withAll(evaluator.evaluateTeam(project, runs));
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var microAverage = metrics.calculateAverages(results, null)
+        var weightedAverageResult = metrics.calculateAverages(results, null)
                 .stream()
                 .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()
                 .orElseThrow();
 
-        logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, microAverage);
+        logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, weightedAverageResult);
         ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs, logSuffix);
     }
 }
