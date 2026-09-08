@@ -211,9 +211,10 @@ class InconsistencyDetectionEvaluationIT {
         }
 
         var goldStandard = project.getGoldstandardForArchitectureModel(InconsistencyDetectionEvaluationIT.getComponentModel(project));
-        var expectedLines = goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString);
-        var actualSentences = inconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence).distinct().collect(Object::toString);
-
+        //We use this format ('<sentenceNumber> -> <componentName>') because using only the sentence number would not account for false positives in our evaluation that have the same sentence number but a different component name
+        var expectedLines = Lists.immutable.ofAll(goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString).stream().map(l->l+" -> "+removedElement.getName().toLowerCase()).toList());
+        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i->i.sentence()+" -> "+removedElement.getName().toLowerCase()).toList());
+        
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
 
