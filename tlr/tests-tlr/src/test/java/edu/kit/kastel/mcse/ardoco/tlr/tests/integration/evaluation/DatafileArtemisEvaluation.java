@@ -3,18 +3,16 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import java.io.File;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.DatafileArtemisNerStrategy;
-
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ClassArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.DatafileArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
@@ -35,7 +33,7 @@ public class DatafileArtemisEvaluation extends AbstractArtemisEvaluation {
     @Override
     protected ArdocoRunner createArtemisRunner() {
         String projectName = project.getName();
-        File documentationFile = project.getTlrTask().getEvaluationProject().getTextFile();
+        File documentationFile = getDocumentationFile();
         File outputDirectory = new File("target", projectName + "-datafile-artemis-output");
         outputDirectory.mkdirs();
 
@@ -44,6 +42,10 @@ public class DatafileArtemisEvaluation extends AbstractArtemisEvaluation {
 
         return ArtemisEvaluationRunnerFactory.createRunner(projectName, documentationFile, null, codeConfiguration, SortedMaps.immutable.empty(),
                 outputDirectory, llmForNer, List.of(strategy));
+    }
+
+    protected File getDocumentationFile() {
+        return project.getTlrTask().getEvaluationProject().getTextFile();
     }
 
     @Override
@@ -58,7 +60,7 @@ public class DatafileArtemisEvaluation extends AbstractArtemisEvaluation {
     protected int getConfusionMatrixSum(ArdocoResult result, Metamodel metamodel) {
         var text = result.getSimplePreprocessingData().getText();
         int sentences = text.getLines().size();
-        int files = ((CodeModel)result.getModelState(metamodel)).getCodeFiles().size();
+        int files = ((CodeModel) result.getModelState(metamodel)).getCodeFiles().size();
         return sentences * files;
     }
 }

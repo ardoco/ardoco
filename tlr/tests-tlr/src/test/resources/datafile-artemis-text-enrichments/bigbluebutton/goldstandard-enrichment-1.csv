@@ -1,0 +1,15 @@
+goldstandard-enrichment-0.csvsentenceID,file
+89,record-and-playback/video/scripts/playback-video.nginx
+90,record-and-playback/slides/scripts/slides.nginx
+91,record-and-playback/slides/scripts/slides.nginx
+91,record-and-playback/video/scripts/playback-video.nginx
+92,.idea/inspectionprofiles/project_default.xml
+93,bbb-graphql-server/metadata/databases/bigbluebutton/tables/public_v_user_voice.yaml
+94,bbb-graphql-server/metadata/databases/bigbluebutton/tables/public_v_pres_page_writers.yaml
+96,bigbluebutton-web/grails-app/i18n/messages_it.properties
+97,bigbluebutton-html5/public/locales/es_mx.json
+98,docs/static/fonts/OpenSans-Bold.ttf
+99,bigbluebutton-html5/public/locales/es_mx.json
+99,bigbluebutton-web/grails-app/i18n/messages_it.properties
+100,bbb-voice-conference/config/freeswitch/conf/autoload_configs/sndfile.conf.xml
+101,record-and-playback/core/resources/raw/chat_0_9.xml

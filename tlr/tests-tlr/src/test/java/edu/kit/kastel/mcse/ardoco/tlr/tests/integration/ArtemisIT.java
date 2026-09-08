@@ -25,6 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.DatafileArtemisEvaluationPr
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ClassArtemisEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ComponentArtemisEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileArtemisEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileEnrichmentArtemisEvaluation;
 
 public class ArtemisIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
@@ -86,6 +87,21 @@ public class ArtemisIT extends AbstractArdocoIT {
         var evaluation = new DatafileArtemisEvaluation(project, llm);
         var result = evaluation.runTraceLinkEvaluation();
         Assertions.assertNotNull(result);
+    }
+
+    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
+    @DisplayName("Evaluate Datafile ArTEMiS TLR Enriched")
+    @ParameterizedTest(name = "{0} ({1})")
+    @MethodSource("llmsXDatafileProjects")
+    void evaluateDatafileArtemisTlrEnrichedIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+        List<SingleClassificationResult<String>> results = Lists.mutable.empty();
+        for (int i = 0; i < 5; i++) {
+            var evaluation = new DatafileEnrichmentArtemisEvaluation(project, llm, i);
+            var result = evaluation.runTraceLinkEvaluation();
+            Assertions.assertNotNull(result);
+            results.add(result);
+        }
+        averageAndLog(results); //TODO here we could use the ClassificationMetricCalculator in future to get more meaningful aggregation metrics
     }
 
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")

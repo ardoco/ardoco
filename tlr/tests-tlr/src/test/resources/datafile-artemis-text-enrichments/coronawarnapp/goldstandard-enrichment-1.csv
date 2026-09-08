@@ -1,0 +1,26 @@
+goldstandard-enrichment-0.csvsentenceID,file
+371,runconfigs/intellij/submission service.run.xml
+372,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/dgc/dsc_list.proto
+373,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_signature_list.proto
+374,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_signature_list.proto
+374,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/dgc/dsc_list.proto
+374,runconfigs/intellij/submission service.run.xml
+375,.github/workflows/hadolint-analysis.yml
+376,services/distribution/src/test/resources/testsetups/s3publishertest/topublish/file3.txt.checksum
+377,runconfigs/eclipse/spring-boot-dcc_revocation.launch
+378,runconfigs/eclipse/spring-boot-dcc_revocation.launch
+379,services/distribution/src/test/resources/testsetups/s3publishertest/topublish/file1.txt.checksum
+380,docker-compose-test-secrets/contains_efgs_truststore.jks
+381,docker-compose-test-secrets/contains_efgs_truststore.jks
+382,services/distribution/src/main/resources/dgc/rule_3.json
+383,services/upload/src/main/resources/application-e2e.yaml
+384,.github/workflows/hadolint-analysis.yml
+384,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_signature_list.proto
+384,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/dgc/dsc_list.proto
+384,docker-compose-test-secrets/contains_efgs_truststore.jks
+384,runconfigs/eclipse/spring-boot-dcc_revocation.launch
+384,runconfigs/intellij/submission service.run.xml
+384,services/distribution/src/main/resources/dgc/rule_3.json
+384,services/distribution/src/test/resources/testsetups/s3publishertest/topublish/file1.txt.checksum
+384,services/distribution/src/test/resources/testsetups/s3publishertest/topublish/file3.txt.checksum
+384,services/upload/src/main/resources/application-e2e.yaml
