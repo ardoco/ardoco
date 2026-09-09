@@ -21,7 +21,7 @@ public class DatafileArtemisNerStrategy implements ArtemisNerStrategy {
                 
                 1.  Data files are non-executable files that contain information essential to the operation, configuration, processing, or functionality of a system or application.
                     They provide meaningful data that can be stored, transferred, processed, or shared between systems or subsystems.
-                    Files that only serve a visual, illustrative, or documentation purpose (for example, architecture_overview.png) are not considered data files.
+                    Files that only serve a visual, illustrative, or documentation purpose (for example, architecture_overview.png or homepage.html) are not considered data files.
                 
                 2.  Pronoun and coreference resolution:
                     Resolve pronouns and other unambiguous references when they clearly refer to a previously introduced data file.
