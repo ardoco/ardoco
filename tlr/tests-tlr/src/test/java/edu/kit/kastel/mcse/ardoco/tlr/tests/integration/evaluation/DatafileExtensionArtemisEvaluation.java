@@ -16,30 +16,30 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
 
-public class DatafileEnrichmentArtemisEvaluation extends DatafileArtemisEvaluation {
+public class DatafileExtensionArtemisEvaluation extends DatafileArtemisEvaluation {
 
-    private final int enrichmentNumber;
+    private final int extensionNumber;
 
-    public DatafileEnrichmentArtemisEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llmForNer, int enrichmentNumber) {
+    public DatafileExtensionArtemisEvaluation(ArtemisEvaluationProject project, LargeLanguageModel llmForNer, int extensionNumber) {
         super(project, llmForNer);
-        this.enrichmentNumber = enrichmentNumber;
+        this.extensionNumber = extensionNumber;
     }
 
     protected File getDocumentationFile() {
         return new File(Objects.requireNonNull(this.getClass()
-                .getResource("/datafile-artemis-text-enrichments/" + project.getName().toLowerCase() + "/enrichment-" + enrichmentNumber + ".txt")).getFile());
+                .getResource("/datafile-artemis-text-extensions/" + project.getName().toLowerCase() + "/extension-" + extensionNumber + ".txt")).getFile());
     }
 
     @Override
     public SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard,
             ArtemisNerStrategy strategy) {
-        goldStandard.addAll(getExpectedEnrichmentTraceLinks());
+        goldStandard.addAll(getExpectedExtendedTraceLinks());
         return super.calculateEvaluationResults(result, goldStandard, strategy);
     }
 
-    private List<Pair<Integer, String>> getExpectedEnrichmentTraceLinks() {
+    private List<Pair<Integer, String>> getExpectedExtendedTraceLinks() {
         File file = EvaluationHelper.loadFileFromResources(
-                "/datafile-artemis-text-enrichments/" + project.getName().toLowerCase() + "/goldstandard-enrichment-" + enrichmentNumber + ".csv");
+                "/datafile-artemis-text-extensions/" + project.getName().toLowerCase() + "/goldstandard-extension-" + extensionNumber + ".csv");
 
         List<String> goldLinks;
         try {

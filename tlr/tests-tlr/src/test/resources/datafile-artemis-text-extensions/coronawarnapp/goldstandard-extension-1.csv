@@ -1,4 +1,4 @@
-goldstandard-enrichment-0.csvsentenceID,file
+sentenceID,file
 371,runconfigs/intellij/submission service.run.xml
 372,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/dgc/dsc_list.proto
 373,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_signature_list.proto

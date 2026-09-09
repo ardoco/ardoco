@@ -1,4 +1,4 @@
-# Prompt used to Generate the Enriched SAD Texts:
+# Prompt used to Generate the Extended SAD Texts:
 ```
 Given the text below, write a natural extension that incorporates all of the provided data file names.
 
@@ -23,7 +23,7 @@ Original text:
 
 Output only the extended text, with one complete sentence per line.
 ```
-## LLM used to Generate the Enriched SAD Texts:
+## LLM used to Generate the Extended SAD Texts:
 gpt-5.6-terra (https://ki-toolbox.scc.kit.edu/?model=azure.gpt-5.6-terra)
 
 ---

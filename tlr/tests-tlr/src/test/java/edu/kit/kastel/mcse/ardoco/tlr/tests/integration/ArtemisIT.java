@@ -25,7 +25,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.DatafileArtemisEvaluationPr
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ClassArtemisEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ComponentArtemisEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileArtemisEvaluation;
-import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileEnrichmentArtemisEvaluation;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.DatafileExtensionArtemisEvaluation;
 
 public class ArtemisIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
@@ -90,13 +90,13 @@ public class ArtemisIT extends AbstractArdocoIT {
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
-    @DisplayName("Evaluate Datafile ArTEMiS TLR Enriched")
+    @DisplayName("Evaluate Datafile ArTEMiS TLR Extended")
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXDatafileProjects")
-    void evaluateDatafileArtemisTlrEnrichedIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
+    void evaluateDatafileArtemisTlrExtendedIT(ArtemisEvaluationProject project, LargeLanguageModel llm) {
         List<SingleClassificationResult<String>> results = Lists.mutable.empty();
         for (int i = 0; i < 5; i++) {
-            var evaluation = new DatafileEnrichmentArtemisEvaluation(project, llm, i);
+            var evaluation = new DatafileExtensionArtemisEvaluation(project, llm, i);
             var result = evaluation.runTraceLinkEvaluation();
             Assertions.assertNotNull(result);
             results.add(result);

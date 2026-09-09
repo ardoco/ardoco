@@ -1,4 +1,4 @@
-goldstandard-enrichment-0.csvsentenceID,file
+sentenceID,file
 199,src/main/resources/build-dev.template.properties
 201,.idea/compiler.xml
 202,.gradle/buildoutputcleanup/buildoutputcleanup.lock

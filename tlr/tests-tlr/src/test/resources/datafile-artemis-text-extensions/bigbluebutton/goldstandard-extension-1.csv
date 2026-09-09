@@ -1,4 +1,4 @@
-goldstandard-enrichment-0.csvsentenceID,file
+sentenceID,file
 89,record-and-playback/video/scripts/playback-video.nginx
 90,record-and-playback/slides/scripts/slides.nginx
 91,record-and-playback/slides/scripts/slides.nginx

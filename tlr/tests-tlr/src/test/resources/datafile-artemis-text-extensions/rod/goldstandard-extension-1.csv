@@ -1,4 +1,4 @@
-goldstandard-enrichment-0.csvsentenceID,file
+sentenceID,file
 121,features/basic.feature
 122,.travis.yml
 123,features/update.feature
