@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ArtemisInconsistencyRunProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ClassHoldBackArtemisInconsistencyRunProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ComponentHoldBackArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.DatafileExtendedArtemisInconsistencyRunProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.SingleArtemisInconsistencyRunProducer;
 
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.DatafileArtemisInconsistencyTask;
@@ -106,6 +107,19 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var producer = new SingleArtemisInconsistencyRunProducer<DatafileArtemisInconsistencyTask>(LLM, configuration);
 
         runTeamEvaluation(project, configuration, producer, new DatafileArtemisInconsistencyEvaluator(), "_TEAM");
+    }
+
+    @DisplayName("Evaluate ArTEMiS Datafile TEAM inconsistency detection using SAD Extensions")
+    @ParameterizedTest(name = "Evaluating ArTEMiS Datafile TEAM Extended for {0}")
+    @EnumSource(DatafileArtemisInconsistencyTask.class)
+    @Order(6)
+    void datafileTeamExtendedInconsistencyIT(DatafileArtemisInconsistencyTask project) {
+        int numberOfRuns = 5;
+
+        var configuration = ArtemisInconsistencyEvaluationConfiguration.datafile();
+        var producer = new DatafileExtendedArtemisInconsistencyRunProducer(LLM, numberOfRuns);
+
+        runTeamEvaluation(project, configuration, producer, new DatafileArtemisInconsistencyEvaluator(), "_TEAM extended");
     }
 
     private <T extends ArtemisInconsistencyTask> void runMeatEvaluation(T project, ArtemisInconsistencyEvaluationConfiguration configuration,

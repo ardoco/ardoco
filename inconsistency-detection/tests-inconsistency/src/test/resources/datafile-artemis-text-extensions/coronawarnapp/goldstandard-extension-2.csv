@@ -1,0 +1,14 @@
+sentenceID,file
+371,risk-score-classification.yaml
+372,attenuation-weights.yaml
+373,transmission-risk-levels.yaml
+374,attenuation-weights.yaml
+374,transmission-risk-levels.yaml
+374,risk-score-classification.yaml
+375,diagnosis-key-retention.yaml
+376,download-schedule.yaml
+378,efgs-configuration.yaml
+379,ppdd-configuration.yaml
+381,callback-configuration.yaml
+382,signature-configuration.yaml
+383,cdn-configuration.yaml
