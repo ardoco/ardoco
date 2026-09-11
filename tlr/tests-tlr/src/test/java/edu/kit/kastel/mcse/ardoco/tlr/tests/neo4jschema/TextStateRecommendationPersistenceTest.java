@@ -37,8 +37,20 @@ public class TextStateRecommendationPersistenceTest extends AbstractPersistenceT
 
         Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
         Assertions.assertTrue(countRelationshipsWithType("MAPS_WORD") > 0);
+        Assertions.assertTrue(countRelationshipsWithType("IN_PHRASE") > 0,
+                "NounMappings should link to Phrase nodes via contained word positions");
         Assertions.assertEquals(0, countNodesWithLabel("RecommendedInstance"));
         Assertions.assertEquals(0, countRelationshipsWithType("HAS_NAME_MAPPING"));
+    }
+
+    @Test
+    @DisplayName("SWATTR with persistRecommendations only still writes NounMappings (TextState auto-enabled)")
+    void testSwattrRecommendationsOnlyAutoEnablesTextState() {
+        runSwattr(true, false, true);
+
+        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
+        Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
+        Assertions.assertTrue(countRelationshipsWithType("HAS_NAME_MAPPING") > 0);
     }
 
     @Test

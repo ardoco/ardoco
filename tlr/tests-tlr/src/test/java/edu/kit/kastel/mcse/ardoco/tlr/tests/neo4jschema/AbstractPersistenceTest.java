@@ -176,7 +176,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
 
     protected ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled) {
         boolean persistRecommendations = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistRecommendations", "false"));
-        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false")) || persistRecommendations;
+        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false"));
         return getConfigsWithPersistence(enabled, persistTextState, persistRecommendations);
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
             throw new FileNotFoundException("Could not find config in resources");
         }
         boolean persistRecommendations = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistRecommendations", "false"));
-        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false")) || persistRecommendations;
+        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false"));
         ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(resource.toURI()));
         MutableSortedMap<String, String> additionalConfigs = configs.toSortedMap();
         putPersistenceFlags(additionalConfigs, enabled, persistTextState, persistRecommendations);

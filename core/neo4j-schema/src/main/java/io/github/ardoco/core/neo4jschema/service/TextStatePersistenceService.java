@@ -51,9 +51,20 @@ public class TextStatePersistenceService {
             MERGE (nm)-[:HAS_REFERENCE_WORD]->(w)
             """;
 
-    private static final String LINK_PHRASE = """
+    /**
+     * Links a {@code NounMapping} to the {@code Phrase} whose direct {@code CONTAINS_WORD} positions match
+     * {@link Phrase#getContainedWords()} exactly. {@code text} alone is not unique across a document; word
+     * positions are the same stable keys used for {@code Word} nodes during text preprocessing.
+     */
+    private static final String LINK_PHRASE_BY_WORD_POSITIONS = """
             MATCH (nm:NounMapping {ardocoId: $ardocoId})
-            MATCH (p:Phrase {text: $text, phraseType: $phraseType})
+            WITH nm, $positions AS positions, $phraseType AS phraseType
+            WHERE size(positions) > 0
+            MATCH (p:Phrase {phraseType: phraseType})
+            MATCH (p)-[:CONTAINS_WORD]->(w:Word)
+            WITH nm, p, positions, collect(DISTINCT w.position) AS phrasePositions
+            WHERE size(phrasePositions) = size(positions)
+              AND ALL(pos IN positions WHERE pos IN phrasePositions)
             MERGE (nm)-[:IN_PHRASE]->(p)
             """;
 
@@ -101,14 +112,24 @@ public class TextStatePersistenceService {
             neo4jClient.query(LINK_REFERENCE_WORDS).bind(ardocoId).to("ardocoId").bind(referencePositions).to("positions").run();
         }
         for (Phrase phrase : mapping.getPhrases()) {
-            neo4jClient.query(LINK_PHRASE)
+            List<Integer> phraseWordPositions = phrase.getContainedWords().collect(Word::getPosition).toList();
+            if (phraseWordPositions.isEmpty()) {
+                logger.warn("Skipping IN_PHRASE for NounMapping {}: phrase has no contained words to match in Neo4j", ardocoId);
+                continue;
+            }
+            long linked = neo4jClient.query(LINK_PHRASE_BY_WORD_POSITIONS)
                     .bind(ardocoId)
                     .to("ardocoId")
-                    .bind(phrase.getText())
-                    .to("text")
+                    .bind(phraseWordPositions)
+                    .to("positions")
                     .bind(phrase.getPhraseType().name())
                     .to("phraseType")
-                    .run();
+                    .run()
+                    .counters()
+                    .relationshipsCreated();
+            if (linked == 0) {
+                logger.warn("No Phrase matched for NounMapping {} (type={}, positions={})", ardocoId, phrase.getPhraseType(), phraseWordPositions);
+            }
         }
         logger.debug("Saved NounMapping {} ({} words)", ardocoId, wordPositions.size());
     }

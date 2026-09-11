@@ -2,6 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -14,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
  * THe persistanceHandler in this class is populated from the neo4j-schema
  */
 public class PersistenceBridge extends AbstractConfigurable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceBridge.class);
+
     //singleton instance of the bringe
     private static final PersistenceBridge INSTANCE = new PersistenceBridge();
 
@@ -37,7 +41,8 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     /**
      * When true (and {@link #isAvailable()}), RecommendedInstances are dual-written to Neo4j.
-     * Default false. Enable together with {@link #persistTextState} so HAS_NAME_MAPPING can resolve NounMapping nodes.
+     * Default false. Implies {@link #persistTextState}: enabling recommendations without TextState would leave
+     * {@code HAS_NAME_MAPPING} / {@code HAS_TYPE_MAPPING} edges unresolved.
      */
     @Configurable
     private boolean persistRecommendations = false;
@@ -79,6 +84,10 @@ public class PersistenceBridge extends AbstractConfigurable {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         usePersistenceStatic = this.usePersistence;
+        if (this.persistRecommendations && !this.persistTextState) {
+            LOGGER.info("persistRecommendations is enabled without persistTextState; enabling persistTextState automatically");
+            this.persistTextState = true;
+        }
         persistTextStateStatic = this.persistTextState;
         persistRecommendationsStatic = this.persistRecommendations;
     }
