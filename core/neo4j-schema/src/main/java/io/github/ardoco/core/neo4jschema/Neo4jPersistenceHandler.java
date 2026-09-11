@@ -3,6 +3,7 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -228,6 +229,28 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
         logger.debug("Saving RecommendedInstance {}", recommendedInstance.getId());
         this.recommendationService.saveRecommendedInstance(recommendedInstance, metamodel);
+    }
+
+    @Override
+    public boolean hasNounMappings() {
+        return this.textStateService.hasNounMappings();
+    }
+
+    @Override
+    public Collection<NounMapping> loadNounMappings(Text annotatedText) {
+        logger.info("Loading NounMappings from Neo4j (resume)");
+        return this.textStateService.loadAllNounMappings(annotatedText);
+    }
+
+    @Override
+    public boolean hasRecommendedInstances() {
+        return this.recommendationService.hasRecommendedInstances();
+    }
+
+    @Override
+    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById) {
+        logger.info("Loading RecommendedInstances for {} from Neo4j (resume)", metamodel);
+        return this.recommendationService.loadRecommendedInstances(metamodel, nounMappingsById);
     }
 
 }

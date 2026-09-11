@@ -115,12 +115,22 @@ public class TextStateImpl extends AbstractState implements TextState {
 
     @Override
     public void addNounMapping(NounMapping nounMapping) {
+        addNounMapping(nounMapping, true);
+    }
+
+    /**
+     * Adds a noun mapping. When {@code persist} is false, skips Neo4j dual-write
+     * (used for load-on-resume hydrate).
+     */
+    public void addNounMapping(NounMapping nounMapping, boolean persist) {
         if (this.nounMappings.contains(nounMapping)) {
             throw new IllegalArgumentException("Nounmapping was already in state");
         }
         this.nounMappings.add(nounMapping);
         this.nounMappings.sortThis(ORDER_NOUNMAPPING);
-        persistNounMapping(nounMapping);
+        if (persist) {
+            persistNounMapping(nounMapping);
+        }
 
         for (PhraseMapping phraseMapping : this.phraseMappings) {
             SortedIterable<Phrase> phrases = phraseMapping.getPhrases();

@@ -42,27 +42,55 @@ public class RecommendedInstanceNode {
         return ardocoId;
     }
 
+    public void setArdocoId(String ardocoId) {
+        this.ardocoId = ardocoId;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public double getProbability() {
         return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 
     public String getMetamodel() {
         return metamodel;
     }
 
+    public void setMetamodel(String metamodel) {
+        this.metamodel = metamodel;
+    }
+
     public List<NounMappingNode> getNameMappings() {
         return nameMappings;
     }
 
+    public void setNameMappings(List<NounMappingNode> nameMappings) {
+        this.nameMappings = nameMappings != null ? nameMappings : new ArrayList<>();
+    }
+
     public List<NounMappingNode> getTypeMappings() {
         return typeMappings;
+    }
+
+    public void setTypeMappings(List<NounMappingNode> typeMappings) {
+        this.typeMappings = typeMappings != null ? typeMappings : new ArrayList<>();
     }
 }

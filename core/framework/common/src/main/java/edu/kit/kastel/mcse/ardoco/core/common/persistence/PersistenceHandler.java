@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.SortedSet;
 
 import org.eclipse.jgit.annotations.Nullable;
@@ -165,10 +166,39 @@ public interface PersistenceHandler {
     void deleteNounMapping(String ardocoId);
 
     /**
-     * Saves (upserts) a recommended instance. Write-only: does not replace in-memory RecommendationState.
+     * Saves (upserts) a recommended instance. Dual-write: does not replace in-memory RecommendationState.
      *
      * @param recommendedInstance the recommended instance
      * @param metamodel           the metamodel bucket this instance belongs to
      */
     void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel);
+
+    /**
+     * @return true if at least one NounMapping node exists in persistence
+     */
+    boolean hasNounMappings();
+
+    /**
+     * Loads all NounMappings. Domain words are resolved from {@code annotatedText} by position.
+     * Intended for load-on-resume (once), not per-request reads.
+     *
+     * @param annotatedText the preprocessed text already available for this run
+     * @return loaded noun mappings
+     */
+    Collection<NounMapping> loadNounMappings(Text annotatedText);
+
+    /**
+     * @return true if at least one RecommendedInstance node exists in persistence
+     */
+    boolean hasRecommendedInstances();
+
+    /**
+     * Loads recommended instances for a metamodel. {@code nounMappingsById} must already be hydrated.
+     * Intended for load-on-resume (once), not per-request reads.
+     *
+     * @param metamodel        metamodel bucket
+     * @param nounMappingsById ardocoId → NounMapping from TextState
+     * @return loaded recommended instances
+     */
+    Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById);
 }

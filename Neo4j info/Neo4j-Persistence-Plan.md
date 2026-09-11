@@ -196,11 +196,11 @@ Former “blocked on professor” steps are unblocked by §7. See **§8** for th
 
 | Step | Topic | Status |
 |---|---|---|
-| A | Commit steps 1–2 | Local, pending verify/commit |
-| B | NounMapping → UUID (resume-safe ids) | **Next code** |
-| C | `RecommendedInstanceImpl(name, type, id)` | Approved; not done |
-| D | Load-on-resume + Spring Data rewrite (together) | After B/C |
-| E | Fault isolation (merge gate) | Parallelizable |
+| A | Commit steps 1–2 | ✅ Committed |
+| B | NounMapping → UUID (resume-safe ids) | ✅ Done (local) |
+| C | `RecommendedInstanceImpl(name, type, id)` | ✅ Done (local) |
+| D | Load-on-resume + Spring Data rewrite (together) | ✅ Done (local) |
+| E | Fault isolation (merge gate) | **Next** |
 | F | Round-trip / resume tests | After D/E |
 | G | ConnectionState next (not NER) | After D |
 | H | Merge → `feature/neo4j` | After E + process OK |
@@ -212,19 +212,19 @@ Former “blocked on professor” steps are unblocked by §7. See **§8** for th
 
 | Item | Status |
 |---|---|
-| Stable `NounMapping.ardocoId` + merge preservation | ✅ Committed (still uses `IdentifierProvider` — must change before resume) |
+| Stable `NounMapping.ardocoId` + merge preservation | ✅ Committed; **UUID generation** (step B) done locally |
 | `NounMapping` / `RecommendedInstance` Neo4j schema entities + repos | ✅ Committed (repos unused for writes yet) |
 | Cypher-based write services | ✅ Committed — **keep until read-back** (§7.1) |
 | Dual-write hooks in TextState + Recommendation stages | ✅ Committed — **transitional**, not final (§1) |
 | Config flags on `PersistenceBridge` | ✅ Committed |
 | Integration tests (Phase 4) | ✅ Committed |
-| Phrase linking by word positions (step 1) | ✅ Local only |
-| Flag auto-enable (step 2) | ✅ Local only |
+| Phrase linking by word positions (step 1) | ✅ Committed (`e6231bca2`) |
+| Flag auto-enable (step 2) | ✅ Committed (`e6231bca2`) |
 | Architecture decisions (§7) | ✅ Locked 2026-09-11 |
-| NounMapping → UUID (or Neo4j-generated id) | ❌ Next prerequisite for resume |
-| `RecommendedInstanceImpl(name, type, id)` constructor | ❌ Approved; not implemented yet |
-| Load-on-resume for TextState / Recommendations | ❌ Not started |
-| Spring Data rewrite (as part of read-back) | ❌ Not started (do **not** rewrite early) |
+| NounMapping → UUID (or Neo4j-generated id) | ✅ Done (local; await commit) |
+| `RecommendedInstanceImpl(name, type, id)` constructor | ✅ Done (local; await commit) |
+| Load-on-resume for TextState / Recommendations | ✅ Done (local; await commit) |
+| Spring Data rewrite (as part of read-back) | ✅ Done (local; await commit) |
 | Fault isolation (Neo4j down → pipeline continues) | ❌ Required before merge |
 | ConnectionState coverage (next state after NM+RI) | ❌ After TextState/RI resume path |
 | Full DataRepository → Neo4j sole store | ❌ End vision |
@@ -363,10 +363,10 @@ Reasons:
 
 | Step | Work | Depends on | Status |
 |---|---|---|---|
-| **A** | Commit phrase fix + flag auto-enable + plan notes | Manual Neo4j verify | Local, uncommitted |
-| **B** | Switch `NounMapping` id generation from `IdentifierProvider` → **UUID** (keep `ardocoId` field + merge earliest-id) | — | **Next code** |
-| **C** | Add `RecommendedInstanceImpl(name, type, id)` | — | Approved; can do with B or D |
-| **D** | Read-back: load TextState + RecommendationStates **once on resume**; rewrite Cypher → Spring Data mappers in the same effort | B, C | Blocked only by B/C |
+| **A** | Commit phrase fix + flag auto-enable + plan notes | Manual Neo4j verify | ✅ `e6231bca2` |
+| **B** | Switch `NounMapping` id generation from `IdentifierProvider` → **UUID** (keep `ardocoId` field + merge earliest-id) | — | ✅ Done (local) |
+| **C** | Add `RecommendedInstanceImpl(name, type, id)` | — | ✅ Done (local) |
+| **D** | Read-back: load TextState + RecommendationStates **once on resume**; rewrite Cypher → Spring Data mappers in the same effort | B, C | ✅ Done (local) |
 | **E** | Fault isolation: persist failures / Neo4j down must not abort the pipeline | — | Can parallelize; **merge gate** |
 | **F** | Tests: resume round-trip, IN_PHRASE, flag matrix, fault-isolation | D, E | |
 | **G** | Extend coverage toward `ConnectionState` (links RI → TraceLinks already partially persisted) | D working | Next state after NM+RI |
@@ -544,10 +544,8 @@ mvn -pl tlr/tests-tlr -am test `
 
 ## 13. Immediate next actions
 
-1. **Commit A** — after Neo4j verify: phrase fix, flag auto-enable, `PersistenceBridgeTest`, this plan update.
-2. **Implement B** — `NounMapping` ids via **UUID** (keep merge earliest-id); stop relying on `IdentifierProvider` counters for resume safety.
-3. **Implement C** — `RecommendedInstanceImpl(name, type, id)` for mapper `toDomain`.
-4. **Implement D** — load-on-resume for TextState + Recommendations; Spring Data rewrite in the same pass (not earlier).
-5. **Implement E** (can overlap) — fault isolation so Neo4j outage does not kill the pipeline; required before merge.
-6. **Then G** — `ConnectionState` as next persisted state; defer CodeTraceability / NER.
-7. **Do not** treat dual-write as final; track cutover to **Neo4j sole store (I)** as the real end goal.
+1. **Commit B+C+D** — UUID NounMapping ids, RI predefined-id ctors, Spring Data mappers/services, load-on-resume hooks.
+2. **Implement E** — fault isolation so Neo4j outage does not kill the pipeline; required before merge.
+3. **Tests F** — resume round-trip / hydrate coverage (optional alongside E).
+4. **Then G** — `ConnectionState` as next persisted state; defer CodeTraceability / NER.
+5. **Do not** treat dual-write as final; track cutover to **Neo4j sole store (I)** as the real end goal.

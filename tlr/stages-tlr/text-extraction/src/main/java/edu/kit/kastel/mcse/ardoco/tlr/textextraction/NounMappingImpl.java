@@ -5,6 +5,7 @@ import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAG
 
 import java.io.Serial;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -24,12 +25,15 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
-import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
  * The Class NounMapping is a basic realization of {@link NounMapping}.
+ *
+ * <p>{@code ardocoId} is a UUID so Neo4j upserts stay unique across JVM restarts / pipeline resume.
+ * In-process merges still keep the earliest mapping's id via {@link #ardocoIdOfEarliest}.
+ * {@link #CREATION_TIME_COUNTER} is only for in-run merge ordering, not graph identity.
  */
 @Deterministic
 @NoHashCodeEquals
@@ -63,7 +67,7 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms) {
-        this(IdentifierProvider.createId(), CREATION_TIME_COUNTER.incrementAndGet(), words, kind, claimant, probability, referenceWords, surfaceForms);
+        this(newArdocoId(), CREATION_TIME_COUNTER.incrementAndGet(), words, kind, claimant, probability, referenceWords, surfaceForms);
     }
 
     /**
@@ -77,7 +81,7 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution, ImmutableList<Word> referenceWords,
             ImmutableList<String> surfaceForms, String reference) {
-        this(IdentifierProvider.createId(), CREATION_TIME_COUNTER.incrementAndGet(), words, distribution, referenceWords, surfaceForms, reference);
+        this(newArdocoId(), CREATION_TIME_COUNTER.incrementAndGet(), words, distribution, referenceWords, surfaceForms, reference);
     }
 
     /**
@@ -115,7 +119,7 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(Long earliestCreationTime, ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
             ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
-        this(IdentifierProvider.createId(), earliestCreationTime, words, distribution, referenceWords, surfaceForms, reference);
+        this(newArdocoId(), earliestCreationTime, words, distribution, referenceWords, surfaceForms, reference);
     }
 
     /**
@@ -131,7 +135,7 @@ public class NounMappingImpl implements NounMapping {
      */
     public NounMappingImpl(Long earliestCreationTime, ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability,
             ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms) {
-        this(IdentifierProvider.createId(), earliestCreationTime, words, kind, claimant, probability, referenceWords, surfaceForms);
+        this(newArdocoId(), earliestCreationTime, words, kind, claimant, probability, referenceWords, surfaceForms);
     }
 
     private NounMappingImpl(String ardocoId, Long earliestCreationTime, ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability,
@@ -268,13 +272,28 @@ public class NounMappingImpl implements NounMapping {
             }
         }
         if (earliest == null) {
-            return IdentifierProvider.createId();
+            return newArdocoId();
         }
         return earliest.getArdocoId();
     }
 
+    /**
+     * Fresh graph-stable id. UUID avoids collisions when the same Neo4j DB is reused across JVM runs
+     * (unlike {@code IdentifierProvider}'s process-local counter).
+     */
+    private static String newArdocoId() {
+        return UUID.randomUUID().toString();
+    }
+
     public Long earliestCreationTime() {
         return this.earliestCreationTime;
+    }
+
+    /**
+     * Advances the in-process creation-time counter (e.g. when hydrating mappings from Neo4j).
+     */
+    public static long nextEarliestCreationTime() {
+        return CREATION_TIME_COUNTER.incrementAndGet();
     }
 
     public ImmutableSortedSet<Word> words() {

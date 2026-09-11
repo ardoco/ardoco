@@ -49,43 +49,87 @@ public class NounMappingNode {
         return ardocoId;
     }
 
+    public void setArdocoId(String ardocoId) {
+        this.ardocoId = ardocoId;
+    }
+
     public String getReference() {
         return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getKind() {
         return kind;
     }
 
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
     public double getProbability() {
         return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 
     public boolean isCompound() {
         return isCompound;
     }
 
+    public void setCompound(boolean compound) {
+        isCompound = compound;
+    }
+
     public List<String> getSurfaceForms() {
         return surfaceForms;
+    }
+
+    public void setSurfaceForms(List<String> surfaceForms) {
+        this.surfaceForms = surfaceForms != null ? surfaceForms : new ArrayList<>();
     }
 
     public double getNameProbability() {
         return nameProbability;
     }
 
+    public void setNameProbability(double nameProbability) {
+        this.nameProbability = nameProbability;
+    }
+
     public double getTypeProbability() {
         return typeProbability;
+    }
+
+    public void setTypeProbability(double typeProbability) {
+        this.typeProbability = typeProbability;
     }
 
     public List<WordNode> getMappedWords() {
         return mappedWords;
     }
 
+    public void setMappedWords(List<WordNode> mappedWords) {
+        this.mappedWords = mappedWords != null ? mappedWords : new ArrayList<>();
+    }
+
     public List<WordNode> getReferenceWords() {
         return referenceWords;
     }
 
+    public void setReferenceWords(List<WordNode> referenceWords) {
+        this.referenceWords = referenceWords != null ? referenceWords : new ArrayList<>();
+    }
+
     public List<PhraseNode> getPhrases() {
         return phrases;
+    }
+
+    public void setPhrases(List<PhraseNode> phrases) {
+        this.phrases = phrases != null ? phrases : new ArrayList<>();
     }
 }

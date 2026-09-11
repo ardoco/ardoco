@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import java.io.Serial;
@@ -26,6 +26,10 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 /**
  * This class represents recommended instances. These instances should be contained by the model. The likelihood is measured by the probability. Every
  * recommended instance has a unique name.
+ *
+ * <p>Entity {@code id} is a UUID for new instances. A predefined id can be supplied for Neo4j read-back via
+ * {@link #RecommendedInstanceImpl(String, String, String)}. {@code equals}/{@code hashCode}/{@code compareTo} use
+ * name and type only, so restoring an id does not change collection semantics.
  */
 public final class RecommendedInstanceImpl extends RecommendedInstance implements Claimant {
 
@@ -45,13 +49,25 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     private final MutableList<NounMapping> nameMappings;
     private Metamodel metamodel;
 
-    private RecommendedInstanceImpl(String name, String type) {
-        super(name, UUID.randomUUID().toString());
+    /**
+     * Creates a recommended instance with a predefined entity id (e.g. mapper {@code toDomain} / Neo4j resume).
+     * Collection equality remains based on {@code name} and {@code type} only.
+     *
+     * @param name the name of the instance
+     * @param type the type of the instance
+     * @param id   stable entity id; must not be {@code null}
+     */
+    public RecommendedInstanceImpl(String name, String type, String id) {
+        super(name, Objects.requireNonNull(id, "id"));
         this.type = type;
         this.name = name;
         this.internalConfidence = new Confidence(AggregationFunctions.AVERAGE);
         this.nameMappings = Lists.mutable.empty();
         this.typeMappings = Lists.mutable.empty();
+    }
+
+    private RecommendedInstanceImpl(String name, String type) {
+        this(name, type, UUID.randomUUID().toString());
     }
 
     @Override
@@ -89,6 +105,25 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         this(name, type);
         this.internalConfidence.addAgentConfidence(claimant, probability);
 
+        this.nameMappings.addAll(nameNodes.castToCollection());
+        this.typeMappings.addAll(typeNodes.castToCollection());
+    }
+
+    /**
+     * Restores a recommended instance with a predefined id and mappings (Neo4j read-back).
+     *
+     * @param name        the name of the instance
+     * @param type        the type of the instance
+     * @param id          stable entity id from persistence
+     * @param claimant    claimant for the restored probability
+     * @param probability the stored probability
+     * @param nameNodes   the involved name mappings
+     * @param typeNodes   the involved type mappings
+     */
+    public RecommendedInstanceImpl(String name, String type, String id, Claimant claimant, double probability, ImmutableList<NounMapping> nameNodes,
+            ImmutableList<NounMapping> typeNodes) {
+        this(name, type, id);
+        this.internalConfidence.addAgentConfidence(claimant, probability);
         this.nameMappings.addAll(nameNodes.castToCollection());
         this.typeMappings.addAll(typeNodes.castToCollection());
     }

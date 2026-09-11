@@ -20,6 +20,8 @@ public interface NounMapping extends Serializable {
     /**
      * Returns a stable identifier for this mapping.
      * Used for Neo4j persistence upserts and for preserving identity across merges.
+     * Implementations should use a globally unique value (e.g. UUID) so ids do not collide
+     * across JVM restarts when the same Neo4j graph is reused.
      *
      * @return the unique ardoco id
      */

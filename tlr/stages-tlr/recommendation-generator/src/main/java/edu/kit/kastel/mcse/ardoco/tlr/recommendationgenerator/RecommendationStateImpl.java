@@ -145,4 +145,16 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
             PersistenceBridge.getHandler().saveRecommendedInstance(recommendedInstance, this.metamodel);
         }
     }
+
+    /**
+     * Adds a recommended instance without Neo4j dual-write (load-on-resume hydrate).
+     */
+    public void hydrateRecommendedInstance(RecommendedInstance recommendedInstance) {
+        if (recommendedInstance instanceof RecommendedInstanceImpl impl) {
+            impl.setMetamodel(this.metamodel);
+        }
+        if (!this.recommendedInstances.contains(recommendedInstance)) {
+            this.recommendedInstances.add(recommendedInstance);
+        }
+    }
 }

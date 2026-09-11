@@ -1,11 +1,18 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.agents.InitialTextAgent;
@@ -15,6 +22,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.textextraction.agents.PhraseAgent;
  * The Class TextExtractor.
  */
 public class TextExtraction extends AbstractExecutionStage {
+
+    private static final Logger logger = LoggerFactory.getLogger(TextExtraction.class);
 
     /**
      * Instantiates a new text extractor.
@@ -42,7 +51,32 @@ public class TextExtraction extends AbstractExecutionStage {
         var optionalTextState = dataRepository.getData(TextState.ID, TextStateImpl.class);
         if (optionalTextState.isEmpty()) {
             var textState = new TextStateImpl();
+            hydrateFromPersistenceIfPresent(dataRepository, textState);
             dataRepository.addData(TextState.ID, textState);
         }
+    }
+
+    /**
+     * Load-on-resume: if Neo4j already has NounMappings and TextState is empty in memory, hydrate once.
+     * Does not re-dual-write. Live extraction still writes via {@link TextStateImpl#addNounMapping}.
+     */
+    private static void hydrateFromPersistenceIfPresent(DataRepository dataRepository, TextStateImpl textState) {
+        if (!PersistenceBridge.shouldPersistTextState()) {
+            return;
+        }
+        var handler = PersistenceBridge.getHandler();
+        if (handler == null || !handler.hasNounMappings()) {
+            return;
+        }
+        if (!DataRepositoryHelper.hasAnnotatedText(dataRepository)) {
+            logger.warn("Cannot load NounMappings from Neo4j: annotated text is not available yet");
+            return;
+        }
+        Text annotatedText = DataRepositoryHelper.getAnnotatedText(dataRepository);
+        Collection<NounMapping> loaded = handler.loadNounMappings(annotatedText);
+        for (NounMapping mapping : loaded) {
+            textState.addNounMapping(mapping, false);
+        }
+        logger.info("Hydrated {} NounMappings from Neo4j into TextState (resume)", loaded.size());
     }
 }
