@@ -72,7 +72,11 @@ public class RecommendationGenerator extends AbstractExecutionStage {
             return;
         }
         var handler = PersistenceBridge.getHandler();
-        if (handler == null || !handler.hasRecommendedInstances()) {
+        if (handler == null) {
+            return;
+        }
+        Boolean hasRis = PersistenceBridge.callQuietly("hasRecommendedInstances", handler::hasRecommendedInstances, Boolean.FALSE);
+        if (!Boolean.TRUE.equals(hasRis)) {
             return;
         }
         if (dataRepository.getData(TextState.ID, TextState.class).isEmpty()) {
@@ -88,12 +92,15 @@ public class RecommendationGenerator extends AbstractExecutionStage {
         int total = 0;
         for (Metamodel metamodel : activeMetamodels) {
             RecommendationStateImpl state = recommendationStates.getRecommendationState(metamodel);
-            Collection<RecommendedInstance> loaded = handler.loadRecommendedInstances(metamodel, nounMappingsById);
+            Collection<RecommendedInstance> loaded = PersistenceBridge.callQuietly("loadRecommendedInstances",
+                    () -> handler.loadRecommendedInstances(metamodel, nounMappingsById), java.util.List.of());
             for (RecommendedInstance ri : loaded) {
                 state.hydrateRecommendedInstance(ri);
             }
             total += loaded.size();
         }
-        logger.info("Hydrated {} RecommendedInstances from Neo4j (resume)", total);
+        if (total > 0) {
+            logger.info("Hydrated {} RecommendedInstances from Neo4j (resume)", total);
+        }
     }
 }

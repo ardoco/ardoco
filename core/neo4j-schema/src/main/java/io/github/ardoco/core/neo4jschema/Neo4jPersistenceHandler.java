@@ -19,7 +19,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -251,6 +253,32 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById) {
         logger.info("Loading RecommendedInstances for {} from Neo4j (resume)", metamodel);
         return this.recommendationService.loadRecommendedInstances(metamodel, nounMappingsById);
+    }
+
+    @Override
+    public boolean hasRecommendationModelTraceLinks() {
+        return countRecommendationArchitectureLinks() > 0;
+    }
+
+    private long countRecommendationArchitectureLinks() {
+        return neo4jClient.query("""
+                MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = $type
+                RETURN count(r) AS c
+                """)
+                .bind(TraceLinkType.RECOMMENDATION_ARCHITECTURE.name())
+                .to("type")
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
+    }
+
+    @Override
+    public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(Map<String, RecommendedInstance> recommendedInstancesById,
+            Map<String, ArchitectureItem> architectureItemsById) {
+        logger.info("Loading RecommendationModelTraceLinks from Neo4j (resume)");
+        return this.traceLinkService.loadAllRecommendationArchitectureTraceLinks(recommendedInstancesById, architectureItemsById);
     }
 
 }

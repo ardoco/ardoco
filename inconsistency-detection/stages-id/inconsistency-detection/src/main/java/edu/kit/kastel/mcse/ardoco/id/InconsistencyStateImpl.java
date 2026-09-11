@@ -35,14 +35,15 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public boolean addInconsistency(Inconsistency inconsistency) {
-        if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().addInconsistencies(List.of(inconsistency));
-        }
         if (!inconsistencies.contains(inconsistency)) {
-            return inconsistencies.add(inconsistency);
+            inconsistencies.add(inconsistency);
         }
-
-        return false;
+        if (PersistenceBridge.isAvailable()) {
+            Boolean saved = PersistenceBridge.callQuietly("addInconsistencies",
+                    () -> PersistenceBridge.getHandler().addInconsistencies(List.of(inconsistency)), Boolean.FALSE);
+            return Boolean.TRUE.equals(saved) || inconsistencies.contains(inconsistency);
+        }
+        return inconsistencies.contains(inconsistency);
     }
 
     /**
@@ -53,9 +54,12 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
     @Override
     public ImmutableList<Inconsistency> getInconsistencies() {
         if (PersistenceBridge.isAvailable()) {
-            var loadedInconsistencies = PersistenceBridge.getHandler().getInconsistencies();
-            this.inconsistencies.clear();
-            this.inconsistencies.addAll(loadedInconsistencies);
+            var loadedInconsistencies = PersistenceBridge.callQuietly("getInconsistencies",
+                    () -> PersistenceBridge.getHandler().getInconsistencies(), java.util.Collections.<Inconsistency>emptyList());
+            if (!loadedInconsistencies.isEmpty()) {
+                this.inconsistencies.clear();
+                this.inconsistencies.addAll(loadedInconsistencies);
+            }
         }
         return inconsistencies.toImmutable();
     }

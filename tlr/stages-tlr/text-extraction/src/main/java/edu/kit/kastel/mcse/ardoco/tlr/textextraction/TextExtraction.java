@@ -65,7 +65,11 @@ public class TextExtraction extends AbstractExecutionStage {
             return;
         }
         var handler = PersistenceBridge.getHandler();
-        if (handler == null || !handler.hasNounMappings()) {
+        if (handler == null) {
+            return;
+        }
+        Boolean hasMappings = PersistenceBridge.callQuietly("hasNounMappings", handler::hasNounMappings, Boolean.FALSE);
+        if (!Boolean.TRUE.equals(hasMappings)) {
             return;
         }
         if (!DataRepositoryHelper.hasAnnotatedText(dataRepository)) {
@@ -73,10 +77,13 @@ public class TextExtraction extends AbstractExecutionStage {
             return;
         }
         Text annotatedText = DataRepositoryHelper.getAnnotatedText(dataRepository);
-        Collection<NounMapping> loaded = handler.loadNounMappings(annotatedText);
+        Collection<NounMapping> loaded = PersistenceBridge.callQuietly("loadNounMappings", () -> handler.loadNounMappings(annotatedText),
+                java.util.List.of());
         for (NounMapping mapping : loaded) {
             textState.addNounMapping(mapping, false);
         }
-        logger.info("Hydrated {} NounMappings from Neo4j into TextState (resume)", loaded.size());
+        if (!loaded.isEmpty()) {
+            logger.info("Hydrated {} NounMappings from Neo4j into TextState (resume)", loaded.size());
+        }
     }
 }

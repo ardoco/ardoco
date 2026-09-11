@@ -37,6 +37,22 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
         createTraceLink(sourceId, targetId, -1.0, type);
     }
 
+    @Query("""
+            MATCH (ri:RecommendedInstance {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId})
+            MERGE (ri)-[r:TRACES_TO {traceLinkType: $type}]->(t)
+            SET r.confidence = COALESCE($conf, -1.0),
+                r.traceLinkType = $type
+            """)
+    void createRecommendationArchitectureTraceLink(@Param("sourceId") String sourceId, @Param("targetId") String targetId, @Param("conf") Double conf,
+            @Param("type") TraceLinkType type);
+
+    @Query("""
+            MATCH (ri:RecommendedInstance)-[r:TRACES_TO]->(t:Traceable)
+            WHERE r.traceLinkType = $type
+            RETURN ri.ardocoId AS riId, t.ardocoId AS targetId, coalesce(r.confidence, -1.0) AS confidence
+            """)
+    List<java.util.Map<String, Object>> findRecommendationArchitectureLinks(@Param("type") TraceLinkType type);
+
     @Query("MATCH ()-[r:TRACES_TO]->()  DETACH DELETE r")
     void deleteAllTraceLinks();
 

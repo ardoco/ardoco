@@ -2,13 +2,21 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.core.data.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
@@ -62,6 +70,54 @@ public class TextStateRecommendationPersistenceTest extends AbstractPersistenceT
         Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
         Assertions.assertTrue(countRelationshipsWithType("HAS_NAME_MAPPING") > 0);
         Assertions.assertTrue(countRelationshipsWithType("TRACES_TO") > 0);
+        Assertions.assertTrue(countRecommendationArchitectureLinks() > 0,
+                "ConnectionState instance links (RI→Architecture) should be persisted");
+    }
+
+    @Test
+    @DisplayName("Resume hydrate reloads NounMappings and RecommendedInstances from Neo4j without re-running SWATTR")
+    void testLoadOnResumeHydratesTextStateAndRecommendations() {
+        runSwattr(true, true, true);
+
+        long nounMappingCount = countNodesWithLabel("NounMapping");
+        long recommendedInstanceCount = countNodesWithLabel("RecommendedInstance");
+        Assertions.assertTrue(nounMappingCount > 0);
+        Assertions.assertTrue(recommendedInstanceCount > 0);
+
+        var handler = PersistenceBridge.getHandler();
+        Assertions.assertNotNull(handler);
+        Assertions.assertTrue(handler.hasNounMappings());
+        Assertions.assertTrue(handler.hasRecommendedInstances());
+
+        Text annotatedText = handler.loadPreprocessedText(PreprocessingData.ID);
+        Assertions.assertNotNull(annotatedText);
+
+        Collection<NounMapping> loadedMappings = handler.loadNounMappings(annotatedText);
+        Assertions.assertEquals(nounMappingCount, loadedMappings.size());
+
+        Map<String, NounMapping> byId = new HashMap<>();
+        for (NounMapping mapping : loadedMappings) {
+            byId.put(mapping.getArdocoId(), mapping);
+        }
+
+        long loadedRis = 0;
+        for (Metamodel metamodel : Metamodel.values()) {
+            loadedRis += handler.loadRecommendedInstances(metamodel, byId).size();
+        }
+        Assertions.assertEquals(recommendedInstanceCount, loadedRis);
+        Assertions.assertTrue(handler.hasRecommendationModelTraceLinks());
+    }
+
+    private long countRecommendationArchitectureLinks() {
+        return neo4jClient.query("""
+                MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = 'RECOMMENDATION_ARCHITECTURE'
+                RETURN count(r) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
     }
 
     private void runSwattr(boolean usePersistence, boolean persistTextState, boolean persistRecommendations) {

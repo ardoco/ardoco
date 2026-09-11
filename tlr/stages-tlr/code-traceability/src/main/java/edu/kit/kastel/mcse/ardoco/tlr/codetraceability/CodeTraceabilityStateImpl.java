@@ -37,18 +37,23 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
+        // Always keep in-memory copy so Neo4j outages do not lose links (fault isolation).
+        boolean added = this.samCodeTraceLinks.addAll(traceLinks);
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().saveTraceLinks(traceLinks);
+            PersistenceBridge.runQuietly("saveSamCodeTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(traceLinks));
         }
-        return this.samCodeTraceLinks.addAll(traceLinks);
+        return added;
     }
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
         if ((this.samCodeTraceLinks.isEmpty() || !loadedFromPersistence) && PersistenceBridge.isAvailable()) {
-            Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.getHandler().loadArchitectureCodeTraceLinks();
-            this.samCodeTraceLinks = Lists.mutable.withAll(loadedLinks);
-            loadedFromPersistence = true;
+            Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.callQuietly("loadArchitectureCodeTraceLinks",
+                    () -> PersistenceBridge.getHandler().loadArchitectureCodeTraceLinks(), java.util.List.of());
+            if (!loadedLinks.isEmpty()) {
+                this.samCodeTraceLinks = Lists.mutable.withAll(loadedLinks);
+                loadedFromPersistence = true;
+            }
         }
 
         return Sets.immutable.withAll(new LinkedHashSet<>(this.samCodeTraceLinks));
@@ -56,20 +61,25 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public boolean addSadCodeTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
+        boolean added = this.transitiveTraceLinks.addAll(traceLinks);
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().saveTraceLinks(traceLinks);
+            PersistenceBridge.runQuietly("saveSadCodeTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(traceLinks));
         }
-        return this.transitiveTraceLinks.addAll(traceLinks);
+        return added;
     }
 
     @Override
     public ImmutableSet<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
         if (PersistenceBridge.isAvailable()) {
-            Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = PersistenceBridge.getHandler().loadTransitiveTraceLinks();
-            Collection<SentenceModelTraceLink> directLinks = PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
-            this.transitiveTraceLinks = Lists.mutable.withAll(transitiveLinks);
-            this.transitiveTraceLinks.addAll(directLinks);
-            loadedFromPersistence = true;
+            Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = PersistenceBridge.callQuietly("loadTransitiveTraceLinks",
+                    () -> PersistenceBridge.getHandler().loadTransitiveTraceLinks(), java.util.List.of());
+            Collection<SentenceModelTraceLink> directLinks = PersistenceBridge.callQuietly("loadSentenceModelTraceLinks",
+                    () -> PersistenceBridge.getHandler().loadSentenceModelTraceLinks(), java.util.List.of());
+            if (!transitiveLinks.isEmpty() || !directLinks.isEmpty()) {
+                this.transitiveTraceLinks = Lists.mutable.withAll(transitiveLinks);
+                this.transitiveTraceLinks.addAll(directLinks);
+                loadedFromPersistence = true;
+            }
         }
 
         return Sets.immutable.withAll(new LinkedHashSet<>(this.transitiveTraceLinks));

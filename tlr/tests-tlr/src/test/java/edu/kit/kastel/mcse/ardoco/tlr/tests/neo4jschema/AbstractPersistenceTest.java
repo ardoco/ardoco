@@ -77,7 +77,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
     private Neo4jPersistenceHandler neo4jPersistenceHandler;
 
     @Autowired
-    private Neo4jClient neo4jClient;
+    protected Neo4jClient neo4jClient;
 
     /**
      * Wires Spring Data Neo4j to the local Desktop instance.

@@ -15,5 +15,10 @@ public enum TraceLinkType {
     /**
      * Represents a link from a Sentence to an Architecture Model Item.
      */
-    SENTENCE_ARCHITECTURE
+    SENTENCE_ARCHITECTURE,
+
+    /**
+     * Represents a link from a RecommendedInstance to an Architecture Model Item (ConnectionState instance link).
+     */
+    RECOMMENDATION_ARCHITECTURE
 }

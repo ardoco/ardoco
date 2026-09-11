@@ -76,7 +76,11 @@ public final class DataRepositoryHelper {
      */
     public static boolean hasAnnotatedText(DataRepository dataRepository) {
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().hasPreprocessedText(PreprocessingData.ID);
+            Boolean fromNeo4j = PersistenceBridge.callQuietly("hasPreprocessedText",
+                    () -> PersistenceBridge.getHandler().hasPreprocessedText(PreprocessingData.ID), null);
+            if (fromNeo4j != null) {
+                return fromNeo4j;
+            }
         }
         return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).isPresent();
     }
@@ -91,7 +95,11 @@ public final class DataRepositoryHelper {
      */
     public static Text getAnnotatedText(DataRepository dataRepository) {
         if (PersistenceBridge.isAvailable()) {
-            return PersistenceBridge.getHandler().loadPreprocessedText(PreprocessingData.ID);
+            Text loaded = PersistenceBridge.callQuietly("loadPreprocessedText",
+                    () -> PersistenceBridge.getHandler().loadPreprocessedText(PreprocessingData.ID), null);
+            if (loaded != null) {
+                return loaded;
+            }
         }
         return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow().getText();
     }
@@ -263,11 +271,12 @@ public final class DataRepositoryHelper {
      * @param preprocessingData the preprocessingData
      */
     public static void putPreprocessingData(DataRepository dataRepository, PreprocessingData preprocessingData) {
-        // persist preprocessing data to neo4j
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID);
-        }
+        // Keep in-memory state even if Neo4j is down (fault isolation).
         dataRepository.addData(PreprocessingData.ID, preprocessingData);
+        if (PersistenceBridge.isAvailable()) {
+            PersistenceBridge.runQuietly("savePreprocessedText",
+                    () -> PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID));
+        }
     }
 
     /**

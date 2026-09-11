@@ -45,12 +45,11 @@ public final class ModelStates implements PipelineStepData {
      * @param model the {@link Model}
      */
     public void addModel(Metamodel id, Model model) {
-        // store the model in neo4j
+        this.models.put(id, model);
         if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable()) {
-            PersistenceBridge.getHandler().saveModel(id, model);
+            PersistenceBridge.runQuietly("saveModel", () -> PersistenceBridge.getHandler().saveModel(id, model));
             this.dirtyMetamodels.add(id);
         }
-        this.models.put(id, model);
     }
 
     /**
@@ -65,10 +64,12 @@ public final class ModelStates implements PipelineStepData {
         boolean needsLoading = !this.models.containsKey(id) || this.dirtyMetamodels.contains(id);
 
         if (needsLoading && isPersistentType && persistenceAvailable) {
-            Model loaded = PersistenceBridge.getHandler().loadModel(id);
-            this.models.put(id, loaded);
-            this.dirtyMetamodels.remove(id);
-            return loaded;
+            Model loaded = PersistenceBridge.callQuietly("loadModel", () -> PersistenceBridge.getHandler().loadModel(id), null);
+            if (loaded != null) {
+                this.models.put(id, loaded);
+                this.dirtyMetamodels.remove(id);
+                return loaded;
+            }
         }
 
         if (this.models.containsKey(id)) {

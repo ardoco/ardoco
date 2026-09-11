@@ -183,13 +183,13 @@ public class TextStateImpl extends AbstractState implements TextState {
 
     private static void persistNounMapping(NounMapping nounMapping) {
         if (PersistenceBridge.shouldPersistTextState()) {
-            PersistenceBridge.getHandler().saveNounMapping(nounMapping);
+            PersistenceBridge.runQuietly("saveNounMapping", () -> PersistenceBridge.getHandler().saveNounMapping(nounMapping));
         }
     }
 
     private static void deletePersistedNounMapping(NounMapping nounMapping) {
         if (PersistenceBridge.shouldPersistTextState()) {
-            PersistenceBridge.getHandler().deleteNounMapping(nounMapping.getArdocoId());
+            PersistenceBridge.runQuietly("deleteNounMapping", () -> PersistenceBridge.getHandler().deleteNounMapping(nounMapping.getArdocoId()));
         }
     }
 

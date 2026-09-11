@@ -200,9 +200,9 @@ Former “blocked on professor” steps are unblocked by §7. See **§8** for th
 | B | NounMapping → UUID (resume-safe ids) | ✅ Done (local) |
 | C | `RecommendedInstanceImpl(name, type, id)` | ✅ Done (local) |
 | D | Load-on-resume + Spring Data rewrite (together) | ✅ Done (local) |
-| E | Fault isolation (merge gate) | **Next** |
-| F | Round-trip / resume tests | After D/E |
-| G | ConnectionState next (not NER) | After D |
+| E | Fault isolation (merge gate) | ✅ Done (local) |
+| F | Round-trip / resume tests | ✅ Done (local) |
+| G | ConnectionState next (not NER) | ✅ Done (local) |
 | H | Merge → `feature/neo4j` | After E + process OK |
 | I | Neo4j sole store; remove dual-write scaffolding | **End vision** |
 
@@ -225,8 +225,8 @@ Former “blocked on professor” steps are unblocked by §7. See **§8** for th
 | `RecommendedInstanceImpl(name, type, id)` constructor | ✅ Done (local; await commit) |
 | Load-on-resume for TextState / Recommendations | ✅ Done (local; await commit) |
 | Spring Data rewrite (as part of read-back) | ✅ Done (local; await commit) |
-| Fault isolation (Neo4j down → pipeline continues) | ❌ Required before merge |
-| ConnectionState coverage (next state after NM+RI) | ❌ After TextState/RI resume path |
+| Fault isolation (Neo4j down → pipeline continues) | ✅ Done (local) |
+| ConnectionState coverage (next state after NM+RI) | ✅ RI→Architecture instance links + load-on-resume (local) |
 | Full DataRepository → Neo4j sole store | ❌ End vision |
 
 **Browser verification (SWATTR, both flags on):** ~125 `NounMapping`, ~121 `RecommendedInstance`, ~125 `HAS_NAME_MAPPING`.
@@ -544,8 +544,7 @@ mvn -pl tlr/tests-tlr -am test `
 
 ## 13. Immediate next actions
 
-1. **Commit B+C+D** — UUID NounMapping ids, RI predefined-id ctors, Spring Data mappers/services, load-on-resume hooks.
-2. **Implement E** — fault isolation so Neo4j outage does not kill the pipeline; required before merge.
-3. **Tests F** — resume round-trip / hydrate coverage (optional alongside E).
-4. **Then G** — `ConnectionState` as next persisted state; defer CodeTraceability / NER.
-5. **Do not** treat dual-write as final; track cutover to **Neo4j sole store (I)** as the real end goal.
+1. **Commit E+F+G** — fault isolation, resume/fault tests, ConnectionState RI→Architecture persistence + hydrate.
+2. **H** — Merge to `feature/neo4j` when professor/process OK (fault isolation was the technical merge gate).
+3. **I** — Cut dual-write → Neo4j sole store (end vision); more states as needed.
+4. **Do not** treat dual-write as final.

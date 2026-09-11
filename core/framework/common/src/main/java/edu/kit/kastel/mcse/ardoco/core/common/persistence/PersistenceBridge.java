@@ -1,6 +1,8 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
+import java.util.function.Supplier;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,16 +11,14 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 
 /**
- * This class serves as a holder for a concrete implementation of the persistence handler
- * (i.e. by the neo4j-schema module) to be able to statically access the handler from
- * classes like DatarepositoryHelper.java or ModelStates.java
+ * Holder for a concrete {@link PersistenceHandler} (Neo4j) so pipeline stages can access persistence statically.
  *
- * THe persistanceHandler in this class is populated from the neo4j-schema
+ * <p>Persistence is optional: {@link #runQuietly} / {@link #callQuietly} isolate Neo4j failures so a down
+ * database does not abort the pipeline. Dual-write is transitional; Neo4j sole store is the end vision.
  */
 public class PersistenceBridge extends AbstractConfigurable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceBridge.class);
 
-    //singleton instance of the bringe
     private static final PersistenceBridge INSTANCE = new PersistenceBridge();
 
     private static PersistenceHandler handler;
@@ -79,6 +79,32 @@ public class PersistenceBridge extends AbstractConfigurable {
      */
     public static boolean shouldPersistRecommendations() {
         return isAvailable() && persistRecommendationsStatic;
+    }
+
+    /**
+     * Runs a persistence side-effect. On {@link RuntimeException} (e.g. Neo4j down), logs and continues.
+     * Does not catch {@link Error}.
+     */
+    public static void runQuietly(String operation, Runnable action) {
+        try {
+            action.run();
+        } catch (RuntimeException ex) {
+            LOGGER.warn("Persistence operation '{}' failed; continuing without Neo4j. Cause: {}", operation, ex.toString());
+            LOGGER.debug("Persistence failure details for '{}'", operation, ex);
+        }
+    }
+
+    /**
+     * Runs a persistence call that returns a value. On failure, logs and returns {@code fallback}.
+     */
+    public static <T> T callQuietly(String operation, Supplier<T> action, T fallback) {
+        try {
+            return action.get();
+        } catch (RuntimeException ex) {
+            LOGGER.warn("Persistence operation '{}' failed; using fallback. Cause: {}", operation, ex.toString());
+            LOGGER.debug("Persistence failure details for '{}'", operation, ex);
+            return fallback;
+        }
     }
 
     @Override

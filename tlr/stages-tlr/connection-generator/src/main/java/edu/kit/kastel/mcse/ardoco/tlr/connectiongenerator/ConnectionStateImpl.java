@@ -64,6 +64,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
 
         boolean shouldPersist = PersistenceBridge.isAvailable() && modelEntity instanceof ArchitectureEntity;
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Sets.mutable.empty();
+        MutableList<TraceLink<?, ?>> instanceLinksToPersist = Lists.mutable.empty();
 
         var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
@@ -71,6 +72,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
 
             if (shouldPersist) {
                 linksToPersist.addAll(generateLinksFromInstance(recommendedModelInstance, modelEntity));
+                instanceLinksToPersist.add(newInstanceLink);
             }
 
         } else {
@@ -85,12 +87,26 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                     for (var nm : newNameMappings) {
                         linksToPersist.addAll(generateLinksFromNameMapping(nm, modelEntity));
                     }
+                    instanceLinksToPersist.add(existingInstanceLink);
                 }
             }
         }
 
         if (!linksToPersist.isEmpty()) {
-            PersistenceBridge.getHandler().saveTraceLinks(linksToPersist);
+            PersistenceBridge.runQuietly("saveTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(linksToPersist));
+        }
+        if (!instanceLinksToPersist.isEmpty()) {
+            PersistenceBridge.runQuietly("saveRecommendationModelTraceLinks",
+                    () -> PersistenceBridge.getHandler().saveTraceLinks(instanceLinksToPersist));
+        }
+    }
+
+    /**
+     * Adds an instance link without Neo4j dual-write (load-on-resume hydrate).
+     */
+    public void hydrateInstanceLink(TraceLink<RecommendedInstance, ModelEntity> instanceLink) {
+        if (!this.isContainedByInstanceLinks(instanceLink)) {
+            this.instanceLinks.add(instanceLink);
         }
     }
 

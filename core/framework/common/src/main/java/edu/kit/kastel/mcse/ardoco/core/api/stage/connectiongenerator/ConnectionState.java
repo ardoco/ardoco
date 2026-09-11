@@ -40,7 +40,8 @@ public interface ConnectionState extends IConfigurable {
 
         // only architecture links are saved to persistence, since the code links still get processed further during the pipeline.
         if (PersistenceBridge.isAvailable()) {
-            var persistedLinks = PersistenceBridge.getHandler().loadSentenceModelTraceLinks();
+            var persistedLinks = PersistenceBridge.callQuietly("loadSentenceModelTraceLinks",
+                    () -> PersistenceBridge.getHandler().loadSentenceModelTraceLinks(), java.util.Collections.<SentenceModelTraceLink>emptySet());
             traceLinks.addAll(persistedLinks);
         }
 

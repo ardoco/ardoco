@@ -10,7 +10,9 @@ import org.eclipse.jgit.annotations.Nullable;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -201,4 +203,20 @@ public interface PersistenceHandler {
      * @return loaded recommended instances
      */
     Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById);
+
+    /**
+     * @return true if at least one RI→Architecture instance link exists in persistence
+     */
+    boolean hasRecommendationModelTraceLinks();
+
+    /**
+     * Loads ConnectionState instance links (RecommendedInstance → ArchitectureItem).
+     * Intended for load-on-resume (once).
+     *
+     * @param recommendedInstancesById RI id → domain instance
+     * @param architectureItemsById    architecture entity id → domain item
+     * @return loaded recommendation–model trace links
+     */
+    Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(Map<String, RecommendedInstance> recommendedInstancesById,
+            Map<String, ArchitectureItem> architectureItemsById);
 }
