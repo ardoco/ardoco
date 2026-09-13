@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 
+import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
+
 public class NamedArchitectureEntity implements Comparable<NamedArchitectureEntity> {
 
+    private final String id;
     private final List<NamedArchitectureEntityOccurrence> occurrences;
     /**
      * alternative names of the entity, e.g., if the name is ambiguous
@@ -15,9 +18,21 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
     private final String name;
 
     public NamedArchitectureEntity(String name, SortedSet<String> alternativeNames, List<NamedArchitectureEntityOccurrence> occurrences) {
+        this(IdentifierProvider.createId(), name, alternativeNames, occurrences);
+    }
+
+    /**
+     * Resume / persistence constructor with a stable id.
+     */
+    public NamedArchitectureEntity(String id, String name, SortedSet<String> alternativeNames, List<NamedArchitectureEntityOccurrence> occurrences) {
+        this.id = Objects.requireNonNull(id);
         this.alternativeNames = alternativeNames;
         this.name = name;
         this.occurrences = occurrences;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<NamedArchitectureEntityOccurrence> getOccurrences() {
@@ -52,6 +67,6 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
 
     @Override
     public String toString() {
-        return "NamedArchitectureEntity{" + "name='" + name + '\'' + ", alternativeNames=" + alternativeNames + '}';
+        return "NamedArchitectureEntity{" + "id='" + id + "', name='" + name + '\'' + ", alternativeNames=" + alternativeNames + '}';
     }
 }

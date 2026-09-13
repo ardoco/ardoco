@@ -48,24 +48,43 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Returns the input text as String stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw
-     * an {@link java.util.NoSuchElementException} if the data is not present.
+     * Returns the input text as String stored within the provided {@link DataRepository}.
+     * If missing in-memory and Neo4j is available, loads from Project metadata (sole-store / resume).
      *
      * @param dataRepository the DataRepository to access
      * @return the text
      */
     public static String getInputText(DataRepository dataRepository) {
-        return dataRepository.getData(InputTextData.ID, InputTextData.class).orElseThrow().getText();
+        var inMemory = dataRepository.getData(InputTextData.ID, InputTextData.class);
+        if (inMemory.isPresent()) {
+            return inMemory.get().getText();
+        }
+        if (PersistenceBridge.isAvailable() && hasProjectPipelineData(dataRepository)) {
+            String projectName = getProjectPipelineData(dataRepository).getProjectName();
+            String loaded = PersistenceBridge.callQuietly("loadProjectInputText",
+                    () -> PersistenceBridge.getHandler().loadProjectInputText(projectName), null);
+            if (loaded != null) {
+                dataRepository.addData(InputTextData.ID, new InputTextData(loaded));
+                return loaded;
+            }
+        }
+        throw new java.util.NoSuchElementException("No InputTextData in DataRepository or Neo4j");
     }
 
     /**
      * Put the given input text into the given {@link DataRepository}. This will override existing data!
+     * Dual-writes to Neo4j Project metadata when persistence is available and project name is known.
      *
      * @param dataRepository the dataRepository
      * @param inputText      the input inputText
      */
     public static void putInputText(DataRepository dataRepository, String inputText) {
         dataRepository.addData(InputTextData.ID, new InputTextData(inputText));
+        if (PersistenceBridge.isAvailable() && hasProjectPipelineData(dataRepository)) {
+            String projectName = getProjectPipelineData(dataRepository).getProjectName();
+            PersistenceBridge.runQuietly("saveProjectMetadata",
+                    () -> PersistenceBridge.getHandler().saveProjectMetadata(projectName, inputText));
+        }
     }
 
     /**
@@ -75,6 +94,9 @@ public final class DataRepositoryHelper {
      * @return true, if there is {@link Text} within the {@link DataRepository}; else, false
      */
     public static boolean hasAnnotatedText(DataRepository dataRepository) {
+        if (dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).isPresent()) {
+            return true;
+        }
         if (PersistenceBridge.isAvailable()) {
             Boolean fromNeo4j = PersistenceBridge.callQuietly("hasPreprocessedText",
                     () -> PersistenceBridge.getHandler().hasPreprocessedText(PreprocessingData.ID), null);
@@ -82,7 +104,7 @@ public final class DataRepositoryHelper {
                 return fromNeo4j;
             }
         }
-        return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).isPresent();
+        return false;
     }
 
     /**
@@ -94,6 +116,10 @@ public final class DataRepositoryHelper {
      * @return the text
      */
     public static Text getAnnotatedText(DataRepository dataRepository) {
+        var inMemory = dataRepository.getData(PreprocessingData.ID, PreprocessingData.class);
+        if (inMemory.isPresent()) {
+            return inMemory.get().getText();
+        }
         if (PersistenceBridge.isAvailable()) {
             Text loaded = PersistenceBridge.callQuietly("loadPreprocessedText",
                     () -> PersistenceBridge.getHandler().loadPreprocessedText(PreprocessingData.ID), null);
@@ -101,29 +127,51 @@ public final class DataRepositoryHelper {
                 return loaded;
             }
         }
-        return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow().getText();
+        throw new java.util.NoSuchElementException("No annotated text in DataRepository or Neo4j");
     }
 
     /**
      * Checks whether there is annotated {@link SimpleText} stored within the provided {@link DataRepository}
+     * or (when persistence is available) in Neo4j.
      *
      * @param dataRepository the DataRepository to access
      * @return true, if there is {@link SimpleText} within the {@link DataRepository}; else, false
      */
     public static boolean hasSimpleText(DataRepository dataRepository) {
-        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).isPresent();
+        if (dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).isPresent()) {
+            return true;
+        }
+        if (PersistenceBridge.isAvailable()) {
+            Boolean fromNeo4j = PersistenceBridge.callQuietly("hasSimpleText",
+                    () -> PersistenceBridge.getHandler().hasSimpleText(SimplePreprocessingData.ID), null);
+            if (fromNeo4j != null) {
+                return fromNeo4j;
+            }
+        }
+        return false;
     }
 
     /**
-     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
-     * {@link java.util.NoSuchElementException} if the data is not present. To make sure that there is data present, use
-     * {@link #hasAnnotatedText(DataRepository)}
+     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}.
+     * If missing in-memory and Neo4j is available, loads SimpleText (sole-store / resume).
      *
      * @param dataRepository the DataRepository to access
      * @return the text
      */
     public static SimpleText getSimpleText(DataRepository dataRepository) {
-        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow().getText();
+        var inMemory = dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class);
+        if (inMemory.isPresent()) {
+            return inMemory.get().getText();
+        }
+        if (PersistenceBridge.isAvailable()) {
+            SimpleText loaded = PersistenceBridge.callQuietly("loadSimpleText",
+                    () -> PersistenceBridge.getHandler().loadSimpleText(SimplePreprocessingData.ID), null);
+            if (loaded != null) {
+                dataRepository.addData(SimplePreprocessingData.ID, new SimplePreprocessingData(loaded));
+                return loaded;
+            }
+        }
+        throw new java.util.NoSuchElementException("No SimplePreprocessingData in DataRepository or Neo4j");
     }
 
     /**
@@ -281,12 +329,16 @@ public final class DataRepositoryHelper {
 
     /**
      * Put the given {@link SimplePreprocessingData} into the given {@link DataRepository}. This will override existing data!
+     * Dual-writes SimpleText to Neo4j when persistence is available.
      *
      * @param dataRepository    the dataRepository
      * @param preprocessingData the preprocessingData
      */
     public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
         dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
-
+        if (PersistenceBridge.isAvailable()) {
+            PersistenceBridge.runQuietly("saveSimpleText",
+                    () -> PersistenceBridge.getHandler().saveSimpleText(preprocessingData.getText(), SimplePreprocessingData.ID));
+        }
     }
 }

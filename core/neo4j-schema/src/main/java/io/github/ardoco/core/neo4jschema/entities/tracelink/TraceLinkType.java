@@ -20,5 +20,15 @@ public enum TraceLinkType {
     /**
      * Represents a link from a RecommendedInstance to an Architecture Model Item (ConnectionState instance link).
      */
-    RECOMMENDATION_ARCHITECTURE
+    RECOMMENDATION_ARCHITECTURE,
+
+    /**
+     * Represents a link from a RecommendedInstance to a Code Model Item (ConnectionState instance link).
+     */
+    RECOMMENDATION_CODE,
+
+    /**
+     * Represents a link from a NamedArchitectureEntityOccurrence to an Architecture Model Item (NER).
+     */
+    NER_ARCHITECTURE
 }

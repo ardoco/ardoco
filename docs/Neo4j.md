@@ -1,6 +1,6 @@
 # Neo4j-Schema
 This component provides functionality to save and load architecture models, code models and preprocessed texts in a Neo4j graph database.
-Moreover, it provides functionality to insert and retrieve tracelinks and inconsistencies.
+Moreover, it provides functionality to insert and retrieve tracelinks and inconsistencies, and optionally to dual-write TextState (`NounMapping`) and RecommendationStates (`RecommendedInstance`) for inspection and load-on-resume.
 The component is designed to be used in conjunction with other components of the ARDoCo Core, such as the Architecture Model and Code Model components.
 
 ## 1. Overview
@@ -18,13 +18,33 @@ This allows the neo4j module to be easily switched on or off. Moreover, the depl
 - ``SPRING_NEO4J_AUTHENTICATION_USERNAME``: Username for database authentication. Defaults to "neo4j".
 - ``SPRING_NEO4J_AUTHENTICATION_PASSWORD``: Password for database authentication. Defaults to "password".
 
-Note:
-Even when globally enabled, individual Runners can bypass the persistence layer by setting the 
-`PersistenceBridge::usePersistence` flag to false in their specific configuration.
+### 2.1 Per-runner PersistenceBridge flags
+
+Even when Neo4j is globally enabled, individual runners control dual-write via additional config (all default **`false`** so existing Stage-0 tests stay unchanged):
+
+| Config key | Meaning |
+|---|---|
+| `PersistenceBridge::usePersistence` | Master switch; requires the Neo4j module (`Neo4jBridgeActivator`). |
+| `PersistenceBridge::persistTextState` | Dual-write `NounMapping` nodes (`MAPS_WORD`, `IN_PHRASE`, …). |
+| `PersistenceBridge::persistRecommendations` | Dual-write `RecommendedInstance` nodes. **Implies** `persistTextState` (auto-enabled with an INFO log if recommendations are on alone), because RI edges resolve `NounMapping` by `ardocoId`. |
+| `PersistenceBridge::persistNerConnection` | Dual-write NER named entities / occurrence→model links (`NamedArchitectureEntity`, `NER_ARCHITECTURE`). Default **false**. |
+
+Example (SWATTR additional configs):
+
+```
+PersistenceBridge::usePersistence=true
+PersistenceBridge::persistTextState=true
+PersistenceBridge::persistRecommendations=true
+PersistenceBridge::persistNerConnection=true
+```
+
+When `usePersistence` is on, **SimpleText** and **Project** metadata (`InputTextData` + project name) are dual-written without a separate flag (thin slices).
+
+Neo4j failures are isolated via `PersistenceBridge.runQuietly` / `callQuietly` so a down database does not abort the pipeline.
 
 ## 3. Architecture
 The architecture of the Neo4j-Schema follows a layered architecture pattern:
-1. `Neo4jPersistenceHandler` The central entry point into the neo4j-module for saving, loading, and deleting models, text, tracelinks, and inconsistencies.
+1. `Neo4jPersistenceHandler` The central entry point into the neo4j-module for saving, loading, and deleting models, text, tracelinks, inconsistencies, NounMappings, and RecommendedInstances.
 2. **Services**:Domain-specific logic for managing persistence operations.
 3. **Mappers**: Classes responsible for converting ARDoCo domain objects into Neo4j entities and vice versa.
 4. **Repositories**: Spring Data Neo4j interfaces for database interaction.
@@ -50,8 +70,10 @@ A visualization of the graph schema can be found at the end of this file.
 - **Directionality:** While Neo4j relationships are directed, ARDoCo tracelinks are conceptually undirected. 
 To minimize the number of relationships needed, only one relationship is created per link, as it can be traversed in both directions at equal speed in neo4j.
 - The classes each class ending with `Relationship` represent a relationship with additional properties in the graph.
-- **TRACES_TO - Relationship**: Connects Traceable nodes and includes properties for traceLinkType and confidence.
+- **TRACES_TO - Relationship**: Connects Traceable nodes and includes properties for traceLinkType and confidence (including `RECOMMENDATION_ARCHITECTURE` for RI→architecture instance links).
 - **HAS_INCONSISTENCY - Relationship**: Connects Traceable nodes to InconsistencyNode types (Text or Model inconsistencies).
+- **HAS_NAME_MAPPING / HAS_TYPE_MAPPING**: Connect `RecommendedInstance` to `NounMapping` nodes (name vs type evidence).
+- **MAPS_WORD / HAS_REFERENCE_WORD / IN_PHRASE**: Connect `NounMapping` to `Word` / `Phrase` nodes from the preprocessed text graph.
 
 ### 4.3 Mapping between ARDoCo and Neo4j
 To map between the representation of the architecture model, code model and preprocessed text in ARDoCo and the representation in neo4j, each of the 
@@ -79,6 +101,8 @@ To verify whether the pipelines which use the neo4j-schema module work as expect
 the number of expected tracelinks and inconsistencies match with the number of tracelinks and inconsistencies retrieved of the traceview-website.
 Currently, these numbers are hardcoded in the tests.
 
+**Recommendation / TextState dual-write** is covered by `TextStateRecommendationPersistenceTest` (flag matrix: flags off, TextState only, recommendations-only auto-enables TextState, both on, load-on-resume). Default SWATTR Neo4j tests leave `persistRecommendations` / `persistTextState` **off** so Stage-0 behaviour is unchanged.
+
 ### 6.1 Debugging Neo4j Tests
 In order to debug Neo4j tests it may help to look at the visual representation of the graph. To do so, you can use the Neo4j Browser.
 
@@ -103,11 +127,48 @@ To access the Neo4j Browser, you can follow these steps:
 
 ## 7. Implementation Remarks & Future Work
 
+### 7.1 TextState and RecommendationStates (dual-write)
+
+ARDoCo can optionally mirror intermediate TLR state into Neo4j for inspection and load-on-resume:
+
+| Node | Key properties | Typical relationships |
+|---|---|---|
+| `NounMapping` | `ardocoId`, `reference`, `kind`, probabilities, surface forms | `MAPS_WORD`, `HAS_REFERENCE_WORD`, `IN_PHRASE` → Word/Phrase |
+| `RecommendedInstance` | `ardocoId`, `name`, `type`, `probability`, `metamodel` | `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING` → `NounMapping`; may also participate in `TRACES_TO` (`RECOMMENDATION_ARCHITECTURE`) |
+
+**Write path:** `RecommendationStateImpl` / `RecommendedInstanceImpl` call `PersistenceBridge.saveRecommendedInstance` when `persistRecommendations` is on (upsert by `ardocoId`). Text extraction dual-writes NounMappings when `persistTextState` is on.
+
+**Read path:** Load-on-resume APIs (`loadNounMappings`, `loadRecommendedInstances`) hydrate the in-memory states once at stage start. Dual-write remains transitional; Neo4j as sole store is the end vision.
+
+**Design note vs early “BASED_ON_WORD” sketch:** RIs link to `NounMapping` nodes (not only Word positions). That preserves name/type evidence structure and enables resume; it requires TextState persistence whenever recommendations are persisted.
+
+#### Cons of keeping recommendations in Neo4j
+
+- **Graph noise / size:** SWATTR creates many candidates; Browser and storage grow vs only final `TRACES_TO`.
+- **Not final TLR output:** RIs are intermediate; classic Neo4j docs targeted text, models, links, and inconsistencies.
+- **Write amplification:** Add/merge/update of RIs can trigger Neo4j writes mid-pipeline (latency).
+- **Coupling to TextState:** Without NounMappings in the graph, `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING` cannot resolve (hence auto-enable of `persistTextState`).
+- **Sync risk:** DataRepository remains the runtime source of truth during a live run; Neo4j can lag if a write fails (failures are logged and swallowed).
+- **Cleanup / idempotency:** Merges must upsert by stable `ardocoId`, not blind insert.
+- **Test cost:** Flagged runs are slower; `@AfterEach` still clears the graph via `MATCH (n) DETACH DELETE n`.
+
+#### Browser checks (after a flagged SWATTR run)
+
+```cypher
+MATCH (r:RecommendedInstance) RETURN r.name, r.type, r.probability, r.metamodel LIMIT 50;
+MATCH (r:RecommendedInstance)-[:HAS_NAME_MAPPING]->(nm:NounMapping)
+RETURN r.name, nm.reference, nm.ardocoId LIMIT 50;
+MATCH (:RecommendedInstance)-[rel:TRACES_TO]->(:Traceable)
+WHERE rel.traceLinkType = 'RECOMMENDATION_ARCHITECTURE'
+RETURN count(rel) AS riToArchitecture;
+```
+
 ### Future Work
 - Improve speed of retrieving models from the database
 - Improve speed of inconsistency saving and retrieving
 - Currently, the `getTransitiveTracelinks()` method only retrieves transitive tracelinks from Sentence to Code with an architecture item as intermediate node.
   In case other types of transitive tracelinks are needed the `loadTransitiveTraceLinks()` Method in the TraceLinkPersistenceService class needs to be extended.
+- Remaining dual-write scaffolding removal (sole-store cutover) is gated on green Suites A–E + professor merge; load-on-resume for covered slices is in place (SimpleText, Project metadata, NER, RI→Code). See `Neo4j info/Neo4j-Remaining-Coverage-Plan.md`.
 
 ### Further Implementation Remarks
 The class `ConnectionstateImpl.java` in ARDoCo has a `getTraceLinks()` method and a `addToLinks()` method which work together for SentenceModelTracelinks.
@@ -167,6 +228,29 @@ TextInconsistencies:
 ModelInconsistencies:
 ![MEAT.png](../core/neo4j-schema/MEAT.png)
 
+### RecommendationStates / TextState (optional dual-write)
+When `persistRecommendations` / `persistTextState` are enabled, the graph also contains:
 
+- `NounMapping` nodes linked into the preprocessed text via `MAPS_WORD` / `IN_PHRASE`
+- `RecommendedInstance` nodes linked to those mappings via `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING`
+- Optional `TRACES_TO` edges with `traceLinkType = RECOMMENDATION_ARCHITECTURE` or `RECOMMENDATION_CODE` from ConnectionState
+- Thin `SimpleText` nodes (raw text + lines) when `usePersistence` is on
+- `Project` nodes for project name + raw input text
+- When `persistNerConnection` is on: `NamedArchitectureEntity` / `NamedArchitectureEntityOccurrence` and `TRACES_TO` with `NER_ARCHITECTURE`
 
+```cypher
+MATCH (s:SimpleText) RETURN s.identifier, size(s.lines) AS lines
+MATCH (p:Project) RETURN p.projectName, size(p.inputText) AS inputLen
+MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
+WHERE r.traceLinkType = 'NER_ARCHITECTURE'
+RETURN count(r)
+MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
+WHERE r.traceLinkType = 'RECOMMENDATION_CODE'
+RETURN count(r)
+```
 
+See §7.1 for flags, cons, and example Cypher.
+
+### Sole-store readiness (Phase 5)
+
+Covered slices load from Neo4j when the in-memory `DataRepository` is empty (`DataRepositoryHelper` / stage hydrate). Dual-write remains flag-gated until Suites A–E stay green and the professor merge process allows removing transitional scaffolding.

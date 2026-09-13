@@ -18,10 +18,11 @@ public class NerConnectionStatesImpl implements NerConnectionStates {
     }
 
     public static NerConnectionStatesImpl build(Metamodel[] metamodels) {
-        logger.info("Building connection states for {} metamodels", metamodels.length);
         var nerConnectionStates = new NerConnectionStatesImpl();
         for (Metamodel mm : metamodels) {
-            nerConnectionStates.connectionStates.put(mm, new NerConnectionStateImpl());
+            NerConnectionStateImpl state = new NerConnectionStateImpl();
+            state.setMetamodel(mm);
+            nerConnectionStates.connectionStates.put(mm, state);
         }
         return nerConnectionStates;
     }

@@ -11,6 +11,14 @@ public class NamedArchitectureEntityOccurrence extends TextEntity {
         this.sentenceNumber = sentenceNumber;
     }
 
+    /**
+     * Resume / persistence constructor with a stable id.
+     */
+    public NamedArchitectureEntityOccurrence(String id, String name, int sentenceNumber) {
+        super(name, id);
+        this.sentenceNumber = sentenceNumber;
+    }
+
     public int getSentenceNumber() {
         return this.sentenceNumber;
     }

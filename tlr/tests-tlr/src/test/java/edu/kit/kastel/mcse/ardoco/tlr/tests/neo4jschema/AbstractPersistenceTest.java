@@ -206,6 +206,20 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
         additionalConfigs.put("PersistenceBridge::persistTextState", String.valueOf(persistTextState));
         additionalConfigs.put("PersistenceBridge::persistRecommendations", String.valueOf(persistRecommendations));
+        boolean persistNer = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistNerConnection", "false"));
+        additionalConfigs.put("PersistenceBridge::persistNerConnection", String.valueOf(persistNer));
+    }
+
+    protected ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled, boolean persistTextState, boolean persistRecommendations,
+            boolean persistNerConnection) {
+        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        MutableSortedMap<String, String> map = SortedMaps.mutable.empty();
+        map.putAll(configs.toSortedMap());
+        map.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
+        map.put("PersistenceBridge::persistTextState", String.valueOf(persistTextState));
+        map.put("PersistenceBridge::persistRecommendations", String.valueOf(persistRecommendations));
+        map.put("PersistenceBridge::persistNerConnection", String.valueOf(persistNerConnection));
+        return map.toImmutable();
     }
 
     protected long countNodesWithLabel(String label) {

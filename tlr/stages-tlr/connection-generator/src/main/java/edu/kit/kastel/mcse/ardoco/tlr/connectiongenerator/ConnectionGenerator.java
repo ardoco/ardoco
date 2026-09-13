@@ -2,19 +2,21 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
@@ -68,8 +70,8 @@ public class ConnectionGenerator extends AbstractExecutionStage {
     }
 
     /**
-     * Load-on-resume for ConnectionState instance links (RI → Architecture).
-     * Requires RecommendationStates and architecture models already in memory / Neo4j.
+     * Load-on-resume for ConnectionState instance links (RI → Architecture / RI → Code).
+     * Requires RecommendationStates and models already in memory / Neo4j.
      */
     private static void hydrateFromPersistenceIfPresent(DataRepository dataRepository, ConnectionStatesImpl connectionStates,
             Collection<Metamodel> activeMetamodels) {
@@ -92,8 +94,9 @@ public class ConnectionGenerator extends AbstractExecutionStage {
         RecommendationStates recommendationStates = dataRepository.getData(RecommendationStates.ID, RecommendationStates.class).orElseThrow();
         ModelStates modelStates = dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow();
 
-        Map<String, RecommendedInstance> risById = new HashMap<>();
-        Map<String, ArchitectureItem> archById = new HashMap<>();
+        SortedMap<String, RecommendedInstance> risById = new TreeMap<>();
+        SortedMap<String, ArchitectureItem> archById = new TreeMap<>();
+        SortedMap<String, CodeItem> codeById = new TreeMap<>();
         for (Metamodel metamodel : activeMetamodels) {
             for (RecommendedInstance ri : recommendationStates.getRecommendationState(metamodel).getRecommendedInstances()) {
                 risById.put(ri.getId(), ri);
@@ -106,22 +109,40 @@ public class ConnectionGenerator extends AbstractExecutionStage {
                     }
                 }
             }
+            if (model instanceof CodeModel codeModel) {
+                for (var item : codeModel.getEndpoints()) {
+                    if (item instanceof CodeItem codeItem) {
+                        codeById.put(codeItem.getId(), codeItem);
+                    }
+                }
+            }
         }
 
-        Collection<RecommendationModelTraceLink> loaded = PersistenceBridge.callQuietly("loadRecommendationModelTraceLinks",
+        Collection<RecommendationModelTraceLink> loadedArch = PersistenceBridge.callQuietly("loadRecommendationModelTraceLinks",
                 () -> handler.loadRecommendationModelTraceLinks(risById, archById), List.of());
+        Collection<RecommendationModelTraceLink> loadedCode = PersistenceBridge.callQuietly("loadRecommendationCodeTraceLinks",
+                () -> handler.loadRecommendationCodeTraceLinks(risById, codeById), List.of());
+
         int total = 0;
-        for (RecommendationModelTraceLink link : loaded) {
-            Metamodel metamodel = findMetamodelForLink(activeMetamodels, recommendationStates, link);
-            if (metamodel == null) {
-                continue;
-            }
-            connectionStates.getConnectionState(metamodel).hydrateInstanceLink(link);
-            total++;
+        for (RecommendationModelTraceLink link : loadedArch) {
+            total += hydrateOne(connectionStates, activeMetamodels, recommendationStates, link);
+        }
+        for (RecommendationModelTraceLink link : loadedCode) {
+            total += hydrateOne(connectionStates, activeMetamodels, recommendationStates, link);
         }
         if (total > 0) {
             logger.info("Hydrated {} RecommendationModelTraceLinks into ConnectionState (resume)", total);
         }
+    }
+
+    private static int hydrateOne(ConnectionStatesImpl connectionStates, Collection<Metamodel> activeMetamodels, RecommendationStates recommendationStates,
+            RecommendationModelTraceLink link) {
+        Metamodel metamodel = findMetamodelForLink(activeMetamodels, recommendationStates, link);
+        if (metamodel == null) {
+            return 0;
+        }
+        connectionStates.getConnectionState(metamodel).hydrateInstanceLink(link);
+        return 1;
     }
 
     private static Metamodel findMetamodelForLink(Collection<Metamodel> activeMetamodels, RecommendationStates recommendationStates,

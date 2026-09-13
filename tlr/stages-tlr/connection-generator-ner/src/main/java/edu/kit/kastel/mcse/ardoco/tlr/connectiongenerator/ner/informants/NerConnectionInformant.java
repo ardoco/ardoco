@@ -62,6 +62,10 @@ public class NerConnectionInformant extends Informant {
     private void processForMetamodel(Metamodel metamodel) {
         var modelEndpoints = modelStatesData.getModel(metamodel).getEndpoints();
         var nerConnectionState = nerConnectionStates.getNerConnectionState(metamodel);
+        if (!nerConnectionState.getTraceLinks().isEmpty()) {
+            // Resume: occurrence→model links already hydrated from Neo4j.
+            return;
+        }
         var namedArchitectureEntities = nerConnectionState.getNamedArchitectureEntities();
 
         // Try to match with similarity metrics

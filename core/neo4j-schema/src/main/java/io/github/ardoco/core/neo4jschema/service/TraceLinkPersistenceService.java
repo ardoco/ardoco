@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
@@ -125,8 +128,16 @@ public class TraceLinkPersistenceService {
         if (link instanceof SentenceModelTraceLink smtl) {
             return (smtl.getSecondEndpoint() instanceof ArchitectureItem) ? TraceLinkType.SENTENCE_ARCHITECTURE : TraceLinkType.SENTENCE_CODE;
         }
-        if (link instanceof RecommendationModelTraceLink rmtl && rmtl.getSecondEndpoint() instanceof ArchitectureItem) {
-            return TraceLinkType.RECOMMENDATION_ARCHITECTURE;
+        if (link instanceof RecommendationModelTraceLink rmtl) {
+            if (rmtl.getSecondEndpoint() instanceof ArchitectureItem) {
+                return TraceLinkType.RECOMMENDATION_ARCHITECTURE;
+            }
+            if (rmtl.getSecondEndpoint() instanceof CodeItem) {
+                return TraceLinkType.RECOMMENDATION_CODE;
+            }
+        }
+        if (link instanceof NamedArchitectureEntityToModelTraceLink) {
+            return TraceLinkType.NER_ARCHITECTURE;
         }
         return null;
     }
@@ -139,6 +150,9 @@ public class TraceLinkPersistenceService {
         if (endpoint instanceof RecommendedInstance ri) {
             return ri.getId();
         }
+        if (endpoint instanceof NamedArchitectureEntityOccurrence occ) {
+            return occ.getId();
+        }
         if (endpoint instanceof ModelEntity me)
             return me.getId();
         return endpoint.toString();
@@ -147,9 +161,14 @@ public class TraceLinkPersistenceService {
     private void saveAtomicLink(TraceLink<?, ?> link, TraceLinkType type) {
         String sourceId = getEndpointId(link.getFirstEndpoint());
         String targetId = getEndpointId(link.getSecondEndpoint());
-        if (type == TraceLinkType.RECOMMENDATION_ARCHITECTURE) {
+        if (type == TraceLinkType.RECOMMENDATION_ARCHITECTURE || type == TraceLinkType.RECOMMENDATION_CODE) {
             double confidence = link instanceof RecommendationModelTraceLink rmtl ? rmtl.getConfidence() : -1.0;
             traceLinkRepo.createRecommendationArchitectureTraceLink(sourceId, targetId, confidence, type);
+            return;
+        }
+        if (type == TraceLinkType.NER_ARCHITECTURE) {
+            double confidence = link instanceof NamedArchitectureEntityToModelTraceLink nerLink ? nerLink.getConfidence() : -1.0;
+            traceLinkRepo.createTraceLink(sourceId, targetId, confidence, type);
             return;
         }
         traceLinkRepo.createTraceLink(sourceId, targetId, type);
@@ -233,31 +252,51 @@ public class TraceLinkPersistenceService {
     }
 
     /**
-     * Loads RecommendationModelTraceLinks (RI → Architecture). Endpoints are resolved from the provided maps
-     * (already hydrated RecommendationStates + architecture model).
+     * Loads RecommendationModelTraceLinks (RI → Architecture or RI → Code). Endpoints are resolved from the provided maps
+     * (already hydrated RecommendationStates + architecture/code models).
      */
     @Transactional(readOnly = true)
-    public List<RecommendationModelTraceLink> loadAllRecommendationArchitectureTraceLinks(Map<String, RecommendedInstance> recommendedInstancesById,
-            Map<String, ArchitectureItem> architectureItemsById) {
+    public List<RecommendationModelTraceLink> loadAllRecommendationArchitectureTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
+            SortedMap<String, ArchitectureItem> architectureItemsById) {
+        return loadRecommendationModelLinks(recommendedInstancesById, architectureItemsById, null, TraceLinkType.RECOMMENDATION_ARCHITECTURE);
+    }
+
+    /**
+     * Loads RecommendationModelTraceLinks of type {@link TraceLinkType#RECOMMENDATION_CODE}.
+     */
+    @Transactional(readOnly = true)
+    public List<RecommendationModelTraceLink> loadAllRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
+            SortedMap<String, CodeItem> codeItemsById) {
+        return loadRecommendationModelLinks(recommendedInstancesById, null, codeItemsById, TraceLinkType.RECOMMENDATION_CODE);
+    }
+
+    private List<RecommendationModelTraceLink> loadRecommendationModelLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
+            SortedMap<String, ArchitectureItem> architectureItemsById, SortedMap<String, CodeItem> codeItemsById, TraceLinkType type) {
         List<RecommendationModelTraceLink> result = new ArrayList<>();
-        for (Map<String, Object> row : traceLinkRepo.findRecommendationArchitectureLinks(TraceLinkType.RECOMMENDATION_ARCHITECTURE)) {
+        for (Map<String, Object> row : traceLinkRepo.findRecommendationArchitectureLinks(type)) {
             String riId = String.valueOf(row.get("riId"));
             String targetId = String.valueOf(row.get("targetId"));
             RecommendedInstance ri = recommendedInstancesById.get(riId);
-            ArchitectureItem arch = architectureItemsById.get(targetId);
-            if (ri == null || arch == null) {
-                logger.warn("Skipping RI→Architecture link resume: missing endpoint ri={} arch={}", riId, targetId);
+            ModelEntity target = null;
+            if (architectureItemsById != null) {
+                target = architectureItemsById.get(targetId);
+            }
+            if (target == null && codeItemsById != null) {
+                target = codeItemsById.get(targetId);
+            }
+            if (ri == null || target == null) {
+                logger.warn("Skipping RI→Model link resume ({}): missing endpoint ri={} target={}", type, riId, targetId);
                 continue;
             }
             Object confObj = row.get("confidence");
             double confidence = confObj instanceof Number number ? number.doubleValue() : -1.0;
             if (confidence >= 0) {
-                result.add(new RecommendationModelTraceLink(ri, arch, NounMappingMapper.RESUME_CLAIMANT, confidence));
+                result.add(new RecommendationModelTraceLink(ri, target, NounMappingMapper.RESUME_CLAIMANT, confidence));
             } else {
-                result.add(new RecommendationModelTraceLink(ri, arch));
+                result.add(new RecommendationModelTraceLink(ri, target));
             }
         }
-        logger.info("Loaded {} RecommendationModelTraceLinks from Neo4j", result.size());
+        logger.info("Loaded {} RecommendationModelTraceLinks ({}) from Neo4j", result.size(), type);
         return result;
     }
 

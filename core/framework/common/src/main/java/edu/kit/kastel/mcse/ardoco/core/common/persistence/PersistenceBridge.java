@@ -29,6 +29,8 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static boolean persistRecommendationsStatic = false;
 
+    public static boolean persistNerConnectionStatic = false;
+
     @Configurable
     private boolean usePersistence = false;
 
@@ -46,6 +48,13 @@ public class PersistenceBridge extends AbstractConfigurable {
      */
     @Configurable
     private boolean persistRecommendations = false;
+
+    /**
+     * When true (and {@link #isAvailable()}), NER named entities / occurrence→model links are dual-written.
+     * Default false. Requires models (and typically SimpleText) already available for a meaningful resume.
+     */
+    @Configurable
+    private boolean persistNerConnection = false;
 
     private PersistenceBridge() {
         // Private constructor for Singleton
@@ -79,6 +88,13 @@ public class PersistenceBridge extends AbstractConfigurable {
      */
     public static boolean shouldPersistRecommendations() {
         return isAvailable() && persistRecommendationsStatic;
+    }
+
+    /**
+     * @return true if Neo4j persistence is available and NER connection dual-write is enabled
+     */
+    public static boolean shouldPersistNerConnection() {
+        return isAvailable() && persistNerConnectionStatic;
     }
 
     /**
@@ -116,5 +132,6 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
         persistTextStateStatic = this.persistTextState;
         persistRecommendationsStatic = this.persistRecommendations;
+        persistNerConnectionStatic = this.persistNerConnection;
     }
 }

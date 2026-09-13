@@ -8,6 +8,7 @@ import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -38,7 +39,7 @@ public interface ConnectionState extends IConfigurable {
     default ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinks() {
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
 
-        // only architecture links are saved to persistence, since the code links still get processed further during the pipeline.
+        // only architecture/code instance links are saved to persistence; derived sentence links for those targets come from Neo4j when available.
         if (PersistenceBridge.isAvailable()) {
             var persistedLinks = PersistenceBridge.callQuietly("loadSentenceModelTraceLinks",
                     () -> PersistenceBridge.getHandler().loadSentenceModelTraceLinks(), java.util.Collections.<SentenceModelTraceLink>emptySet());
@@ -49,7 +50,7 @@ public interface ConnectionState extends IConfigurable {
             var textualInstance = instanceLink.getFirstEndpoint();
             ModelEntity target = instanceLink.getSecondEndpoint();
 
-            if (PersistenceBridge.isAvailable() && target instanceof ArchitectureEntity) {
+            if (PersistenceBridge.isAvailable() && (target instanceof ArchitectureEntity || target instanceof CodeItem)) {
                 continue;
             }
 

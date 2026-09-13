@@ -50,12 +50,15 @@ public class NerInformant extends Informant {
             if (!metamodel.isArchitectureModel()) {
                 continue;
             }
+            var nerConnectionState = nerConnectionStates.getNerConnectionState(metamodel);
+            if (!nerConnectionState.getNamedArchitectureEntities().isEmpty() || !nerConnectionState.getUnlinkedNamedArchitectureEntities().isEmpty()) {
+                // Already hydrated from Neo4j — skip LLM recognition for this metamodel.
+                continue;
+            }
             var prompt = getPrompt();
             var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(prompt).build();
             var possibleEntities = getPossibleEntities(metamodel);
             var namedArchitectureEntities = recognizeNamedArchitectureEntities(namedEntityRecognizer, sad, possibleEntities);
-
-            var nerConnectionState = nerConnectionStates.getNerConnectionState(metamodel);
             nerConnectionState.addNamedEntities(namedArchitectureEntities);
         }
     }

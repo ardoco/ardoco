@@ -144,6 +144,34 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
     }
 
     @Test
+    @DisplayName("ARDoCode with TextState/Recommendations flags writes RI→Code instance links")
+    void testArDoCodeWritesRecommendationCodeLinksWhenFlagsOn() {
+        var runner = new Ardocode(projectName);
+        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithPersistence(true, true, true), new File(outputDir));
+
+        testRunnerAssertions(runner);
+        ArdocoResult result = runner.run();
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.getSadCodeTraceLinks().isEmpty());
+
+        long riCodeLinks = countRecommendationCodeLinks();
+        Assertions.assertTrue(riCodeLinks > 0, "Expected RECOMMENDATION_CODE TRACES_TO links when recommendations persist against a code model");
+        pauseForNeo4jInspection();
+    }
+
+    private long countRecommendationCodeLinks() {
+        return neo4jClient.query("""
+                MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = 'RECOMMENDATION_CODE'
+                RETURN count(r) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
+    }
+
+    @Test
     @DisplayName("Test ARDoCo pipeline with Neo4j persistence")
     void testArDoCodePipelineWithNeo4j() {
         runAndAssertArdocode(true);

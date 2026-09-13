@@ -5,13 +5,12 @@ import java.io.Serial;
 import java.util.Collection;
 
 import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
@@ -62,8 +61,9 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Override
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
-        boolean shouldPersist = PersistenceBridge.isAvailable() && modelEntity instanceof ArchitectureEntity;
-        MutableSet<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Sets.mutable.empty();
+        // Persist RI→Architecture and RI→Code instance links (and derived sentence→model edges).
+        boolean shouldPersist = PersistenceBridge.isAvailable() && (modelEntity instanceof ArchitectureEntity || modelEntity instanceof CodeItem);
+        MutableList<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Lists.mutable.empty();
         MutableList<TraceLink<?, ?>> instanceLinksToPersist = Lists.mutable.empty();
 
         var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);

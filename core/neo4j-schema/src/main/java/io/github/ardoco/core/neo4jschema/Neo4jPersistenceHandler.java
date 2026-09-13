@@ -3,11 +3,12 @@ package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortedMap;
 
+import org.eclipse.collections.api.factory.SortedSets;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
+import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
@@ -20,13 +21,18 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
@@ -35,7 +41,10 @@ import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.NerPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.ProjectPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.RecommendationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.SimpleTextPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TextStatePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 
@@ -55,11 +64,15 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final InconsistencyPersistenceService inconsistencyService;
     private final TextStatePersistenceService textStateService;
     private final RecommendationPersistenceService recommendationService;
+    private final SimpleTextPersistenceService simpleTextService;
+    private final ProjectPersistenceService projectService;
+    private final NerPersistenceService nerService;
     private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
-            TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, Neo4jClient neo4jClient) {
+            TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, SimpleTextPersistenceService simpleTextService,
+            ProjectPersistenceService projectService, NerPersistenceService nerService, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
@@ -68,6 +81,9 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.inconsistencyService = inconsistencyService;
         this.textStateService = textStateService;
         this.recommendationService = recommendationService;
+        this.simpleTextService = simpleTextService;
+        this.projectService = projectService;
+        this.nerService = nerService;
     }
 
     @Override
@@ -94,11 +110,11 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public SortedSet<Metamodel> getStoredMetamodels() {
-        SortedSet<Metamodel> available = new TreeSet<>();
+    public ImmutableSortedSet<Metamodel> getStoredMetamodels() {
+        MutableSortedSet<Metamodel> available = SortedSets.mutable.empty();
         available.addAll(codeService.getStoredCodeModelMetamodels());
         available.addAll(architectureService.getStoredArchitectureModelMetamodels());
-        return available;
+        return available.toImmutable();
     }
 
     @Override
@@ -148,7 +164,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public Set<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
+    public Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks from neo4j");
         Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
         Set<SentenceModelTraceLink> codeLinks = this.traceLinkService.loadAllSentenceCodeModelTraceLinks();
@@ -250,23 +266,24 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById) {
+    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
         logger.info("Loading RecommendedInstances for {} from Neo4j (resume)", metamodel);
         return this.recommendationService.loadRecommendedInstances(metamodel, nounMappingsById);
     }
 
     @Override
     public boolean hasRecommendationModelTraceLinks() {
-        return countRecommendationArchitectureLinks() > 0;
+        return countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_ARCHITECTURE) > 0
+                || countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_CODE) > 0;
     }
 
-    private long countRecommendationArchitectureLinks() {
+    private long countRecommendationModelLinks(TraceLinkType type) {
         return neo4jClient.query("""
                 MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
                 WHERE r.traceLinkType = $type
                 RETURN count(r) AS c
                 """)
-                .bind(TraceLinkType.RECOMMENDATION_ARCHITECTURE.name())
+                .bind(type.name())
                 .to("type")
                 .fetch()
                 .one()
@@ -275,10 +292,79 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(Map<String, RecommendedInstance> recommendedInstancesById,
-            Map<String, ArchitectureItem> architectureItemsById) {
-        logger.info("Loading RecommendationModelTraceLinks from Neo4j (resume)");
+    public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
+            SortedMap<String, ArchitectureItem> architectureItemsById) {
+        logger.info("Loading RecommendationModelTraceLinks (architecture) from Neo4j (resume)");
         return this.traceLinkService.loadAllRecommendationArchitectureTraceLinks(recommendedInstancesById, architectureItemsById);
+    }
+
+    @Override
+    public Collection<RecommendationModelTraceLink> loadRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
+            SortedMap<String, CodeItem> codeItemsById) {
+        logger.info("Loading RecommendationModelTraceLinks (code) from Neo4j (resume)");
+        return this.traceLinkService.loadAllRecommendationCodeTraceLinks(recommendedInstancesById, codeItemsById);
+    }
+
+    @Override
+    public void saveSimpleText(SimpleText simpleText, String identifier) {
+        logger.info("Saving SimpleText for {}", identifier);
+        this.simpleTextService.saveSimpleText(simpleText, identifier);
+    }
+
+    @Override
+    public boolean hasSimpleText(String identifier) {
+        return this.simpleTextService.hasSimpleText(identifier);
+    }
+
+    @Override
+    public SimpleText loadSimpleText(String identifier) {
+        logger.info("Loading SimpleText for {}", identifier);
+        return this.simpleTextService.loadSimpleText(identifier).orElse(null);
+    }
+
+    @Override
+    public void saveProjectMetadata(String projectName, String inputText) {
+        logger.info("Saving Project metadata for {}", projectName);
+        this.projectService.saveProjectMetadata(projectName, inputText);
+    }
+
+    @Override
+    public boolean hasProjectMetadata(String projectName) {
+        return this.projectService.hasProjectMetadata(projectName);
+    }
+
+    @Override
+    public String loadProjectInputText(String projectName) {
+        return this.projectService.loadProjectInputText(projectName).orElse(null);
+    }
+
+    @Override
+    public String loadSoleProjectName() {
+        return this.projectService.loadSoleProjectName().orElse(null);
+    }
+
+    @Override
+    public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+        logger.debug("Saving NamedArchitectureEntity {} ({})", entity.getId(), entity.getName());
+        this.nerService.saveNamedArchitectureEntity(entity, metamodel, unlinked);
+    }
+
+    @Override
+    public boolean hasNerNamedArchitectureEntities() {
+        return this.nerService.hasNamedArchitectureEntities();
+    }
+
+    @Override
+    public Collection<NamedArchitectureEntity> loadNamedArchitectureEntities(Metamodel metamodel, boolean unlinkedOnly) {
+        logger.info("Loading NamedArchitectureEntities for {} (unlinkedOnly={})", metamodel, unlinkedOnly);
+        return this.nerService.loadNamedArchitectureEntities(metamodel, unlinkedOnly);
+    }
+
+    @Override
+    public Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
+            SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById) {
+        logger.info("Loading NER trace links for {} from Neo4j (resume)", metamodel);
+        return this.nerService.loadNerTraceLinks(metamodel, occurrencesById, modelEntitiesById);
     }
 
 }
