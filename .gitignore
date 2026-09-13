@@ -122,3 +122,8 @@ pipeline/src/main/resources/evaluations/
 
 **/.cache-llm/
 package-info.java
+
+# Local Neo4j working notes (not for remote)
+Neo4j info/Neo4j-Bugfixes-and-Test-Changes.md
+Neo4j info/Neo4j-Verification-Test-Guide.md
+Neo4j info/Neo4j-Remaining-Coverage-Plan.md

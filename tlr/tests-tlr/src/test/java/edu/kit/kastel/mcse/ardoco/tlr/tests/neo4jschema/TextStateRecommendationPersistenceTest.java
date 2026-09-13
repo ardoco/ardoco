@@ -3,8 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import edu.kit.kastel.mcse.ardoco.core.data.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
@@ -95,7 +95,7 @@ public class TextStateRecommendationPersistenceTest extends AbstractPersistenceT
         Collection<NounMapping> loadedMappings = handler.loadNounMappings(annotatedText);
         Assertions.assertEquals(nounMappingCount, loadedMappings.size());
 
-        Map<String, NounMapping> byId = new HashMap<>();
+        SortedMap<String, NounMapping> byId = new TreeMap<>();
         for (NounMapping mapping : loadedMappings) {
             byId.put(mapping.getArdocoId(), mapping);
         }

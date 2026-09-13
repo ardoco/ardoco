@@ -72,11 +72,20 @@ public final class InterfaceUnit extends Datatype {
     /**
      * Returns the content IDs of this interface unit.
      *
-     * @return list of content IDs
+     * @return list of content IDs, or {@code null} if none were stored
      */
     @JsonGetter("content")
     public List<String> getContentIds() {
-        return new ArrayList<>(this.content);
+        return this.content == null ? null : new ArrayList<>(this.content);
+    }
+
+    /**
+     * Replaces the raw content-id list (may be {@code null}). Used by persistence for a lossless round trip.
+     *
+     * @param contentIds the raw id list to set (may be {@code null})
+     */
+    public void setRawContentIds(List<String> contentIds) {
+        this.content = contentIds;
     }
 
     /**

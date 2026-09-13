@@ -4,7 +4,7 @@ package io.github.ardoco.core.neo4jschema.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -54,7 +54,7 @@ public class RecommendationPersistenceService {
      * (TextState resume before RecommendationStates).
      */
     @Transactional(readOnly = true)
-    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, Map<String, NounMapping> nounMappingsById) {
+    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
         List<RecommendedInstance> result = new ArrayList<>();
         String metamodelName = metamodel.name();
         for (RecommendedInstanceNode node : recommendedInstanceRepository.findAll()) {
@@ -68,7 +68,7 @@ public class RecommendationPersistenceService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<RecommendedInstance> loadAllRecommendedInstances(Map<String, NounMapping> nounMappingsById) {
+    public Collection<RecommendedInstance> loadAllRecommendedInstances(SortedMap<String, NounMapping> nounMappingsById) {
         return StreamSupport.stream(recommendedInstanceRepository.findAll().spliterator(), false)
                 .map(node -> recommendedInstanceMapper.toDomain(node, nounMappingsById))
                 .collect(Collectors.toList());

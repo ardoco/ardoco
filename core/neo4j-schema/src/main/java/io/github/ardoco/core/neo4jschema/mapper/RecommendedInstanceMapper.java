@@ -3,7 +3,7 @@ package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -49,7 +49,7 @@ public class RecommendedInstanceMapper {
      * Restores a domain RecommendedInstance. {@code nounMappingsById} must contain the NounMappings
      * already loaded for this resume (TextState hydrate first).
      */
-    public RecommendedInstance toDomain(RecommendedInstanceNode node, Map<String, NounMapping> nounMappingsById) {
+    public RecommendedInstance toDomain(RecommendedInstanceNode node, SortedMap<String, NounMapping> nounMappingsById) {
         ImmutableList<NounMapping> nameMappings = resolveDomainMappings(node.getNameMappings(), nounMappingsById);
         ImmutableList<NounMapping> typeMappings = resolveDomainMappings(node.getTypeMappings(), nounMappingsById);
 
@@ -66,7 +66,7 @@ public class RecommendedInstanceMapper {
         return nodes;
     }
 
-    private static ImmutableList<NounMapping> resolveDomainMappings(List<NounMappingNode> nodes, Map<String, NounMapping> nounMappingsById) {
+    private static ImmutableList<NounMapping> resolveDomainMappings(List<NounMappingNode> nodes, SortedMap<String, NounMapping> nounMappingsById) {
         List<NounMapping> result = new ArrayList<>();
         if (nodes == null) {
             return Lists.immutable.empty();

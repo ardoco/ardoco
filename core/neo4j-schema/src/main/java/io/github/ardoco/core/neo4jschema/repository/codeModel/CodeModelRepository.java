@@ -11,7 +11,7 @@ import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
 @Repository
 public interface CodeModelRepository extends Neo4jRepository<CodeModelNode, String> {
 
-    @Query("MATCH (m:CodeModel {modelId: $modelId}) " + "OPTIONAL MATCH (m)-[r:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)" + "DETACH DELETE m, n")
+    @Query("MATCH (m:CodeModel {modelId: $modelId}) " + "OPTIONAL MATCH (m)-[r:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)" + "DETACH DELETE m, n")
     void deleteByModelId(@Param("modelId") String modelId);
 
     @Query("MATCH (m:CodeModel {metamodel: $mt})" + "OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)" + "DETACH DELETE m, child")

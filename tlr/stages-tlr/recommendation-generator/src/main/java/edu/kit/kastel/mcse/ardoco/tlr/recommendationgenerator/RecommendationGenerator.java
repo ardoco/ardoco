@@ -2,8 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
@@ -84,7 +84,7 @@ public class RecommendationGenerator extends AbstractExecutionStage {
             return;
         }
         TextState textState = dataRepository.getData(TextState.ID, TextState.class).orElseThrow();
-        Map<String, NounMapping> nounMappingsById = new HashMap<>();
+        SortedMap<String, NounMapping> nounMappingsById = new TreeMap<>();
         for (NounMapping mapping : textState.getNounMappings()) {
             nounMappingsById.put(mapping.getArdocoId(), mapping);
         }

@@ -7,6 +7,8 @@ import java.util.Comparator;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.ordered.SortedIterable;
 
@@ -27,6 +29,9 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepositorySyncer;
  * The Class TextState defines the basic implementation of a {@link TextState}.
  */
 public class TextStateImpl extends AbstractState implements TextState {
+
+    // TODO(neo4j-diagnostic): temporary logging to confirm whether NounMapping creation/merge diverges when persistTextState=true. Remove once root-caused.
+    private static final Logger DIAG_LOGGER = LoggerFactory.getLogger(TextStateImpl.class);
 
     @Serial
     private static final long serialVersionUID = -8204535036570535865L;
@@ -123,6 +128,9 @@ public class TextStateImpl extends AbstractState implements TextState {
      * (used for load-on-resume hydrate).
      */
     public void addNounMapping(NounMapping nounMapping, boolean persist) {
+        // TODO(neo4j-diagnostic): temporary logging to confirm whether NounMapping creation/merge diverges when persistTextState=true. Remove once root-caused.
+        logDiagnosticIfRelevant("addNounMapping", nounMapping, persist);
+
         if (this.nounMappings.contains(nounMapping)) {
             throw new IllegalArgumentException("Nounmapping was already in state");
         }
@@ -145,6 +153,8 @@ public class TextStateImpl extends AbstractState implements TextState {
 
     @Override
     public void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement, boolean cascade) {
+        // TODO(neo4j-diagnostic): temporary logging to confirm whether NounMapping creation/merge diverges when persistTextState=true. Remove once root-caused.
+        logDiagnosticIfRelevant("removeNounMapping", nounMapping, PersistenceBridge.shouldPersistTextState());
 
         if (cascade) {
             PhraseMapping phraseMapping = this.getPhraseMappingByNounMapping(nounMapping);
@@ -179,6 +189,19 @@ public class TextStateImpl extends AbstractState implements TextState {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         // handle additional configuration
+    }
+
+    // TODO(neo4j-diagnostic): temporary logging to confirm whether NounMapping creation/merge diverges when persistTextState=true. Remove once root-caused.
+    private static void logDiagnosticIfRelevant(String op, NounMapping nounMapping, boolean persist) {
+        String reference = nounMapping.getReference();
+        if (reference == null) {
+            return;
+        }
+        String lower = reference.toLowerCase(java.util.Locale.ROOT);
+        if (lower.contains("image") || lower.contains("provider")) {
+            DIAG_LOGGER.info("[textstate-diagnostic] {} ardocoId={} reference='{}' kind={} words={} persist={}", op, nounMapping.getArdocoId(), reference,
+                    nounMapping.getKind(), nounMapping.getWords().size(), persist);
+        }
     }
 
     private static void persistNounMapping(NounMapping nounMapping) {

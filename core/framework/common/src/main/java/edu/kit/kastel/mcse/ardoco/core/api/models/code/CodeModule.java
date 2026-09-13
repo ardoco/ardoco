@@ -81,6 +81,25 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     }
 
     /**
+     * Returns the raw content-id list exactly as stored (may be {@code null}). Prefer {@link #getContent()} for resolved access; use this for lossless
+     * persistence round trips where {@code null} vs empty and dangling ids must be preserved.
+     *
+     * @return the raw content id list, possibly {@code null}
+     */
+    public List<String> getRawContentIds() {
+        return this.content;
+    }
+
+    /**
+     * Replaces the raw content-id list. See {@link #getRawContentIds()} for the semantics.
+     *
+     * @param contentIds the raw id list to set (may be {@code null})
+     */
+    public void setRawContentIds(List<String> contentIds) {
+        this.content = contentIds;
+    }
+
+    /**
      * Returns the content of this code module as a list of code items.
      *
      * @return list of code items

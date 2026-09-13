@@ -92,8 +92,9 @@ public class DocumentationPersistenceService {
      */
     @Transactional(readOnly = true)
     public Optional<Text> loadPreprocessedText(String identifier) {
-        TextNode meta = textRepository.findByArdocoId(identifier).orElse(null);
-        if (meta == null) {
+        // Only an existence check is needed here; the sentences/words/phrases are streamed via the paged Cypher queries below.
+        // findByArdocoId now fully hydrates the graph, so avoid calling it just to null-check.
+        if (!textRepository.existsByArdocoId(identifier)) {
             logger.info("No preprocessed text found for id: " + identifier);
             return Optional.empty();
         }

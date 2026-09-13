@@ -29,25 +29,92 @@ public class CodeModelMapper {
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());
         Map<String, CodeItemNode> cache = new HashMap<>();
 
-        Set<String> modelContentIds = new HashSet<>(model.createCodeModelDto().content());
         CodeItemRepository itemRepo = model.createCodeModelDto().codeItemRepository();
+        Map<String, CodeItem> allItems = itemRepo.getRepository();
 
-        // Pass 1: Hierarchy
-        for (String id : modelContentIds) {
-            CodeItem item = itemRepo.getCodeItem(id);
-            if (isRootInModel(item, modelContentIds)) {
-                modelNode.addContent(mapHierarchyToNode(item, cache));
+        // Pass 0: Instantiate a node for EVERY item in the repository. The repository - not the containment hierarchy reachable from the model's declared roots -
+        // is the authoritative set of items. Relying on getContent() traversal from the roots silently dropped every item whose top-most ancestor was not part of
+        // the model's declared content() (observed as ~58% data loss on real code models).
+        for (CodeItem item : allItems.values()) {
+            createNode(item, cache);
+        }
+
+        // Pass 1: Wire the containment hierarchy (CONTAINS_CODE_ITEM) and the explicit parent / compilation-unit / parent-datatype references for every item. The
+        // latter are stored verbatim (not derived) because the domain keeps them independent of the content lists (see CodeItemNode#getParentModuleId()).
+        for (Map.Entry<String, CodeItem> entry : allItems.entrySet()) {
+            CodeItem item = entry.getValue();
+            CodeItemNode itemNode = cache.get(entry.getKey());
+            for (CodeItem child : item.getContent()) {
+                CodeItemNode childNode = cache.get(child.getId());
+                if (childNode != null) {
+                    itemNode.addContent(childNode);
+                }
+            }
+            // Persist the content order verbatim from the raw id list (not from getContent(), which drops unresolvable ids). The CONTAINS_CODE_ITEM relationship
+            // above is unordered; see CodeItemNode#getContentIds().
+            List<String> rawContentIds = switch (item) {
+                case CodeModule module -> module.getRawContentIds();
+                case ClassUnit classUnit -> classUnit.getContentIds();
+                case InterfaceUnit interfaceUnit -> interfaceUnit.getContentIds();
+                default -> null;
+            };
+            itemNode.setContentIds(rawContentIds == null ? null : new ArrayList<>(rawContentIds));
+            if (item instanceof CodeModule module) {
+                CodeModule parentModule = module.getParent();
+                if (parentModule != null) {
+                    itemNode.setParentModuleId(parentModule.getId());
+                }
+            }
+            if (item instanceof Datatype datatype && itemNode instanceof DatatypeNode datatypeNode) {
+                CodeCompilationUnit compilationUnit = datatype.getCompilationUnit();
+                if (compilationUnit != null) {
+                    datatypeNode.setCompilationUnitId(compilationUnit.getId());
+                }
+                Datatype parentDatatype = datatype.getParentDatatype();
+                if (parentDatatype != null) {
+                    datatypeNode.setParentDatatypeId(parentDatatype.getId());
+                }
+                // Persist the raw datatype-reference id lists verbatim (order and null-vs-empty preserved) for a lossless round trip.
+                datatypeNode.setExtendedDataTypesIds(datatype.getExtendedDataTypesIds());
+                datatypeNode.setImplementedDataTypesIds(datatype.getImplementedDataTypesIds());
+                datatypeNode.setDatatypeReferencesIds(datatype.getDatatypeReferencesIds());
             }
         }
 
-        // Pass 2: Type References
+        // Pass 2: Roots (CONTAINS_CODE_ROOT) come from the model's declared content.
+        Set<String> modelContentIds = new HashSet<>(model.createCodeModelDto().content());
+        for (String id : modelContentIds) {
+            CodeItem item = itemRepo.getCodeItem(id);
+            if (item != null && isRootInModel(item, modelContentIds)) {
+                modelNode.addContent(cache.get(id));
+            }
+        }
+
+        // Pass 3: Type references (EXTENDS / IMPLEMENTS / REFERENCES_DATATYPE).
         cache.forEach((id, node) -> {
             if (node instanceof DatatypeNode dtNode && itemRepo.getCodeItem(id) instanceof Datatype dt) {
                 linkTypeReferencesToNode(dt, dtNode, cache);
             }
         });
 
+        // Pass 4: Attach every item to the model via HAS_REPOSITORY_ITEM so persistence retains the complete repository, independent of hierarchy reachability.
+        for (CodeItemNode node : cache.values()) {
+            modelNode.addRepositoryItem(node);
+        }
+
         return modelNode;
+    }
+
+    /**
+     * Instantiates (or returns the cached) {@link CodeItemNode} for the given domain item without recursing into its children.
+     */
+    private CodeItemNode createNode(CodeItem item, Map<String, CodeItemNode> cache) {
+        return cache.computeIfAbsent(item.getId(), id -> NODE_FACTORIES.entrySet()
+                .stream()
+                .filter(e -> e.getKey().isInstance(item))
+                .map(e -> e.getValue().apply(item, id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported: " + item.getClass())));
     }
 
     /**
@@ -67,8 +134,11 @@ public class CodeModelMapper {
         CodeItemRepository repository = new CodeItemRepository();
         Set<CodeItemNode> allNodes = new HashSet<>();
 
-        // Iterative collection to prevent StackOverflow
-        collectAllNodesIteratively(node.getContent(), allNodes);
+        // Iterative collection to prevent StackOverflow. Seed from both the roots (CONTAINS_CODE_ROOT) and the full repository set (HAS_REPOSITORY_ITEM) so that
+        // items which are not reachable from a root through the containment hierarchy are still restored.
+        List<CodeItemNode> seeds = new ArrayList<>(node.getContent());
+        seeds.addAll(node.getAllRepositoryItems());
+        collectAllNodesIteratively(seeds, allNodes);
 
         // Pass 1: Flat instantiation
         allNodes.forEach(n -> instantiateDomainObject(n, repository));
@@ -79,39 +149,47 @@ public class CodeModelMapper {
             if (currentItem == null)
                 continue;
 
-            // Containment
-            for (CodeItemNode childNode : itemNode.getContent()) {
-                CodeItem childItem = repository.getCodeItem(childNode.getArdocoId());
-                if (childItem != null)
-                    linkDomainHierarchy(currentItem, childItem);
+            // Containment (content lists), restored from the verbatim contentIds property. Prefer setting the raw id list directly so null-vs-empty and dangling
+            // ids are preserved exactly (addContent would both initialize empty lists and drop null contentIds).
+            List<String> contentIds = itemNode.getContentIds();
+            if (currentItem instanceof CodeModule module) {
+                module.setRawContentIds(copyOrNull(contentIds));
+            } else if (currentItem instanceof ClassUnit classUnit) {
+                // ClassUnit never uses a null content list in the domain (Jackson + constructors always initialize it to []).
+                classUnit.setRawContentIds(contentIds == null ? new ArrayList<>() : new ArrayList<>(contentIds));
+            } else if (currentItem instanceof InterfaceUnit interfaceUnit) {
+                interfaceUnit.setRawContentIds(copyOrNull(contentIds));
             }
 
-            // Cross-references
+            // Explicit parent link (only if it was set in the original model).
+            if (currentItem instanceof CodeModule module && itemNode.getParentModuleId() != null) {
+                CodeItem parent = repository.getCodeItem(itemNode.getParentModuleId());
+                if (parent instanceof CodeModule parentModule)
+                    module.setParent(parentModule);
+            }
+
+            // Explicit datatype links + cross-references.
             if (itemNode instanceof DatatypeNode dtNode && currentItem instanceof Datatype dtItem) {
-                linkDomainTypeReferences(dtItem, dtNode, repository);
+                if (dtNode.getCompilationUnitId() != null) {
+                    CodeItem compilationUnit = repository.getCodeItem(dtNode.getCompilationUnitId());
+                    if (compilationUnit instanceof CodeCompilationUnit codeCompilationUnit)
+                        dtItem.setCompilationUnit(codeCompilationUnit);
+                }
+                if (dtNode.getParentDatatypeId() != null) {
+                    CodeItem parentDatatype = repository.getCodeItem(dtNode.getParentDatatypeId());
+                    if (parentDatatype instanceof Datatype parentDt)
+                        dtItem.setParentDatatype(parentDt);
+                }
+                // Restore the raw datatype-reference id lists verbatim (see toNode). Copy the lists but preserve a null list as null, because the domain treats a
+                // null list as distinct from an empty one in equals().
+                dtItem.setExtendedDataTypesIds(copyOrNull(dtNode.getExtendedDataTypesIds()));
+                dtItem.setImplementedDataTypesIds(copyOrNull(dtNode.getImplementedDataTypesIds()));
+                dtItem.setDatatypeReferencesIds(copyOrNull(dtNode.getDatatypeReferencesIds()));
             }
         }
 
         repository.init();
         return finalizeCodeModel(node, repository);
-    }
-
-    private void linkDomainHierarchy(CodeItem parent, CodeItem child) {
-        if (parent instanceof CodeModule pm)
-            pm.addContent(child);
-        else if (parent instanceof ClassUnit pc)
-            pc.addContent(child);
-        else if (parent instanceof InterfaceUnit pi)
-            pi.addContent(child);
-
-        if (child instanceof CodeModule cm && parent instanceof CodeModule pm)
-            cm.setParent(pm);
-        else if (child instanceof Datatype dt) {
-            if (parent instanceof CodeCompilationUnit cu)
-                dt.setCompilationUnit(cu);
-            else if (parent instanceof Datatype pd)
-                dt.setParentDatatype(pd);
-        }
     }
 
     private CodeItem instantiateDomainObject(CodeItemNode node, CodeItemRepository repo) {
@@ -144,40 +222,14 @@ public class CodeModelMapper {
         }
     }
 
-    private CodeItemNode mapHierarchyToNode(CodeItem item, Map<String, CodeItemNode> cache) {
-        if (cache.containsKey(item.getId()))
-            return cache.get(item.getId());
-        CodeItemNode node = NODE_FACTORIES.entrySet()
-                .stream()
-                .filter(e -> e.getKey().isInstance(item))
-                .map(e -> e.getValue().apply(item, item.getId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported: " + item.getClass()));
-
-        cache.put(item.getId(), node);
-        item.getContent().forEach(child -> node.addContent(mapHierarchyToNode(child, cache)));
-        return node;
-    }
-
     private void linkTypeReferencesToNode(Datatype dt, DatatypeNode node, Map<String, CodeItemNode> cache) {
         dt.getExtendedTypes().forEach(t -> node.addExtendedType((DatatypeNode) cache.get(t.getId())));
         dt.getImplementedTypes().forEach(t -> node.addImplementedType((DatatypeNode) cache.get(t.getId())));
         dt.getDatatypeReferences().forEach(t -> node.addReferencedDatatype((DatatypeNode) cache.get(t.getId())));
     }
 
-    private void linkDomainTypeReferences(Datatype domain, DatatypeNode node, CodeItemRepository repo) {
-        domain.setExtendedTypes(mapNodesToTypes(node.getExtendedTypes(), repo));
-        domain.setImplementedTypes(mapNodesToTypes(node.getImplementedTypes(), repo));
-        domain.setDatatypeReference(mapNodesToTypes(node.getReferencedDatatypes(), repo));
-    }
-
-    private SortedSet<Datatype> mapNodesToTypes(Set<DatatypeNode> nodes, CodeItemRepository repo) {
-        SortedSet<Datatype> result = new TreeSet<>();
-        for (DatatypeNode n : nodes) {
-            if (repo.getCodeItem(n.getArdocoId()) instanceof Datatype dt)
-                result.add(dt);
-        }
-        return result;
+    private static List<String> copyOrNull(List<String> ids) {
+        return ids == null ? null : new ArrayList<>(ids);
     }
 
     private boolean isRootInModel(CodeItem item, Set<String> modelContent) {

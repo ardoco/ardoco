@@ -23,6 +23,12 @@ public interface TextNodeRepository extends Neo4jRepository<TextNode, String> {
             """)
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
-    @Query("MATCH (t:Text{ardocoId: $id}) RETURN t")
-    Optional<TextNode> findByArdocoId(@Param("id") String id);
+    /**
+     * Loads a {@link TextNode} together with its related graph (sentences, words, phrases, ...).
+     *
+     * <p>Uses a derived finder instead of a bare {@code MATCH (t) RETURN t} query on purpose: a custom query returning only the root node does not hydrate the
+     * {@code HAS_SENTENCE} (and transitive) relationships, so {@code getSentences()} would come back empty. The derived finder lets Spring Data Neo4j generate
+     * the full relationship-hydrating query.
+     */
+    Optional<TextNode> findByArdocoId(String ardocoId);
 }

@@ -15,6 +15,22 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
 
     private String name;
 
+    /**
+     * The id of the parent {@code CodeModule}, if any. Stored explicitly (rather than derived from the containment hierarchy) because the domain model represents
+     * parent links and content lists independently: an item can appear in another item's content list while its own parent id is {@code null}. Deriving the parent
+     * from containment would fabricate parent links that were not present in the original model and break round-trip equality.
+     */
+    private String parentModuleId;
+
+    /**
+     * The ordered ids of this item's content, stored verbatim as a node property.
+     *
+     * <p>This duplicates the {@code CONTAINS_CODE_ITEM} relationship below on purpose: the relationship is kept for graph queries/visualization, but Neo4j
+     * relationships are unordered whereas the domain content list is order-sensitive ({@code CodeModule}/{@code ClassUnit#equals} compare the content lists in
+     * order). The verbatim id list here is the source of truth used to rebuild the domain content in its original order.
+     */
+    private List<String> contentIds;
+
     @Relationship(type = "CONTAINS_CODE_ITEM", direction = Relationship.Direction.OUTGOING)
     private List<CodeItemNode> content = new ArrayList<>();
 
@@ -37,6 +53,22 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
 
     public String getName() {
         return name;
+    }
+
+    public String getParentModuleId() {
+        return parentModuleId;
+    }
+
+    public void setParentModuleId(String parentModuleId) {
+        this.parentModuleId = parentModuleId;
+    }
+
+    public List<String> getContentIds() {
+        return contentIds;
+    }
+
+    public void setContentIds(List<String> contentIds) {
+        this.contentIds = contentIds;
     }
 
     public String getArdocoId() {

@@ -1,10 +1,9 @@
 /* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
@@ -50,7 +49,7 @@ public class NameTypeInformant extends Informant {
 
         // prepare models to not have to call getModel multiple times
         var metamodels = modelStatesData.getMetamodels();
-        Map<Metamodel, Model> metamodelModelMap = new HashMap<>();
+        MutableSortedMap<Metamodel, Model> metamodelModelMap = SortedMaps.mutable.empty();
         for (var metamodel : metamodels) {
             var model = modelStatesData.getModel(metamodel);
             if (model != null) {
@@ -63,12 +62,11 @@ public class NameTypeInformant extends Informant {
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy textStateStrategy, Map<Metamodel, Model> metamodelModelMap,
+    private void exec(TextState textState, TextStateStrategy textStateStrategy, MutableSortedMap<Metamodel, Model> metamodelModelMap,
             RecommendationStates recommendationStates, Word word) {
 
-        for (var modelEntry : metamodelModelMap.entrySet()) {
-            Metamodel metamodel = modelEntry.getKey();
-            var model = modelEntry.getValue();
+        for (Metamodel metamodel : metamodelModelMap.keysView()) {
+            var model = metamodelModelMap.get(metamodel);
             if (model == null) {
                 continue;
             }
