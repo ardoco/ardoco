@@ -16,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ClassArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.DatafileArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -67,7 +68,8 @@ public class Artemis extends ArdocoRunner {
     private void definePipeline(@Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm) {
         var dataRepository = getArdoco().getDataRepository();
-        var strategies = List.of(new ComponentArtemisNerStrategy(), new ClassArtemisNerStrategy()); //further strategies can be added here
+        var strategies = List.of(new ComponentArtemisNerStrategy(), new ClassArtemisNerStrategy(),
+                new DatafileArtemisNerStrategy()); //further strategies can be added here
 
         getArdoco().addPipelineStep(ArtemisPreprocessing.get(additionalConfigs, dataRepository,
                 architectureConfiguration != null ? architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS) : null,
