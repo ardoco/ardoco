@@ -1,9 +1,9 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import org.antlr.v4.runtime.Token;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.PythonLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.CommentExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3.Python3ElementStorageRegistry;
 
@@ -20,7 +20,7 @@ public class Python3CommentExtractor extends CommentExtractor {
 
     @Override
     protected boolean isComment(Token token) {
-        return token.getType() == Python3Lexer.COMMENT || token.getType() == Python3Lexer.STRING;
+        return token.getType() == PythonLexer.COMMENT || token.getType() == PythonLexer.STRING;
     }
 
     @Override
