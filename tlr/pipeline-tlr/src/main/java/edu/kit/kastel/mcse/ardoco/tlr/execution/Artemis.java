@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
@@ -57,7 +58,8 @@ public class Artemis extends ArdocoRunner {
      */
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm) {
-        if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration.metamodel() != null)) {
+        if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration
+                .metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
         DataRepositoryHelper.putInputText(getArdoco().getDataRepository(), CommonUtilities.readInputText(inputText));
@@ -68,12 +70,11 @@ public class Artemis extends ArdocoRunner {
     private void definePipeline(@Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm) {
         var dataRepository = getArdoco().getDataRepository();
-        var strategies = List.of(new ComponentArtemisNerStrategy(), new ClassArtemisNerStrategy(),
-                new DatafileArtemisNerStrategy()); //further strategies can be added here
+        var strategies = List.of(new ComponentArtemisNerStrategy(), new ClassArtemisNerStrategy(), new DatafileArtemisNerStrategy()); //further strategies can be added here
 
-        getArdoco().addPipelineStep(ArtemisPreprocessing.get(additionalConfigs, dataRepository,
-                architectureConfiguration != null ? architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS) : null,
-                codeConfiguration != null ? codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) : null));
+        getArdoco().addPipelineStep(ArtemisPreprocessing.get(additionalConfigs, dataRepository, architectureConfiguration != null ?
+                architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS) :
+                null, codeConfiguration != null ? codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS) : null));
 
         getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llm, strategies));
 

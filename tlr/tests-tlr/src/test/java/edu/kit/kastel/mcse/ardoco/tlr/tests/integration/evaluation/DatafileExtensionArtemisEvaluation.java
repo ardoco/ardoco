@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.io.File;
@@ -38,8 +39,8 @@ public class DatafileExtensionArtemisEvaluation extends DatafileArtemisEvaluatio
     }
 
     private List<Pair<Integer, String>> getExpectedExtendedTraceLinks() {
-        File file = EvaluationHelper.loadFileFromResources(
-                "/datafile-artemis-text-extensions/" + project.getName().toLowerCase() + "/goldstandard-extension-" + extensionNumber + ".csv");
+        File file = EvaluationHelper.loadFileFromResources("/datafile-artemis-text-extensions/" + project.getName()
+                .toLowerCase() + "/goldstandard-extension-" + extensionNumber + ".csv");
 
         List<String> goldLinks;
         try {

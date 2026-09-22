@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.io.File;
@@ -86,8 +87,9 @@ public class DatafileArtemisInconsistencyEvaluator implements ArtemisInconsisten
     }
 
     private List<String> getExpectedExtendedTraceLinks(DatafileArtemisInconsistencyTask project, int runNumber) {
-        File file = EvaluationHelper.loadFileFromResources(
-                "/datafile-artemis-text-extensions/" + project.getEvaluationProject().name().toLowerCase() + "/goldstandard-extension-" + runNumber + ".csv");
+        File file = EvaluationHelper.loadFileFromResources("/datafile-artemis-text-extensions/" + project.getEvaluationProject()
+                .name()
+                .toLowerCase() + "/goldstandard-extension-" + runNumber + ".csv");
 
         List<String> goldLinks;
         try {

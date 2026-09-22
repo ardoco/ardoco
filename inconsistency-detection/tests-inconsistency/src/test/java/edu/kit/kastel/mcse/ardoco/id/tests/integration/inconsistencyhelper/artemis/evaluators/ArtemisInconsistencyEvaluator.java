@@ -1,12 +1,12 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.util.Map;
 
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
-
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 

@@ -1,12 +1,12 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
-
 import org.jspecify.annotations.NonNull;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.ClassArtemisConnectionInformant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;

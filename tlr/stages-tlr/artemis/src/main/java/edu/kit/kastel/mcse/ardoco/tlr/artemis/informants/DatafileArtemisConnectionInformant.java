@@ -1,14 +1,14 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
-
 import org.eclipse.collections.api.factory.Lists;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -19,8 +20,8 @@ public class ArtemisTeamInconsistencyInformant extends ArtemisInconsistencyInfor
         for (var namedEntity : traceabilityState.getUnlinkedNamedEntities()) {
             for (var occurrence : namedEntity.getOccurrences()) {
                 var sentenceNumber = occurrence.getSentenceNumber();
-                inconsistencyState.addInconsistency(
-                        new TextEntityAbsentFromModelInconsistency(namedEntity.getName(), sentenceNumber, DEFAULT_PROBABILITY, null));
+                inconsistencyState.addInconsistency(new TextEntityAbsentFromModelInconsistency(namedEntity.getName(), sentenceNumber, DEFAULT_PROBABILITY,
+                        null));
             }
         }
     }

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;

@@ -1,9 +1,8 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 
 import java.io.File;
 import java.util.List;
-
-import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
@@ -40,8 +39,9 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
         outputDirectory.mkdirs();
 
         ModelFormat architectureModelFormat = ModelFormat.PCM;
-        ArchitectureConfiguration architectureConfiguration = new ArchitectureConfiguration(
-                project.getTlrTask().getEvaluationProject().getArchitectureModel(architectureModelFormat), architectureModelFormat);
+        ArchitectureConfiguration architectureConfiguration = new ArchitectureConfiguration(project.getTlrTask()
+                .getEvaluationProject()
+                .getArchitectureModel(architectureModelFormat), architectureModelFormat);
 
         return ArtemisEvaluationRunnerFactory.createRunner(projectName, documentationFile, architectureConfiguration, null, SortedMaps.immutable.empty(),
                 outputDirectory, llmForNer, List.of(strategy));

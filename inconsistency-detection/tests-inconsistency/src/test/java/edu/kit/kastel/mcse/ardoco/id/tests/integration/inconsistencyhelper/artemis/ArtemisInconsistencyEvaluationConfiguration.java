@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis;
 
 import java.util.List;

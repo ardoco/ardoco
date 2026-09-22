@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.execution.runner;
 
 import java.io.File;
@@ -35,7 +36,8 @@ public class ArtemisInconsistencyDetection extends ArdocoRunner {
 
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm, List<ArtemisNerStrategy> strategies) {
-        if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration.metamodel() != null)) {
+        if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration
+                .metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
 

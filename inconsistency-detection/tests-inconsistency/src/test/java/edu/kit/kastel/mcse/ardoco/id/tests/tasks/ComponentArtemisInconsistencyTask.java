@@ -20,31 +20,31 @@ public enum ComponentArtemisInconsistencyTask implements ArtemisInconsistencyTas
     MEDIASTORE(EvaluationProject.MEDIASTORE, //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016_UME.csv", //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv", //
-            new ExpectedResults(.127, .793, .22, .685, .227, .679) //
+            new ExpectedResults(.127, .793, .22, .685, .227, .679)//
     ), //
 
     TEASTORE(EvaluationProject.TEASTORE, //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020_UME.csv", //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020.csv", //
-            new ExpectedResults(.95, .703, .808, .98, .808, .998) //
+            new ExpectedResults(.95, .703, .808, .98, .808, .998)//
     ), //
 
     TEAMMATES(EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
-            new ExpectedResults(.147, .745, .245, .852, .287, .856) //
+            new ExpectedResults(.147, .745, .245, .852, .287, .856)//
     ), //
 
     BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
-            new ExpectedResults(.685, .403, .510, .954, .507, .988) //
+            new ExpectedResults(.685, .403, .510, .954, .507, .988)//
     ), //
 
     JABREF(EvaluationProject.JABREF, //
             "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
-            new ExpectedResults(1.0, .444, .615, .871, .617, 1.0) //
+            new ExpectedResults(1.0, .444, .615, .871, .617, 1.0)//
     );
 
     private final EvaluationProject project;

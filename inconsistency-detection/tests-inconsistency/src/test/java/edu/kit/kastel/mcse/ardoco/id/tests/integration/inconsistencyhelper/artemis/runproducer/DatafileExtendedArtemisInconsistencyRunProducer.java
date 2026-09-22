@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class DatafileExtendedArtemisInconsistencyRunProducer implements ArtemisI
 
     private DataRepository runDatafileExtendedTeam(DatafileArtemisInconsistencyTask project, int runIndex) {
         File sadFile = new File(Objects.requireNonNull(this.getClass()
-                        .getResource("/datafile-artemis-text-extensions/" + project.getEvaluationProject().name().toLowerCase() + "/extension-" + runIndex + ".txt"))
+                .getResource("/datafile-artemis-text-extensions/" + project.getEvaluationProject().name().toLowerCase() + "/extension-" + runIndex + ".txt"))
                 .getFile());
         File outputFile = new File("target/testout/artemis-id-runs/" + "datafile-extended" + "/" + project.getEvaluationProject().name() + "-" + runIndex);
 

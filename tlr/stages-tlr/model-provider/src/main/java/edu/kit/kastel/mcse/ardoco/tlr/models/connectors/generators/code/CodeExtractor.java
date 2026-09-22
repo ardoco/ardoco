@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +22,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel.CodeModelDto;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;

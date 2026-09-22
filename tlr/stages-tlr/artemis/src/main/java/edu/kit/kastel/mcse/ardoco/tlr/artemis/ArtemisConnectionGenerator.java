@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.artemis;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class ArtemisConnectionGenerator extends AbstractExecutionStage {
     private final List<ArtemisNerStrategy> strategies;
 
     public ArtemisConnectionGenerator(DataRepository dataRepository, List<ArtemisNerStrategy> strategies) {
-        super(strategies.stream().map(strategy -> new ArtemisConnectionAgent(dataRepository, strategy)).toList(),
-                ArtemisConnectionGenerator.class.getSimpleName(), dataRepository);
+        super(strategies.stream().map(strategy -> new ArtemisConnectionAgent(dataRepository, strategy)).toList(), ArtemisConnectionGenerator.class
+                .getSimpleName(), dataRepository);
         this.strategies = List.copyOf(strategies);
     }
 

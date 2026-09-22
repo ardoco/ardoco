@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer;
 
 import java.io.File;
@@ -24,7 +25,6 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.BaseEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackClassesRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
-//import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassSadCodeTlrTask;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
@@ -114,8 +114,8 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
 
         var candidateClasses = getClassesFromTlrGoldStandard(project);
         if (candidateClasses.size() < numberOfHeldBackClassesPerRun) {
-            throw new IllegalArgumentException(
-                    "Cannot hold back " + numberOfHeldBackClassesPerRun + " classes because only " + candidateClasses.size() + " classes occur in the TLR gold standard");
+            throw new IllegalArgumentException("Cannot hold back " + numberOfHeldBackClassesPerRun + " classes because only " + candidateClasses
+                    .size() + " classes occur in the TLR gold standard");
         }
 
         for (int runIndex = 0; runIndex < numberOfRuns; runIndex++) {
@@ -146,8 +146,8 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
 
                 DataRepositoryHelper.putInputText(dataRepository, text);
 
-                pipelineSteps.add(ArtemisPreprocessing.get(additionalConfigs.toImmutable(), dataRepository, null,
-                        Objects.requireNonNull(codeConfiguration).withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
+                pipelineSteps.add(ArtemisPreprocessing.get(additionalConfigs.toImmutable(), dataRepository, null, Objects.requireNonNull(codeConfiguration)
+                        .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
                 pipelineSteps.add(ArtemisNer.get(additionalConfigs.toImmutable(), dataRepository, llm, strategies));
                 pipelineSteps.add(new HoldbackClassArtemisConnectionInformant(dataRepository, strategies.getFirst(), heldBackClassNames));
                 pipelineSteps.add(ArtemisPostprocessing.get(additionalConfigs.toImmutable(), dataRepository));

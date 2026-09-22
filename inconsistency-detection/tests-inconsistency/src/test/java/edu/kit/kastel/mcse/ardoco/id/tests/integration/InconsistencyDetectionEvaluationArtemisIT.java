@@ -6,19 +6,6 @@ import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelpe
 
 import java.util.Map;
 
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ClassArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ComponentArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.DatafileArtemisInconsistencyEvaluator;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ArtemisInconsistencyRunProducer;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ClassHoldBackArtemisInconsistencyRunProducer;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ComponentHoldBackArtemisInconsistencyRunProducer;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.DatafileExtendedArtemisInconsistencyRunProducer;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.SingleArtemisInconsistencyRunProducer;
-
-import edu.kit.kastel.mcse.ardoco.id.tests.tasks.DatafileArtemisInconsistencyTask;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +19,20 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.*;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ClassArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ComponentArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.DatafileArtemisInconsistencyEvaluator;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ClassHoldBackArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.ComponentHoldBackArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.DatafileExtendedArtemisInconsistencyRunProducer;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.runproducer.SingleArtemisInconsistencyRunProducer;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ComponentArtemisInconsistencyTask;
+import edu.kit.kastel.mcse.ardoco.id.tests.tasks.DatafileArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
