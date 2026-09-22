@@ -1,9 +1,10 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.data;
 
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public interface PipelineStepData extends Serializable {
      *
      * @return JSON string representation of this data or null if serialization fails.
      */
-    default String serialize() {
+    default @Nullable String serialize() {
         var oom = JsonHandling.createObjectMapper();
         try {
             return oom.writeValueAsString(this);
@@ -55,7 +56,7 @@ public interface PipelineStepData extends Serializable {
      * @param data JSON string to deserialize
      * @return Deserialized instance of this data type or null if deserialization fails.
      */
-    default PipelineStepData deserialize(String data) {
+    default @Nullable PipelineStepData deserialize(String data) {
         var oom = JsonHandling.createObjectMapper();
         try {
             return oom.readValue(data, this.getClass());

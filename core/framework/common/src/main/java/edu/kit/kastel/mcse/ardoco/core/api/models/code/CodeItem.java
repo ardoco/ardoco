@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -31,7 +33,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
 
     @JsonIgnore
     protected CodeItemRepository codeItemRepository;
-    protected String comment;
+    protected @Nullable String comment;
 
     CodeItem() {
         // Jackson
@@ -121,7 +123,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
         return new TreeSet<>();
     }
 
-    public String getComment() {
+    public @Nullable String getComment() {
         return this.comment;
     }
 

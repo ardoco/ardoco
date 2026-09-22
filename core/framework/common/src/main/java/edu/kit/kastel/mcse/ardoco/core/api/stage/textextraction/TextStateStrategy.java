@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
@@ -8,6 +8,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
@@ -61,7 +62,7 @@ public interface TextStateStrategy {
      * @return the new or merged mapping
      */
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution, ImmutableList<Word> referenceWords,
-            ImmutableList<String> surfaceForms, String reference);
+            ImmutableList<String> surfaceForms, @Nullable String reference);
 
     /**
      * Adds a noun mapping of the specified kind to the state that contains the specified words, surface forms, etc.
@@ -76,7 +77,7 @@ public interface TextStateStrategy {
      * @return the new or merged mapping
      */
     NounMapping addNounMapping(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability, ImmutableList<Word> referenceWords,
-            ImmutableList<String> surfaceForms, String reference);
+            ImmutableList<String> surfaceForms, @Nullable String reference);
 
     /**
      * Merges two noun mappings into a new mapping of the given kind, probability and claimant without adding it to the state.
@@ -90,8 +91,8 @@ public interface TextStateStrategy {
      * @param probability       the probability
      * @return the merged noun mapping
      */
-    NounMapping mergeNounMappingsStateless(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords, String reference,
-            MappingKind mappingKind, Claimant claimant, double probability);
+    NounMapping mergeNounMappingsStateless(NounMapping firstNounMapping, NounMapping secondNounMapping, @Nullable ImmutableList<Word> referenceWords,
+            @Nullable String reference, MappingKind mappingKind, Claimant claimant, double probability);
 
     /**
      * Merges two noun mappings into a new mapping of the given kind, probability and claimant and adds it to the state.
@@ -105,8 +106,8 @@ public interface TextStateStrategy {
      * @param probability       the probability
      * @return the merged noun mapping
      */
-    NounMapping mergeNounMappings(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords, String reference,
-            MappingKind mappingKind, Claimant claimant, double probability);
+    NounMapping mergeNounMappings(NounMapping firstNounMapping, NounMapping secondNounMapping, @Nullable ImmutableList<Word> referenceWords,
+            @Nullable String reference, MappingKind mappingKind, Claimant claimant, double probability);
 
     /**
      * Calculates a joined reference for a set of reference words.

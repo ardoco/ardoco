@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.tracelink;
 
 import java.io.Serial;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public final class MultiHopTransitiveTraceLink<A extends Entity, B extends Entit
     }
 
     public static <A extends Entity, B extends Entity> Optional<MultiHopTransitiveTraceLink<A, B>> createTransitiveTraceLink(TraceLink<A, ?> firstTraceLink,
-            TraceLink<?, B> lastTraceLink, List<? extends TraceLink<?, ?>> intermediateLinks) {
+            TraceLink<?, B> lastTraceLink, @Nullable List<? extends TraceLink<?, ?>> intermediateLinks) {
 
         if (intermediateLinks == null || intermediateLinks.isEmpty()) {
             throw new IllegalArgumentException("Please use " + TransitiveTraceLink.class.getSimpleName());

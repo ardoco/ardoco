@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.io.Serial;
@@ -6,6 +6,8 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
@@ -47,7 +49,7 @@ public final class ModelStates implements PipelineStepData {
      * @param id the id
      * @return the corresponding {@link Model}
      */
-    public Model getModel(Metamodel id) {
+    public @Nullable Model getModel(Metamodel id) {
         return this.models.get(id);
     }
 

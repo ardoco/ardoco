@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.MutableSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
@@ -110,7 +111,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         throw new IllegalStateException("Could not find model element " + modelElementId);
     }
 
-    private CodeModelWithCompilationUnitsAndPackages findCoarseGrainedCodeModel(ModelStates models) {
+    private @Nullable CodeModelWithCompilationUnitsAndPackages findCoarseGrainedCodeModel(ModelStates models) {
         for (var metamodel : models.getMetamodels()) {
             var model = models.getModel(metamodel);
             if (model instanceof CodeModelWithCompilationUnitsAndPackages codeModel) {

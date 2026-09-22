@@ -1,9 +1,11 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -110,7 +112,7 @@ public final class TraceLinkGenerator {
         return Filter.getFilterArchNode(maxCompInterface, new ProvidedInterfaceCorrespondence().getNode(maxCompInterface));
     }
 
-    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(Node root, ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(@Nullable Node root, @Nullable ArchitectureModel archModel, @Nullable CodeModel codeModel) {
         if (archModel == null || codeModel == null) {
             return new java.util.LinkedHashSet<>();
         }
@@ -122,7 +124,7 @@ public final class TraceLinkGenerator {
         return computation.getTraceLinks();
     }
 
-    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(ArchitectureModel archModel, CodeModel codeModel) {
+    public static Set<ArchitectureCodeTraceLink> generateTraceLinks(@Nullable ArchitectureModel archModel, @Nullable CodeModel codeModel) {
         return generateTraceLinks(getRoot(), archModel, codeModel);
     }
 }

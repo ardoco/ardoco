@@ -1,10 +1,11 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.antlr.v4.runtime.*;
+import org.jspecify.annotations.Nullable;
 
 abstract class Python3LexerBase extends Lexer {
     // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
@@ -14,7 +15,7 @@ abstract class Python3LexerBase extends Lexer {
     // The amount of opened braces, brackets and parenthesis.
     private int opened = 0;
     // The most recently produced token.
-    private Token lastToken = null;
+    private @Nullable Token lastToken = null;
 
     protected Python3LexerBase(CharStream input) {
         super(input);
