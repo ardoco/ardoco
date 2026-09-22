@@ -44,7 +44,6 @@ import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
-import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 
@@ -88,7 +87,7 @@ class InconsistencyDetectionEvaluationIT {
         var results = this.calculateEvaluationResults(project, runs);
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var microAverage = metrics.calculateAverages(results, null).stream().filter(it -> it.getType() == AggregationType.MICRO_AVERAGE).findFirst().get();
+        var microAverage = metrics.calculateAverages(results, null).getMicroAverage();
 
         this.logResultsMissingModelInconsistency(project, microAverage, project.getExpectedMissingModelInconsistencyResults());
         this.checkResults(microAverage, project.getExpectedMissingModelInconsistencyResults());
@@ -124,11 +123,7 @@ class InconsistencyDetectionEvaluationIT {
 
         var metrics = ClassificationMetricsCalculator.getInstance();
 
-        var weightedResults = metrics.calculateAverages(results, null)
-                .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
-                .findFirst()
-                .get();
+        var weightedResults = metrics.calculateAverages(results, null).getWeightedAverage();
 
         if (InconsistencyDetectionEvaluationIT.logger.isInfoEnabled()) {
             String name = project.name() + " missing model inconsistency";
@@ -278,11 +273,7 @@ class InconsistencyDetectionEvaluationIT {
         StringBuilder outputBuilder = new StringBuilder();
         outputBuilder.append("###").append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR);
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResults = metrics.calculateAverages(results, null)
-                .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
-                .findFirst()
-                .get();
+        var weightedAverageResults = metrics.calculateAverages(results, null).getWeightedAverage();
         var resultString = createResultLogString("### OVERALL RESULTS ###" + InconsistencyDetectionEvaluationIT.LINE_SEPARATOR + "Weighted" + " Average",
                 weightedAverageResults);
         outputBuilder.append(resultString);
