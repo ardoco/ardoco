@@ -31,7 +31,7 @@ public final class AllLanguagesExtractor extends CodeExtractor {
         super(codeItemRepository, path, metamodelToExtract);
         this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), //
                 ProgrammingLanguage.SHELL, new ShellExtractor(codeItemRepository, path, metamodelToExtract), //
-                ProgrammingLanguage.PYTHON3, new Python3Extractor(codeItemRepository, path), //
+                ProgrammingLanguage.PYTHON, new Python3Extractor(codeItemRepository, path), //
                 ProgrammingLanguage.CPP, new CppExtractor(codeItemRepository, path));
     }
 

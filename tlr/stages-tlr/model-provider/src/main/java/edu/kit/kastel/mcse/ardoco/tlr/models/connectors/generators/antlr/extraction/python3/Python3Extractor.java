@@ -13,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class Python3Extractor extends AntlrExtractor {
 
     public Python3Extractor(CodeItemRepository repository, String path) {
-        super(repository, path, ProgrammingLanguage.PYTHON3);
+        super(repository, path, ProgrammingLanguage.PYTHON);
         Python3ElementStorageRegistry elementManager = new Python3ElementStorageRegistry();
         this.mapper = new Python3ModelMapper(repository, elementManager);
         this.elementExtractor = new Python3ElementExtractor(elementManager);
