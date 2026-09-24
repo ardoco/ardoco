@@ -32,17 +32,17 @@
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>artemis</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>code-traceability</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>connection-generator</artifactId>
-      <version>${revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.github.ardoco.tlr</groupId>
-      <artifactId>connection-generator-ner</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>

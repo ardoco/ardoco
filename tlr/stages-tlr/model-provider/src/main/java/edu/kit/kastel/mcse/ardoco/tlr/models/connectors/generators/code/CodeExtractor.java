@@ -1,10 +1,15 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +22,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel.CodeModelDto;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
@@ -36,6 +44,38 @@ public abstract class CodeExtractor extends Extractor {
 
     @Override
     public abstract CodeModel extractModel();
+
+    protected List<CodeFile> extractCodeFiles(SortedSet<CodeItem> codeEndpoints) { //TODO in the future this method should be used by all Extractors (not only the AllLanguagesExtractor)
+        //code files with reference to compilationUnit:
+        List<CodeFile> codeFiles = new ArrayList<>();
+        for (CodeItem codeEndpoint : codeEndpoints) {
+            for (CodeCompilationUnit compilationUnit : codeEndpoint.getAllCompilationUnits()) {
+                codeFiles.add(CodeFile.fromRelativePath(compilationUnit.getPath(), compilationUnit));
+            }
+        }
+
+        // code files without reference to compilationUnit:
+        Path rootPath = Path.of(this.path).toAbsolutePath().normalize();
+        SortedSet<String> knownCompilationUnitPaths = new TreeSet<>();
+        for (CodeItem codeEndpoint : codeEndpoints) {
+            for (CodeCompilationUnit compilationUnit : codeEndpoint.getAllCompilationUnits()) {
+                knownCompilationUnitPaths.add(compilationUnit.getPath());
+            }
+        }
+
+        var predictions = fileTypePredictor.predictFileTypesFromFolderRecursively(rootPath);
+        for (var prediction : predictions.entrySet()) {
+            Path absolutePath = prediction.getKey().toAbsolutePath().normalize();
+            String relativePath = rootPath.relativize(absolutePath).toString().replace('\\', '/');
+            if (knownCompilationUnitPaths.contains(relativePath)) {
+                continue;
+            }
+
+            codeFiles.add(CodeFile.fromRelativePath(relativePath));
+        }
+
+        return codeFiles;
+    }
 
     public void writeOutCodeModel(CodeModel codeModel, File outputFile) {
         ObjectMapper objectMapper = createObjectMapper();

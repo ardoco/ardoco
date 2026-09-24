@@ -1,8 +1,10 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.io.File;
 import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
@@ -10,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.AllLanguagesExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtractor;
 
-public record CodeConfiguration(File code, CodeConfigurationType type, Metamodel metamodel) {
+public record CodeConfiguration(File code, CodeConfigurationType type, @Nullable Metamodel metamodel) {
 
     public CodeConfiguration(File code, CodeConfigurationType type) {
         this(code, type, null);

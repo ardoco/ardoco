@@ -44,7 +44,42 @@ public enum EvaluationProject {
             "/benchmark/jabref/text_2021/jabref.txt", //
             "https://github.com/ardoco/jabref.git", //
             "6269698cae437610ec79c38e6dd611eef7e88afe", //
-            "/benchmark/jabref/model_2023/code/codeModel.acm");
+            "/benchmark/jabref/model_2023/code/codeModel.acm"), //
+
+    ZENGARDEN(//
+            "/benchmark/zengarden/notAvailable", //
+            "/benchmark/zengarden/text_2014/zengarden.txt", //
+            "todo_add_as_ardoco_repo", //
+            "todo_add_code_commit", //
+            "/benchmark/zengarden/model_2014/code/codeModel.acm"),//
+
+    SCONS(//
+            "/benchmark/scons/notAvailable", //
+            "/benchmark/scons/text_2024/scons.txt", //
+            "todo_add_as_ardoco_repo", //
+            "todo_add_code_commit", //
+            "/benchmark/scons/model_2024/code/codeModel.acm"),//
+
+    BEETS(//
+            "/benchmark/beets/notAvailable", //
+            "/benchmark/beets/text_2013/beets.txt", //
+            "todo_add_as_ardoco_repo", //
+            "todo_add_code_commit", //
+            "/benchmark/beets/model_2013/code/codeModel.acm"),//
+
+    ROD(//
+            "/benchmark/rod/notAvailable", //
+            "/benchmark/rod/text_2013/rod.txt", //
+            "todo_add_as_ardoco_repo", //
+            "todo_add_code_commit", //
+            "/benchmark/rod/model_2013/code/codeModel.acm"),//
+
+    CORONAWARNAPP(//
+            "/benchmark/coronawarnapp/notAvailable", //
+            "/benchmark/coronawarnapp/text_2023/coronawarnapp.txt", //
+            "todo_add_as_ardoco_repo", //
+            "todo_add_code_commit", //
+            "/benchmark/coronawarnapp/model_2023/code/codeModel.acm");//
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
@@ -75,8 +110,7 @@ public enum EvaluationProject {
     }
 
     /**
-     * Get the code model for this project. The code will be cloned from
-     * the repository and the folder will be returned.
+     * Get the code model for this project. The code will be cloned from the repository and the folder will be returned.
      *
      * @return the folder containing the code
      * @see #getCodeDirectoryWithoutCloning()
@@ -100,7 +134,7 @@ public enum EvaluationProject {
 
     /**
      * Get the location where the code for this project will be stored.
-     * 
+     *
      * @return the location of the code
      * @see #getCodeDirectory()
      */

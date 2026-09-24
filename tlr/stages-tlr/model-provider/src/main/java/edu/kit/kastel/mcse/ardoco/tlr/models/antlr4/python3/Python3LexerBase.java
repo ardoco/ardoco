@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
 
 import java.util.ArrayDeque;
@@ -22,6 +22,9 @@ abstract class Python3LexerBase extends Lexer {
 
     @Override
     public void emit(Token t) {
+        if (t.getType() == Python3Lexer.COMMENT) {
+            ((WritableToken) t).setChannel(HIDDEN);
+        }
         super.setToken(t);
         tokens.offer(t);
     }

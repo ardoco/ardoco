@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
@@ -10,9 +11,12 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisConnectionGenerator;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
@@ -64,8 +68,9 @@ public class ArtemisInExArch extends ArdocoRunner {
                 documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 
-        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
-        this.getArdoco().addPipelineStep(nerConnectionGenerator);
+        List<ArtemisNerStrategy> artemisStrategies = List.of(new ComponentArtemisNerStrategy());
+        this.getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llmForNer, artemisStrategies));
+        this.getArdoco().addPipelineStep(ArtemisConnectionGenerator.get(additionalConfigs, dataRepository, artemisStrategies));
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
 

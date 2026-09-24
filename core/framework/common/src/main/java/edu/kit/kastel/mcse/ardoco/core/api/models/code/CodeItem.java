@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -15,8 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.CodeEntity;
 
 /**
- * Abstract base class for items in the code model.
- * Provides methods to access content and relationships between code elements.
+ * Abstract base class for items in the code model. Provides methods to access content and relationships between code elements.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({ //

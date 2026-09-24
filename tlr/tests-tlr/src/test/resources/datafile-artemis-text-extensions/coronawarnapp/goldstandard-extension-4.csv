@@ -1,0 +1,32 @@
+sentenceID,file
+370,services/distribution/src/main/resources/application-demo.yaml
+371,services/distribution/src/main/resources/application-demo.yaml
+372,services/distribution/src/main/resources/main-config/v2/risk-calculation-parameters-1.15.yaml
+373,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/risk_calculation_parameters.proto
+375,common/shared/src/test/resources/validation_schema.json
+376,services/distribution/src/main/resources/dgc/dcc-validation-service-allowlist-rule.json
+378,services/distribution/src/main/resources/dgc/bn_rule_1.json
+379,services/distribution/src/test/resources/application-allow-list-invalid.yaml
+381,services/callback/src/test/resources/application-callback-change-certificate-cn.yaml
+382,services/upload/src/test/resources/testprivatekey.pem
+383,runconfigs/intellij/submission [spring-boot_run...].run.xml
+384,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/risk_calculation_parameters.proto
+384,common/shared/src/test/resources/validation_schema.json
+384,runconfigs/intellij/submission [spring-boot_run...].run.xml
+384,services/callback/src/test/resources/application-callback-change-certificate-cn.yaml
+384,services/distribution/src/main/resources/application-demo.yaml
+384,services/distribution/src/main/resources/dgc/bn_rule_1.json
+384,services/distribution/src/main/resources/dgc/dcc-validation-service-allowlist-rule.json
+384,services/distribution/src/main/resources/main-config/v2/risk-calculation-parameters-1.15.yaml
+384,services/distribution/src/test/resources/application-allow-list-invalid.yaml
+384,services/upload/src/test/resources/testprivatekey.pem
+385,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/risk_calculation_parameters.proto
+385,common/shared/src/test/resources/validation_schema.json
+385,runconfigs/intellij/submission [spring-boot_run...].run.xml
+385,services/callback/src/test/resources/application-callback-change-certificate-cn.yaml
+385,services/distribution/src/main/resources/application-demo.yaml
+385,services/distribution/src/main/resources/dgc/bn_rule_1.json
+385,services/distribution/src/main/resources/dgc/dcc-validation-service-allowlist-rule.json
+385,services/distribution/src/main/resources/main-config/v2/risk-calculation-parameters-1.15.yaml
+385,services/distribution/src/test/resources/application-allow-list-invalid.yaml
+385,services/upload/src/test/resources/testprivatekey.pem
