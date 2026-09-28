@@ -70,7 +70,8 @@ public final class ArtemisInconsistencyEvaluationWriter {
         }
 
         var weightedAverageResult = ClassificationMetricsCalculator.getInstance()
-                .calculateAverages(results, null).asList()
+                .calculateAverages(results, null)
+                .asList()
                 .stream()
                 .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()
