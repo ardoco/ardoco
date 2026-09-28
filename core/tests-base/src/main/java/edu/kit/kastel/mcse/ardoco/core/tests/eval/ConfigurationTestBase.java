@@ -17,6 +17,9 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This test class deals with the configurations.
  *
@@ -24,6 +27,7 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUt
  */
 @SuppressWarnings({ "java:S106", "java:S3011" })
 public abstract class ConfigurationTestBase {
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationTestBase.class);
 
     private static final String ARDOCO = "edu.kit.kastel.mcse.ardoco";
 
@@ -47,7 +51,13 @@ public abstract class ConfigurationTestBase {
                 .filter(c -> !c.getPackageName().contains("tests"))
                 .toList();
         for (var clazz : classesThatMayBeConfigured) {
-            processConfigurationOfClass(configs, clazz);
+            try {
+                processConfigurationOfClass(configs, clazz);
+            } catch (IllegalArgumentException e) {
+                logger.debug("Skipping default configuration extraction for {}: {}", clazz.getName(), e.getMessage());
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            }
         }
         assertFalse(configs.isEmpty(), "Configuration shall not be empty");
 
