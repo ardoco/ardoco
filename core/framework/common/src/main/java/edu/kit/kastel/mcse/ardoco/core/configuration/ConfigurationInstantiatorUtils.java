@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.configuration;
 
 import java.lang.reflect.Constructor;
@@ -64,8 +64,8 @@ public final class ConfigurationInstantiatorUtils {
             return result;
         }
 
-        throw new IllegalArgumentException("Cannot create default configuration instance for " + clazz.getName()
-                + " because no supported constructor is available.");
+        throw new IllegalArgumentException("Cannot create default configuration instance for " + clazz
+                .getName() + " because no supported constructor is available.");
     }
 
     private static AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector, Object[] parameters)

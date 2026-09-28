@@ -4,15 +4,15 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.arte
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluationConfiguration;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.BaseEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-
-import org.eclipse.collections.api.factory.Maps;
-import org.eclipse.collections.api.map.ImmutableMap;
 
 public final class SingleArtemisInconsistencyRunProducer<T extends ArtemisInconsistencyTask> implements ArtemisInconsistencyRunProducer<T> {
     private final LargeLanguageModel llm;

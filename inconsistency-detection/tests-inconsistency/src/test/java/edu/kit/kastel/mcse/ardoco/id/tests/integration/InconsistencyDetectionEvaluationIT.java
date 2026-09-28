@@ -385,7 +385,7 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static List<String> sortIntegerStrings(Collection<String> list) {
-        return list.stream().map(s->s.substring(0,s.indexOf(" ->"))).map(Integer::parseInt).sorted().map(Object::toString).toList();
+        return list.stream().map(s -> s.substring(0, s.indexOf(" ->"))).map(Integer::parseInt).sorted().map(Object::toString).toList();
     }
 
     private static String listToString(Collection<?> truePositives) {

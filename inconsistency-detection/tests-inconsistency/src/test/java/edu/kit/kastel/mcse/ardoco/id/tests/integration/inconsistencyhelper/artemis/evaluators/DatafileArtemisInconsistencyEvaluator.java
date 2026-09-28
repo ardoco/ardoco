@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
@@ -29,8 +30,6 @@ import edu.kit.kastel.mcse.ardoco.id.tests.tasks.DatafileArtemisInconsistencyTas
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
-
-import org.eclipse.collections.api.map.MutableMap;
 
 public class DatafileArtemisInconsistencyEvaluator implements ArtemisInconsistencyEvaluator<DatafileArtemisInconsistencyTask> {
 
