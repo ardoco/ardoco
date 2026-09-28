@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -87,7 +89,7 @@ class InconsistencyDetectionEvaluationIT {
         var results = this.calculateEvaluationResults(project, runs);
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResult = metrics.calculateAverages(results, null)
+        var weightedAverageResult = metrics.calculateAverages(results, null).asList()
                 .stream()
                 .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()

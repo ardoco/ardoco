@@ -150,7 +150,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var results = Lists.mutable.withAll(evaluator.evaluateTeam(project, runs.toMap()));
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResult = metrics.calculateAverages(results, null)
+        var weightedAverageResult = metrics.calculateAverages(results, null).asList()
                 .stream()
                 .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()
