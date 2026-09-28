@@ -4,8 +4,6 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration;
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logExplicitResults;
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logResults;
 
-import java.util.Map;
-
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ArtemisInconsistencyEvaluator;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ClassArtemisInconsistencyEvaluator;
@@ -20,6 +18,7 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.DatafileArtemisInconsistencyTask;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.map.ImmutableMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -140,17 +139,17 @@ class InconsistencyDetectionEvaluationArtemisIT {
             ArtemisInconsistencyRunProducer<T> producer, ArtemisInconsistencyEvaluator<T> evaluator, String logSuffix) {
         logger.info("Start ArTEMiS TEAM evaluation for project {} using {}", project.getEvaluationProject().name(), configuration.name());
 
-        Map<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceRuns(project);
+        ImmutableMap<ArtemisEvaluationRun, ArdocoResult> runs = producer.produceRuns(project);
 
         evaluateAndWriteTeamResults(project, configuration, evaluator, runs, logSuffix);
     }
 
     private <T extends ArtemisInconsistencyTask> void evaluateAndWriteTeamResults(T project, ArtemisInconsistencyEvaluationConfiguration configuration,
-            ArtemisInconsistencyEvaluator<T> evaluator, Map<ArtemisEvaluationRun, ArdocoResult> runs, String logSuffix) {
+            ArtemisInconsistencyEvaluator<T> evaluator, ImmutableMap<ArtemisEvaluationRun, ArdocoResult> runs, String logSuffix) {
         Assertions.assertNotNull(runs, "Runs must not be null");
         Assertions.assertFalse(runs.isEmpty(), "Runs must not be empty");
 
-        var results = Lists.mutable.withAll(evaluator.evaluateTeam(project, runs));
+        var results = Lists.mutable.withAll(evaluator.evaluateTeam(project, runs.toMap()));
 
         var metrics = ClassificationMetricsCalculator.getInstance();
         var weightedAverageResult = metrics.calculateAverages(results, null)
@@ -160,6 +159,6 @@ class InconsistencyDetectionEvaluationArtemisIT {
                 .orElseThrow();
 
         logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, weightedAverageResult);
-        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs, logSuffix);
+        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs.toMap(), logSuffix);
     }
 }

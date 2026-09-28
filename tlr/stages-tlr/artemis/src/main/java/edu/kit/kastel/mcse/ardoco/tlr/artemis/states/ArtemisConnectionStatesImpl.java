@@ -12,6 +12,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Art
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
 /**
  * Container state for all ArTEMiS connection states of one pipeline run.
  */
@@ -51,7 +54,7 @@ public class ArtemisConnectionStatesImpl extends AbstractState implements Artemi
     }
 
     @Override
-    public Map<ArtemisTarget, ArtemisConnectionState> getStates() {
-        return Map.copyOf(this.states);
+    public ImmutableMap<ArtemisTarget, ArtemisConnectionState> getStates() {
+        return Maps.immutable.ofAll(this.states);
     }
 }

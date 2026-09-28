@@ -50,7 +50,7 @@ public class DatafileArtemisConnectionInformant extends ArtemisConnectionInforma
             }
         }
 
-        state.addTraceLinks(traceLinks);
+        state.addTraceLinks(Lists.mutable.ofAll(traceLinks));
         state.addUnlinkedNamedEntities(unlinkedNamedEntities);
     }
 

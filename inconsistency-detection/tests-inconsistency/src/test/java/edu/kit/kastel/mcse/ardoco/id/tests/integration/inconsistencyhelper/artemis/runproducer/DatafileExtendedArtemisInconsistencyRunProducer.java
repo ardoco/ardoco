@@ -5,7 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
@@ -30,7 +32,7 @@ public class DatafileExtendedArtemisInconsistencyRunProducer implements ArtemisI
     }
 
     @Override
-    public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(DatafileArtemisInconsistencyTask project) {
+    public ImmutableMap<ArtemisEvaluationRun, ArdocoResult> produceRuns(DatafileArtemisInconsistencyTask project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
 
         var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.name(), "base");
@@ -41,7 +43,7 @@ public class DatafileExtendedArtemisInconsistencyRunProducer implements ArtemisI
             runs.put(new ExtendedSadRun(runIndex), new ArdocoResult(runData));
         }
 
-        return runs;
+        return Maps.immutable.ofMap(runs);
     }
 
     private DataRepository runDatafileExtendedTeam(DatafileArtemisInconsistencyTask project, int runIndex) {

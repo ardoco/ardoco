@@ -11,6 +11,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsiste
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
 @Deterministic
 public class ArtemisInconsistencyStatesImpl extends AbstractState
         implements edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyStates {
@@ -48,7 +51,7 @@ public class ArtemisInconsistencyStatesImpl extends AbstractState
     }
 
     @Override
-    public Map<ArtemisTarget, ArtemisInconsistencyState> getStates() {
-        return Map.copyOf(this.states);
+    public ImmutableMap<ArtemisTarget, ArtemisInconsistencyState> getStates() {
+        return Maps.immutable.ofAll(this.states);
     }
 }

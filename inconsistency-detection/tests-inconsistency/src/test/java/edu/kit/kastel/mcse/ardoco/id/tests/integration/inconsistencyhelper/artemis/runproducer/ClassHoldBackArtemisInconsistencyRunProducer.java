@@ -5,7 +5,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.jspecify.annotations.NonNull;
 
@@ -106,7 +108,7 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
     }
 
     @Override
-    public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(ClassArtemisInconsistencyTask project) {
+    public ImmutableMap<ArtemisEvaluationRun, ArdocoResult> produceRuns(ClassArtemisInconsistencyTask project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
 
         var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.name(), "base");
@@ -124,7 +126,7 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
             runs.put(new HeldBackClassesRun(heldBackClasses, runIndex), new ArdocoResult(runData));
         }
 
-        return runs;
+        return Maps.immutable.ofMap(runs);
     }
 
     private DataRepository runClassHoldBackTeam(ClassArtemisInconsistencyTask project, List<String> heldBackClassNames) {

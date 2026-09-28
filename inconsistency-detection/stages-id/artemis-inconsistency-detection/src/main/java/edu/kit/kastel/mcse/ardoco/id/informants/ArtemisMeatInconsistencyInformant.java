@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+@Deterministic
 public class ArtemisMeatInconsistencyInformant extends ArtemisInconsistencyInformant {
 
     public ArtemisMeatInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {

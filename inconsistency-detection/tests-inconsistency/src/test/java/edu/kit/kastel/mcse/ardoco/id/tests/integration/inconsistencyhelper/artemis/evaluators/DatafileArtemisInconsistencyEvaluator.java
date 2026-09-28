@@ -29,11 +29,13 @@ import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
+import org.eclipse.collections.api.map.MutableMap;
+
 public class DatafileArtemisInconsistencyEvaluator implements ArtemisInconsistencyEvaluator<DatafileArtemisInconsistencyTask> {
 
     @Override
     public ImmutableList<SingleClassificationResult<String>> evaluateTeam(DatafileArtemisInconsistencyTask project,
-            Map<ArtemisEvaluationRun, ArdocoResult> runs) {
+            MutableMap<ArtemisEvaluationRun, ArdocoResult> runs) {
         if (containsExtendedSadRuns(runs)) {
             return evaluateExtendedDatafileTeam(project, runs);
         }

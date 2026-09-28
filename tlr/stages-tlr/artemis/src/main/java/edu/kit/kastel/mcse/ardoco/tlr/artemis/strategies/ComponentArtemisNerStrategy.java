@@ -7,12 +7,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.TwoPartPrompt;
 
+@Deterministic
 public class ComponentArtemisNerStrategy implements ArtemisNerStrategy {
     @Override
     public Prompt createPrompt(DataRepository dataRepository) {

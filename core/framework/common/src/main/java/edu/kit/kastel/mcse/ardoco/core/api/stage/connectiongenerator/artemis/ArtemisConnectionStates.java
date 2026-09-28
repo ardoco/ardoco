@@ -1,14 +1,16 @@
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis;
 
-import java.util.Map;
+import org.eclipse.collections.api.map.ImmutableMap;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
+@Deterministic
 public interface ArtemisConnectionStates extends PipelineStepData {
 
     String ID = "ArtemisConnectionStates";
 
     ArtemisConnectionState getState(ArtemisTarget target);
 
-    Map<ArtemisTarget, ArtemisConnectionState> getStates();
+    ImmutableMap<ArtemisTarget, ArtemisConnectionState> getStates();
 }

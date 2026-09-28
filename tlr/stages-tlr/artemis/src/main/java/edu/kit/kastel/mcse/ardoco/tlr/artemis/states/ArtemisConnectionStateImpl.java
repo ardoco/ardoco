@@ -1,12 +1,8 @@
 package edu.kit.kastel.mcse.ardoco.tlr.artemis.states;
 
 import java.io.Serial;
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -27,35 +23,35 @@ public class ArtemisConnectionStateImpl extends AbstractState implements Artemis
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final SortedSet<NamedArchitectureEntity> namedEntities;
+    private final MutableList<NamedArchitectureEntity> namedEntities;
     private final MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks;
-    private final SortedSet<NamedArchitectureEntity> unlinkedNamedEntities;
+    private final MutableList<NamedArchitectureEntity> unlinkedNamedEntities;
 
     public ArtemisConnectionStateImpl() {
         super();
-        namedEntities = SortedSets.mutable.empty();
+        namedEntities = Lists.mutable.empty();
         traceLinks = Lists.mutable.empty();
-        unlinkedNamedEntities = SortedSets.mutable.empty();
+        unlinkedNamedEntities = Lists.mutable.empty();
     }
 
     @Override
-    public boolean addNamedEntities(Collection<NamedArchitectureEntity> namedEntities) {
+    public boolean addNamedEntities(MutableList<NamedArchitectureEntity> namedEntities) {
         return this.namedEntities.addAll(namedEntities);
     }
 
     @Override
-    public boolean addTraceLinks(Collection<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks) {
+    public boolean addTraceLinks(MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks) {
         return this.traceLinks.addAll(traceLinks);
     }
 
     @Override
-    public boolean addUnlinkedNamedEntities(Collection<NamedArchitectureEntity> unlinkedNamedEntities) {
-        return this.unlinkedNamedEntities.addAll(unlinkedNamedEntities);
+    public boolean addUnlinkedNamedEntities(MutableList<NamedArchitectureEntity> namedEntities) {
+        return this.unlinkedNamedEntities.addAll(namedEntities);
     }
 
     @Override
-    public SortedSet<NamedArchitectureEntity> getNamedEntities() {
-        return new TreeSet<>(this.namedEntities);
+    public ImmutableList<NamedArchitectureEntity> getNamedEntities() {
+        return Lists.immutable.withAll(this.namedEntities);
     }
 
     @Override
@@ -64,7 +60,7 @@ public class ArtemisConnectionStateImpl extends AbstractState implements Artemis
     }
 
     @Override
-    public SortedSet<NamedArchitectureEntity> getUnlinkedNamedEntities() {
-        return new TreeSet<>(this.unlinkedNamedEntities);
+    public ImmutableList<NamedArchitectureEntity> getUnlinkedNamedEntities() {
+        return Lists.immutable.withAll(this.unlinkedNamedEntities);
     }
 }

@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -20,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+@Deterministic
 public class ArtemisNerInformant extends Informant {
 
     private final LargeLanguageModel llm;
@@ -72,6 +75,6 @@ public class ArtemisNerInformant extends Informant {
         var namedEntityRecognizer = new NamedEntityRecognizer.Builder().chatModel(chatModel).prompt(strategy.createPrompt(dataRepository)).build();
 
         var namedArchitectureEntities = recognizeNamedArchitectureEntities(namedEntityRecognizer, sad);
-        state.addNamedEntities(namedArchitectureEntities);
+        state.addNamedEntities(Lists.mutable.ofAll(namedArchitectureEntities));
     }
 }

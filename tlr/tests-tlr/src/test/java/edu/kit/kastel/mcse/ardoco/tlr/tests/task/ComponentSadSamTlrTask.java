@@ -13,6 +13,9 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+
 public enum ComponentSadSamTlrTask implements TlrTask {
 
     MEDIASTORE(EvaluationProject.MEDIASTORE, "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv"),//
@@ -45,7 +48,7 @@ public enum ComponentSadSamTlrTask implements TlrTask {
      * @return a list of pairs where each pair contains the sentence number and the model element ID
      */
     @Override
-    public List<Pair<Integer, String>> getExpectedTraceLinks() {
+    public ImmutableList<Pair<Integer, String>> getExpectedTraceLinks() {
         File file = EvaluationHelper.loadFileFromResources(goldStandardPath);
 
         List<String> goldLinks;
@@ -67,7 +70,7 @@ public enum ComponentSadSamTlrTask implements TlrTask {
             int sentenceId = Integer.parseInt(parts[1].trim());
             expectedLinks.add(new Pair<>(sentenceId, modelElementId));
         }
-        return expectedLinks;
+        return Lists.immutable.ofAll(expectedLinks);
     }
 
     @Override

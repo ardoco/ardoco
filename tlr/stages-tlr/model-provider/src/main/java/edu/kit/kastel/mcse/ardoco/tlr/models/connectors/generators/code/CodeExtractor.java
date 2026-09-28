@@ -15,6 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
 
+@Deterministic
 public abstract class CodeExtractor extends Extractor {
     private static final Logger logger = LoggerFactory.getLogger(CodeExtractor.class);
 

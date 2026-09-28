@@ -1,7 +1,6 @@
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -23,10 +22,12 @@ import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
+import org.eclipse.collections.api.map.MutableMap;
+
 public class ClassArtemisInconsistencyEvaluator implements ArtemisInconsistencyEvaluator<ClassArtemisInconsistencyTask> {
 
     @Override
-    public ImmutableList<SingleClassificationResult<String>> evaluateTeam(ClassArtemisInconsistencyTask project, Map<ArtemisEvaluationRun, ArdocoResult> runs) {
+    public ImmutableList<SingleClassificationResult<String>> evaluateTeam(ClassArtemisInconsistencyTask project, MutableMap<ArtemisEvaluationRun, ArdocoResult> runs) {
         if (containsClassHoldbackRuns(runs)) {
             return evaluateClassHoldbackTeam(project, runs);
         }

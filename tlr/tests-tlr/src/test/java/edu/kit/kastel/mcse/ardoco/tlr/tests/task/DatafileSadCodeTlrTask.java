@@ -12,6 +12,9 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
 
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
+
 public enum DatafileSadCodeTlrTask implements TlrTask {
     CORONAWARNAPP(EvaluationProject.CORONAWARNAPP, "/benchmark/coronawarnapp/goldstandards/goldstandard_datafiles_sad_2023-code_2023.csv"), //
     BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, "/benchmark/bigbluebutton/goldstandards/goldstandard_datafiles_sad_2021-code_2023.csv"), //
@@ -34,7 +37,7 @@ public enum DatafileSadCodeTlrTask implements TlrTask {
      * @return a list of pairs where each pair contains the sentence number and the code element ID
      */
     @Override
-    public List<Pair<Integer, String>> getExpectedTraceLinks() {
+    public ImmutableList<Pair<Integer, String>> getExpectedTraceLinks() {
         File file = EvaluationHelper.loadFileFromResources(goldStandardPath);
 
         List<String> goldLinks;
@@ -57,7 +60,7 @@ public enum DatafileSadCodeTlrTask implements TlrTask {
             expectedLinks.add(new Pair<>(sentenceId, modelElementId));
         }
 
-        return expectedLinks;
+        return Lists.immutable.ofAll(expectedLinks);
     }
 
     @Override

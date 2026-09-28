@@ -1,7 +1,6 @@
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +11,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
@@ -61,7 +61,7 @@ public class ComponentArtemisInconsistencyEvaluator implements ArtemisInconsiste
 
     @Override
     public ImmutableList<SingleClassificationResult<String>> evaluateTeam(ComponentArtemisInconsistencyTask project,
-            Map<ArtemisEvaluationRun, ArdocoResult> runs) {
+            MutableMap<ArtemisEvaluationRun, ArdocoResult> runs) {
         MutableList<SingleClassificationResult<String>> results = Lists.mutable.empty();
 
         var goldStandard = project.getGoldstandardForArchitectureModel(createComponentModel(project));

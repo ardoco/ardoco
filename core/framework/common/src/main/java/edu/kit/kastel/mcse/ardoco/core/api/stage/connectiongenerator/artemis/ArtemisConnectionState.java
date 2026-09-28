@@ -1,25 +1,25 @@
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis;
 
-import java.util.Collection;
-import java.util.SortedSet;
-
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
+@Deterministic
 public interface ArtemisConnectionState extends PipelineStepData {
 
-    boolean addNamedEntities(Collection<NamedArchitectureEntity> namedEntities);
+    boolean addNamedEntities(MutableList<NamedArchitectureEntity> namedEntities);
 
-    boolean addTraceLinks(Collection<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks);
+    boolean addTraceLinks(MutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks);
 
-    boolean addUnlinkedNamedEntities(Collection<NamedArchitectureEntity> namedEntities);
+    boolean addUnlinkedNamedEntities(MutableList<NamedArchitectureEntity> namedEntities);
 
-    SortedSet<NamedArchitectureEntity> getNamedEntities();
+    ImmutableList<NamedArchitectureEntity> getNamedEntities();
 
     ImmutableList<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> getTraceLinks();
 
-    SortedSet<NamedArchitectureEntity> getUnlinkedNamedEntities();
+    ImmutableList<NamedArchitectureEntity> getUnlinkedNamedEntities();
 }

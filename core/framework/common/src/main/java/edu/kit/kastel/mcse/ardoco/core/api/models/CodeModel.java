@@ -78,7 +78,7 @@ public abstract sealed class CodeModel extends Model permits CodeModelWithCompil
         this.initialized = true;
         this.codeItemRepository = codeItemRepository;
         this.content = new ArrayList<>(content);
-        this.codeFiles = new ArrayList<>(codeFiles);
+        this.codeFiles = codeFiles == null ? new ArrayList<>() : new ArrayList<>(codeFiles);
     }
 
     /**

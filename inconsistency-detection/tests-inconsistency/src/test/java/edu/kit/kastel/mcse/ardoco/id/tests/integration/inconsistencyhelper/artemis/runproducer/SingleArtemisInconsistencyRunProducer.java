@@ -10,6 +10,9 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
 public final class SingleArtemisInconsistencyRunProducer<T extends ArtemisInconsistencyTask> implements ArtemisInconsistencyRunProducer<T> {
     private final LargeLanguageModel llm;
     private final ArtemisInconsistencyEvaluationConfiguration configuration;
@@ -25,9 +28,9 @@ public final class SingleArtemisInconsistencyRunProducer<T extends ArtemisIncons
     }
 
     @Override
-    public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(T project) {
+    public ImmutableMap<ArtemisEvaluationRun, ArdocoResult> produceRuns(T project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
         runs.put(new BaseEvaluationRun(), produceBaseRun(project));
-        return runs;
+        return Maps.immutable.ofMap(runs);
     }
 }

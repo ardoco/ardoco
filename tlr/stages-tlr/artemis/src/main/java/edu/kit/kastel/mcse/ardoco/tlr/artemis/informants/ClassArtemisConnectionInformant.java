@@ -50,7 +50,7 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
             }
         }
 
-        state.addTraceLinks(traceLinks);
+        state.addTraceLinks(Lists.mutable.ofAll(traceLinks));
         state.addUnlinkedNamedEntities(unlinkedNamedEntities);
     }
 

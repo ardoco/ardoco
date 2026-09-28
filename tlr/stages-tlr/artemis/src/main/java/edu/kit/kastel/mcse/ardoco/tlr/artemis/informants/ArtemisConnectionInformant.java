@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+@Deterministic
 public abstract class ArtemisConnectionInformant extends Informant {
     public static final double DEFAULT_PROBABILITY = 0.92;
     public static final double EMBEDDING_SIMILARITY_THRESHOLD = 0.6;

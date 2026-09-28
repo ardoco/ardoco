@@ -15,6 +15,9 @@ import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ComponentArtemisInconsistencyTa
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
 public final class ComponentHoldBackArtemisInconsistencyRunProducer implements ArtemisInconsistencyRunProducer<ComponentArtemisInconsistencyTask> {
     private static final ArtemisInconsistencyEvaluationConfiguration CONFIGURATION = ArtemisInconsistencyEvaluationConfiguration.component();
 
@@ -29,7 +32,7 @@ public final class ComponentHoldBackArtemisInconsistencyRunProducer implements A
     }
 
     @Override
-    public Map<ArtemisEvaluationRun, ArdocoResult> produceRuns(ComponentArtemisInconsistencyTask project) {
+    public ImmutableMap<ArtemisEvaluationRun, ArdocoResult> produceRuns(ComponentArtemisInconsistencyTask project) {
         Map<ArtemisEvaluationRun, ArdocoResult> runs = new LinkedHashMap<>();
 
         var baseRunData = ArtemisInconsistencyRunSupport.run(project, llm, CONFIGURATION.strategies(), CONFIGURATION.name(), "base");
@@ -47,6 +50,6 @@ public final class ComponentHoldBackArtemisInconsistencyRunProducer implements A
             runs.put(new HeldBackArchitectureItemRun(heldBackComponent), new ArdocoResult(runData));
         }
 
-        return runs;
+        return Maps.immutable.ofMap(runs);
     }
 }

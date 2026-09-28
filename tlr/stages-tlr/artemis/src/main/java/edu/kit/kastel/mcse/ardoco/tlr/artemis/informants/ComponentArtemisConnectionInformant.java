@@ -67,7 +67,7 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
         }
         unlinkedNamedEntities.removeAll(matchedNamedEntities);
 
-        state.addTraceLinks(traceLinks);
+        state.addTraceLinks(Lists.mutable.ofAll(traceLinks));
         state.addUnlinkedNamedEntities(unlinkedNamedEntities);
     }
 }
