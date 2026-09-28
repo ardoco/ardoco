@@ -25,6 +25,7 @@ jobs:
       deploy: false
       with-submodules: true
       runs-on: ubuntu-latest
+      dependencies: https://github.com/ardoco/named-architecture-entity-recognition.git
     secrets:
       CENTRAL_USER: ""
       CENTRAL_TOKEN: ""

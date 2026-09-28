@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import java.util.ArrayList;
@@ -52,10 +52,10 @@ public final class AllLanguagesExtractor extends CodeExtractor {
             List<CodeFile> codeFiles = extractCodeFiles(codeEndpoints);
 
             switch (this.metamodelToExtract) {
-            case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES ->
-                    this.codeModel = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository, codeEndpoints, codeFiles);
-            case CODE_WITH_COMPILATION_UNITS -> this.codeModel = new CodeModelWithCompilationUnits(this.codeItemRepository, codeEndpoints, codeFiles);
-            default -> throw new IllegalStateException("This extractor does not support this metamodel");
+                case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository,
+                        codeEndpoints, codeFiles);
+                case CODE_WITH_COMPILATION_UNITS -> this.codeModel = new CodeModelWithCompilationUnits(this.codeItemRepository, codeEndpoints, codeFiles);
+                default -> throw new IllegalStateException("This extractor does not support this metamodel");
             }
         }
         return this.codeModel;

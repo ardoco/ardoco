@@ -44,7 +44,6 @@ import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
-import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 
@@ -88,7 +87,11 @@ class InconsistencyDetectionEvaluationIT {
         var results = this.calculateEvaluationResults(project, runs);
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResult = metrics.calculateAverages(results, null).stream().filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE).findFirst().get();
+        var weightedAverageResult = metrics.calculateAverages(results, null)
+                .stream()
+                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
+                .findFirst()
+                .get();
 
         this.logResultsMissingModelInconsistency(project, weightedAverageResult, project.getExpectedMissingModelInconsistencyResults());
         this.checkResults(weightedAverageResult, project.getExpectedMissingModelInconsistencyResults());
@@ -124,11 +127,7 @@ class InconsistencyDetectionEvaluationIT {
 
         var metrics = ClassificationMetricsCalculator.getInstance();
 
-        var weightedResults = metrics.calculateAverages(results, null)
-                .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
-                .findFirst()
-                .get();
+        var weightedResults = metrics.calculateAverages(results, null).getWeightedAverage();
 
         if (InconsistencyDetectionEvaluationIT.logger.isInfoEnabled()) {
             String name = project.name() + " missing model inconsistency";
@@ -212,9 +211,14 @@ class InconsistencyDetectionEvaluationIT {
 
         var goldStandard = project.getGoldstandardForArchitectureModel(InconsistencyDetectionEvaluationIT.getComponentModel(project));
         //We use this format ('<sentenceNumber> -> <componentName>') because using only the sentence number would not account for false positives in our evaluation that have the same sentence number but a different component name
-        var expectedLines = Lists.immutable.ofAll(goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString).stream().map(l->l+" -> "+removedElement.getName().toLowerCase()).toList());
-        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i->i.sentence()+" -> "+removedElement.getName().toLowerCase()).toList());
-        
+        var expectedLines = Lists.immutable.ofAll(goldStandard.getSentencesWithElement(removedElement)
+                .distinct()
+                .collect(Object::toString)
+                .stream()
+                .map(l -> l + " -> " + removedElement.getName().toLowerCase())
+                .toList());
+        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i -> i.sentence() + " -> " + removedElement.getName().toLowerCase()).toList());
+
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
 
@@ -279,11 +283,7 @@ class InconsistencyDetectionEvaluationIT {
         StringBuilder outputBuilder = new StringBuilder();
         outputBuilder.append("###").append(InconsistencyDetectionEvaluationIT.LINE_SEPARATOR);
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResults = metrics.calculateAverages(results, null)
-                .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
-                .findFirst()
-                .get();
+        var weightedAverageResults = metrics.calculateAverages(results, null).getWeightedAverage();
         var resultString = createResultLogString("### OVERALL RESULTS ###" + InconsistencyDetectionEvaluationIT.LINE_SEPARATOR + "Weighted" + " Average",
                 weightedAverageResults);
         outputBuilder.append(resultString);

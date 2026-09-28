@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.tasks;
 
 import java.io.File;
@@ -17,22 +18,22 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 public enum DatafileArtemisInconsistencyTask implements ArtemisInconsistencyTask {
     CORONAWARNAPP(EvaluationProject.CORONAWARNAPP, //
             "/benchmark/coronawarnapp/goldstandards/goldstandard_datafile_team_inconsistencies.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_datafile_team_inconsistencies.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     ROD(EvaluationProject.ROD, //
             "/benchmark/rod/goldstandards/goldstandard_datafile_team_inconsistencies.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     TEAMMATES(EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_datafile_team_inconsistencies.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     );
 
     private final EvaluationProject project;

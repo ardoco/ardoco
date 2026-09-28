@@ -19,25 +19,25 @@ public enum ClassArtemisInconsistencyTask implements ArtemisInconsistencyTask {
     TEAMMATES(EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_class_team_inconsistencies.csv", //
             "/benchmark/teammates/goldstandards/goldstandard_classes_sad_2021-code_2023.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     SCONS(EvaluationProject.SCONS, //
             "/benchmark/scons/goldstandards/goldstandard_class_team_inconsistencies.csv", //
             "/benchmark/scons/goldstandards/goldstandard_classes_sad_2024-code_2024.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     BEETS(EvaluationProject.BEETS, //
             "/benchmark/beets/goldstandards/goldstandard_class_team_inconsistencies.csv", //
             "/benchmark/beets/goldstandards/goldstandard_classes_sad_2013-code_2013.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
 
     ZENGARDEN(EvaluationProject.ZENGARDEN, //
             "/benchmark/zengarden/goldstandards/goldstandard_class_team_inconsistencies.csv", //
             "/benchmark/zengarden/goldstandards/goldstandard_classes_sad_2014-code_2014.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     );
 
     private final EvaluationProject project;
@@ -109,8 +109,7 @@ public enum ClassArtemisInconsistencyTask implements ArtemisInconsistencyTask {
             }
             int sentenceId = Integer.parseInt(parts[0].trim());
             String modelElementId = parts[1].trim();
-            if (modelElementId.contains(
-                    ".")) { //in the goldstandard we sometimes have the classname like this: "Environment.Base" but the real name of the class in this case would be "Base"
+            if (modelElementId.contains(".")) { //in the goldstandard we sometimes have the classname like this: "Environment.Base" but the real name of the class in this case would be "Base"
                 modelElementId = modelElementId.substring(modelElementId.lastIndexOf(".") + 1);
             }
             expectedLinks.add(new Pair<>(sentenceId, modelElementId));

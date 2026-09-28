@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis;
 
 import java.io.Serial;
@@ -58,8 +58,8 @@ public final class NamedArchitectureEntityToModelTraceLink extends TraceLink<Nam
 
         String typeInfo;
         switch (this.getSecondEndpoint()) {
-        case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType().orElseThrow();
-        case CodeEntity ignored -> typeInfo = "";
+            case ArchitectureEntity architectureEntity -> typeInfo = architectureEntity.getType().orElseThrow();
+            case CodeEntity ignored -> typeInfo = "";
         }
 
         return "NamedArchitectureEntityToModelTraceLink [ uid=" + modelEntity.getId() + ", name=" + modelEntity.getName() + //

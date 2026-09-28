@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.states;
 
 import java.io.Serial;
@@ -15,8 +16,8 @@ import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.map.ImmutableMap;
 
 @Deterministic
-public class ArtemisInconsistencyStatesImpl extends AbstractState
-        implements edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyStates {
+public class ArtemisInconsistencyStatesImpl extends AbstractState implements
+        edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyStates {
 
     @Serial
     private static final long serialVersionUID = 1L;

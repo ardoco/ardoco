@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -11,28 +12,28 @@ public class DatafileArtemisNerStrategy implements ArtemisNerStrategy {
     public Prompt createPrompt(DataRepository dataRepository) {
         String taskPrompt = """
                 Identify all data files that are explicitly named in the following text.
-                
+
                 For each identified file, provide:
                 - The primary name (as it appears in the text)
                 - All alternative names or abbreviations used for the same file in the text (case-insensitive)
                 - All full lines where the file is mentioned (directly or via clear context)
-                
+
                 Rules for identifying data files:
-                
+
                 1.  Data files are non-executable files that contain information essential to the operation, configuration, processing, or functionality of a system or application.
                     They provide meaningful data that can be stored, transferred, processed, or shared between systems or subsystems.
                     Files that only serve a visual, illustrative, or documentation purpose (for example, architecture_overview.png or homepage.html) are not considered data files.
-                
+
                 2.  Pronoun and coreference resolution:
                     Resolve pronouns and other unambiguous references when they clearly refer to a previously introduced data file.
                     Include both the introducing line and the referring line as occurrences.
-                
+
                     Example:
                     "The configuration.xml file specifies how the system behaves.
                     It is structured as follows."
-                
+
                     Both lines must be listed as occurrences of datafile configuration.xml.
-                
+
                 Return the results in a clearly structured, unambiguous plain-text format that enables straightforward conversion to JSON (e.g., using key-value sections per file).
                 """;
         String formattingPrompt = """
@@ -41,7 +42,7 @@ public class DatafileArtemisNerStrategy implements ArtemisNerStrategy {
                 - "type": "DATAFILE"
                 - "alternativeNames": a list of alternative or ambiguous names, if applicable.
                 - "occurrences": a list of lines where the file appears or is referenced.
-                
+
                 Output should be a JSON array (and nothing else!), like:
                 [
                     {
@@ -52,7 +53,7 @@ public class DatafileArtemisNerStrategy implements ArtemisNerStrategy {
                     },
                     ...
                 ]
-                
+
                 Example:
                 [
                     {

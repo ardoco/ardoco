@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
@@ -188,7 +188,8 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Returns the {@link ArtemisConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and
+     * Returns the {@link ArtemisConnectionStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail
+     * and
      * throw an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
      * {@link #hasConnectionStates(DataRepository)}
      *

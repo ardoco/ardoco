@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.util.ArrayList;
@@ -26,7 +26,8 @@ public class ModelProviderAgent extends PipelineAgent {
      * @param architectureConfiguration the architecture configuration
      * @param codeConfiguration         the code configuration
      */
-    public ModelProviderAgent(DataRepository data, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
+    public ModelProviderAgent(DataRepository data, @Nullable ArchitectureConfiguration architectureConfiguration,
+            @Nullable CodeConfiguration codeConfiguration) {
         super(informants(data, architectureConfiguration, codeConfiguration), ModelProviderAgent.class.getSimpleName(), data);
     }
 
