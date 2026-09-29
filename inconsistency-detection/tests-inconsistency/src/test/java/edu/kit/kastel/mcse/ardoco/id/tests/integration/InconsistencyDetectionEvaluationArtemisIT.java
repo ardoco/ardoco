@@ -7,6 +7,7 @@ import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelpe
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -17,7 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.*;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluationConfiguration;
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.ArtemisInconsistencyEvaluationWriter;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ArtemisInconsistencyEvaluator;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evaluators.ClassArtemisInconsistencyEvaluator;
@@ -41,6 +43,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
  * Integration test that evaluates inconsistency detection based on ArTEMiS.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled("Only for manual execution")
 class InconsistencyDetectionEvaluationArtemisIT {
     private static final Logger logger = LoggerFactory.getLogger(InconsistencyDetectionEvaluationArtemisIT.class);
 
