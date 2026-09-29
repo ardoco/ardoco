@@ -44,7 +44,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
 
         ArtemisNerStrategy strategy = getStrategy();
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-        var evaluationResults = calculateEvaluationResults(result, goldStandard, strategy);
+        var evaluationResults = calculateEvaluationResults(result, goldStandard.stream().toList(), strategy);
 
         var expectedResults = project.getExpectedResults();
         logExtendedResultsWithExpected(project.getName(), evaluationResults, expectedResults);
