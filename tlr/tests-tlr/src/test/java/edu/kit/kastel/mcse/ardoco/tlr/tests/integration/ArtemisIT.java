@@ -58,7 +58,6 @@ public class ArtemisIT extends AbstractArdocoIT {
     }
 
     private static Stream<Arguments> llmsXDatafileProjects() {
-        //return llmsXProjects(new DatafileArtemisEvaluationProject[] { DatafileArtemisEvaluationProject.CWA });
         return llmsXProjects(DatafileArtemisEvaluationProject.values());
     }
 

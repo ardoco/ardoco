@@ -234,7 +234,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         if (varNames.size() != values.size()) {
             // If the number of variables and values does not match, we cannot reliably extract them.
             // This can happen in tuple unpacking with mismatching sizes or multiple assignments with different structures.
-            logger.warn("Skipping extraction of the following variables because the number of variable names and values does not match: " + varNames);
+            logger.warn("Skipping extraction of the following variables because the number of variable names and values does not match: {}", varNames);
             return;
         }
 

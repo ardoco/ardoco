@@ -30,7 +30,6 @@ public class ClassArtemisConnectionInformant extends ArtemisConnectionInformant 
         var state = getConnectionState();
         var codeModel = (CodeModelWithCompilationUnits) getModelStatesData().getModel(strategy.getMetamodel());
         var classes = getClasses(codeModel);
-        //var modelEndpointsClasses = ((List<CodeCompilationUnit>)modelEndpoints).stream().map(CodeCompilationUnit::getAllDataTypes).flatMap(List::stream).toList(); //bzw so
 
         var namedEntities = state.getNamedEntities();
         var unlinkedNamedEntities = Lists.mutable.withAll(namedEntities);

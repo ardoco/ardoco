@@ -15,7 +15,7 @@ public class ArtemisPostprocessing extends AbstractExecutionStage {
 
     public ArtemisPostprocessing(DataRepository dataRepository) {
         super(List.of(), ArtemisPostprocessing.class.getSimpleName(), dataRepository);
-        logger.info("ArtemisPostprocessing is currently only a dummy and uses no agents."); //TODO evtl wo anders hinschieben?
+        logger.info("ArtemisPostprocessing is currently only a dummy and uses no agents.");
     }
 
     public static ArtemisPostprocessing get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository) {

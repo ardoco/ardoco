@@ -125,17 +125,6 @@ public abstract class ArtemisConnectionInformant extends Informant {
     protected List<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> createTraceLinks(NamedArchitectureEntity namedEntity, ModelEntity modelEntity) {
         List<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks = new ArrayList<>();
 
-        /*var lines = this.getDataRepository().getData("SimplePreprocessingData", SimplePreprocessingData.class).get().getText().getLines(); //TODO tmp test - add direct occurrences
-        for (int i = 0; i < lines.size(); i++) {
-            var line = lines.get(i);
-            var lineNumber = i+1;
-            //remove whitespace and all non-alphanumeric characters
-            var searchiLine = line.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            if (searchiLine.contains(namedEntity.getName().toLowerCase())){
-                namedEntity.getOccurrences().add(new NamedArchitectureEntityOccurrence(namedEntity.getName(),lineNumber)); // use cooler method... + logger.debug info
-            }
-        }*/
-
         for (var occurrence : namedEntity.getOccurrences()) {
             traceLinks.add(new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity, this, DEFAULT_PROBABILITY));
         }

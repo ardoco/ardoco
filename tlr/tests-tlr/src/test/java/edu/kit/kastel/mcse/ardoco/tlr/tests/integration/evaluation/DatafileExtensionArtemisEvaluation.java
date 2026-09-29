@@ -26,6 +26,7 @@ public class DatafileExtensionArtemisEvaluation extends DatafileArtemisEvaluatio
         this.extensionNumber = extensionNumber;
     }
 
+    @Override
     protected File getDocumentationFile() {
         return new File(Objects.requireNonNull(this.getClass()
                 .getResource("/datafile-artemis-text-extensions/" + project.getName().toLowerCase() + "/extension-" + extensionNumber + ".txt")).getFile());
