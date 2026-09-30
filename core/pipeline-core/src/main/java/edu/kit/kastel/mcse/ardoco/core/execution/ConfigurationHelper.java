@@ -86,6 +86,8 @@ public class ConfigurationHelper {
         for (var clazz : classesThatMayBeConfigured) {
             try {
                 processConfigurationOfClass(configs, clazz);
+            } catch (IllegalArgumentException e) {
+                logger.debug("Skipping default configuration extraction for {}: {}", clazz.getName(), e.getMessage());
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }

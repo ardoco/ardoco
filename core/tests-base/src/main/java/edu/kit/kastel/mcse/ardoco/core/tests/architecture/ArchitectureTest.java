@@ -28,6 +28,7 @@ public class ArchitectureTest extends BasicArchitectureTest {
     private static final String PACKAGE_TRACE_LINK = "..tracelink..";
     private static final String PACKAGE_DATA = "..data..";
     private static final String PACKAGE_TEXT_EXTRACTION = "..textextraction..";
+    private static final String PACKAGE_ARTEMIS = "..artemis..";
 
     // Layer name constants
     private static final String LAYER_COMMON = "Common";
@@ -37,6 +38,7 @@ public class ArchitectureTest extends BasicArchitectureTest {
     private static final String LAYER_CONNECTION_GENERATOR = "ConnectionGenerator";
     private static final String LAYER_INCONSISTENCY_DETECTION = "InconsistencyDetection";
     private static final String LAYER_CODE_TRACEABILITY = "CodeTraceability";
+    private static final String LAYER_ARTEMIS = "Artemis";
     private static final String LAYER_PIPELINE = "Pipeline";
     private static final String LAYER_EXECUTION = "Execution";
 
@@ -52,7 +54,7 @@ public class ArchitectureTest extends BasicArchitectureTest {
             .should()
             .onlyHaveDependentClassesThat()
             .resideInAnyPackage(PACKAGE_MODELS, PACKAGE_RECOMMENDATION_GENERATOR, PACKAGE_CONNECTION_GENERATOR, PACKAGE_INCONSISTENCY,
-                    PACKAGE_INCONSISTENCY_DETECTION, PACKAGE_PIPELINE, PACKAGE_COMMON, PACKAGE_OUTPUT, PACKAGE_TESTS);
+                    PACKAGE_INCONSISTENCY_DETECTION, PACKAGE_PIPELINE, PACKAGE_COMMON, PACKAGE_OUTPUT, PACKAGE_TESTS, PACKAGE_ARTEMIS);
 
     @ArchTest
     public static final ArchRule linksOnlyAfterConnectionGenerator = classes().that()
@@ -60,7 +62,7 @@ public class ArchitectureTest extends BasicArchitectureTest {
             .should()
             .onlyHaveDependentClassesThat()
             .resideInAnyPackage(PACKAGE_CONNECTION_GENERATOR, PACKAGE_CODE_TRACEABILITY, PACKAGE_TRACE_LINKS, PACKAGE_INCONSISTENCY,
-                    PACKAGE_INCONSISTENCY_DETECTION, PACKAGE_PIPELINE, PACKAGE_COMMON, PACKAGE_API, PACKAGE_TESTS);
+                    PACKAGE_INCONSISTENCY_DETECTION, PACKAGE_PIPELINE, PACKAGE_COMMON, PACKAGE_API, PACKAGE_TESTS, PACKAGE_ARTEMIS);
 
     @ArchTest
     public static final ArchRule usingLinkAsNamingOnlyInConnectionGenerator = classes().that()
@@ -88,6 +90,8 @@ public class ArchitectureTest extends BasicArchitectureTest {
             .definedBy(PACKAGE_RECOMMENDATION_GENERATOR)
             .layer(LAYER_CONNECTION_GENERATOR)
             .definedBy(PACKAGE_CONNECTION_GENERATOR)
+            .layer(LAYER_ARTEMIS)
+            .definedBy(PACKAGE_ARTEMIS)
             .layer(LAYER_INCONSISTENCY_DETECTION)
             .definedBy(PACKAGE_INCONSISTENCY, PACKAGE_INCONSISTENCY_DETECTION)
             .layer(LAYER_CODE_TRACEABILITY)
@@ -102,14 +106,17 @@ public class ArchitectureTest extends BasicArchitectureTest {
             .whereLayer(LAYER_INCONSISTENCY_DETECTION)
             .mayOnlyBeAccessedByLayers(LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION)
             .whereLayer(LAYER_CONNECTION_GENERATOR)
-            .mayOnlyBeAccessedByLayers(LAYER_CODE_TRACEABILITY, LAYER_INCONSISTENCY_DETECTION, LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION)
+            .mayOnlyBeAccessedByLayers(LAYER_CODE_TRACEABILITY, LAYER_INCONSISTENCY_DETECTION, LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION, LAYER_ARTEMIS)
             .whereLayer(LAYER_RECOMMENDATION_GENERATOR)
             .mayOnlyBeAccessedByLayers(LAYER_CONNECTION_GENERATOR, LAYER_INCONSISTENCY_DETECTION, LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION)
             .whereLayer(LAYER_TEXT_EXTRACTOR)
             .mayOnlyBeAccessedByLayers(LAYER_RECOMMENDATION_GENERATOR, LAYER_CONNECTION_GENERATOR, LAYER_INCONSISTENCY_DETECTION, LAYER_PIPELINE, LAYER_COMMON,
-                    LAYER_EXECUTION)
+                    LAYER_EXECUTION, LAYER_ARTEMIS)
             .whereLayer(LAYER_MODEL_EXTRACTOR)
             .mayOnlyBeAccessedByLayers(LAYER_RECOMMENDATION_GENERATOR, LAYER_CONNECTION_GENERATOR, LAYER_CODE_TRACEABILITY, LAYER_INCONSISTENCY_DETECTION,
-                    LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION);
+                    LAYER_PIPELINE, LAYER_COMMON, LAYER_EXECUTION, LAYER_ARTEMIS)
+            .whereLayer(LAYER_ARTEMIS)
+            .mayOnlyBeAccessedByLayers(LAYER_CONNECTION_GENERATOR, LAYER_PIPELINE, LAYER_EXECUTION, LAYER_COMMON, LAYER_INCONSISTENCY_DETECTION,
+                    LAYER_CODE_TRACEABILITY);
 
 }

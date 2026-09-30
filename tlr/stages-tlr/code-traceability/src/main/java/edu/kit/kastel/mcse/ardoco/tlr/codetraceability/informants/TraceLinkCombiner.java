@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.io.Serial;
@@ -17,7 +17,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
@@ -28,6 +29,7 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
 @Deterministic
 public class TraceLinkCombiner extends Informant {
@@ -43,7 +45,7 @@ public class TraceLinkCombiner extends Informant {
         ModelStates modelStatesData = DataRepositoryHelper.getModelStatesData(this.getDataRepository());
 
         var swattrConnectionState = this.getDataRepository().getData(ConnectionStates.ID, ConnectionStates.class);
-        var artemisConnectionState = this.getDataRepository().getData(NerConnectionStates.ID, NerConnectionStates.class);
+        var artemisConnectionState = this.getDataRepository().getData(ArtemisConnectionStates.ID, ArtemisConnectionStates.class);
 
         if (codeTraceabilityState == null || modelStatesData == null || (swattrConnectionState.isEmpty() && artemisConnectionState.isEmpty())) {
             return;
@@ -62,7 +64,7 @@ public class TraceLinkCombiner extends Informant {
 
             codeTraceabilityState.addSadCodeTraceLinks(transitiveTraceLinks);
         } else if (artemisConnectionState.isPresent()) {
-            var connectionState = artemisConnectionState.get().getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            var connectionState = artemisConnectionState.get().getState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT));
             var nerSamTraceLinks = connectionState.getTraceLinks();
 
             ImmutableSet<? extends TraceLink<SentenceEntity, ? extends Entity>> sadSamTraceLinks = nerSamTraceLinks.collect(traceLink -> {

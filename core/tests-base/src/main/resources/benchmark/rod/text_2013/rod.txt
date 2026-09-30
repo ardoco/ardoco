@@ -1,0 +1,119 @@
+This page describes the designed architecture of Ruby Object Database (ROD) as of version 1.0.
+The current implementation (0.6.x) differes in some respects - mainly by the fact, that it is backed by custom persistence mechanism.
+This will be replaced by Oracle Berkeley DB in v. 1.0.
+Note: The sections marked WIP (work-in-progress) are prone to change in the final implementation.
+Persistence layer.
+The Ruby Object Database is implemented on the basis of Oracle Berkeley DB.
+The API of ROD allows for direct storing and accessing Ruby objects.
+It is not an object-relational library, it is a first-class object database.
+It is not a database server - it runs in the same process as the Ruby script that have access to it.
+Each class which inherits from @Rod::Model@ has a corresponding primary Berkeley "database":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/concepts.html, which in general is a fast key-value store.
+(Note: Berkeley DB naming conventions might be unfamiliar to SQL oriented readers.
+You can think of a single Berkeley database as a table in SQL terminology.).
+WIP-start This database uses "Recno":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_conf.html#id3879033 access method with fixed-size records and fixed record numbers for storing the objects.
+Alternative: "Queue":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_conf.html#id3877002 *WIP-end*.
+Each object is identified by its @rod_id@ (see section below), which is the @key@ (fixed record number) in that Berkeley database and its properties are converted to C struct, which is the @value@ in that Berkeley database.
+Each property might be indexed with one of two types of indices: @hash@ and @btree@, which correspond to the "Hash":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_conf.html#id3879052 and "BTree":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_conf.html#id3878736 access methods.
+These are implemented as the "secondary databases":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/indexes.html of the primary database storing the C structs itself.
+Objects might be linked with each-other via @has_one@ and @has_many@ relationships.
+The first type of relationship is implemented as a field in the C struct, which holds the @rod_id@ of the accessed object.
+The second type is implemented as a separate Berkeley database with Hash access method and "duplicate values":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/Positioning.html#getdups.
+The C struct holds the identifier of the @Rod::JoinElement@ (the element used to store the @has_many@ relationships), whose duplicated values are the ordered <code>rod_id</code>s of the referenced objects.
+A set of interlinked objects (i.e. referencing each others using @has_one@ or @has_many@ properties) might be stored in one or many ROD databases, which correspond to Berkeley DB "environments":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/environments.html (database instance in SQL terminology).
+If the sets of classes of these objects constitute a partially ordered set (i.e. for every pair of databases the reference relation is anti-symetric, that is any class in a database A references some class in database B, but none of the classes in the database B accesses any of the classes in database A or neither A nor B references the other database or A and B are the same) then the these classes might define direct references (via @has_one@ or @has_many@ properties).
+If not - one of the symmetric references has to be changed into reverse indices on the offending properties.
+As a result both the relationship and its inverse will be stored in the same database and the partial order will be preserved.
+The database meta-data (mostly the definitions of the classes of the stored objects) is kept with it in a @database.yml@ file.
+It is used to detect schema changes, to autogenerate the classes and to migrate the objects from one version of the class to another.
+It might be also consulted by a human, e.g. to check for the numbers of stored objects or to check the structure of the classes.
+The concurrent access to the databases (Berkeley DB environments) is provided by Berkeley DB.
+As a result, many Ruby processes/threads might access/modify the same database at the same time, with support for strict "ACID transactions":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/intro_dbis.html#id3877453.
+Berkeley DB also supports write ahead-logging, for (catastrophic) error recovery and master-slave distributed settings with fault-tolerance and high availability.
+Objects identity.
+In order to be persistable, given object have to be an instance of a class that inherits from @Rod::Model@.
+That object is identified by its *@rod_id@* (ROD identifier) which is ascribed to it, when the object is stored.
+This id is unique for a given class.
+The object might be uniquely identified within given ROD database instance by its class and @rod_id@.
+To be universally uniquely identified, the database instance has a universally unique id, so the triple @(rod_id,class_id,database_id)@ identifies the object universally.
+The @rod_id@ is assigned in a "sequence":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/sequence.html and is limited by the maximum positive value of @int@ at current architecture.
+The @class_id@ is computed as a SHA2 hash of the class name and semi-uniquely identifies the class.
+The chance for hash collision is neglectable but there might be two different classes with the same name.
+These might be completely different classes (say from different applications/libraries) or different versions of the same class.
+The first case could happen in some scenarios, but will not impact the usage of the database, since the classes can not be used in the same (run)time.
+The second case is resolved by the library, since the meta-data relevant for the data interpretation are stored with the data files and allow for detection of conflicting class schemes, thus incompatible versions of the class.
+It should be also noted that two versions of the same class might be accessed in the same runtime, since the library allows for embedding the classes in different Ruby modules, which makes their object spaces separable.
+This feature is used to migrate the data from one schema to another and also to access two different databases with same classes at the same time.
+As a result, although not totally universally uniquely identified, objects are uniquely identified for a valid (lacking conflicting definitions and versions of the classes) runtimes.
+Properties.
+The database defines three types of properties for Ruby objects:.
+* <code>field</code>s.
+* @has_one@ relationships.
+* @has_many@ relationships.
+These properties are the only means for storing data in ROD.
+The structure of these properties is mapped into fields in C structs, which are used to store the data in the Berkeley DB.
+The following sections describe how these properties are mapped into the fields of a C struct.
+fields.
+Considering architecture, there are two types of fields: fixed and variable length.
+ROD defines very limited set of fixed length fields: @integer@, @ulong@ and @float@.
+They correspond directly to the fields in the C structs, whose types are also limited.
+ROD uses the built-in "conversion macros":http://www.ruby-doc.org/docs/ProgrammingRuby/html/ext_ruby.html#S2 to convert the Ruby values to the C values.
+As a result, the valid set of values for @integer@ and @ulong@ is limited not by the system memory (as in Ruby), but the size of @int@ and @unsigned long int@ for the current architecture (this might change to be architecture independent).
+ROD defines three types of variable length fields: @string@, @object@ and @yaml@.
+All of them are stored internally as byte-arrays and are roughly same from the architecture point-of-view.
+The difference between them from the API point-of-view, is that <code>string</code>s are used to store Ruby strings, <code>object</code>s are used to store arbitrary Ruby objects, which are marshaled using Ruby build-in Marshal during store and @yaml@ is used for the same purpose, but converts the objects into "YAML":http://yaml.org/ representation.
+It should be noted that Ruby objects stored as @object@ or @yaml@ will not have their referential integrity preserved between different ROD-persistable objects.
+As a result, they should be used to store direct values (such as symbols or arrays of integers).
+The difference between @object@ and @yaml@ lays in the performance (much better for @object@) and portability (@yaml@ objects are portable between different programming languages - although not yet implemented, the support for other languages is planned for ROD).
+*WIP-start*.
+The byte-arrays are not directly stored in the corresponding C structs nor are "marshalled":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/cstructs.html#cstructdynamic with it.
+The struct has a corresponding @length@ and @offset@ field for each byte-array.
+The @lenght@ as its name suggests is the length of the array.
+The byte-array is stored in a different Berkeley database as the C structs corresponding to the Ruby object and the @offset@ is used as its identifier (a @key@ in Berkeley DB terminology).
+The byte arrays are (by default) lazily loaded and converted to corresponding value (Ruby string/object) only when the property is accessed.
+Alternative: Berkeley DB "marshalling":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/cstructs.html#cstructdynamic of the byte-arrays.
+*WIP-end*.
+has-one relationships.
+There are two types of @has_one@ relationships in ROD: mono- and polymorphic.
+The class of the monomorphic @has_one@ relationships is guessed from the property name (but might be directly pointed out with @class_name@ option) and its values are limited only to exact instances of that class.
+It should be noted, that by exact instances we don't mean instances of their subclasses.
+In such a case, the referenced object is identified by its @rod_id@, which is stored in the C struct as (@property_name@)@_id@ field (e.g. @has_one :car@ => @car_id@) of type @unsigned long int@.
+In the case of poly-morphic association, the object has to be identified by its @rod_id@ and its @class_id@.
+As a result, a second field (@property_name@)@__class@ is defined in such cases.
+It holds the SHA2 name hash of the class of the referenced object.
+The pair (@rod_id@,@class_id@) uniquely identifies the object in scope of a given database (see section above).
+has-many relationships.
+The @has_many@ relationships are also mono- and polymorphic.
+The primary difference between @has_many@ and @has_one@ relationships lays in the fact, that the number of references is not known in advance in the case of the former, but is restricted to one in case of the latter.
+As a result, the @has_many@ relationships have to be stored similarly to byte-arrays - the C structs record only their @offset@ (identifier) and @count@ (the number of referenced objects).
+The actual references are stored in the form of <code>Rod::JoinElement</code>s and <code>Rod::PolymorphicJoinElement</code>s (in case of the polymorphic relationships) in separate Berkeley databases.
+The @Rod::JoinElement@ and @Rod::PolymorphicJoinElement@ define their own C structs - which hold the @rod_id@ of the referenced objects, and their @class_id@ in case of the polymorphic join elements.
+These structs are stored in Berkeley DB with "Hash":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_conf.html#id3879052 access method, with support of "duplicated records":http://download.oracle.com/docs/cd/E17076_02/html/gsg/C/Positioning.html#getdups (Recno doesn't suppor duplicated recoreds).
+The @offset@ is acquired from Berkeley DB sequence and is used as the @key@, while the C structs corresponding to the @has_many@ relationships of the object are filled with their <code>rod_id</code>s and <code>class_id</code>s (if necessary).
+The order of the duplicated records is preserved by Berkeley DB so the <code>Rod::(Polymorphic)JoinElement</code>s doesn't have to be sorted or hold their position within give @has_many@ relationship.
+Indexing.
+ROD has a built-in support for indexing of all types of properties, i.e. fields, has-one and has-many relationships.
+There are two types of indexing: @btree@ and @hash@, which are based on Berkeley DB BTree and Hash access methods.
+The primary difference between them is that BTree allows for sorting the indexed keys and as a result allows for iterating over the keys in a specified order.
+On the other hand Hash has much smaller impact on memory and has better access and storage performance.
+Both of these access methods allows for defining the order in which the values are stored.
+By default they are sorted linearly with ascending <code>rod_id</code>s for fields and monomorphic @has_one@ and @has_many@ relationships and are stored in lexicographical order for polymorphic @has_one@ and @has_many@ relationships (where the @class_id@ is the primary sorting criteria).
+This allows for an efficient intersection operation performed over sets of values (i.e. object references) of two different keys.
+This efficient algorithm is "build-in into":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_cursor.html#am_join the Berkeley DB.
+The user might also define his/her own sorting order, but in such a case the intersection operation is less efficient.
+The indexing of fields and has-one relationships is implemented using Berkeley DB "secondary databases":http://download.oracle.com/docs/cd/E17076_02/html/programmer_reference/am_second.html.
+In the case of fields, the value of the field is the @key@ used in that database, while in the case of has-one relationships it might be the @rod_id@ of the referenced object (when the relationship is monomorphic) or the @rod_id@ concatenated with the @class_id@ (when the relationship is polymorphic).
+In the case of has-many relationships, the indexing is implemented using a primary Berkeley database.
+This is due to the fact that the secondary databases don't support multikeyd values (that would be strange in fact).
+When the object with an indexed has-many relationship is stored, the referenced objects are visited in order to collect their <code>rod_id</code>s (and <code>class_id</code>s in the case of a polymorphic relationship) and for each referenced object its @rod_id@ (concatenated with its @class_id@ in the case of polymorphic relationships) is the @key@  in the primary database, and to @rod_id@ of the referencing object is the @value@.
+Referential integrity and object (de)coupling.
+The design goals of ROD include the requirement for easy memory reclaims, when the garbage collection is performed.
+The other nice feature of ROD is the referential integrity of object (within one process).
+It assures that there are no two copies of uniquely identified (stored) object in the process.
+The application of the first feature focuses on has-many relationships.
+*WIP-start* It is assumed that has-one relationships should not result in large collections of non-garbage-collectible objects.
+Alternative: allow for configuration of reference model for has-one relationships. *WIP-end*.
+As a result whenever the object found in a has-many relationship is accessed, it is retrieved from the database (that is its reference is not registered in the collection proxy).
+In normal circumstances this would lead to poor performance, but connected with the second feature (referential integrity), the object is never retrieved from the Berkeley DB nor constructed if it already occupies the process memory.
+The referential integrity is implemented using a custom implementation of a weak-hash (not the one available at rubygems.org).
+It ensures that the same copy (with the same @object_id@) of the uniquely identified object is returned, until all of its accessible references (which exclude the has-many relationships it is a part of on the _many_ side) are lost.
+The implementation uses the @ObjectSpace._id2ref@ to retrieve the object, but unlike the weak-hash at rubygems, it has several optimizations, especially for the objects that don't support finalize (<code>Fixnum</code>s in particular).
