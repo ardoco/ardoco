@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5a19412b3203b8d8b87a13fc9f723ff9b912e2a857fc3c7d5bc5832463268083",
+  "pageVersion": "sha256:c1004c5a62896b37444ada3920292c1da35776a032b8f02579e8fd779dc62fc0",
   "claims": [
     {
       "id": "claim_6b4e5f7887b84ecba335d1cc85c5ab97",
@@ -169,10 +169,52 @@
           "version": "repo-lines-v1:sha256:b7572313d05d11a188fe6bbeb90f8c0bc37ea043a4f75b18aeee24c3955151e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MzQxY2E1YmJhZjhkYTc3NWEzYmFiNDliYjgxYjM0NDE4YTFlNDY0NjI3NDk5YjBkMDRhMWI3N2M4M2MyMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkN2NmNTk4YTNkZDZhNWUxZjdmNWYyNTA5Y2ZkNGFlNDMwM2RhNjdiOGEzZjljYThlOGUyYThiYjA0NTUzN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExODYxMzgwOTFlNzQ5Y2NmYzQ4Y2FiODRiZmUwMzA5OGQ5OGFhMzMwZmFhMTdiNDMxMjllYzNjMmQ5NDQwM2UifQ"
         }
       ]
+    },
+    {
+      "id": "claim_86e917b33a264ca4bc1d5bdd6476d823",
+      "statement": "The InconsistencyDetection runner constructs its ArchitectureConfiguration directly with Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES and has no metamodel guard, in contrast to the TLR runners (e.g., Swattr), whose setUp rejects a pre-set metamodel with IllegalArgumentException and then pins ARCHITECTURE_WITH_COMPONENTS via ArchitectureConfiguration.withMetamodel(...).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java#L56-L60",
+          "version": "repo-lines-v1:sha256:3c941bab10abd6dc1a1b93cf932387de2d181793313d69ea07bcdbadecdf0dc0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTQ5ZjlhYWVhZTJmMzYxOWFkZWViNTlmMGI0YTUzZmVhMTM4ZjkxYjgxMjdhZTU3MjFhZTQ3YWU2MDIyNjZkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzE5YmFhMTNlMGIzYjFiYjgxMzNlMzVjODhlZDAyZTZhYThhZGMyZDg3YTMzZDJjZjg0ZTI3NGY1MjhmNTg4YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDE3MWVhZjFhYzgyNTljYzA4ZTQ5MmE3MjY5NWJmMWViNGFhM2VlZTE4MTRhZjA1ZGJhZGJkNmQ1OTE3NTc1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjFhNGRkODg0OWRiZjVjZWNiMThiMjAxYzczNjE5Zjk3YWI2YWVlNWRjNWY3NjMyM2ExZjdiMzhhNWE4MTQzMiJ9"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java#L30-L38",
+          "version": "repo-lines-v1:sha256:6f044273f5eee2cd094da941c4293a05ba3b5c3d8f35b542e7ce9fc2191b5832:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJjOGJkOTYwNTkwZWJhYjFiMDYxNWUyOTAwNGIxMjFkYWIxMmVkYzFlMTdiNDhkNGYxOWI3NDNhZDcxZjRlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2FiMTdlNmRmOGM5MmQxZWZiNWIxZDY0MDQ2ZGE2ZmE2NTcxNjA4YTUxZGE2ODQ5MzBhYzVjMTVlYmNhZjhlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA0ODk0OWU5ZmQ1ZDUyODRjNTdlZDk0YWEyODRiZTc2NzgxYTRlMGE5Njc4Y2RjZmEwZWMyNzZkNTVhNTdiMyJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java#L27-L29",
+          "version": "repo-lines-v1:sha256:d57a7a7467489d088e7ab0a44dfb52cbb07f26ce4f89175181b8318d2d35dd45:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTAwZjU5NjQxNmMyMTU4YTUyNDJlYTY5NWM4YjZhZWZkZmRmOTE1OTVjN2MyMTQ0ZDNiYzZhZDYyMmYwMzFkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk5YmRlZmVlYWNhNjM0MGUwMjkwZGM4NmU4ODljODlkNWUxODlhYTViYTQ0YjU4NWIzYjcwNzM0ZjRhNjJkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE1OWM1NTIyOTA0YjQxNWJmZWJiNDIzZjU2ZDVjZWRjOTdmNDkyN2Q4MDI2ZWI4ZDc1ZmMyYzNjMmY5OGM1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a915e3f371a04d7ea738d5bee49511e4",
+      "statement": "In RecommendedInstanceProbabilityFilter.checkProbabilitiesForNounMappingTypes, getHighestNameProbability is called on getTypeMappings(), so both thresholdNameOrTypeProbability gates effectively test the type-mapping probability and the name-mapping probability is only constrained by the thresholdNameAndTypeProbability gate.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/RecommendedInstanceProbabilityFilter.java#L106-L126",
+          "version": "repo-lines-v1:sha256:999f9de8964256b8ce5641cc33b59cd43848bae3a6b547a0550006517ddfd6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYjQ1ZjAwYjBiYjAzNmNmMDI4NGE2ZTY5OTNiMDRlMTIyMTA1MDA2Yzc2Nzc5YzE5NGEzOTM5ZWM2YmQwYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwODIzZDVhODU3MDRjNTEzODdiNDJmZDE4NGU2NmUyMTkyMDEwZjY1NWEyOTdkODgzMzk5NTk3MjUxMGQ3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2YjkwZDQzNjQ2YTY0YTgzOWUzMjY1YTIwM2ZmMGIyMmQ0NzM5YzZmMmM2MTYxY2JjYjE3ZTM0NmQ4ZjllOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2c20059d66a4340a37d603f01984fca",
+      "statement": "The ID type unit tests extend AbstractInconsistencyTypeTest, which actively asserts the inconsistency type strings and equals/hashCode behavior while its reason-string and file-output tests are @Disabled because expected values change regularly; the agent-level unit test covers the MEAT whitelist full-match regex and modelInstanceHasTargetedType type/type-part matching.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/agents/ModelEntityAbsentFromTextInconsistencyTest.java#L30-L67",
+          "version": "repo-lines-v1:sha256:907156497f0ddba9e1844cc1459a3243cd2266be2709bcd38879c1dbd5b51deb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmJjNDJiNTM4YzY3YTM3MWNlNWRkNGQxODY1NmIzZjNhNzNhZGJhZmI3YmRmMTFkMzFmZmQ0NjYwMmQ0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/types/AbstractInconsistencyTypeTest.java#L37-L64",
+          "version": "repo-lines-v1:sha256:378e13fd7736263cab0c133da5b9fce5c9e60e59fb71e5fccfbe9a31a20eef81:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNTQ3MzU1OTRkYjUzNjI2NmIwZTI2MGU1YmJkODI3YWZhNjc0MTAxYmU5Yjc4YmEyYzJkZmM2NjMyYTBhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiODNiY2Q0YWFlMzE4NTIxZTQwZTNjOWRjOGU5NTkxZGM4MTQ1ODUwNTEzNDNjMzVmN2JmYTZmMDlkMzRjMDkifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.6.0",
-    "at": "2026-09-28T12:10:26.118Z"
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-05T12:50:45.506Z"
   }
 }
