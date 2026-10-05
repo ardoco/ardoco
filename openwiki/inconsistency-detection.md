@@ -12,8 +12,8 @@ openwiki:
   test_paths: [inconsistency-detection/stages-id/inconsistency-detection/src/test/java, inconsistency-detection/tests-inconsistency/src/test/java]
   validation_commands: ["mvn -pl inconsistency-detection clean verify"]
 verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-28T12:10:26.118Z
+  - by: openwiki/0.7.0
+    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-b0f594a7d3e6330bcef64b54
     resource: repo://core/tests-base/pom.xml
@@ -49,6 +49,8 @@ sources:
     resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/types/TextEntityAbsentFromModelInconsistency.java
   - id: openwiki-source-16474d78d6a2d91a07302dfe
     resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/agents/ModelEntityAbsentFromTextInconsistencyTest.java
+  - id: openwiki-source-dda6a8955474a7938892d976
+    resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/types/AbstractInconsistencyTypeTest.java
   - id: openwiki-source-b1947d838c05c65e6ca3f79d
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/eval/baseline/InconsistencyBaselineInformant.java
   - id: openwiki-source-edf5c30c4e5b71b28c079cd1
@@ -59,7 +61,11 @@ sources:
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java
   - id: openwiki-source-af363b099a3f39a1a9f8fceb
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java
-generated: { by: "openwiki/0.6.0", at: "2026-09-28T12:10:26.118Z" }
+  - id: openwiki-source-c3324edd02fb573e63e5301b
+    resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java
+  - id: openwiki-source-02915942e497a9802282dcbf
+    resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java
+generated: { by: "openwiki/0.7.0", at: "2026-10-05T12:50:45.506Z" }
 ---
 
 # Inconsistency Detection
@@ -142,7 +148,7 @@ TextPreprocessingAgent → ModelProviderAgent → TextExtraction → Recommendat
 
 This is the SWATTR trace link recovery pipeline (see [TLR Approaches](tlr-approaches.md)) with the `InconsistencyChecker` stage appended. Two details matter:
 
-- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` via an `ArchitectureConfiguration`; like the other runners it forbids a metamodel from external configuration.
+- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` by constructing the `ArchitectureConfiguration` directly with that metamodel (unlike the TLR runners, whose `setUp` forbids a pre-set metamodel and then calls `withMetamodel(...)` itself; see [TLR Approaches](tlr-approaches.md)). Note the contrast with the SWATTR runner, which pins `ARCHITECTURE_WITH_COMPONENTS`.
 - Blank input text is rejected up front with an `IllegalArgumentException`.
 
 The runner contract (`isSetUp` flag, `run()` vs. `runWithoutSaving()`) is documented on [Architecture](architecture.md). Because both informants read `ConnectionStates`, `ModelStates`, and `InconsistencyStates` from the shared `DataRepository`, the `InconsistencyChecker` only produces results when the upstream stages have already run.
@@ -169,7 +175,7 @@ Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in 
 | `OccasionFilter` | Drops RIs that do not recur | `expectedAppearances=2` |
 | `UnwantedWordsFilter` | Drops RIs with unwanted words | `enableCommonBlacklist=true`, custom/common word lists, common file endings |
 
-**RecommendedInstanceProbabilityFilter**: with `dynamicThreshold=true`, the threshold is recomputed per run as `dynamicThresholdFactor × highest RI probability`. An RI survives if its probability exceeds the threshold **and** the name/type noun mapping probabilities pass one of the gates: name and type each above `thresholdNameAndTypeProbability`, or name above `thresholdNameOrTypeProbability`, or type above `thresholdNameOrTypeProbability`.
+**RecommendedInstanceProbabilityFilter**: with `dynamicThreshold=true`, the threshold is recomputed per run as `dynamicThresholdFactor × highest RI probability`. An RI survives if its probability exceeds the threshold **and** the name/type noun mapping probabilities pass one of the gates: name and type each above `thresholdNameAndTypeProbability`, or name above `thresholdNameOrTypeProbability`, or type above `thresholdNameOrTypeProbability`. (The two "or" gates compare the *same* highest type and name probabilities against `thresholdNameOrTypeProbability`, so the name gate can only fire for type mappings and vice versa — an implementation quirk of `checkProbabilitiesForNounMappingTypes`.)
 
 **OccasionFilter**: counts how many *distinct text positions* the RI's name-mapping words occupy (consecutive word positions count as one position); the RI survives only if the count is at least `expectedAppearances`.
 
@@ -205,7 +211,6 @@ Behavioral notes:
 
 ## Evaluation Harness
 
-<!-- openwiki: broken internal link [testing.md] file "testing.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 `InconsistencyDetectionEvaluationIT` (module `tests-inconsistency`) evaluates TEAM and MEAT on the benchmark projects of the `InconsistencyDetectionTask` enum: `MEDIASTORE`, `TEASTORE`, `TEAMMATES`, `BIGBLUEBUTTON`, and `JABREF` (see [Testing & Evaluation](testing.md) for run recipes and the EnumSource trick to run a single project).
 
 ### Hold-Back Runs
@@ -240,11 +245,10 @@ All evaluation artifacts are written under `target/testout`:
 
 ## Testing Infrastructure
 
-- **Unit tests** (`stages-id/inconsistency-detection/src/test/java/.../id/`): `types/AbstractInconsistencyTypeTest.java` plus `types/TextEntityAbsentFromModelInconsistencyTest.java` and `types/ModelEntityAbsentFromTextInconsistencyTest.java` verify type strings, reasons, equality, and file output; `agents/ModelEntityAbsentFromTextInconsistencyTest.java` covers the MEAT whitelist regex and type-targeting helpers.
+- **Unit tests** (`stages-id/inconsistency-detection/src/test/java/.../id/`): `types/AbstractInconsistencyTypeTest.java` plus `types/TextEntityAbsentFromModelInconsistencyTest.java` and `types/ModelEntityAbsentFromTextInconsistencyTest.java` verify type strings, equality, and (currently `@Disabled` because expected values change regularly) reason and file output; `agents/ModelEntityAbsentFromTextInconsistencyTest.java` covers the MEAT whitelist regex and type-targeting helpers.
 - **Shared ArchUnit tests** (`tests-inconsistency`): `ArchitectureTest`, `ConfigurationTest`, and `DeterministicArdocoTest` extend the rule base classes from `core/tests-base`, enforcing the architecture rules, `@Configurable` validity, and determinism over `core`, `tlr`, and `id` packages.
 - **Integration/evaluation**: `InconsistencyDetectionEvaluationIT` with the `integration/inconsistencyhelper/` support classes (`HoldBackArCoTLModelProvider`, `HoldBackRunResultsProducer`, `InconsistencyDetectionEvaluationUtil`) and the `eval/baseline/InconsistencyBaseline*` classes.
 
-<!-- openwiki: broken internal link [testing.md] file "testing.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 Run commands, environment variables, and the invariant that metric-affecting heuristic changes require deliberate expectation updates are covered on [Testing & Evaluation](testing.md); module build commands live on [Quickstart](quickstart.md) and [Operations](operations.md).
 
 ## Use Cases
