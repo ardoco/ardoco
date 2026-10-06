@@ -154,10 +154,7 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
     }
 
     private void persistRecommendedInstance(RecommendedInstance recommendedInstance) {
-        if (this.metamodel != null && PersistenceBridge.shouldPersistRecommendations()) {
-            PersistenceBridge.runQuietly("saveRecommendedInstance",
-                    () -> PersistenceBridge.getHandler().saveRecommendedInstance(recommendedInstance, this.metamodel));
-        }
+        PersistenceBridge.saveRecommendedInstance(recommendedInstance, this.metamodel);
     }
 
     /**

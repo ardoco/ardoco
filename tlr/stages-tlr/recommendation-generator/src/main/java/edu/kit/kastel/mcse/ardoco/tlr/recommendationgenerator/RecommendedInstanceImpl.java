@@ -254,9 +254,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     private void persistIfEnabled() {
-        if (this.metamodel != null && PersistenceBridge.shouldPersistRecommendations()) {
-            PersistenceBridge.runQuietly("saveRecommendedInstance", () -> PersistenceBridge.getHandler().saveRecommendedInstance(this, this.metamodel));
-        }
+        PersistenceBridge.saveRecommendedInstance(this, this.metamodel);
     }
 
     @Override
