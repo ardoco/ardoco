@@ -24,7 +24,7 @@ public class ConnectionStatesImpl implements ConnectionStates {
         logger.info("Building connection states for {} metamodels", metamodels.length);
         var recStates = new ConnectionStatesImpl();
         for (Metamodel mm : metamodels) {
-            recStates.connectionStates.put(mm, new ConnectionStateImpl());
+            recStates.connectionStates.put(mm, new ConnectionStateImpl(mm));
         }
         return recStates;
     }

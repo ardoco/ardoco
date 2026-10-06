@@ -10,6 +10,7 @@ import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
@@ -31,13 +32,22 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Serial
     private static final long serialVersionUID = 3340998661239696150L;
     private final MutableList<TraceLink<RecommendedInstance, ModelEntity>> instanceLinks;
+    private final Metamodel metamodel;
 
     /**
-     * Creates a new connection state.
+     * Creates a new connection state for the given metamodel.
+     *
+     * @param metamodel the metamodel this state belongs to
      */
-    public ConnectionStateImpl() {
+    public ConnectionStateImpl(Metamodel metamodel) {
         super();
         this.instanceLinks = Lists.mutable.empty();
+        this.metamodel = metamodel;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+        return this.metamodel;
     }
 
     /**

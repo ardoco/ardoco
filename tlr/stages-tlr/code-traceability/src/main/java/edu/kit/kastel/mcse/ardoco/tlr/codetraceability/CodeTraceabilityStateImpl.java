@@ -12,6 +12,7 @@ import org.eclipse.collections.impl.factory.Sets;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
@@ -77,7 +78,12 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
                     () -> PersistenceBridge.getHandler().loadSentenceModelTraceLinks(), java.util.List.of());
             if (!transitiveLinks.isEmpty() || !directLinks.isEmpty()) {
                 this.transitiveTraceLinks = Lists.mutable.withAll(transitiveLinks);
-                this.transitiveTraceLinks.addAll(directLinks);
+                // The loader returns the sentence links of all metamodels; only sentence->code links belong to SAD-code.
+                for (SentenceModelTraceLink directLink : directLinks) {
+                    if (directLink.getSecondEndpoint() instanceof CodeItem) {
+                        this.transitiveTraceLinks.add(directLink);
+                    }
+                }
                 loadedFromPersistence = true;
             }
         }
