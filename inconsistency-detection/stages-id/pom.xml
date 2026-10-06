@@ -14,5 +14,6 @@
   <modules>
     <module>artemis-inconsistency-detection</module>
     <module>inconsistency-detection</module>
+    <module>programming-language-inconsistency-detection</module>
   </modules>
 </project>
