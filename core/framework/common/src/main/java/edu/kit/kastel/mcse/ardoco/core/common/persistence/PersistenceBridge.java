@@ -31,6 +31,12 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static boolean persistNerConnectionStatic = false;
 
+    /**
+     * When true, {@link #runQuietly} and {@link #callQuietly} rethrow {@link RuntimeException} instead of swallowing.
+     * Integration tests enable this so persistence bugs fail tests instead of returning fallbacks.
+     */
+    public static boolean failOnPersistenceErrorStatic = false;
+
     @Configurable
     private boolean usePersistence = false;
 
@@ -97,6 +103,14 @@ public class PersistenceBridge extends AbstractConfigurable {
         return isAvailable() && persistNerConnectionStatic;
     }
 
+    public static void setFailOnPersistenceError(boolean failOnPersistenceError) {
+        failOnPersistenceErrorStatic = failOnPersistenceError;
+    }
+
+    public static boolean shouldFailOnPersistenceError() {
+        return failOnPersistenceErrorStatic;
+    }
+
     /**
      * Runs a persistence side-effect. On {@link RuntimeException} (e.g. Neo4j down), logs and continues.
      * Does not catch {@link Error}.
@@ -105,6 +119,9 @@ public class PersistenceBridge extends AbstractConfigurable {
         try {
             action.run();
         } catch (RuntimeException ex) {
+            if (failOnPersistenceErrorStatic) {
+                throw ex;
+            }
             LOGGER.warn("Persistence operation '{}' failed; continuing without Neo4j. Cause: {}", operation, ex.toString());
             LOGGER.debug("Persistence failure details for '{}'", operation, ex);
         }
@@ -117,6 +134,9 @@ public class PersistenceBridge extends AbstractConfigurable {
         try {
             return action.get();
         } catch (RuntimeException ex) {
+            if (failOnPersistenceErrorStatic) {
+                throw ex;
+            }
             LOGGER.warn("Persistence operation '{}' failed; using fallback. Cause: {}", operation, ex.toString());
             LOGGER.debug("Persistence failure details for '{}'", operation, ex);
             return fallback;

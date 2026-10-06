@@ -128,8 +128,14 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         this.typeMappings.addAll(typeNodes.castToCollection());
     }
 
-    void setMetamodel(Metamodel metamodel) {
+    @Override
+    public void setMetamodel(Metamodel metamodel) {
         this.metamodel = metamodel;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+        return this.metamodel;
     }
 
     private static double calculateMappingProbability(ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings) {

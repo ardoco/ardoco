@@ -17,16 +17,10 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The recommendation state encapsulates all recommended instances and relations. These recommendations should be contained by the model by their probability.
  */
 public class RecommendationStateImpl extends AbstractState implements RecommendationState {
-
-    // TODO(neo4j-diagnostic): temporary logging to confirm whether RecommendedInstance creation diverges when persistTextState=true. Remove once root-caused.
-    private static final Logger DIAG_LOGGER = LoggerFactory.getLogger(RecommendationStateImpl.class);
 
     @Serial
     private static final long serialVersionUID = 3088770775218314854L;
@@ -98,10 +92,6 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
      * recommendedInstance with the same name can be found it is extended. Elsewhere a new recommended instance is created.
      */
     private void addRecommendedInstance(RecommendedInstance ri) {
-        // TODO(neo4j-diagnostic): temporary logging to confirm whether RecommendedInstance creation diverges when persistTextState=true. Remove once root-caused.
-        DIAG_LOGGER.info("[recommendation-diagnostic] addRecommendedInstance name='{}' type='{}' nameMappings={} typeMappings={} alreadyContained={}",
-                ri.getName(), ri.getType(), ri.getNameMappings().size(), ri.getTypeMappings().size(), this.recommendedInstances.contains(ri));
-
         if (this.recommendedInstances.contains(ri)) {
             return;
         }
@@ -148,6 +138,19 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
         for (RecommendedInstance ri : this.recommendedInstances.toImmutable()) {
             ri.onNounMappingDeletion(nounMapping, replacement);
         }
+    }
+
+    @Override
+    public void repersistInstancesReferencing(NounMapping nounMapping) {
+        for (RecommendedInstance ri : this.recommendedInstances) {
+            if (referencesMapping(ri, nounMapping)) {
+                persistRecommendedInstance(ri);
+            }
+        }
+    }
+
+    private static boolean referencesMapping(RecommendedInstance ri, NounMapping nounMapping) {
+        return ri.getNameMappings().contains(nounMapping) || ri.getTypeMappings().contains(nounMapping);
     }
 
     private void persistRecommendedInstance(RecommendedInstance recommendedInstance) {

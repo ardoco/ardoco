@@ -110,7 +110,7 @@ public class TextStateRecommendationPersistenceTest extends AbstractPersistenceT
 
     private long countRecommendationArchitectureLinks() {
         return neo4jClient.query("""
-                MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
+                MATCH (:RecommendedInstance)-[r:TRACES_TO]->()
                 WHERE r.traceLinkType = 'RECOMMENDATION_ARCHITECTURE'
                 RETURN count(r) AS c
                 """)

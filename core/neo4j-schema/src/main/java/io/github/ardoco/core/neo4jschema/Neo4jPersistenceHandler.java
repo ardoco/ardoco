@@ -292,6 +292,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, ArchitectureItem> architectureItemsById) {
         logger.info("Loading RecommendationModelTraceLinks (architecture) from Neo4j (resume)");

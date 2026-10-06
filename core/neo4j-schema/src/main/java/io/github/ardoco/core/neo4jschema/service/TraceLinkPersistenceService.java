@@ -64,7 +64,6 @@ public class TraceLinkPersistenceService {
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
     private final DocumentationMapper documentationMapper;
-
     public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, TraceLinkRepository traceLinkRepo,
             ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, DocumentationMapper documentationMapper) {
         this.traceLinkRepo = traceLinkRepo;
@@ -273,7 +272,7 @@ public class TraceLinkPersistenceService {
     private List<RecommendationModelTraceLink> loadRecommendationModelLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, ArchitectureItem> architectureItemsById, SortedMap<String, CodeItem> codeItemsById, TraceLinkType type) {
         List<RecommendationModelTraceLink> result = new ArrayList<>();
-        for (Map<String, Object> row : traceLinkRepo.findRecommendationArchitectureLinks(type)) {
+        for (Map<String, Object> row : findRecommendationModelLinkRows(type.name())) {
             String riId = String.valueOf(row.get("riId"));
             String targetId = String.valueOf(row.get("targetId"));
             RecommendedInstance ri = recommendedInstancesById.get(riId);
@@ -298,6 +297,18 @@ public class TraceLinkPersistenceService {
         }
         logger.info("Loaded {} RecommendationModelTraceLinks ({}) from Neo4j", result.size(), type);
         return result;
+    }
+
+    private Collection<Map<String, Object>> findRecommendationModelLinkRows(String traceLinkType) {
+        return neo4jClient.query("""
+                MATCH (ri:RecommendedInstance)-[r:TRACES_TO]->(t:Traceable)
+                WHERE r.traceLinkType = $type
+                RETURN ri.ardocoId AS riId, t.ardocoId AS targetId, coalesce(r.confidence, -1.0) AS confidence
+                """)
+                .bind(traceLinkType)
+                .to("type")
+                .fetch()
+                .all();
     }
 
     /**

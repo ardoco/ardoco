@@ -15,6 +15,7 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -94,6 +95,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
 
     @BeforeEach
     void setUp() {
+        PersistenceBridge.setFailOnPersistenceError(true);
         System.out.println("----------------------------------------------------------");
         System.out.println("neo4j browser: " + NEO4J_BROWSER);
         System.out.println("username:      " + NEO4J_USER);
@@ -114,9 +116,13 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
      */
     @AfterEach
     void clearNeo4jAfterTest() {
-        System.out.println(">>> @AfterEach: clearing all Neo4j test data (MATCH (n) DETACH DELETE n)...");
-        clearNeo4jGraph();
-        System.out.println(">>> Neo4j graph cleared.");
+        try {
+            System.out.println(">>> @AfterEach: clearing all Neo4j test data (MATCH (n) DETACH DELETE n)...");
+            clearNeo4jGraph();
+            System.out.println(">>> Neo4j graph cleared.");
+        } finally {
+            PersistenceBridge.setFailOnPersistenceError(false);
+        }
     }
 
     protected void clearNeo4jGraph() {
@@ -220,6 +226,21 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         map.put("PersistenceBridge::persistRecommendations", String.valueOf(persistRecommendations));
         map.put("PersistenceBridge::persistNerConnection", String.valueOf(persistNerConnection));
         return map.toImmutable();
+    }
+
+    /**
+     * Architecture/code model items must carry {@code :Traceable} so link writes can use {@code traceable_id_idx}.
+     */
+    protected long countModelItemsMissingTraceableLabel() {
+        return neo4jClient.query("""
+                MATCH (n)
+                WHERE (n:ArchitectureItem OR n:CodeItem) AND NOT n:Traceable
+                RETURN count(n) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
     }
 
     protected long countNodesWithLabel(String label) {

@@ -28,6 +28,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepositorySyncer;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 @Deterministic
@@ -180,6 +181,7 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
         this.textState.removeNounMapping(this.dataRepository, secondNounMapping, mergedNounMapping, false);
 
         this.textState.addNounMapping(mergedNounMapping);
+        DataRepositorySyncer.repersistRecommendedInstancesReferencing(this.dataRepository, mergedNounMapping);
         return mergedNounMapping;
     }
 

@@ -72,8 +72,16 @@ public class RecommendedInstanceMapper {
         ImmutableList<NounMapping> nameMappings = resolveDomainMappings(node.getNameMappings(), nounMappingsById);
         ImmutableList<NounMapping> typeMappings = resolveDomainMappings(node.getTypeMappings(), nounMappingsById);
 
-        return new RecommendedInstanceImpl(node.getName(), node.getType() != null ? node.getType() : "", node.getArdocoId(),
+        RecommendedInstanceImpl instance = new RecommendedInstanceImpl(node.getName(), node.getType() != null ? node.getType() : "", node.getArdocoId(),
                 NounMappingMapper.RESUME_CLAIMANT, node.getProbability(), nameMappings, typeMappings);
+        if (node.getMetamodel() != null) {
+            try {
+                instance.setMetamodel(Metamodel.valueOf(node.getMetamodel()));
+            } catch (IllegalArgumentException ex) {
+                logger.warn("Unknown metamodel '{}' on RecommendedInstance {}; leaving metamodel unset", node.getMetamodel(), node.getArdocoId());
+            }
+        }
+        return instance;
     }
 
     private static ImmutableList<NounMapping> resolveDomainMappings(List<NounMappingNode> nodes, SortedMap<String, NounMapping> nounMappingsById) {

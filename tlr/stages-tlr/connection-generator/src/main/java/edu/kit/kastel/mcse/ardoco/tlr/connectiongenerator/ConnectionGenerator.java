@@ -15,6 +15,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
@@ -93,21 +95,20 @@ public class ConnectionGenerator extends AbstractExecutionStage {
 
         RecommendationStates recommendationStates = dataRepository.getData(RecommendationStates.ID, RecommendationStates.class).orElseThrow();
         ModelStates modelStates = dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow();
-
         SortedMap<String, RecommendedInstance> risById = new TreeMap<>();
         SortedMap<String, ArchitectureItem> archById = new TreeMap<>();
         SortedMap<String, CodeItem> codeById = new TreeMap<>();
         for (Metamodel metamodel : activeMetamodels) {
-            for (RecommendedInstance ri : recommendationStates.getRecommendationState(metamodel).getRecommendedInstances()) {
+            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            if (recommendationState == null) {
+                continue;
+            }
+            for (RecommendedInstance ri : recommendationState.getRecommendedInstances()) {
                 risById.put(ri.getId(), ri);
             }
             Model model = modelStates.getModel(metamodel);
             if (model instanceof ArchitectureModel architectureModel) {
-                for (var item : architectureModel.getContent()) {
-                    if (item instanceof ArchitectureItem architectureItem) {
-                        archById.put(architectureItem.getId(), architectureItem);
-                    }
-                }
+                collectArchitectureItems(architectureModel, archById);
             }
             if (model instanceof CodeModel codeModel) {
                 for (var item : codeModel.getEndpoints()) {
@@ -141,21 +142,54 @@ public class ConnectionGenerator extends AbstractExecutionStage {
         if (metamodel == null) {
             return 0;
         }
-        connectionStates.getConnectionState(metamodel).hydrateInstanceLink(link);
+        ConnectionStateImpl connectionState = connectionStates.getConnectionState(metamodel);
+        if (connectionState == null) {
+            logger.warn("No ConnectionState bucket for metamodel {} when hydrating trace link", metamodel);
+            return 0;
+        }
+        connectionState.hydrateInstanceLink(link);
         return 1;
     }
 
     private static Metamodel findMetamodelForLink(Collection<Metamodel> activeMetamodels, RecommendationStates recommendationStates,
             RecommendationModelTraceLink link) {
-        String riId = link.getFirstEndpoint().getId();
+        RecommendedInstance recommendedInstance = link.getFirstEndpoint();
+        if (recommendedInstance.getMetamodel() != null) {
+            return recommendedInstance.getMetamodel();
+        }
+        String riId = recommendedInstance.getId();
         for (Metamodel metamodel : activeMetamodels) {
-            boolean found = recommendationStates.getRecommendationState(metamodel)
-                    .getRecommendedInstances()
-                    .anySatisfy(ri -> ri.getId().equals(riId));
+            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            if (recommendationState == null) {
+                continue;
+            }
+            boolean found = recommendationState.getRecommendedInstances().anySatisfy(ri -> ri.getId().equals(riId));
             if (found) {
                 return metamodel;
             }
         }
-        return activeMetamodels.stream().findFirst().orElse(null);
+        logger.warn("Could not resolve metamodel for RecommendedInstance id {} when hydrating trace link; skipping", riId);
+        return null;
+    }
+
+    private static void collectArchitectureItems(ArchitectureModel architectureModel, SortedMap<String, ArchitectureItem> archById) {
+        for (ArchitectureItem endpoint : architectureModel.getEndpoints()) {
+            collectArchitectureItem(endpoint, archById);
+        }
+    }
+
+    private static void collectArchitectureItem(ArchitectureItem item, SortedMap<String, ArchitectureItem> archById) {
+        archById.put(item.getId(), item);
+        if (item instanceof ArchitectureComponent component) {
+            for (ArchitectureComponent subcomponent : component.getSubcomponents()) {
+                collectArchitectureItem(subcomponent, archById);
+            }
+            for (ArchitectureInterface provided : component.getProvidedInterfaces()) {
+                archById.put(provided.getId(), provided);
+            }
+            for (ArchitectureInterface required : component.getRequiredInterfaces()) {
+                archById.put(required.getId(), required);
+            }
+        }
     }
 }

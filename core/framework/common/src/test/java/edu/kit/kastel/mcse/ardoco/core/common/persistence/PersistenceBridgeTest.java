@@ -34,6 +34,7 @@ class PersistenceBridgeTest {
 
     @AfterEach
     void resetFlags() {
+        PersistenceBridge.setFailOnPersistenceError(false);
         PersistenceBridge.setHandler(null);
         PersistenceBridge.getInstance()
                 .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "false", "PersistenceBridge::persistTextState", "false",
@@ -71,6 +72,15 @@ class PersistenceBridgeTest {
             throw new RuntimeException("simulated Neo4j down");
         }));
         Assertions.assertTrue(ran.get());
+    }
+
+    @Test
+    @DisplayName("callQuietly rethrows when fail-on-persistence-error is enabled")
+    void callQuietlyRethrowsInStrictMode() {
+        PersistenceBridge.setFailOnPersistenceError(true);
+        Assertions.assertThrows(RuntimeException.class, () -> PersistenceBridge.callQuietly("test-op", () -> {
+            throw new RuntimeException("simulated Neo4j down");
+        }, "fallback"));
     }
 
     @Test

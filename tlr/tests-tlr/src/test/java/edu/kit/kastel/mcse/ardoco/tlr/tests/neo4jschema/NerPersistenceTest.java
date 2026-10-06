@@ -4,15 +4,22 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
@@ -55,5 +62,53 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         assertThat(persistenceHandler.hasSimpleText(SimplePreprocessingData.ID)).isTrue();
 
         pauseForNeo4jInspection();
+    }
+
+    @Test
+    @DisplayName("NER_ARCHITECTURE trace link save and load round-trip")
+    void testNerArchitectureTraceLinkRoundTrip() {
+        PersistenceBridge.setHandler(persistenceHandler);
+        PersistenceBridge.getInstance()
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
+                        "PersistenceBridge::persistNerConnection", "true"));
+
+        Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+        UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, mm);
+        ArchitectureModel architectureModel = extractor.extractModel();
+        persistenceHandler.saveModel(mm, architectureModel);
+        ArchitectureComponent component = (ArchitectureComponent) architectureModel.getEndpoints().get(0);
+
+        var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
+        var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
+        persistenceHandler.saveNamedArchitectureEntity(entity, mm, false);
+
+        var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component);
+        assertThat(persistenceHandler.saveTraceLinks(List.of(link))).isTrue();
+
+        long stored = countNerArchitectureLinks();
+        assertThat(stored).isEqualTo(1L);
+
+        SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById = new TreeMap<>();
+        occurrencesById.put(occurrence.getId(), occurrence);
+        SortedMap<String, ModelEntity> modelEntitiesById = new TreeMap<>();
+        modelEntitiesById.put(component.getId(), component);
+
+        var loaded = persistenceHandler.loadNerTraceLinks(mm, occurrencesById, modelEntitiesById);
+        assertThat(loaded).hasSize(1);
+        assertThat(loaded.iterator().next().getSecondEndpoint().getId()).isEqualTo(component.getId());
+
+        pauseForNeo4jInspection();
+    }
+
+    private long countNerArchitectureLinks() {
+        return neo4jClient.query("""
+                MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = 'NER_ARCHITECTURE'
+                RETURN count(r) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
     }
 }

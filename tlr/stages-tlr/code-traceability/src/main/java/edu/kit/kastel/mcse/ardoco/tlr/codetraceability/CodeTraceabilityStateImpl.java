@@ -47,7 +47,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> getSamCodeTraceLinks() {
-        if ((this.samCodeTraceLinks.isEmpty() || !loadedFromPersistence) && PersistenceBridge.isAvailable()) {
+        if (this.samCodeTraceLinks.isEmpty() && PersistenceBridge.isAvailable()) {
             Collection<ArchitectureCodeTraceLink> loadedLinks = PersistenceBridge.callQuietly("loadArchitectureCodeTraceLinks",
                     () -> PersistenceBridge.getHandler().loadArchitectureCodeTraceLinks(), java.util.List.of());
             if (!loadedLinks.isEmpty()) {
@@ -70,7 +70,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
-        if (PersistenceBridge.isAvailable()) {
+        if (this.transitiveTraceLinks.isEmpty() && PersistenceBridge.isAvailable()) {
             Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = PersistenceBridge.callQuietly("loadTransitiveTraceLinks",
                     () -> PersistenceBridge.getHandler().loadTransitiveTraceLinks(), java.util.List.of());
             Collection<SentenceModelTraceLink> directLinks = PersistenceBridge.callQuietly("loadSentenceModelTraceLinks",
