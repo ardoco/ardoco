@@ -139,4 +139,49 @@ public final class InconsistencyDetectionEvaluationUtil {
     public static String createResultLogString(String name, AggregatedClassificationResult results) {
         return String.format(Locale.ENGLISH, "%n%s:%n%s", name, results);
     }
+
+    /**
+     * Logs extended results with expected results comparison using the provided logger.
+     *
+     * @param logger          Logger to use
+     * @param name            the name that should be displayed
+     * @param results         the results
+     * @param expectedResults the expected results
+     */
+    public static  void logExtendedResultsWithExpected(Logger logger, String name, SingleClassificationResult<?> results, ExpectedResults expectedResults) {
+        var infoString = String.format(Locale.ENGLISH, """
+
+                %s:
+                %s""", name, getExtendedResultStringWithExpected(results, expectedResults));
+        logger.info(infoString);
+    }
+
+    private static String getExtendedResultStringWithExpected(SingleClassificationResult<?> result, ExpectedResults expectedResults) {
+        return "" +//
+                String.format(Locale.ENGLISH, """
+                        \tPrecision:%8.2f (min. expected: %.2f)
+                        \tRecall:%11.2f (min. expected: %.2f)
+                        \tF1:%15.2f (min. expected: %.2f)""", //
+                        result.getPrecision(), expectedResults.precision(), result.getRecall(), expectedResults.recall(), result.getF1(), expectedResults.f1()) //
+                + String.format(Locale.ENGLISH, """
+
+                        \tAccuracy:%9.2f (min. expected: %.2f)
+                        \tSpecificity:%6.2f (min. expected: %.2f)""",//
+                result.getAccuracy(), expectedResults.accuracy(), result.getSpecificity(), expectedResults.specificity())//
+                + String.format(Locale.ENGLISH, """
+
+                        \tPhi Coef.:%8.2f (min. expected: %.2f)
+                        \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
+                        %s""",//
+                result.getPhiCoefficient(), expectedResults.phiCoefficient(), result.getPhiOverPhiMax(), result.getPhiCoefficientMax(), toRow(result));
+    }
+
+    private static String toRow(SingleClassificationResult<?> result) {
+        return String.format(Locale.ENGLISH, """
+                %4s & %4s & %4s & %4s & %4s & %4s & %4s
+                %4.2f & %4.2f & %4.2f & %4.2f & %4.2f & %4.2f & %4.2f""", "P", "R", "F1", "Acc", "Spec", "Phi", "PhiN",//
+                result.getPrecision(), result.getRecall(), result.getF1(),//
+                result.getAccuracy(), result.getSpecificity(), result.getPhiCoefficient(), result.getPhiOverPhiMax());
+    }
+
 }
