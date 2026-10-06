@@ -1,8 +1,7 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration;
 
-import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logExplicitResults;
-import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logResults;
+import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.*;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.map.ImmutableMap;
@@ -153,14 +152,20 @@ class InconsistencyDetectionEvaluationArtemisIT {
         var results = Lists.mutable.withAll(evaluator.evaluateTeam(project, runs.toMap()));
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var weightedAverageResult = metrics.calculateAverages(results, null)
-                .asList()
-                .stream()
-                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
-                .findFirst()
-                .orElseThrow();
+        if (results.size() == 1) {
+            logExtendedResultsWithExpected(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, results.getFirst(),
+                    project.getExpectedResults());
+            ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results.getFirst(), logSuffix);
+        } else {
+            var weightedAverageResult = metrics.calculateAverages(results, null)
+                    .asList()
+                    .stream()
+                    .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
+                    .findFirst()
+                    .orElseThrow();
 
-        logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, weightedAverageResult);
-        ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results, runs.toMap(), logSuffix);
+            logResults(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, weightedAverageResult);
+            ArtemisInconsistencyEvaluationWriter.writeTeamResults(project, configuration, results, runs.toMap(), logSuffix);
+        }
     }
 }

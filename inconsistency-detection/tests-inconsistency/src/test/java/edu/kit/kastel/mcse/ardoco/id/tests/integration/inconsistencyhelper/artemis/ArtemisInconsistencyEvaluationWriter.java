@@ -43,6 +43,17 @@ public final class ArtemisInconsistencyEvaluationWriter {
     }
 
     public static void writeTeamResult(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration,
+            SingleClassificationResult<String> result, String logSuffix) {
+        StringBuilder builder = createHeader(project, configuration, "TEAM");
+        builder.append(createResultLogString("TEAM inconsistencies", result));
+        builder.append(LINE_SEPARATOR);
+        appendConfusionSets(builder, result);
+
+        String fileName = "TEAM_" + configuration.name() + "_" + project.getEvaluationProject().name() + ".txt";
+        write(fileName, builder);
+    }
+
+    public static void writeTeamResults(ArtemisInconsistencyTask project, ArtemisInconsistencyEvaluationConfiguration configuration,
             MutableList<SingleClassificationResult<String>> results, Map<ArtemisEvaluationRun, ArdocoResult> runs, String logSuffix) {
         StringBuilder builder = createHeader(project, configuration, "TEAM");
 
