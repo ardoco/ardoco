@@ -2,7 +2,8 @@
 package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,6 @@ import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.NounMappingImpl;
-import io.github.ardoco.core.neo4jschema.entities.documentation.PhraseNode;
 import io.github.ardoco.core.neo4jschema.entities.documentation.WordNode;
 import io.github.ardoco.core.neo4jschema.entities.textextraction.NounMappingNode;
 import io.github.ardoco.core.neo4jschema.repository.documentation.DocumentationGraphRepository;
@@ -49,34 +49,66 @@ public class NounMappingMapper {
         this.documentationGraphRepository = documentationGraphRepository;
     }
 
-    public NounMappingNode toNode(NounMapping mapping) {
-        NounMappingNode node = new NounMappingNode(mapping.getArdocoId());
-        node.setReference(mapping.getReference());
-        node.setKind(mapping.getKind().name());
-        node.setProbability(mapping.getProbability());
-        node.setCompound(mapping.isCompound());
-        node.setSurfaceForms(new ArrayList<>(mapping.getSurfaceForms().toList()));
-        node.setNameProbability(mapping.getProbabilityForKind(MappingKind.NAME));
-        node.setTypeProbability(mapping.getProbabilityForKind(MappingKind.TYPE));
+    /**
+     * Scalar properties of the NounMapping node, for {@code NounMappingRepository#upsertAndClearLinks}.
+     * <p>
+     * The keys must equal the field names of {@link NounMappingNode}: Spring Data maps those fields 1:1 (no {@code @Property} overrides), and
+     * the read path ({@code findAll} + {@link #toDomain}) relies on the same names.
+     *
+     * @param mapping the domain noun mapping
+     * @return property map (mutable, may contain {@code null} values)
+     */
+    public Map<String, Object> toProperties(NounMapping mapping) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("reference", mapping.getReference());
+        props.put("kind", mapping.getKind().name());
+        props.put("probability", mapping.getProbability());
+        props.put("isCompound", mapping.isCompound());
+        props.put("surfaceForms", new ArrayList<>(mapping.getSurfaceForms().toList()));
+        props.put("nameProbability", mapping.getProbabilityForKind(MappingKind.NAME));
+        props.put("typeProbability", mapping.getProbabilityForKind(MappingKind.TYPE));
+        return props;
+    }
 
-        List<Integer> wordPositions = mapping.getWords().collect(Word::getPosition).toList();
-        List<Integer> referencePositions = mapping.getReferenceWords().collect(Word::getPosition).toList();
-        node.setMappedWords(findWords(wordPositions));
-        node.setReferenceWords(findWords(referencePositions));
+    /**
+     * Distinct word positions in iteration order.
+     *
+     * @param words the words
+     * @return their distinct positions
+     */
+    public static List<Integer> positionsOf(Iterable<? extends Word> words) {
+        Set<Integer> positions = new LinkedHashSet<>();
+        for (Word word : words) {
+            positions.add(word.getPosition());
+        }
+        return new ArrayList<>(positions);
+    }
 
-        List<PhraseNode> phraseNodes = new ArrayList<>();
+    /**
+     * Resolves the ids of the existing Phrase nodes (from the preprocessed text graph) that correspond to the phrases of the given noun mapping.
+     * Phrases are matched by phrase type and exact word positions; only ids are loaded, never {@code PhraseNode} objects.
+     *
+     * @param mapping the domain noun mapping
+     * @return distinct Phrase ids; phrases without a match are logged and skipped
+     */
+    public List<String> resolvePhraseIds(NounMapping mapping) {
+        Set<String> phraseIds = new LinkedHashSet<>();
         for (Phrase phrase : mapping.getPhrases()) {
             List<Integer> phraseWordPositions = phrase.getContainedWords().collect(Word::getPosition).toList();
             if (phraseWordPositions.isEmpty()) {
                 logger.warn("Skipping IN_PHRASE for NounMapping {}: phrase has no contained words", mapping.getArdocoId());
                 continue;
             }
-            documentationGraphRepository.findPhraseByTypeAndExactWordPositions(phrase.getPhraseType().name(), phraseWordPositions).ifPresentOrElse(phraseNodes::add,
-                    () -> logger.warn("No Phrase matched for NounMapping {} (type={}, positions={})", mapping.getArdocoId(), phrase.getPhraseType(),
-                            phraseWordPositions));
+            List<String> matches = documentationGraphRepository.findPhraseIdByTypeAndExactWordPositions(phrase.getPhraseType().name(),
+                    phraseWordPositions);
+            if (matches.isEmpty()) {
+                logger.warn("No Phrase matched for NounMapping {} (type={}, positions={})", mapping.getArdocoId(), phrase.getPhraseType(),
+                        phraseWordPositions);
+            } else {
+                phraseIds.add(matches.get(0));
+            }
         }
-        node.setPhrases(phraseNodes);
-        return node;
+        return new ArrayList<>(phraseIds);
     }
 
     /**
@@ -112,20 +144,5 @@ public class NounMappingMapper {
                 surfaceForms, reference);
         mapping.setIsDefinedAsCompound(node.isCompound());
         return mapping;
-    }
-
-    private List<WordNode> findWords(List<Integer> positions) {
-        if (positions == null || positions.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<WordNode> found = documentationGraphRepository.findWordsByPositions(positions);
-        Set<Integer> wanted = new HashSet<>(positions);
-        List<WordNode> ordered = new ArrayList<>();
-        for (Integer position : positions) {
-            found.stream().filter(w -> w.getPosition() == position).findFirst().ifPresentOrElse(ordered::add, () -> logger.warn(
-                    "No Word node for position {} while saving NounMapping", position));
-            wanted.remove(position);
-        }
-        return ordered;
     }
 }

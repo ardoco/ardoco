@@ -34,4 +34,22 @@ public interface DocumentationGraphRepository extends Neo4jRepository<WordNode, 
             LIMIT 1
             """)
     Optional<PhraseNode> findPhraseByTypeAndExactWordPositions(@Param("phraseType") String phraseType, @Param("positions") Collection<Integer> positions);
+
+    /**
+     * Same matching rule as {@link #findPhraseByTypeAndExactWordPositions}, but returns only the Phrase id.
+     * <p>
+     * Use this on write paths: returning a {@link PhraseNode} from this {@link WordNode} repository yields a DTO projection without relationships,
+     * and cascading a {@code save} into it produced orphan Phrase copies (TeaStore: +3846 Phrase nodes without tree edges).
+     *
+     * @return the id of the matching Phrase (at most one element)
+     */
+    @Query("""
+            MATCH (p:Phrase {phraseType: $phraseType})-[:CONTAINS_WORD]->(w:Word)
+            WITH p, collect(DISTINCT w.position) AS phrasePositions
+            WHERE size(phrasePositions) = size($positions)
+              AND ALL(pos IN $positions WHERE pos IN phrasePositions)
+            RETURN p.id
+            LIMIT 1
+            """)
+    List<String> findPhraseIdByTypeAndExactWordPositions(@Param("phraseType") String phraseType, @Param("positions") Collection<Integer> positions);
 }

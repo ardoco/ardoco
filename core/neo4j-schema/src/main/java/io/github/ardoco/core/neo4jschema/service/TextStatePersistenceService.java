@@ -38,11 +38,36 @@ public class TextStatePersistenceService {
         this.nounMappingMapper = nounMappingMapper;
     }
 
+    /**
+     * Creates or updates a NounMapping node and replaces its outgoing MAPS_WORD, HAS_REFERENCE_WORD and IN_PHRASE edges.
+     * <p>
+     * Deliberately does not use {@code nounMappingRepository.save(NounMappingNode)}: that cascades into the attached Word/Phrase objects and
+     * synchronises their relationships, which deleted NEXT_WORD/DEPENDENCY edges and created orphan Phrase copies (TeaStore: -255 NEXT_WORD,
+     * -358 DEPENDENCY, +3846 Phrase nodes). Here Word and Phrase nodes are only matched, never written.
+     *
+     * @param mapping the domain noun mapping
+     */
     @Transactional
     public void saveNounMapping(NounMapping mapping) {
-        NounMappingNode node = nounMappingMapper.toNode(mapping);
-        nounMappingRepository.save(node);
-        logger.debug("Saved NounMapping {} ({} words)", mapping.getArdocoId(), mapping.getWords().size());
+        String ardocoId = mapping.getArdocoId();
+        nounMappingRepository.upsertAndClearLinks(ardocoId, nounMappingMapper.toProperties(mapping));
+
+        List<Integer> wordPositions = NounMappingMapper.positionsOf(mapping.getWords());
+        List<Integer> referencePositions = NounMappingMapper.positionsOf(mapping.getReferenceWords());
+        List<String> phraseIds = nounMappingMapper.resolvePhraseIds(mapping);
+
+        warnIfIncomplete(ardocoId, "MAPS_WORD", wordPositions.size(), nounMappingRepository.linkMappedWords(ardocoId, wordPositions));
+        warnIfIncomplete(ardocoId, "HAS_REFERENCE_WORD", referencePositions.size(), nounMappingRepository.linkReferenceWords(ardocoId,
+                referencePositions));
+        warnIfIncomplete(ardocoId, "IN_PHRASE", phraseIds.size(), nounMappingRepository.linkPhrases(ardocoId, phraseIds));
+        logger.debug("Saved NounMapping {} ({} words, {} phrases)", ardocoId, wordPositions.size(), phraseIds.size());
+    }
+
+    private static void warnIfIncomplete(String ardocoId, String relationshipType, int expected, Long linked) {
+        long actual = linked == null ? 0 : linked;
+        if (actual < expected) {
+            logger.warn("NounMapping {}: linked only {}/{} {} targets (target nodes missing)", ardocoId, actual, expected, relationshipType);
+        }
     }
 
     @Transactional

@@ -2,7 +2,11 @@
 package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -17,32 +21,47 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendedInstanceImpl;
 import io.github.ardoco.core.neo4jschema.entities.recommendation.RecommendedInstanceNode;
 import io.github.ardoco.core.neo4jschema.entities.textextraction.NounMappingNode;
-import io.github.ardoco.core.neo4jschema.repository.textextraction.NounMappingRepository;
 
 /**
  * Maps between domain {@link RecommendedInstance} and Neo4j {@link RecommendedInstanceNode}.
- * Name/type mappings are linked to existing {@link NounMappingNode}s by {@code ardocoId}.
+ * Name/type mappings are linked to existing {@link NounMappingNode}s by {@code ardocoId} (see {@code RecommendedInstanceRepository}).
  */
 @Component
 public class RecommendedInstanceMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(RecommendedInstanceMapper.class);
 
-    private final NounMappingRepository nounMappingRepository;
-
-    public RecommendedInstanceMapper(NounMappingRepository nounMappingRepository) {
-        this.nounMappingRepository = nounMappingRepository;
+    /**
+     * Scalar properties of the RecommendedInstance node, for {@code RecommendedInstanceRepository#upsertAndClearMappings}.
+     * <p>
+     * The keys must equal the field names of {@link RecommendedInstanceNode}: Spring Data maps those fields 1:1, and the read path
+     * ({@code findAll} + {@link #toDomain}) relies on the same names.
+     *
+     * @param recommendedInstance the domain recommended instance
+     * @param metamodel           the metamodel of the owning recommendation state
+     * @return property map (mutable, may contain {@code null} values)
+     */
+    public Map<String, Object> toProperties(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", recommendedInstance.getName());
+        props.put("type", recommendedInstance.getType());
+        props.put("probability", recommendedInstance.getProbability());
+        props.put("metamodel", metamodel.name());
+        return props;
     }
 
-    public RecommendedInstanceNode toNode(RecommendedInstance recommendedInstance, Metamodel metamodel) {
-        RecommendedInstanceNode node = new RecommendedInstanceNode(recommendedInstance.getId());
-        node.setName(recommendedInstance.getName());
-        node.setType(recommendedInstance.getType());
-        node.setProbability(recommendedInstance.getProbability());
-        node.setMetamodel(metamodel.name());
-        node.setNameMappings(resolveNounMappingNodes(recommendedInstance.getNameMappings()));
-        node.setTypeMappings(resolveNounMappingNodes(recommendedInstance.getTypeMappings()));
-        return node;
+    /**
+     * Distinct ardocoIds of the given noun mappings, in iteration order.
+     *
+     * @param mappings the noun mappings
+     * @return their distinct ardocoIds
+     */
+    public static List<String> ardocoIdsOf(ImmutableList<NounMapping> mappings) {
+        Set<String> ids = new LinkedHashSet<>();
+        for (NounMapping mapping : mappings) {
+            ids.add(mapping.getArdocoId());
+        }
+        return new ArrayList<>(ids);
     }
 
     /**
@@ -55,15 +74,6 @@ public class RecommendedInstanceMapper {
 
         return new RecommendedInstanceImpl(node.getName(), node.getType() != null ? node.getType() : "", node.getArdocoId(),
                 NounMappingMapper.RESUME_CLAIMANT, node.getProbability(), nameMappings, typeMappings);
-    }
-
-    private List<NounMappingNode> resolveNounMappingNodes(ImmutableList<NounMapping> mappings) {
-        List<NounMappingNode> nodes = new ArrayList<>();
-        for (NounMapping mapping : mappings) {
-            nounMappingRepository.findByArdocoId(mapping.getArdocoId()).ifPresentOrElse(nodes::add, () -> logger.warn(
-                    "No NounMapping node {} while saving RecommendedInstance", mapping.getArdocoId()));
-        }
-        return nodes;
     }
 
     private static ImmutableList<NounMapping> resolveDomainMappings(List<NounMappingNode> nodes, SortedMap<String, NounMapping> nounMappingsById) {

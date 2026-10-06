@@ -38,11 +38,35 @@ public class RecommendationPersistenceService {
         this.recommendedInstanceMapper = recommendedInstanceMapper;
     }
 
+    /**
+     * Creates or updates a RecommendedInstance node and replaces its outgoing HAS_NAME_MAPPING and HAS_TYPE_MAPPING edges.
+     * <p>
+     * Deliberately does not use {@code recommendedInstanceRepository.save(RecommendedInstanceNode)}: that requires loading every referenced
+     * NounMapping node with its (cyclic) Word/Phrase subgraph and then cascades through that subgraph on save. Here NounMapping nodes are only
+     * matched by their indexed {@code ardocoId}, never loaded or written.
+     *
+     * @param recommendedInstance the domain recommended instance
+     * @param metamodel           the metamodel of the recommendation state the instance belongs to
+     */
     @Transactional
     public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
-        RecommendedInstanceNode node = recommendedInstanceMapper.toNode(recommendedInstance, metamodel);
-        recommendedInstanceRepository.save(node);
-        logger.debug("Saved RecommendedInstance {} ({})", recommendedInstance.getId(), recommendedInstance.getName());
+        String ardocoId = recommendedInstance.getId();
+        recommendedInstanceRepository.upsertAndClearMappings(ardocoId, recommendedInstanceMapper.toProperties(recommendedInstance, metamodel));
+
+        List<String> nameMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getNameMappings());
+        List<String> typeMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getTypeMappings());
+        long linkedNames = orZero(recommendedInstanceRepository.linkNameMappings(ardocoId, nameMappingIds));
+        long linkedTypes = orZero(recommendedInstanceRepository.linkTypeMappings(ardocoId, typeMappingIds));
+
+        if (linkedNames < nameMappingIds.size() || linkedTypes < typeMappingIds.size()) {
+            logger.warn("RecommendedInstance {} ({}): linked only {}/{} name and {}/{} type mappings (NounMapping nodes missing)", ardocoId,
+                    recommendedInstance.getName(), linkedNames, nameMappingIds.size(), linkedTypes, typeMappingIds.size());
+        }
+        logger.debug("Saved RecommendedInstance {} ({})", ardocoId, recommendedInstance.getName());
+    }
+
+    private static long orZero(Long value) {
+        return value == null ? 0 : value;
     }
 
     public boolean hasRecommendedInstances() {
