@@ -19,20 +19,21 @@ public final class ArtemisInconsistencyAgent {
         var agents = new ArrayList<PipelineAgent>();
 
         for (var strategy : strategies) {
-            agents.add(new ArtemisMeatInconsistencyAgent(dataRepository, strategy));
+            agents.add(new ArtemisTeamInconsistencyAgent(dataRepository, strategy));
 
-            if (supportsTeamInconsistencies(strategy)) {
-                agents.add(new ArtemisTeamInconsistencyAgent(dataRepository, strategy));
+            if (supportsMeatInconsistencies(strategy)) {
+                agents.add(new ArtemisMeatInconsistencyAgent(dataRepository, strategy));
             }
         }
 
         return List.copyOf(agents);
     }
 
-    private static boolean supportsTeamInconsistencies(ArtemisNerStrategy strategy) {
+    private static boolean supportsMeatInconsistencies(ArtemisNerStrategy strategy) {
         return switch (strategy.getNamedEntityType()) {
             case NamedEntityType.COMPONENT -> true;
             case NamedEntityType.CLASS -> false;
+            case NamedEntityType.DATAFILE -> false;
             default -> false;
         };
     }
