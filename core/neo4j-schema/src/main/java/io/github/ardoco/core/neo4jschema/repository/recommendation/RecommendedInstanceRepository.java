@@ -15,7 +15,7 @@ import io.github.ardoco.core.neo4jschema.entities.recommendation.RecommendedInst
 /**
  * Repository for {@link RecommendedInstanceNode}s.
  * <p>
- * Writes go through the {@code upsert…}/{@code link…} queries below instead of {@code save(RecommendedInstanceNode)}. A {@code save} needs fully
+ * Writes go through {@link #saveWithMappings} instead of {@code save(RecommendedInstanceNode)}. A {@code save} needs fully
  * loaded NounMapping nodes and then cascades through their (cyclic) Word/Phrase subgraphs. The queries below only write the RecommendedInstance node
  * and its own outgoing edges; NounMapping nodes are matched by their indexed {@code ardocoId}, never loaded or written.
  */
@@ -28,11 +28,14 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
     /**
-     * Creates or updates the RecommendedInstance node and removes all of its outgoing HAS_NAME_MAPPING and HAS_TYPE_MAPPING edges, so that the
-     * subsequent {@code link…} calls recreate them from the current domain state.
+     * Creates or updates the RecommendedInstance node and replaces its outgoing HAS_NAME_MAPPING and HAS_TYPE_MAPPING edges in one round trip.
+     * NounMapping nodes are matched by their indexed {@code ardocoId}; they are not written.
      *
-     * @param ardocoId the ardocoId of the recommended instance
-     * @param props    scalar properties; keys must equal the field names of {@link RecommendedInstanceNode}
+     * @param ardocoId       the ardocoId of the recommended instance
+     * @param props          scalar properties; keys must equal the field names of {@link RecommendedInstanceNode}
+     * @param nameMappingIds distinct ardocoIds of the name mappings
+     * @param typeMappingIds distinct ardocoIds of the type mappings
+     * @return the number of requested NounMapping targets that were not found (0 if all edges were created)
      */
     @Query("""
             MERGE (ri:RecommendedInstance {ardocoId: $ardocoId})
@@ -40,34 +43,16 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
             WITH ri
             OPTIONAL MATCH (ri)-[old:HAS_NAME_MAPPING|HAS_TYPE_MAPPING]->()
             DELETE old
+            WITH DISTINCT ri
+            OPTIONAL MATCH (n:NounMapping) WHERE n.ardocoId IN $nameMappingIds
+            WITH ri, collect(DISTINCT n) AS names
+            FOREACH (nameMapping IN names | MERGE (ri)-[:HAS_NAME_MAPPING]->(nameMapping))
+            WITH ri, names
+            OPTIONAL MATCH (t:NounMapping) WHERE t.ardocoId IN $typeMappingIds
+            WITH ri, names, collect(DISTINCT t) AS types
+            FOREACH (typeMapping IN types | MERGE (ri)-[:HAS_TYPE_MAPPING]->(typeMapping))
+            RETURN (size($nameMappingIds) - size(names)) + (size($typeMappingIds) - size(types))
             """)
-    void upsertAndClearMappings(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props);
-
-    /**
-     * Links the RecommendedInstance to the existing NounMapping nodes with the given ardocoIds as name mappings.
-     *
-     * @return the number of distinct NounMapping nodes linked
-     */
-    @Query("""
-            MATCH (ri:RecommendedInstance {ardocoId: $ardocoId})
-            UNWIND $nounMappingIds AS nmId
-            MATCH (nm:NounMapping {ardocoId: nmId})
-            MERGE (ri)-[:HAS_NAME_MAPPING]->(nm)
-            RETURN count(DISTINCT nm)
-            """)
-    Long linkNameMappings(@Param("ardocoId") String ardocoId, @Param("nounMappingIds") List<String> nounMappingIds);
-
-    /**
-     * Links the RecommendedInstance to the existing NounMapping nodes with the given ardocoIds as type mappings.
-     *
-     * @return the number of distinct NounMapping nodes linked
-     */
-    @Query("""
-            MATCH (ri:RecommendedInstance {ardocoId: $ardocoId})
-            UNWIND $nounMappingIds AS nmId
-            MATCH (nm:NounMapping {ardocoId: nmId})
-            MERGE (ri)-[:HAS_TYPE_MAPPING]->(nm)
-            RETURN count(DISTINCT nm)
-            """)
-    Long linkTypeMappings(@Param("ardocoId") String ardocoId, @Param("nounMappingIds") List<String> nounMappingIds);
+    Long saveWithMappings(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props,
+            @Param("nameMappingIds") List<String> nameMappingIds, @Param("typeMappingIds") List<String> typeMappingIds);
 }

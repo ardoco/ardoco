@@ -50,24 +50,16 @@ public class TextStatePersistenceService {
     @Transactional
     public void saveNounMapping(NounMapping mapping) {
         String ardocoId = mapping.getArdocoId();
-        nounMappingRepository.upsertAndClearLinks(ardocoId, nounMappingMapper.toProperties(mapping));
-
         List<Integer> wordPositions = NounMappingMapper.positionsOf(mapping.getWords());
         List<Integer> referencePositions = NounMappingMapper.positionsOf(mapping.getReferenceWords());
         List<String> phraseIds = nounMappingMapper.resolvePhraseIds(mapping);
 
-        warnIfIncomplete(ardocoId, "MAPS_WORD", wordPositions.size(), nounMappingRepository.linkMappedWords(ardocoId, wordPositions));
-        warnIfIncomplete(ardocoId, "HAS_REFERENCE_WORD", referencePositions.size(), nounMappingRepository.linkReferenceWords(ardocoId,
-                referencePositions));
-        warnIfIncomplete(ardocoId, "IN_PHRASE", phraseIds.size(), nounMappingRepository.linkPhrases(ardocoId, phraseIds));
-        logger.debug("Saved NounMapping {} ({} words, {} phrases)", ardocoId, wordPositions.size(), phraseIds.size());
-    }
-
-    private static void warnIfIncomplete(String ardocoId, String relationshipType, int expected, Long linked) {
-        long actual = linked == null ? 0 : linked;
-        if (actual < expected) {
-            logger.warn("NounMapping {}: linked only {}/{} {} targets (target nodes missing)", ardocoId, actual, expected, relationshipType);
+        Long missing = nounMappingRepository.saveWithLinks(ardocoId, nounMappingMapper.toProperties(mapping), wordPositions, referencePositions, phraseIds);
+        if (missing != null && missing > 0) {
+            logger.warn("NounMapping {}: {} link targets not found (requested: {} words, {} reference words, {} phrases; target nodes missing)", ardocoId,
+                    missing, wordPositions.size(), referencePositions.size(), phraseIds.size());
         }
+        logger.debug("Saved NounMapping {} ({} words, {} phrases)", ardocoId, wordPositions.size(), phraseIds.size());
     }
 
     @Transactional

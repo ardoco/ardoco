@@ -51,16 +51,14 @@ public class RecommendationPersistenceService {
     @Transactional
     public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
         String ardocoId = recommendedInstance.getId();
-        recommendedInstanceRepository.upsertAndClearMappings(ardocoId, recommendedInstanceMapper.toProperties(recommendedInstance, metamodel));
-
         List<String> nameMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getNameMappings());
         List<String> typeMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getTypeMappings());
-        long linkedNames = orZero(recommendedInstanceRepository.linkNameMappings(ardocoId, nameMappingIds));
-        long linkedTypes = orZero(recommendedInstanceRepository.linkTypeMappings(ardocoId, typeMappingIds));
 
-        if (linkedNames < nameMappingIds.size() || linkedTypes < typeMappingIds.size()) {
-            logger.warn("RecommendedInstance {} ({}): linked only {}/{} name and {}/{} type mappings (NounMapping nodes missing)", ardocoId,
-                    recommendedInstance.getName(), linkedNames, nameMappingIds.size(), linkedTypes, typeMappingIds.size());
+        long missing = orZero(recommendedInstanceRepository.saveWithMappings(ardocoId, recommendedInstanceMapper.toProperties(recommendedInstance, metamodel),
+                nameMappingIds, typeMappingIds));
+        if (missing > 0) {
+            logger.warn("RecommendedInstance {} ({}): {} of {} name/type mappings not linked (NounMapping nodes missing)", ardocoId,
+                    recommendedInstance.getName(), missing, nameMappingIds.size() + typeMappingIds.size());
         }
         logger.debug("Saved RecommendedInstance {} ({})", ardocoId, recommendedInstance.getName());
     }

@@ -15,7 +15,7 @@ import io.github.ardoco.core.neo4jschema.entities.textextraction.NounMappingNode
 /**
  * Repository for {@link NounMappingNode}s.
  * <p>
- * Writes go through the {@code upsert…}/{@code link…} queries below instead of {@code save(NounMappingNode)}. A {@code save} cascades into the
+ * Writes go through {@link #saveWithLinks} instead of {@code save(NounMappingNode)}. A {@code save} cascades into the
  * attached Word/Phrase objects and synchronises their relationships with the (relationship-less) Java objects, which deletes NEXT_WORD/DEPENDENCY
  * edges and creates orphan Phrase copies. The queries below only write the NounMapping node and its own outgoing edges; Word and Phrase nodes are
  * matched, never written.
@@ -29,11 +29,15 @@ public interface NounMappingRepository extends Neo4jRepository<NounMappingNode, 
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
     /**
-     * Creates or updates the NounMapping node and removes all of its outgoing MAPS_WORD, HAS_REFERENCE_WORD and IN_PHRASE edges, so that the
-     * subsequent {@code link…} calls recreate them from the current domain state.
+     * Creates or updates the NounMapping node and replaces its outgoing MAPS_WORD, HAS_REFERENCE_WORD and IN_PHRASE edges in one round trip.
+     * Word nodes are matched by position and Phrase nodes by id (both indexed); neither is written.
      *
-     * @param ardocoId the ardocoId of the noun mapping
-     * @param props    scalar properties; keys must equal the field names of {@link NounMappingNode}
+     * @param ardocoId           the ardocoId of the noun mapping
+     * @param props              scalar properties; keys must equal the field names of {@link NounMappingNode}
+     * @param wordPositions      distinct positions of the mapped words
+     * @param referencePositions distinct positions of the reference words
+     * @param phraseIds          distinct ids of the Phrase nodes the noun mapping occurs in
+     * @return the number of requested link targets that were not found (0 if all edges were created)
      */
     @Query("""
             MERGE (nm:NounMapping {ardocoId: $ardocoId})
@@ -41,48 +45,20 @@ public interface NounMappingRepository extends Neo4jRepository<NounMappingNode, 
             WITH nm
             OPTIONAL MATCH (nm)-[old:MAPS_WORD|HAS_REFERENCE_WORD|IN_PHRASE]->()
             DELETE old
+            WITH DISTINCT nm
+            OPTIONAL MATCH (w:Word) WHERE w.position IN $wordPositions
+            WITH nm, collect(DISTINCT w) AS words
+            FOREACH (word IN words | MERGE (nm)-[:MAPS_WORD]->(word))
+            WITH nm, words
+            OPTIONAL MATCH (r:Word) WHERE r.position IN $referencePositions
+            WITH nm, words, collect(DISTINCT r) AS referenceWords
+            FOREACH (referenceWord IN referenceWords | MERGE (nm)-[:HAS_REFERENCE_WORD]->(referenceWord))
+            WITH nm, words, referenceWords
+            OPTIONAL MATCH (p:Phrase) WHERE p.id IN $phraseIds
+            WITH nm, words, referenceWords, collect(DISTINCT p) AS phrases
+            FOREACH (phrase IN phrases | MERGE (nm)-[:IN_PHRASE]->(phrase))
+            RETURN (size($wordPositions) - size(words)) + (size($referencePositions) - size(referenceWords)) + (size($phraseIds) - size(phrases))
             """)
-    void upsertAndClearLinks(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props);
-
-    /**
-     * Links the NounMapping to the existing Word nodes at the given positions.
-     *
-     * @return the number of distinct Word nodes linked
-     */
-    @Query("""
-            MATCH (nm:NounMapping {ardocoId: $ardocoId})
-            UNWIND $positions AS pos
-            MATCH (w:Word {position: pos})
-            MERGE (nm)-[:MAPS_WORD]->(w)
-            RETURN count(DISTINCT w)
-            """)
-    Long linkMappedWords(@Param("ardocoId") String ardocoId, @Param("positions") List<Integer> positions);
-
-    /**
-     * Links the NounMapping to its reference Word nodes at the given positions.
-     *
-     * @return the number of distinct Word nodes linked
-     */
-    @Query("""
-            MATCH (nm:NounMapping {ardocoId: $ardocoId})
-            UNWIND $positions AS pos
-            MATCH (w:Word {position: pos})
-            MERGE (nm)-[:HAS_REFERENCE_WORD]->(w)
-            RETURN count(DISTINCT w)
-            """)
-    Long linkReferenceWords(@Param("ardocoId") String ardocoId, @Param("positions") List<Integer> positions);
-
-    /**
-     * Links the NounMapping to the existing Phrase nodes (from the preprocessed text graph) with the given ids.
-     *
-     * @return the number of distinct Phrase nodes linked
-     */
-    @Query("""
-            MATCH (nm:NounMapping {ardocoId: $ardocoId})
-            UNWIND $phraseIds AS pid
-            MATCH (p:Phrase {id: pid})
-            MERGE (nm)-[:IN_PHRASE]->(p)
-            RETURN count(DISTINCT p)
-            """)
-    Long linkPhrases(@Param("ardocoId") String ardocoId, @Param("phraseIds") List<String> phraseIds);
+    Long saveWithLinks(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props, @Param("wordPositions") List<Integer> wordPositions,
+            @Param("referencePositions") List<Integer> referencePositions, @Param("phraseIds") List<String> phraseIds);
 }
