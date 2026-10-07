@@ -1,8 +1,10 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
 import java.util.EnumMap;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
@@ -26,7 +28,7 @@ public class ConnectionStatesImpl implements ConnectionStates {
     }
 
     @Override
-    public ConnectionStateImpl getConnectionState(Metamodel metamodel) {
+    public @Nullable ConnectionStateImpl getConnectionState(Metamodel metamodel) {
         return connectionStates.get(metamodel);
     }
 }

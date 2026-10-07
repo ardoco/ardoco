@@ -1,7 +1,9 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.commentmatching;
 
 import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Comment;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -25,7 +27,7 @@ public class CommentMatcher {
         }
     }
 
-    private Element findClosestElement(Comment comment, List<Element> allElements) {
+    private @Nullable Element findClosestElement(Comment comment, List<Element> allElements) {
         int closestLineDifferenceSoFar = Integer.MAX_VALUE;
         Element closestElement = null;
 

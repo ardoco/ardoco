@@ -10,6 +10,7 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp.CPP14Parser;
@@ -90,7 +91,7 @@ public class CppElementExtractor extends ElementExtractor {
         }
     }
 
-    public void visitDeclaration(CPP14Parser.DeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public void visitDeclaration(CPP14Parser.DeclarationContext ctx, @Nullable ElementIdentifier parentIdentifier) {
         if (parentIdentifier == null) {
             parentIdentifier = new ElementIdentifier(PathExtractor.extractNameFromPath(ctx), PathExtractor.extractPath(ctx), Type.FILE);
         }

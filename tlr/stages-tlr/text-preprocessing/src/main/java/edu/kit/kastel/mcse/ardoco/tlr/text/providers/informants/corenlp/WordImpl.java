@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.Serial;
@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
@@ -27,11 +28,11 @@ class WordImpl implements Word {
     private final CoreLabel token;
     private final TextImpl parent;
     private final int index;
-    private Word preWord = null;
-    private Word nextWord = null;
+    private @Nullable Word preWord = null;
+    private @Nullable Word nextWord = null;
 
     private final int sentenceNo;
-    private Phrase phrase;
+    private @Nullable Phrase phrase;
     private final String text;
     private final POSTag posTag;
 
@@ -84,7 +85,7 @@ class WordImpl implements Word {
     }
 
     @Override
-    public Word getPreWord() {
+    public @Nullable Word getPreWord() {
         int preWordIndex = index - 1;
         if (preWord == null && preWordIndex > 0) {
             preWord = parent.getWord(preWordIndex);
@@ -93,7 +94,7 @@ class WordImpl implements Word {
     }
 
     @Override
-    public Word getNextWord() {
+    public @Nullable Word getNextWord() {
         int nextWordIndex = index + 1;
         if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {
             nextWord = parent.getWord(nextWordIndex);

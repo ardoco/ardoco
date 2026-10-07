@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.io.Serial;
@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 
@@ -23,7 +24,7 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
      *
      * @param name the name of the entity to be created
      */
-    protected ModelEntity(String name) {
+    protected ModelEntity(@Nullable String name) {
         super(name);
     }
 

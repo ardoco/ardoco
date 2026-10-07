@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.configuration;
 
 import java.lang.reflect.Field;
@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public abstract class AbstractConfigurable implements IConfigurable {
     public static final String LIST_SEPARATOR = ",";
 
     @SuppressWarnings("java:S2065") // The logger is used in the subclasses that are serializable
-    private transient Logger logger;
+    private transient @Nullable Logger logger;
 
     private ImmutableSortedMap<String, String> lastAppliedConfiguration = SortedMaps.immutable.empty();
 
