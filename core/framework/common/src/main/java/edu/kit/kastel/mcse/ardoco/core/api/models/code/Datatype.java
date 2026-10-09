@@ -211,6 +211,15 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     }
 
     /**
+     * Returns all class units represented by this datatype.
+     *
+     * @return list of class units
+     */
+    public List<ClassUnit> getAllClassUnits() {
+        return List.of();
+    }
+
+    /**
      * Sets the compilation unit for this datatype.
      *
      * @param compilationUnit the compilation unit to set

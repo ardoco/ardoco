@@ -1,0 +1,12 @@
+sentenceID,file
+371,tele_tan.proto
+372,registration_token.proto
+374,tan.proto
+375,diagnosis_key_submission.proto
+376,verification_result.proto
+378,test_result.proto
+380,exposure_submission.proto
+382,efgs_batch.proto
+383,visited_countries.proto
+385,transmission_risk_level.proto
+386,transmission_risk_level.proto

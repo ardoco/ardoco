@@ -1,0 +1,16 @@
+sentenceID,file
+89,bigbluebutton-web/grails-app/i18n/messages_nl.properties
+90,bigbluebutton-html5/public/locales/sv_se.json
+92,bbb-graphql-server/metadata/databases/bigbluebutton/tables/public_v_user_whiteboard.yaml
+93,bbb-graphql-server/metadata/databases/bigbluebutton/tables/public_v_user_whiteboard.yaml
+94,bigbluebutton-web/src/main/webapp/web-inf/tld/grails.tld
+95,bigbluebutton-web/src/main/webapp/web-inf/tld/grails.tld
+96,build/packages-template/bbb-etherpad/etherpad.service
+98,record-and-playback/core/scripts/bbb-1.1-meeting-tag
+99,record-and-playback/core/scripts/bbb-1.1-meeting-tag
+100,record-and-playback/core/features/process_audio.feature
+101,record-and-playback/core/resources/raw/unmatched_audio_events.xml
+103,bigbluebutton-config/record/support-bbb-recording.patch
+104,bigbluebutton-config/record/support-bbb-recording.patch
+105,bbb-voice-conference/config/freeswitch/conf/autoload_configs/conference.conf.xml
+106,bbb-voice-conference/config/freeswitch/conf/autoload_configs/conference.conf.xml

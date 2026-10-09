@@ -1,0 +1,109 @@
+# Abstract.
+The architecture of the ZenGarden software package is introduced.
+ZenGarden is a stand-alone interpreter for the Pure Data audio programming language.
+It is designed as an audio library, making it easy to add to any audio software, either as the primary audio engine or as a plugin.
+It is built from the ground up in portable C++ using modern software design principles, giving a clear syntax and making it easily extensible and available for use on most modern platforms.
+This includes mobile systems such as iOS and Android.
+Optimizations are made in the DSP code for the ARM and x86 hardware architectures, comprising the vast majority of target devices for embedded, mobile, and desktop applications.
+ZenGarden does not implement a GUI and instead focuses only the execution of pregenerated object graph descriptions.
+ZenGarden is open source under the LGPL.
+# Introduction.
+## Overview and Motivation.
+One goal is to make the process of writing a new object as simple and straightforward as possible.
+New objects should inherit from a superclass which provides all of the infrastructure necessary for the object to directly describe its unique functionality.
+## A Brief Overview of Pure Data.
+## Previous Work.
+# The ZenGarden Architecture.
+## Inspiration and Goals.
+## Messages.
+Messages are used to instantly send information between objects at a specified time.
+A Pd message may contain different kinds of information, primarily floats, symbols (character arrays), and bangs, and also including lists of these types or pointers [[#](http://gitorious.org/pdlib/libpd/blobs/master/pure-data/src/m_pd.h#line125)].
+These typed variables are known as atoms in Pd and generally exist independently.
+ZenGarden maintains the idea of typed variables, but all messages are ordered lists of such variables [[#](http://gitorious.org/pdlib/libpd/blobs/master/pure-data/src/m_pd.h#line143)].
+The [PdMessage](http://github.com/mhroth/ZenGarden/blob/master/src/PdMessage.h) class encapsulates the message, and each typed variable is implemented by the [MessageElement](http://github.com/mhroth/ZenGarden/blob/master/src/MessageElement.h) class.
+Being an ordered list, a ZG message may contain any number of float, symbol, or bang elements, in any order.
+A Pd list message is not directly represented in ZenGarden, rather all messages in ZG are by their nature lists.
+For example, a float message is a list containing only one float.
+When a message arrives at an object via the `receiveMessage()` [[#](http://github.com/mhroth/ZenGarden/blob/master/src/MessageObject.h#L46)] and `processMessage()` [[#](http://github.com/mhroth/ZenGarden/blob/master/src/MessageObject.h#L49)] functions, the object queries the message for the number and type of its elements and performs the necessary operations, for example as in the `MessageAdd` object [[#](http://github.com/mhroth/ZenGarden/blob/master/src/MessageAdd.cpp#L37)].
+As in Pd, messages always arrive in temporal order, though the order in which simultaneous messages are processed is not defined; multiple message scheduled to arrive at an object at the same time may not do so in the order in which they were scheduled.
+### PdMessage Object Design.
+The `PdMessage` object implements messages in ZenGarden.
+It consists of a list of `MessageElement` objects, which are typed variables of type float (a single floating point number, `float`), symbol (a character array, `char *`), or a bang.
+Character buffers are not instantiated unless the element has been specifically assigned a symbol value.
+This approach saves memory, especially when many bang or float messages exist in the system instead of symbols.
+The list of `MessageElement`s is implemented as growable array and the `PdMessage` object maintains the number of valid `MessageElement`s in the array and the total length of the array.
+If the message must be reformatted, or the number of elements and their values changed, this becomes a trivial matter.
+In order to update the value of a `MessageElement`, the type flag must be changed and the value for that type (except for the bang).
+If `MessageElement`s must be added to the message then new ones can be appended in the array, and the array grown if necessary.
+If fewer elements are needed then the number of valid elements in the `PdElement` is updated.
+One difficulty of this approach is reordering existing `MessageElements` within a message, including prepending, splitting, or removing elements from the list.
+Such operations are performed by the `[list]` object.
+They are currently implemented using memory copy which can be inefficient if only moving small amounts of memory.
+Ultimately an array approach was selected, instead of a linked list data structure for example, in order to facilitate fast random access into the list which is the most common message operation (i.e., the first and second elements of a message are very often requested for any message operation).
+### The Message Pool.
+A single message reference is never passed on for more than one object.
+When an message is consumed at an object and a new message is generated, then a new message object is used.
+Receiving objects may reserve a message and ensure that it is not reused until it is released.
+Such a reservation scheme allows message to be stored until a later time, such as when delaying its arrival after it has been dispatched or simply maintaining state until audio can be resolved.
+For his reason each object currently maintains its own message pool, consisting of a group of unreserved messages ready to be dispatched at any time.
+In this way new message objects rarely need to be created at runtime, sparing execution time.
+Of course, if the pool runs empty then new message objects are created and will remain in the pool until the owning object is deleted from memory.
+In the future it is planned that instead of each object maintaining its own message pool, a global message pool will be used.
+The advantage of the current approach is that most messages sent by any given object all have the same format.
+For instance, `MessageAdd` objects _always_ send messages containing only one float value.
+Time can be saved by not having to reformat the message.
+But a change in the way that message objects maintain their typed variable list now allows messages to be formatted faster, mooting one advantage of the former approach.
+A further advantage of a global pool is that the infrastructure of maintaining it has some memory overhead, and this overhead can be made constant and independent of the number of objects in the graph by establishing only one.
+### The Global Message Queue.
+## The Runloop.
+### Object Ordering.
+Only objects that process audio data must be ordered by the runloop.
+Message objects are evaluated depth-first and can therefore be processed at the time that a message is generated.
+A breadth-first analysis of the DSP graph is used to order the tree such that children objects are evaluated after their parents.
+Currently this kind of ordering takes place any time than any connection is made or broken in the graph, regardless if it is between message or signal objects.
+This is hugely inefficient, but it does guarantee that the object ordering is correct at all times.
+Many optimisations to this algorithm can be implemented, either by detecting whether the connection change would have an effect on the ordering in the first place, or by recomputing the ordering of subtrees instead of the whole graph.
+Explicit loops are oftentimes introduced into the signal graph in order to promote feedback.
+As in Pd, the problem of generating a linear ordering out of a loop is solved by breaking the loop and adding an implicit one-block delay between the two connected objects.
+## Basic Object Hierarchy.
+All Pd objects in ZG inherit from the abstract MessageObject class.
+This class defines a basic interface to receive a message, process it, and then immediately send it to any connected objects.
+Messages are processed depth-first.
+All of these functions are virtual, allowing concrete objects to override their default behavior.
+The default behavior is to do nothing.
+Objects which also process audio inherit from DspObject, an abstract subclass of MessageObject.
+DspObject provides the infrastructure necessary to process audio buffers and make them available to following objects.
+Concrete subclasses of DspObject override the audio processing functionality which consumes the input buffers and stores the results in the local output buffers.
+## The MessageObject.
+[MessageObject](http://github.com/mhroth/ZenGarden/blob/master/src/MessageObject.h) is the abstract base class of all objects in ZenGarden.
+It is the direct superclass of objects such as MessageAdd, MessageSpigot, or MessageMoses, i.e., objects that only process messages.
+The class provides the basic interface for receiving messages (receiveMessage()), processing it (processMessage()), and sending messages to connected objects (sendMessage()).
+Each of these functions is virtual, allowing them to be overridden by subclasses.
+processMessage is overridden by almost every subclass because this is where the core functionality of a message object is defined.
+The other two functions are rarely overridden, though are on occasion.
+The most notable of which is that DspObjects store received messages in a queue until they are processed, instead of processing them right away as do typical MessageObjects.
+## The DspObject.
+[DspObject](http://github.com/mhroth/ZenGarden/blob/master/src/DspObject.h) is an abstract class which provides the infrastructure for objects that process audio buffers, and inherits directly from `MessageObject`.
+In this way all audio processing objects are also configured to process messages.
+Similarly to the `MessageObject`, the `DspObject` exposes only one function which must be overridden in order to provide the core functionality of the object, `processBufferWithIndex()`.
+The runloop executes the DspObject's processDsp function which resolves all incoming buffers, evaluates the effect of any queued messages, and finally resolves the remainder of the output buffer.
+### Optimisations.
+The DspObject class contains several optimizations meant to increase the speed of audio computations.
+This is the most time consuming step in the runloop by far.
+Unfortunately such optimisation often make the code unwieldy and at worst unreadable or opaque.
+For this reason a special effort is made in order to explain the logic behind the implementation.
+The basic optimizations are input buffer resolution loop unrolling, fast resolution, and the use of SIMD to speed the evaluation of floating-point arithmetic-heavy signal operations.
+## The Pd Canvas.
+## The ZenGarden Context.
+# ZenGarden Ain't Perfect.
+## On the Limits of C++.
+ZenGarden is meant to be as portable as possible using standard tools.
+For this reason it was written in C++, chosen for its support of object oriented programming and ubiquity.
+ZG does _not_ make use of the [STL](http://en.wikipedia.org/wiki/Standard_Template_Library) or common libraries such as [Boost](http://www.boost.org/).
+This design choice was made in order to make ZenGarden as lightweight as possible and to reduce the number of external dependencies.
+Also, at the time that work began on the library (September 2009), it was difficult to compile JNI libraries with STL support on Android.
+But C++ is not the ideal language in which to implement a Pure Data interpreter.
+The primary difficulty is its lack of modern language semantics such as Java-style interfaces or Objective-C-style protocols.
+Of course many programming guides will claim that the same functionality can be generated in C++ by using multiple inheritance and abstract classes.
+In my opinion this approach only serves to confuse the issue (though ZenGarden does make use of this technique) and is more of a dirty hack than good program design.
+## The Pure Data Compiler.

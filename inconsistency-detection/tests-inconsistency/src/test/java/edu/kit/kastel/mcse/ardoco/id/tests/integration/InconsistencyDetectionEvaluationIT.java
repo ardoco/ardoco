@@ -44,6 +44,7 @@ import edu.kit.kastel.mcse.ardoco.id.tests.tasks.InconsistencyDetectionTask;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.AggregatedClassificationResult;
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 
@@ -87,10 +88,15 @@ class InconsistencyDetectionEvaluationIT {
         var results = this.calculateEvaluationResults(project, runs);
 
         var metrics = ClassificationMetricsCalculator.getInstance();
-        var microAverage = metrics.calculateAverages(results, null).getMicroAverage();
+        var microAverageResult = metrics.calculateAverages(results, null)
+                .asList()
+                .stream()
+                .filter(it -> it.getType() == AggregationType.MICRO_AVERAGE)
+                .findFirst()
+                .get();
 
-        this.logResultsMissingModelInconsistency(project, microAverage, project.getExpectedMissingModelInconsistencyResults());
-        this.checkResults(microAverage, project.getExpectedMissingModelInconsistencyResults());
+        this.logResultsMissingModelInconsistency(project, microAverageResult, project.getExpectedMissingModelInconsistencyResults());
+        this.checkResults(microAverageResult, project.getExpectedMissingModelInconsistencyResults());
 
         this.writeOutResults(project, results, runs);
     }
@@ -206,8 +212,14 @@ class InconsistencyDetectionEvaluationIT {
         }
 
         var goldStandard = project.getGoldstandardForArchitectureModel(InconsistencyDetectionEvaluationIT.getComponentModel(project));
-        var expectedLines = goldStandard.getSentencesWithElement(removedElement).distinct().collect(Object::toString);
-        var actualSentences = inconsistencies.collect(TextEntityAbsentFromModelInconsistency::sentence).distinct().collect(Object::toString);
+        //We use this format ('<sentenceNumber> -> <componentName>') because using only the sentence number would not account for false positives in our evaluation that have the same sentence number but a different component name
+        var expectedLines = Lists.immutable.ofAll(goldStandard.getSentencesWithElement(removedElement)
+                .distinct()
+                .collect(Object::toString)
+                .stream()
+                .map(l -> l + " -> " + removedElement.getName().toLowerCase())
+                .toList());
+        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i -> i.sentence() + " -> " + removedElement.getName().toLowerCase()).toList());
 
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
@@ -375,7 +387,7 @@ class InconsistencyDetectionEvaluationIT {
     }
 
     private static List<String> sortIntegerStrings(Collection<String> list) {
-        return list.stream().map(Integer::parseInt).sorted().map(Object::toString).toList();
+        return list.stream().map(s -> s.substring(0, s.indexOf(" ->"))).map(Integer::parseInt).sorted().map(Object::toString).toList();
     }
 
     private static String listToString(Collection<?> truePositives) {

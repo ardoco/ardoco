@@ -1,9 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 /**
- * Supported programming languages.
+ * Supported programming languages (there are no code model extractors for all of them).
  */
 public enum ProgrammingLanguage {
-    JAVA, SHELL, PYTHON3, CPP
+    JAVA, SHELL, PYTHON, CPP
 }
