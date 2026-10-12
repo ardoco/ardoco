@@ -11,9 +11,6 @@ openwiki:
   invariants: ["Each approach is an ArdocoRunner whose definePipeline wires stages from stages-tlr", "Transitive SAD->Code links combine SAD->SAM and SAM->Code links via TraceLinkCombiner"]
   test_paths: [tlr/tests-tlr/src/test/java]
   validation_commands: ["mvn -pl tlr clean verify"]
-verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-28T12:10:26.118Z
 sources:
   - id: openwiki-source-655de2c71ac36c571ac56508
     resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Arcotl.java

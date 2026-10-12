@@ -8,9 +8,6 @@ openwiki:
   source_paths: [README.md, docs/Home.md, docs/Quickstart.md, pom.xml, sample.env]
   invariants: ["Monorepo of core, tlr, and inconsistency-detection modules under parent io.github.ardoco:parent"]
   validation_commands: ["mvn clean install", "mvn -pl core clean verify", "mvn -pl tlr clean verify", "mvn -pl inconsistency-detection clean verify"]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-d558e38ccd1b08e055e4f3f5
     resource: repo://.github/workflows/docs.yml

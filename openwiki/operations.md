@@ -9,9 +9,6 @@ openwiki:
   source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml]
   invariants: ["flatten-maven-plugin pinned to 1.7.3 due to upstream NPE in 1.8.0", "JDK 21+ and Maven 3.9+ required", "Docs/openwiki paths do not trigger Maven verify"]
   validation_commands: ["mvn clean verify", "mvn spotless:check"]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-d558e38ccd1b08e055e4f3f5
     resource: repo://.github/workflows/docs.yml

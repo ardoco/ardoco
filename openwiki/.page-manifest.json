@@ -9,32 +9,32 @@
       "completedRunId": "0b5976a1-2fb5-4eca-876e-c32c869e3ec1"
     },
     "/openwiki/inconsistency-detection.md": {
+      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
+      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6",
       "pageVersion": "sha256:c1004c5a62896b37444ada3920292c1da35776a032b8f02579e8fd779dc62fc0",
       "completedBy": "openwiki/0.7.0",
-      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c",
-      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
-      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6"
+      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c"
     },
     "/openwiki/operations.md": {
+      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
+      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6",
       "pageVersion": "sha256:95fd1f37f61be2af27814847caa90be9085403bdb0df76a5601d6f37b27db62f",
       "completedBy": "openwiki/0.7.0",
-      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c",
-      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
-      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6"
+      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c"
     },
     "/openwiki/quickstart.md": {
+      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
+      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6",
       "pageVersion": "sha256:53c0566add6ce9a5183b36d1b9ef5d1881f2ecfcd5b2c41f8ae14d8e0cf952f9",
       "completedBy": "openwiki/0.7.0",
-      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c",
-      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
-      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6"
+      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c"
     },
     "/openwiki/testing.md": {
+      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
+      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6",
       "pageVersion": "sha256:35e68d0c9e80cb9a131e45ac78acc7f74a4c9b449b06250188191d1f324798d7",
       "completedBy": "openwiki/0.7.0",
-      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c",
-      "gitHead": "109a5813eba883a383ad4ab8958a24cdf0156f4d",
-      "sourceFingerprint": "sha256:6753d77da96ed8091e40058c93392d9f7ef01eb4cab56dc4bb96f8e866be44c6"
+      "completedRunId": "a677cf08-8971-4200-a846-c8150bb7435c"
     },
     "/openwiki/tlr-approaches.md": {
       "gitHead": "807e129497707e5b5c7cdd144f53ab43c08d80a2",
