@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.id.tests.integration;
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logExtendedResultsWithExpected;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.ProgrammingLanguageInconsistencyDetectionEvaluation;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ProgrammingLanguageInconsistencyDetectionTask;
+import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -55,10 +58,20 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
     @MethodSource("projectsXCodeConfigurationTypes")
     void programmingLanguageInconsistencyDetectionExtendedIT(ProgrammingLanguageInconsistencyDetectionTask task,
             CodeConfiguration.CodeConfigurationType configurationType) {
-        //TODO add data + logic for this testcase
+        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM);
 
-        //Assertions.assertNotNull(result);
-        //logExtendedResultsWithExpected(logger, task.getEvaluationProject().name() + " programming language ID extended", result, task.getExpectedResults());
+        var results = evaluation.runInconsistencyDetectionExtendedEvaluation(configurationType);
+
+        Assertions.assertNotNull(results);
+        var metrics = ClassificationMetricsCalculator.getInstance();
+        var weightedAverageResult = metrics.calculateAverages(results.castToList(), null)
+                .asList()
+                .stream()
+                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
+                .findFirst()
+                .orElseThrow();
+        logExtendedResultsWithExpected(logger, this, task.getEvaluationProject().name() + " programming language ID extended", weightedAverageResult,
+                task.getExpectedResults());
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
