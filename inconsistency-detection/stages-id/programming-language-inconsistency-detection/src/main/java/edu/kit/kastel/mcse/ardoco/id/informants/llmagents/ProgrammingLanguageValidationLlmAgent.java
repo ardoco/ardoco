@@ -38,9 +38,13 @@ public interface ProgrammingLanguageValidationLlmAgent {
             
             2. Determine first whether the statement makes a repository-specific claim about the contents, structure, implementation, or use of programming languages in the repository.
             * If the statement does **not** make a repository-specific claim, there is nothing repository-specific to verify. Return `true`.
-            * If the statement **does** make a repository-specific claim, verify it using evidence from the repository's actual source-code files.
+            * If the statement **does** make a repository-specific claim, verify it using evidence from the repository's actual source-code files and directory tree.
             * Return `false` when the available source-code evidence contradicts the statement.
-            * If the statement makes a repository-specific claim but the available source-code evidence neither supports nor contradicts it, return true.
+              * Examples:
+                * “The repository contains Python source files.” → `false` if the available repository evidence establishes that it contains no Python source files.
+                * “Component X is implemented in Java.” → `false` if the component is implemented in an other language or if the component X does not exist at all.
+                * “The project uses JavaScript for data processing.” → `false` if the relevant implementation shows that data processing is performed in an other language and contradicts the claim that JavaScript is used for this task.
+            * If the statement makes a repository-specific claim but the available source-code evidence neither supports nor contradicts it, return `true`.
             
             3. If the statement says that something is implemented **strictly, only, purely, exclusively, or entirely** in a particular programming language, explicitly check whether the relevant source files in the referenced location actually use only that language and whether other programming languages are present.
             
@@ -78,7 +82,9 @@ public interface ProgrammingLanguageValidationLlmAgent {
             Current code project root path:
             {{codeProjectPath}}
             
-            Decide whether the statement in the current line about the programming language is true.
+            Decide whether the statement in the current line about the programming language ({{programmingLanguage}}) is true.
+            If the line also talks about other programming languages, ignore them and only consider the statement about {{programmingLanguage}}.
+            Use the provided read-only tools to make an informed decision based on repository evidence.
             """)
     ProgrammingLanguageValidationResult validateProgrammingLanguageStatementAgainstCodeDirectory(@V("namedEntityOccurrence") String namedEntityOccurrence,
             @V("programmingLanguage") String programmingLanguage, @V("fullText") String fullText, @V("line") String line,
@@ -146,7 +152,9 @@ public interface ProgrammingLanguageValidationLlmAgent {
             Current documentation line:
             {{line}}
             
-            Decide whether the statement in the current line about the programming language is true.
+            Decide whether the statement in the current line about the programming language ({{programmingLanguage}}) is true.
+            If the line also talks about other programming languages, ignore them and only consider the statement about {{programmingLanguage}}.
+            Use the provided read-only tools to make an informed decision based on repository evidence.
             """)
     ProgrammingLanguageValidationResult validateProgrammingLanguageStatementAgainstCodeModel(@V("namedEntityOccurrence") String namedEntityOccurrence,
             @V("programmingLanguage") String programmingLanguage, @V("fullText") String fullText, @V("line") String line);

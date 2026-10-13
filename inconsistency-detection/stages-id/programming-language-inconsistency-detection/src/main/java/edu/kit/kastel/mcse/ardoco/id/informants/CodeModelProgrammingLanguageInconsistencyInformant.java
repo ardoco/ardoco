@@ -26,7 +26,7 @@ public class CodeModelProgrammingLanguageInconsistencyInformant extends Abstract
         var llm = LargeLanguageModel.GPT_5_4_MINI;
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(llm.create())
+                .chatModel(llm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();

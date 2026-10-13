@@ -336,11 +336,11 @@ public class CodeDirectoryReadOnlyTools {
         }
 
         try (Stream<Path> stream = Files.walk(projectRoot)) {
-
-            return stream.filter(Files::isRegularFile).filter(path -> !isInsideIgnoredDirectory(path)).filter(path -> {
+            var result = stream.filter(Files::isRegularFile).filter(path -> !isInsideIgnoredDirectory(path)).filter(path -> {
                 Path relative = projectRoot.relativize(path);
                 return matcher.matches(relative);
             }).sorted().limit(MAX_SEARCH_RESULTS).map(this::toRelativeString).collect(Collectors.joining(System.lineSeparator()));
+            return result.isEmpty() ? "No files found matching glob pattern: " + glob : result;
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not search for files: " + glob, e);

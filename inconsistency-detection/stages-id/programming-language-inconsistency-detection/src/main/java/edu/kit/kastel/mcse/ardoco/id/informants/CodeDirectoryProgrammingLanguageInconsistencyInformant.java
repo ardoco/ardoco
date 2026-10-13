@@ -27,7 +27,7 @@ public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends Abst
 
         var llm = LargeLanguageModel.GPT_5_4_MINI;
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(llm.create())
+                .chatModel(llm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
                 .tools(new CodeDirectoryReadOnlyTools(codeProjectPath))
                 .build();
 
