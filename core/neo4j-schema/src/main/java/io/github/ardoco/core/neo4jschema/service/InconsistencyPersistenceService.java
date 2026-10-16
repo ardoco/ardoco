@@ -104,6 +104,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
         return inconsistencyRepository.findAllWithRelationships()
                 .stream()
                 .map(node -> node.accept(this)) // Use Visitor pattern to map each database node
+                .filter(java.util.Objects::nonNull) // orphaned nodes are skipped (see visit(ModelInconsistencyNode))
                 .toList();
     }
 
@@ -171,7 +172,9 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
     public Inconsistency visit(ModelInconsistencyNode node) {
         TraceableNode modelNode = node.getTraceableNode();
         if (modelNode == null) {
-            throw new IllegalStateException("Orphaned Inconsistency: " + node.getId());
+            // Can only come from data written before model deletes removed attached inconsistencies; skip instead of failing the whole load.
+            logger.warn("Skipping orphaned model inconsistency {} (its model element no longer exists)", node.getId());
+            return null;
         }
 
         ModelEntity modelEntity = (modelNode.getModelType() == ArchitectureType.ARCHITECTURE) ?

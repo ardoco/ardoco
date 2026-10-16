@@ -11,9 +11,30 @@ import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
 @Repository
 public interface CodeModelRepository extends Neo4jRepository<CodeModelNode, String> {
 
-    @Query("MATCH (m:CodeModel {modelId: $modelId}) " + "OPTIONAL MATCH (m)-[r:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)" + "DETACH DELETE m, n")
+    /**
+     * Deletes the code model with the given id, all of its items, and the inconsistencies attached to those items. Without the last part, a re-saved
+     * model would leave orphaned inconsistency nodes behind.
+     *
+     * @param modelId the id of the code model
+     */
+    @Query("""
+            MATCH (m:CodeModel {modelId: $modelId})
+            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)
+            OPTIONAL MATCH (n)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
+            DETACH DELETE m, n, i
+            """)
     void deleteByModelId(@Param("modelId") String modelId);
 
-    @Query("MATCH (m:CodeModel {metamodel: $mt})" + "OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)" + "DETACH DELETE m, child")
+    /**
+     * Deletes all code models of the given metamodel, their items, and the inconsistencies attached to those items.
+     *
+     * @param metamodel the metamodel name
+     */
+    @Query("""
+            MATCH (m:CodeModel {metamodel: $mt})
+            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)
+            OPTIONAL MATCH (child)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
+            DETACH DELETE m, child, i
+            """)
     void deleteByMetamodel(@Param("mt") String metamodel);
 }

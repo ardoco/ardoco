@@ -13,13 +13,22 @@ import io.github.ardoco.core.neo4jschema.entities.architectureModel.Architecture
 @Repository
 public interface ArchitectureModelRepository extends Neo4jRepository<ArchitectureModelNode, String> {
 
+    /**
+     * Deletes the architecture model with the given id, its components, interfaces and methods, and the inconsistencies attached to them. Without the
+     * last part, a re-saved model would leave orphaned inconsistency nodes behind.
+     *
+     * @param modelId the id of the architecture model
+     */
     @Query("""
                 MATCH (m:ArchitectureModel {modelId: $modelId})
                 // Traverse components, subcomponents, and interfaces
                 OPTIONAL MATCH (m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT*0..10]->(item)
                 // Traverse methods inside interfaces
                 OPTIONAL MATCH (item)-[:HAS_METHOD]->(method)
-                DETACH DELETE m, item, method
+                // Inconsistencies attached to items or methods
+                OPTIONAL MATCH (item)-[:HAS_INCONSISTENCY]->(itemInconsistency:Inconsistency)
+                OPTIONAL MATCH (method)-[:HAS_INCONSISTENCY]->(methodInconsistency:Inconsistency)
+                DETACH DELETE m, item, method, itemInconsistency, methodInconsistency
             """)
     void deleteByModelId(@Param("modelId") String modelId);
 

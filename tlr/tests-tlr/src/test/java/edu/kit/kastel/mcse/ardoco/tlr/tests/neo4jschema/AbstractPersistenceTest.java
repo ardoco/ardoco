@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.Neo4jContainer;
 
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
@@ -22,14 +23,16 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 
 /**
- * Base class for TLR persistence integration tests against a local Neo4j instance.
+ * Base class for TLR persistence integration tests.
  *
- * <h2>Local setup (Neo4j Desktop)</h2>
+ * <h2>Which Neo4j the tests use</h2>
+ * Selected with {@code -Dardoco.neo4j.testDatabase=container|local}:
  * <ul>
- *   <li>Start the Desktop DBMS before running tests (status must be RUNNING).</li>
- *   <li>Bolt URI uses {@code 127.0.0.1} (avoids Windows {@code localhost} → IPv6 quirks).</li>
- *   <li>Keep credentials in sync with Desktop / repo {@code .env}.</li>
- *   <li>Stop any Docker Neo4j on ports 7474/7687 to avoid conflicts.</li>
+ *   <li>{@code container} (default): an isolated, throw-away Neo4j started via Testcontainers (Docker must be running). The tests never touch
+ *       a local database, so a graph kept in Neo4j Desktop is safe.</li>
+ *   <li>{@code local}: Neo4j Desktop at {@code bolt://127.0.0.1:7687} (user {@value #NEO4J_USER}, password {@value #NEO4J_PASSWORD}), for
+ *       inspecting the graph in Neo4j Browser during a pause. To protect a kept graph, a test refuses to start if this database is not empty,
+ *       unless {@code -Dardoco.neo4j.allowWipe=true} is set; a test that refused to start never clears the database.</li>
  * </ul>
  *
  * <h2>Data lifetime: pause then clear</h2>
@@ -70,6 +73,17 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
      */
     protected static final String PAUSE_SECONDS_PROPERTY = "ardoco.neo4j.pauseSeconds";
 
+    /** System property selecting the test database: {@code container} (default) or {@code local}. */
+    protected static final String TEST_DATABASE_PROPERTY = "ardoco.neo4j.testDatabase";
+
+    /** System property that allows tests to clear a non-empty local database. */
+    protected static final String ALLOW_WIPE_PROPERTY = "ardoco.neo4j.allowWipe";
+
+    private static final boolean USE_LOCAL_NEO4J = "local".equalsIgnoreCase(System.getProperty(TEST_DATABASE_PROPERTY, "container"));
+
+    /** Isolated Neo4j for the default mode; {@code null} when the local database is used. Same image as the neo4j-schema tests. */
+    private static final Neo4jContainer<?> NEO4J_CONTAINER = USE_LOCAL_NEO4J ? null : startContainer();
+
     /**
      * Used by {@link #clearNeo4jAfterTest()} to wipe the graph after each test.
      * Data remains available only until that teardown — i.e. through any in-test pause.
@@ -81,26 +95,66 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
     protected Neo4jClient neo4jClient;
 
     /**
-     * Wires Spring Data Neo4j to the local Desktop instance.
-     * Prefer {@code 127.0.0.1} over {@code localhost} on Windows.
+     * Wires Spring Data Neo4j to the selected test database: the Testcontainers instance (default) or the local Desktop instance. For the local
+     * instance, {@code 127.0.0.1} is used instead of {@code localhost} (Windows IPv6 quirks).
      */
     @DynamicPropertySource
     static void neo4jProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.neo4j.uri", () -> "bolt://127.0.0.1:7687");
-        registry.add("spring.neo4j.authentication.username", () -> NEO4J_USER);
-        registry.add("spring.neo4j.authentication.password", () -> NEO4J_PASSWORD);
+        if (USE_LOCAL_NEO4J) {
+            registry.add("spring.neo4j.uri", () -> "bolt://127.0.0.1:7687");
+            registry.add("spring.neo4j.authentication.username", () -> NEO4J_USER);
+            registry.add("spring.neo4j.authentication.password", () -> NEO4J_PASSWORD);
+        } else {
+            registry.add("spring.neo4j.uri", NEO4J_CONTAINER::getBoltUrl);
+            registry.add("spring.neo4j.authentication.username", () -> "neo4j");
+            registry.add("spring.neo4j.authentication.password", NEO4J_CONTAINER::getAdminPassword);
+        }
+    }
+
+    private static Neo4jContainer<?> startContainer() {
+        Neo4jContainer<?> container = new Neo4jContainer<>("neo4j:5").withReuse(true);
+        container.start();
+        return container;
+    }
+
+    /** {@return the Neo4j Browser URL of the database the tests use} */
+    protected static String neo4jBrowserUrl() {
+        return USE_LOCAL_NEO4J ? NEO4J_BROWSER : NEO4J_CONTAINER.getHttpUrl();
+    }
+
+    /** {@return the password of the database the tests use} */
+    protected static String neo4jPassword() {
+        return USE_LOCAL_NEO4J ? NEO4J_PASSWORD : NEO4J_CONTAINER.getAdminPassword();
+    }
+
+    /** {@return the Bolt URL of the database the tests use} */
+    protected static String neo4jBoltUrl() {
+        return USE_LOCAL_NEO4J ? "bolt://127.0.0.1:7687" : NEO4J_CONTAINER.getBoltUrl();
     }
 
     private static StanfordCoreNLP pipeline;
 
+    /** True once this test may clear the database (container mode, or a local database that was empty or explicitly allowed). */
+    private boolean graphOwnedByTest = false;
+
     @BeforeEach
     void setUp() {
+        if (USE_LOCAL_NEO4J && !Boolean.getBoolean(ALLOW_WIPE_PROPERTY)) {
+            long existingNodes = countAllNodes();
+            if (existingNodes > 0) {
+                throw new IllegalStateException("Local Neo4j at bolt://127.0.0.1:7687 already contains " + existingNodes
+                        + " nodes. The tests would delete them. Use the default -D" + TEST_DATABASE_PROPERTY + "=container, empty the database, or set -D"
+                        + ALLOW_WIPE_PROPERTY + "=true.");
+            }
+        }
+        graphOwnedByTest = true;
         PersistenceBridge.setFailOnPersistenceError(true);
         System.out.println("----------------------------------------------------------");
-        System.out.println("neo4j browser: " + NEO4J_BROWSER);
+        System.out.println("test database: " + (USE_LOCAL_NEO4J ? "local Neo4j Desktop" : "Testcontainers (isolated)"));
+        System.out.println("neo4j browser: " + neo4jBrowserUrl());
         System.out.println("username:      " + NEO4J_USER);
-        System.out.println("password:      " + NEO4J_PASSWORD);
-        System.out.println("Connect URL:   bolt://127.0.0.1:7687");
+        System.out.println("password:      " + neo4jPassword());
+        System.out.println("Connect URL:   " + neo4jBoltUrl());
         System.out.println("Pause (s):     -D" + PAUSE_SECONDS_PROPERTY + "=<seconds> (0 = off)");
         System.out.println("Teardown:      graph cleared in @AfterEach after the test");
         System.out.println("----------------------------------------------------------");
@@ -117,6 +171,10 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
     @AfterEach
     void clearNeo4jAfterTest() {
         try {
+            if (!graphOwnedByTest) {
+                System.out.println(">>> @AfterEach: test did not start; database left untouched.");
+                return;
+            }
             System.out.println(">>> @AfterEach: clearing all Neo4j test data (MATCH (n) DETACH DELETE n)...");
             clearNeo4jGraph();
             System.out.println(">>> Neo4j graph cleared.");
@@ -126,7 +184,18 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
     }
 
     protected void clearNeo4jGraph() {
+        if (!graphOwnedByTest) {
+            throw new IllegalStateException("Refusing to clear a database this test does not own");
+        }
         neo4jPersistenceHandler.deleteAllData();
+    }
+
+    private long countAllNodes() {
+        return neo4jClient.query("MATCH (n) RETURN count(n) AS c")
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
     }
 
     /**
@@ -166,7 +235,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         }
 
         System.out.println(">>> Pipeline data is in Neo4j until this test ends.");
-        System.out.println(">>> Open Browser NOW: " + NEO4J_BROWSER);
+        System.out.println(">>> Open Browser NOW: " + neo4jBrowserUrl());
         System.out.println(">>> Pausing " + seconds + "s ( -D" + PAUSE_SECONDS_PROPERTY + " ).");
         System.out.println(">>> After the pause, @AfterEach will DELETE all graph data.");
 

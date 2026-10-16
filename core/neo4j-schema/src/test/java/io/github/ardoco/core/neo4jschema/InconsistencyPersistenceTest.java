@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.neo4j.core.Neo4jClient;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
@@ -19,8 +20,10 @@ import io.github.ardoco.core.neo4jschema.entities.architectureModel.Architecture
 import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
+import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 import io.github.ardoco.core.neo4jschema.util.FakeArchitectureEntity;
+import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelFactory;
 
 @SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class, properties = "ardoco.persistence.neo4j.enabled=true")
 @Import({ Neo4jBridgeActivator.class, Neo4jInitializer.class })
@@ -34,6 +37,12 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
 
     @Autowired
     private TraceableNodeRepository traceableNodeRepository;
+
+    @Autowired
+    private ArchitecturePersistenceService architecturePersistenceService;
+
+    @Autowired
+    private Neo4jClient neo4jClient;
 
     @Test
     void shouldPersistRelationshipAndAvoidNPE() {
@@ -79,5 +88,39 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
         assertTrue(retrieved.getReason().contains(name));
         assertTrue(retrieved.getReason().contains("0.85"));
         assertEquals("TextEntityAbsentFromModel", retrieved.getType());
+    }
+
+    @Test
+    void resavingAModelRemovesItsInconsistenciesInsteadOfLeavingOrphans() {
+        var model = ArchitectureModelFactory.createArchitectureModel();
+        architecturePersistenceService.saveArchitectureModel(model);
+
+        var authService = new FakeArchitectureEntity("AuthService", "id_comp_auth", "Component");
+        persistenceService.addInconsistencies(List.of(new ModelEntityAbsentFromTextInconsistency(authService)));
+        assertTrue(hasInconsistencyFor("id_comp_auth"), "Precondition: the inconsistency is attached to the model item");
+
+        // Saving the same model again replaces its items; the attached inconsistency must go with them.
+        architecturePersistenceService.saveArchitectureModel(model);
+
+        assertEquals(0L, countOrphanedModelInconsistencies(), "No model inconsistency may be left without its model element");
+        var results = assertDoesNotThrow(() -> persistenceService.getInconsistencies());
+        assertTrue(results.stream()
+                .noneMatch(i -> i instanceof ModelEntityAbsentFromTextInconsistency m && "id_comp_auth".equals(m.getModelInstanceUid())));
+    }
+
+    private boolean hasInconsistencyFor(String ardocoId) {
+        return neo4jClient.query("MATCH (:Traceable {ardocoId: $id})-[:HAS_INCONSISTENCY]->(i:ModelInconsistency) RETURN count(i) > 0 AS found")
+                .bind(ardocoId)
+                .to("id")
+                .fetchAs(Boolean.class)
+                .one()
+                .orElse(false);
+    }
+
+    private long countOrphanedModelInconsistencies() {
+        return neo4jClient.query("MATCH (i:ModelInconsistency) WHERE NOT ()-[:HAS_INCONSISTENCY]->(i) RETURN count(i) AS c")
+                .fetchAs(Long.class)
+                .one()
+                .orElse(0L);
     }
 }
