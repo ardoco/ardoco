@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
+import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.SpecificationVersion;
@@ -41,13 +42,12 @@ public final class JsonConverter {
      * @return whether the json string matches the text schema
      */
     public static boolean validateJson(String json) throws IOException {
-        ObjectMapper mapper = createObjectMapper();
         SchemaRegistry schemaRegistry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12);
 
         InputStream inputSchema = JsonConverter.class.getClassLoader().getResourceAsStream(SCHEMA_PATH);
         Schema schema = schemaRegistry.getSchema(inputSchema);
 
-        List<Error> message = schema.validate(mapper.readTree(json));
+        List<Error> message = schema.validate(json, InputFormat.JSON);
         if (!message.isEmpty()) {
             // get only the first fifteen messages
             List<String> loggerMessages = message.stream().map(Error::getMessage).toList();
