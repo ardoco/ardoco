@@ -1,0 +1,17 @@
+sentenceID,file
+371,services/distribution/src/main/resources/main-config/v2/exposure-configuration.yaml
+373,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/dgc_parameters.proto
+373,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/presence_tracing_parameters.proto
+374,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/dgc_parameters.proto
+374,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/v2/presence_tracing_parameters.proto
+375,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/stats/local_statistics.proto
+376,common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/stats/local_statistics.proto
+377,runconfigs/intellij/distribution [spring-boot_run...].run.xml
+379,services/distribution/src/test/resources/configtests/naming_mismatch.yaml
+381,services/distribution/src/main/resources/trustlist/ubirchdsc.json
+382,services/distribution/src/main/resources/trustlist/ubirchdsc.json
+383,services/download/src/test/resources/application-error-batch.yaml
+384,services/download/src/test/resources/application-error-batch.yaml
+385,runconfigs/eclipse/spring-boot-dcc_revocation.launch
+387,docker-compose-test-secrets/ssl.p12
+388,docker-compose-test-secrets/ssl.p12

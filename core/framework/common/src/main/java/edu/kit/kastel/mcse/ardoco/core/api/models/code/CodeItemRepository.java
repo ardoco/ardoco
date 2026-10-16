@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -46,6 +46,19 @@ public class CodeItemRepository implements Serializable {
             return null;
         }
         return this.repository.get(id);
+    }
+
+    /**
+     * Returns a list of all {@link ClassUnit} instances contained within the repository.
+     *
+     * @return list of all class units present in the repository
+     */
+    public List<ClassUnit> getAllClassUnits() {
+        return this.repository.values()
+                .stream()
+                .flatMap(codeItem -> codeItem.getAllDataTypes().stream())
+                .flatMap(datatype -> datatype.getAllClassUnits().stream())
+                .toList();
     }
 
     /**
