@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.util.Properties;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public final class ResourceAccessor {
      * @param key name of the specified property
      * @return value of the property as a string, or null if not found
      */
-    public String getProperty(String key) {
+    public @Nullable String getProperty(String key) {
         return this.prop.getProperty(key);
     }
 

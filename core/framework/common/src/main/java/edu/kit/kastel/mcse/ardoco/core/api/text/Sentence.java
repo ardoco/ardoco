@@ -1,9 +1,10 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.text;
 
 import java.io.Serializable;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a sentence in the document.
@@ -37,7 +38,7 @@ public interface Sentence extends Serializable {
      * @param other the other sentence
      * @return true if equal
      */
-    default boolean isEqualTo(Sentence other) {
+    default boolean isEqualTo(@Nullable Sentence other) {
         return other != null && this.getSentenceNumber() == other.getSentenceNumber() && other.getText().equals(this.getText());
     }
 

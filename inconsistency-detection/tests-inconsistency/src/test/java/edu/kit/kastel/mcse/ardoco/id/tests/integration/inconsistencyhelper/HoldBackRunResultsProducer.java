@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.NonNull;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
@@ -81,7 +82,7 @@ public class HoldBackRunResultsProducer {
             boolean useInconsistencyBaseline) {
         return new AnonymousRunner(goldStandardProject.name()) {
             @Override
-            public List<AbstractPipelineStep> initializePipelineSteps(DataRepository dataRepository) {
+            public @NonNull List<AbstractPipelineStep> initializePipelineSteps(@NonNull DataRepository dataRepository) {
                 var pipelineSteps = new ArrayList<AbstractPipelineStep>();
 
                 var text = CommonUtilities.readInputText(HoldBackRunResultsProducer.this.inputText);

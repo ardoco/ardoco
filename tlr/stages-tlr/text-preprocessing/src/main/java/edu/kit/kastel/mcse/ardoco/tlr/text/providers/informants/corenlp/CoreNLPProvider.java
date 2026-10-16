@@ -1,7 +1,8 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.text.NlpInformant;
@@ -12,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.textproc
 
 public class CoreNLPProvider extends NlpInformant {
 
-    private Text annotatedText;
+    private @Nullable Text annotatedText;
 
     // Needed for Configuration Generation
     private CoreNLPProvider() {

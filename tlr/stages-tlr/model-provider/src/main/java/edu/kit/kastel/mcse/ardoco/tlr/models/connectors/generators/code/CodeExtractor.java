@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
@@ -6,6 +6,7 @@ import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMa
 import java.io.File;
 import java.io.IOException;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public abstract class CodeExtractor extends Extractor {
         writeOutCodeModel(codeModel, file);
     }
 
-    public static CodeModel readInCodeModel(File codeModelFile, Metamodel metamodelToExtract) {
+    public static @Nullable CodeModel readInCodeModel(@Nullable File codeModelFile, Metamodel metamodelToExtract) {
         if (codeModelFile != null && codeModelFile.isFile()) {
             logger.info("Reading in existing code model.");
             ObjectMapper objectMapper = createObjectMapper();

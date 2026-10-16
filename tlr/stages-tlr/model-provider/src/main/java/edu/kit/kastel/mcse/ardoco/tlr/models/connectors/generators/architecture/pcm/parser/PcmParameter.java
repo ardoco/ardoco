@@ -1,10 +1,11 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.parser;
 
 import java.util.List;
 
 import org.fuchss.xmlobjectmapper.annotation.XMLClass;
 import org.fuchss.xmlobjectmapper.annotation.XMLValue;
+import org.jspecify.annotations.Nullable;
 
 @XMLClass
 public final class PcmParameter {
@@ -15,7 +16,7 @@ public final class PcmParameter {
     @XMLValue(name = "dataType__Parameter", mandatory = false)
     private String typeId;
 
-    private PcmDatatype type;
+    private @Nullable PcmDatatype type;
 
     PcmParameter() {
         // NOP
@@ -25,7 +26,7 @@ public final class PcmParameter {
         return parameterName;
     }
 
-    public PcmDatatype getType() {
+    public @Nullable PcmDatatype getType() {
         return type;
     }
 
