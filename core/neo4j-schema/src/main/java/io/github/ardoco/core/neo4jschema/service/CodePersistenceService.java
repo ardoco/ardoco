@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepositor
 
 @Service
 public class CodePersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CodePersistenceService.class);
 
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
@@ -82,25 +86,29 @@ public class CodePersistenceService {
         // datatype ids, datatype-reference lists) from the verbatim node properties, then reuse CodeModelMapper#toDomain(CodeModelNode). Because
         // CodeItemNode#ardocoId is the @Id, nodes are rewired purely by id. The CONTAINS_CODE_ITEM / EXTENDS / ... relationships still exist in the graph for
         // querying, but they are not needed here because the ordered/nullable state lives in the properties.
-        String modelId = neo4jClient.query("MATCH (m:CodeModel {metamodel: $mt}) RETURN m.modelId AS modelId LIMIT 1")
+        List<String> modelIds = new ArrayList<>(neo4jClient.query("MATCH (m:CodeModel {metamodel: $mt}) RETURN m.modelId AS modelId ORDER BY modelId")
                 .bind(metamodel.name())
                 .to("mt")
                 .fetchAs(String.class)
                 .mappedBy((typeSystem, record) -> record.get("modelId").asString(null))
-                .one()
-                .orElse(null);
-        if (modelId == null) {
+                .all());
+        modelIds.removeIf(java.util.Objects::isNull);
+        if (modelIds.isEmpty()) {
             return Optional.empty();
+        }
+        String modelId = modelIds.get(0);
+        if (modelIds.size() > 1) {
+            logger.warn("{} code models stored for metamodel {} ({}); loading only {}", modelIds.size(), metamodel, modelIds, modelId);
         }
 
         // 1) Every code item that belongs to the model (via HAS_REPOSITORY_ITEM), independent of hierarchy reachability.
         Collection<Map<String, Object>> itemRows = neo4jClient.query(
                 """
-                        MATCH (m:CodeModel {metamodel: $mt})-[:HAS_REPOSITORY_ITEM]->(n:CodeItem)
+                        MATCH (m:CodeModel {modelId: $modelId})-[:HAS_REPOSITORY_ITEM]->(n:CodeItem)
                         RETURN n.ardocoId AS id, labels(n) AS labels, properties(n) AS props
                         """)
-                .bind(metamodel.name())
-                .to("mt")
+                .bind(modelId)
+                .to("modelId")
                 .fetch()
                 .all();
 
@@ -116,9 +124,9 @@ public class CodePersistenceService {
 
         // 2) Roots of the model.
         Collection<Map<String, Object>> rootRows = neo4jClient.query(
-                "MATCH (m:CodeModel {metamodel: $mt})-[:CONTAINS_CODE_ROOT]->(root:CodeItem) RETURN root.ardocoId AS rootId")
-                .bind(metamodel.name())
-                .to("mt")
+                "MATCH (m:CodeModel {modelId: $modelId})-[:CONTAINS_CODE_ROOT]->(root:CodeItem) RETURN root.ardocoId AS rootId")
+                .bind(modelId)
+                .to("modelId")
                 .fetch()
                 .all();
 

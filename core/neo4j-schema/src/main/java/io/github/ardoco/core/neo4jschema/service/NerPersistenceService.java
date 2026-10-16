@@ -22,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedAr
 import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityNode;
 import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityOccurrenceNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
+import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
 import io.github.ardoco.core.neo4jschema.repository.ner.NamedArchitectureEntityOccurrenceRepository;
 import io.github.ardoco.core.neo4jschema.repository.ner.NamedArchitectureEntityRepository;
 
@@ -113,7 +114,10 @@ public class NerPersistenceService {
             NamedArchitectureEntityOccurrence occurrence = occurrencesById.get(occId);
             ModelEntity modelEntity = modelEntitiesById.get(targetId);
             if (occurrence != null && modelEntity != null) {
-                links.add(new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity));
+                double confidence = row.get("confidence") instanceof Number number ? number.doubleValue() : -1.0;
+                links.add(confidence >= 0 ?
+                        new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity, NounMappingMapper.RESUME_CLAIMANT, confidence) :
+                        new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity));
             }
         }
         logger.info("Loaded {} NER trace links for {}", links.size(), metamodel);

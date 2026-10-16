@@ -82,6 +82,16 @@ public class Neo4jPhrase implements Phrase {
     public int compareTo(Phrase o) {
         if (this == o)
             return 0;
-        return Comparator.comparing(Phrase::getSentenceNumber).thenComparing(Phrase::getText).thenComparing(Phrase::getPhraseType).compare(this, o);
+        // Same order as PhraseImpl (CoreNLP); the start position keeps repeated phrases of one sentence apart.
+        return Comparator.comparing(Phrase::getSentenceNumber)
+                .thenComparing(Phrase::getText)
+                .thenComparing(Phrase::getPhraseType)
+                .thenComparingInt(Neo4jPhrase::startPosition)
+                .compare(this, o);
+    }
+
+    private static int startPosition(Phrase phrase) {
+        var words = phrase.getContainedWords();
+        return words.isEmpty() ? -1 : words.get(0).getPosition();
     }
 }

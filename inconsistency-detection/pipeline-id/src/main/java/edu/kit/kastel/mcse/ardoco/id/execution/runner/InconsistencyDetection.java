@@ -27,9 +27,9 @@ public class InconsistencyDetection extends ArdocoRunner {
 
     public void setUp(File inputText, File inputModelArchitecture, ModelFormat inputModelFormat, ImmutableSortedMap<String, String> additionalConfigs,
             File outputDir) {
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, inputModelArchitecture, inputModelFormat, additionalConfigs);
         setOutputDirectory(outputDir);
-        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // configure persistence bridge
         isSetUp = true;
     }
 

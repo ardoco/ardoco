@@ -218,7 +218,8 @@ public class PersistenceBridge extends AbstractConfigurable {
      * outermost scope ends, the collected saves run first (one per instance, with its final state) and the deletions last; a deletion is cancelled
      * if the same {@code ardocoId} is saved after it within the scope. For a merge this yields the order: merged noun mapping upserted, referencing
      * recommended instances re-linked, obsolete noun mapping removed, so the graph is consistent at every point. Nested calls join the outer
-     * scope. The collected writes are also flushed if {@code body} throws, so Neo4j mirrors the in-memory state that was actually reached.
+     * scope. The collected writes are also flushed if {@code body} throws, so Neo4j mirrors the in-memory state that was actually reached. If
+     * a collected save fails (and failures are not configured to throw), the deletions are skipped so no existing link is lost.
      *
      * @param body the code to run
      * @param <T>  the result type
@@ -268,8 +269,23 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
 
         void flush() {
+            int failedSaves = 0;
             for (DeferredSave save : this.pendingSaves.values()) {
-                runQuietly(save.operation(), save.action());
+                boolean[] succeeded = { false };
+                runQuietly(save.operation(), () -> {
+                    save.action().run();
+                    succeeded[0] = true;
+                });
+                if (!succeeded[0]) {
+                    failedSaves++;
+                }
+            }
+            if (failedSaves > 0 && !this.pendingNounMappingDeletions.isEmpty()) {
+                // Deleting now would also remove the old links of the instances that could not be re-linked. Keep the obsolete noun mappings;
+                // they are unreferenced in memory and can be cleaned up later, while the graph keeps every link it had.
+                LOGGER.warn("{} deferred save(s) failed; skipping deletion of {} obsolete noun mapping(s) {} to avoid losing links", failedSaves,
+                        this.pendingNounMappingDeletions.size(), this.pendingNounMappingDeletions);
+                return;
             }
             for (String ardocoId : this.pendingNounMappingDeletions) {
                 runQuietly("deleteNounMapping", () -> getHandler().deleteNounMapping(ardocoId));

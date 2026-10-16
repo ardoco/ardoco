@@ -47,7 +47,7 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
                 id: randomUUID(),
                 modelArdocoId: $uid,
                 reason: $reason,
-                type: "TextEntityAbsentFromModel"
+                type: "ModelEntityAbsentFromText"
             })
             """)
     void saveModelInconsistency(@Param("ardocoId") String parentArdocoId, @Param("uid") String uid, @Param("reason") String reason);

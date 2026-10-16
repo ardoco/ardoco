@@ -5,14 +5,19 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.list.ImmutableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
  * Unit tests for the write scope of {@link PersistenceBridge#withDeferredWrites} (noun-mapping merges).
@@ -20,10 +25,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 class PersistenceBridgeDeferredWritesTest {
 
     private final List<String> calls = new ArrayList<>();
+    private boolean failRecommendedInstanceSaves = false;
 
     @BeforeEach
     void setUp() {
-        PersistenceBridge.setHandler(recordingHandler(this.calls));
+        PersistenceBridge.setHandler(recordingHandler(this.calls, () -> this.failRecommendedInstanceSaves));
         configure("true", "true");
     }
 
@@ -72,6 +78,38 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
+    @DisplayName("Recommended-instance saves are deferred to the end of the scope and run once per instance")
+    void recommendedInstanceSavesAreDeferredAndDeduplicated() {
+        configure("true", "true", "true");
+        RecommendedInstance ri = new StubRecommendedInstance("ri-1");
+        PersistenceBridge.withDeferredWrites(() -> {
+            PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            PersistenceBridge.deleteNounMapping("old");
+            PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            Assertions.assertTrue(this.calls.isEmpty(), "Recommended-instance saves must be deferred inside the scope");
+            return null;
+        });
+        Assertions.assertEquals(List.of("saveRecommendedInstance:ri-1", "deleteNounMapping:old"), this.calls);
+    }
+
+    @Test
+    @DisplayName("If a deferred save fails, obsolete noun mappings are not deleted (no link is lost)")
+    void failedDeferredSaveSkipsDeletions() {
+        configure("true", "true", "true");
+        this.failRecommendedInstanceSaves = true;
+        RecommendedInstance ri = new StubRecommendedInstance("ri-2");
+        PersistenceBridge.withDeferredWrites(() -> {
+            PersistenceBridge.deleteNounMapping("first");
+            PersistenceBridge.deleteNounMapping("second");
+            PersistenceBridge.saveNounMapping(nounMapping("first"));
+            PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            return null;
+        });
+        Assertions.assertEquals(List.of("saveNounMapping:first", "saveRecommendedInstance:ri-2"), this.calls,
+                "The obsolete noun mapping 'second' must not be deleted after the failed save");
+    }
+
+    @Test
     @DisplayName("Nested scopes join the outer scope and flush only at its end")
     void nestedScopesJoinOuterScope() {
         PersistenceBridge.withDeferredWrites(() -> {
@@ -110,9 +148,14 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     private static void configure(String usePersistence, String persistTextState) {
+        configure(usePersistence, persistTextState, "false");
+    }
+
+    private static void configure(String usePersistence, String persistTextState, String persistRecommendations) {
         PersistenceBridge.getInstance()
                 .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", usePersistence, "PersistenceBridge::persistTextState",
-                        persistTextState, "PersistenceBridge::persistRecommendations", "false", "PersistenceBridge::persistNerConnection", "false"));
+                        persistTextState, "PersistenceBridge::persistRecommendations", persistRecommendations, "PersistenceBridge::persistNerConnection",
+                        "false"));
     }
 
     private static NounMapping nounMapping(String ardocoId) {
@@ -132,7 +175,7 @@ class PersistenceBridgeDeferredWritesTest {
         });
     }
 
-    private static PersistenceHandler recordingHandler(List<String> calls) {
+    private static PersistenceHandler recordingHandler(List<String> calls, java.util.function.BooleanSupplier failRecommendedInstanceSaves) {
         return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class }, (proxy,
                 method, args) -> {
             switch (method.getName()) {
@@ -147,6 +190,12 @@ class PersistenceBridgeDeferredWritesTest {
                 return null;
             case "deleteNounMapping":
                 calls.add("deleteNounMapping:" + args[0]);
+                return null;
+            case "saveRecommendedInstance":
+                calls.add("saveRecommendedInstance:" + ((RecommendedInstance) args[0]).getId());
+                if (failRecommendedInstanceSaves.getAsBoolean()) {
+                    throw new IllegalStateException("simulated Neo4j failure");
+                }
                 return null;
             default:
                 calls.add(method.getName());
@@ -181,5 +230,69 @@ class PersistenceBridgeDeferredWritesTest {
             return '\0';
         }
         return null;
+    }
+
+    /** Minimal {@link RecommendedInstance} for the bridge tests; only the id is used. */
+    private static final class StubRecommendedInstance extends RecommendedInstance {
+        private static final long serialVersionUID = 1L;
+
+        StubRecommendedInstance(String id) {
+            super("stub", id);
+        }
+
+        @Override
+        public ImmutableList<NounMapping> getNameMappings() {
+            return Lists.immutable.empty();
+        }
+
+        @Override
+        public ImmutableList<NounMapping> getTypeMappings() {
+            return Lists.immutable.empty();
+        }
+
+        @Override
+        public double getProbability() {
+            return 0;
+        }
+
+        @Override
+        public void addProbability(Claimant claimant, double probability) {
+            // not needed
+        }
+
+        @Override
+        public void addMappings(ImmutableList<NounMapping> nameMapping, ImmutableList<NounMapping> typeMapping) {
+            // not needed
+        }
+
+        @Override
+        public void addName(NounMapping nameMapping) {
+            // not needed
+        }
+
+        @Override
+        public void addType(NounMapping typeMapping) {
+            // not needed
+        }
+
+        @Override
+        public String getType() {
+            return "stub";
+        }
+
+        @Override
+        public String getName() {
+            return "stub";
+        }
+
+        @Override
+        public void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement) {
+            // not needed
+        }
+
+        @Override
+        public void setMetamodel(Metamodel metamodel) {
+            // not needed
+        }
     }
 }

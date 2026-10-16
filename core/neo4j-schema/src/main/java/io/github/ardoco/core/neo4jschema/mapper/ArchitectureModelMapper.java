@@ -39,7 +39,7 @@ public class ArchitectureModelMapper {
         } else if (node instanceof ArchitectureInterfaceNode interfaceNode) {
             return mapInterfaceToDomain(interfaceNode, new HashMap<>());
         } else if (node instanceof ArchitectureMethodNode methodNode) {
-            return new ArchitectureMethod(methodNode.getName(), methodNode.getArdocoId());
+            return new ArchitectureMethod(methodNode.getArdocoId(), methodNode.getName()); // constructor order is (id, name)
         }
         throw new IllegalArgumentException("Unknown ArchitectureItemNode type: " + node.getClass().getSimpleName());
     }

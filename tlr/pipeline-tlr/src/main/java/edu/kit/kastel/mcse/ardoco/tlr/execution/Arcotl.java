@@ -32,9 +32,9 @@ public class Arcotl extends ArdocoRunner {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner define the metamodels.");
         }
 
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
-        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // configure persistence bridge
         isSetUp = true;
     }
 

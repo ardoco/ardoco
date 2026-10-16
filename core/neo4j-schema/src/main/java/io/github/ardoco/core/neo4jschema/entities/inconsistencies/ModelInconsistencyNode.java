@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Node("ModelInconsistency")
 public class ModelInconsistencyNode extends InconsistencyNode {
 
-    private static final String INCONSISTENCY_TYPE_NAME = "TextEntityAbsentFromModel";
+    private static final String INCONSISTENCY_TYPE_NAME = "ModelEntityAbsentFromText";
 
     private String modelArdocoId;
 

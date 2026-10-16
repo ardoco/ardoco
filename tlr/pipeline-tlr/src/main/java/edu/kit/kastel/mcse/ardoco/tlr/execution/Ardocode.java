@@ -34,9 +34,9 @@ public class Ardocode extends ArdocoRunner {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
-        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // configure persistence bridge
         isSetUp = true;
     }
 
