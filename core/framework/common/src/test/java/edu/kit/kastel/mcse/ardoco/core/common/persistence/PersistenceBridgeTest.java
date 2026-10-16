@@ -103,6 +103,89 @@ class PersistenceBridgeTest {
         Assertions.assertDoesNotThrow(() -> PersistenceBridge.runQuietly("saveNounMapping", () -> PersistenceBridge.getHandler().saveNounMapping(null)));
     }
 
+    @Test
+    @DisplayName("storage=neo4j forces all write flags on and fail-fast, even if an explicit flag was set to false")
+    void storageNeo4jDerivesAllFlags() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler()); // handler already registered: bootstrap via ServiceLoader is skipped
+
+        PersistenceBridge.getInstance()
+                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j", "PersistenceBridge::persistNerConnection", "false"));
+
+        Assertions.assertEquals(PersistenceStorage.NEO4J, PersistenceBridge.storageStatic);
+        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic);
+        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
+        Assertions.assertTrue(PersistenceBridge.persistRecommendationsStatic);
+        Assertions.assertTrue(PersistenceBridge.persistNerConnectionStatic, "storage=neo4j overrides an explicit persistNerConnection=false");
+        Assertions.assertTrue(PersistenceBridge.shouldFailOnPersistenceError(), "storage=neo4j implies fail-fast without an explicit setFailOnPersistenceError");
+    }
+
+    @Test
+    @DisplayName("storage=memory (default) leaves the individual flags exactly as configured")
+    void storageMemoryLeavesExplicitFlagsAlone() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+
+        PersistenceBridge.getInstance()
+                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true"));
+
+        Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.storageStatic);
+        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic);
+        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
+        Assertions.assertFalse(PersistenceBridge.persistNerConnectionStatic);
+        Assertions.assertFalse(PersistenceBridge.shouldFailOnPersistenceError(), "memory storage must not derive fail-fast");
+    }
+
+    @Test
+    @DisplayName("every flag resets to its default when applyConfiguration omits its key, instead of keeping the previous run's value")
+    void flagsResetWhenKeysAreAbsent() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+        var allOn = org.eclipse.collections.api.factory.SortedMaps.mutable.<String, String>empty();
+        allOn.put("PersistenceBridge::storage", "neo4j");
+        allOn.put("PersistenceBridge::usePersistence", "true");
+        allOn.put("PersistenceBridge::persistTextState", "true");
+        allOn.put("PersistenceBridge::persistRecommendations", "true");
+        allOn.put("PersistenceBridge::persistNerConnection", "true");
+        PersistenceBridge.getInstance().applyConfiguration(allOn.toImmutable());
+        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic, "sanity check: flags are on before the empty reconfiguration");
+
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.empty());
+
+        Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.storageStatic);
+        Assertions.assertFalse(PersistenceBridge.usePersistenceStatic);
+        Assertions.assertFalse(PersistenceBridge.persistTextStateStatic);
+        Assertions.assertFalse(PersistenceBridge.persistRecommendationsStatic);
+        Assertions.assertFalse(PersistenceBridge.persistNerConnectionStatic);
+        Assertions.assertFalse(PersistenceBridge.shouldFailOnPersistenceError(), "the derived fail-fast value must not leak into the next run either");
+    }
+
+    @Test
+    @DisplayName("the explicit fail-on-persistence-error override is independent of storage and survives storage=memory")
+    void explicitFailOnPersistenceErrorIsIndependentOfStorage() {
+        PersistenceBridge.setFailOnPersistenceError(true);
+
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
+
+        Assertions.assertTrue(PersistenceBridge.shouldFailOnPersistenceError(), "the explicit override must not be reset by applyConfiguration");
+    }
+
+    @Test
+    @DisplayName("storage=neo4j without a registered PersistenceHandlerProvider aborts with a clear message")
+    void storageNeo4jWithoutProviderAborts() {
+        PersistenceBridge.setHandler(null); // no handler pre-registered, and this module has no ServiceLoader provider on its classpath
+
+        var config = SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j");
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class,
+                () -> PersistenceBridge.getInstance().applyConfiguration(config));
+        Assertions.assertTrue(exception.getMessage().contains("PersistenceHandlerProvider"));
+        Assertions.assertTrue(exception.getMessage().contains("ServiceLoader"));
+    }
+
+    @Test
+    @DisplayName("an invalid storage value is rejected with a clear error instead of silently defaulting")
+    void invalidStorageValueIsRejected() {
+        var config = SortedMaps.immutable.with("PersistenceBridge::storage", "NEO4J"); // wrong case: values are lower-case, see PersistenceStorage
+        Assertions.assertThrows(IllegalArgumentException.class, () -> PersistenceBridge.getInstance().applyConfiguration(config));
+    }
+
     /** Minimal handler that always fails — used to simulate Neo4j outage. */
     private static final class ThrowingPersistenceHandler implements PersistenceHandler {
         private RuntimeException fail() {
@@ -268,6 +351,7 @@ class PersistenceBridgeTest {
             throw fail();
         }
 
+
         @Override
         public boolean hasProjectMetadata(String projectName) {
             throw fail();
@@ -305,6 +389,11 @@ class PersistenceBridgeTest {
                 Metamodel metamodel,
                 SortedMap<String, edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence> occurrencesById,
                 SortedMap<String, ModelEntity> modelEntitiesById) {
+            throw fail();
+        }
+
+        @Override
+        public String exportGraphAsJson() {
             throw fail();
         }
     }

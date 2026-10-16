@@ -4,9 +4,11 @@ package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 
@@ -22,11 +25,41 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
  *
  * <p>Persistence is optional: {@link #runQuietly} / {@link #callQuietly} isolate Neo4j failures so a down
  * database does not abort the pipeline. Dual-write is transitional; Neo4j sole store is the end vision.
+ *
+ * <h2>{@code storage} vs. the individual write flags</h2>
+ * {@link #storage} is the single switch for "how is this run persisted":
+ * <ul>
+ * <li>{@code storage = neo4j} unconditionally forces {@link #usePersistence}, {@link #persistTextState},
+ * {@link #persistRecommendations} and {@link #persistNerConnection} to {@code true}, and makes persistence failures
+ * abort the run (see {@link #shouldFailOnPersistenceError()}). It also bootstraps a {@link PersistenceHandler} via
+ * {@link ServiceLoader} if none is registered yet.</li>
+ * <li>{@code storage = memory} (the default) leaves the individual flags exactly as configured. Setting
+ * {@link #usePersistence} (or one of the other flags) to {@code true} without {@code storage = neo4j} still enables
+ * dual-write if a handler happens to be registered (e.g. by a test); this is surprising for normal use and logged as
+ * a warning. The individual flags exist mainly for tests and fine-grained measurements; prefer {@code storage} for
+ * everything else.</li>
+ * </ul>
+ * All flags (and the resolved Neo4j connection properties) are reset to their defaults on every
+ * {@link #applyConfiguration}: a key absent from the configuration map never keeps the value from a previous run.
  */
 public class PersistenceBridge extends AbstractConfigurable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceBridge.class);
 
     private static final PersistenceBridge INSTANCE = new PersistenceBridge();
+
+    /** Default Bolt URI. {@code 127.0.0.1}, not {@code localhost}: avoids IPv6 resolution trouble seen on Windows. */
+    private static final String DEFAULT_NEO4J_URI = "bolt://127.0.0.1:7687";
+    private static final String DEFAULT_NEO4J_USERNAME = "neo4j";
+    private static final String DEFAULT_NEO4J_PASSWORD = "password";
+
+    private static final String KEY_STORAGE = "PersistenceBridge::storage";
+    private static final String KEY_USE_PERSISTENCE = "PersistenceBridge::usePersistence";
+    private static final String KEY_PERSIST_TEXT_STATE = "PersistenceBridge::persistTextState";
+    private static final String KEY_PERSIST_RECOMMENDATIONS = "PersistenceBridge::persistRecommendations";
+    private static final String KEY_PERSIST_NER_CONNECTION = "PersistenceBridge::persistNerConnection";
+    private static final String KEY_NEO4J_URI = "PersistenceBridge::neo4jUri";
+    private static final String KEY_NEO4J_USERNAME = "PersistenceBridge::neo4jUsername";
+    private static final String KEY_NEO4J_PASSWORD = "PersistenceBridge::neo4jPassword";
 
     private static PersistenceHandler handler;
 
@@ -38,14 +71,37 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static boolean persistNerConnectionStatic = false;
 
+    public static PersistenceStorage storageStatic = PersistenceStorage.MEMORY;
+
+    /** Resolved Neo4j URI of the last {@link #applyConfiguration}, for diagnostics; never the password. */
+    public static String neo4jUriStatic = DEFAULT_NEO4J_URI;
+
+    /** Resolved Neo4j username of the last {@link #applyConfiguration}, for diagnostics; never the password. */
+    public static String neo4jUsernameStatic = DEFAULT_NEO4J_USERNAME;
+
     /**
-     * When true, {@link #runQuietly} and {@link #callQuietly} rethrow {@link RuntimeException} instead of swallowing.
-     * Integration tests enable this so persistence bugs fail tests instead of returning fallbacks.
+     * Explicit fail-on-persistence-error override, set only via {@link #setFailOnPersistenceError}. Not touched by
+     * {@link #applyConfiguration}, so a test (or caller) that sets it before configuring the bridge is not overridden
+     * by the reset. See {@link #shouldFailOnPersistenceError()} for how this combines with {@link #storage}.
      */
-    public static boolean failOnPersistenceErrorStatic = false;
+    private static boolean failOnPersistenceErrorExplicit = false;
+
+    /**
+     * Derived fail-on-persistence-error value, recomputed on every {@link #applyConfiguration} as
+     * {@code storage == NEO4J}. Unlike the explicit override, this never leaks into the next run: it is recomputed,
+     * not merely defaulted, every time.
+     */
+    private static boolean failOnPersistenceErrorDerived = false;
 
     /** Write scope of the current thread, see {@link #withDeferredWrites(Supplier)}. */
     private static final ThreadLocal<DeferredWrites> DEFERRED_WRITES = new ThreadLocal<>();
+
+    /**
+     * Storage mode for this run. {@code memory} (default) leaves the write flags below as configured;
+     * {@code neo4j} forces all of them on. See the class javadoc.
+     */
+    @Configurable
+    private PersistenceStorage storage = PersistenceStorage.MEMORY;
 
     @Configurable
     private boolean usePersistence = false;
@@ -71,6 +127,13 @@ public class PersistenceBridge extends AbstractConfigurable {
      */
     @Configurable
     private boolean persistNerConnection = false;
+
+    /** Neo4j Bolt URI; resolved from the configuration, then environment, then {@link #DEFAULT_NEO4J_URI}. Not reflectively configurable (no String support in {@link AbstractConfigurable}), read directly from the raw map in {@link #delegateApplyConfigurationToInternalObjects}. */
+    private String neo4jUri;
+
+    private String neo4jUsername;
+
+    private String neo4jPassword;
 
     private PersistenceBridge() {
         // Private constructor for Singleton
@@ -113,12 +176,22 @@ public class PersistenceBridge extends AbstractConfigurable {
         return isAvailable() && persistNerConnectionStatic;
     }
 
+    /**
+     * Sets the explicit fail-on-persistence-error override (e.g. from a test's {@code @BeforeEach}, before
+     * {@code applyConfiguration} runs). Independent of {@link #storage}; see {@link #shouldFailOnPersistenceError()}.
+     */
     public static void setFailOnPersistenceError(boolean failOnPersistenceError) {
-        failOnPersistenceErrorStatic = failOnPersistenceError;
+        failOnPersistenceErrorExplicit = failOnPersistenceError;
     }
 
+    /**
+     * {@return whether a persistence failure should abort the run}, i.e. the explicit override
+     * ({@link #setFailOnPersistenceError}) or the derived value ({@code storage == NEO4J}, recomputed on every
+     * {@link #applyConfiguration}). Neither alone leaks into the next run: the explicit override is set anew by
+     * whoever wants it, and the derived value is recomputed, never merely defaulted.
+     */
     public static boolean shouldFailOnPersistenceError() {
-        return failOnPersistenceErrorStatic;
+        return failOnPersistenceErrorExplicit || failOnPersistenceErrorDerived;
     }
 
     /**
@@ -129,7 +202,7 @@ public class PersistenceBridge extends AbstractConfigurable {
         try {
             action.run();
         } catch (RuntimeException ex) {
-            if (failOnPersistenceErrorStatic) {
+            if (shouldFailOnPersistenceError()) {
                 throw ex;
             }
             LOGGER.warn("Persistence operation '{}' failed; continuing without Neo4j. Cause: {}", operation, ex.toString());
@@ -144,7 +217,7 @@ public class PersistenceBridge extends AbstractConfigurable {
         try {
             return action.get();
         } catch (RuntimeException ex) {
-            if (failOnPersistenceErrorStatic) {
+            if (shouldFailOnPersistenceError()) {
                 throw ex;
             }
             LOGGER.warn("Persistence operation '{}' failed; using fallback. Cause: {}", operation, ex.toString());
@@ -298,13 +371,104 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
-        usePersistenceStatic = this.usePersistence;
+        // The reflective pass in AbstractConfigurable only overwrites fields whose key is present in
+        // additionalConfiguration. Without this reset, a value from an earlier applyConfiguration call on this
+        // singleton (e.g. a previous run or test in the same JVM) would leak into a run that never set it.
+        if (!additionalConfiguration.containsKey(KEY_STORAGE)) {
+            this.storage = PersistenceStorage.MEMORY;
+        }
+        if (!additionalConfiguration.containsKey(KEY_USE_PERSISTENCE)) {
+            this.usePersistence = false;
+        }
+        if (!additionalConfiguration.containsKey(KEY_PERSIST_TEXT_STATE)) {
+            this.persistTextState = false;
+        }
+        if (!additionalConfiguration.containsKey(KEY_PERSIST_RECOMMENDATIONS)) {
+            this.persistRecommendations = false;
+        }
+        if (!additionalConfiguration.containsKey(KEY_PERSIST_NER_CONNECTION)) {
+            this.persistNerConnection = false;
+        }
+        this.neo4jUri = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_URI, "NEO4J_URI", DEFAULT_NEO4J_URI);
+        this.neo4jUsername = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_USERNAME, "NEO4J_USERNAME", DEFAULT_NEO4J_USERNAME);
+        this.neo4jPassword = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_PASSWORD, "NEO4J_PASSWORD", DEFAULT_NEO4J_PASSWORD);
+
+        if (this.storage == PersistenceStorage.NEO4J) {
+            this.usePersistence = true;
+            this.persistTextState = true;
+            this.persistRecommendations = true;
+            this.persistNerConnection = true;
+        } else if (this.usePersistence) {
+            LOGGER.warn("PersistenceBridge::usePersistence is enabled without PersistenceBridge::storage=neo4j; dual-write only works if a "
+                    + "PersistenceHandler happens to already be registered (e.g. by a test). Prefer storage=neo4j for a real run.");
+        }
+
         if (this.persistRecommendations && !this.persistTextState) {
             LOGGER.info("persistRecommendations is enabled without persistTextState; enabling persistTextState automatically");
             this.persistTextState = true;
         }
+
+        usePersistenceStatic = this.usePersistence;
         persistTextStateStatic = this.persistTextState;
         persistRecommendationsStatic = this.persistRecommendations;
         persistNerConnectionStatic = this.persistNerConnection;
+        storageStatic = this.storage;
+        neo4jUriStatic = this.neo4jUri;
+        neo4jUsernameStatic = this.neo4jUsername;
+        failOnPersistenceErrorDerived = this.storage == PersistenceStorage.NEO4J;
+
+        if (this.storage == PersistenceStorage.NEO4J && handler == null) {
+            bootstrapHandler(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
+        }
+    }
+
+    /**
+     * Resolves a connection property: the configuration map, then the environment variable, then the default.
+     * {@code neo4jUri}/{@code neo4jUsername}/{@code neo4jPassword} are not {@link Configurable} fields because
+     * {@link AbstractConfigurable}'s reflective parsing has no {@link String} branch; they are read directly from the
+     * raw map instead.
+     */
+    private static String resolveConnectionProperty(ImmutableSortedMap<String, String> additionalConfiguration, String key, String envVariable,
+            String defaultValue) {
+        String configured = additionalConfiguration.get(key);
+        if (configured != null) {
+            return configured;
+        }
+        String fromEnv = Environment.getEnv(envVariable);
+        return fromEnv != null ? fromEnv : defaultValue;
+    }
+
+    /**
+     * Looks up a {@link PersistenceHandlerProvider} via {@link ServiceLoader} and registers the handler it creates.
+     * Does nothing if a handler is already registered (a test, the Spring activator, or an earlier run in this JVM
+     * already set one): that handler wins, matching today's test setup.
+     *
+     * @throws IllegalStateException if no provider is registered, or the provider could not connect
+     */
+    private static void bootstrapHandler(String uri, String username, String password) {
+        PersistenceHandlerProvider provider = ServiceLoader.load(PersistenceHandlerProvider.class)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "PersistenceBridge::storage=neo4j but no PersistenceHandlerProvider is registered via ServiceLoader. Add a module "
+                                + "providing one (e.g. 'neo4j-schema') to the runtime classpath. Attempted connection: " + uri + " as " + username));
+
+        var connectionProperties = SortedMaps.mutable.<String, String>empty();
+        connectionProperties.put(PersistenceHandlerProvider.PROPERTY_URI, uri);
+        connectionProperties.put(PersistenceHandlerProvider.PROPERTY_USERNAME, username);
+        connectionProperties.put(PersistenceHandlerProvider.PROPERTY_PASSWORD, password);
+
+        PersistenceHandler created;
+        try {
+            created = provider.createHandler(connectionProperties.toImmutable());
+        } catch (RuntimeException ex) {
+            throw new IllegalStateException(
+                    "PersistenceBridge::storage=neo4j: could not connect to Neo4j at " + uri + " as " + username + ": " + ex.getMessage(), ex);
+        }
+        if (created == null) {
+            throw new IllegalStateException("PersistenceHandlerProvider " + provider.getClass().getName() + " returned no handler for " + uri);
+        }
+        setHandler(created);
+        LOGGER.info("Neo4j persistence bootstrapped via ServiceLoader provider {} (uri={}, username={})", provider.getClass().getName(), uri,
+                username);
     }
 }

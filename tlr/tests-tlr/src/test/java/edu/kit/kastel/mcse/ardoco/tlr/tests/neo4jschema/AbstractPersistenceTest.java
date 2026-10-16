@@ -263,6 +263,18 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         return additionalConfigs.toImmutable();
     }
 
+    /**
+     * Configs for the Neo4j-mode run lifecycle ({@code PersistenceBridge::storage=neo4j}): forces every write flag
+     * and fail-fast on, unlike {@link #getConfigsWithPersistence(boolean)} which sets the individual legacy flags.
+     */
+    protected ImmutableSortedMap<String, String> getConfigsWithNeo4jStorage() {
+        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
+        MutableSortedMap<String, String> result = SortedMaps.mutable.empty();
+        result.putAll(configs.toSortedMap());
+        result.put("PersistenceBridge::storage", "neo4j");
+        return result.toImmutable();
+    }
+
     protected ImmutableSortedMap<String, String> getInconsistencyConfigsWithPersistence(boolean enabled) throws Exception {
         var resource = getClass().getResource("/teastore/inconsistencyConfig.txt");
         if (resource == null) {

@@ -40,6 +40,7 @@ import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.DocumentationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.GraphExportService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.NerPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.ProjectPersistenceService;
@@ -67,12 +68,13 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final SimpleTextPersistenceService simpleTextService;
     private final ProjectPersistenceService projectService;
     private final NerPersistenceService nerService;
+    private final GraphExportService graphExportService;
     private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
             TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, SimpleTextPersistenceService simpleTextService,
-            ProjectPersistenceService projectService, NerPersistenceService nerService, Neo4jClient neo4jClient) {
+            ProjectPersistenceService projectService, NerPersistenceService nerService, GraphExportService graphExportService, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
@@ -84,6 +86,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.simpleTextService = simpleTextService;
         this.projectService = projectService;
         this.nerService = nerService;
+        this.graphExportService = graphExportService;
     }
 
     @Override
@@ -217,6 +220,11 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public void deleteAllData() {
         neo4jClient.query("MATCH (n) DETACH DELETE n ").run();
+    }
+
+    @Override
+    public String exportGraphAsJson() {
+        return graphExportService.exportAsJson();
     }
 
     @Override

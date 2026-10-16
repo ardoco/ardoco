@@ -298,4 +298,14 @@ public interface PersistenceHandler {
      */
     Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
             SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById);
+
+    /**
+     * Exports the entire graph as a lossless JSON dump: every node (id, labels, properties) and every relationship
+     * (id, type, start/end node id, properties) currently stored. Used to keep a Neo4j-mode run's knowledge graph on
+     * disk once the run ends; the live database itself is wiped after every run (interim format until the final
+     * knowledge-graph format is researched).
+     *
+     * @return the JSON dump as a string
+     */
+    String exportGraphAsJson();
 }
