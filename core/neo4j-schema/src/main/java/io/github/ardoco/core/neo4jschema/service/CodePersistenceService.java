@@ -4,10 +4,12 @@ package io.github.ardoco.core.neo4jschema.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,6 +226,12 @@ public class CodePersistenceService {
 
     /**
      * Saves the given code model. This method first deletes any existing model with the same ID to ensure that stale data is not retained.
+     * <p>
+     * Deliberately does not use {@code repository.save(CodeModelNode)}: a plain Spring Data cascade walks the whole cyclic
+     * {@code CodeItemNode} object graph with its own per-node id resolution (the code model is the single largest contributor to base-persistence
+     * time - TeaStore: tens of seconds for ~3,800 items). {@link CodeModelMapper#toNode} already builds the complete, de-duplicated node graph (one
+     * {@link CodeItemNode} per domain item, cached by id); this method only replaces the final persistence step with targeted, batched Cypher
+     * ({@code UNWIND}/{@code CREATE}), grouped by concrete item type since Cypher cannot parameterize a node label without APOC.
      *
      * @param model The domain CodeModel object to be saved into the database.
      */
@@ -231,7 +239,238 @@ public class CodePersistenceService {
     public void saveCodeModel(CodeModel model) {
         repository.deleteByModelId(model.getId());
         CodeModelNode modelNode = mapper.toNode(model);
-        repository.save(modelNode);
+        persistCodeModelBatched(modelNode);
+    }
+
+    private static final int BATCH_CHUNK_SIZE = 2000;
+
+    private void persistCodeModelBatched(CodeModelNode modelNode) {
+        neo4jClient.query("CREATE (m:CodeModel {id: $id, modelId: $modelId, metamodel: $metamodel})")
+                .bind(UUID.randomUUID().toString())
+                .to("id")
+                .bind(modelNode.getModelId())
+                .to("modelId")
+                .bind(modelNode.getMetamodel())
+                .to("metamodel")
+                .run();
+
+        Collection<CodeItemNode> items = modelNode.getAllRepositoryItems();
+        createCodeItemNodes(items);
+        createContainsCodeItemEdges(items);
+        createHasRepositoryItemEdges(modelNode.getModelId(), items);
+        createContainsCodeRootEdges(modelNode.getModelId(), modelNode.getContent());
+        createDatatypeReferenceEdges(items);
+    }
+
+    /**
+     * Groups {@code items} by concrete node type (Cypher cannot parameterize a label without APOC) and creates each group in one batched,
+     * chunked {@code UNWIND}/{@code CREATE} per type. Every concrete {@link CodeItemNode} subtype is handled, even ones with zero instances in a
+     * given model, so the full label/property shape is always available.
+     */
+    private void createCodeItemNodes(Collection<CodeItemNode> items) {
+        Map<String, Map<String, Object>> codePackages = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> codeModules = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> codeAssemblies = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> controlElements = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> compilationUnits = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> classUnits = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> interfaceUnits = new LinkedHashMap<>();
+
+        for (CodeItemNode node : items) {
+            Map<String, Object> props = baseItemProps(node);
+            if (node instanceof CodeCompilationUnitNode c) {
+                putIfNotNull(props, "extension", c.getExtension());
+                putIfNotNull(props, "language", c.getLanguage());
+                putIfNotNull(props, "pathElements", c.getPathElements());
+                compilationUnits.put(node.getArdocoId(), props);
+            } else if (node instanceof CodeAssemblyNode c) {
+                putIfNotNull(props, "language", c.getLanguage());
+                codeAssemblies.put(node.getArdocoId(), props);
+            } else if (node instanceof ClassUnitNode c) {
+                addDatatypeProps(props, c);
+                classUnits.put(node.getArdocoId(), props);
+            } else if (node instanceof InterfaceUnitNode c) {
+                addDatatypeProps(props, c);
+                interfaceUnits.put(node.getArdocoId(), props);
+            } else if (node instanceof CodeModuleNode) {
+                codeModules.put(node.getArdocoId(), props);
+            } else if (node instanceof CodePackageNode) {
+                codePackages.put(node.getArdocoId(), props);
+            } else if (node instanceof ControlElementNode) {
+                controlElements.put(node.getArdocoId(), props);
+            } else {
+                throw new IllegalStateException("Unknown CodeItemNode subtype: " + node.getClass().getName());
+            }
+        }
+
+        createNodesByLabel("CodePackage:CodeItem:Traceable", codePackages.values());
+        createNodesByLabel("CodeModule:CodeItem:Traceable", codeModules.values());
+        createNodesByLabel("CodeAssembly:CodeModule:CodeItem:Traceable", codeAssemblies.values());
+        createNodesByLabel("ControlElement:CodeItem:Traceable", controlElements.values());
+        createNodesByLabel("CodeCompilationUnit:CodeItem:Traceable", compilationUnits.values());
+        createNodesByLabel("ClassUnit:Datatype:CodeItem:Traceable", classUnits.values());
+        createNodesByLabel("InterfaceUnit:Datatype:CodeItem:Traceable", interfaceUnits.values());
+    }
+
+    private Map<String, Object> baseItemProps(CodeItemNode node) {
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("ardocoId", node.getArdocoId());
+        putIfNotNull(props, "name", node.getName());
+        putIfNotNull(props, "parentModuleId", node.getParentModuleId());
+        putIfNotNull(props, "contentIds", node.getContentIds());
+        return props;
+    }
+
+    private void addDatatypeProps(Map<String, Object> props, DatatypeNode node) {
+        putIfNotNull(props, "compilationUnitId", node.getCompilationUnitId());
+        putIfNotNull(props, "parentDatatypeId", node.getParentDatatypeId());
+        putIfNotNull(props, "extendedDataTypesIds", node.getExtendedDataTypesIds());
+        putIfNotNull(props, "implementedDataTypesIds", node.getImplementedDataTypesIds());
+        putIfNotNull(props, "datatypeReferencesIds", node.getDatatypeReferencesIds());
+    }
+
+    private static void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
+    }
+
+    private void createNodesByLabel(String labels, Collection<Map<String, Object>> items) {
+        if (items.isEmpty()) {
+            return;
+        }
+        for (List<Map<String, Object>> chunk : chunk(new ArrayList<>(items), BATCH_CHUNK_SIZE)) {
+            neo4jClient.query("""
+                    UNWIND $items AS item
+                    CREATE (n:%s)
+                    SET n += item
+                    """.formatted(labels))
+                    .bind(chunk)
+                    .to("items")
+                    .run();
+        }
+    }
+
+    /** {@code CONTAINS_CODE_ITEM}: only for children actually resolvable in the model (mirrors the in-memory node graph, not the raw {@code contentIds}). */
+    private void createContainsCodeItemEdges(Collection<CodeItemNode> items) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (CodeItemNode parent : items) {
+            for (CodeItemNode child : parent.getContent()) {
+                edges.add(Map.of("parentId", parent.getArdocoId(), "childId", child.getArdocoId()));
+            }
+        }
+        createTraceableToTraceableEdges("CONTAINS_CODE_ITEM", edges, "parentId", "childId", "CONTAINS_CODE_ITEM target(s) not found");
+    }
+
+    private void createHasRepositoryItemEdges(String modelId, Collection<CodeItemNode> items) {
+        List<String> itemIds = items.stream().map(CodeItemNode::getArdocoId).toList();
+        for (List<String> idChunk : chunk(itemIds, BATCH_CHUNK_SIZE)) {
+            Long missing = neo4jClient.query("""
+                    MATCH (m:CodeModel {modelId: $modelId})
+                    UNWIND $itemIds AS itemId
+                    OPTIONAL MATCH (n:Traceable {ardocoId: itemId})
+                    WITH m, itemId, n
+                    FOREACH (ignore IN CASE WHEN n IS NOT NULL THEN [1] ELSE [] END | CREATE (m)-[:HAS_REPOSITORY_ITEM]->(n))
+                    RETURN sum(CASE WHEN n IS NULL THEN 1 ELSE 0 END) AS missing
+                    """)
+                    .bind(modelId)
+                    .to("modelId")
+                    .bind(idChunk)
+                    .to("itemIds")
+                    .fetchAs(Long.class)
+                    .one()
+                    .orElse(0L);
+            if (missing != null && missing > 0) {
+                logger.warn("HAS_REPOSITORY_ITEM: {} item(s) not found while linking to CodeModel {}", missing, modelId);
+            }
+        }
+    }
+
+    private void createContainsCodeRootEdges(String modelId, Collection<CodeItemNode> roots) {
+        if (roots.isEmpty()) {
+            return;
+        }
+        List<String> rootIds = roots.stream().map(CodeItemNode::getArdocoId).toList();
+        for (List<String> idChunk : chunk(rootIds, BATCH_CHUNK_SIZE)) {
+            Long missing = neo4jClient.query("""
+                    MATCH (m:CodeModel {modelId: $modelId})
+                    UNWIND $rootIds AS rootId
+                    OPTIONAL MATCH (n:Traceable {ardocoId: rootId})
+                    WITH m, rootId, n
+                    FOREACH (ignore IN CASE WHEN n IS NOT NULL THEN [1] ELSE [] END | CREATE (m)-[:CONTAINS_CODE_ROOT]->(n))
+                    RETURN sum(CASE WHEN n IS NULL THEN 1 ELSE 0 END) AS missing
+                    """)
+                    .bind(modelId)
+                    .to("modelId")
+                    .bind(idChunk)
+                    .to("rootIds")
+                    .fetchAs(Long.class)
+                    .one()
+                    .orElse(0L);
+            if (missing != null && missing > 0) {
+                logger.warn("CONTAINS_CODE_ROOT: {} root(s) not found while linking to CodeModel {}", missing, modelId);
+            }
+        }
+    }
+
+    /** {@code EXTENDS}/{@code IMPLEMENTS}/{@code REFERENCES_DATATYPE}, from the verbatim id-list properties (not the {@code Set<DatatypeNode>} fields). */
+    private void createDatatypeReferenceEdges(Collection<CodeItemNode> items) {
+        List<Map<String, Object>> extendsEdges = new ArrayList<>();
+        List<Map<String, Object>> implementsEdges = new ArrayList<>();
+        List<Map<String, Object>> referencesEdges = new ArrayList<>();
+        for (CodeItemNode node : items) {
+            if (!(node instanceof DatatypeNode dt)) {
+                continue;
+            }
+            addEdges(extendsEdges, dt.getArdocoId(), dt.getExtendedDataTypesIds());
+            addEdges(implementsEdges, dt.getArdocoId(), dt.getImplementedDataTypesIds());
+            addEdges(referencesEdges, dt.getArdocoId(), dt.getDatatypeReferencesIds());
+        }
+        createTraceableToTraceableEdges("EXTENDS", extendsEdges, "sourceId", "targetId", "EXTENDS target(s) not found");
+        createTraceableToTraceableEdges("IMPLEMENTS", implementsEdges, "sourceId", "targetId", "IMPLEMENTS target(s) not found");
+        createTraceableToTraceableEdges("REFERENCES_DATATYPE", referencesEdges, "sourceId", "targetId", "REFERENCES_DATATYPE target(s) not found");
+    }
+
+    private static void addEdges(List<Map<String, Object>> edges, String sourceId, List<String> targetIds) {
+        if (targetIds == null) {
+            return;
+        }
+        for (String targetId : targetIds) {
+            edges.add(Map.of("sourceId", sourceId, "targetId", targetId));
+        }
+    }
+
+    private void createTraceableToTraceableEdges(String relationshipType, List<Map<String, Object>> edges, String sourceKey, String targetKey,
+            String missingWarning) {
+        if (edges.isEmpty()) {
+            return;
+        }
+        for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
+            Long missing = neo4jClient.query("""
+                    UNWIND $edges AS edge
+                    OPTIONAL MATCH (s:Traceable {ardocoId: edge.%s})
+                    OPTIONAL MATCH (t:Traceable {ardocoId: edge.%s})
+                    WITH s, t
+                    FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END | CREATE (s)-[:%s]->(t))
+                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
+                    """.formatted(sourceKey, targetKey, relationshipType))
+                    .bind(chunk)
+                    .to("edges")
+                    .fetchAs(Long.class)
+                    .one()
+                    .orElse(0L);
+            if (missing != null && missing > 0) {
+                logger.warn("{}: {}", missingWarning, missing);
+            }
+        }
+    }
+
+    private static <T> List<List<T>> chunk(List<T> items, int size) {
+        List<List<T>> chunks = new ArrayList<>();
+        for (int i = 0; i < items.size(); i += size) {
+            chunks.add(items.subList(i, Math.min(i + size, items.size())));
+        }
+        return chunks;
     }
 
 }
