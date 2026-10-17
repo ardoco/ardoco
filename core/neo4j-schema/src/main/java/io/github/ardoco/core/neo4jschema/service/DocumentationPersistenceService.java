@@ -1,11 +1,15 @@
 /* Licensed under MIT 2023-2026. */
 package io.github.ardoco.core.neo4jschema.service;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jSentence;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jText;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jWord;
+import io.github.ardoco.core.neo4jschema.entities.documentation.PhraseNode;
 import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.entities.documentation.TextNode;
 import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
@@ -158,7 +163,263 @@ public class DocumentationPersistenceService {
     public void savePreprocessedText(Text domainText, String documentId) {
         deletePreprocessedText(documentId);
         TextNode textNode = documentationMapper.toNode(domainText, documentId);
-        textRepository.save(textNode);
+        persistTextBatched(textNode);
+    }
+
+    private static final int BATCH_CHUNK_SIZE = 2000;
+
+    /**
+     * Persists the already-built {@link TextNode} graph (see {@link DocumentationMapper#toNode}) via targeted, batched Cypher instead of
+     * {@code textRepository.save(TextNode)}: a plain Spring Data cascade walks the whole cyclic Sentence/Word/Phrase/Dependency graph with its own
+     * per-node id resolution. {@code toNode} already assigns every id exactly as before (deterministic {@code Sentence.ardocoId}, matching what
+     * {@code TraceLinkPersistenceService} independently recomputes for SENTENCE_* trace links) and already de-duplicates shared {@link PhraseNode}s by
+     * Java object identity (a phrase reachable from multiple ancestors - {@code getSubphrases()} returns the full transitive descendant set, not just
+     * direct children - stays one physical node); this method only replaces the final persistence step.
+     */
+    private void persistTextBatched(TextNode textNode) {
+        neo4jClient.query("CREATE (t:Text {id: $id, ardocoId: $ardocoId})")
+                .bind(UUID.randomUUID().toString())
+                .to("id")
+                .bind(textNode.getArdocoId())
+                .to("ardocoId")
+                .run();
+
+        List<SentenceNode> sentences = textNode.getSentences();
+
+        createSentenceNodes(sentences);
+        createWordNodes(sentences);
+        Map<PhraseNode, String> phraseIds = collectPhrases(sentences);
+        createPhraseNodes(phraseIds);
+
+        createHasSentenceEdges(textNode.getArdocoId(), sentences);
+        createNextSentenceEdges(sentences);
+        createContainsWordEdges(sentences);
+        createNextWordEdges(sentences);
+        createDependencyEdges(sentences);
+        createHasRootPhraseEdges(sentences, phraseIds);
+        createPhraseContainsWordEdges(phraseIds);
+        createHasChildPhraseEdges(phraseIds);
+    }
+
+    private void createSentenceNodes(List<SentenceNode> sentences) {
+        List<Map<String, Object>> items = new ArrayList<>(sentences.size());
+        for (SentenceNode s : sentences) {
+            items.add(Map.of("ardocoId", s.getArdocoId(), "sentenceNumber", s.getSentenceNumber(), "text", s.getText()));
+        }
+        runBatchedCreate("CREATE (n:Sentence:Traceable) SET n += item", items);
+    }
+
+    private void createWordNodes(List<SentenceNode> sentences) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (SentenceNode s : sentences) {
+            for (var w : s.getWords()) {
+                Map<String, Object> props = new HashMap<>();
+                props.put("id", UUID.randomUUID().toString());
+                props.put("position", w.getPosition());
+                putIfNotNull(props, "text", w.getText());
+                putIfNotNull(props, "lemma", w.getLemma());
+                putIfNotNull(props, "posTag", w.getPosTag());
+                items.add(props);
+            }
+        }
+        runBatchedCreate("CREATE (n:Word) SET n += item", items);
+    }
+
+    /**
+     * Collects every unique {@link PhraseNode} reachable from the sentences' root phrases, de-duplicated by Java object identity (matching
+     * {@code toNode}'s {@code phraseCache}), and assigns each a fresh id. {@code getChildPhrases()} already holds the full transitive descendant set
+     * (not just direct children), so a plain reachability walk with an identity-based visited set discovers every phrase exactly once regardless of
+     * how many ancestors point to it.
+     */
+    private Map<PhraseNode, String> collectPhrases(List<SentenceNode> sentences) {
+        Map<PhraseNode, String> phraseIds = new IdentityHashMap<>();
+        Deque<PhraseNode> stack = new ArrayDeque<>();
+        for (SentenceNode s : sentences) {
+            stack.addAll(s.getRootPhrases());
+        }
+        while (!stack.isEmpty()) {
+            PhraseNode phrase = stack.pop();
+            if (phraseIds.containsKey(phrase)) {
+                continue;
+            }
+            phraseIds.put(phrase, UUID.randomUUID().toString());
+            stack.addAll(phrase.getChildPhrases());
+        }
+        return phraseIds;
+    }
+
+    private void createPhraseNodes(Map<PhraseNode, String> phraseIds) {
+        List<Map<String, Object>> items = new ArrayList<>(phraseIds.size());
+        for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
+            PhraseNode phrase = entry.getKey();
+            Map<String, Object> props = new HashMap<>();
+            props.put("id", entry.getValue());
+            putIfNotNull(props, "text", phrase.getText());
+            putIfNotNull(props, "phraseType", phrase.getPhraseType());
+            items.add(props);
+        }
+        runBatchedCreate("CREATE (n:Phrase) SET n += item", items);
+    }
+
+    private static void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
+    }
+
+    private void runBatchedCreate(String createClause, List<Map<String, Object>> items) {
+        if (items.isEmpty()) {
+            return;
+        }
+        for (List<Map<String, Object>> chunk : chunk(items, BATCH_CHUNK_SIZE)) {
+            neo4jClient.query("UNWIND $items AS item\n" + createClause).bind(chunk).to("items").run();
+        }
+    }
+
+    private void createHasSentenceEdges(String textArdocoId, List<SentenceNode> sentences) {
+        List<String> sentenceIds = sentences.stream().map(SentenceNode::getArdocoId).toList();
+        runBatchedMatchedEdges("""
+                MATCH (t:Text {ardocoId: $textArdocoId})
+                UNWIND $ids AS sId
+                MATCH (s:Sentence {ardocoId: sId})
+                CREATE (t)-[:HAS_SENTENCE]->(s)
+                """, Map.of("textArdocoId", textArdocoId), "ids", sentenceIds);
+    }
+
+    private void createNextSentenceEdges(List<SentenceNode> sentences) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (int i = 0; i < sentences.size() - 1; i++) {
+            edges.add(Map.of("fromId", sentences.get(i).getArdocoId(), "toId", sentences.get(i + 1).getArdocoId()));
+        }
+        createMatchedPairEdges("Sentence", "ardocoId", "Sentence", "ardocoId", "NEXT_SENTENCE", edges);
+    }
+
+    private void createContainsWordEdges(List<SentenceNode> sentences) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (SentenceNode s : sentences) {
+            for (var w : s.getWords()) {
+                edges.add(Map.of("fromId", s.getArdocoId(), "toId", w.getPosition()));
+            }
+        }
+        createMatchedPairEdges("Sentence", "ardocoId", "Word", "position", "CONTAINS_WORD", edges);
+    }
+
+    private void createNextWordEdges(List<SentenceNode> sentences) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (SentenceNode s : sentences) {
+            var words = s.getWords();
+            for (int i = 0; i < words.size() - 1; i++) {
+                edges.add(Map.of("fromId", words.get(i).getPosition(), "toId", words.get(i + 1).getPosition()));
+            }
+        }
+        createMatchedPairEdges("Word", "position", "Word", "position", "NEXT_WORD", edges);
+    }
+
+    private void createDependencyEdges(List<SentenceNode> sentences) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (SentenceNode s : sentences) {
+            for (var w : s.getWords()) {
+                for (var dependency : w.getDependencies()) {
+                    edges.add(Map.of("fromId", w.getPosition(), "toId", dependency.getTargetWord().getPosition(), "type", dependency.getDependencyType()));
+                }
+            }
+        }
+        if (edges.isEmpty()) {
+            return;
+        }
+        for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
+            Long missing = neo4jClient.query("""
+                    UNWIND $edges AS edge
+                    OPTIONAL MATCH (s:Word {position: edge.fromId})
+                    OPTIONAL MATCH (t:Word {position: edge.toId})
+                    WITH s, t, edge
+                    FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END |
+                        CREATE (s)-[:DEPENDENCY {dependencyType: edge.type}]->(t))
+                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
+                    """)
+                    .bind(chunk)
+                    .to("edges")
+                    .fetchAs(Long.class)
+                    .one()
+                    .orElse(0L);
+            if (missing != null && missing > 0) {
+                logger.warn("DEPENDENCY: {} endpoint(s) not found", missing);
+            }
+        }
+    }
+
+    private void createHasRootPhraseEdges(List<SentenceNode> sentences, Map<PhraseNode, String> phraseIds) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (SentenceNode s : sentences) {
+            for (PhraseNode root : s.getRootPhrases()) {
+                edges.add(Map.of("fromId", s.getArdocoId(), "toId", phraseIds.get(root)));
+            }
+        }
+        createMatchedPairEdges("Sentence", "ardocoId", "Phrase", "id", "HAS_ROOT_PHRASE", edges);
+    }
+
+    private void createPhraseContainsWordEdges(Map<PhraseNode, String> phraseIds) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
+            for (var w : entry.getKey().getContainedWords()) {
+                edges.add(Map.of("fromId", entry.getValue(), "toId", w.getPosition()));
+            }
+        }
+        createMatchedPairEdges("Phrase", "id", "Word", "position", "CONTAINS_WORD", edges);
+    }
+
+    private void createHasChildPhraseEdges(Map<PhraseNode, String> phraseIds) {
+        List<Map<String, Object>> edges = new ArrayList<>();
+        for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
+            for (PhraseNode child : entry.getKey().getChildPhrases()) {
+                edges.add(Map.of("fromId", entry.getValue(), "toId", phraseIds.get(child)));
+            }
+        }
+        createMatchedPairEdges("Phrase", "id", "Phrase", "id", "HAS_CHILD_PHRASE", edges);
+    }
+
+    private void createMatchedPairEdges(String fromLabel, String fromKey, String toLabel, String toKey, String relationshipType,
+            List<Map<String, Object>> edges) {
+        if (edges.isEmpty()) {
+            return;
+        }
+        for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
+            Long missing = neo4jClient.query("""
+                    UNWIND $edges AS edge
+                    OPTIONAL MATCH (s:%s {%s: edge.fromId})
+                    OPTIONAL MATCH (t:%s {%s: edge.toId})
+                    WITH s, t
+                    FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END | CREATE (s)-[:%s]->(t))
+                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
+                    """.formatted(fromLabel, fromKey, toLabel, toKey, relationshipType))
+                    .bind(chunk)
+                    .to("edges")
+                    .fetchAs(Long.class)
+                    .one()
+                    .orElse(0L);
+            if (missing != null && missing > 0) {
+                logger.warn("{}: {} endpoint(s) not found", relationshipType, missing);
+            }
+        }
+    }
+
+    private void runBatchedMatchedEdges(String cypher, Map<String, Object> scalarParams, String listParamName, List<?> listParam) {
+        if (listParam.isEmpty()) {
+            return;
+        }
+        for (List<?> chunk : chunk(listParam, BATCH_CHUNK_SIZE)) {
+            var spec = neo4jClient.query(cypher);
+            var boundSpec = spec.bindAll(scalarParams);
+            boundSpec.bind(chunk).to(listParamName).run();
+        }
+    }
+
+    private static <T> List<List<T>> chunk(List<T> items, int size) {
+        List<List<T>> chunks = new ArrayList<>();
+        for (int i = 0; i < items.size(); i += size) {
+            chunks.add(items.subList(i, Math.min(i + size, items.size())));
+        }
+        return chunks;
     }
 
     /**
