@@ -63,6 +63,27 @@ public class NerPersistenceService {
         logger.debug("Saved NamedArchitectureEntity {} ({})", entity.getId(), entity.getName());
     }
 
+    /**
+     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same metamodel and linked/unlinked bucket) in one
+     * transaction instead of one per entity. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}). NER entities
+     * carry a nested occurrence subgraph, so this still upserts per entity internally; the batching is at the transaction/round-trip level, not a
+     * single {@code UNWIND} query like the NounMapping/RecommendedInstance batches.
+     *
+     * @param entities  the entities to save; a no-op if empty
+     * @param metamodel metamodel bucket
+     * @param unlinked  true if stored in the unlinked set
+     */
+    @Transactional
+    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked) {
+        if (entities.isEmpty()) {
+            return;
+        }
+        for (NamedArchitectureEntity entity : entities) {
+            saveNamedArchitectureEntity(entity, metamodel, unlinked);
+        }
+        logger.debug("Saved {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), metamodel, unlinked);
+    }
+
     @Transactional(readOnly = true)
     public boolean hasNamedArchitectureEntities() {
         return entityRepository.count() > 0;

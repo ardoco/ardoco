@@ -38,11 +38,7 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
         if (!inconsistencies.contains(inconsistency)) {
             inconsistencies.add(inconsistency);
         }
-        if (PersistenceBridge.isAvailable()) {
-            Boolean saved = PersistenceBridge.callQuietly("addInconsistencies",
-                    () -> PersistenceBridge.getHandler().addInconsistencies(List.of(inconsistency)), Boolean.FALSE);
-            return Boolean.TRUE.equals(saved) || inconsistencies.contains(inconsistency);
-        }
+        PersistenceBridge.addInconsistencies(List.of(inconsistency));
         return inconsistencies.contains(inconsistency);
     }
 

@@ -95,6 +95,14 @@ public interface PersistenceHandler {
     void saveNounMapping(NounMapping nounMapping);
 
     /**
+     * Batched form of {@link #saveNounMapping}: upserts every mapping (and its word/reference/phrase links) in one
+     * round trip instead of one per mapping. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param nounMappings the mappings to persist; a no-op if empty
+     */
+    void saveNounMappings(Collection<NounMapping> nounMappings);
+
+    /**
      * Deletes a persisted noun mapping by its stable ardoco id.
      *
      * @param ardocoId the mapping id
@@ -108,6 +116,15 @@ public interface PersistenceHandler {
      * @param metamodel           the metamodel bucket this instance belongs to
      */
     void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel);
+
+    /**
+     * Batched form of {@link #saveRecommendedInstance}: upserts every instance (all for the same metamodel) in one
+     * round trip instead of one per instance. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param recommendedInstances the instances to persist; a no-op if empty
+     * @param metamodel            the metamodel bucket the instances belong to
+     */
+    void saveRecommendedInstances(Collection<RecommendedInstance> recommendedInstances, Metamodel metamodel);
 
     /**
      * Saves a thin {@link SimpleText} (raw text + ordered lines).
@@ -127,6 +144,17 @@ public interface PersistenceHandler {
      * @param unlinked  true if stored in the unlinked set
      */
     void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked);
+
+    /**
+     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same metamodel and
+     * linked/unlinked bucket) in one transaction instead of one per entity. Used by the stage-level write-behind
+     * ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param entities  the entities to save; a no-op if empty
+     * @param metamodel metamodel bucket
+     * @param unlinked  true if stored in the unlinked set
+     */
+    void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked);
 
     /**
      * Exports the entire graph as a lossless JSON dump: every node (id, labels, properties) and every relationship

@@ -3,8 +3,11 @@ package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
+import org.eclipse.collections.api.collection.ImmutableCollection;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -15,12 +18,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 /**
- * Unit tests for the write scope of {@link PersistenceBridge#withDeferredWrites} (noun-mapping merges).
+ * Unit tests for the write-behind scope of {@link PersistenceBridge#withDeferredWrites}: originally noun-mapping merges (Fix 2a), now the
+ * stage-level write-behind for all five dual-write kinds (noun mappings, recommended instances, NER entities, trace links, inconsistencies), each
+ * batched into one call per scope, plus noun-mapping deletions.
  */
 class PersistenceBridgeDeferredWritesTest {
 
@@ -47,21 +57,21 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
-    @DisplayName("In a merge scope, the surviving id is upserted, not deleted; the obsolete id is deleted last")
+    @DisplayName("In a merge scope, noun-mapping saves and deletions are both deferred; the surviving id is upserted, the obsolete id deleted last")
     void mergeScopeKeepsSurvivingIdAndDeletesObsoleteLast() {
         PersistenceBridge.withDeferredWrites(() -> {
             PersistenceBridge.deleteNounMapping("first");   // removeNounMapping(first, merged)
             PersistenceBridge.deleteNounMapping("second");  // removeNounMapping(second, merged)
             Assertions.assertTrue(this.calls.isEmpty(), "Deletions must be deferred inside the scope");
             PersistenceBridge.saveNounMapping(nounMapping("first")); // addNounMapping(merged), merged keeps the id of first
-            Assertions.assertEquals(List.of("saveNounMapping:first"), this.calls, "Noun-mapping saves must run immediately");
+            Assertions.assertTrue(this.calls.isEmpty(), "Noun-mapping saves must also be deferred inside the scope, batched with the rest");
             return null;
         });
-        Assertions.assertEquals(List.of("saveNounMapping:first", "deleteNounMapping:second"), this.calls);
+        Assertions.assertEquals(List.of("saveNounMappings:[first]", "deleteNounMapping:second"), this.calls);
     }
 
     @Test
-    @DisplayName("Chained merges in one scope: an id saved earlier and merged away later is still deleted")
+    @DisplayName("Chained merges in one scope: all pending saves flush as one batch; an id merged away later is still deleted")
     void chainedMergesDeleteIdsMergedAwayLater() {
         PersistenceBridge.withDeferredWrites(() -> {
             // merge 1: A + B -> A
@@ -74,11 +84,12 @@ class PersistenceBridgeDeferredWritesTest {
             PersistenceBridge.saveNounMapping(nounMapping("C"));
             return null;
         });
-        Assertions.assertEquals(List.of("saveNounMapping:A", "saveNounMapping:C", "deleteNounMapping:B", "deleteNounMapping:A"), this.calls);
+        // One batched save for both surviving ids (A and C), not one call per save; B and the re-deleted A are deleted last.
+        Assertions.assertEquals(List.of("saveNounMappings:[A, C]", "deleteNounMapping:B", "deleteNounMapping:A"), this.calls);
     }
 
     @Test
-    @DisplayName("Recommended-instance saves are deferred to the end of the scope and run once per instance")
+    @DisplayName("Recommended-instance saves are deferred to the end of the scope and batched into one call")
     void recommendedInstanceSavesAreDeferredAndDeduplicated() {
         configure("true", "true", "true");
         RecommendedInstance ri = new StubRecommendedInstance("ri-1");
@@ -89,11 +100,11 @@ class PersistenceBridgeDeferredWritesTest {
             Assertions.assertTrue(this.calls.isEmpty(), "Recommended-instance saves must be deferred inside the scope");
             return null;
         });
-        Assertions.assertEquals(List.of("saveRecommendedInstance:ri-1", "deleteNounMapping:old"), this.calls);
+        Assertions.assertEquals(List.of("saveRecommendedInstances:[ri-1]", "deleteNounMapping:old"), this.calls);
     }
 
     @Test
-    @DisplayName("If a deferred save fails, obsolete noun mappings are not deleted (no link is lost)")
+    @DisplayName("If a deferred batch fails, obsolete noun mappings are not deleted (no link is lost)")
     void failedDeferredSaveSkipsDeletions() {
         configure("true", "true", "true");
         this.failRecommendedInstanceSaves = true;
@@ -105,8 +116,9 @@ class PersistenceBridgeDeferredWritesTest {
             PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
             return null;
         });
-        Assertions.assertEquals(List.of("saveNounMapping:first", "saveRecommendedInstance:ri-2"), this.calls,
-                "The obsolete noun mapping 'second' must not be deleted after the failed save");
+        // The NounMapping batch succeeds independently of the RecommendedInstance batch; only the latter fails.
+        Assertions.assertEquals(List.of("saveNounMappings:[first]", "saveRecommendedInstances:[ri-2]"), this.calls,
+                "The obsolete noun mapping 'second' must not be deleted after the failed batch");
     }
 
     @Test
@@ -124,14 +136,16 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
-    @DisplayName("Collected writes are flushed when the scope body throws, and the exception propagates")
-    void scopeFlushesOnException() {
+    @DisplayName("Collected writes are discarded, not flushed, when the scope body throws, and the exception propagates")
+    void scopeDiscardsPendingWritesOnException() {
         IllegalStateException thrown = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.withDeferredWrites(() -> {
-            PersistenceBridge.deleteNounMapping("y");
+            PersistenceBridge.saveNounMapping(nounMapping("y"));
+            PersistenceBridge.deleteNounMapping("z");
             throw new IllegalStateException("pipeline failure");
         }));
         Assertions.assertEquals("pipeline failure", thrown.getMessage());
-        Assertions.assertEquals(List.of("deleteNounMapping:y"), this.calls);
+        Assertions.assertTrue(this.calls.isEmpty(),
+                "A failed stage discards its pending writes instead of flushing them; the run gets wiped on failure anyway");
     }
 
     @Test
@@ -145,6 +159,34 @@ class PersistenceBridgeDeferredWritesTest {
             return null;
         });
         Assertions.assertTrue(this.calls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("A stage scope flushes every kind in the fixed order: NounMappings, RecommendedInstances, NER entities, trace links, "
+            + "inconsistencies, deletions last - trace links and inconsistencies match their endpoints by id, so those must already exist")
+    void stageFlushOrderCoversAllKinds() {
+        PersistenceBridge.getInstance()
+                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true",
+                        "PersistenceBridge::persistRecommendations", "true", "PersistenceBridge::persistNerConnection", "true"));
+
+        RecommendedInstance ri = new StubRecommendedInstance("ri-order");
+        NamedArchitectureEntity entity = new NamedArchitectureEntity("entity-order", new TreeSet<>(), List.of());
+        TraceLink<?, ?> traceLink = stubTraceLink("order");
+        Inconsistency inconsistency = stubInconsistency("order");
+
+        PersistenceBridge.withDeferredWrites("stage-order", () -> {
+            PersistenceBridge.deleteNounMapping("obsolete");
+            PersistenceBridge.saveNounMapping(nounMapping("order"));
+            PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            PersistenceBridge.saveNamedArchitectureEntity(entity, Metamodel.ARCHITECTURE_WITH_COMPONENTS, false);
+            PersistenceBridge.saveTraceLinks(List.of(traceLink));
+            PersistenceBridge.addInconsistencies(List.of(inconsistency));
+            Assertions.assertTrue(this.calls.isEmpty(), "Every kind must be deferred inside the scope");
+            return null;
+        });
+
+        Assertions.assertEquals(List.of("saveNounMappings:[order]", "saveRecommendedInstances:[ri-order]", "saveNamedArchitectureEntities:1",
+                "saveTraceLinks:1", "addInconsistencies:1", "deleteNounMapping:obsolete"), this.calls);
     }
 
     private static void configure(String usePersistence, String persistTextState) {
@@ -175,6 +217,32 @@ class PersistenceBridgeDeferredWritesTest {
         });
     }
 
+    private static TraceLink<?, ?> stubTraceLink(String id) {
+        RecommendedInstance ri = new StubRecommendedInstance("ri-" + id);
+        ArchitectureComponent target = new ArchitectureComponent("Target-" + id, "target-" + id, new TreeSet<>(), new TreeSet<>(), new TreeSet<>(),
+                "Service");
+        return new RecommendationModelTraceLink(ri, target);
+    }
+
+    private static Inconsistency stubInconsistency(String reason) {
+        return new Inconsistency() {
+            @Override
+            public String getReason() {
+                return reason;
+            }
+
+            @Override
+            public String getType() {
+                return "stub";
+            }
+
+            @Override
+            public ImmutableCollection<String[]> toFileOutput() {
+                return Lists.immutable.empty();
+            }
+        };
+    }
+
     private static PersistenceHandler recordingHandler(List<String> calls, java.util.function.BooleanSupplier failRecommendedInstanceSaves) {
         return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class }, (proxy,
                 method, args) -> {
@@ -188,6 +256,9 @@ class PersistenceBridgeDeferredWritesTest {
             case "saveNounMapping":
                 calls.add("saveNounMapping:" + ((NounMapping) args[0]).getArdocoId());
                 return null;
+            case "saveNounMappings":
+                calls.add("saveNounMappings:" + idsOf((Collection<?>) args[0], item -> ((NounMapping) item).getArdocoId()));
+                return null;
             case "deleteNounMapping":
                 calls.add("deleteNounMapping:" + args[0]);
                 return null;
@@ -197,11 +268,34 @@ class PersistenceBridgeDeferredWritesTest {
                     throw new IllegalStateException("simulated Neo4j failure");
                 }
                 return null;
+            case "saveRecommendedInstances":
+                calls.add("saveRecommendedInstances:" + idsOf((Collection<?>) args[0], item -> ((RecommendedInstance) item).getId()));
+                if (failRecommendedInstanceSaves.getAsBoolean()) {
+                    throw new IllegalStateException("simulated Neo4j failure");
+                }
+                return null;
+            case "saveNamedArchitectureEntities":
+                calls.add("saveNamedArchitectureEntities:" + ((Collection<?>) args[0]).size());
+                return null;
+            case "saveTraceLinks":
+                calls.add("saveTraceLinks:" + ((Collection<?>) args[0]).size());
+                return true;
+            case "addInconsistencies":
+                calls.add("addInconsistencies:" + ((Collection<?>) args[0]).size());
+                return true;
             default:
                 calls.add(method.getName());
                 return defaultValue(method.getReturnType());
             }
         });
+    }
+
+    private static String idsOf(Collection<?> items, java.util.function.Function<Object, String> idExtractor) {
+        List<String> ids = new ArrayList<>();
+        for (Object item : items) {
+            ids.add(idExtractor.apply(item));
+        }
+        return ids.toString();
     }
 
     private static Object defaultValue(Class<?> type) {

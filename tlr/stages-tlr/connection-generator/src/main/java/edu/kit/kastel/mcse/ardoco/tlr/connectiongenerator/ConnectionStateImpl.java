@@ -102,13 +102,8 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
             }
         }
 
-        if (!linksToPersist.isEmpty()) {
-            PersistenceBridge.runQuietly("saveTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(linksToPersist));
-        }
-        if (!instanceLinksToPersist.isEmpty()) {
-            PersistenceBridge.runQuietly("saveRecommendationModelTraceLinks",
-                    () -> PersistenceBridge.getHandler().saveTraceLinks(instanceLinksToPersist));
-        }
+        PersistenceBridge.saveTraceLinks(linksToPersist);
+        PersistenceBridge.saveTraceLinks(instanceLinksToPersist);
     }
 
     private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {

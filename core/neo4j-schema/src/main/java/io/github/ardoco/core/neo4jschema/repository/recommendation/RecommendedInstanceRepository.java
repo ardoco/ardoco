@@ -55,4 +55,32 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
             """)
     Long saveWithMappings(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props,
             @Param("nameMappingIds") List<String> nameMappingIds, @Param("typeMappingIds") List<String> typeMappingIds);
+
+    /**
+     * Batched form of {@link #saveWithMappings}: the same per-item upsert and edge replacement, for every item in one round trip. Used by the
+     * stage-level write-behind (see {@code PersistenceBridge::withDeferredWrites}) to replace N sequential transactions with one.
+     * <p>
+     * Each map in {@code items} has the same shape as the scalar parameters of {@link #saveWithMappings}: {@code ardocoId} (String), {@code props}
+     * (Map), {@code nameMappingIds} (List of String), {@code typeMappingIds} (List of String).
+     *
+     * @return the total number of requested NounMapping targets that were not found, summed across all items
+     */
+    @Query("""
+            UNWIND $items AS item
+            MERGE (ri:RecommendedInstance {ardocoId: item.ardocoId})
+            SET ri += item.props
+            WITH ri, item
+            OPTIONAL MATCH (ri)-[old:HAS_NAME_MAPPING|HAS_TYPE_MAPPING]->()
+            DELETE old
+            WITH DISTINCT ri, item
+            OPTIONAL MATCH (n:NounMapping) WHERE n.ardocoId IN item.nameMappingIds
+            WITH ri, item, collect(DISTINCT n) AS names
+            FOREACH (nameMapping IN names | MERGE (ri)-[:HAS_NAME_MAPPING]->(nameMapping))
+            WITH ri, item, names
+            OPTIONAL MATCH (t:NounMapping) WHERE t.ardocoId IN item.typeMappingIds
+            WITH item, names, collect(DISTINCT t) AS types, ri
+            FOREACH (typeMapping IN types | MERGE (ri)-[:HAS_TYPE_MAPPING]->(typeMapping))
+            RETURN sum((size(item.nameMappingIds) - size(names)) + (size(item.typeMappingIds) - size(types))) AS totalMissing
+            """)
+    Long saveAllWithMappings(@Param("items") List<Map<String, Object>> items);
 }

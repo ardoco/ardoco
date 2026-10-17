@@ -238,6 +238,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
+    public void saveNounMappings(Collection<NounMapping> nounMappings) {
+        logger.debug("Saving {} NounMappings in one batch", nounMappings.size());
+        this.textStateService.saveNounMappings(nounMappings);
+    }
+
+    @Override
     public void deleteNounMapping(String ardocoId) {
         logger.debug("Deleting NounMapping {}", ardocoId);
         this.textStateService.deleteNounMapping(ardocoId);
@@ -247,6 +253,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
         logger.debug("Saving RecommendedInstance {}", recommendedInstance.getId());
         this.recommendationService.saveRecommendedInstance(recommendedInstance, metamodel);
+    }
+
+    @Override
+    public void saveRecommendedInstances(Collection<RecommendedInstance> recommendedInstances, Metamodel metamodel) {
+        logger.debug("Saving {} RecommendedInstances in one batch ({})", recommendedInstances.size(), metamodel);
+        this.recommendationService.saveRecommendedInstances(recommendedInstances, metamodel);
     }
 
     public boolean hasNounMappings() {
@@ -336,6 +348,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
         logger.debug("Saving NamedArchitectureEntity {} ({})", entity.getId(), entity.getName());
         this.nerService.saveNamedArchitectureEntity(entity, metamodel, unlinked);
+    }
+
+    @Override
+    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked) {
+        logger.debug("Saving {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), metamodel, unlinked);
+        this.nerService.saveNamedArchitectureEntities(entities, metamodel, unlinked);
     }
 
     public boolean hasNerNamedArchitectureEntities() {

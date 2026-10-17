@@ -1,8 +1,11 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -14,8 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -60,6 +66,9 @@ public class PersistenceBridge extends AbstractConfigurable {
     private static final String KEY_NEO4J_URI = "PersistenceBridge::neo4jUri";
     private static final String KEY_NEO4J_USERNAME = "PersistenceBridge::neo4jUsername";
     private static final String KEY_NEO4J_PASSWORD = "PersistenceBridge::neo4jPassword";
+
+    /** Max items per batched Cypher round trip (see {@link #chunk(List, int)}); one commit per chunk is fine, a later failure wipes everything anyway. */
+    private static final int WRITE_CHUNK_SIZE = 2000;
 
     private static PersistenceHandler handler;
 
@@ -227,11 +236,9 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
-     * Saves a noun mapping if TextState persistence is enabled.
-     * <p>
-     * The save always runs immediately, also inside {@link #withDeferredWrites}: deferred recommended-instance saves of the same scope must find
-     * the noun mapping node when they run. Within a scope, a pending deletion of the same {@code ardocoId} is cancelled (the node is updated
-     * instead of deleted and recreated).
+     * Saves a noun mapping if TextState persistence is enabled. Inside {@link #withDeferredWrites} the save is deferred and batched with the other
+     * noun-mapping saves of the scope; a pending deletion of the same {@code ardocoId} is cancelled (the node is updated instead of deleted and
+     * recreated).
      *
      * @param nounMapping the noun mapping to save
      */
@@ -239,11 +246,68 @@ public class PersistenceBridge extends AbstractConfigurable {
         if (!shouldPersistTextState()) {
             return;
         }
-        runQuietly("saveNounMapping", () -> getHandler().saveNounMapping(nounMapping));
         DeferredWrites scope = DEFERRED_WRITES.get();
         if (scope != null) {
-            scope.nounMappingSaved(nounMapping.getArdocoId());
+            scope.deferNounMappingSave(nounMapping);
+            return;
         }
+        runQuietly("saveNounMapping", () -> getHandler().saveNounMapping(nounMapping));
+    }
+
+    /**
+     * Saves a collection of trace links if persistence is available. Inside {@link #withDeferredWrites} the save is deferred and batched with the
+     * other trace-link saves of the scope.
+     *
+     * @param traceLinks the trace links to save
+     */
+    public static void saveTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        if (traceLinks.isEmpty() || !isAvailable()) {
+            return;
+        }
+        DeferredWrites scope = DEFERRED_WRITES.get();
+        if (scope != null) {
+            scope.deferTraceLinks(traceLinks);
+            return;
+        }
+        runQuietly("saveTraceLinks", () -> getHandler().saveTraceLinks(traceLinks));
+    }
+
+    /**
+     * Saves a collection of inconsistencies if persistence is available. Inside {@link #withDeferredWrites} the save is deferred and batched with
+     * the other inconsistency saves of the scope.
+     *
+     * @param inconsistencies the inconsistencies to save
+     */
+    public static void addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        if (inconsistencies.isEmpty() || !isAvailable()) {
+            return;
+        }
+        DeferredWrites scope = DEFERRED_WRITES.get();
+        if (scope != null) {
+            scope.deferInconsistencies(inconsistencies);
+            return;
+        }
+        runQuietly("addInconsistencies", () -> getHandler().addInconsistencies(inconsistencies));
+    }
+
+    /**
+     * Saves a named architecture entity if NER connection persistence is enabled. Inside {@link #withDeferredWrites} the save is deferred and
+     * batched (per metamodel and linked/unlinked bucket) with the other NER saves of the scope.
+     *
+     * @param entity    the entity to save
+     * @param metamodel the metamodel bucket this entity belongs to
+     * @param unlinked  true if stored in the unlinked set
+     */
+    public static void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+        if (!shouldPersistNerConnection()) {
+            return;
+        }
+        DeferredWrites scope = DEFERRED_WRITES.get();
+        if (scope != null) {
+            scope.deferNamedArchitectureEntity(entity, metamodel, unlinked);
+            return;
+        }
+        runQuietly("saveNamedArchitectureEntity", () -> getHandler().saveNamedArchitectureEntity(entity, metamodel, unlinked));
     }
 
     /**
@@ -266,7 +330,8 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     /**
      * Saves a recommended instance if recommendation persistence is enabled and the metamodel is known. Inside {@link #withDeferredWrites} the save
-     * is deferred to the end of the scope; multiple saves of the same instance within a scope result in a single save of its final state.
+     * is deferred and batched (per metamodel) with the other recommended-instance saves of the scope; multiple saves of the same instance within a
+     * scope result in a single save of its final state.
      *
      * @param recommendedInstance the recommended instance to save
      * @param metamodel           the metamodel of the recommendation state the instance belongs to
@@ -275,45 +340,54 @@ public class PersistenceBridge extends AbstractConfigurable {
         if (metamodel == null || !shouldPersistRecommendations()) {
             return;
         }
-        Runnable save = () -> getHandler().saveRecommendedInstance(recommendedInstance, metamodel);
         DeferredWrites scope = DEFERRED_WRITES.get();
         if (scope != null) {
-            scope.deferSave(recommendedInstance.getId() + "|" + metamodel.name(), "saveRecommendedInstance", save);
+            scope.deferRecommendedInstanceSave(recommendedInstance, metamodel);
             return;
         }
-        runQuietly("saveRecommendedInstance", save);
+        runQuietly("saveRecommendedInstance", () -> getHandler().saveRecommendedInstance(recommendedInstance, metamodel));
     }
 
     /**
-     * Runs {@code body} as one write scope (used for noun-mapping merges).
-     * <p>
-     * Within the scope, noun mappings are saved immediately, while recommended-instance saves and noun-mapping deletions are collected. When the
-     * outermost scope ends, the collected saves run first (one per instance, with its final state) and the deletions last; a deletion is cancelled
-     * if the same {@code ardocoId} is saved after it within the scope. For a merge this yields the order: merged noun mapping upserted, referencing
-     * recommended instances re-linked, obsolete noun mapping removed, so the graph is consistent at every point. Nested calls join the outer
-     * scope. The collected writes are also flushed if {@code body} throws, so Neo4j mirrors the in-memory state that was actually reached. If
-     * a collected save fails (and failures are not configured to throw), the deletions are skipped so no existing link is lost.
+     * Runs {@code body} as one write-behind scope with no stage name (used for noun-mapping merges, see {@link #withDeferredWrites(String, Supplier)}).
      *
      * @param body the code to run
      * @param <T>  the result type
      * @return the result of {@code body}
      */
     public static <T> T withDeferredWrites(Supplier<T> body) {
+        return withDeferredWrites(null, body);
+    }
+
+    /**
+     * Runs {@code body} as one write-behind scope: dual-writes made during {@code body} (noun mappings, recommended instances, NER entities, trace
+     * links, inconsistencies, and noun-mapping deletions) are collected instead of written immediately. When the outermost scope ends successfully,
+     * the collected writes are flushed in a fixed order - noun mappings, recommended instances, NER entities, trace links, inconsistencies, then
+     * deletions last - because trace links and inconsistencies match their endpoints (noun mappings, recommended instances, NER entities) by id, so
+     * those endpoints must already exist in the database. A deletion is cancelled if the same {@code ardocoId} is saved again later in the scope.
+     * Nested calls (e.g. a per-stage scope wrapping several per-merge scopes) join the outer scope and do not flush on their own.
+     * <p>
+     * On failure (an exception from {@code body}), the collected writes are discarded, not flushed: the caller's failure already aborts the whole
+     * run, which wipes the database regardless (see the run lifecycle), so flushing a partial, possibly inconsistent batch first would be wasted
+     * work and risk. If a flushed batch itself fails (and failures are not configured to throw), the pending noun-mapping deletions are skipped so
+     * no existing link is lost.
+     *
+     * @param stageName the name to log the flush under (e.g. the pipeline step id), or {@code null} for an unnamed scope
+     * @param body      the code to run
+     * @param <T>       the result type
+     * @return the result of {@code body}
+     */
+    public static <T> T withDeferredWrites(String stageName, Supplier<T> body) {
         if (DEFERRED_WRITES.get() != null) {
             return body.get();
         }
-        DeferredWrites scope = new DeferredWrites();
+        DeferredWrites scope = new DeferredWrites(stageName);
         DEFERRED_WRITES.set(scope);
         T result;
         try {
             result = body.get();
         } catch (RuntimeException | Error ex) {
             DEFERRED_WRITES.remove();
-            try {
-                scope.flush();
-            } catch (RuntimeException flushException) {
-                ex.addSuppressed(flushException);
-            }
             throw ex;
         }
         DEFERRED_WRITES.remove();
@@ -322,19 +396,54 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
+     * Splits {@code items} into chunks of at most {@link #WRITE_CHUNK_SIZE} rows, for batched Cypher round trips.
+     */
+    private static <T> List<List<T>> chunk(List<T> items) {
+        List<List<T>> chunks = new ArrayList<>();
+        for (int i = 0; i < items.size(); i += WRITE_CHUNK_SIZE) {
+            chunks.add(items.subList(i, Math.min(i + WRITE_CHUNK_SIZE, items.size())));
+        }
+        return chunks;
+    }
+
+    /**
      * Writes collected by {@link #withDeferredWrites}. Thread-confined via {@link #DEFERRED_WRITES}.
      */
     private static final class DeferredWrites {
-        private final Map<String, DeferredSave> pendingSaves = new LinkedHashMap<>();
+        private final String stageName;
+        private final Map<String, NounMapping> pendingNounMappingSaves = new LinkedHashMap<>();
+        private final Map<String, RecommendedInstanceSave> pendingRecommendedInstanceSaves = new LinkedHashMap<>();
+        private final Map<String, NamedArchitectureEntitySave> pendingNamedArchitectureEntitySaves = new LinkedHashMap<>();
+        private final List<TraceLink<?, ?>> pendingTraceLinks = new ArrayList<>();
+        private final List<Inconsistency> pendingInconsistencies = new ArrayList<>();
         private final Set<String> pendingNounMappingDeletions = new LinkedHashSet<>();
 
-        void deferSave(String key, String operation, Runnable action) {
-            this.pendingSaves.put(key, new DeferredSave(operation, action));
+        DeferredWrites(String stageName) {
+            this.stageName = stageName;
         }
 
-        void nounMappingSaved(String ardocoId) {
-            // The node is (re)written under this id after the deletion was requested: keep it.
-            this.pendingNounMappingDeletions.remove(ardocoId);
+        void deferNounMappingSave(NounMapping nounMapping) {
+            this.pendingNounMappingSaves.put(nounMapping.getArdocoId(), nounMapping);
+            // The node is (re)written under this id in the same scope: keep it, cancel a pending deletion of it.
+            this.pendingNounMappingDeletions.remove(nounMapping.getArdocoId());
+        }
+
+        void deferRecommendedInstanceSave(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+            String key = recommendedInstance.getId() + "|" + metamodel.name();
+            this.pendingRecommendedInstanceSaves.put(key, new RecommendedInstanceSave(recommendedInstance, metamodel));
+        }
+
+        void deferNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+            String key = entity.getId() + "|" + metamodel.name() + "|" + unlinked;
+            this.pendingNamedArchitectureEntitySaves.put(key, new NamedArchitectureEntitySave(entity, metamodel, unlinked));
+        }
+
+        void deferTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+            this.pendingTraceLinks.addAll(traceLinks);
+        }
+
+        void deferInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+            this.pendingInconsistencies.addAll(inconsistencies);
         }
 
         void deferNounMappingDeletion(String ardocoId) {
@@ -342,31 +451,167 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
 
         void flush() {
-            int failedSaves = 0;
-            for (DeferredSave save : this.pendingSaves.values()) {
+            int failedBatches = 0;
+            failedBatches += flushNounMappingSaves();
+            failedBatches += flushRecommendedInstanceSaves();
+            failedBatches += flushNamedArchitectureEntitySaves();
+            failedBatches += flushTraceLinks();
+            failedBatches += flushInconsistencies();
+
+            if (failedBatches > 0 && !this.pendingNounMappingDeletions.isEmpty()) {
+                // Deleting now would also remove the old links of the instances that could not be re-linked. Keep the obsolete noun mappings;
+                // they are unreferenced in memory and can be cleaned up later, while the graph keeps every link it had.
+                LOGGER.warn("{} deferred batch write(s) failed; skipping deletion of {} obsolete noun mapping(s) {} to avoid losing links", failedBatches,
+                        this.pendingNounMappingDeletions.size(), this.pendingNounMappingDeletions);
+            } else {
+                for (String ardocoId : this.pendingNounMappingDeletions) {
+                    runQuietly("deleteNounMapping", () -> getHandler().deleteNounMapping(ardocoId));
+                }
+            }
+            logFlush();
+        }
+
+        private int flushNounMappingSaves() {
+            if (this.pendingNounMappingSaves.isEmpty()) {
+                return 0;
+            }
+            int failed = 0;
+            for (List<NounMapping> batch : chunk(new ArrayList<>(this.pendingNounMappingSaves.values()))) {
                 boolean[] succeeded = { false };
-                runQuietly(save.operation(), () -> {
-                    save.action().run();
+                runQuietly("saveNounMappings", () -> {
+                    getHandler().saveNounMappings(batch);
                     succeeded[0] = true;
                 });
                 if (!succeeded[0]) {
-                    failedSaves++;
+                    failed++;
                 }
             }
-            if (failedSaves > 0 && !this.pendingNounMappingDeletions.isEmpty()) {
-                // Deleting now would also remove the old links of the instances that could not be re-linked. Keep the obsolete noun mappings;
-                // they are unreferenced in memory and can be cleaned up later, while the graph keeps every link it had.
-                LOGGER.warn("{} deferred save(s) failed; skipping deletion of {} obsolete noun mapping(s) {} to avoid losing links", failedSaves,
-                        this.pendingNounMappingDeletions.size(), this.pendingNounMappingDeletions);
+            return failed;
+        }
+
+        private int flushRecommendedInstanceSaves() {
+            if (this.pendingRecommendedInstanceSaves.isEmpty()) {
+                return 0;
+            }
+            Map<Metamodel, List<RecommendedInstance>> byMetamodel = new LinkedHashMap<>();
+            for (RecommendedInstanceSave save : this.pendingRecommendedInstanceSaves.values()) {
+                byMetamodel.computeIfAbsent(save.metamodel(), ignored -> new ArrayList<>()).add(save.recommendedInstance());
+            }
+            int failed = 0;
+            for (Map.Entry<Metamodel, List<RecommendedInstance>> entry : byMetamodel.entrySet()) {
+                Metamodel metamodel = entry.getKey();
+                for (List<RecommendedInstance> batch : chunk(entry.getValue())) {
+                    boolean[] succeeded = { false };
+                    runQuietly("saveRecommendedInstances", () -> {
+                        getHandler().saveRecommendedInstances(batch, metamodel);
+                        succeeded[0] = true;
+                    });
+                    if (!succeeded[0]) {
+                        failed++;
+                    }
+                }
+            }
+            return failed;
+        }
+
+        private int flushNamedArchitectureEntitySaves() {
+            if (this.pendingNamedArchitectureEntitySaves.isEmpty()) {
+                return 0;
+            }
+            Map<String, List<NamedArchitectureEntity>> byMetamodelAndLinkage = new LinkedHashMap<>();
+            Map<String, Metamodel> metamodelByKey = new LinkedHashMap<>();
+            Map<String, Boolean> unlinkedByKey = new LinkedHashMap<>();
+            for (NamedArchitectureEntitySave save : this.pendingNamedArchitectureEntitySaves.values()) {
+                String bucketKey = save.metamodel().name() + "|" + save.unlinked();
+                byMetamodelAndLinkage.computeIfAbsent(bucketKey, ignored -> new ArrayList<>()).add(save.entity());
+                metamodelByKey.put(bucketKey, save.metamodel());
+                unlinkedByKey.put(bucketKey, save.unlinked());
+            }
+            int failed = 0;
+            for (Map.Entry<String, List<NamedArchitectureEntity>> entry : byMetamodelAndLinkage.entrySet()) {
+                Metamodel metamodel = metamodelByKey.get(entry.getKey());
+                boolean unlinked = unlinkedByKey.get(entry.getKey());
+                for (List<NamedArchitectureEntity> batch : chunk(entry.getValue())) {
+                    boolean[] succeeded = { false };
+                    runQuietly("saveNamedArchitectureEntities", () -> {
+                        getHandler().saveNamedArchitectureEntities(batch, metamodel, unlinked);
+                        succeeded[0] = true;
+                    });
+                    if (!succeeded[0]) {
+                        failed++;
+                    }
+                }
+            }
+            return failed;
+        }
+
+        private int flushTraceLinks() {
+            if (this.pendingTraceLinks.isEmpty()) {
+                return 0;
+            }
+            int failed = 0;
+            for (List<TraceLink<?, ?>> batch : chunk(this.pendingTraceLinks)) {
+                boolean[] succeeded = { false };
+                runQuietly("saveTraceLinks", () -> {
+                    getHandler().saveTraceLinks(batch);
+                    succeeded[0] = true;
+                });
+                if (!succeeded[0]) {
+                    failed++;
+                }
+            }
+            return failed;
+        }
+
+        private int flushInconsistencies() {
+            if (this.pendingInconsistencies.isEmpty()) {
+                return 0;
+            }
+            int failed = 0;
+            for (List<Inconsistency> batch : chunk(this.pendingInconsistencies)) {
+                boolean[] succeeded = { false };
+                runQuietly("addInconsistencies", () -> {
+                    getHandler().addInconsistencies(batch);
+                    succeeded[0] = true;
+                });
+                if (!succeeded[0]) {
+                    failed++;
+                }
+            }
+            return failed;
+        }
+
+        private void logFlush() {
+            if (this.pendingNounMappingSaves.isEmpty() && this.pendingRecommendedInstanceSaves.isEmpty()
+                    && this.pendingNamedArchitectureEntitySaves.isEmpty() && this.pendingTraceLinks.isEmpty() && this.pendingInconsistencies.isEmpty()
+                    && this.pendingNounMappingDeletions.isEmpty()) {
                 return;
             }
-            for (String ardocoId : this.pendingNounMappingDeletions) {
-                runQuietly("deleteNounMapping", () -> getHandler().deleteNounMapping(ardocoId));
+            StringBuilder counts = new StringBuilder();
+            appendCount(counts, "NounMappings", this.pendingNounMappingSaves.size());
+            appendCount(counts, "RecommendedInstances", this.pendingRecommendedInstanceSaves.size());
+            appendCount(counts, "NamedArchitectureEntities", this.pendingNamedArchitectureEntitySaves.size());
+            appendCount(counts, "TraceLinks", this.pendingTraceLinks.size());
+            appendCount(counts, "Inconsistencies", this.pendingInconsistencies.size());
+            appendCount(counts, "NounMapping deletions", this.pendingNounMappingDeletions.size());
+            LOGGER.info("Flushed persistence for stage {}: {}", this.stageName == null ? "<unnamed>" : this.stageName, counts);
+        }
+
+        private static void appendCount(StringBuilder builder, String label, int count) {
+            if (count == 0) {
+                return;
             }
+            if (!builder.isEmpty()) {
+                builder.append(", ");
+            }
+            builder.append(count).append(' ').append(label);
         }
     }
 
-    private record DeferredSave(String operation, Runnable action) {
+    private record RecommendedInstanceSave(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+    }
+
+    private record NamedArchitectureEntitySave(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
     }
 
     @Override

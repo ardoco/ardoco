@@ -3,7 +3,9 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -61,6 +63,37 @@ public class RecommendationPersistenceService {
                     recommendedInstance.getName(), missing, nameMappingIds.size() + typeMappingIds.size());
         }
         logger.debug("Saved RecommendedInstance {} ({})", ardocoId, recommendedInstance.getName());
+    }
+
+    /**
+     * Batched form of {@link #saveRecommendedInstance}: upserts every instance (all for the same metamodel) and replaces its
+     * HAS_NAME_MAPPING/HAS_TYPE_MAPPING edges in one round trip instead of one transaction per instance. Used by the stage-level write-behind
+     * ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param recommendedInstances the domain recommended instances to save; a no-op if empty
+     * @param metamodel            the metamodel of the recommendation state the instances belong to (one batch is always one metamodel)
+     */
+    @Transactional
+    public void saveRecommendedInstances(Collection<RecommendedInstance> recommendedInstances, Metamodel metamodel) {
+        if (recommendedInstances.isEmpty()) {
+            return;
+        }
+        List<Map<String, Object>> items = new ArrayList<>(recommendedInstances.size());
+        for (RecommendedInstance recommendedInstance : recommendedInstances) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("ardocoId", recommendedInstance.getId());
+            item.put("props", recommendedInstanceMapper.toProperties(recommendedInstance, metamodel));
+            item.put("nameMappingIds", RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getNameMappings()));
+            item.put("typeMappingIds", RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getTypeMappings()));
+            items.add(item);
+        }
+
+        Long missing = recommendedInstanceRepository.saveAllWithMappings(items);
+        if (missing != null && missing > 0) {
+            logger.warn("Batch RecommendedInstance save: {} name/type mapping(s) not linked across {} instance(s) (NounMapping nodes missing)", missing,
+                    recommendedInstances.size());
+        }
+        logger.debug("Saved {} RecommendedInstances in one batch ({})", recommendedInstances.size(), metamodel);
     }
 
     private static long orZero(Long value) {

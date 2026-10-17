@@ -131,10 +131,12 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
 
         PersistenceHandler realHandler = PersistenceBridge.getHandler();
         Assertions.assertNotNull(realHandler, "storage=neo4j must have a handler available (registered by the Spring test context)");
-        PersistenceBridge.setHandler(failingOn(realHandler, "saveNounMapping"));
+        // Since 1.3a, NounMapping saves are deferred per stage and flushed as one saveNounMappings(Collection) batch at the end of
+        // TextExtraction, not one saveNounMapping(NounMapping) call per mapping during the stage.
+        PersistenceBridge.setHandler(failingOn(realHandler, "saveNounMappings"));
         try {
             RuntimeException thrown = Assertions.assertThrows(RuntimeException.class, runner::run);
-            Assertions.assertEquals("injected failure in saveNounMapping for Neo4jRunLifecycleTest", thrown.getMessage(),
+            Assertions.assertEquals("injected failure in saveNounMappings for Neo4jRunLifecycleTest", thrown.getMessage(),
                     "the original failure must propagate unmasked, not be swallowed by the wipe");
         } finally {
             PersistenceBridge.setHandler(realHandler);

@@ -62,6 +62,35 @@ public class TextStatePersistenceService {
         logger.debug("Saved NounMapping {} ({} words, {} phrases)", ardocoId, wordPositions.size(), phraseIds.size());
     }
 
+    /**
+     * Batched form of {@link #saveNounMapping}: upserts every mapping and replaces its MAPS_WORD/HAS_REFERENCE_WORD/IN_PHRASE edges in one round
+     * trip instead of one transaction per mapping. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param mappings the domain noun mappings to save; a no-op if empty
+     */
+    @Transactional
+    public void saveNounMappings(Collection<NounMapping> mappings) {
+        if (mappings.isEmpty()) {
+            return;
+        }
+        List<Map<String, Object>> items = new ArrayList<>(mappings.size());
+        for (NounMapping mapping : mappings) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("ardocoId", mapping.getArdocoId());
+            item.put("props", nounMappingMapper.toProperties(mapping));
+            item.put("wordPositions", NounMappingMapper.positionsOf(mapping.getWords()));
+            item.put("referencePositions", NounMappingMapper.positionsOf(mapping.getReferenceWords()));
+            item.put("phraseIds", nounMappingMapper.resolvePhraseIds(mapping));
+            items.add(item);
+        }
+
+        Long missing = nounMappingRepository.saveAllWithLinks(items);
+        if (missing != null && missing > 0) {
+            logger.warn("Batch NounMapping save: {} link target(s) not found across {} noun mapping(s) (target nodes missing)", missing, mappings.size());
+        }
+        logger.debug("Saved {} NounMappings in one batch", mappings.size());
+    }
+
     @Transactional
     public void deleteNounMapping(String ardocoId) {
         nounMappingRepository.deleteByArdocoId(ardocoId);

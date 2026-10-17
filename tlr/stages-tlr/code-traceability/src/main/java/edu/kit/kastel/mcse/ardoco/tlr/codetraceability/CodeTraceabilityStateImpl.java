@@ -35,9 +35,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
         // Always keep in-memory copy so Neo4j outages do not lose links (fault isolation).
         boolean added = this.samCodeTraceLinks.addAll(traceLinks);
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.runQuietly("saveSamCodeTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(traceLinks));
-        }
+        PersistenceBridge.saveTraceLinks(traceLinks);
         return added;
     }
 
@@ -49,9 +47,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
     @Override
     public boolean addSadCodeTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
         boolean added = this.transitiveTraceLinks.addAll(traceLinks);
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.runQuietly("saveSadCodeTraceLinks", () -> PersistenceBridge.getHandler().saveTraceLinks(traceLinks));
-        }
+        PersistenceBridge.saveTraceLinks(traceLinks);
         return added;
     }
 

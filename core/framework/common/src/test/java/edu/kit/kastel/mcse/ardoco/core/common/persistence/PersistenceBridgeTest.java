@@ -234,12 +234,22 @@ class PersistenceBridgeTest {
         }
 
         @Override
+        public void saveNounMappings(Collection<NounMapping> nounMappings) {
+            throw fail();
+        }
+
+        @Override
         public void deleteNounMapping(String ardocoId) {
             throw fail();
         }
 
         @Override
         public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+            throw fail();
+        }
+
+        @Override
+        public void saveRecommendedInstances(Collection<RecommendedInstance> recommendedInstances, Metamodel metamodel) {
             throw fail();
         }
 
@@ -256,6 +266,13 @@ class PersistenceBridgeTest {
         @Override
         public void saveNamedArchitectureEntity(edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity entity,
                 Metamodel metamodel, boolean unlinked) {
+            throw fail();
+        }
+
+        @Override
+        public void saveNamedArchitectureEntities(
+                Collection<edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity> entities, Metamodel metamodel,
+                boolean unlinked) {
             throw fail();
         }
 

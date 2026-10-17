@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 /**
@@ -67,6 +68,12 @@ public class Pipeline extends AbstractPipelineStep {
         return this.executed;
     }
 
+    /**
+     * Runs a pipeline step as one write-behind scope (see {@link PersistenceBridge#withDeferredWrites}): dual-writes the step makes (noun mappings,
+     * recommended instances, NER entities, trace links, inconsistencies, noun-mapping deletions) are collected during the step and flushed in one
+     * batched round trip per kind right after it, instead of one round trip per item during the step. A no-op when persistence is off. Nested steps
+     * (a step that is itself a {@link Pipeline}) join this outer scope, so their writes flush once, with the outer step's, not once per nested step.
+     */
     @Override
     public void process() {
         this.preparePipelineSteps();
@@ -74,7 +81,10 @@ public class Pipeline extends AbstractPipelineStep {
             this.getLogger().info("Starting {} - {}", this.getId(), pipelineStep.getId());
             var start = Instant.now();
 
-            pipelineStep.run();
+            PersistenceBridge.withDeferredWrites(pipelineStep.getId(), () -> {
+                pipelineStep.run();
+                return null;
+            });
 
             if (this.getLogger().isInfoEnabled()) {
                 var end = Instant.now();

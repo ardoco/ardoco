@@ -88,12 +88,8 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
         if (!PersistenceBridge.shouldPersistNerConnection() || this.metamodel == null || entities == null || entities.isEmpty()) {
             return;
         }
-        var handler = PersistenceBridge.getHandler();
-        if (handler == null) {
-            return;
-        }
         for (NamedArchitectureEntity entity : entities) {
-            PersistenceBridge.runQuietly("saveNamedArchitectureEntity", () -> handler.saveNamedArchitectureEntity(entity, this.metamodel, unlinked));
+            PersistenceBridge.saveNamedArchitectureEntity(entity, this.metamodel, unlinked);
         }
     }
 
@@ -101,11 +97,7 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
         if (!PersistenceBridge.shouldPersistNerConnection()) {
             return;
         }
-        var handler = PersistenceBridge.getHandler();
-        if (handler == null) {
-            return;
-        }
-        PersistenceBridge.runQuietly("saveNerTraceLinks", () -> handler.saveTraceLinks(List.of(link)));
+        PersistenceBridge.saveTraceLinks(List.of(link));
     }
 
 }
