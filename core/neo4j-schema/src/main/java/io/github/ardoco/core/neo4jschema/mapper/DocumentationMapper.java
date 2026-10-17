@@ -171,7 +171,7 @@ public class DocumentationMapper {
         }
 
         List<Phrase> phrases = new ArrayList<>();
-        for (PhraseNode pNode : sNode.getRootPhrases()) {
+        for (PhraseNode pNode : sortedByConstituencyPreOrder(sNode.getRootPhrases())) {
             phrases.add(mapPhraseToDomain(pNode, sentence, sentenceWordMap));
         }
 
@@ -183,13 +183,30 @@ public class DocumentationMapper {
 
     private Neo4jPhrase mapPhraseToDomain(PhraseNode pNode, Neo4jSentence parentSentence, Map<Integer, Neo4jWord> wordMap) {
         List<Phrase> childPhrases = new ArrayList<>();
-        for (PhraseNode childNode : pNode.getChildPhrases()) {
+        for (PhraseNode childNode : sortedByConstituencyPreOrder(pNode.getChildPhrases())) {
             childPhrases.add(mapPhraseToDomain(childNode, parentSentence, wordMap));
         }
 
-        List<Neo4jWord> containedWords = pNode.getContainedWords().stream().map(wn -> wordMap.get(wn.getPosition())).collect(Collectors.toList());
+        List<WordNode> sortedWords = new ArrayList<>(pNode.getContainedWords());
+        sortedWords.sort(Comparator.comparingInt(WordNode::getPosition));
+        List<Neo4jWord> containedWords = sortedWords.stream().map(wn -> wordMap.get(wn.getPosition())).collect(Collectors.toList());
 
         return new Neo4jPhrase(pNode.getText(), pNode.getPhraseType(), parentSentence, containedWords, childPhrases);
+    }
+
+    // Neo4j returns CONTAINS_WORD/HAS_CHILD_PHRASE relationships in no defined order, so words are sorted by
+    // position and child phrases by (first position asc, word count desc, descendant count desc) - the
+    // constituency pre-order; code relying on getContainedWords().get(0) as "the phrase's start" needs this.
+    private static List<PhraseNode> sortedByConstituencyPreOrder(List<PhraseNode> phrases) {
+        List<PhraseNode> sorted = new ArrayList<>(phrases);
+        sorted.sort(Comparator.comparingInt(DocumentationMapper::firstWordPosition)
+                .thenComparing(Comparator.comparingInt((PhraseNode p) -> p.getContainedWords().size()).reversed())
+                .thenComparing(Comparator.comparingInt((PhraseNode p) -> p.getChildPhrases().size()).reversed()));
+        return sorted;
+    }
+
+    private static int firstWordPosition(PhraseNode phrase) {
+        return phrase.getContainedWords().stream().mapToInt(WordNode::getPosition).min().orElse(Integer.MAX_VALUE);
     }
 
     private void createDomainDependencies(TextNode textNode, Map<Integer, Neo4jWord> globalWordMap) {

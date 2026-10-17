@@ -46,16 +46,21 @@ public class TextEqualityHelper {
         }
 
         for (int i = 0; i < expected.getWords().size(); i++) {
-            assertWordsEqual(expected.getWords().get(i).getNextWord(), expected.getWords().get(i).getNextWord(), "Next word");
-            assertWordsEqual(expected.getWords().get(i).getPreWord(), expected.getWords().get(i).getPreWord(), "Previous word");
+            assertWordsEqual(expected.getWords().get(i).getNextWord(), actual.getWords().get(i).getNextWord(), "Next word");
+            assertWordsEqual(expected.getWords().get(i).getPreWord(), actual.getWords().get(i).getPreWord(), "Previous word");
         }
 
-        Comparator<Phrase> phraseComparator = Comparator.comparing(Phrase::getText)
-                .thenComparing(Phrase::getPhraseType) // Enums have a natural order based on definition
-                .thenComparing(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition());
+        // Sorted by structure (start position, then span size), not by (text, type): the same text can legitimately occur
+        // in more than one phrase with different types (e.g. a short token appearing in both a nested NP and its
+        // enclosing FRAG), which made a (text, type) sort key pair up the wrong phrases depending on incidental
+        // traversal order.
+        Comparator<Phrase> phraseComparator = Comparator
+                .<Phrase>comparingInt(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition())
+                .thenComparingInt(p -> p.getContainedWords().size())
+                .thenComparing(Phrase::getText)
+                .thenComparing(Phrase::getPhraseType);
 
         List<? extends Phrase> expectedPhrases = expected.getPhrases().stream().sorted(phraseComparator).toList();
-
         List<? extends Phrase> actualPhrases = actual.getPhrases().stream().sorted(phraseComparator).toList();
 
         assertEquals(expectedPhrases.size(), actualPhrases.size(), () -> "Phrase count mismatch in sentence " + expected.getSentenceNumber());
@@ -88,11 +93,12 @@ public class TextEqualityHelper {
 
             assertEquals(outExpected.size(), outActual.size(), () -> context + " - Dependency count mismatch for tag " + tag);
 
-            for (int k = 0; k < outExpected.size(); k++) {
-                int finalK = k;
-                assertEquals(outExpected.get(k).getPosition(), outActual.get(k).getPosition(),
-                        () -> context + " - Dependency target mismatch for tag " + tag + " at index " + finalK);
-            }
+            // Compare target positions as a set, not by traversal index: Neo4j relationships of the same type carry no
+            // inherent order, so when a word has multiple same-tag dependencies, a plain round trip through the database
+            // can return them in a different order than they were added without actually losing or corrupting any of them.
+            List<Integer> expectedPositions = outExpected.stream().map(Word::getPosition).sorted().toList();
+            List<Integer> actualPositions = outActual.stream().map(Word::getPosition).sorted().toList();
+            assertEquals(expectedPositions, actualPositions, () -> context + " - Dependency target positions mismatch for tag " + tag);
         }
     }
 
