@@ -48,20 +48,11 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
 
     /**
      * Returns a list of inconsistencies held by this state.
-     * <p>
-     * The in-memory list is authoritative during a run (same rule as for the connection and code traceability states): it also holds
-     * inconsistencies whose database write failed. The database is only read when this state is empty (resume). The stored inconsistencies are not
-     * scoped by metamodel, so on resume this state receives all stored inconsistencies.
      *
      * @return list of inconsistencies
      */
     @Override
     public ImmutableList<Inconsistency> getInconsistencies() {
-        if (this.inconsistencies.isEmpty() && PersistenceBridge.isAvailable()) {
-            var loadedInconsistencies = PersistenceBridge.callQuietly("getInconsistencies",
-                    () -> PersistenceBridge.getHandler().getInconsistencies(), java.util.Collections.<Inconsistency>emptyList());
-            this.inconsistencies.addAll(loadedInconsistencies);
-        }
         return inconsistencies.toImmutable();
     }
 

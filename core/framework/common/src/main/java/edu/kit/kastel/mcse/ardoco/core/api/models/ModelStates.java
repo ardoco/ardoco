@@ -53,18 +53,6 @@ public final class ModelStates implements PipelineStepData {
      * @return the corresponding {@link Model}
      */
     public Model getModel(Metamodel id) {
-        boolean isPersistentType = id.isArchitectureModel() || id.isCodeModel();
-        boolean persistenceAvailable = PersistenceBridge.isAvailable();
-        boolean needsLoading = !this.models.containsKey(id);
-
-        if (needsLoading && isPersistentType && persistenceAvailable) {
-            Model loaded = PersistenceBridge.callQuietly("loadModel", () -> PersistenceBridge.getHandler().loadModel(id), null);
-            if (loaded != null) {
-                this.models.put(id, loaded);
-                return loaded;
-            }
-        }
-
         if (this.models.containsKey(id)) {
             return this.models.get(id);
         }

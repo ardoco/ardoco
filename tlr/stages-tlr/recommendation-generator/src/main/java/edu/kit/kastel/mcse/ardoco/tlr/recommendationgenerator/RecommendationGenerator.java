@@ -1,22 +1,12 @@
 /* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
-import java.util.Collection;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.agents.InitialRecommendationAgent;
@@ -26,8 +16,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.agents.PhraseRecom
  * The Class RecommendationGenerator defines the recommendation stage.
  */
 public class RecommendationGenerator extends AbstractExecutionStage {
-
-    private static final Logger logger = LoggerFactory.getLogger(RecommendationGenerator.class);
 
     /**
      * Creates a new model connection agent with the given extraction state and ntr state.
@@ -58,49 +46,6 @@ public class RecommendationGenerator extends AbstractExecutionStage {
         var dataRepository = this.getDataRepository();
         var activeMetamodels = dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
         RecommendationStatesImpl recommendationStates = (RecommendationStatesImpl) RecommendationStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
-        hydrateFromPersistenceIfPresent(dataRepository, recommendationStates, activeMetamodels);
         dataRepository.addData(RecommendationStates.ID, recommendationStates);
-    }
-
-    /**
-     * Load-on-resume: if Neo4j has RecommendedInstances, hydrate empty in-memory buckets once.
-     * Requires TextState NounMappings already present (from prior stage or TextState resume).
-     */
-    private static void hydrateFromPersistenceIfPresent(DataRepository dataRepository, RecommendationStatesImpl recommendationStates,
-            Collection<Metamodel> activeMetamodels) {
-        if (!PersistenceBridge.shouldPersistRecommendations()) {
-            return;
-        }
-        var handler = PersistenceBridge.getHandler();
-        if (handler == null) {
-            return;
-        }
-        Boolean hasRis = PersistenceBridge.callQuietly("hasRecommendedInstances", handler::hasRecommendedInstances, Boolean.FALSE);
-        if (!Boolean.TRUE.equals(hasRis)) {
-            return;
-        }
-        if (dataRepository.getData(TextState.ID, TextState.class).isEmpty()) {
-            logger.warn("Cannot load RecommendedInstances from Neo4j: TextState is not available");
-            return;
-        }
-        TextState textState = dataRepository.getData(TextState.ID, TextState.class).orElseThrow();
-        SortedMap<String, NounMapping> nounMappingsById = new TreeMap<>();
-        for (NounMapping mapping : textState.getNounMappings()) {
-            nounMappingsById.put(mapping.getArdocoId(), mapping);
-        }
-
-        int total = 0;
-        for (Metamodel metamodel : activeMetamodels) {
-            RecommendationStateImpl state = recommendationStates.getRecommendationState(metamodel);
-            Collection<RecommendedInstance> loaded = PersistenceBridge.callQuietly("loadRecommendedInstances",
-                    () -> handler.loadRecommendedInstances(metamodel, nounMappingsById), java.util.List.of());
-            for (RecommendedInstance ri : loaded) {
-                state.hydrateRecommendedInstance(ri);
-            }
-            total += loaded.size();
-        }
-        if (total > 0) {
-            logger.info("Hydrated {} RecommendedInstances from Neo4j (resume)", total);
-        }
     }
 }

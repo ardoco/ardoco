@@ -13,8 +13,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 
 /**
@@ -42,12 +40,6 @@ class SimpleTextPersistenceTest extends AbstractPersistenceTest {
         assertThat(loaded.getText()).isEqualTo(content);
         assertThat(loaded.getLines()).hasSize(3);
         assertThat(loaded.getLines().get(1)).isEqualTo("Second line.");
-
-        // Empty DR: sole-store / resume path via DataRepositoryHelper
-        DataRepository empty = new DataRepository();
-        SimpleText fromHelper = DataRepositoryHelper.getSimpleText(empty);
-        assertThat(fromHelper.getText()).isEqualTo(content);
-        assertThat(fromHelper.getLines()).hasSize(3);
 
         pauseForNeo4jInspection();
     }

@@ -101,7 +101,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         }
     }
 
-    @Override
     public Model loadModel(Metamodel metamodel) {
         logger.info("Loading model of type: " + metamodel);
         if (metamodel.isCodeModel()) {
@@ -112,7 +111,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return null;
     }
 
-    @Override
     public ImmutableSortedSet<Metamodel> getStoredMetamodels() {
         MutableSortedSet<Metamodel> available = SortedSets.mutable.empty();
         available.addAll(codeService.getStoredCodeModelMetamodels());
@@ -126,7 +124,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.documentationService.savePreprocessedText(text, identifier);
     }
 
-    @Override
     public Text loadPreprocessedText(String identifier) {
         logger.info("Loading preprocessed text for " + identifier);
 
@@ -137,7 +134,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return text;
     }
 
-    @Override
     public boolean hasPreprocessedText(String identifier) {
         logger.info("Checking if preprocessed text is available for " + identifier);
         return this.documentationService.hasPreprocessedText(identifier);
@@ -150,7 +146,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return this.traceLinkService.saveTracelinks(uniqueLinks);
     }
 
-    @Override
     public Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks() {
         logger.info("Loading ArchitectureCodeTraceLinks from neo4j");
         Set<ArchitectureCodeTraceLink> links = this.traceLinkService.loadAllArchitectureCodeTraceLinks();
@@ -158,7 +153,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return links;
     }
 
-    @Override
     public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
         logger.info("Loading TransitiveTraceLinks from neo4j");
         Set<TraceLink<SentenceEntity, ? extends ModelEntity>> transitiveLinks = this.traceLinkService.loadTransitiveTraceLinks();
@@ -166,7 +160,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return transitiveLinks;
     }
 
-    @Override
     public Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
         logger.info("Loading SentenceModelTraceLinks from neo4j");
         Set<SentenceModelTraceLink> links = this.traceLinkService.loadAllSentenceArchitectureModelTraceLinks();
@@ -182,7 +175,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return this.inconsistencyService.addInconsistencies(inconsistencies);
     }
 
-    @Override
     public Collection<? extends Inconsistency> getInconsistencies() {
         logger.info("Loading inconsistencies from neo4j");
         Collection<? extends Inconsistency> inconsistencies = this.inconsistencyService.getInconsistencies();
@@ -257,29 +249,24 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.recommendationService.saveRecommendedInstance(recommendedInstance, metamodel);
     }
 
-    @Override
     public boolean hasNounMappings() {
         return this.textStateService.hasNounMappings();
     }
 
-    @Override
     public Collection<NounMapping> loadNounMappings(Text annotatedText) {
         logger.info("Loading NounMappings from Neo4j (resume)");
         return this.textStateService.loadAllNounMappings(annotatedText);
     }
 
-    @Override
     public boolean hasRecommendedInstances() {
         return this.recommendationService.hasRecommendedInstances();
     }
 
-    @Override
     public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
         logger.info("Loading RecommendedInstances for {} from Neo4j (resume)", metamodel);
         return this.recommendationService.loadRecommendedInstances(metamodel, nounMappingsById);
     }
 
-    @Override
     public boolean hasRecommendationModelTraceLinks() {
         return countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_ARCHITECTURE) > 0
                 || countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_CODE) > 0;
@@ -299,7 +286,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
                 .orElse(0L);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, ArchitectureItem> architectureItemsById) {
@@ -307,7 +293,6 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         return this.traceLinkService.loadAllRecommendationArchitectureTraceLinks(recommendedInstancesById, architectureItemsById);
     }
 
-    @Override
     public Collection<RecommendationModelTraceLink> loadRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, CodeItem> codeItemsById) {
         logger.info("Loading RecommendationModelTraceLinks (code) from Neo4j (resume)");
@@ -320,12 +305,10 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.simpleTextService.saveSimpleText(simpleText, identifier);
     }
 
-    @Override
     public boolean hasSimpleText(String identifier) {
         return this.simpleTextService.hasSimpleText(identifier);
     }
 
-    @Override
     public SimpleText loadSimpleText(String identifier) {
         logger.info("Loading SimpleText for {}", identifier);
         return this.simpleTextService.loadSimpleText(identifier).orElse(null);
@@ -337,17 +320,14 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.projectService.saveProjectMetadata(projectName, inputText);
     }
 
-    @Override
     public boolean hasProjectMetadata(String projectName) {
         return this.projectService.hasProjectMetadata(projectName);
     }
 
-    @Override
     public String loadProjectInputText(String projectName) {
         return this.projectService.loadProjectInputText(projectName).orElse(null);
     }
 
-    @Override
     public String loadSoleProjectName() {
         return this.projectService.loadSoleProjectName().orElse(null);
     }
@@ -358,18 +338,15 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.nerService.saveNamedArchitectureEntity(entity, metamodel, unlinked);
     }
 
-    @Override
     public boolean hasNerNamedArchitectureEntities() {
         return this.nerService.hasNamedArchitectureEntities();
     }
 
-    @Override
     public Collection<NamedArchitectureEntity> loadNamedArchitectureEntities(Metamodel metamodel, boolean unlinkedOnly) {
         logger.info("Loading NamedArchitectureEntities for {} (unlinkedOnly={})", metamodel, unlinkedOnly);
         return this.nerService.loadNamedArchitectureEntities(metamodel, unlinkedOnly);
     }
 
-    @Override
     public Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
             SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById) {
         logger.info("Loading NER trace links for {} from Neo4j (resume)", metamodel);

@@ -111,15 +111,6 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
         }
     }
 
-    /**
-     * Adds an instance link without Neo4j dual-write (load-on-resume hydrate).
-     */
-    public void hydrateInstanceLink(TraceLink<RecommendedInstance, ModelEntity> instanceLink) {
-        if (!this.isContainedByInstanceLinks(instanceLink)) {
-            this.instanceLinks.add(instanceLink);
-        }
-    }
-
     private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {
         return recommendedInstance.getNameMappings().stream().flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream()).toList();
     }

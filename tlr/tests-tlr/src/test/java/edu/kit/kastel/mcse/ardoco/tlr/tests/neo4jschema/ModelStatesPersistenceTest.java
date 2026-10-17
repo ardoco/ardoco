@@ -53,8 +53,8 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     }
 
     @Test
-    @DisplayName("ModelStates loads architecture model from Neo4j when absent in memory")
-    void testGetModelLoadsFromNeo4jOnResume() {
+    @DisplayName("saveModel round-trips the architecture model losslessly through Neo4j")
+    void testSaveModelRoundTripsArchitectureModel() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
                 .applyConfiguration(getConfigsWithPersistence(true, false, false));
@@ -63,16 +63,15 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
         ArchitectureModel original = extractor.extractModel();
         persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, original);
 
-        ModelStates modelStates = new ModelStates();
-        ArchitectureModel loaded = (ArchitectureModel) modelStates.getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+        ArchitectureModel loaded = (ArchitectureModel) persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         assertArchitectureModelsEqual(original, loaded);
 
         pauseForNeo4jInspection();
     }
 
     @Test
-    @DisplayName("ModelStates loads code model from Neo4j when absent in memory")
-    void testGetModelLoadsCodeModelFromNeo4jOnResume() {
+    @DisplayName("saveModel round-trips the code model losslessly through Neo4j")
+    void testSaveModelRoundTripsCodeModel() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
                 .applyConfiguration(getConfigsWithPersistence(true, false, false));
@@ -80,8 +79,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
         CodeModel original = CodeExtractor.readInCodeModel(codeConfiguration.code(), Metamodel.CODE_WITH_COMPILATION_UNITS);
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS, original);
 
-        ModelStates modelStates = new ModelStates();
-        CodeModel loaded = (CodeModel) modelStates.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         assertCodeModelsEqual(original, loaded);
         Assertions.assertEquals(0, countModelItemsMissingTraceableLabel(),
                 "CodeItem nodes persisted with the code model must also be labeled Traceable");

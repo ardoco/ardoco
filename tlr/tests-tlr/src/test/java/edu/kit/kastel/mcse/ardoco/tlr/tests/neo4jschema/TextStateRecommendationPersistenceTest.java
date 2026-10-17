@@ -2,21 +2,13 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
-import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
@@ -75,37 +67,39 @@ public class TextStateRecommendationPersistenceTest extends AbstractPersistenceT
     }
 
     @Test
-    @DisplayName("Resume hydrate reloads NounMappings and RecommendedInstances from Neo4j without re-running SWATTR")
-    void testLoadOnResumeHydratesTextStateAndRecommendations() {
+    @DisplayName("Dual-write leaves a consistent graph: every RecommendedInstance has a mapping edge, every NounMapping maps a word")
+    void testDualWriteGraphIsConsistent() {
         runSwattr(true, true, true);
 
-        long nounMappingCount = countNodesWithLabel("NounMapping");
-        long recommendedInstanceCount = countNodesWithLabel("RecommendedInstance");
-        Assertions.assertTrue(nounMappingCount > 0);
-        Assertions.assertTrue(recommendedInstanceCount > 0);
+        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
+        Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
+        Assertions.assertEquals(0, countRecommendedInstancesWithoutMappingEdges(),
+                "Every persisted RecommendedInstance must have HAS_NAME_MAPPING or HAS_TYPE_MAPPING");
+        Assertions.assertEquals(0, countNounMappingsWithoutMapsWordEdge(), "Every persisted NounMapping must map at least one Word");
+    }
 
-        var handler = PersistenceBridge.getHandler();
-        Assertions.assertNotNull(handler);
-        Assertions.assertTrue(handler.hasNounMappings());
-        Assertions.assertTrue(handler.hasRecommendedInstances());
+    private long countRecommendedInstancesWithoutMappingEdges() {
+        return neo4jClient.query("""
+                MATCH (ri:RecommendedInstance)
+                WHERE NOT (ri)-[:HAS_NAME_MAPPING|:HAS_TYPE_MAPPING]->()
+                RETURN count(ri) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
+    }
 
-        Text annotatedText = handler.loadPreprocessedText(PreprocessingData.ID);
-        Assertions.assertNotNull(annotatedText);
-
-        Collection<NounMapping> loadedMappings = handler.loadNounMappings(annotatedText);
-        Assertions.assertEquals(nounMappingCount, loadedMappings.size());
-
-        SortedMap<String, NounMapping> byId = new TreeMap<>();
-        for (NounMapping mapping : loadedMappings) {
-            byId.put(mapping.getArdocoId(), mapping);
-        }
-
-        long loadedRis = 0;
-        for (Metamodel metamodel : Metamodel.values()) {
-            loadedRis += handler.loadRecommendedInstances(metamodel, byId).size();
-        }
-        Assertions.assertEquals(recommendedInstanceCount, loadedRis);
-        Assertions.assertTrue(handler.hasRecommendationModelTraceLinks());
+    private long countNounMappingsWithoutMapsWordEdge() {
+        return neo4jClient.query("""
+                MATCH (nm:NounMapping)
+                WHERE NOT (nm)-[:MAPS_WORD]->()
+                RETURN count(nm) AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).longValue())
+                .orElse(0L);
     }
 
     private long countRecommendationArchitectureLinks() {

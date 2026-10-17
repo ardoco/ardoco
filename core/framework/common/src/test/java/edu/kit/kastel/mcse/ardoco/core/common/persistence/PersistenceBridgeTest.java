@@ -2,28 +2,19 @@
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import java.util.Collection;
-import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.collections.api.factory.SortedMaps;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
-import org.eclipse.jgit.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
@@ -198,29 +189,7 @@ class PersistenceBridgeTest {
         }
 
         @Override
-        @Nullable
-        public Model loadModel(Metamodel metamodel) {
-            throw fail();
-        }
-
-        @Override
-        public ImmutableSortedSet<Metamodel> getStoredMetamodels() {
-            throw fail();
-        }
-
-        @Override
         public void savePreprocessedText(Text text, String identifier) {
-            throw fail();
-        }
-
-        @Override
-        @Nullable
-        public Text loadPreprocessedText(String identifier) {
-            throw fail();
-        }
-
-        @Override
-        public boolean hasPreprocessedText(String identifier) {
             throw fail();
         }
 
@@ -230,27 +199,7 @@ class PersistenceBridgeTest {
         }
 
         @Override
-        public Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks() {
-            throw fail();
-        }
-
-        @Override
         public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
-            throw fail();
-        }
-
-        @Override
-        public Collection<? extends Inconsistency> getInconsistencies() {
             throw fail();
         }
 
@@ -295,54 +244,7 @@ class PersistenceBridgeTest {
         }
 
         @Override
-        public boolean hasNounMappings() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<NounMapping> loadNounMappings(Text annotatedText) {
-            throw fail();
-        }
-
-        @Override
-        public boolean hasRecommendedInstances() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
-            throw fail();
-        }
-
-        @Override
-        public boolean hasRecommendationModelTraceLinks() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
-                SortedMap<String, ArchitectureItem> architectureItemsById) {
-            throw fail();
-        }
-
-        @Override
-        public Collection<RecommendationModelTraceLink> loadRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
-                SortedMap<String, edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem> codeItemsById) {
-            throw fail();
-        }
-
-        @Override
         public void saveSimpleText(edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText simpleText, String identifier) {
-            throw fail();
-        }
-
-        @Override
-        public boolean hasSimpleText(String identifier) {
-            throw fail();
-        }
-
-        @Override
-        public edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText loadSimpleText(String identifier) {
             throw fail();
         }
 
@@ -351,44 +253,9 @@ class PersistenceBridgeTest {
             throw fail();
         }
 
-
-        @Override
-        public boolean hasProjectMetadata(String projectName) {
-            throw fail();
-        }
-
-        @Override
-        public String loadProjectInputText(String projectName) {
-            throw fail();
-        }
-
-        @Override
-        public String loadSoleProjectName() {
-            throw fail();
-        }
-
         @Override
         public void saveNamedArchitectureEntity(edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity entity,
                 Metamodel metamodel, boolean unlinked) {
-            throw fail();
-        }
-
-        @Override
-        public boolean hasNerNamedArchitectureEntities() {
-            throw fail();
-        }
-
-        @Override
-        public Collection<edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity> loadNamedArchitectureEntities(
-                Metamodel metamodel, boolean unlinkedOnly) {
-            throw fail();
-        }
-
-        @Override
-        public Collection<edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(
-                Metamodel metamodel,
-                SortedMap<String, edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence> occurrencesById,
-                SortedMap<String, ModelEntity> modelEntitiesById) {
             throw fail();
         }
 

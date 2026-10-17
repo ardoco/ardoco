@@ -2,26 +2,13 @@
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import java.util.Collection;
-import java.util.SortedMap;
 
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
-import org.eclipse.jgit.annotations.Nullable;
-
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
-import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -29,6 +16,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 /**
  * Interface defining persistence operations.
  * Implemented by the neo4j-schema module.
+ * <p>
+ * Write-only by design: nothing reads Neo4j during a run (memory is authoritative). Reads needed outside write
+ * paths (e.g. the neo4j-schema module's own facade tests, or matching existing nodes by id before creating an
+ * edge inside a write path) stay on the concrete {@code Neo4jPersistenceHandler}/service classes, not here.
  */
 public interface PersistenceHandler {
 
@@ -41,22 +32,6 @@ public interface PersistenceHandler {
     void saveModel(Metamodel metamodel, Model model);
 
     /**
-     * Loads the model for the given metamodel from persistence.
-     *
-     * @param metamodel the metamodel which should be loaded
-     * @return the loaded model or null if no model for the given metamodel is stored
-     */
-    @Nullable
-    Model loadModel(Metamodel metamodel);
-
-    /**
-     * Retrieves the set of metamodels for which a model is stored in persistence.
-     *
-     * @return the set of metamodels with stored models
-     */
-    ImmutableSortedSet<Metamodel> getStoredMetamodels();
-
-    /**
      * Saves the preprocessed text for the given identifier.
      *
      * @param text       the preprocessed text to save
@@ -65,51 +40,12 @@ public interface PersistenceHandler {
     void savePreprocessedText(Text text, String identifier);
 
     /**
-     * Loads the preprocessed text for the given identifier from persistence.
-     *
-     * @param identifier the identifier for the preprocessed text
-     * @return the loaded preprocessed text
-     */
-    @Nullable
-    Text loadPreprocessedText(String identifier);
-
-    /**
-     * Checks if a preprocessed text for the given identifier is stored in persistence.
-     *
-     * @param identifier the identifier for the preprocessed text
-     * @return true if a preprocessed text for the given identifier is stored, false otherwise
-     */
-    boolean hasPreprocessedText(String identifier);
-
-    /**
      * Saves a collection of tracelinks
      *
      * @param traceLinks the trace links to save
      * @return true if the trace links were successfully saved, false otherwise
      */
     boolean saveTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks);
-
-    /**
-     * Loads the specific Architecture-Code links from the database.
-     *
-     * @return the loaded Architecture-Code tracelinks
-     */
-    Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks();
-
-    /**
-     * Loads a collection of transitive tracelinks between sentences and code model entities.
-     * As well as direct links between sentences and Code Model entities
-     *
-     * @return the loaded transitive tracelinks
-     */
-    Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> loadTransitiveTraceLinks();
-
-    /**
-     * Loads a collection of tracelinks between sentences and model entities.
-     *
-     * @return the loaded trace links
-     */
-    Collection<SentenceModelTraceLink> loadSentenceModelTraceLinks();
 
     /**
      * Saves a collection of inconsistencies.
@@ -121,22 +57,15 @@ public interface PersistenceHandler {
     boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies);
 
     /**
-     * Retrieves all inconsistencies from persistence.
-     *
-     * @return a collection of all inconsistencies
-     */
-    Collection<? extends Inconsistency> getInconsistencies();
-
-    /**
      * Removes all data associated with a specific metamodel.
-     * 
+     *
      * @param metamodel the metamodel to clear
      */
     void deleteModel(Metamodel metamodel);
 
     /**
      * Deletes a specific preprocessed text.
-     * 
+     *
      * @param identifier the identifier of the text to remove
      */
     void deletePreprocessedText(String identifier);
@@ -181,98 +110,14 @@ public interface PersistenceHandler {
     void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel);
 
     /**
-     * @return true if at least one NounMapping node exists in persistence
-     */
-    boolean hasNounMappings();
-
-    /**
-     * Loads all NounMappings. Domain words are resolved from {@code annotatedText} by position.
-     * Intended for load-on-resume (once), not per-request reads.
-     *
-     * @param annotatedText the preprocessed text already available for this run
-     * @return loaded noun mappings
-     */
-    Collection<NounMapping> loadNounMappings(Text annotatedText);
-
-    /**
-     * @return true if at least one RecommendedInstance node exists in persistence
-     */
-    boolean hasRecommendedInstances();
-
-    /**
-     * Loads recommended instances for a metamodel. {@code nounMappingsById} must already be hydrated.
-     * Intended for load-on-resume (once), not per-request reads.
-     *
-     * @param metamodel        metamodel bucket
-     * @param nounMappingsById ardocoId → NounMapping from TextState
-     * @return loaded recommended instances
-     */
-    Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById);
-
-    /**
-     * @return true if at least one RI→Architecture or RI→Code instance link exists in persistence
-     */
-    boolean hasRecommendationModelTraceLinks();
-
-    /**
-     * Loads ConnectionState instance links (RecommendedInstance → ArchitectureItem).
-     * Intended for load-on-resume (once).
-     *
-     * @param recommendedInstancesById RI id → domain instance
-     * @param architectureItemsById    architecture entity id → domain item
-     * @return loaded recommendation–model trace links
-     */
-    Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
-            SortedMap<String, ArchitectureItem> architectureItemsById);
-
-    /**
-     * Loads ConnectionState instance links (RecommendedInstance → CodeItem).
-     * Intended for load-on-resume (once).
-     *
-     * @param recommendedInstancesById RI id → domain instance
-     * @param codeItemsById            code entity id → domain item
-     * @return loaded recommendation–code trace links
-     */
-    Collection<RecommendationModelTraceLink> loadRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
-            SortedMap<String, CodeItem> codeItemsById);
-
-    /**
      * Saves a thin {@link SimpleText} (raw text + ordered lines).
      */
     void saveSimpleText(SimpleText simpleText, String identifier);
 
     /**
-     * @return true if SimpleText with the given identifier exists
-     */
-    boolean hasSimpleText(String identifier);
-
-    /**
-     * Loads SimpleText, or {@code null} if absent.
-     */
-    @Nullable
-    SimpleText loadSimpleText(String identifier);
-
-    /**
      * Saves project metadata (name + raw input text) on a Project root node.
      */
     void saveProjectMetadata(String projectName, String inputText);
-
-    /**
-     * @return true if a Project node with the given name exists
-     */
-    boolean hasProjectMetadata(String projectName);
-
-    /**
-     * Loads raw input text for a project, or {@code null} if absent.
-     */
-    @Nullable
-    String loadProjectInputText(String projectName);
-
-    /**
-     * Loads project name if exactly one Project node exists, otherwise {@code null}.
-     */
-    @Nullable
-    String loadSoleProjectName();
 
     /**
      * Dual-writes a named architecture entity (and its occurrences) for a metamodel.
@@ -282,22 +127,6 @@ public interface PersistenceHandler {
      * @param unlinked  true if stored in the unlinked set
      */
     void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked);
-
-    /**
-     * @return true if any NER named-architecture-entity nodes exist
-     */
-    boolean hasNerNamedArchitectureEntities();
-
-    /**
-     * Loads named architecture entities for a metamodel (linked + unlinked flags preserved on nodes).
-     */
-    Collection<NamedArchitectureEntity> loadNamedArchitectureEntities(Metamodel metamodel, boolean unlinkedOnly);
-
-    /**
-     * Loads NER occurrence→model trace links for a metamodel.
-     */
-    Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
-            SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById);
 
     /**
      * Exports the entire graph as a lossless JSON dump: every node (id, labels, properties) and every relationship

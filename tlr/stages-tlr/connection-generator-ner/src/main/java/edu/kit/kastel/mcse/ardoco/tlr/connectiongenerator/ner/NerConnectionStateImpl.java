@@ -62,15 +62,6 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
         }
     }
 
-    /**
-     * Load-on-resume: add a link without dual-writing back to Neo4j.
-     */
-    public void hydrateTraceLink(TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> link) {
-        if (!this.instanceLinks.contains(link)) {
-            this.instanceLinks.add(link);
-        }
-    }
-
     @Override
     public ImmutableSortedSet<NamedArchitectureEntity> getNamedArchitectureEntities() {
         return SortedSets.immutable.withAll(this.namedEntities);
@@ -82,13 +73,6 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
         dualWriteEntities(namedArchitectureEntities, false);
     }
 
-    /**
-     * Load-on-resume: add named entities without dual-writing.
-     */
-    public void hydrateNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
-        this.namedEntities.addAll(namedArchitectureEntities);
-    }
-
     @Override
     public ImmutableSortedSet<NamedArchitectureEntity> getUnlinkedNamedArchitectureEntities() {
         return SortedSets.immutable.withAll(unlinkedNamedArchitectureEntities);
@@ -98,13 +82,6 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     public void addUnlinkedNamedArchitectureEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
         this.unlinkedNamedArchitectureEntities.addAll(namedArchitectureEntities);
         dualWriteEntities(namedArchitectureEntities, true);
-    }
-
-    /**
-     * Load-on-resume: add unlinked entities without dual-writing.
-     */
-    public void hydrateUnlinkedNamedEntities(Collection<NamedArchitectureEntity> namedArchitectureEntities) {
-        this.unlinkedNamedArchitectureEntities.addAll(namedArchitectureEntities);
     }
 
     private void dualWriteEntities(Collection<NamedArchitectureEntity> entities, boolean unlinked) {
