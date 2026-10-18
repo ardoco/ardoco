@@ -2,6 +2,7 @@
 package io.github.ardoco.core.neo4jschema;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponent
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
@@ -106,6 +109,27 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         Assertions.assertEquals(2, storedMetamodels.size());
         Assertions.assertTrue(storedMetamodels.contains(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
         Assertions.assertTrue(storedMetamodels.contains(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+    }
+
+    @Test
+    @DisplayName("Facade: re-saving an architecture model doesn't duplicate interfaces/methods reachable only via a component's provided/required interfaces")
+    void testArchitectureModelResaveNoOrphanedInterfacesOrMethods() {
+        // Unlike ArchitectureModelFactory's fixture, this interface is NOT a top-level model item (no HAS_INTERFACE edge) - it is reachable
+        // only via the component's PROVIDES_INTERFACE edge, matching real PCM extraction output (e.g. TeaStore), which never attaches
+        // interfaces to the model directly.
+        var method = new ArchitectureMethod("ping()");
+        var iface = new ArchitectureInterface("IPing", "id_iface_ping", new TreeSet<>(List.of(method)));
+        var component = new ArchitectureComponent("PingService", "id_comp_ping", new TreeSet<>(), new TreeSet<>(List.of(iface)), new TreeSet<>(), "Service");
+        var model = new ArchitectureModelWithComponentsAndInterfaces(List.of(component));
+
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, model);
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, model);
+
+        Long interfaceCount = neo4jClient.query("MATCH (n:ArchitectureInterface) RETURN count(n)").fetchAs(Long.class).one().orElse(0L);
+        Long methodCount = neo4jClient.query("MATCH (n:ArchitectureMethod) RETURN count(n)").fetchAs(Long.class).one().orElse(0L);
+
+        Assertions.assertEquals(1L, interfaceCount, "Re-saving duplicated an interface only reachable via a component's provided/required set");
+        Assertions.assertEquals(1L, methodCount, "Re-saving duplicated a method of an interface only reachable via a component's provided/required set");
     }
 
     @Test

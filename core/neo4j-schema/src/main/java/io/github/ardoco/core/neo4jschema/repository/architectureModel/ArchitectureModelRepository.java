@@ -21,8 +21,11 @@ public interface ArchitectureModelRepository extends Neo4jRepository<Architectur
      */
     @Query("""
                 MATCH (m:ArchitectureModel {modelId: $modelId})
-                // Traverse components, subcomponents, and interfaces
-                OPTIONAL MATCH (m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT*0..10]->(item)
+                // Traverse components, subcomponents, and interfaces - including interfaces reachable only via a
+                // component's PROVIDES_INTERFACE/REQUIRES_INTERFACE (e.g. PCM models, which never attach interfaces
+                // to the model directly via HAS_INTERFACE); missing these left them - and their methods - behind on
+                // delete, masked only by Spring Data's id-aware upsert on a later save().
+                OPTIONAL MATCH (m)-[:HAS_COMPONENT|HAS_INTERFACE|HAS_SUBCOMPONENT|PROVIDES_INTERFACE|REQUIRES_INTERFACE*0..10]->(item)
                 // Traverse methods inside interfaces
                 OPTIONAL MATCH (item)-[:HAS_METHOD]->(method)
                 // Inconsistencies attached to items or methods
