@@ -25,28 +25,6 @@ public interface TraceLinkRepository extends Neo4jRepository<TraceableNode, Stri
             """)
     List<TraceableNode> findAllByRelationshipType(@Param("type") TraceLinkType type);
 
-    @Query("""
-            MATCH (s:Traceable {ardocoId: $sourceId}), (t:Traceable {ardocoId: $targetId})
-            MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t)
-            SET r.confidence = COALESCE($conf, -1.0),
-                r.traceLinkType = $type
-            """)
-    void createTraceLink(@Param("sourceId") String sourceId, @Param("targetId") String targetId, @Param("conf") Double conf, @Param("type") TraceLinkType type);
-
-    default void createTraceLink(String sourceId, String targetId, TraceLinkType type) {
-        createTraceLink(sourceId, targetId, -1.0, type);
-    }
-
-    @Query("""
-            MATCH (ri:RecommendedInstance {ardocoId: $sourceId})
-            MATCH (t:Traceable {ardocoId: $targetId})
-            MERGE (ri)-[r:TRACES_TO {traceLinkType: $type}]->(t)
-            SET r.confidence = COALESCE($conf, -1.0),
-                r.traceLinkType = $type
-            """)
-    void createRecommendationArchitectureTraceLink(@Param("sourceId") String sourceId, @Param("targetId") String targetId, @Param("conf") Double conf,
-            @Param("type") TraceLinkType type);
-
     @Query("MATCH ()-[r:TRACES_TO]->()  DETACH DELETE r")
     void deleteAllTraceLinks();
 

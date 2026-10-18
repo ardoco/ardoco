@@ -102,22 +102,26 @@ public class TraceLinkPersistenceService {
      * @return true if the trace links were processed (even if some were skipped due to unknown types)
      */
     public boolean saveTracelinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
+        MissingEndpointTracker tracker = new MissingEndpointTracker();
         for (TraceLink<?, ?> link : traceLinks) {
-            resolveAndSave(link);
+            resolveAndSave(link, tracker);
         }
+        tracker.logSummaryIfAny();
         return true;
     }
 
-    private void resolveAndSave(TraceLink<?, ?> link) {
+    private void resolveAndSave(TraceLink<?, ?> link, MissingEndpointTracker tracker) {
         if (link instanceof TransitiveTraceLink<?, ?> transitive) {
-            saveAtomicLink(transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE);
-            saveAtomicLink(transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE);
+            saveAtomicLink(transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE, tracker);
+            saveAtomicLink(transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE, tracker);
             return;
         }
 
         TraceLinkType type = determineType(link);
         if (type != null) {
-            saveAtomicLink(link, type);
+            saveAtomicLink(link, type, tracker);
+        } else {
+            logger.warn("Could not determine a TraceLinkType for link of class {}; skipping", link.getClass().getName());
         }
     }
 
@@ -125,7 +129,14 @@ public class TraceLinkPersistenceService {
         if (link instanceof ArchitectureCodeTraceLink)
             return TraceLinkType.ARCHITECTURE_CODE;
         if (link instanceof SentenceModelTraceLink smtl) {
-            return (smtl.getSecondEndpoint() instanceof ArchitectureItem) ? TraceLinkType.SENTENCE_ARCHITECTURE : TraceLinkType.SENTENCE_CODE;
+            if (smtl.getSecondEndpoint() instanceof ArchitectureItem) {
+                return TraceLinkType.SENTENCE_ARCHITECTURE;
+            }
+            if (!(smtl.getSecondEndpoint() instanceof CodeItem)) {
+                logger.warn("SentenceModelTraceLink second endpoint is neither ArchitectureItem nor CodeItem ({}); defaulting to SENTENCE_CODE",
+                        smtl.getSecondEndpoint().getClass().getName());
+            }
+            return TraceLinkType.SENTENCE_CODE;
         }
         if (link instanceof RecommendationModelTraceLink rmtl) {
             if (rmtl.getSecondEndpoint() instanceof ArchitectureItem) {
@@ -154,23 +165,88 @@ public class TraceLinkPersistenceService {
         }
         if (endpoint instanceof ModelEntity me)
             return me.getId();
+        logger.warn("getEndpointId: unrecognized endpoint type {}; falling back to toString(), which will never match a persisted node's id",
+                endpoint.getClass().getName());
         return endpoint.toString();
     }
 
-    private void saveAtomicLink(TraceLink<?, ?> link, TraceLinkType type) {
+    private void saveAtomicLink(TraceLink<?, ?> link, TraceLinkType type, MissingEndpointTracker tracker) {
         String sourceId = getEndpointId(link.getFirstEndpoint());
         String targetId = getEndpointId(link.getSecondEndpoint());
+        Map<String, Object> result;
         if (type == TraceLinkType.RECOMMENDATION_ARCHITECTURE || type == TraceLinkType.RECOMMENDATION_CODE) {
             double confidence = link instanceof RecommendationModelTraceLink rmtl ? rmtl.getConfidence() : -1.0;
-            traceLinkRepo.createRecommendationArchitectureTraceLink(sourceId, targetId, confidence, type);
-            return;
-        }
-        if (type == TraceLinkType.NER_ARCHITECTURE) {
+            result = createRecommendationArchitectureTraceLink(sourceId, targetId, confidence, type);
+        } else if (type == TraceLinkType.NER_ARCHITECTURE) {
             double confidence = link instanceof NamedArchitectureEntityToModelTraceLink nerLink ? nerLink.getConfidence() : -1.0;
-            traceLinkRepo.createTraceLink(sourceId, targetId, confidence, type);
-            return;
+            result = createTraceLink(sourceId, targetId, confidence, type);
+        } else {
+            result = createTraceLink(sourceId, targetId, -1.0, type);
         }
-        traceLinkRepo.createTraceLink(sourceId, targetId, type);
+        tracker.record(type, sourceId, targetId, result);
+    }
+
+    private Map<String, Object> createTraceLink(String sourceId, String targetId, Double conf, TraceLinkType type) {
+        return neo4jClient.query("""
+                OPTIONAL MATCH (s:Traceable {ardocoId: $sourceId})
+                OPTIONAL MATCH (t:Traceable {ardocoId: $targetId})
+                FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END |
+                    MERGE (s)-[r:TRACES_TO {traceLinkType: $type}]->(t)
+                    SET r.confidence = COALESCE($conf, -1.0),
+                        r.traceLinkType = $type)
+                RETURN (CASE WHEN s IS NULL THEN 1 ELSE 0 END) AS sourceMissing,
+                       (CASE WHEN t IS NULL THEN 1 ELSE 0 END) AS targetMissing
+                """).bindAll(Map.of("sourceId", sourceId, "targetId", targetId, "type", type.name(), "conf", conf)).fetch().one().orElse(Map.of());
+    }
+
+    private Map<String, Object> createRecommendationArchitectureTraceLink(String sourceId, String targetId, Double conf, TraceLinkType type) {
+        return neo4jClient.query("""
+                OPTIONAL MATCH (ri:RecommendedInstance {ardocoId: $sourceId})
+                OPTIONAL MATCH (t:Traceable {ardocoId: $targetId})
+                FOREACH (ignore IN CASE WHEN ri IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END |
+                    MERGE (ri)-[r:TRACES_TO {traceLinkType: $type}]->(t)
+                    SET r.confidence = COALESCE($conf, -1.0),
+                        r.traceLinkType = $type)
+                RETURN (CASE WHEN ri IS NULL THEN 1 ELSE 0 END) AS sourceMissing,
+                       (CASE WHEN t IS NULL THEN 1 ELSE 0 END) AS targetMissing
+                """).bindAll(Map.of("sourceId", sourceId, "targetId", targetId, "type", type.name(), "conf", conf)).fetch().one().orElse(Map.of());
+    }
+
+    private final class MissingEndpointTracker {
+        private int sourceMissingCount;
+        private int targetMissingCount;
+        private final List<String> sourceMissingExamples = new ArrayList<>();
+        private final List<String> targetMissingExamples = new ArrayList<>();
+
+        void record(TraceLinkType type, String sourceId, String targetId, Map<String, Object> result) {
+            if (isMissing(result.get("sourceMissing"))) {
+                sourceMissingCount++;
+                addExample(sourceMissingExamples, type + ": " + sourceId);
+            }
+            if (isMissing(result.get("targetMissing"))) {
+                targetMissingCount++;
+                addExample(targetMissingExamples, type + ": " + targetId);
+            }
+        }
+
+        void logSummaryIfAny() {
+            if (sourceMissingCount > 0) {
+                logger.warn("saveTracelinks: {} trace link source endpoint(s) not found (examples: {})", sourceMissingCount, sourceMissingExamples);
+            }
+            if (targetMissingCount > 0) {
+                logger.warn("saveTracelinks: {} trace link target endpoint(s) not found (examples: {})", targetMissingCount, targetMissingExamples);
+            }
+        }
+
+        private static void addExample(List<String> examples, String example) {
+            if (examples.size() < 5) {
+                examples.add(example);
+            }
+        }
+
+        private static boolean isMissing(Object value) {
+            return value instanceof Number number && number.longValue() != 0;
+        }
     }
 
     /**

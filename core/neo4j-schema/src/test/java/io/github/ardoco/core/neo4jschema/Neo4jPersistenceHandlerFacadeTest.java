@@ -8,10 +8,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
@@ -26,6 +31,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jTextInconsistency;
+import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelEqualityHelper;
 import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelFactory;
 import io.github.ardoco.core.neo4jschema.util.models.CodeModelEqualityHelper;
@@ -171,6 +177,34 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         var loaded = persistenceHandler.loadArchitectureCodeTraceLinks();
         Assertions.assertTrue(loaded.stream().noneMatch(l -> l.getFirstEndpoint().getId().equals("ghost_id")));
+    }
+
+    @Test
+    @DisplayName("Facade: a trace link with a missing endpoint is counted and warned, not dropped silently")
+    void testMissingEndpointTraceLinkIsCountedAndWarned() {
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var archEntity = archModel.getEndpoints().getFirst();
+        var codeItem = codeModel.getEndpoints().getFirst();
+
+        Logger traceLinkServiceLogger = (Logger) LoggerFactory.getLogger(TraceLinkPersistenceService.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        traceLinkServiceLogger.addAppender(appender);
+        try {
+            persistenceHandler.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(archEntity, codeItem)));
+        } finally {
+            traceLinkServiceLogger.detachAppender(appender);
+        }
+
+        Long edgeCount = neo4jClient.query("""
+                MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = 'ARCHITECTURE_CODE' RETURN count(r) AS c
+                """).fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(0L);
+        Assertions.assertEquals(0L, edgeCount, "No edge must be created when an endpoint is unresolved");
+
+        boolean warned = appender.list.stream().anyMatch(event -> event.getLevel() == Level.WARN && event.getFormattedMessage().contains("source endpoint"));
+        Assertions.assertTrue(warned, "An unresolved endpoint must be logged as a WARN, not dropped silently");
     }
 
     @Test
