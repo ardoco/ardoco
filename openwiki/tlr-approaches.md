@@ -11,9 +11,6 @@ openwiki:
   invariants: ["Each approach is an ArdocoRunner whose definePipeline wires stages from stages-tlr", "Transitive SAD->Code links combine SAD->SAM and SAM->Code links via TraceLinkCombiner"]
   test_paths: [tlr/tests-tlr/src/test/java]
   validation_commands: ["mvn -pl tlr clean verify"]
-verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-28T12:10:26.118Z
 sources:
   - id: openwiki-source-655de2c71ac36c571ac56508
     resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Arcotl.java
@@ -125,7 +122,10 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/SwattrIT.java
   - id: openwiki-source-9ea0f7ce301200f534aacd64
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/TransarcIT.java
-generated: { by: "openwiki/0.6.0", at: "2026-09-28T12:10:26.118Z" }
+generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-19T11:24:11.899Z
 ---
 
 # TLR Approaches
@@ -409,7 +409,7 @@ The LLM-based approaches (ExArch, ArTEMiS, and the hybrids) share the following 
 
 ### ArTEMiS: NAER-based NER and matching
 
-`NerConnectionGenerator` depends on `io.github.ardoco:named-architecture-entity-recognition:2.0.0` (NAER, declared in `connection-generator-ner/pom.xml`). `NerInformant` builds a `SoftwareArchitectureDocumentation` from the simple text, creates an uncached chat model from the runner's `LargeLanguageModel`, and runs NAER's `NamedEntityRecognizer` with a two-part prompt (`TwoPartPrompt`: a detailed component-identification task prompt plus a JSON formatting prompt). Candidate model endpoint names from the architecture model (component vs. interface, by type string) scope the recognition; NAER results are sorted by name to keep the output order deterministic, although the informant is annotated `@Deterministic("Currently not fully deterministic due to NAER.")`. The recognized `NamedArchitectureEntity`s (name, alternative names, 1-based occurrence lines) are stored in the per-metamodel `NerConnectionState`.
+`NerConnectionGenerator` depends on `io.github.ardoco:named-architecture-entity-recognition:2.1.0` (NAER, declared in `connection-generator-ner/pom.xml`). `NerInformant` builds a `SoftwareArchitectureDocumentation` from the simple text, creates an uncached chat model from the runner's `LargeLanguageModel`, and runs NAER's `NamedEntityRecognizer` with a two-part prompt (`TwoPartPrompt`: a detailed component-identification task prompt plus a JSON formatting prompt). Candidate model endpoint names from the architecture model (component vs. interface, by type string) scope the recognition; NAER results are sorted by name to keep the output order deterministic, although the informant is annotated `@Deterministic("Currently not fully deterministic due to NAER.")`. The recognized `NamedArchitectureEntity`s (name, alternative names, 1-based occurrence lines) are stored in the per-metamodel `NerConnectionState`.
 
 `NerConnectionInformant` matches each NAE against model endpoints in three escalating phases: (1) strong word similarity on name and alternative names via `SimilarityUtils`; (2) weak similarity on name parts (whitespace/camel-case splits); (3) embedding similarity using OpenAI `text-embedding-3-large` with cosine similarity ≥ `0.6` (`EMBEDDING_SIMILARITY_THRESHOLD`) — this phase requires `OPENAI_API_KEY` and throws otherwise. Each occurrence of a matched NAE becomes a trace link with `DEFAULT_PROBABILITY = 0.92`; unmatched NAEs are recorded as `unlinkedNamedArchitectureEntities`.
 
