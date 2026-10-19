@@ -17,6 +17,10 @@ public interface SimpleTextRepository extends Neo4jRepository<SimpleTextNode, St
 
     boolean existsByIdentifier(String identifier);
 
-    @Query("MATCH (s:SimpleText {identifier: $id}) DETACH DELETE s")
+    @Query("""
+            MATCH (s:SimpleText {identifier: $id})
+            OPTIONAL MATCH (s)-[:HAS_SENTENCE]->(sentence:Sentence)
+            DETACH DELETE s, sentence
+            """)
     void deleteByIdentifier(@Param("id") String id);
 }

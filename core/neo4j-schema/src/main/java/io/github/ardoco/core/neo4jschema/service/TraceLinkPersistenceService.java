@@ -155,6 +155,9 @@ public class TraceLinkPersistenceService {
     private String getEndpointId(Object endpoint) {
         if (endpoint instanceof SentenceEntity se) {
             Sentence s = se.getSentence();
+            if (s.getWords().isEmpty() && s.getPhrases().isEmpty() && s.getText().equals(String.valueOf(s.getSentenceNumber()))) {
+                return "simpletext-sentence-" + s.getSentenceNumber();
+            }
             return s.getSentenceNumber() + String.valueOf(s.getText().hashCode());
         }
         if (endpoint instanceof RecommendedInstance ri) {
