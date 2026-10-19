@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.service.AiServices;
+import edu.kit.kastel.mcse.ardoco.core.common.readonlytools.CodeModelReadOnlyTools;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
-import edu.kit.kastel.mcse.ardoco.id.informants.llmagents.CodeModelReadOnlyTools;
 import edu.kit.kastel.mcse.ardoco.id.informants.llmagents.ProgrammingLanguageValidationLlmAgent;
 import edu.kit.kastel.mcse.ardoco.id.informants.llmagents.ProgrammingLanguageValidationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
@@ -17,6 +17,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 public class CodeModelProgrammingLanguageInconsistencyInformant extends AbstractProgrammingLanguageInconsistencyInformant {
 
     private static final Logger logger = LoggerFactory.getLogger(CodeModelProgrammingLanguageInconsistencyInformant.class);
+    private static final int MAX_VALIDATION_RETRIES = 3;
 
     private final ProgrammingLanguageValidationLlmAgent validationAgent;
 
@@ -37,7 +38,18 @@ public class CodeModelProgrammingLanguageInconsistencyInformant extends Abstract
     @Override
     protected ProgrammingLanguageValidationResult validateProgrammingLanguageStatement(String namedEntityOccurrence, String programmingLanguageName,
             String fullDocumentationText, String sentenceText) {
-        return validationAgent.validateProgrammingLanguageStatementAgainstCodeModel(namedEntityOccurrence, programmingLanguageName, fullDocumentationText,
-                sentenceText);
+        IllegalArgumentException lastIllegalArgumentException = null;
+
+        for (int attempt = 1; attempt <= MAX_VALIDATION_RETRIES; attempt++) {
+            try {
+                return validationAgent.validateProgrammingLanguageStatementAgainstCodeModel(namedEntityOccurrence, programmingLanguageName,
+                        fullDocumentationText, sentenceText);
+            } catch (IllegalArgumentException e) {
+                lastIllegalArgumentException = e;
+                logger.warn("Validation failed. Retrying ({}/{}).", attempt, MAX_VALIDATION_RETRIES, e);
+            }
+        }
+
+        throw lastIllegalArgumentException;
     }
 }

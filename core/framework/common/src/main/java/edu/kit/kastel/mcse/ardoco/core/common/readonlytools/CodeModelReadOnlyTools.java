@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.id.informants.llmagents;
+package edu.kit.kastel.mcse.ardoco.core.common.readonlytools;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;

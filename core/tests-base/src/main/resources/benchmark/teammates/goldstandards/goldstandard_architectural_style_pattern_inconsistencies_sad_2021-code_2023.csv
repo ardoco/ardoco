@@ -1,0 +1,14 @@
+line,pattern/style,valid
+7,rest,true
+20,dto,true
+22,mvc,true
+36,template method,true
+44,factory,true
+66,factory,true
+88,facade class,true
+126,dto,true
+127,dto,true
+159,dto,true
+160,dto,true
+174,dto,true
+185,rest,true

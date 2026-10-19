@@ -1,4 +1,4 @@
-package edu.kit.kastel.mcse.ardoco.id.informants.llmagents;
+package edu.kit.kastel.mcse.ardoco.core.common.readonlytools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
