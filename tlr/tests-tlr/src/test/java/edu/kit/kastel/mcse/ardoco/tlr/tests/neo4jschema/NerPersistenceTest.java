@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -24,6 +25,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
+import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
 
 /**
  * Unit-style Neo4j Desktop tests for NER dual-write / load APIs (Phase 3).
@@ -96,6 +98,86 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         var loaded = persistenceHandler.loadNerTraceLinks(mm, occurrencesById, modelEntitiesById);
         assertThat(loaded).hasSize(1);
         assertThat(loaded.iterator().next().getSecondEndpoint().getId()).isEqualTo(component.getId());
+
+        pauseForNeo4jInspection();
+    }
+
+    @Test
+    @DisplayName("NER_ARCHITECTURE link confidence round-trips through the batched save path")
+    void testNerArchitectureTraceLinkConfidenceRoundTrip() {
+        PersistenceBridge.setHandler(persistenceHandler);
+        PersistenceBridge.getInstance()
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
+                        "PersistenceBridge::persistNerConnection", "true"));
+
+        Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+        UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, mm);
+        ArchitectureModel architectureModel = extractor.extractModel();
+        persistenceHandler.saveModel(mm, architectureModel);
+        ArchitectureComponent component = (ArchitectureComponent) architectureModel.getEndpoints().get(0);
+
+        var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
+        var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
+        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), mm, false);
+
+        double confidence = 0.73;
+        var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component, NounMappingMapper.RESUME_CLAIMANT, confidence);
+        assertThat(persistenceHandler.saveTraceLinks(List.of(link))).isTrue();
+
+        double storedConfidence = neo4jClient.query("""
+                MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = 'NER_ARCHITECTURE'
+                RETURN r.confidence AS c
+                """)
+                .fetch()
+                .one()
+                .map(row -> ((Number) row.get("c")).doubleValue())
+                .orElse(-1.0);
+        assertThat(storedConfidence).isEqualTo(confidence);
+
+        SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById = new TreeMap<>();
+        occurrencesById.put(occurrence.getId(), occurrence);
+        SortedMap<String, ModelEntity> modelEntitiesById = new TreeMap<>();
+        modelEntitiesById.put(component.getId(), component);
+
+        var loaded = persistenceHandler.loadNerTraceLinks(mm, occurrencesById, modelEntitiesById);
+        assertThat(loaded).hasSize(1);
+        assertThat(loaded.iterator().next().getConfidence()).isEqualTo(confidence);
+
+        pauseForNeo4jInspection();
+    }
+
+    @Test
+    @DisplayName("Unlinked NamedArchitectureEntity is stored as unlinked, has no NER_ARCHITECTURE edge, and loads back as unlinked")
+    void testUnlinkedNerEntityRoundTrip() {
+        PersistenceBridge.setHandler(persistenceHandler);
+        PersistenceBridge.getInstance()
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
+                        "PersistenceBridge::persistNerConnection", "true"));
+
+        Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+        var occurrence = new NamedArchitectureEntityOccurrence("Logger", 5);
+        var entity = new NamedArchitectureEntity("Logger", new TreeSet<>(List.of("Log")), List.of(occurrence));
+
+        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), mm, true);
+
+        Boolean storedUnlinked = neo4jClient.query("MATCH (n:NamedArchitectureEntity {ardocoId: $id}) RETURN n.unlinked AS unlinked")
+                .bindAll(Map.of("id", entity.getId()))
+                .fetch()
+                .one()
+                .map(row -> (Boolean) row.get("unlinked"))
+                .orElse(null);
+        assertThat(storedUnlinked).isTrue();
+
+        long nerEdges = countNerArchitectureLinks();
+        assertThat(nerEdges).isEqualTo(0L);
+
+        var loadedUnlinked = persistenceHandler.loadNamedArchitectureEntities(mm, true);
+        assertThat(loadedUnlinked).hasSize(1);
+        assertThat(loadedUnlinked.iterator().next().getName()).isEqualTo("Logger");
+
+        var loadedLinked = persistenceHandler.loadNamedArchitectureEntities(mm, false);
+        assertThat(loadedLinked).isEmpty();
 
         pauseForNeo4jInspection();
     }
