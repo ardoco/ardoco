@@ -3,12 +3,15 @@ type: reference
 title: Testing & Evaluation
 description: Map of ARDoCo's test and evaluation infrastructure — the shared ArchUnit rule suites in core/tests-base, benchmark-driven TLR and ID integration tests with gold standards and ExpectedResults gating, env-gated test selection, the inconsistency-detection hold-back harness, and module-scoped run recipes.
 tags: [testing, evaluation, archunit, benchmark, integration-tests, ci]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-20b031951a024a0cdd9ef7cb
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/RepositoryHandler.java
+  - id: openwiki-source-b87213e4150499aabb82ac88
+    resource: repo://core/pipeline-core/pom.xml
+  - id: openwiki-source-69f922ab00b4f597bd9e4dde
+    resource: repo://core/pipeline-core/src/test/java/edu/kit/kastel/mcse/ardoco/core/execution/CodeRunnerBaseTest.java
+  - id: openwiki-source-bc4139cef7a29a3475d1483d
+    resource: repo://core/pipeline-core/src/test/java/edu/kit/kastel/mcse/ardoco/core/execution/RunnerBaseTest.java
   - id: openwiki-source-b0f594a7d3e6330bcef64b54
     resource: repo://core/tests-base/pom.xml
   - id: openwiki-source-5516bc70f5d673966ceb52b5
@@ -27,6 +30,10 @@ sources:
     resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/ExpectedResults.java
   - id: openwiki-source-5e8f23c888959e5684de6689
     resource: repo://core/tests-base/src/main/resources/archunit.properties
+  - id: openwiki-source-2716f8b0e6cb2c55d3124163
+    resource: repo://inconsistency-detection/pipeline-id/pom.xml
+  - id: openwiki-source-38233c8fee5ee99c11cba733
+    resource: repo://inconsistency-detection/pipeline-id/src/test/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ArDoCoForInconsistencyDetectionTest.java
   - id: openwiki-source-e606e5b567b52ead1b70009a
     resource: repo://inconsistency-detection/tests-inconsistency/pom.xml
   - id: openwiki-source-e1a7a3345443ffee8c4d9c44
@@ -47,8 +54,14 @@ sources:
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java
   - id: openwiki-source-c9530f5e893d970e1910ab0c
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/InconsistencyDetectionTask.java
+  - id: openwiki-source-40ef335ff207fb6e089b0f1d
+    resource: repo://inconsistency-detection/update_integration_tests.sh
   - id: openwiki-source-2355f81d7cf522f8dbdaabd4
     resource: repo://pom.xml
+  - id: openwiki-source-088be4109ab13c708d7c7ef7
+    resource: repo://tlr/pipeline-tlr/pom.xml
+  - id: openwiki-source-af15dcd6a61b1236c72a2cf6
+    resource: repo://tlr/pipeline-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/execution/runner/SwattrTest.java
   - id: openwiki-source-95e8799b9bfbe3dd6c790802
     resource: repo://tlr/tests-tlr/pom.xml
   - id: openwiki-source-e7c4e61562d45daeb76f25f7
@@ -65,12 +78,20 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArcotlIT.java
   - id: openwiki-source-82abacbda65ba84b59c05bbd
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisInExArchIT.java
+  - id: openwiki-source-ab15ebf193bf8c6f9d48e5fa
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisInTransarcIT.java
   - id: openwiki-source-beb18ecda062904e345893cd
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
+  - id: openwiki-source-251110adf8b69fa52d15d8f8
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/AbstractDocumentationToCodeTlrEvaluation.java
   - id: openwiki-source-a9e06844322a36514a81e6ae
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/AbstractEvaluation.java
   - id: openwiki-source-849d91617680f3d7b15c1d01
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ArcotlEvaluation.java
+  - id: openwiki-source-7d6025bffe24ba48dd1d4926
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ArtemisInTransarcEvaluation.java
+  - id: openwiki-source-23b04a7bd0aaa57cdec14dc7
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ExArchEvaluation.java
   - id: openwiki-source-5c72ab1422c834f2ca5a7b10
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/SwattrEvaluation.java
   - id: openwiki-source-f4aa43830655fb133573851b
@@ -79,9 +100,20 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/SwattrAiIT.java
   - id: openwiki-source-9ea0f7ce301200f534aacd64
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/TransarcIT.java
+  - id: openwiki-source-5fadec7330a40970e5124fb0
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToArchitectureModelTlrTask.java
+  - id: openwiki-source-c7a2846e1da521b78ab14fc3
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToCodeTlrTask.java
+  - id: openwiki-source-5a69702f34324d7658839da8
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToModelToCodeTlrTask.java
+  - id: openwiki-source-d19461ab0a6f48910bc790d3
+    resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/ModelToCodeTlrTask.java
   - id: openwiki-source-14f886f1a214908e7068814d
     resource: repo://tlr/update_integration_tests.sh
-generated: { by: "openwiki/0.7.0", at: "2026-10-05T12:50:45.506Z" }
+generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-19T11:24:11.899Z
 ---
 
 # Testing & Evaluation
@@ -96,18 +128,18 @@ ARDoCo's tests serve two purposes: they *check* the implementation (unit, archit
 | `tests-tlr` | [`tlr/tests-tlr`](../tlr/tests-tlr/pom.xml) | TLR integration/evaluation tests (`*IT.java`) for all approaches, plus module-local subclasses of the shared ArchUnit suites |
 | `tests-inconsistency` | [`inconsistency-detection/tests-inconsistency`](../inconsistency-detection/tests-inconsistency/pom.xml) | The ID hold-back evaluation harness and baseline, plus module-local subclasses of the shared ArchUnit suites |
 
-`tests-tlr` and `tests-inconsistency` declare `tests-base` as a **test-scoped** dependency and bind the `maven-failsafe-plugin` (root POM, version 3.5.6, goals `integration-test` + `verify` at the `integration-test` phase), so `mvn verify` runs both Surefire unit/ArchUnit tests and Failsafe integration tests.
+`tests-tlr` and `tests-inconsistency` declare `tests-base` as a **test-scoped** dependency and bind the `maven-failsafe-plugin` (root POM, version 3.5.6, goals `integration-test` + `verify` at the `integration-test` phase), so `mvn verify` runs both Surefire unit/ArchUnit tests and Failsafe integration tests. In addition to these three test modules, the pipeline modules (`pipeline-core`, `pipeline-tlr`, `pipeline-id`) each carry a few runner smoke tests in their own `src/test` trees — see [Runner Smoke Tests in the Pipeline Modules](#runner-smoke-tests-in-the-pipeline-modules).
 
 ## Shared Rule Suites in `core/tests-base`
 
-A structural quirk that matters when editing these files: the ArchUnit suites live in **`src/main`**, not `src/test`. They compile into the regular `tests-base` jar (with compile-scoped `archunit-junit5`, `junit-jupiter-*`, `io.github.ardoco:metrics`, and `reflections` dependencies) so that every other module can consume them on its own test classpath. They are never executed in `tests-base` itself.
+A structural quirk that matters when editing these files: the ArchUnit suites live in **`src/main`**, not `src/test`. They compile into the regular `tests-base` jar (with compile-scoped `archunit-junit5`, `junit-jupiter-*`, `io.github.ardoco:metrics`, and `reflections` dependencies) so that every other module can consume them on its own test classpath. They are never executed in `tests-base` itself (the module has no test tree).
 
-- **`ArchitectureTest`** — enforces the product architecture. The `layerRule` defines the layers `Common` (common/data/api/tests packages), `TextExtractor`, `ModelExtractor`, `RecommendationGenerator`, `ConnectionGenerator`, `InconsistencyDetection` (`..inconsistency..`/`..id..`), `CodeTraceability`, `Pipeline`, and `Execution`, restricting which layers may access which. Additional rules: execution classes are only used by execution and test code; classes named `Model` are only used after model extraction; classes whose simple name ends in `Link` are only used after the connection generator, and `*Link` naming is confined to the `tracelink`, `codetraceability`, and `connectiongenerator` packages; `Inconsistency`-named classes are only used after inconsistency detection.
+- **`ArchitectureTest`** — enforces the product architecture. The `layerRule` defines the layers `Common` (common/data/api/tests packages), `TextExtractor`, `ModelExtractor`, `RecommendationGenerator`, `ConnectionGenerator`, `InconsistencyDetection` (`..inconsistency..`/`..id..`), `CodeTraceability`, `Pipeline`, and `Execution`, restricting which layers may access which (e.g., `Execution` may only be accessed by `Common` — needed for tests — and the detection layer may only be accessed by `Pipeline`, `Common`, and `Execution`). Additional rules: execution classes are only used by execution and test code; classes named `Model` are only used after model extraction; classes whose simple name ends in `Link` are only used after the connection generator, and `*Link` naming is confined to the `tracelink`, `codetraceability`, and `connectiongenerator` packages; `Inconsistency`-named classes are only used after inconsistency detection.
 - **`BasicArchitectureTest`** — cross-cutting rules: `@Configurable` fields may only be declared in `AbstractConfigurable` subclasses; all `TraceLink` subclasses must be `final`; `ObjectMapper` may only be constructed inside `JsonHandling`; `System.getenv` may only be called by the `Environment` utility (rule `noGetEnv`); no `forEach`/`forEachOrdered` on streams or lists ("lambdas should be functional"); and interface methods must not expose or accept JDK `List`/`Set`/`Map`/`Sorted*` raw types, preferring Eclipse Collections (outside `..metrics..`).
-- **`DeterministicArdocoTest`** — keeps pipeline runs reproducible: classes that are not directly annotated `@Deterministic` must not access `Set`/`HashSet`/Eclipse `MutableSet`/`ImmutableSet`/`Sets`/`Map`/`HashMap`/`ImmutableMap`/`Maps` (excluding `..tests..`, `..metrics..`, `..magika..`); `HashMap`/`HashSet` are forbidden outright in favor of linked versions; classes annotated `@NoHashCodeEquals` must not implement `equals`/`hashCode` (empty-should allowed); classes implementing `Comparable` directly must implement both `equals` and `hashCode`; and sorted collection fields/returns may only be parameterized with `Comparable` types.
+- **`DeterministicArdocoTest`** — keeps pipeline runs reproducible: classes that are not directly annotated `@Deterministic` must not access `Set`/`HashSet`/Eclipse `MutableSet`/`ImmutableSet`/`Sets`/`Map`/`HashMap`/`MutableMap`/`ImmutableMap`/`Maps` (excluding `..tests..`, `..metrics..`, `..magika..`); `HashMap`/`HashSet` are forbidden outright in favor of linked versions; classes annotated `@NoHashCodeEquals` must not implement `equals`/`hashCode`; classes implementing `Comparable` directly must implement both `equals` and `hashCode`; and sorted collection fields/returns may only be parameterized with `Comparable` types.
 - **`ConfigurationTestBase`** — uses Reflections to find every concrete `AbstractConfigurable` subclass under `edu.kit.kastel.mcse.ardoco`, validates that all `@Configurable` fields are neither `final` nor `static`, and prints the complete default configuration in `key=value` form. It is assertion-framework agnostic (abstract `assertFalse`/`fail` hooks) so each module binds it to JUnit.
 - **`ExpectedResults`** — a record of six minimum metrics (`precision`, `recall`, `f1`, `accuracy`, `phiCoefficient`, `specificity`) used by every benchmark evaluation.
-- **`EvaluationHelper`** — loads classpath resources (benchmark files) into temporary files, since the extraction APIs take `File` arguments.
+- **`EvaluationHelper`** — loads classpath resources (benchmark files) into temporary files (marked `deleteOnExit`), since the extraction APIs take `File` arguments.
 - **`archunit.properties`** — sets `archRule.failOnEmptyShould=false`, so a rule that matches nothing on a given module's classpath does not fail that module.
 
 ## Re-enabling the Suites per Module
@@ -129,21 +161,22 @@ Two access paths exist for code:
 - `getCodeModelFromResources()` returns the cached ACM fixture — fast, deterministic, used by default (e.g., `ArcotlEvaluation`/`TransarcEvaluation` with `CodeConfigurationType.ACM_FILE`, and `ArdocodeEvaluation` always).
 - `getCodeDirectory()` shallow-clones the GitHub repository into `$TMPDIR/ARDoCo/<PROJECT>` via `RepositoryHandler.shallowCloneRepository` (clone with depth 1, unshallow + checkout of the pinned commit if the fetched tip differs) and is only used by the `testCodeFull`-gated full-clone variants.
 
-Per-approach task enums resolve the remaining inputs: `DocumentationToArchitectureModelTlrTask` (SAD→SAM gold standard CSVs: sentence number ↔ model element id), `ModelToCodeTlrTask` (SAM→Code CSVs: architecture id ↔ code path; entries ending in `/` are packages), `DocumentationToCodeTlrTask`, and `DocumentationToModelToCodeTlrTask`. The ID side uses `InconsistencyDetectionTask`, which wraps an `EvaluationProject` and adds the sentence-to-architecture gold standard, the `*_UME.csv` unmentioned-model-elements gold standard, a filter-list configuration (e.g., `/configurations/ms/filterlists_all.txt`), and its `ExpectedResults`.
+Per-approach task enums resolve the remaining inputs: `DocumentationToArchitectureModelTlrTask` (SAD→SAM gold standard CSVs: sentence number ↔ model element id), `ModelToCodeTlrTask` (SAM→Code CSVs: architecture id ↔ code path; entries ending in `/` are packages), `DocumentationToCodeTlrTask` and `DocumentationToModelToCodeTlrTask` (sentence number ↔ code path), and `DocumentationToModelToCodeTlrTask` additionally exposes the architecture model for TransArC. The ID side uses `InconsistencyDetectionTask`, which wraps an `EvaluationProject` and adds the sentence-to-architecture gold standard, the `*_UME.csv` unmentioned-model-elements gold standard, a filter-list configuration (e.g., `/configurations/ms/filterlists_all.txt`), and its `ExpectedResults`.
 
 ## How Evaluation Metrics Work
 
 All comparisons funnel through `ClassificationMetricsCalculator` from the `io.github.ardoco:metrics` library (the [ardoco/evaluator](https://github.com/ardoco/evaluator) code, pulled in by `tests-base`). A test converts results and gold standard into sorted string sets, then asks the calculator for a `SingleClassificationResult` with an explicit **confusion matrix denominator**:
 
-- ID TEAM evaluation: the number of sentences in the text.
-- SAD-SAM TLR (`SwattrEvaluation`): sentences × architecture model endpoints.
-- SAD-SAM-Code TLR (`ArcotlEvaluation`, TransArC): code model endpoints × architecture model endpoints.
+- ID TEAM evaluation (`InconsistencyDetectionEvaluationUtil.compareInconsistencies`): the number of sentences in the text.
+- SAD-SAM TLR (`SwattrEvaluation`, `ArtemisEvaluation`): sentences × architecture model endpoints (`ArtemisEvaluation` counts the lines of the preprocessed text).
+- SAM-Code TLR (`ArcotlEvaluation`): code model endpoints × architecture model endpoints.
+- Documentation-to-Code TLR (`AbstractDocumentationToCodeTlrEvaluation`, the shared base of `ArdocodeEvaluation`, `TransarcEvaluation`, `ExArchEvaluation`, `ArtemisInTransarcEvaluation`, and `ArtemisInExArchEvaluation`): input text lines × code model endpoints.
 
-For code-based TLR the gold standard is *enrolled* first (`AbstractEvaluation.enrollGoldStandard`): a gold entry whose code id ends in `/` is a package and is expanded into one link per code-model endpoint under that path. Multiple per-run results are aggregated with micro/weighted/macro averages into an `AggregatedClassificationResult`.
+For code-based TLR the gold standard is *enrolled* first (`AbstractEvaluation.enrollGoldStandard`): a gold entry whose code id ends in `/` is a package and is expanded into one link per code-model endpoint whose path starts with that prefix. Multiple per-run results are aggregated with micro/weighted/macro averages into an `AggregatedClassificationResult`.
 
 ## TLR Integration Tests (`tests-tlr`)
 
-`AbstractArdocoIT` switches ardoco-core logging to `info` for the test class and provides `averageAndLog`, which averages repeated runs per metric and logs `mean ± stddev` — the coping mechanism for LLM nondeterminism in ArTEMiS/ExArch. The per-approach `*Evaluation` classes (in `integration/evaluation/`) build the runner, run it, compare trace links against the gold standard, log results alongside the expected minimums, and call `compareResults`.
+`AbstractArdocoIT` switches ardoco-core logging to `info` for the test class (restoring `error` in `@AfterAll`) and provides `averageAndLog`, which averages repeated runs per metric and logs `mean ± stddev` — the coping mechanism for LLM nondeterminism in ArTEMiS/ExArch. The per-approach `*Evaluation` classes (in `integration/evaluation/`) build the runner, run it, compare trace links against the gold standard, log results alongside the expected minimums, and call `compareResults`.
 
 | Test | Approach | Runs when |
 |------|----------|-----------|
@@ -151,9 +184,9 @@ For code-based TLR the gold standard is *enrolled* first (`AbstractEvaluation.en
 | `ArdocodeIT` | ARDoCode (SAD-Code, ACM fixture) | always |
 | `ArcotlIT` | ArCoTL (SAM-Code, ACM fixture) | always; full-clone variant gated by `testCodeFull` |
 | `TransarcIT` | TransArC (SAD-SAM-Code, ACM fixture) | always; full-clone variant gated by `testCodeFull` |
-| `SwattrAiIT` | SWATTR fed pre-generated LLM component listings (`ModelFormat.COMPONENT_LISTING` from `src/test/resources/..._from_docs.txt`) | always; disables metric assertions, writes to `target/testout-tlr-it-llm` |
+| `SwattrAiIT` | SWATTR fed pre-generated LLM component listings (`ModelFormat.COMPONENT_LISTING` from `src/test/resources/..._from_docs.txt`, MediaStore and BigBlueButton) | always; disables metric assertions, writes to `target/testout-tlr-it-llm` |
 | `ArtemisIT` | ArTEMiS (SAD-SAM via LLM NER) | `OPENAI_API_KEY` or `OLLAMA_HOST` set **and** not on CI |
-| `ArtemisInTransarcIT` | ArTEMiS NER inside TransArC | `OPENAI_API_KEY` or `OLLAMA_HOST` set **and** not on CI |
+| `ArtemisInTransarcIT` | ArTEMiS NER inside TransArC (NER LLM fixed to `GPT_5`, results logged without metric assertions) | `OPENAI_API_KEY` or `OLLAMA_HOST` set **and** not on CI |
 | `ExArchIT`, `ArtemisInExArchIT` | ExArch variants | `@Disabled("Only for manual execution")`, also LLM-gated and CI-skipped |
 
 ```mermaid
@@ -174,9 +207,20 @@ flowchart TD
 Details worth knowing:
 
 - The full-clone variants (`evaluateSamCodeTlrITFull`, `evaluateSadSamCodeTlrITFull`) first call `RepositoryHandler.removeRepository` on the cached code directory so the pinned commit is genuinely re-cloned from GitHub, then evaluate with `CodeConfigurationType.DIRECTORY`.
-- `ArtemisIT` parameterizes over the cross product of all non-generic `LargeLanguageModel` values × `ArtemisEvaluationProject` via a `@MethodSource`. A `@BeforeAll` assumption requires `OPENAI_API_KEY` or `OLLAMA_HOST`; because `checkLlmProvision` only accepts an OpenAI key, an Ollama-only setup passes the class-level assumption but each test logs a skip. Setting the env variable `mutipleRuns` (sic — the typo is in the code) switches from single runs to `NUMBER_OF_RUNS = 5` repeated runs aggregated by `averageAndLog`.
-- The ArTEMiS evaluation project enums currently carry uniform `0.420` minimums for all metrics — deliberately loose, since LLM output is nondeterministic.
+- `ArtemisIT` parameterizes over the cross product of all non-generic `LargeLanguageModel` values × `ArtemisEvaluationProject` via a `@MethodSource`; the `ArtemisEvaluation` path asserts against the project's (loose) minimums. `ArtemisInTransarcIT` instead runs per `TransarcEvaluationProject` with the NER LLM fixed to `GPT_5` and only logs its results. A `@BeforeAll` assumption in both classes requires `OPENAI_API_KEY` or `OLLAMA_HOST`; because `checkLlmProvision` only accepts an OpenAI key, an Ollama-only setup passes the class-level assumption but each test logs a skip. Setting the env variable `mutipleRuns` (sic — the typo is in the code) switches both classes from single runs to `NUMBER_OF_RUNS = 5` repeated runs aggregated by `averageAndLog`.
+- The ArTEMiS evaluation project enums (`ArtemisEvaluationProject`) currently carry uniform `0.420` minimums for all metrics — deliberately loose, since LLM output is nondeterministic; the TransArC/ExArch LLM variants skip metric assertions entirely.
 - The ExArch ITs exist mainly to produce comparison tables: `ExArchIT` collects results per project × LLM in an `@AfterAll` and prints a LaTeX-style P/R/F1 row per LLM with macro and weighted averages.
+
+## Runner Smoke Tests in the Pipeline Modules
+
+Separate from the evaluation ITs, the pipeline modules carry a small set of **runner smoke tests** under Surefire. They build on `RunnerBaseTest`, shipped in the `pipeline-core` **test-jar** (`core/pipeline-core` attaches a test-jar and installs it as classifier `tests`): the base class copies the TeaStore fixtures (text, PCM `.repository`, UML, `additionalConfig.txt`) into a fresh temp directory per test class, cleans `target/testout-<TestClass>` in `@AfterEach`, and exposes `testRunnerAssertions` (runner exists and `isSetUp()`); subclasses `setUp(...)` a concrete `ArdocoRunner` and assert that `run()` completes with a non-null result.
+
+- `CodeRunnerBaseTest` adds a TeaStore `codeModel.acm` `CodeConfiguration`; when the environment variable `testCodeFull` is set it switches to a full shallow clone of the TeaStore repository at a pinned commit instead — the second consumer of the `testCodeFull` gate.
+- The TLR tree wires the base classes in via a test-scoped `pipeline-core` `test-jar` dependency (`tlr/pipeline-tlr/pom.xml`); `inconsistency-detection/pipeline-id` obtains them through its default `test-dependencies` profile.
+- `tlr/pipeline-tlr` hosts `SwattrTest`, `ArcotlTest`, `ArdocodeTest`, and `TransarcTest`; `SwattrTest` is `@Disabled` ("other (integration) tests cover the same functionality") and the UML variants of the others are disabled for faster builds.
+- `inconsistency-detection/pipeline-id` hosts the ID runner test — the file `ArDoCoForInconsistencyDetectionTest.java` declares `InconsistencyDetectionTest extends RunnerBaseTest` and checks the `InconsistencyDetection` runner with both PCM and UML architecture models.
+
+These tests assert only that a runner sets up and completes; quality gating stays with the benchmark evaluations above.
 
 ## ID Hold-Back Evaluation Harness (`tests-inconsistency`)
 
@@ -207,7 +251,7 @@ The detection logic these tests exercise is described in [Inconsistency Detectio
 
 ## Running the Tests
 
-All commands work from the repository root (the root POM aggregates `core`, `tlr`, and `inconsistency-detection`); `.mvn/maven.config` already enables parallel builds and tests (see [Operations](operations.md)).
+All commands work from the repository root (the root POM aggregates `core`, `tlr`, and `inconsistency-detection`; each tree's own `.mvn/maven.config` additionally enables parallel builds and tests when you invoke Maven inside a tree — see [Operations](operations.md)). CI runs `mvn verify` through the shared `ardoco/actions` Maven workflow (`verify.yml`, `with-submodules: true`, no publish secrets), so the unconditional benchmark ITs are the effective CI coverage and every env-gated variant skips gracefully because its variables are absent on the runner.
 
 ```bash
 # Everything: unit + ArchUnit + integration tests (gated ones skip without env)
@@ -239,11 +283,11 @@ OPENAI_API_KEY=... mvn -pl tlr clean verify
 mvn -pl tlr test -Dtest='ArchitectureTest,DeterministicArdocoTest,ConfigurationTest'
 ```
 
-Only the `testCodeFull` full-clone variants of the ArCoTL/TransArC evaluations need network access — they clone from GitHub at the pinned commit on first execution and cache the result under `$TMPDIR/ARDoCo/<PROJECT>`; all other evaluations run purely from bundled resources.
+Network access is only needed by the `testCodeFull`-gated full-clone variants: the ArCoTL/TransArC evaluation ITs clone from GitHub at the pinned commit on first execution and cache the result under `$TMPDIR/ARDoCo/<PROJECT>`, and the pipeline runner smoke tests likewise clone the TeaStore repository when `testCodeFull` is set. All other evaluations run purely from bundled resources.
 
 ## Keeping Test Trees in Sync
 
-The `tlr/tests-tlr` test tree is synced from the separate [ardoco/IntegrationTests](https://github.com/ardoco/IntegrationTests) repository via [`tlr/update_integration_tests.sh`](../tlr/update_integration_tests.sh), which adds the `integrationTests` remote, fetches `main`, and runs `git subtree pull --prefix tests/integration-tests integrationTests main --squash` (note the prefix as written; the script ends with an interactive pause).
+The `tlr/tests-tlr` test tree is synced from the separate [ardoco/IntegrationTests](https://github.com/ardoco/IntegrationTests) repository via [`tlr/update_integration_tests.sh`](../tlr/update_integration_tests.sh), which adds the `integrationTests` remote, fetches `main`, and runs `git subtree pull --prefix tests/integration-tests integrationTests main --squash` (note the prefix as written; the script ends with an interactive pause). The `inconsistency-detection` tree carries an identical [`update_integration_tests.sh`](../inconsistency-detection/update_integration_tests.sh) for the same subtree sync of its test tree.
 
 ## The `ExpectedResults` Invariant
 

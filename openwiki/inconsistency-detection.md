@@ -11,9 +11,6 @@ openwiki:
   invariants: ["InconsistencyChecker runs after the SWATTR connection pipeline", "TEAM flags text entities with no trace link; MEAT flags model entities with insufficient trace links"]
   test_paths: [inconsistency-detection/stages-id/inconsistency-detection/src/test/java, inconsistency-detection/tests-inconsistency/src/test/java]
   validation_commands: ["mvn -pl inconsistency-detection clean verify"]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-b0f594a7d3e6330bcef64b54
     resource: repo://core/tests-base/pom.xml
@@ -65,7 +62,10 @@ sources:
     resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java
   - id: openwiki-source-02915942e497a9802282dcbf
     resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java
-generated: { by: "openwiki/0.7.0", at: "2026-10-05T12:50:45.506Z" }
+generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-19T11:24:11.899Z
 ---
 
 # Inconsistency Detection
@@ -87,7 +87,7 @@ Elements described in the documentation that cannot be traced to any model eleme
 
 **Detection logic** (`minSupport` configurable, default `1`):
 
-1. Read the recommended instances that `InitialInconsistencyAgent` copied into the inconsistency state (already reduced by the pre-filters).
+1. Read the recommended instances that `InitialInconsistencyAgent` copied into the inconsistency state (already reduced by the pre-filters), for each metamodel of `ModelStates`.
 2. Remove every recommended instance that participates in a trace link, i.e., that appears as the first endpoint of an instance link in `ConnectionState.getInstanceLinks()`.
 3. Additionally remove candidates whose words overlap with any linked recommended instance (they describe the same concept that is already linked).
 4. Remaining candidates become `MissingElementInconsistencyCandidate`s with `ELEMENT_WITH_NO_TRACE_LINK` support; candidates that overlap each other accumulate `MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES` support.
@@ -104,9 +104,9 @@ Model elements that have no (or insufficient) corresponding documentation.
 
 **Detection logic**:
 
-1. Collect the distinct model entities that appear as second endpoints of instance links.
+1. Collect the distinct model entities that appear as second endpoints of instance links, per metamodel of `ModelStates`.
 2. Walk all `Model.getEndpoints()` and keep entities of a targeted type whose link count is below `minimumNeededTraceLinks` (default `1`).
-3. Remove whitelist matches: a whitelist entry is a regex that must **fully match** the entity name or any of its name parts; matching entities are excluded.
+3. Remove whitelist matches: a whitelist entry is a regex that must **fully match** the entity name or any of its name parts; matching entities are excluded (the helper is `static` and directly unit-tested).
 4. Each remaining candidate becomes one `ModelEntityAbsentFromTextInconsistency`.
 
 **Configuration options**:
@@ -126,7 +126,7 @@ flowchart TD
     F1 --> F2["OccasionFilter"]
     F2 --> F3["UnwantedWordsFilter"]
     F3 --> TEAM["TextEntityAbsentFromModelInconsistencyAgent"]
-    F3 --> MEAT["ModelEntityAbsentFromTextInconsistencyAgent"]
+    F3 -.->|"runs after"| MEAT["ModelEntityAbsentFromTextInconsistencyAgent"]
     CS["ConnectionState instance links"] --> TEAM
     CS --> MEAT
     MS["ModelStates model endpoints"] --> MEAT
@@ -136,20 +136,21 @@ flowchart TD
     MI --> ST
 ```
 
-*Data flow through the `InconsistencyChecker`: recommended instances are pre-filtered by three informants before the TEAM and MEAT agents write inconsistencies into the per-metamodel inconsistency state.*
+*Agent order and data flow in the `InconsistencyChecker`: recommended instances are pre-filtered by three informants before the TEAM agent derives text inconsistencies from them; MEAT reads model endpoints and instance links directly. Both agents write into the per-metamodel inconsistency state.*
 
 ## Pipeline Entry Point
 
-The end-to-end runner is `InconsistencyDetection` (`inconsistency-detection/pipeline-id/.../execution/runner/InconsistencyDetection.java`), an `ArdocoRunner` whose `definePipeline` wires:
+The end-to-end runner is `InconsistencyDetection` (`inconsistency-detection/pipeline-id/.../execution/runner/InconsistencyDetection.java`), an `ArdocoRunner` whose `setUp` calls `definePipeline`, which:
 
 ```
 TextPreprocessingAgent → ModelProviderAgent → TextExtraction → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker
 ```
 
-This is the SWATTR trace link recovery pipeline (see [TLR Approaches](tlr-approaches.md)) with the `InconsistencyChecker` stage appended. Two details matter:
+This is the SWATTR trace link recovery pipeline (see [TLR Approaches](tlr-approaches.md)) with the `InconsistencyChecker` stage appended. Three details matter:
 
-- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` by constructing the `ArchitectureConfiguration` directly with that metamodel (unlike the TLR runners, whose `setUp` forbids a pre-set metamodel and then calls `withMetamodel(...)` itself; see [TLR Approaches](tlr-approaches.md)). Note the contrast with the SWATTR runner, which pins `ARCHITECTURE_WITH_COMPONENTS`.
+- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` by constructing the `ArchitectureConfiguration` directly with that metamodel and passing it to `ModelProviderAgent.getModelProviderAgent(...)` (unlike the TLR runners, whose `setUp` forbids a pre-set metamodel with an `IllegalArgumentException` and then calls `withMetamodel(...)` itself; see [TLR Approaches](tlr-approaches.md)). Note the contrast with the SWATTR runner, which pins `ARCHITECTURE_WITH_COMPONENTS`.
 - Blank input text is rejected up front with an `IllegalArgumentException`.
+- `definePipeline` puts the input text into the `DataRepository` itself (`DataRepositoryHelper.putInputText`) rather than adding a separate preprocessing pipeline step.
 
 The runner contract (`isSetUp` flag, `run()` vs. `runWithoutSaving()`) is documented on [Architecture](architecture.md). Because both informants read `ConnectionStates`, `ModelStates`, and `InconsistencyStates` from the shared `DataRepository`, the `InconsistencyChecker` only produces results when the upstream stages have already run.
 
@@ -163,11 +164,11 @@ The runner contract (`isSetUp` flag, `run()` vs. `runWithoutSaving()`) is docume
 2. `TextEntityAbsentFromModelInconsistencyAgent` (TEAM)
 3. `ModelEntityAbsentFromTextInconsistencyAgent` (MEAT)
 
-Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in the `DataRepository` under `InconsistencyStates.ID` (`"InconsistencyStates"`). The static factory `InconsistencyChecker.get(additionalConfigs, dataRepository)` applies configuration before execution. As with every stage, agents can be switched off via the stage's `enabledAgents` configuration (see [Architecture](architecture.md)).
+Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in the `DataRepository` under `InconsistencyStates.ID` (`"InconsistencyStates"`); this happens in `preparePipelineSteps` before any agent runs. The static factory `InconsistencyChecker.get(additionalConfigs, dataRepository)` applies configuration before execution. As with every stage, agents can be switched off via the stage's `enabledAgents` configuration (see [Architecture](architecture.md)).
 
 ### Agent 1: InitialInconsistencyAgent (Pre-filtering)
 
-`initializeState()` copies the recommended instances from the per-metamodel `RecommendationState` into the `InconsistencyState`. The agent then runs three filter informants. All of them extend the `Filter` base class, an `Informant` whose `process()` iterates the metamodels and rewrites the inconsistency state's recommended instances by calling the abstract `filterRecommendedInstances(InconsistencyState)`.
+`initializeState()` copies the recommended instances from the per-metamodel `RecommendationState` into the matching per-metamodel `InconsistencyState`. The agent then runs three filter informants. All of them extend the `Filter` base class, an `Informant` whose `process()` iterates the metamodels derived from `ModelStates`, resolves each metamodel's inconsistency state, and rewrites that state's recommended instances by calling the abstract `filterRecommendedInstances(InconsistencyState)`.
 
 | Informant | Purpose | Key defaults |
 |-----------|---------|--------------|
@@ -175,7 +176,7 @@ Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in 
 | `OccasionFilter` | Drops RIs that do not recur | `expectedAppearances=2` |
 | `UnwantedWordsFilter` | Drops RIs with unwanted words | `enableCommonBlacklist=true`, custom/common word lists, common file endings |
 
-**RecommendedInstanceProbabilityFilter**: with `dynamicThreshold=true`, the threshold is recomputed per run as `dynamicThresholdFactor × highest RI probability`. An RI survives if its probability exceeds the threshold **and** the name/type noun mapping probabilities pass one of the gates: name and type each above `thresholdNameAndTypeProbability`, or name above `thresholdNameOrTypeProbability`, or type above `thresholdNameOrTypeProbability`. (The two "or" gates compare the *same* highest type and name probabilities against `thresholdNameOrTypeProbability`, so the name gate can only fire for type mappings and vice versa — an implementation quirk of `checkProbabilitiesForNounMappingTypes`.)
+**RecommendedInstanceProbabilityFilter**: with `dynamicThreshold=true`, the threshold is recomputed per run as `dynamicThresholdFactor × highest RI probability` (calculated over the RIs the state currently holds). An RI survives if its probability exceeds the threshold **and** `checkProbabilitiesForNounMappingTypes` passes one of the three gates: highest type and highest name probability both above `thresholdNameAndTypeProbability`, or the type probability above `thresholdNameOrTypeProbability`, or the name probability above `thresholdNameOrTypeProbability`. Implementation quirk: the "name" probability is computed via `getHighestNameProbability(getTypeMappings())` rather than from the name mappings, so with the default thresholds all three gates collapse to a single test of the highest type-mapping probability against `thresholdNameAndTypeProbability`; real name mappings are never consulted and an RI without any type mapping is always dropped.
 
 **OccasionFilter**: counts how many *distinct text positions* the RI's name-mapping words occupy (consecutive word positions count as one position); the RI survives only if the count is at least `expectedAppearances`.
 
@@ -200,7 +201,7 @@ A thin `PipelineAgent` wrapper around `ModelEntityAbsentFromTextInconsistencyInf
 
 Behavioral notes:
 
-- `InconsistencyStateImpl.addInconsistency` skips duplicates (equality per inconsistency type), so repeated word-level TEAM records with identical name/sentence/confidence collapse.
+- `InconsistencyStateImpl.addInconsistency` skips duplicates (equality per inconsistency type), so repeated word-level TEAM records with identical name/sentence/confidence collapse; `setRecommendedInstances` replaces the stored list in place.
 - The pre-filters do not just remove entries; they **replace** the state's recommended instances via `setRecommendedInstances`, which is why filter order (probability → occasion → unwanted words) defines a narrowing funnel.
 - `MissingElementInconsistencyCandidate.getAmountOfSupport()` is the number of *distinct* support kinds; `equals`/`hashCode` are keyed only by the wrapped `RecommendedInstance`.
 - Of the four support kinds, only `ELEMENT_WITH_NO_TRACE_LINK` and `MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES` are currently produced; `TRACED_ELEMENT_IN_SAME_SENTENCE` and `DEPENDENCY_TO_TRACED_ELEMENT` are declared for future heuristics.

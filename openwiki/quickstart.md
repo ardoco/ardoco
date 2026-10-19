@@ -8,12 +8,11 @@ openwiki:
   source_paths: [README.md, docs/Home.md, docs/Quickstart.md, pom.xml, sample.env]
   invariants: ["Monorepo of core, tlr, and inconsistency-detection modules under parent io.github.ardoco:parent"]
   validation_commands: ["mvn clean install", "mvn -pl core clean verify", "mvn -pl tlr clean verify", "mvn -pl inconsistency-detection clean verify"]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-d558e38ccd1b08e055e4f3f5
     resource: repo://.github/workflows/docs.yml
+  - id: openwiki-source-6d3ac2bdfb0e76882a670989
+    resource: repo://.github/workflows/openwiki.yml
   - id: openwiki-source-64c4c51956e735b4f8b4f2ad
     resource: repo://core/.mvn/jvm.config
   - id: openwiki-source-85d7e1bba1ef1c69d3421831
@@ -28,6 +27,10 @@ sources:
     resource: repo://core/pom.xml
   - id: openwiki-source-e6a9915b73df8322a4b13396
     resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/BasicArchitectureTest.java
+  - id: openwiki-source-ddf1b7f2e4ba84326ad31c9f
+    resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/EvaluationProject.java
+  - id: openwiki-source-cd73574c04943e56a29dd96f
+    resource: repo://core/tests-base/src/main/resources/benchmark/README.md
   - id: openwiki-source-7d177c0f26ceaecd7fd6d232
     resource: repo://docs/Home.md
   - id: openwiki-source-a07d83c86ab5dff75745e6ce
@@ -60,7 +63,10 @@ sources:
     resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/HttpCommunicator.java
   - id: openwiki-source-6fc674d44f4df015eca8837e
     resource: repo://tlr/stages-tlr/text-preprocessing/src/main/resources/config.properties
-generated: { by: "openwiki/0.7.0", at: "2026-10-05T12:50:45.506Z" }
+generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-19T11:24:11.899Z
 ---
 
 # ARDoCo — OpenWiki Quickstart
@@ -77,7 +83,7 @@ The project is actively developed by the [MCSE group](https://mcse.kastel.kit.ed
 
 ## Repository Layout
 
-This repository is the **monorepo** containing the framework and all approaches: the pipeline and data-handling definitions as well as the individual pipeline steps, inputs, and outputs. The root POM `io.github.ardoco:parent` (version `2.1.0-SNAPSHOT` via the CI-friendly `${revision}` placeholder, MIT license) is the parent for three top-level module trees:
+This repository is the **monorepo** containing the framework and all approaches: the pipeline and data-handling definitions as well as the individual pipeline steps, inputs, and outputs. The root POM `io.github.ardoco:parent` (version `2.2.0-SNAPSHOT` via the CI-friendly `${revision}` placeholder, MIT license) is the parent for three top-level module trees:
 
 | Module | Path | Aggregator POM | Purpose | Submodules |
 |--------|------|----------------|---------|------------|
@@ -147,7 +153,7 @@ End-user entry points are `ArdocoRunner` subclasses that assemble a pipeline and
 
 - The eight TLR runners live in `tlr/pipeline-tlr/.../execution/`: `Swattr`, `Ardocode`, `Arcotl`, `Transarc`, `ExArch`, `Artemis`, `ArtemisInExArch`, and `ArtemisInTransArC`. Each `setUp(...)` validates inputs, wires its stage composition, and pins the metamodels — see [TLR Approaches](tlr-approaches.md).
 - The end-to-end inconsistency detection runner is `InconsistencyDetection` (`inconsistency-detection/pipeline-id`), which appends the `InconsistencyChecker` stage (with its `InitialInconsistencyAgent`, TEAM agent, and MEAT agent) to the SWATTR-style pipeline — see [Inconsistency Detection](inconsistency-detection.md).
-- Every runner wraps an `Ardoco` pipeline (`core/pipeline-core`); `runAndSave(outputDir)` writes `traceLinks_<project>.txt`, a trace-link CSV, and `inconsistencyDetection_<project>.txt`.
+- Every runner wraps an `Ardoco` pipeline (`core/pipeline-core`) and inherits `ArdocoRunner` (`core/pipeline-core/.../execution/runner/`); `runAndSave(outputDir)` writes `traceLinks_<project>.txt`, a trace-link CSV, and `inconsistencyDetection_<project>.txt`.
 
 ## Environment Configuration
 
@@ -200,13 +206,13 @@ When changing a specific area, start at the listed page and validate with the fo
 
 ## Where the Docs Live
 
-The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) whose source files live in [`/docs`](../docs/Home.md) (sidebar: [`_Sidebar.md`](../docs/_Sidebar.md)). This OpenWiki is an opinionated map and synthesis over those pages with added source-level detail for developers and agents. CI republishes the wiki on every push to `main` that touches `docs/**` or `openwiki/**`; each root-level `/openwiki/*.md` page is rendered as `OpenWiki-<name>.md`, so **wiki pages must stay flat in `/openwiki/`** (subdirectories are never rendered) — see [Operations](operations.md).
+The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) whose source files live in [`/docs`](../docs/Home.md) (sidebar: [`_Sidebar.md`](../docs/_Sidebar.md)). This OpenWiki is an opinionated map and synthesis over those pages with added source-level detail for developers and agents. CI republishes the wiki on every push to `main` that touches `docs/**` or `openwiki/**` ([`docs.yml`](../.github/workflows/docs.yml)); each root-level `/openwiki/*.md` page is rendered as `OpenWiki-<name>.md`, so **wiki pages must stay flat in `/openwiki/`** (subdirectories are never rendered) — see [Operations](operations.md). The OpenWiki content itself is refreshed by the scheduled [`openwiki.yml`](../.github/workflows/openwiki.yml) workflow (weekly, Monday 06:00 UTC, plus manual dispatch).
 
 ## External Repositories
 
 - [LiSSA](https://github.com/ardoco/lissa) — LLM-based generic TLR framework
 - [StanfordCoreNLP-Provider-Service](https://github.com/ardoco/StanfordCoreNLP-Provider-Service) — text preprocessing microservice
-- [Benchmark](https://github.com/ardoco/benchmark) — evaluation benchmarks and datasets (bundled as a snapshot in `core/tests-base` test resources)
+- [Benchmark](https://github.com/ardoco/benchmark) — evaluation benchmarks and datasets (vendored as a snapshot under [`core/tests-base/src/main/resources/benchmark/`](../core/tests-base/src/main/resources/benchmark/); `EvaluationProject` loads the SAD, PCM/UML, and code-model files from these classpath resources and shallow-clones the pinned code repositories for code evaluations)
 - [Evaluator](https://github.com/ardoco/evaluator) — evaluation code for comparing results (`io.github.ardoco:metrics`)
 - [TraceView](https://github.com/ardoco/traceview-v2) — visualization tool for TLR and ID outputs
 - [Actions](https://github.com/ardoco/actions) — reusable GitHub Actions (Maven verify and OpenWiki workflows)

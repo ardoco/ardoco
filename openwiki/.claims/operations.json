@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:95fd1f37f61be2af27814847caa90be9085403bdb0df76a5601d6f37b27db62f",
+  "pageVersion": "sha256:f1f71edf6c26a0c353636a5a15b91efa69fc595a211b98410759522337d07376",
   "claims": [
     {
       "id": "claim_1123c509f09b44349db6e6ea625403c6",
-      "statement": "The root pom.xml pins org.codehaus.mojo:flatten-maven-plugin to 1.7.3 with flattenMode=resolveCiFriendliesOnly (executing at clean and process-resources phases) to resolve the CI-friendly ${revision} placeholders; upgrading to 1.8.0 is blocked because its CI-friendly interpolator throws an NPE (mojohaus/flatten-maven-plugin#523) against this POM.",
+      "statement": "The root pom.xml pins org.codehaus.mojo:flatten-maven-plugin to 1.7.3 with flattenMode=resolveCiFriendliesOnly (executing at clean and process-resources phases, updatePomFile=true, expanding dependencyManagement and dependencies) to resolve the CI-friendly ${revision} placeholders (currently <revision>2.2.0-SNAPSHOT</revision>); upgrading to 1.8.0 is blocked because its CI-friendly interpolator throws an NPE (mojohaus/flatten-maven-plugin#523) against this POM, and deployed POMs therefore carry fully resolved versions.",
       "evidence": [
         {
           "resource": "repo://pom.xml#L404-L434",
@@ -12,7 +12,7 @@
         },
         {
           "resource": "repo://pom.xml#L66-L68",
-          "version": "repo-lines-v1:sha256:baf4ec640fbff3f11506519c93669c13432d39fbbfd89824d5859d4ec1e7c957:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAxZDQyOTFlM2NlYWE2NWYzOGY3N2U5ZjI2ZGI3Nzg0YWE2Mjg4Y2I3ZGE1MTRiOWZjNTY0NWQzODlhMGRmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI1YWJhZjU1MzZlMzNlYjFjNjNhOTRhMTkxY2VkNTJjOTk2MGE4MjIyMjVhNTBlMDcyZTY3M2I1ZDYwMWY1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmNjMjQxMzg3OTY3YWY1Mzk4NGU1ZDU3ZTBjZDhmNDkzMzlmMmYxOWJmYmI1MzdjMTk0YjZiYmI2OWQ4MTNmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjYwN2M1OTA3MDVmMWQ5OGJkYWIzNDcwN2Q4M2ViY2E0YjFiZWZjZTUyMzE4MWMxYzgxYTI1ZmI4OWQ5MWY1MCJ9"
+          "version": "repo-lines-v1:sha256:a698a441636b20110ae558e73aac04cc79aa81430b1757259c47a8db5f9089f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAxZDQyOTFlM2NlYWE2NWYzOGY3N2U5ZjI2ZGI3Nzg0YWE2Mjg4Y2I3ZGE1MTRiOWZjNTY0NWQzODlhMGRmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI1YWJhZjU1MzZlMzNlYjFjNjNhOTRhMTkxY2VkNTJjOTk2MGE4MjIyMjVhNTBlMDcyZTY3M2I1ZDYwMWY1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmNjMjQxMzg3OTY3YWY1Mzk4NGU1ZDU3ZTBjZDhmNDkzMzlmMmYxOWJmYmI1MzdjMTk0YjZiYmI2OWQ4MTNmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjYwN2M1OTA3MDVmMWQ5OGJkYWIzNDcwN2Q4M2ViY2E0YjFiZWZjZTUyMzE4MWMxYzgxYTI1ZmI4OWQ5MWY1MCJ9"
         }
       ]
     },
@@ -74,15 +74,15 @@
     },
     {
       "id": "claim_5efcf1c854b54bd4a7469e556011111a",
-      "statement": "The root POM dependencyManagement pins Jackson 2.22.2 (jackson-bom), JUnit 6.1.3, Mockito 5.23.0, SLF4J 2.0.18, Eclipse Collections 13.0.0, JavaParser 3.28.2, Stanford CoreNLP 4.5.10, ArchUnit 1.5.0, ANTLR 4.13.2, and io.github.ardoco:metrics 0.3.0; opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), and tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.18.1 for its OpenAI/Ollama clients.",
+      "statement": "The root POM dependencyManagement pins Jackson 2.22.2 (jackson-bom), JUnit 6.1.3, Mockito 5.23.0, SLF4J 2.0.18, Eclipse Collections 13.0.0, JavaParser 3.28.2, Stanford CoreNLP 4.5.10, ArchUnit 1.5.0, ANTLR 4.13.2, and io.github.ardoco:metrics 0.3.0; opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), and tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.19.0 for its OpenAI/Ollama clients.",
       "evidence": [
         {
-          "resource": "repo://core/framework/common/pom.xml#L45-L54",
-          "version": "repo-lines-v1:sha256:9e86bd664a9cae47eeb8e29513f48cb74f8db8e250494a651287887de34fdff0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwZjIxYjQwYTUyNGFjMzdiZGQwOTcwODZmNDlkNmJmOGU4OTg0N2MzMTVlMjYwNjg5MDljZjA4ZTBlOTViYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjMGMyNWMzMjgzY2MzNThjM2RlZWQxMGIxYjgyNzM5OGZlYTdkMmM4ZTNlMTY5ODNjMDhmMDU0NTk2MGQwNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMmZkMWI5MDcwYzExYzE3YmI3MGI3Njk0YmZlNTQyOWRlZTRkNTQ3NGJjNWQ0MDFmN2EzMzk2ODEzMDc2OWQifQ"
+          "resource": "repo://core/framework/common/pom.xml#L44-L54",
+          "version": "repo-lines-v1:sha256:166a23313f3500ed9985d59b73ba9b70aa3fcd6ef15f1a92f5e64fa6fb764ee8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NjRjMGZjMWFkZWMzMzFiNTEyYTM5ZmQyODYyOTllMzQ4Mjc2ZGQwYWNlMjkwNWVmMDg0MjNmMDRiMjVlNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlNTFhZDJkMzg3YmE0MDJlNjdmMjhlZTg1NWU4NTkyMGI0MDBmZThkMDM2ZWZhNDcwNjI2MzgxYmM4MzBlOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMmZkMWI5MDcwYzExYzE3YmI3MGI3Njk0YmZlNTQyOWRlZTRkNTQ3NGJjNWQ0MDFmN2EzMzk2ODEzMDc2OWQifQ"
         },
         {
-          "resource": "repo://pom.xml#L79-L88",
-          "version": "repo-lines-v1:sha256:fe546ab7ae2c154df8a9799a16f55af23e1702dacf8807b51ebf54a065c01c1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiY2ViNTUyMjY5ZDJmOTY1MWJlNjA1ZDhiYzc1NjZmYWU2Yzc4OTg5NjE3YWNhZjI1MzRlZThlOTc4MjA2ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYjdhOTlmY2NkMzA3NTZmZGVmMTdjNjY4MzJjYWJkMGM0Mzc3MTQyZWE3ZmI3MDUxYWFiYjI0YjllMDQ2ZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxNDNhNTZjMjUyYzRkOTQyYmMyMTJlY2U5YTA5NzI3YWQxNDNkZTRjZTM5MzMwZWFiMjgwZWFiM2ZlY2ZmZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5MTI2NTg0MTE2Y2MyMzc4NTlkMmE2YTU2ZGMyOTY1ZTIxOTBhNzFmODE0ODgzYjg1ZTY1NTQ5MzNiNWEzNmYifQ"
+          "resource": "repo://pom.xml#L78-L89",
+          "version": "repo-lines-v1:sha256:989dfbe2cac743096090cafa01c8b9f1a85968d1d229f6160050c6be772dc906:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyOGY5OTAxY2Y5MmI4Zjc0MWZlZjUxYjM4ZGRlMTc1NWUyMzY4ZDQyZDIzZTk2ODcxNjg0OWRhZjlmMDBiMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwOGUyODkxOTRjNmZlMTI4YzZmYWRhMzM5ZWFmZjU4YzIyYjk3NmU5MmYxMTgyYTk4NzA4MzZlZWE1NjEyZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3Mzc0Mzg2NTA0MTk5YzVjOGFmYjlmODVlZGU5ODQ0NzZjNmFlMzU3YWVjODllMDA4YjQ2YWY4ODcyYzcwZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2RkZWRkMTViMTNjMjI1OTlhN2JjOWI3OTZkMTFlMjg0MWNkY2RiYTAzYThmZWNhOWUzMGYyNzgzZDcxNTQifQ"
         },
         {
           "resource": "repo://tlr/stages-tlr/code-traceability/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/codetraceability/informants/arcotl/NameComparisonUtils.java#L206-L234",
@@ -90,7 +90,7 @@
         },
         {
           "resource": "repo://tlr/stages-tlr/model-provider/pom.xml#L14-L24",
-          "version": "repo-lines-v1:sha256:a224de0badc15b93a5b682772ba9ee3ce6747fbf30e4f35c009f1050bf8e025e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMmQ3YTJjMDhlYzVjZjc3YTc0YTA4NGI5YzRlOTA4N2I2YzNkZDlmNDIzNDE0ZTNjNmQ3ZDIzMGI0YmJlYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmQwMjBhMjQ3NjEzMDlkMWRlNGQxOGFkZDU2OTc1NzlhMjliNTRiOTk1ZWE3Zjc1NDE4NzE0M2ZlODQ1NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZmZmMjgyNTQ4ZDczN2UzMTc0NzU4ZTkwN2IwZDNhMTMzOTMzYTFmZDFkZjI5ZjhjY2YzMzZhZDFiNTFmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhODBhNWFiMWY4ODVjOTI5Y2IxMDhhMGM3OGJhZjhiMDI1M2QzMjYwNDVhMGIzZmZmMTZiM2MzZTE5NDkyZjMifQ"
+          "version": "repo-lines-v1:sha256:1d966900c6f687bab50d78c7a9a5f6878310a351dc05bdb93e4afb39113d6f68:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMmQ3YTJjMDhlYzVjZjc3YTc0YTA4NGI5YzRlOTA4N2I2YzNkZDlmNDIzNDE0ZTNjNmQ3ZDIzMGI0YmJlYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmQwMjBhMjQ3NjEzMDlkMWRlNGQxOGFkZDU2OTc1NzlhMjliNTRiOTk1ZWE3Zjc1NDE4NzE0M2ZlODQ1NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZmZmMjgyNTQ4ZDczN2UzMTc0NzU4ZTkwN2IwZDNhMTMzOTMzYTFmZDFkZjI5ZjhjY2YzMzZhZDFiNTFmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhODBhNWFiMWY4ODVjOTI5Y2IxMDhhMGM3OGJhZjhiMDI1M2QzMjYwNDVhMGIzZmZmMTZiM2MzZTE5NDkyZjMifQ"
         },
         {
           "resource": "repo://tlr/stages-tlr/text-preprocessing/pom.xml#L20-L41",
@@ -118,15 +118,15 @@
     },
     {
       "id": "claim_98fd9165758a48c8a9de91941f728924",
-      "statement": "JSpecify nullness is enforced by generating @NullMarked package-info.java files via org.fuchss:jspecify-maven-plugin 0.1.0 in the process-sources phase into each module's source directory; the generated files are git-ignored and org.jspecify:jspecify:1.0.0 is a root-POM dependency, so all modules are null-marked by default without per-module setup.",
+      "statement": "JSpecify nullness is enforced by generating @NullMarked package-info.java files via org.fuchss:jspecify-maven-plugin 0.1.0 in the process-sources phase into each module's source directory; the generated files are git-ignored and org.jspecify:jspecify:1.0.1 is a root-POM dependency, so all modules are null-marked by default without per-module setup.",
       "evidence": [
         {
-          "resource": "repo://.gitignore#L124-L124",
-          "version": "repo-lines-v1:sha256:86e66b2242660b365a133eeb9cb98e533802ab7488e799f2f309292252961838:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODZlNjZiMjI0MjY2MGIzNjVhMTMzZWViOWNiOThlNTMzODAyYWI3NDg4ZTc5OWYyZjMwOTI5MjI1Mjk2MTgzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODZlNjZiMjI0MjY2MGIzNjVhMTMzZWViOWNiOThlNTMzODAyYWI3NDg4ZTc5OWYyZjMwOTI5MjI1Mjk2MTgzOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2U0NTI1OTRhMjU4OTExMDM3NjQwNWE5ZmVjMDQ1OThjMzc2MTIwOGM0ODc5YzY0MGZkMDM1ZmFiMzA2MzkxYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://.gitignore",
+          "version": "repo-file-v1:sha256:2e52542ef2ac2f89d2fcc8b2a444ad8443ff381cb73943fba3406435d50e0c63"
         },
         {
           "resource": "repo://pom.xml#L215-L218",
-          "version": "repo-lines-v1:sha256:57ac99cdac52c6ffbbefe0529e74cb713bcac8a232cc4a4ec1eb20bf141e420f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk0NWIyZGEzMmFlNmJhYjlhOTZhZjgzMDQ1NGY1NWZhZTkwYTAyNDY0MmEwNDg0NjQwMGU3OTI3MDdiZWZmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJjNDJmNDBlYTY1OTk1YWYzYzJjYTk3Yjc2YjEyMjk3MjBjOGQ5ODg4NjgxMGQ0ZTQyZTg0YTM2YzMyN2RiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjc0NzBkZGUwMmY5YmJlN2QwMDk4OTBkMDM4ZDZlYmQxNDE2ZmQxMGI5NzQ0MDhkYzMyNjYzZjA2ZDQ0NTk0ZSJ9"
+          "version": "repo-lines-v1:sha256:1bdbe5ad04d6d3b81fc9b89e9231a49037154fd51a2daed1ae43651dcd023613:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk0NWIyZGEzMmFlNmJhYjlhOTZhZjgzMDQ1NGY1NWZhZTkwYTAyNDY0MmEwNDg0NjQwMGU3OTI3MDdiZWZmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJjNDJmNDBlYTY1OTk1YWYzYzJjYTk3Yjc2YjEyMjk3MjBjOGQ5ODg4NjgxMGQ0ZTQyZTg0YTM2YzMyN2RiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjc0NzBkZGUwMmY5YmJlN2QwMDk4OTBkMDM4ZDZlYmQxNDE2ZmQxMGI5NzQ0MDhkYzMyNjYzZjA2ZDQ0NTk0ZSJ9"
         },
         {
           "resource": "repo://pom.xml#L451-L467",
@@ -158,25 +158,29 @@
     },
     {
       "id": "claim_1e37ae20c4284df4bda2453d5bef6b2d",
-      "statement": "The root verify.yml workflow runs Maven verify on push to main and on pull requests (paths-ignore docs/** and openwiki/**, tags v* ignored) by delegating to the reusable ardoco/actions maven.yml with with-submodules=true and deploy=false, passing empty CENTRAL_USER, CENTRAL_TOKEN, and GPG_KEY secrets so CI verifies without publishing.",
+      "statement": "The build's current version baseline is the CI-friendly <revision>2.2.0-SNAPSHOT</revision> property in the root POM (resolved by the pinned flatten-maven-plugin, spotless.version=3.10.1), and the root POM's global dependency block applies jspecify 1.0.1 plus the test-scoped archunit-junit5, assertj-core, and junit-jupiter stack to every module; docs/** and openwiki/** paths are excluded from CI Maven verify.",
       "evidence": [
         {
-          "resource": "repo://.github/workflows/verify.yml#L1-L32",
-          "version": "repo-lines-v1:sha256:4047d279799c5e5ff7db52d39713d9db726429365d8d86f771d479cf8201a066:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1NGM3MDc4ZDU2NTRkOWY2NTNhMTFkNTYwNGI3MzcwMGZjOWJmNTZhMzM3ODc2OWEwM2RhOThiOGFkNGU4MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://pom.xml#L203-L218",
+          "version": "repo-lines-v1:sha256:52820d3ffbf557c9c6c705f53950fb8ede30d07ddd410d5a0fed3217b3f89fb6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMTdhMGMyZDIxNjA1MWQwODBlYTYwM2EyZmVjNjMzMDNiYjI1NTFhMGFlNTVlMzgzYTkzNzQ2MTM5MjBkOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3NmY0YjU0MDYyMTU2ZjRjNTM0NmM3YzMxOTI1ZWUzMTRhOGM2NDU0YWIzNzJjMjgxODU5MjJhY2IwOTkxODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NDcwZGRlMDJmOWJiZTdkMDA5ODkwZDAzOGQ2ZWJkMTQxNmZkMTBiOTc0NDA4ZGMzMjY2M2YwNmQ0NDU5NGUifQ"
         },
         {
-          "resource": "repo://pom.xml#L79-L89",
-          "version": "repo-lines-v1:sha256:942416d9268946775794301f2d800b908742b92c0736e761ba812594019366bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiY2ViNTUyMjY5ZDJmOTY1MWJlNjA1ZDhiYzc1NjZmYWU2Yzc4OTg5NjE3YWNhZjI1MzRlZThlOTc4MjA2ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwOGUyODkxOTRjNmZlMTI4YzZmYWRhMzM5ZWFmZjU4YzIyYjk3NmU5MmYxMTgyYTk4NzA4MzZlZWE1NjEyZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxNDNhNTZjMjUyYzRkOTQyYmMyMTJlY2U5YTA5NzI3YWQxNDNkZTRjZTM5MzMwZWFiMjgwZWFiM2ZlY2ZmZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2RkZWRkMTViMTNjMjI1OTlhN2JjOWI3OTZkMTFlMjg0MWNkY2RiYTAzYThmZWNhOWUzMGYyNzgzZDcxNTQifQ"
+          "resource": "repo://pom.xml#L66-L68",
+          "version": "repo-lines-v1:sha256:a698a441636b20110ae558e73aac04cc79aa81430b1757259c47a8db5f9089f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAxZDQyOTFlM2NlYWE2NWYzOGY3N2U5ZjI2ZGI3Nzg0YWE2Mjg4Y2I3ZGE1MTRiOWZjNTY0NWQzODlhMGRmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI1YWJhZjU1MzZlMzNlYjFjNjNhOTRhMTkxY2VkNTJjOTk2MGE4MjIyMjVhNTBlMDcyZTY3M2I1ZDYwMWY1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmNjMjQxMzg3OTY3YWY1Mzk4NGU1ZDU3ZTBjZDhmNDkzMzlmMmYxOWJmYmI1MzdjMTk0YjZiYmI2OWQ4MTNmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjYwN2M1OTA3MDVmMWQ5OGJkYWIzNDcwN2Q4M2ViY2E0YjFiZWZjZTUyMzE4MWMxYzgxYTI1ZmI4OWQ5MWY1MCJ9"
+        },
+        {
+          "resource": "repo://pom.xml#L78-L81",
+          "version": "repo-lines-v1:sha256:54807be6b7b520054c0854130a27757e9e09b393b836fe5dbf570b67ef9d141b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzI4Zjk5MDFjZjkyYjhmNzQxZmVmNTFiMzhkZGUxNzU1ZTIzNjhkNDJkMjNlOTY4NzE2ODQ5ZGFmOWYwMGIwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczYWRmMzFlZTY2OTRhYWVkODVmYzdhNDQwOTc2MDk0MzNlNWYxYmZhNzNjODc5ZmYzODBjNjQ0M2FjZjA5ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTczNzQzODY1MDQxOTljNWM4YWZiOWY4NWVkZTk4NDQ3NmM2YWUzNTdhZWM4OWUwMDhiNDZhZjg4NzJjNzBmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODYzZGY0NWNmM2RhNjMyY2YxNmY4ZjM1MGFhZGFkYzdjZDY0YTEwNWJmMmYxOGMzMTZhMTk3ZWJhMjIzNjg2ZiJ9"
         }
       ]
     },
     {
       "id": "claim_860945a945eb4fe590e17220073ce7c1",
-      "statement": "The root format.yml workflow runs on pull requests to main and on workflow_dispatch: it checks out with submodules and full history, runs mvn -B spotless:apply, and auto-commits the reformatted files with the message 'Apply formatting changes' — so Spotless violations on a PR are fixed by a bot commit rather than failing the build.",
+      "statement": "The root format.yml workflow runs on pull requests to main and on workflow_dispatch: it checks out with submodules and full history, resolves the JDK version via joshlong/java-version-export-github-action, runs mvn -B spotless:apply, and auto-commits the reformatted files with the message 'Apply formatting changes' — so Spotless violations on a PR are fixed by a bot commit rather than failing the build.",
       "evidence": [
         {
           "resource": "repo://.github/workflows/format.yml#L1-L32",
-          "version": "repo-lines-v1:sha256:280a14cd4ab22986af9a69f186973c212d2132c612240c9bd2a0f2b4a12f915e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZDJiZDBkMTJmYTFjNTgyZjJkZjBkZjliN2VmMjY2NzFmNGQ3MGJhNjkwYjE4MjBjMjA0OGJmMjRiNGNhNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNGJiOTRiN2MyYTIyMTI2NDA2ZWYyMmNhMjc3ZWQyMzZiN2E0NTlhODBlN2Q3ZTRiN2Q0YzhiZjRjMjViYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:ecce61e625ecfce5f2069f4354c1571142ae7038559153a4ed4fa8091abcc9cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZDJiZDBkMTJmYTFjNTgyZjJkZjBkZjliN2VmMjY2NzFmNGQ3MGJhNjkwYjE4MjBjMjA0OGJmMjRiNGNhNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNGJiOTRiN2MyYTIyMTI2NDA2ZWYyMmNhMjc3ZWQyMzZiN2E0NTlhODBlN2Q3ZTRiN2Q0YzhiZjRjMjViYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -357,10 +361,20 @@
           "version": "repo-lines-v1:sha256:d2c5c1f2e9c154c45d1a407771a15518ebb29a7528c1e8503e8ce2371031b5f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2E5MWE5NTdhNWIyNmJhNDk4OGNiYWNiYmY2ZGVkNTIwYzdmNTVjMGFkZjk1YzVhMzIyM2Y4N2U5NGQxMmM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFmYjBhMDI5ZjFiZWY1YmU2M2VjNTFjZDI0MGY4MWUxODAyOTcyMTYxYjE5ZTUwODFlOWY1NTdmOTBhZTQ1MyJ9"
         }
       ]
+    },
+    {
+      "id": "claim_41876e1d6b984c0bbaab8c7857106ee5",
+      "statement": "The root verify.yml workflow runs Maven verify on push to main and on pull requests (paths-ignore docs/** and openwiki/**, tags v* ignored) by delegating to the reusable ardoco/actions maven.yml with with-submodules=true and deploy=false, passing empty CENTRAL_USER, CENTRAL_TOKEN, and GPG_KEY secrets so CI verifies without publishing.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/verify.yml#L1-L32",
+          "version": "repo-lines-v1:sha256:4047d279799c5e5ff7db52d39713d9db726429365d8d86f771d479cf8201a066:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1NGM3MDc4ZDU2NTRkOWY2NTNhMTFkNTYwNGI3MzcwMGZjOWJmNTZhMzM3ODc2OWEwM2RhOThiOGFkNGU4MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-05T12:50:45.506Z"
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-19T11:24:11.899Z"
   }
 }
