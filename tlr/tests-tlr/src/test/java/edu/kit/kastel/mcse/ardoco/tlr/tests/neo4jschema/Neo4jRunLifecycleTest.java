@@ -7,6 +7,9 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
@@ -14,9 +17,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -144,6 +154,68 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
 
         Assertions.assertEquals(0, countAllNodesDirect(),
                 "a failed run must leave the database wiped (no partial results survive, matching the DataRepository-only failsafe)");
+    }
+
+    @Test
+    @DisplayName("Run metadata captures the filtered configuration and never leaks a secret-like value")
+    void runMetadataCapturesFilteredConfigurationAndNeverLeaksSecrets() {
+        clearNeo4jGraph();
+        String secret = "s3cr3t-run-metadata-test";
+        var mutableConfigs = SortedMaps.mutable.<String, String>empty();
+        mutableConfigs.putAll(getConfigsWithNeo4jStorage().toSortedMap());
+        mutableConfigs.put("FakeExternalService::password", secret);
+        mutableConfigs.put("FakeExternalService::connectionUri", "bolt://user:" + secret + "@127.0.0.1:7687");
+        ImmutableSortedMap<String, String> configsWithSecret = mutableConfigs.toImmutable();
+
+        var runner = new Swattr(projectName);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), configsWithSecret, outputDir);
+        testRunnerAssertions(runner);
+
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        rootLogger.addAppender(appender);
+        ArdocoResult result;
+        try {
+            result = runner.run();
+        } finally {
+            rootLogger.detachAppender(appender);
+        }
+        Assertions.assertNotNull(result);
+
+        boolean secretInLogs = appender.list.stream().anyMatch(event -> event.getFormattedMessage().contains(secret));
+        Assertions.assertFalse(secretInLogs, "the secret value must never be logged");
+
+        String json = readFile(knowledgeGraphFile());
+        Assertions.assertFalse(json.contains(secret), "the secret value must never appear anywhere in the exported knowledge graph");
+        Assertions.assertFalse(json.contains("FakeExternalService::password"), "a key matching the secret filter must be dropped entirely");
+        Assertions.assertTrue(json.contains("PersistenceBridge::storage"));
+        Assertions.assertTrue(json.contains("bolt://***@127.0.0.1:7687"), "a surviving key's URI value must still have its user-info masked");
+
+        List<JsonNode> runMetadataNodes = nodesWithLabel(json, "RunMetadata");
+        Assertions.assertEquals(1, runMetadataNodes.size(), "exactly one RunMetadata node must exist");
+        JsonNode properties = runMetadataNodes.get(0).get("properties");
+        Assertions.assertEquals(projectName, properties.get("projectName").asText());
+        Instant.parse(properties.get("startTimestamp").asText());
+        Instant.parse(properties.get("finishTimestamp").asText());
+    }
+
+    private static List<JsonNode> nodesWithLabel(String exportedJson, String label) {
+        List<JsonNode> matches = new ArrayList<>();
+        try {
+            JsonNode root = JsonHandling.createObjectMapper().readTree(exportedJson);
+            for (JsonNode node : root.get("nodes")) {
+                for (JsonNode nodeLabel : node.get("labels")) {
+                    if (nodeLabel.asText().equals(label)) {
+                        matches.add(node);
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return matches;
     }
 
     private File knowledgeGraphFile() {

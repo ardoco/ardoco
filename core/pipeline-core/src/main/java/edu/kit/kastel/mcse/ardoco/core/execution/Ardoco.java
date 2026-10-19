@@ -8,15 +8,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceStorage;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.RunMetadataFilter;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -92,6 +98,9 @@ public final class Ardoco extends Pipeline {
         }
 
         try {
+            if (neo4jMode) {
+                writeRunMetadataStart();
+            }
             super.run();
         } catch (RuntimeException | Error ex) {
             if (neo4jMode) {
@@ -103,6 +112,21 @@ public final class Ardoco extends Pipeline {
         if (neo4jMode) {
             exportAndWipeKnowledgeGraph();
         }
+    }
+
+    private void writeRunMetadataStart() {
+        List<String> droppedKeys = new ArrayList<>();
+        var filteredConfiguration = RunMetadataFilter.filterSecrets(PersistenceBridge.getInstance().getLastAppliedConfiguration(), droppedKeys);
+        if (!droppedKeys.isEmpty()) {
+            classLogger.info("Run metadata: dropped {} secret-like configuration key(s): {}", droppedKeys.size(), droppedKeys);
+        }
+        String configurationJson;
+        try {
+            configurationJson = JsonHandling.createObjectMapper().writeValueAsString(filteredConfiguration);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize the run configuration for run metadata", e);
+        }
+        PersistenceBridge.getHandler().saveRunMetadataStart(this.projectName, Instant.now().toString(), configurationJson);
     }
 
     /**
@@ -152,6 +176,8 @@ public final class Ardoco extends Pipeline {
         File exportDirectory = this.pendingKnowledgeGraphExportDirectory != null ? this.pendingKnowledgeGraphExportDirectory
                 : resolveConfiguredExportDirectory();
         this.pendingKnowledgeGraphExportDirectory = null;
+
+        PersistenceBridge.getHandler().saveRunMetadataFinish(this.projectName, Instant.now().toString());
 
         classLogger.info("Exporting the Neo4j knowledge graph...");
         String json = PersistenceBridge.getHandler().exportGraphAsJson();

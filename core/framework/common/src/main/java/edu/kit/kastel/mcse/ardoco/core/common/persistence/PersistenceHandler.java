@@ -136,6 +136,10 @@ public interface PersistenceHandler {
      */
     void saveProjectMetadata(String projectName, String inputText);
 
+    void saveRunMetadataStart(String projectName, String startTimestamp, String configurationJson);
+
+    void saveRunMetadataFinish(String projectName, String finishTimestamp);
+
     /**
      * Dual-writes a named architecture entity (and its occurrences) for a metamodel.
      *

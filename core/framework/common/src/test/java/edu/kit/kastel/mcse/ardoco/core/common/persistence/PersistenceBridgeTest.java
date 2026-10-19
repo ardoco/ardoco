@@ -277,6 +277,16 @@ class PersistenceBridgeTest {
         }
 
         @Override
+        public void saveRunMetadataStart(String projectName, String startTimestamp, String configurationJson) {
+            throw fail();
+        }
+
+        @Override
+        public void saveRunMetadataFinish(String projectName, String finishTimestamp) {
+            throw fail();
+        }
+
+        @Override
         public String exportGraphAsJson() {
             throw fail();
         }

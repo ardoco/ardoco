@@ -186,6 +186,14 @@ class ModelStatesTest {
         }
 
         @Override
+        public void saveRunMetadataStart(String projectName, String startTimestamp, String configurationJson) {
+        }
+
+        @Override
+        public void saveRunMetadataFinish(String projectName, String finishTimestamp) {
+        }
+
+        @Override
         public String exportGraphAsJson() {
             return "{}";
         }

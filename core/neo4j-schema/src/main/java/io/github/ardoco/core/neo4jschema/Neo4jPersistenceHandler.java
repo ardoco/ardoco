@@ -36,6 +36,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
+import io.github.ardoco.core.neo4jschema.entities.runmetadata.RunMetadataNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.CodePersistenceService;
@@ -45,6 +46,7 @@ import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService
 import io.github.ardoco.core.neo4jschema.service.NerPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.ProjectPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.RecommendationPersistenceService;
+import io.github.ardoco.core.neo4jschema.service.RunMetadataPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.SimpleTextPersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TextStatePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
@@ -68,13 +70,15 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     private final SimpleTextPersistenceService simpleTextService;
     private final ProjectPersistenceService projectService;
     private final NerPersistenceService nerService;
+    private final RunMetadataPersistenceService runMetadataService;
     private final GraphExportService graphExportService;
     private final Neo4jClient neo4jClient;
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
             TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, SimpleTextPersistenceService simpleTextService,
-            ProjectPersistenceService projectService, NerPersistenceService nerService, GraphExportService graphExportService, Neo4jClient neo4jClient) {
+            ProjectPersistenceService projectService, NerPersistenceService nerService, RunMetadataPersistenceService runMetadataService,
+            GraphExportService graphExportService, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
@@ -86,6 +90,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
         this.simpleTextService = simpleTextService;
         this.projectService = projectService;
         this.nerService = nerService;
+        this.runMetadataService = runMetadataService;
         this.graphExportService = graphExportService;
     }
 
@@ -342,6 +347,22 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     public String loadSoleProjectName() {
         return this.projectService.loadSoleProjectName().orElse(null);
+    }
+
+    @Override
+    public void saveRunMetadataStart(String projectName, String startTimestamp, String configurationJson) {
+        logger.info("Saving run metadata start for {}", projectName);
+        this.runMetadataService.saveRunMetadataStart(projectName, startTimestamp, configurationJson);
+    }
+
+    @Override
+    public void saveRunMetadataFinish(String projectName, String finishTimestamp) {
+        logger.info("Saving run metadata finish for {}", projectName);
+        this.runMetadataService.saveRunMetadataFinish(projectName, finishTimestamp);
+    }
+
+    public RunMetadataNode loadRunMetadata(String projectName) {
+        return this.runMetadataService.loadRunMetadata(projectName).orElse(null);
     }
 
     @Override
