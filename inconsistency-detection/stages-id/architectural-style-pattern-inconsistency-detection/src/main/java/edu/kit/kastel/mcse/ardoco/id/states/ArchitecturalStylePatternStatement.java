@@ -1,8 +1,11 @@
 package edu.kit.kastel.mcse.ardoco.id.states;
 
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+
 import java.util.Locale;
 import java.util.Objects;
 
+@Deterministic
 public record ArchitecturalStylePatternStatement(int sentenceNumber, String architecturalStylePatternName, String normalizedArchitecturalStylePatternName,
                                                  String sentenceText) implements Comparable<ArchitecturalStylePatternStatement> {
 

@@ -1,9 +1,12 @@
 /* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
-import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
-
 import java.util.Set;
+
+import org.eclipse.collections.api.factory.SortedSets;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
+
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 /**
  * Supported programming languages (there are no code model extractors for all of them).
@@ -34,7 +37,7 @@ public enum ProgrammingLanguage {
         this.extensions = extensions;
     }
 
-    public Set<String> getExtensions() {
-        return extensions;
+    public ImmutableSortedSet<String> getExtensions() {
+        return SortedSets.immutable.ofAll(extensions);
     }
 }

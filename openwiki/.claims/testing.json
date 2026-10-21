@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:35e68d0c9e80cb9a131e45ac78acc7f74a4c9b449b06250188191d1f324798d7",
+  "claims": [
+    {
+      "id": "claim_c368d58ed7ae432f81183442a7cad495",
+      "statement": "The shared ArchUnit rule suites (ArchitectureTest, BasicArchitectureTest, DeterministicArdocoTest) and evaluation base classes (ConfigurationTestBase, ExpectedResults, EvaluationProject, EvaluationHelper) live in core/tests-base/src/main (not src/test) with compile-scoped ArchUnit/JUnit/metrics dependencies, so other modules consume them as a test-scoped tests-base jar; archunit.properties sets archRule.failOnEmptyShould=false so a rule matching nothing on a module's classpath does not fail that module.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/pom.xml#L11-L63",
+          "version": "repo-lines-v1:sha256:c5c075491457087e60dcfbac8ce9617f53281e9caeed8e478f4ffc36c6f2bd83:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjZjEwMTk4ZWZjNjFlMWYwOTQ3MDg2YWJhYWUwNDBlNjA1M2RiMzkzOTFkMTBiMTg4MjQ3ZDY1OWUwMGM5ZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NWYwNDM1ZGFiMGM5ZDdiZmFjNjViNWU3MjJlZjcwYjk1Njg3MzI3ZDYxMTY3NTA0ZDQ4YWQ0MTQ1OGMxMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMWI3NDQ0MWZjMTNhMWY0ZjRmNGJjY2FmOWQ4ODcxYmVhOGE3Njc2ZGM5ODVmNzRlOTg0MWVhYTVkZTA1ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2ZTMyYTMwZjNmMjBiYmM4MmY1YzUzZDQ4MDg4M2RhODk0OWQwYWJhYTllZGQwNWFkMzJjZDdhYzRlMjc5ZTcifQ"
+        },
+        {
+          "resource": "repo://core/tests-base/src/main/resources/archunit.properties#L1-L1",
+          "version": "repo-lines-v1:sha256:d68929486213701219c84a1d7f093f7aa4925950bb364dd0aa1312325cca5d56:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4OTI5NDg2MjEzNzAxMjE5Yzg0YTFkN2YwOTNmN2FhNDkyNTk1MGJiMzY0ZGQwYWExMzEyMzI1Y2NhNWQ1NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4OTI5NDg2MjEzNzAxMjE5Yzg0YTFkN2YwOTNmN2FhNDkyNTk1MGJiMzY0ZGQwYWExMzEyMzI1Y2NhNWQ1NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_99f6f891b6fa42fa955d04859ca5e1cc",
+      "statement": "ArchitectureTest enforces the product architecture: a layeredArchitecture rule over the layers Common, TextExtractor, ModelExtractor, RecommendationGenerator, ConnectionGenerator, InconsistencyDetection, CodeTraceability, Pipeline, and Execution with per-layer access restrictions, plus ordering/naming rules — execution classes are only used by execution/test code, Model-named classes only after model extraction, classes whose name ends in Link only after the connection generator and confined to the tracelink/codetraceability/connectiongenerator packages, and Inconsistency-named classes only after inconsistency detection.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/ArchitectureTest.java#L43-L113",
+          "version": "repo-lines-v1:sha256:7554d375a288cbf07fc10aec3ad3ec9e41911a36fcce7ce58069c43174570573:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTcyNWNhZmJiYzIwZmUyMmI3MTlmYmFkMDE2YmU0ZGRlMWRkZDY0MTM0NjNjYWE1ZmE0MTQ0OGU5NGZkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3MjRjNDc2Y2FjMWE5YzEyNTAxMGM0MmRkYjA2ZTg0MTk5OGQwNGRjMTBhZmZjY2E1ODdmYjQ4NzQwNGJlYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2NjkyYzEwMDlmYzNjNjNmYjY4OTI0MTM3MDUwNTdhMjM1MmJhZDk5ZDE3YjBmZGE1ZDA1MzFkMmVhOGFkMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9028a2c6571547b89d57ea20ae810aa7",
+      "statement": "BasicArchitectureTest enforces cross-cutting rules: @Configurable fields may only be declared in AbstractConfigurable subclasses, TraceLink subclasses must be final, ObjectMapper may only be constructed in JsonHandling, System.getenv may only be called by the Environment utility (noGetEnv), forEach/forEachOrdered must not be used on streams or lists, and interface methods must prefer Eclipse Collections over JDK List/Set/Map/Sorted* raw types outside ..metrics.. packages.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/BasicArchitectureTest.java#L28-L106",
+          "version": "repo-lines-v1:sha256:507233613bb00f46cc0c2f112217089bda96cf434b21d459e9597417e760c50c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTcyNWNhZmJiYzIwZmUyMmI3MTlmYmFkMDE2YmU0ZGRlMWRkZDY0MTM0NjNjYWE1ZmE0MTQ0OGU5NGZkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkZmIwNzM5NTMzZWJmNmY2MTc3MzQxNjk5YTUyOTZmOGE0Y2VjMWYzYzQ2YmYyYTgzMWI0NWJkZDRkODM4NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1ZjFjYjZlZjJkMzY5MTc2OTQwZTQ5MWUzZjRmM2JjMWMyZjhiNjFmZWRjZTYzZTA0YWRhMTJjMjI0YzcyZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ab4b64c45784361bda78bebbb229073",
+      "statement": "DeterministicArdocoTest keeps pipeline runs reproducible: classes not directly annotated @Deterministic must not access unordered JDK/Eclipse sets and maps (Set, HashSet, MutableSet, ImmutableSet, Sets, Map, HashMap, MutableMap, ImmutableMap, Maps) outside the ..tests../..metrics../..magika.. packages; HashMap/HashSet are forbidden in favor of linked versions; @NoHashCodeEquals-annotated classes must not implement equals/hashCode; classes directly implementing Comparable must implement both equals and hashCode; and sorted collections (fields and returns) may only be parameterized with Comparable types.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/DeterministicArdocoTest.java#L46-L208",
+          "version": "repo-lines-v1:sha256:baf9d79c41c1b09b509a21467d6d39b13db557a33d2234cc1328ae99f1d35d89:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZDNlMDZhNzEwNmM1NmNhMDQ5NTY0YThiODI5ZmU2NGQ3YTRlM2UxM2Q0Njg2M2E1MmY1Nzg4NWFiNjUxZjE0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5YzgyOWJkYjkyNWU3ODA3OTBlYzYyZmFmYTZmN2M4NGFjYjU1ZjhmZjQzOGMyZGY4NjJlYmUwYWY2NDNmZjY4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxMTA2ZWE2M2E2YjhiZjFhN2YwMDFiMDg4YTIwZDIwYTlmZDk2Mjk1MjFiNGNjMjhhNTZiZmU1NGEyMjE2Yjk3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MjNkNjJlOWY1NWU4NGJmMTgyOWJhNTU3YmYyM2M0YmQ3NjZkYjhhMTg5YjQ1MGEyZGRmNjU0NDE4ZTc1MzM3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d58b3c036e634084ad66402a17f1f720",
+      "statement": "ConfigurationTestBase uses Reflections to enumerate every concrete AbstractConfigurable subclass under edu.kit.kastel.mcse.ardoco, validates that all @Configurable fields are neither final nor static, and prints the complete default configuration as key=value lines; it delegates assertions to abstract assertFalse/fail hooks that module subclasses such as tlr.tests.ConfigurationTest and id.tests.ConfigurationTest bind to JUnit.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/ConfigurationTestBase.java#L40-L82",
+          "version": "repo-lines-v1:sha256:a59435a29067e8898525119d2bcc39c69314bb4402aa1424171e72493158a758:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NGI2YTFjODllNDBmZDNhM2NhZDFkMjYwZDViODcyYTQ4YTIyNzNiNDdjMmQxNjA1MTgyOTY2NDIxYWQzYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwYzljYTJiZmM0OGU4N2Q2YzJlZWJmNGMyZmE2YzU1ZGI5NmQ0OWNjY2NjYmI5OGY5NTNmYzI3OWUzNzM3MmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1ZTU4YWIyMzIxOTc3ZDViOWRiODRmZjU5MDM0NGVlNWU1M2ZiYTQ0NzI5ZDE1NjI0YTYyNjAyYmUwZmZlNmQifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/ConfigurationTest.java#L15-L40",
+          "version": "repo-lines-v1:sha256:e3414ece946a9bd320df021ed9ec55e13988ed4cff51ef8147062b3888f2719e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkMGQ3YTVlNGU2Y2Y1NTExOGU1ZjMxOWJiZjc1ZGQzNTBiYjgwNTJmZTBjNDJiMzM2MGI3MjU4OGRmYmFhNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNmU3ZGQ2ZDFmMWFlZWU0OTg0OGM2OTA3ZTU0NmM1MmU3ODhjY2I5YjQ1Nzc4MzhiMjRjNzE4MzA1ODZlYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdmY2QzMTljYmVlMjM5YmI1MjJhZGQ0ZTk5ZWM2ZWUxNzE3YzUzMmUwM2Q4ZWQ2NzRmMjc3OTI4NWJkZDNlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiNjQ5NDk5NzkyN2MzNjY2Mzg5MzY1YmQyNTk5MGQ0ODIyZWIwYmMzNGI1ZDc3NTE1YzlkOWE5ZTg4YWM4ZWEifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/ConfigurationTest.java#L15-L40",
+          "version": "repo-lines-v1:sha256:e3414ece946a9bd320df021ed9ec55e13988ed4cff51ef8147062b3888f2719e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkMGQ3YTVlNGU2Y2Y1NTExOGU1ZjMxOWJiZjc1ZGQzNTBiYjgwNTJmZTBjNDJiMzM2MGI3MjU4OGRmYmFhNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNmU3ZGQ2ZDFmMWFlZWU0OTg0OGM2OTA3ZTU0NmM1MmU3ODhjY2I5YjQ1Nzc4MzhiMjRjNzE4MzA1ODZlYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdmY2QzMTljYmVlMjM5YmI1MjJhZGQ0ZTk5ZWM2ZWUxNzE3YzUzMmUwM2Q4ZWQ2NzRmMjc3OTI4NWJkZDNlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiNjQ5NDk5NzkyN2MzNjY2Mzg5MzY1YmQyNTk5MGQ0ODIyZWIwYmMzNGI1ZDc3NTE1YzlkOWE5ZTg4YWM4ZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef281fd835c64c07b9f4923a3a59d239",
+      "statement": "tests-tlr and tests-inconsistency re-enable the shared ArchUnit suites by subclassing them in their own test trees with @AnalyzeClasses over edu.kit.kastel.mcse.ardoco core+tlr packages (tests-tlr) and core+tlr+id packages (tests-inconsistency), so the same rules are re-evaluated against each module's classpath and violations introduced in TLR or ID modules are caught in those modules.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/ArchitectureTest.java#L6-L8",
+          "version": "repo-lines-v1:sha256:fefbe9cb81a4e59cf019ab2c663829a742252acda5a6ce6e6aa62f06dd9b5e9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MxY2M1MGUxYWY3MDViNjZiYzk0MGVhZDY0MTllM2U4YWYxMDRmOTJkYzIxMDdhNGQyZjE5NWVjYmQ4NGE2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTdhYjBmZGFjNGYwODk2Njc4NWI2MzNlOTYyODg1YmQ0YTc4NWYyYjQzZGNhYmJmMjJhYTViYjAzNmI4YWE2MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDZhNjExNjQ3YWQ3OGQzM2E1NTJlNmM4M2E4YjVhN2E5ZGI3YmUyOWU0ZWFmNjEyYTY1ZDYyZGY4YTljOTk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/DeterministicArdocoTest.java#L6-L9",
+          "version": "repo-lines-v1:sha256:c143508e2a3dfbf70b8214560e2d14be9b901c516b18c2f09c7d12aa96878a20:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MxY2M1MGUxYWY3MDViNjZiYzk0MGVhZDY0MTllM2U4YWYxMDRmOTJkYzIxMDdhNGQyZjE5NWVjYmQ4NGE2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDZhNjExNjQ3YWQ3OGQzM2E1NTJlNmM4M2E4YjVhN2E5ZGI3YmUyOWU0ZWFmNjEyYTY1ZDYyZGY4YTljOTk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/ArchitectureTest.java#L6-L9",
+          "version": "repo-lines-v1:sha256:1e982b3e5ec4a3d45d7e7cac96c496170e71caf86008278d05916986f88cf882:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQwYjIzNTU2ZWUzODg2Mjg2YWM2N2YxNWMzYTljYTM4ZjEwNDQwNGZhZTBmYWViNTZiN2VjNGE5ZmUwNTU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDZhNjExNjQ3YWQ3OGQzM2E1NTJlNmM4M2E4YjVhN2E5ZGI3YmUyOWU0ZWFmNjEyYTY1ZDYyZGY4YTljOTk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/DeterministicArdocoTest.java#L6-L9",
+          "version": "repo-lines-v1:sha256:e1b94d1b94c02d64bbb7de5bd07bd978be92aa55601979cba2e9f52581da4f37:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQwYjIzNTU2ZWUzODg2Mjg2YWM2N2YxNWMzYTljYTM4ZjEwNDQwNGZhZTBmYWViNTZiN2VjNGE5ZmUwNTU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDZhNjExNjQ3YWQ3OGQzM2E1NTJlNmM4M2E4YjVhN2E5ZGI3YmUyOWU0ZWFmNjEyYTY1ZDYyZGY4YTljOTk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_627d4f32d21f425aaf6bd8bc3183fa70",
+      "statement": "ExpectedResults is a record of six minimum metrics (precision, recall, f1, accuracy, phiCoefficient, specificity); benchmark evaluations assert with assertTrue(metric >= minimum) inside Assertions.assertAll covering precision, recall, F1, accuracy, and the phi coefficient — so a regression in any single asserted metric fails the build — while specificity is carried and logged but not currently asserted.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/ExpectedResults.java#L16-L17",
+          "version": "repo-lines-v1:sha256:b22f9dc6c4099fede630a8d13621f01a536b60fa5577256a0621cab6b9ecae0d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQzMzUzZDQyNTkxYTg0ZTg4NmY5OWMwYmZjNmUwNjU0MWRiYzliN2JkZjk0ZTRiZDdhNjFiOTAwOTFiMWExOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTYxMzUyOTMwNWFhMmQ1YmJmYjU0ZDZmM2JkZjBhN2U2YTEzODNhZjAyZDVmY2QzZTIzYTZjOWI4MzExMjNmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L223-L236",
+          "version": "repo-lines-v1:sha256:6bef6bf1fec6597d053e8b49a8f11d51312332d7f251c6e36e5f2afe3be51b01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2ZWVlMjk0ODI5ZTQ3MjQ2ODc5MTg1YjBiNDA1MTU4NjIxZmNlOGI0YWM4ZTgwOGQ3ODUyZTM4NDMwZjIwZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyMDQ4NDQ4ODhiNzc0YTJhYWZkMTMwNjIzYjhjODMyZTRhOTcyYzMwMTBlYTAzYjNmM2ZmZjNiNTU0NDBjYjAifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/AbstractEvaluation.java#L61-L78",
+          "version": "repo-lines-v1:sha256:cf2af0bd825ebacedbf23361652299dd3e40ad562ab8ed15517370b404fb3ec8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlMzlkNDgyNzc5NGFmMDc4NDU5M2I1YTZkNDFmMGVjZTU2YjBhOTQ1NjBiODUyNjQ0Njc5NmEyYjFhZmFjOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0YmMxMzVmYWIzYWVjZmM1ZDg1Y2VhZTc2YzcwMTNjOTIzNDFmNTdjNGQwNmQ1N2E5MDMwZmQ0YWFhZmM5MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhZDhkY2E5MmIwNTIwM2M3MWQ3NTJjMmExN2YxMTIxYTMxODkxOGMyZjVlZTZiN2ZmNzVjOTRjMmRlMDQ0ZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_412692f30cd242af83675117f6cbbd41",
+      "statement": "EvaluationProject defines the five benchmark projects MEDIASTORE, TEASTORE, TEAMMATES, BIGBLUEBUTTON, and JABREF, each carrying classpath resources for a PCM architecture model (UML resolved by path rewriting), the SAD text, a GitHub repository URL with a pinned commit hash, and a cached codeModel.acm; getCodeModelFromResources loads the ACM fixture while getCodeDirectory shallow-clones the repository into $TMPDIR/ARDoCo/<PROJECT> via RepositoryHandler.shallowCloneRepository (depth-1 clone, unshallow plus checkout of the pinned commit when the fetched tip differs).",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/RepositoryHandler.java#L36-L61",
+          "version": "repo-lines-v1:sha256:74a27b933d3e757d219fb18e0ae2bd6b316f53a9d51bc4e833832ac34204759a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkYzE3ZDdhNGQ3OGU1YWQ5MTU4YjViOGQzZGIxY2UxYWY1NDQ5ZDI2NWQzMWQyYTg1NGVjNzY5ODM0Mzg0ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZmFjZWVlOTM2MDI0MzlmZGRhYjEyZTkyMjQ4YzlmZjYyNjEwNTk0M2RkZWU1ZGJkMGQzOGE4NTY1M2RhMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjMTVjNjY1MTg1M2UwMDk2ODA3OTkyZjgxMGMzNWNkMTUyMjhhNzVlNTA2ZDU3MDgxNzkyODRkNWQ0NDgzNWEifQ"
+        },
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/EvaluationProject.java#L13-L113",
+          "version": "repo-lines-v1:sha256:9e4dbe87f9c809c8aa544ea47ec3be23e094a1e72da92dca9da58fc25b55660e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMzI1MDU3ZTgxMjAzMzJmOGMyODJiMjc3MWZlOTNlNGFlNTAwYjE3YmNlODk4MzFhNWJmYjYzYTYwN2MxNTViIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYTdiYjczNGM4ZTZlMzBlNTJlOTAxNzA2MjA3NWRjY2E5OWMwMTRjMjZkY2EzNjBiODMxMzIxOGMwYTMxNWMwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4MDRmODlmYzBlYzk4Yzk4MjQxODNlNzk1ZDNlZGQxOWU5MzBmN2JjNDcxZjkwMTJhYTNkNTAzYmUyZjg5NzRiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d46ecbc848f544789340e85de3f42dc0",
+      "statement": "tests-base bundles a snapshot of the ardoco/benchmark datasets plus per-project filter configurations on its classpath (e.g. /benchmark/mediastore/... and /configurations/ms/filterlists_all.txt), and EvaluationHelper materializes classpath resources into temporary files because the extraction APIs take File arguments.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/pom.xml#L14-L14",
+          "version": "repo-lines-v1:sha256:30c3294b9eef5b499e98d00e5a767d20ed98816e5496050f20ae5a149df7935c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzBjMzI5NGI5ZWVmNWI0OTllOThkMDBlNWE3NjdkMjBlZDk4ODE2ZTU0OTYwNTBmMjBhZTVhMTQ5ZGY3OTM1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzBjMzI5NGI5ZWVmNWI0OTllOThkMDBlNWE3NjdkMjBlZDk4ODE2ZTU0OTYwNTBmMjBhZTVhMTQ5ZGY3OTM1YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWY0NTYwOTdkZGEwYjQyYzdiMWY0MjhlMTc1OTIzZDFhMWYzYmUyNDY3ODVkY2ZlZjRlMWM4NjRlMWVkY2Y3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjY3ZTZmZjMxYWEzMDIzYTZlZDk5NGE2ZmRlYzY4MmQ2ZmE5ZGQ4YjBkZTU3MmVhODVhZDQ0MDA4OWI0MTFkMCJ9"
+        },
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/EvaluationHelper.java#L21-L37",
+          "version": "repo-lines-v1:sha256:baf6b3bdc2041f65159363eb065fd2157f7ac10d7380fc35a748790663534f23:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhYzM0YmFhODk4OWQ2ZGQ0ZDJlMmQwNzc4OWJiOGM0NGQyNmE1YjljOTU2MjE2NWRiMDQ1Y2ZjZTBlZmZjMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlN2RjN2MzZTZlNTBmZGYyNDExMzY0NTcxM2FmZDM2OGEzMjVlMWViNDc5YzU5YjM1Y2JkMmY4OTAzNDNiNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/EvaluationProject.java#L14-L47",
+          "version": "repo-lines-v1:sha256:312046529f814cb8885eb092855fa04f190ef6d6945c74c60964544d7db02742:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjNTgyZWZhZWJiNzdlYTY1NTJjZTdhMDEwZjViZWE3MzVjMmZjNTczODRjODVmN2U5ZTI0YWI5ZDI5YmY2MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwZmUxNWQxMzZiMmExNDllNGMzNTdjYjdiZDAzNjFlNGJhMTRkYTdlZTJlN2U4MmE4YTQzMmM2YzA4NWIxZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmN2Q3ZGZkMTFkNTRjOTYwMjc1MTYzYjE0MmVkYTJhODUyZTAxOTUyNmVjNTQ2ODMyZDllYTUzMjYwNTFjMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjZWM1YTUzYzI4MjQwNDI4YjFlMTJmN2VjYzlhMzdjZWNlM2U1ZjZkZTVkYTg4ZThmYjU5ZmI0MDVkYzEzNjMifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/InconsistencyDetectionTask.java#L18-L51",
+          "version": "repo-lines-v1:sha256:7b68a0385f91fd7865909d6c4ac1dd060c0713ecd2e4c1517b7b01d1fc95e862:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNWYwMzFlODBhN2FjZWUzMWM0NDZlNTc1MTdkNDhjMGU4ZWVmY2VjMjE4ZTgyN2U5N2I3NWFiYzUzZjQ5NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MTA2ZTc4MjNkZTYxZjgwMGJlYTkzNmIwY2YzZmUzZmIwNTc1MWJiYjZiZTZmMzIxYTczMjQwNzdhZTFlMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjOTEwZDNhNGM1MjE4ZTI5MzRjZDZiOGVjNzExMTE5NWIxY2Q0ZjBlMjQyNTg4ODY1NGU4MmE5NzliMGM2N2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkN2E0MGVlMDkxZjllNjdjNGE3NmUxNTIzNDhiOWM5MTczMTk4NjdlNWQyYTEwMzQ0NzlhNTMwNGZlYmJiOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7211570b423945b4b0426657105b9af1",
+      "statement": "InconsistencyDetectionTask wraps an EvaluationProject and adds the ID evaluation inputs: the *_UME.csv unmentioned-model-element gold standard (header and blank lines stripped), the sentence-to-architecture gold standard CSV, a per-project filter-list configuration, and its ExpectedResults minimums.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/InconsistencyDetectionTask.java#L17-L100",
+          "version": "repo-lines-v1:sha256:bae0f0c4a4253fc2dcc3af3da1350ddf46f73173b0730a9781328a93d2b9eb9f:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhZGEwMGYyOTVmMWY0NzQ2YThkMWU5Y2YwZGQ2MDk0NjRkNjk5MjIwZjc1ODZlOTY5NjAyYTAwMmE5NDkxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmNTZjYmFiMzBjMzI0ZTZkYmExNDdmOThiM2NkZDI3ZGM4YjlhY2JmNTE4N2E1MjI4NmQ3ZTM0NTdmMDM0OTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be84a3d41b414113b0ecc8a845198c68",
+      "statement": "All benchmark comparisons compute metrics via ClassificationMetricsCalculator from the io.github.ardoco:metrics dependency (pulled in by tests-base) with an explicit confusion-matrix denominator: the number of sentences for the ID TEAM evaluation, sentences × architecture-model endpoints for SAD-SAM TLR, and code-model endpoints × architecture-model endpoints for SAM-Code TLR; code-based gold standards are enrolled first so package entries whose id ends in '/' expand into one gold link per code-model endpoint under that path.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java#L30-L40",
+          "version": "repo-lines-v1:sha256:b7572313d05d11a188fe6bbeb90f8c0bc37ea043a4f75b18aeee24c3955151e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MzQxY2E1YmJhZjhkYTc3NWEzYmFiNDliYjgxYjM0NDE4YTFlNDY0NjI3NDk5YjBkMDRhMWI3N2M4M2MyMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkN2NmNTk4YTNkZDZhNWUxZjdmNWYyNTA5Y2ZkNGFlNDMwM2RhNjdiOGEzZjljYThlOGUyYThiYjA0NTUzN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExODYxMzgwOTFlNzQ5Y2NmYzQ4Y2FiODRiZmUwMzA5OGQ5OGFhMzMwZmFhMTdiNDMxMjllYzNjMmQ5NDQwM2UifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/AbstractEvaluation.java#L80-L101",
+          "version": "repo-lines-v1:sha256:e845f5f60e27c2560112f8895f8df6d4506363dbe28a03065f00c2e4cceee7bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkZWM5YTRmOTY2MTMyZWRkZWVhZGVlNWY0N2NjNjkyN2FhZjQzMThkOTU4NDk0YTk5MGE2MDY1NDM1N2RkYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyZDgyOGEwMzdhYzFjODE1MzViMWQ1NTAwODMyMzIzYmZiYjg2NmEzYTNmODdlN2E2OGMxM2EyYmFlNTZmZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ArcotlEvaluation.java#L69-L91",
+          "version": "repo-lines-v1:sha256:5f54196c0d8cc56d656bb23fb3d37a4e488c75c9f07190189cce8c765cac9b4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkMTQxMjIzNDY3YmQ3MGQ5MmI2MjQ3ODJhYzAzZjM2MmY0YTA2NGQ0NGYzMDFhY2I5NGYwYjY5ZDM1MzljNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxNzYxNWM5ZDZkMjZkOGU2M2ZlOTVjY2E3ZTZlMGE4OWRmMWZhYmRhNTE2YjY4NDQxZWUxZDcyN2YxMjNiNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/SwattrEvaluation.java#L53-L74",
+          "version": "repo-lines-v1:sha256:67a50b8118b8583052d7c7037925ae83e3cd67e84a78cdfe823f91a0969c660e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNzRmY2E3OWY1NDgwMmJjNmNiOTNmOWMzODU3Mjc0ZmYwMzY0MjNmMjY1YjZkZGE0NjZhNjE3NzBlYWMwMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhOTFjM2EyMjkyOWJhMTQxNTMyODE2MmUyNGViOTIzMzQ5NmMyN2VmMTE2ZTU3OWExZTdlN2VmZDQyNTcyZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMmU5MTcxZDBhNzU5YzdjNGRiMTc0MTUwOGIyZTNmOGE1N2FlNDlmYjAyZmZjNjAxNWYyNDk5YzIwNTFmYzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1e9c6872328c4e1293ff2f2b409c19db",
+      "statement": "tests-tlr and tests-inconsistency declare tests-base as a test-scoped dependency and bind maven-failsafe-plugin (root POM version 3.5.6, integration-test and verify goals at the integration-test phase), so mvn verify runs both Surefire unit/ArchUnit tests and Failsafe *IT.java integration tests; the module-scoped recipes are mvn -pl tlr clean verify and mvn -pl inconsistency-detection clean verify.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/pom.xml#L14-L20",
+          "version": "repo-lines-v1:sha256:1a598219f38750f79997c3614bcb5f82c03ef299d4e9d8b9d7e4ac00ca9fc5e8:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IxN2EwYzJkMjE2MDUxZDA4MGVhNjAzYTJmZWM2MzMwM2JiMjU1MWEwYWU1NWUzODNhOTM3NDYxMzkyMGQ4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM4ZWFiNjYyNTUwM2E2YjgzYzkwMTZmNzM2YThkYzY3ZjRmMTY1MWUyYTJiYjMwNTg5NzU5ZTY4NzA3Zjg1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmY3YWJiYmZlYzUxZTk0NDU2ODlmNWQ4NjFjNDNkZDY2Njg2YzcxZGZkY2E0N2M4ZGQyNzc0YjI2MDljMjVmZSJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/pom.xml#L64-L82",
+          "version": "repo-lines-v1:sha256:7194b672f83c948ab8086b4c1de8c6019c3968e99531c6519467a243d0faf85f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiZjlkNmFmMmVmOTY1Y2ZiNGI0ZmMwZmU2Mzg3NmMwOTVjYzgzYzljYmZmZTlhMTk5ODgzNDM2OTViMzQ4N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYTIyMDg0NTQ1Nzc3YjE0MWI0NzIzMmY5NWY1ODYwMjMyZjcwYTM2YzUyMjUwM2ViOWFmZTVlZDg0Zjc5M2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNjUyMzAyMWU5NzlkYzM3MDIxNjljZmI4ZjUwODM5YjFmN2Q4YmRmMmMwMTEyNzAzOTE4NTgxMTIyMDJlYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2ZTMyYTMwZjNmMjBiYmM4MmY1YzUzZDQ4MDg4M2RhODk0OWQwYWJhYTllZGQwNWFkMzJjZDdhYzRlMjc5ZTcifQ"
+        },
+        {
+          "resource": "repo://pom.xml#L344-L357",
+          "version": "repo-lines-v1:sha256:b49e810dc66fce756c3ef720c9e92a02bd8a6ea4ed4ce2f4da2be6bfae6e0c41:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZDcwNTBhMWE1ZTk5OTdkMWRiOTAzMzBiNWQ1NTgzMDE4OWFjYzQwNzNmNDhmYmIyOTU5YTllMzg1YjE0MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlMTJmYjc2YjQyZjUyNjdhNTQ3ZmIwYTBhYTIyOTA4NTc3OTViNzMwMTk4MDMyZmNmNGViMGNlOTBjOTgxNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczY2ZmYTVmODA1NjU2OGYxMDA0YThhZDE4YjJhYjNmODg3ZDlhODE2ZGExOGE3MWE4ZWZkMjNlMzI1NjU5YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwNTkzMmI5NmVjYTFlNTljYTA1NTg3YTQzZTgzNzlhNDUyMTkxYzk5ZjMxNzA1MDI4ZjIxZTRmNDQ0ZDQ1MzkifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/pom.xml#L14-L26",
+          "version": "repo-lines-v1:sha256:0db470ba848356e1f0519695ce68de4915cf5fb307c7e013661c367fa5a60837:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMTdhMGMyZDIxNjA1MWQwODBlYTYwM2EyZmVjNjMzMDNiYjI1NTFhMGFlNTVlMzgzYTkzNzQ2MTM5MjBkOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkZDYyMzM5N2ZjNzcxM2I2MjE0N2I0NmMxYjMxZTI2NTg3MTA3NDEwMzMwYzViNzM0MDBhYTk1MzkyM2YzNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkYjU4MTY4NWFlZjNmYjQ2NjBkNDE0NDJiZDQ3ODNhYTNkMjUzMjIwZGEzYWZjYjA5MjM4MGYwMjU4MzgwYzYifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/pom.xml#L63-L81",
+          "version": "repo-lines-v1:sha256:7194b672f83c948ab8086b4c1de8c6019c3968e99531c6519467a243d0faf85f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiZjlkNmFmMmVmOTY1Y2ZiNGI0ZmMwZmU2Mzg3NmMwOTVjYzgzYzljYmZmZTlhMTk5ODgzNDM2OTViMzQ4N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYTIyMDg0NTQ1Nzc3YjE0MWI0NzIzMmY5NWY1ODYwMjMyZjcwYTM2YzUyMjUwM2ViOWFmZTVlZDg0Zjc5M2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNjUyMzAyMWU5NzlkYzM3MDIxNjljZmI4ZjUwODM5YjFmN2Q4YmRmMmMwMTEyNzAzOTE4NTgxMTIyMDJlYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2ZTMyYTMwZjNmMjBiYmM4MmY1YzUzZDQ4MDg4M2RhODk0OWQwYWJhYTllZGQwNWFkMzJjZDdhYzRlMjc5ZTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_566954df7abf48a3a14c64a82b83ff9b",
+      "statement": "The TLR integration tests are environment-gated: SwattrIT, ArdocodeIT, ArcotlIT, TransarcIT, and SwattrAiIT run unconditionally (SwattrAiIT feeds pre-generated LLM component listings as ModelFormat.COMPONENT_LISTING with metric assertions disabled); ArcotlIT/TransarcIT offer full-clone variants enabled by the testCodeFull environment variable that first remove the cached code directory via RepositoryHandler.removeRepository and then evaluate from a fresh pinned-commit clone; ArtemisIT and ArtemisInTransarcIT assume OPENAI_API_KEY or OLLAMA_HOST is set and skip on CI; ExArchIT and ArtemisInExArchIT are @Disabled(\"Only for manual execution\") and additionally LLM-gated and CI-skipped.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArcotlIT.java#L14-L35",
+          "version": "repo-lines-v1:sha256:aa0ed5b87acb6c5bdc078ecc469ab03b12907e86892a9017408da611e60e4589:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhM2Q1ZWYwMDUzNjhhZDI1NmM3YmY2OWUwMGQyNWNkNmFjOGM4N2MwNmVmNjRkOTI3YTY4N2Q4MGQ4YTgyNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3N2NiM2RhYWM2ZmM0MTg0ZDhiMmMwMDViMWI3NTBmZTFkYWU2ZDM4N2Q4MDEwOGI3ZmQ2YmEyMzk5MmRmYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L27-L49",
+          "version": "repo-lines-v1:sha256:6df0855dbcb06b45c0e000c8a099710f2298bce926b3f8e3e2afc125cc97cc5c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZGI4MDJmNmIyYzU1ZmQ3Nzg0YWRjMWI5M2U0YWVhZTVjMzE1YzA5NDZlNTNkNjI3NTA4Y2QxZDFiY2ZkMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMTE0ZjRmMjJhMzY4MGJmYWYwNTAzMDUyNWFiMTc2YzY0OTYxOWZmY2NjYThkZDM2YjY0MTg4MWRkZGRlOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwYzQ5NjkzY2NlZjE4ZDkwOGViOWQ3Y2EyMzUxZGJlZmQ4N2MwZTEwZGY1NDNjZGM0YmJkZGRkODdkOTRkNWMifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisInExArchIT.java#L29-L48",
+          "version": "repo-lines-v1:sha256:62897070ece2f61a86a2e19ec610d97bbccb2a5fc6b7650d9df57cd3ee895c31:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2MDkyZmQ0NTJkYzUyYjc4NzMzN2Q1NDVjMGU4OWU3MmNmMjUwZWRkOThmZmFjZGEyMTQ1YjVjNTQyYzE0NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmZWRjZTg2YmE0ZTJjZTc2YmZhM2Q4ZDg0MTA0YmE2ZGRjMTNmMjdjYzllMTQ0ZDM4Yjg5NTJkYTYzZWM0YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyODc2ZTI4MmI0OTJkM2RiNjcxN2I1ZjA0ZDkzOGI3ODE2NGIwYjY2OTY1M2FhZTYzNzAzYTkwZTg3MTFhZDAifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ExArchIT.java#L37-L48",
+          "version": "repo-lines-v1:sha256:abe30fc7d4791e1f71d41c761a416c1b3ef4d7cfe8229b3c057008ab728c2139:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2MDkyZmQ0NTJkYzUyYjc4NzMzN2Q1NDVjMGU4OWU3MmNmMjUwZWRkOThmZmFjZGEyMTQ1YjVjNTQyYzE0NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YWIzNWI0ZGFjODRjZGJlN2MzNTk3YTk0MGFmY2M5OTUzYjcxOWIwZDNiNDI0ODMyMGYzNWNlNTE4MzQ2NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0OGI3ZjY0ZmU2ZTAxNTNiYWI4YTc2ZTUyZTY3MjkxZTQ3OTI2ZTM4N2RhYWU1OGM2ZjdkZWY1NjY0YmE3MGYifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/SwattrAiIT.java#L22-L62",
+          "version": "repo-lines-v1:sha256:82c56037b4da23c9b1644f4f22c67be3c5a8e2a7007d9218bf947d38d7999946:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmZDZiZDMwZDY1NzY5ZjkwZDY2NGMxYzc5ZGQ2ZjgxZTZiNzU0MmUzODNiYTdhNTZiNjcwNDdhOTdmYjE5NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1ZDQ2YzExZDJmMWZiODE0NGI5MDk4NzExZTE1Yjc2MGM5Mzc1MmEzMDkwMDM1ZDkzYWRmYTg4ZTdlZjFjN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NzFlYTY3Y2JmYzA2ZDcxYjk5ZDY2OTJlZDc1ODI4ZTUzYTk5MjJlOGMxYzA0ZjJkZDA3Mjc4ODIxYTc4N2MifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/TransarcIT.java#L14-L35",
+          "version": "repo-lines-v1:sha256:44dd5cd76a98c3bac53182c813d4e4d7f26402ade2e870aebcb40b0334776f03:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYzc5ZTAwOTM3MDY2ODljY2M0NTY5ZDJlMDJjMWMwYTBhZGNhN2U2ZDJmMGU3ZWZlYjcwZThjZDk3Mzg0YzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmMDkzNGZmODI5Y2YzMDkwZjY4NzJjMzNiYzY2NmRiMjI2YjNlN2Y0NjQ5ZTViMzE2NDdkZjlkNDk4YzE3OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f0fc418041942a18451b3bc1404ab65",
+      "statement": "AbstractArdocoIT.averageAndLog averages repeated runs per metric and logs mean ± stddev to cope with LLM nondeterminism; the ArTEMiS ITs run NUMBER_OF_RUNS = 5 repetitions when the environment variable mutipleRuns is set, parameterize over all non-generic LargeLanguageModel values × projects via @MethodSource, and their project enums currently carry uniform 0.420 minimums for all metrics; because checkLlmProvision only accepts an OpenAI key, an Ollama-only setup passes the class-level assumption but each test logs a skip.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/approach/ArtemisEvaluationProject.java#L7-L12",
+          "version": "repo-lines-v1:sha256:f05641c2e38d37180b3baa84e6696489c75df44818b3721e6cb11fb7de344ebb:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU0MDE2ZTE0OTRjYmNlNWRhNDI2MzM2NjIwZmVmYThiMDM2ZGM2ZGZlOTc3Nzk2ZGY2YjM1ODkyOWE2NTNiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWQxNjkyMmFkMTlkYmViNjIyZTE5NzJiZmMyYWRmOWI1NjViMTU5YzNmNjc2NmE0NmU0Nzc1ZmZhM2E2NmRlNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjJkMjZjZTYxMDcwMjdlMTUyNGRmZmNlZjYzMDM4M2RhNzY4ODEwYzFhMWU5ODc3ZDc3NDUyYzcwY2MxYzk4OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTkzZTRkNTk5Yzc4OThhYzVmZTkyYjk2ZTNkZWQ5NTI0Njg5ZTUxM2ZhZDc5N2E2Mjg0NDJhY2MzODIyYWNjYiJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/AbstractArdocoIT.java#L30-L66",
+          "version": "repo-lines-v1:sha256:f66cc9d792ec7eb884e77af94b1d996b25ada919c5b9ae3e40eeb947a9317b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2ZTc4ODRjNzVhNTE1ODY1Y2M3ZDA3NWQ2MTJkMTRlZDc5ZWQwYmExMjNjZmM0NTJhOGFlY2EwM2NlNTQ4ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxYWVhMDYwMTE5YWRlYzA5NmY5YjliYzdlNDY3NjA0MTliNjdkYTUxMGQ3NjZhNjY1MWJhOTdkYTdhZjUwOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZGJmMWQwM2VhNjgzNzQyMjZmZjUyODdjZjVjYThjODY5ZjE2NzVhY2M0ZTc0NTg2MDRlNDVmZGU3NmVmYjYifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L28-L97",
+          "version": "repo-lines-v1:sha256:45b69e1638c3cdc2dc423d7191b52fd88f0d313bb5396c32b1cb590fbbd01264:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MDNiMWYxOWI0YWEzYzIxOWEwM2I1YWFhZTFjOWU1NDIzNDA5NWM2ODcyZTMzN2VkMzc1YTVmNzAyY2JhYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyM2IwMWNlYjM2OTEzZjE2YWY3YTcyZTAzZDRmNTczNzM4ZGE0MTlmNDg1NzYzMDJjNTI2ZjQzMzQzMzU5NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1aeaa95b546241bfa8a8768f78983c9c",
+      "statement": "HoldBackRunResultsProducer produces one base run over the full model stored under the null key plus one run per architecture component, each removing exactly that component; HoldBackArCoTLModelProvider extracts the PCM model once and supplies a PipelineAgent whose extractor returns the initial model minus the current hold-back (a negative index holds nothing back); every run is an AnonymousRunner pipeline TextPreprocessingAgent → TextExtraction → hold-back model provider → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker, or InconsistencyBaseline for the baseline variant, configured from the project's filter-list file.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackArCoTLModelProvider.java#L31-L93",
+          "version": "repo-lines-v1:sha256:3e3ddc5f6475d502b49cd4f13c0848ad905c7890ee5115d3feefccb6ddf9078d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1N2Y1NWUzMDVmZjQ2YjM0NjRkNTBhMGM3NGQ0MmM5YzlkMzZkYzg5NmY4NGJiZjVlZmJkMWU3YTU0YjY2OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0M2Q1OGFlNTVmOWRiMmUzMzViNmQ1MDM1NWYxZjA3NTNhYjUxM2UzMDhiYWFiMzVmODk0N2RiN2IwZTMxM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java#L50-L108",
+          "version": "repo-lines-v1:sha256:e809afcf42e9baa52b50c68276d6cd5a7bff98bab72565ec6cfa9587424fdfb0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhZDczYmUyM2QzMzYwNGIzYmQ1ZmMxMWUzNWVjM2UwMjdkODQ2OWRmYjc5NzIyZWQ0YzAxMjMxNWEzMDMyNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1YTAxNGY3NDYxMmFkMzhkYWViN2I2NDNjZGM0ZDM5YmJjMzg4MTZmNzNmODFmMzQ1ODZhNjIzMDJjODAxNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_14d226d39f0e400b8908445c31aa64c8",
+      "statement": "The TEAM evaluation (order 1) compares the sentence numbers of detected TextEntityAbsentFromModelInconsistency entries against the gold-standard sentences that mention the removed element (from the sentence-to-architecture gold standard via getGoldstandardForArchitectureModel), aggregates per-run results with the micro-average via ClassificationMetricsCalculator, and asserts them against the project's ExpectedResults minimums in checkResults; base runs (null key) are excluded from scoring and only logged.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L198-L236",
+          "version": "repo-lines-v1:sha256:6e88d3bda75fb9ae1e44d26842284f0ff91447c6a28e8fa7e388287b492cbe72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzMTA4NmIxOWRkODliMDEyOGNmZGYxNmE5OGE0YjE1OTBiNjFiOWU0ZTEzZGU2MjcyYjM1YzdkNjllNDdmMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MTc0NTVkOTg2N2JhN2VhMzQzNTljMWY5NWJkNWRlMzExYjE1NmU1MGI5ZTM0YTUxZmEwMDU3YjBmMjZiZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyMDQ4NDQ4ODhiNzc0YTJhYWZkMTMwNjIzYjhjODMyZTRhOTcyYzMwMTBlYTAzYjNmM2ZmZjNiNTU0NDBjYjAifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L75-L96",
+          "version": "repo-lines-v1:sha256:2f02047e69e21c4e99e7234a4dbbb62a9b25f0992c3374078c3d52a342a93bc1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyMzMyZGI1MjNhMDZlM2U2MjExOGE1NmQ4MjBmMmEwMjU0ZTJjMWIzODM1OWQxNDE0Zjc0MTZiYzIyODljMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5NzBjOGM1YTEwMDcyZTMzNzA4YTNkNjJmNGM3MGQ4ZTcwNGU3ZTkxNGMwNTNhMjU4OGI1ODBlM2I3MjM0MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlZjFlYTE1MGU0M2I2ZDRhZjlkNzM4MDIwNTAwNGY1Y2FmYmUwNzgwNjc1ZWJhMDY2YjBiNWFjZGNhYTllNjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60c30bf0217044daaa80acbad7e327df",
+      "statement": "The ID baseline variant (order 5) is enabled only when the environment variable testBaseline is set to any value; it swaps InconsistencyChecker for InconsistencyBaseline, whose informant reports a TEAM inconsistency with empty name and fixed confidence 0.69 for every sentence that has no trace link, and it logs the weighted-average metrics without asserting them.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/eval/baseline/InconsistencyBaselineInformant.java#L26-L46",
+          "version": "repo-lines-v1:sha256:9795144b204d24b1bc0adf5d951a6ec178ba5ff778ac88ca2e4c772fe9fe9231:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1YjAyNzA3ODhjY2FiNDE4ODRmMGUwMzg2YmJiMzNmNDk4MzJkNDc5ODg3MjExM2M3ZjQ4MDZmNWU1MjIxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmYTk2MTVlMDYwNDMzOWMyNjFjODM2Y2M0NTAzNDc1MDI2MGRiMzEzMDg2MjViYzMyYjZhNDQyNGZhOWM2YjkifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L98-L132",
+          "version": "repo-lines-v1:sha256:9109dfdd0d5a726bada4803fa7ff949818dbd24e481b70fed483527909cf540e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5Y2JiYzY1NDY5ZGIxY2EyODQyZWZkOTdkZjdlZTJjZTZjYzE1NzE0ODJkMDFhMThiNzkwYTEwYzdjNTEwZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3Zjk1NjgwNjE4MGE2NzY0MzhmZTQwMzJmYWZlZmFlMmYzNGQ0MmU4NjQyZmM2NmI2MjAxMGVmMDlhMmNiZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5ODk1NTk4MjNjOTc3YTIxN2JmNTZlNDlkZWIyYTE1MTlkMjQ5ZDMzYTU0ZDIwZDlmMTYxMjk5N2ExZDRhMDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2c559f21cc7d417291ca02212b877491",
+      "statement": "The MEAT evaluation (order 10) reuses the base run's ArdocoResult cached in a static EnumMap by the TEAM run (recomputed if missing) and compares the UIDs of all reported ModelInconsistency instances against the ids listed in the project's *_UME.csv gold standard, logging explicit TP/FP/FN counts without minimum assertions.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L134-L174",
+          "version": "repo-lines-v1:sha256:d574462dae622114e274434bb36d8eb9564390ccc18edfb05dc392398f2f0954:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5Y2JiYzY1NDY5ZGIxY2EyODQyZWZkOTdkZjdlZTJjZTZjYzE1NzE0ODJkMDFhMThiNzkwYTEwYzdjNTEwZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1MjdjYmUyYWIyMDZjMjZjMTRjNzVkZGQ1YzI3NmJlZmZkYTRjZDgzNGJjOGY0ODczNjYzMGIxNWNiMzI3OTAifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/InconsistencyDetectionTask.java#L85-L96",
+          "version": "repo-lines-v1:sha256:4733b378a158537a9dad7216f776eb5a7f0e1f46c6236abb4865453a8bd01f0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMjg0ZjYwZjEzMGViYTQ4MmMxZjE1NjVhZDU4MmUwZGI1YjNmYWFhMDllYmM3M2E5YTdkNjAyODcwNGQ3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMzg4NTAzY2E4MGM5MjBkMGE4ZWY0NGY0MTc5NDBmMjhhZDEyMDNmODkzZTViNjZlOGY3ZmQ3MTA3ZGQxOGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMTMwZmM5Y2E0YmQyMDZkM2E5ZWRhYTYwMDhlZjZmY2MwM2UwMjJhMzY2ZGQ0NzdjOGUzMzE1ZjA0NzgxM2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db9aa095e2bc4c528883eb44b862437d",
+      "statement": "InconsistencyDetectionEvaluationIT's javadoc documents the EnumSource names trick for running a single benchmark project — temporarily changing @EnumSource(InconsistencyDetectionTask.class) to include names = { \"BIGBLUEBUTTON\" } — and warns to revert it before committing.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L66-L74",
+          "version": "repo-lines-v1:sha256:0935fbe1268755c0fabe3a5951df43a16c9a0dcb75888995c1daf7e15d273f8e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzljYmJjNjU0NjlkYjFjYTI4NDJlZmQ5N2RmN2VlMmNlNmNjMTU3MTQ4MmQwMWExOGI3OTBhMTBjN2M1MTBmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2QxZTFlMjYwYmRhNzcyZmFhOTgxNTVkMzgwOGYwOTVjOGJkMmE3ZTlhNTM2Y2I3N2I5YTQ3YzcxNDQ2MTY3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjkyMmJjNzQ4OGM3MmJlMjE3YTczNzAyYWQ2OTc4ZDExNTc3ZjdkN2E1MWU5ODAxODk5MTU4YjUzOWJiY2EwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGUzNTg4MDY2NGMzODdkYzZhZGYwOGQxZTNiNTAxMDA0NGRjOGVkNDVhM2MyOTQzZGY0OTFiNzNmZWFiNDkyNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6f09a99007340fa8f5341b79fe70c4c",
+      "statement": "Evaluation artifacts land under target/testout: ardoco_eval_id/inconsistencies_<PROJECT>.txt and detailed_inconsistencies_<PROJECT>.txt (per hold-back run with removed instance, metrics, and TP/FP/FN lists), ardoco_eval_id/inconsistentModelElements_<PROJECT>.txt for MEAT, plus traceLinks_<PROJECT>.txt and inconsistencyDetection_<PROJECT>.txt for the base run; TLR ITs write runner outputs to target/<project>-output and SwattrAiIT to target/testout-tlr-it-llm.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L248-L260",
+          "version": "repo-lines-v1:sha256:5b451d099416b8b731c43faad4a3700cb3123cb3440020ea02de604670b324b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNzcyYWQ3ZGI1ZDMyMzQ1OWRhNjE1MjE2MGI0ZTIxNjY1ZTQ1ZDhiY2ZjZDIzNzZiODIyYjhiMDUwNjNhNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlOTBmZjNlYWFmZTIwNWEzMGZkZjgzZWFkN2JiZTRlNjlkNGIyNmEzZTZkOWZkYjdjMDQwMTdlNWZkMDlhZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MTUxMDI3ZmFlMWFhNTcwOTU5MTJkNDVkODYxYWY0NjZhMjU2ZmU1NzU1NzQwOTVjZmIxZmJlNjZiMmIwNGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L390-L436",
+          "version": "repo-lines-v1:sha256:131f2fd39d90d5bbef02814b02965315ef9bc8e964f0a2e29f3dde6fd0ed4ae6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyNTcwMzFhZDAwMmQwMDg4MTUwNWMyMDFjNWM1Y2JiMWQ0ZjY2OWFlMjc3MmQ0YmFhZTlmMWVlMmRlNjQwYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0MjY5NzNkNzU1MmIyZDQ4N2YxMDI5NjM0YThlZDE0YjRlNmU0Y2JhOGE0MmE2NmQ5OWY2Y2RlNDJmMzQ0NDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L60-L64",
+          "version": "repo-lines-v1:sha256:7b18468ca2bc389e8e4636a85bcebfeb97ef1b9c9b284d3ce44123ed50fdeccf:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzY4NTFlNDkyYTBhM2QyNzM1MDdkNjM0ZmViYWJhZmYxZWM4OGI0N2Y1OGM4MjhmY2NmNGZhNzNkMTFlZTE4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmJhMDNmNTg3Yzg4ZDRhOTYyNmFmY2FlNmI0ZGQ3NmQ2YzY1MGFmYTRhZjgyZTQwOGI3NjlhMzI4MmI4YzI4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ4MGI2MGU2ZjA3MGM0ZDIzMmExMTI1ZGQ4MGI1YWRlNTg3YzcyNWVkYjFiNWZkZmE0NWIxNDU1YmQ1MWM1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTZmN2JmODU0M2JhOWEzMTQxNTQ0M2ZiMDdjOWQwNWY5MjA4YzE1Y2Y2NWM0Nzk3OTZiYTJkOTdhMjU3YjVmZCJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/SwattrAiIT.java#L23-L24",
+          "version": "repo-lines-v1:sha256:ca646ace5d31ff471666a5f60edcde86a28aa008caa4149bde9372a97d24d676:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDBjNDM3OTNjNWZhNjdmZDJkZWVjODY1MTY4NDI1MzRkY2U2ODNhOGM1MjFiZDhiNDc0OWZmYWNkMDhiZDlkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODJjZjJmZTJhMWE2MmE0N2M1YTQwMGYwN2E4ZDQ2ZWU5NTFhNTE4Y2IyMjAyZDA5N2I4NDI3Yzg2YjUzNDNkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTlmMzMwYjY5ZTU1YjU1YWJjNWJiYWUzMTNiNTNhMzQ4NGNmMWFhNTc0OWRjODlhZDY5M2VhMjFkOTI3NjUwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYThkNzI1MTliYmNkMmU5MTkwY2FlNjdkMTUxZmMyYTk5NWZiZTRlYjA3OWRiNjdiYzhhMGNhYTQ5MTlmMzJlMCJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/SwattrEvaluation.java#L82-L83",
+          "version": "repo-lines-v1:sha256:d39fec01cafd9c51f2289df1c043afb0d72d0a9668fc88c259b946d4870d31ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODcwMTkwMjVlY2M2ZDdlZmI3ZTgzYzVjMWJjOTJkZDgwOGVhNjI1NDFiM2VhOGQ1ZjVkNDY3MmY1ZGU1NzBhNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWMzMmU1OGI5YTI3Yzc4MDQyMzVjOGU4MDFmZDE1MzBkMWMyNWZhZjFlNTMzOGU4YTIzZTEwYzE4NWQwYmNhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDAyYTQ2NDE0Y2U5YTYxMTE5OTVhMWNjMGM5NjQyYTRjY2M3ZDFhZGIwMjNiMWUwZTJhOTI1YTRiYWJkOWJiMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmI2YWVmODhjMzdmMDFmMzU0Mzc5ZjNjNWZlNzQ5YjczMDliMThmMTBlYjAwZjljZTM2NWFiYjkwMzRhMGZlNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a86d9e9409674dfa98b49f42af189639",
+      "statement": "tlr/update_integration_tests.sh refreshes the tests-tlr tree from the separate ardoco/IntegrationTests repository by adding the integrationTests remote, fetching main, and running git subtree pull --prefix tests/integration-tests integrationTests main --squash.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/update_integration_tests.sh#L1-L4",
+          "version": "repo-lines-v1:sha256:d2c5c1f2e9c154c45d1a407771a15518ebb29a7528c1e8503e8ce2371031b5f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2E5MWE5NTdhNWIyNmJhNDk4OGNiYWNiYmY2ZGVkNTIwYzdmNTVjMGFkZjk1YzVhMzIyM2Y4N2U5NGQxMmM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFmYjBhMDI5ZjFiZWY1YmU2M2VjNTFjZDI0MGY4MWUxODAyOTcyMTYxYjE5ZTUwODFlOWY1NTdmOTBhZTQ1MyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-05T12:50:45.506Z"
+  }
+}

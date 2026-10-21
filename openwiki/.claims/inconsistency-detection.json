@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c1004c5a62896b37444ada3920292c1da35776a032b8f02579e8fd779dc62fc0",
+  "claims": [
+    {
+      "id": "claim_6b4e5f7887b84ecba335d1cc85c5ab97",
+      "statement": "The InconsistencyDetection runner extends ArdocoRunner and wires the pipeline TextPreprocessingAgent → ModelProviderAgent → TextExtraction → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker, pinning the architecture Metamodel to ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, rejecting blank input text, and reusing the SWATTR TLR stages whose results the checker consumes.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java#L47-L66",
+          "version": "repo-lines-v1:sha256:356bbe9d1de1a81097dcc98e9a770275cc8d43cdf402ee338c5f859c8333fc85:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjOTdmMmZhMzY4N2ZjZTUwNzAzMzlkZGU5ODA1NWU1NjZmNWRlNDU5MGViZmEwNjYxNmIxMmM5YzgyNDc4ZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlOTk0NmU3M2U1MGZlMDgxN2EzODY1MDFmMTRjMjkwYjJiZmFiODYyOGE2MDI3OTA0MTUxZjkwMTVjYzZhY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8344957b05fa46019009fa8edac4ab57",
+      "statement": "InconsistencyChecker is an AbstractExecutionStage that registers InconsistencyStatesImpl in the DataRepository under InconsistencyStates.ID and runs exactly three agents in order: InitialInconsistencyAgent, TextEntityAbsentFromModelInconsistencyAgent (TEAM), and ModelEntityAbsentFromTextInconsistencyAgent (MEAT).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/InconsistencyChecker.java#L15-L39",
+          "version": "repo-lines-v1:sha256:f51c66a1afc519637f1e6b51032b3d5732f95b1cce21a997496bd7ef35e58d46:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNGRmNzU2YmNjOGU4NGFjMThkMjBmZGNmNGZmMjBlZGRkMzNmMjk3YWUzYjAyODMxZGI1YTczNDljOWYzNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyZjE2NzU0NTQzOWMzMTIyNGUxN2I0OWI1ZDM5YTE2M2M0NzkzMzQzYzU2MjQzNWQzYzM2Y2YxZTZlMDQ4MjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_56cc27c294a64d9e8c0140a9a7b1de74",
+      "statement": "InitialInconsistencyAgent copies recommended instances from the per-metamodel RecommendationState into the InconsistencyState and then runs three Filter informants: RecommendedInstanceProbabilityFilter (threshold 0.5, dynamicThreshold true with factor 0.7, name-and-type 0.3, name-or-type 0.8), OccasionFilter (expectedAppearances 2, counting distinct text positions), and UnwantedWordsFilter (custom blacklist plus classpath common blacklist, plural words, number-only references, and common file endings); each filter replaces the state's recommended instances.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/agents/InitialInconsistencyAgent.java#L22-L36",
+          "version": "repo-lines-v1:sha256:f7cb120220a0a3fd3f5446419d31173fab76382bdaeaf1202eb6abf91a913166:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYzJiMzExYWJlODc1NzJlOGE3Y2MwZDk5NmE2NTg0NDA3NmU1MjMyZDIxYjdhODU0NzVmOWI0MDU1Yjc0OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhOTFjM2EyMjkyOWJhMTQxNTMyODE2MmUyNGViOTIzMzQ5NmMyN2VmMTE2ZTU3OWExZTdlN2VmZDQyNTcyZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/Filter.java#L15-L34",
+          "version": "repo-lines-v1:sha256:048719b20d2dca512628b6fa741183d804c799baf50565b8f309910c1b74e141:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZTg3ZWVlYWUzNGI4YTQ3ZGY3OTBjNjM0YWZkYmEzNTkxZmM2MGZiNTNhMmQ3NjliODcyYzlmNTQ2MjUyYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYjcwMDU2MTdhNzZlMzk2ODJkMWQyM2QyYzhhMzllNWY0ZDdiYTBmNmFjYmQwMjQ2ZjcyNTI2Y2RkZjI1NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzMTE2ZGNiNjhiMTNiYjI2NjM3ZDFhMGIyYjVmYzIzNGQ0YjNkOGY1ODYxNmJlZThkNGM5N2U5ZmEyYzUxZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/OccasionFilter.java#L23-L63",
+          "version": "repo-lines-v1:sha256:cc596dea3b78ea8d82c9761b9a9ddda03e8196f9b188242de2964113dade9799:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYWY4NWY1N2RlNDc0NWYyNTlhOTYyOTliNWNiN2VhOWM1MjM5OTkwZTk2ZmMxYWQzMmE2YmY0YTY4NjA2YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5NWMxZWVlMzk1ODM3NDBiZWFjMWE2NjYwZDJmNDJkY2I1MWU2ZDZlNGVjYjAzYTllZGFhOTcxOGY0YzBiMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2NTcyNjFjNGE5ZThiNmYyNTZiNjhlZGFhNzYwZjRiNDI1NDk3NDAxYzFhZWJjZjlhODNjZmVkMDAxY2I3NTQifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/RecommendedInstanceProbabilityFilter.java#L22-L63",
+          "version": "repo-lines-v1:sha256:3b6344973c5376cedc3685f5208bebf7f51b2e09bd54be959ce38276606cd539:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYWY4NWY1N2RlNDc0NWYyNTlhOTYyOTliNWNiN2VhOWM1MjM5OTkwZTk2ZmMxYWQzMmE2YmY0YTY4NjA2YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxZjJmODQ4YWE3OWE0ZmY5ODIyODUyOTYxYTg4YmE5NDFjN2JkMjk2ZmRiZGUyY2IwYWM2MTVjN2Y4YWQyMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0ODUyMmYzMTY3Y2MwMGE0ZjhlZDllYTBhY2UyZTMzZTRjOWZiOWI1MDVhNjY0YmIwMTI4MjJmNmEyNDZjM2YifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/UnwantedWordsFilter.java#L28-L128",
+          "version": "repo-lines-v1:sha256:91d786802f109b8a180f72f405a5ccb190767a350b4106c12a8f2a79567ac9f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0OWIyYjFlZGJiYjY5MzBhZmM4NWU0N2E4OTBhMmU3ZDUyYzRkNmVjNGExYjkzOTc2YmMzOGI2YzRlNzIzYWY1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxNGViNjY5MzAyNmY2ODlkNGMwY2U0ZTcxZDVjMTliYmI3MjFkNjMxZGQwMGNmZmIzM2UwMDRkOTdiZjkzNGE4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4MDRmODlmYzBlYzk4Yzk4MjQxODNlNzk1ZDNlZGQxOWU5MzBmN2JjNDcxZjkwMTJhYTNkNTAzYmUyZjg5NzRiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb68711e53ab4a14a9f7dcedadba23c3",
+      "statement": "TEAM detection removes recommended instances that are linked as first endpoints of ConnectionState instance links and candidates sharing words with linked instances, accumulates ELEMENT_WITH_NO_TRACE_LINK and MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES support into MissingElementInconsistencyCandidates, and emits one TextEntityAbsentFromModelInconsistency per distinct candidate word with 1-based sentence number and RI probability as confidence when support reaches minSupport (default 1).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/MissingElementInconsistencyCandidate.java#L13-L43",
+          "version": "repo-lines-v1:sha256:d8a0f392ced1b4473cbb4504ade1a7c7b8307c9e39c70737bc36ba092817f799:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzYjg4OGE2NmZkMTRhNGYzOWNjZTAyM2E0MjgwNGMzZDIwYWEwMmJhZjYwMzU4YzYzZGU1NDhiYWNkYjVmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjOWY4NTMxZWViMzQ4M2QxYjU2YWY1YTJjZWQ5NDA4NDNiMjk4MTIzMGQzN2UzOTRlNzcwOGViMjBlOTZiOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NjFkMDViZTlmMTJhYzBiODMxMWY1MjQ5Y2NkYjk5ODU2ZTIzNjg5ZTNjNTM4ZDQwZjZkZmVjNDhhMWQxOTUifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/MissingElementSupport.java#L4-L6",
+          "version": "repo-lines-v1:sha256:aaf8e9e517079e712d5071e2c5f450bb2b2b01c658c2aa03b9258227ffb3dd8e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA4MzExZGM5NGY1MjcxOWVlMGIwZmYxMjJjMzUxNTE0YTAwMThiZTg0MGE4NjVmOGM1YTFjMWM1MTZhYThhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmFkNTIxZDQzMGIzM2U5YmI5MjdiYzA2ZDY3ZTI4YmIxM2NjZmUyN2Y5MjY2Nzc1ZjM1MDQ1OWMwNTNhNjlkNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/TextEntityAbsentFromModelInconsistencyInformant.java#L48-L128",
+          "version": "repo-lines-v1:sha256:a14735873db4fb149f7abda7b2c80972ab1956d289682b0c48bfe883f4918b78:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzYTNkYWFhMDZiOGQxNzdkODlkODg3NzQ2ODY3NTFmYzcyNWNhNDIzNDQ5NmFmM2RjNjEzNDUyODkxZGZlODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmYTk2MTVlMDYwNDMzOWMyNjFjODM2Y2M0NTAzNDc1MDI2MGRiMzEzMDg2MjViYzMyYjZhNDQyNGZhOWM2YjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f21f838b67b346efadc82ad04ea53427",
+      "statement": "MEAT detection flags model entities of configured types (default Component, BasicComponent, CompositeComponent) whose instance-link count is below minimumNeededTraceLinks (default 1), after excluding whitelist regex full-matches on entity names and name parts, and creates one ModelEntityAbsentFromTextInconsistency per candidate; the type check also matches type parts so 'Component' matches a BasicComponent.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ModelEntityAbsentFromTextInconsistencyInformant.java#L29-L114",
+          "version": "repo-lines-v1:sha256:7bfed1297db777a9932da864034be56f112f2cb38a45e4d2ceb80639f4f679b0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYWY4NWY1N2RlNDc0NWYyNTlhOTYyOTliNWNiN2VhOWM1MjM5OTkwZTk2ZmMxYWQzMmE2YmY0YTY4NjA2YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4NjMwNjMzNzE0ZmIwOTBmOTg1OGY0MTlkNWJjY2FkNTg0YjJhMzg2NzJiNzc0YWUxOTI2OWU0OGJmNTc4MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmYTk2MTVlMDYwNDMzOWMyNjFjODM2Y2M0NTAzNDc1MDI2MGRiMzEzMDg2MjViYzMyYjZhNDQyNGZhOWM2YjkifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/agents/ModelEntityAbsentFromTextInconsistencyTest.java#L30-L67",
+          "version": "repo-lines-v1:sha256:907156497f0ddba9e1844cc1459a3243cd2266be2709bcd38879c1dbd5b51deb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmJjNDJiNTM4YzY3YTM3MWNlNWRkNGQxODY1NmIzZjNhNzNhZGJhZmI3YmRmMTFkMzFmZmQ0NjYwMmQ0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4278c66431c14f849edc97bc27eeb04f",
+      "statement": "Inconsistency state is stored per Metamodel: InconsistencyStatesImpl is an EnumMap<Metamodel, InconsistencyStateImpl> with one state per Metamodel value, InconsistencyStateImpl holds recommendedInstances and a duplicate-free inconsistencies list, and MissingElementInconsistencyCandidate support is the count of distinct support kinds with equality keyed only by the wrapped RecommendedInstance; only ELEMENT_WITH_NO_TRACE_LINK and MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES supports are currently produced.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/InconsistencyStateImpl.java#L15-L74",
+          "version": "repo-lines-v1:sha256:6389248a84efe53214870638e10dc43b8fe0b9f7de7536ab533346d2c4eccc01:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmOTcyYzMyM2FiYzBjMWU1MDQ0YThlNDNlMjVmM2YwMmMyMGRjYmJkZDI1NGQ2ZWI4Mzg0MDY4MTAyNjBmN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiZjBmMTdmNWRkNzdkZTg3MDA2YjVlZjFkODNhYjcxMjM5NjEzZjY5ZDdhMDRjNjA2YWEzNzhjODE4MzkwNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/InconsistencyStatesImpl.java#L11-L32",
+          "version": "repo-lines-v1:sha256:cb09c2d9dcc52f82be47cd88bb1ea07e69ede2e1f920a98dcfc74024e260ede0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0NjAzMmNjMjk2Zjg0MDQzYjI3YjQ3OGE4ZjEwYWNjZWRhOTIzYTU1OGMzYTA0NDI4ZjExNDJjMDJhODZiNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMzcwNjA4OGNmOTVkNzJjZTNhZWQ4YTk5OTUxY2U5ZGEwOGUyYTg3OWQ3MDQ0YjNmODQzNDUzN2QyYmVjYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/MissingElementInconsistencyCandidate.java#L18-L67",
+          "version": "repo-lines-v1:sha256:063941f85f26b09bf6dd3c553529a4bc0cc152e1eff14816d04bd13bbbcddb35:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1MjJhYzIxMGIzNTkwY2UzNWFjNTRkOWM0MjY5Mzc2YTgwYjBlZDk4YmMzNWUzZDg2ZjEyYzdjZjg5OWQ1MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxOGM0NTRlNDFkNzIxNDhjMWQ0YzQxN2M0ZmMyODc2NTkxNjJlYjg0ZmI1ZmZkM2ZjYmNiOWQwZDYzYzgxNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzYzhlZjczOGFjNGUyNzNlMWU2MjY2YjMxYTdkMTg0NDRiMWUxOTA5MjQyNjUxOGE1OTM4MGYwOTg3OGJkNWYifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/TextEntityAbsentFromModelInconsistencyInformant.java#L62-L113",
+          "version": "repo-lines-v1:sha256:1fb15f2f150b5dcbaf772827f26f05daaa753349c2aa36c1e7a805c5f74a1e0d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NzFkZDU3NGRhMDQ0MjZjMzFhNTFjODkyYzUyZTcxODY1N2VhM2RhMzQ1NmJmM2U0ZGYzMDdkMDJkMTk5YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MDZmZGZkNWY3N2RiMmY5NzhiMDMyMDljY2Q4OGEzMDAxMmQyYmE2YmVmNjJjNmQyYTZiNDI3NWMxZDJjODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMDlkOWY3MjI0ODI2OWFiZWQzNmM5YWE3Yjg0NTMyNTY4Mzg2MGMxMDkzYTYwM2EzOTUzZjRjYWRmNzQwNzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_70d56435722d491bb96b5e19646d354f",
+      "statement": "TextEntityAbsentFromModelInconsistency is a record (name, sentence, confidence, origin) implementing TextInconsistency with type string 'TextEntityAbsentFromModel' and confidence-aware equality; ModelEntityAbsentFromTextInconsistency wraps the ModelEntity, implements ModelInconsistency, has type string 'ModelEntityAbsentFromText', and exposes the entity id via getModelInstanceUid.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/types/ModelEntityAbsentFromTextInconsistency.java#L14-L69",
+          "version": "repo-lines-v1:sha256:af0b22d835071ffe8026af225031a9c149286cb0397aef72520050293e4771ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5YWE2YWM5ZDg0YzIzMzQxNmFmYjcyMWFjYWE1ZjUxNDZlZWRiNGRjYTJhYWQ4N2Q5ZmVlZWJmZmMxYzZmMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhZDM0MzkzYzdmM2UzYzVjNTU0Yjk5YTZkOWNjMjVkYjcwMDQ5MzM3OWNmMjg2Y2E0ZmNiZTU5NjFhZmJiYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/types/TextEntityAbsentFromModelInconsistency.java#L14-L66",
+          "version": "repo-lines-v1:sha256:1fe6d028eadf2820fac37a1184b1ef56bbbc6501975db125e57594f90edc022a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkYmI3OTBlODFkNmFjNGQzMzkxNjJmNjM1MjBhMjYyNWZmNWJiMzdkYzMxOTRhNGEyMzJhN2M1OGEzNjhlNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MTRiODM0NDgxODM3YjQ0MGM2ZDJlZGZkNjNkMDExNjU5NmM3YzZjMTNkMzc4ZGRhODgxNWZhZTg4MjgzZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_950364ef9710447ca09f4ae820a147e1",
+      "statement": "The hold-back evaluation harness produces one base run plus one run per architecture component with that single component removed to simulate TEAM inconsistencies: HoldBackRunResultsProducer executes an AnonymousRunner pipeline (TextPreprocessingAgent, TextExtraction, HoldBackArCoTLModelProvider, RecommendationGenerator, ConnectionGenerator, InconsistencyChecker or InconsistencyBaseline) and maps the held-back element (null for the base run) to each ArdocoResult.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackArCoTLModelProvider.java#L31-L93",
+          "version": "repo-lines-v1:sha256:3e3ddc5f6475d502b49cd4f13c0848ad905c7890ee5115d3feefccb6ddf9078d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1N2Y1NWUzMDVmZjQ2YjM0NjRkNTBhMGM3NGQ0MmM5YzlkMzZkYzg5NmY4NGJiZjVlZmJkMWU3YTU0YjY2OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0M2Q1OGFlNTVmOWRiMmUzMzViNmQ1MDM1NWYxZjA3NTNhYjUxM2UzMDhiYWFiMzVmODk0N2RiN2IwZTMxM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java#L50-L108",
+          "version": "repo-lines-v1:sha256:e809afcf42e9baa52b50c68276d6cd5a7bff98bab72565ec6cfa9587424fdfb0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhZDczYmUyM2QzMzYwNGIzYmQ1ZmMxMWUzNWVjM2UwMjdkODQ2OWRmYjc5NzIyZWQ0YzAxMjMxNWEzMDMyNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1YTAxNGY3NDYxMmFkMzhkYWViN2I2NDNjZGM0ZDM5YmJjMzg4MTZmNzNmODFmMzQ1ODZhNjIzMDJjODAxNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_49fc4855aabf4a0698e2f56adb041415",
+      "statement": "InconsistencyDetectionEvaluationIT evaluates TEAM (micro-averaged metrics asserted against ExpectedResults minimums), MEAT (UID comparison against the *_UME.csv unmentioned-elements gold standard on the cached base run), and a baseline variant gated by the testBaseline environment variable via @EnabledIfEnvironmentVariable, which swaps InconsistencyChecker for InconsistencyBaseline (a TEAM record with empty name and fixed confidence 0.69 for every sentence lacking a trace link) and logs weighted-average metrics without asserting them.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/eval/baseline/InconsistencyBaselineInformant.java#L26-L46",
+          "version": "repo-lines-v1:sha256:9795144b204d24b1bc0adf5d951a6ec178ba5ff778ac88ca2e4c772fe9fe9231:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1YjAyNzA3ODhjY2FiNDE4ODRmMGUwMzg2YmJiMzNmNDk4MzJkNDc5ODg3MjExM2M3ZjQ4MDZmNWU1MjIxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmYTk2MTVlMDYwNDMzOWMyNjFjODM2Y2M0NTAzNDc1MDI2MGRiMzEzMDg2MjViYzMyYjZhNDQyNGZhOWM2YjkifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L223-L236",
+          "version": "repo-lines-v1:sha256:6bef6bf1fec6597d053e8b49a8f11d51312332d7f251c6e36e5f2afe3be51b01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2ZWVlMjk0ODI5ZTQ3MjQ2ODc5MTg1YjBiNDA1MTU4NjIxZmNlOGI0YWM4ZTgwOGQ3ODUyZTM4NDMwZjIwZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyMDQ4NDQ4ODhiNzc0YTJhYWZkMTMwNjIzYjhjODMyZTRhOTcyYzMwMTBlYTAzYjNmM2ZmZjNiNTU0NDBjYjAifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L75-L163",
+          "version": "repo-lines-v1:sha256:a631d41654f6ba7b7287a251eb4f2d1dd0ed0ea24b0d292eafa1c6836d8fb741:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyMzMyZGI1MjNhMDZlM2U2MjExOGE1NmQ4MjBmMmEwMjU0ZTJjMWIzODM1OWQxNDE0Zjc0MTZiYzIyODljMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5NzBjOGM1YTEwMDcyZTMzNzA4YTNkNjJmNGM3MGQ4ZTcwNGU3ZTkxNGMwNTNhMjU4OGI1ODBlM2I3MjM0MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzMmQyNTQyZWViMmVjMTYwNjNkMjNiYWE2ZmY5Yzg0YjlmZGM1ZGEyMzAyNjczNDg3NTNhZGM1YTM5YTI1ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_91d0e38424f94deea21a59d5c6c1c40f",
+      "statement": "Evaluation metrics come from ClassificationMetricsCalculator of the io.github.ardoco:metrics dependency (pulled in via core/tests-base), with confusion matrix sized by the number of sentences, and all evaluation artifacts are written under target/testout (ardoco_eval_id per-project results and base-run traceLinks_/inconsistencyDetection_ files).",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/pom.xml#L24-L29",
+          "version": "repo-lines-v1:sha256:89c3d840ce3ad9b39a080901be5da61be9d7dc560f0f7444fbda3e7fa260b047:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY2NGMwZmMxYWRlYzMzMWI1MTJhMzlmZDI4NjI5OWUzNDgyNzZkZDBhY2UyOTA1ZWYwODQyM2YwNGIyNWU2MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzI3ODIwNDQ5MGEzYzNjNTUyYzQ1OTEwNmU2YTY4YjIyMDk1YzNjNjg1Y2NjOGEzMmJkOTM4ZDIwYWE4NmFlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRiZGViNmMyMTEyMjljZWYzY2QwMTAyZTU0NzAzYjE1N2FmM2U2Yzk3NGE4ZDdjN2Y2OGQzOGZhMzlmYmFmZiJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L248-L260",
+          "version": "repo-lines-v1:sha256:5b451d099416b8b731c43faad4a3700cb3123cb3440020ea02de604670b324b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNzcyYWQ3ZGI1ZDMyMzQ1OWRhNjE1MjE2MGI0ZTIxNjY1ZTQ1ZDhiY2ZjZDIzNzZiODIyYjhiMDUwNjNhNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlOTBmZjNlYWFmZTIwNWEzMGZkZjgzZWFkN2JiZTRlNjlkNGIyNmEzZTZkOWZkYjdjMDQwMTdlNWZkMDlhZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MTUxMDI3ZmFlMWFhNTcwOTU5MTJkNDVkODYxYWY0NjZhMjU2ZmU1NzU1NzQwOTVjZmIxZmJlNjZiMmIwNGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L60-L63",
+          "version": "repo-lines-v1:sha256:b9e4067a9743e93d18bc2ff8972d98c80822d401b165f36aea6b37bdd96fd51a:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzY4NTFlNDkyYTBhM2QyNzM1MDdkNjM0ZmViYWJhZmYxZWM4OGI0N2Y1OGM4MjhmY2NmNGZhNzNkMTFlZTE4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNhNDIwZDMwOGFjY2QxY2JlNDI4YzVjZGUyYTk2ZjNjMTkzNTU2NjM2OWRmNzE5YTVhMzRjMGFmNDkwODUyMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ4MGI2MGU2ZjA3MGM0ZDIzMmExMTI1ZGQ4MGI1YWRlNTg3YzcyNWVkYjFiNWZkZmE0NWIxNDU1YmQ1MWM1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGMyNzJiYmZlYjgyYTRmNGJmYThhM2NhMGQxOTczNGE1YjZiOWU1YjU5NjFhZGIxZDQzODYyM2Y4ODZiZTgyMCJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java#L30-L40",
+          "version": "repo-lines-v1:sha256:b7572313d05d11a188fe6bbeb90f8c0bc37ea043a4f75b18aeee24c3955151e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MzQxY2E1YmJhZjhkYTc3NWEzYmFiNDliYjgxYjM0NDE4YTFlNDY0NjI3NDk5YjBkMDRhMWI3N2M4M2MyMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkN2NmNTk4YTNkZDZhNWUxZjdmNWYyNTA5Y2ZkNGFlNDMwM2RhNjdiOGEzZjljYThlOGUyYThiYjA0NTUzN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExODYxMzgwOTFlNzQ5Y2NmYzQ4Y2FiODRiZmUwMzA5OGQ5OGFhMzMwZmFhMTdiNDMxMjllYzNjMmQ5NDQwM2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_86e917b33a264ca4bc1d5bdd6476d823",
+      "statement": "The InconsistencyDetection runner constructs its ArchitectureConfiguration directly with Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES and has no metamodel guard, in contrast to the TLR runners (e.g., Swattr), whose setUp rejects a pre-set metamodel with IllegalArgumentException and then pins ARCHITECTURE_WITH_COMPONENTS via ArchitectureConfiguration.withMetamodel(...).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java#L56-L60",
+          "version": "repo-lines-v1:sha256:3c941bab10abd6dc1a1b93cf932387de2d181793313d69ea07bcdbadecdf0dc0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTQ5ZjlhYWVhZTJmMzYxOWFkZWViNTlmMGI0YTUzZmVhMTM4ZjkxYjgxMjdhZTU3MjFhZTQ3YWU2MDIyNjZkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzE5YmFhMTNlMGIzYjFiYjgxMzNlMzVjODhlZDAyZTZhYThhZGMyZDg3YTMzZDJjZjg0ZTI3NGY1MjhmNTg4YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDE3MWVhZjFhYzgyNTljYzA4ZTQ5MmE3MjY5NWJmMWViNGFhM2VlZTE4MTRhZjA1ZGJhZGJkNmQ1OTE3NTc1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjFhNGRkODg0OWRiZjVjZWNiMThiMjAxYzczNjE5Zjk3YWI2YWVlNWRjNWY3NjMyM2ExZjdiMzhhNWE4MTQzMiJ9"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java#L30-L38",
+          "version": "repo-lines-v1:sha256:6f044273f5eee2cd094da941c4293a05ba3b5c3d8f35b542e7ce9fc2191b5832:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJjOGJkOTYwNTkwZWJhYjFiMDYxNWUyOTAwNGIxMjFkYWIxMmVkYzFlMTdiNDhkNGYxOWI3NDNhZDcxZjRlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2FiMTdlNmRmOGM5MmQxZWZiNWIxZDY0MDQ2ZGE2ZmE2NTcxNjA4YTUxZGE2ODQ5MzBhYzVjMTVlYmNhZjhlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA0ODk0OWU5ZmQ1ZDUyODRjNTdlZDk0YWEyODRiZTc2NzgxYTRlMGE5Njc4Y2RjZmEwZWMyNzZkNTVhNTdiMyJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java#L27-L29",
+          "version": "repo-lines-v1:sha256:d57a7a7467489d088e7ab0a44dfb52cbb07f26ce4f89175181b8318d2d35dd45:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTAwZjU5NjQxNmMyMTU4YTUyNDJlYTY5NWM4YjZhZWZkZmRmOTE1OTVjN2MyMTQ0ZDNiYzZhZDYyMmYwMzFkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk5YmRlZmVlYWNhNjM0MGUwMjkwZGM4NmU4ODljODlkNWUxODlhYTViYTQ0YjU4NWIzYjcwNzM0ZjRhNjJkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE1OWM1NTIyOTA0YjQxNWJmZWJiNDIzZjU2ZDVjZWRjOTdmNDkyN2Q4MDI2ZWI4ZDc1ZmMyYzNjMmY5OGM1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a915e3f371a04d7ea738d5bee49511e4",
+      "statement": "In RecommendedInstanceProbabilityFilter.checkProbabilitiesForNounMappingTypes, getHighestNameProbability is called on getTypeMappings(), so both thresholdNameOrTypeProbability gates effectively test the type-mapping probability and the name-mapping probability is only constrained by the thresholdNameAndTypeProbability gate.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/RecommendedInstanceProbabilityFilter.java#L106-L126",
+          "version": "repo-lines-v1:sha256:999f9de8964256b8ce5641cc33b59cd43848bae3a6b547a0550006517ddfd6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYjQ1ZjAwYjBiYjAzNmNmMDI4NGE2ZTY5OTNiMDRlMTIyMTA1MDA2Yzc2Nzc5YzE5NGEzOTM5ZWM2YmQwYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwODIzZDVhODU3MDRjNTEzODdiNDJmZDE4NGU2NmUyMTkyMDEwZjY1NWEyOTdkODgzMzk5NTk3MjUxMGQ3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2YjkwZDQzNjQ2YTY0YTgzOWUzMjY1YTIwM2ZmMGIyMmQ0NzM5YzZmMmM2MTYxY2JjYjE3ZTM0NmQ4ZjllOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2c20059d66a4340a37d603f01984fca",
+      "statement": "The ID type unit tests extend AbstractInconsistencyTypeTest, which actively asserts the inconsistency type strings and equals/hashCode behavior while its reason-string and file-output tests are @Disabled because expected values change regularly; the agent-level unit test covers the MEAT whitelist full-match regex and modelInstanceHasTargetedType type/type-part matching.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/agents/ModelEntityAbsentFromTextInconsistencyTest.java#L30-L67",
+          "version": "repo-lines-v1:sha256:907156497f0ddba9e1844cc1459a3243cd2266be2709bcd38879c1dbd5b51deb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmJjNDJiNTM4YzY3YTM3MWNlNWRkNGQxODY1NmIzZjNhNzNhZGJhZmI3YmRmMTFkMzFmZmQ0NjYwMmQ0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/types/AbstractInconsistencyTypeTest.java#L37-L64",
+          "version": "repo-lines-v1:sha256:378e13fd7736263cab0c133da5b9fce5c9e60e59fb71e5fccfbe9a31a20eef81:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNTQ3MzU1OTRkYjUzNjI2NmIwZTI2MGU1YmJkODI3YWZhNjc0MTAxYmU5Yjc4YmEyYzJkZmM2NjMyYTBhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiODNiY2Q0YWFlMzE4NTIxZTQwZTNjOWRjOGU5NTkxZGM4MTQ1ODUwNTEzNDNjMzVmN2JmYTZmMDlkMzRjMDkifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-05T12:50:45.506Z"
+  }
+}
