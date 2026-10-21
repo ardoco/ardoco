@@ -4,7 +4,7 @@ line,pattern/style,valid
 22,mvc,true
 36,template method,true
 44,factory,true
-66,factory,true
+66,factory,false
 88,facade class,true
 126,dto,true
 127,dto,true
@@ -12,3 +12,4 @@ line,pattern/style,valid
 160,dto,true
 174,dto,true
 185,rest,true
+189,page object,true

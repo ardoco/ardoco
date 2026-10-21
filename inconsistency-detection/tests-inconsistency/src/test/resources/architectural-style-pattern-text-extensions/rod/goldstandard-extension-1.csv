@@ -1,0 +1,9 @@
+sentence,style/pattern,valid
+120,hexagonal architecture,false
+120,adapter,false
+122,microkernel architecture,false
+124,pipes-and-filters architecture,false
+126,blackboard pattern,false
+128,command pattern,false
+130,strategy pattern,false
+132,factory method,false

@@ -5,12 +5,6 @@ import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelpe
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.ArchitecturalStylePatternInconsistencyDetectionEvaluation;
-import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArchitecturalStylePatternInconsistencyDetectionTask;
-import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
-import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +15,14 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.ArchitecturalStylePatternInconsistencyDetectionEvaluation;
+import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ArchitecturalStylePatternInconsistencyDetectionTask;
+import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
+import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
+import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
+import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 @Disabled("Only for manual execution")
 class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
@@ -62,5 +64,26 @@ class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
         logExtendedResultsWithExpected(logger, task.getEvaluationProject().name() + " architectural style/pattern NER", result, task.getExpectedResults());
     }
 
-    //TODO add extended eval as always
+    @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
+    @DisplayName("Evaluate architectural style/pattern inconsistency detection extended")
+    @ParameterizedTest(name = "Evaluating architectural style/pattern inconsistency detection extended for {0} with {1}")
+    @MethodSource("projectsXCodeConfigurationTypes")
+    void architecturalStylePatternInconsistencyDetectionExtendedIT(ArchitecturalStylePatternInconsistencyDetectionTask task,
+            CodeConfiguration.CodeConfigurationType configurationType) {
+        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM);
+
+        var results = evaluation.runInconsistencyDetectionExtendedEvaluation(configurationType);
+
+        Assertions.assertNotNull(results);
+        var metrics = ClassificationMetricsCalculator.getInstance();
+        var weightedAverageResult = metrics.calculateAverages(results.castToList(), null)
+                .asList()
+                .stream()
+                .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
+                .findFirst()
+                .orElseThrow();
+        logExtendedResultsWithExpected(logger, this, task.getEvaluationProject().name() + " architectural style/pattern ID extended", weightedAverageResult,
+                task.getExpectedResults());
+    }
+
 }

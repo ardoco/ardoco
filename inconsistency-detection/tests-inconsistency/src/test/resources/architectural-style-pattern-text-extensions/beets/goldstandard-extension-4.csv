@@ -1,0 +1,13 @@
+sentence,style/pattern,valid
+132,state pattern,false
+133,chain of responsibility,false
+136,visitor pattern,false
+138,blackboard architectural pattern,false
+126,layered architecture,false
+127,facade,false
+128,hexagonal architecture,false
+129,adapter pattern,false
+130,mediator pattern,false
+135,template method pattern,false
+140,memento pattern,false
+142,flyweight pattern,false

@@ -1,0 +1,11 @@
+sentence,style/pattern,valid
+199,microkernel architectural style,false
+201,command query responsibility segregation,false
+202,event sourcing pattern,false
+204,blackboard architectural pattern,false
+206,observer pattern,false
+208,specification pattern,false
+209,state pattern,false
+211,decorator pattern,false
+212,circuit breaker pattern,false
+213,unit of work pattern,false

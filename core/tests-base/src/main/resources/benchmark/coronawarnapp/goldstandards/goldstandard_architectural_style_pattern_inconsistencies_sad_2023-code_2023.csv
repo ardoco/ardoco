@@ -1,7 +1,11 @@
 line,pattern/style,valid
+42,rate limiting,true
 84,rest,true
 87,rest,true
+88,polling,true
+125,polling,true
 163,callback api,true
 189,rest,true
 205,rest,true
+292,retry,true
 362,Privacy-preserving Access Control,true

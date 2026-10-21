@@ -40,7 +40,6 @@ public interface ArchitecturalStylePatternValidationLlmAgent {
                * If the statement does not make a repository-specific claim, return true.
                * If the statement makes a repository-specific claim, verify it using source-code evidence, project structure, package structure, configuration files, and implementation artifacts.
                * Return false when the repository evidence contradicts the statement.
-               * If the evidence neither supports nor contradicts the statement, return true.
             
             3. Do not treat a mere naming coincidence as sufficient evidence.
                For example, a package named "controller" alone does not prove MVC unless the relevant model/view/controller responsibilities or dependencies are visible.
@@ -107,7 +106,6 @@ public interface ArchitecturalStylePatternValidationLlmAgent {
                * If the statement does not make a repository-specific claim, return true.
                * If the statement makes a repository-specific claim, verify it using source-code evidence, project structure, package structure, configuration files, and implementation artifacts.
                * Return false when the repository evidence contradicts the statement.
-               * If the evidence neither supports nor contradicts the statement, return true.
             
             3. Do not treat a mere naming coincidence as sufficient evidence.
                For example, a package named "controller" alone does not prove MVC unless the relevant model/view/controller responsibilities or dependencies are visible.
