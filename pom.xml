@@ -82,7 +82,7 @@
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
     <mockito.version>5.23.0</mockito.version>
-    <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
+    <stanford.corenlp.version>4.6.0</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>2.22.2</jackson.version>
     <metrics.version>0.3.0</metrics.version>
