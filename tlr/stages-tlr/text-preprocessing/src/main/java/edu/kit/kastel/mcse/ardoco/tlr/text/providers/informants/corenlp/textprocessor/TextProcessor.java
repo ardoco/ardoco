@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.textprocessor;
 
 import java.io.IOException;
@@ -10,6 +10,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.error.InvalidJsonException;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.error.NotConvertableException;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.config.ConfigManager;
+import tools.jackson.core.JacksonException;
 
 /**
  * This text processor processes texts using CoreNLP.
@@ -33,7 +34,7 @@ public class TextProcessor {
                 try {
                     logger.info("Processing text with CoreNLP microservice.");
                     return processService(inputText);
-                } catch (IOException e) {
+                } catch (IOException | JacksonException e) {
                     numberOfTry++;
                     logger.warn("Could not process text with CoreNLP microservice. Trying again. ", e);
                 } catch (NotConvertableException | InvalidJsonException e) {
