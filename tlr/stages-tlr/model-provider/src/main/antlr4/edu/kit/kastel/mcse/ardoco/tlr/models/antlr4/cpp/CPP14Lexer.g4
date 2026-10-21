@@ -3,9 +3,6 @@
 // $antlr-format alignColons trailing, singleLineOverrulesHangingColon true, alignLexerCommands true, alignLabels true, alignTrailers true
 
 lexer grammar CPP14Lexer;
-@header {
-package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.cpp;
-}
 
 IntegerLiteral:
     DecimalLiteral Integersuffix?
