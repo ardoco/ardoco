@@ -103,7 +103,7 @@ public class ArtemisIT extends AbstractArdocoIT {
             Assertions.assertNotNull(result);
             results.add(result);
         }
-        averageAndLog(results); //TODO here we could use the ClassificationMetricCalculator in future to get more meaningful aggregation metrics
+        averageAndLog(results); // here we could use the ClassificationMetricCalculator in future to get more meaningful aggregation metrics
     }
 
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")

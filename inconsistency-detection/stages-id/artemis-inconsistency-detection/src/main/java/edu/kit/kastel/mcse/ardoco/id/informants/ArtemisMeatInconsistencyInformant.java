@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -23,8 +24,9 @@ public class ArtemisMeatInconsistencyInformant extends ArtemisInconsistencyInfor
     public void process() {
         var modelStates = DataRepositoryHelper.getModelStatesData(getDataRepository());
         var model = modelStates.getModel(getStrategy().getMetamodel());
-        var traceabilityState = getArtemisConnectionState();
-        var inconsistencyState = getArtemisInconsistencyState();
+        var result = new ArdocoResult(getDataRepository());
+        var traceabilityState = result.getArtemisConnectionState(getTarget());
+        var inconsistencyState = result.getArtemisInconsistencyState(getTarget());
 
         Set<String> linkedModelEntityIds = traceabilityState.getTraceLinks()
                 .stream()

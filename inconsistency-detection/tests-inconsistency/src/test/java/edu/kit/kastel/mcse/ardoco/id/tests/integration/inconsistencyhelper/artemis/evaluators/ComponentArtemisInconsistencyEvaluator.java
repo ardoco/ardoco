@@ -12,7 +12,6 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.set.MutableSet;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureComponentModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
@@ -22,6 +21,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Nam
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.ArtemisEvaluationRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackArchitectureItemRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ComponentArtemisInconsistencyTask;
+import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
@@ -40,18 +40,11 @@ public class ComponentArtemisInconsistencyEvaluator implements ArtemisInconsiste
     @Override
     public SingleClassificationResult<String> evaluateMeat(ComponentArtemisInconsistencyTask project, ArdocoResult result) {
         Set<String> expectedUnmentionedModelElements = new LinkedHashSet<>(project.getUnmentionedModelElementIds());
-
-        var model = result.getModelState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
-        Set<String> allModelIds = model.getEndpoints().stream().map(Entity::getId).collect(Collectors.toCollection(LinkedHashSet::new));
-
-        Set<String> linkedModelIds = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT))
-                .getTraceLinks()
+        Set<String> actualUnmentionedModelElements = result.getArtemisInconsistencyState(
+                        new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT))
+                .getInconsistenciesOfType(ModelEntityAbsentFromTextInconsistency.class)
                 .stream()
-                .map(traceLink -> traceLink.getSecondEndpoint().getId())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        Set<String> actualUnmentionedModelElements = allModelIds.stream()
-                .filter(modelId -> !linkedModelIds.contains(modelId))
+                .map(ModelEntityAbsentFromTextInconsistency::getModelInstanceUid)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         int confusionMatrixSize = result.getSimplePreprocessingData().getText().getLines().size();

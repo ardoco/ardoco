@@ -47,7 +47,7 @@ public abstract class CodeExtractor extends Extractor {
     @Override
     public abstract CodeModel extractModel();
 
-    protected List<CodeFile> extractCodeFiles(SortedSet<CodeItem> codeEndpoints) { //TODO in the future this method should be used by all Extractors (not only the AllLanguagesExtractor)
+    protected List<CodeFile> extractCodeFiles(SortedSet<CodeItem> codeEndpoints) { //in the future this method should possibly be used by all Extractors (not only the AllLanguagesExtractor)
         //code files with reference to compilationUnit:
         List<CodeFile> codeFiles = new ArrayList<>();
         for (CodeItem codeEndpoint : codeEndpoints) {

@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyState;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -256,6 +258,21 @@ public record ArdocoResult(DataRepository dataRepository) {
             return states.getState(artemisTarget);
         }
         logger.warn("No ArtemisConnectionState found.");
+        return null;
+    }
+
+    /**
+     * Returns the internal {@link ArtemisInconsistencyState} for the given artemisTarget or null if there is none.
+     *
+     * @param artemisTarget the artemis target to get the inconsistency state for
+     * @return the state or null if there is no inconsistency state for the given artemisTarget
+     */
+    public ArtemisInconsistencyState getArtemisInconsistencyState(ArtemisTarget artemisTarget) {
+        if (DataRepositoryHelper.hasArtemisInconsistencyStates(this.dataRepository)) {
+            var states = DataRepositoryHelper.getArtemisInconsistencyStates(this.dataRepository);
+            return states.getState(artemisTarget);
+        }
+        logger.warn("No ArtemisInconsistencyState found.");
         return null;
     }
 

@@ -8,6 +8,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ArtemisInconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
@@ -198,6 +199,28 @@ public final class DataRepositoryHelper {
      */
     public static ArtemisConnectionStates getArtemisConnectionStates(DataRepository dataRepository) {
         return dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStates.class).orElseThrow();
+    }
+
+    /**
+     * Checks whether there is {@link ArtemisInconsistencyStates} stored within the provided {@link DataRepository}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return true, if there is {@link ArtemisInconsistencyStates} within the {@link DataRepository}; else, false
+     */
+    public static boolean hasArtemisInconsistencyStates(DataRepository dataRepository) {
+        return dataRepository.getData(ArtemisInconsistencyStates.ID, ArtemisInconsistencyStates.class).isPresent();
+    }
+
+    /**
+     * Returns the {@link ArtemisInconsistencyStates} stored within the provided {@link DataRepository}. This does not check if there actually is one and will
+     * fail and throw an {@link java.util.NoSuchElementException} if the state is not present. To make sure that there is data present, use
+     * {@link #hasArtemisInconsistencyStates(DataRepository)}
+     *
+     * @param dataRepository the DataRepository to access
+     * @return the state
+     */
+    public static ArtemisInconsistencyStates getArtemisInconsistencyStates(DataRepository dataRepository) {
+        return dataRepository.getData(ArtemisInconsistencyStates.ID, ArtemisInconsistencyStates.class).orElseThrow();
     }
 
     /**

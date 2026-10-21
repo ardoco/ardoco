@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
@@ -129,13 +131,10 @@ public class DatafileArtemisInconsistencyEvaluator implements ArtemisInconsisten
     }
 
     private Set<String> collectDetectedDatafileTeamSentences(ArdocoResult result) {
-        var artemisConnectionState = result.getArtemisConnectionState(new ArtemisTarget(Metamodel.CODE_WITH_COMPILATION_UNITS, NamedEntityType.DATAFILE));
-        //TODO in the future use: ID state probably...
-        return artemisConnectionState.getUnlinkedNamedEntities()
+        var artemisInconsistencyState = result.getArtemisInconsistencyState(new ArtemisTarget(Metamodel.CODE_WITH_COMPILATION_UNITS, NamedEntityType.DATAFILE));
+        return artemisInconsistencyState.getInconsistenciesOfType(TextEntityAbsentFromModelInconsistency.class)
                 .stream()
-                .map(NamedArchitectureEntity::getOccurrences)
-                .flatMap(java.util.Collection::stream)
-                .map(occurrence -> occurrence.getSentenceNumber() + "," + Objects.requireNonNull(occurrence.getName()))
+                .map(inconsistency -> inconsistency.getSentenceNumber() + "," + inconsistency.name())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

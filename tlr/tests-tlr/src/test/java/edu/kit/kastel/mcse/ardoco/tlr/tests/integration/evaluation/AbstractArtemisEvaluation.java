@@ -56,7 +56,6 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
     public SingleClassificationResult<String> calculateEvaluationResults(ArdocoResult result, List<Pair<Integer, String>> goldStandard,
             ArtemisNerStrategy strategy) {
         ArtemisConnectionState state = getArtemisConnectionState(result, strategy);
-        System.out.println("unlinked: " + state.getUnlinkedNamedEntities());
         var traceLinksAsStrings = getTraceLinksAsStrings(state);
         var goldStandardAsStrings = enrollGoldStandard(goldStandard, result, strategy.getMetamodel()).stream()
                 .map(pair -> pair.first() + " -> " + pair.second().toLowerCase())

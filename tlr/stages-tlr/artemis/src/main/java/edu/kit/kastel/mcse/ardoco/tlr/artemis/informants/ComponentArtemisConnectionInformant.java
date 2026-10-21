@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
@@ -28,7 +30,7 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
 
         var namedEntities = state.getNamedEntities();
         var unlinkedNamedEntities = Lists.mutable.withAll(namedEntities);
-        var matchedNamedEntities = Lists.mutable.empty();
+        MutableList<NamedArchitectureEntity> matchedNamedEntities = Lists.mutable.empty();
         List<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks = new ArrayList<>();
 
         for (var namedEntity : namedEntities) {
