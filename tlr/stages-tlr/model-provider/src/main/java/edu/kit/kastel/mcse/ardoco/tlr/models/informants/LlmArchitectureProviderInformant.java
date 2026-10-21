@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt.Features.PACKAGES;
@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +43,15 @@ public class LlmArchitectureProviderInformant extends Informant {
 
     private static final Logger logger = LoggerFactory.getLogger(LlmArchitectureProviderInformant.class);
 
-    private final ChatModel chatLanguageModel;
-    private final LlmArchitecturePrompt documentationPrompt;
-    private final LlmArchitecturePrompt codePrompt;
-    private final LlmArchitecturePrompt aggregationPrompt;
-    private final LlmArchitecturePrompt.Features codeFeature;
+    private final @Nullable ChatModel chatLanguageModel;
+    private final @Nullable LlmArchitecturePrompt documentationPrompt;
+    private final @Nullable LlmArchitecturePrompt codePrompt;
+    private final @Nullable LlmArchitecturePrompt aggregationPrompt;
+    private final LlmArchitecturePrompt.@Nullable Features codeFeature;
 
-    public LlmArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentation,
-            LlmArchitecturePrompt code, LlmArchitecturePrompt.Features codeFeature, LlmArchitecturePrompt aggregation) {
+    public LlmArchitectureProviderInformant(DataRepository dataRepository, @Nullable LargeLanguageModel largeLanguageModel,
+            @Nullable LlmArchitecturePrompt documentation, @Nullable LlmArchitecturePrompt code, LlmArchitecturePrompt.@Nullable Features codeFeature,
+            @Nullable LlmArchitecturePrompt aggregation) {
         super(LlmArchitectureProviderInformant.class.getSimpleName(), dataRepository);
         String apiKey = Environment.getEnv("OPENAI_API_KEY");
         String orgId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
