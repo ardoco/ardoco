@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
 
@@ -26,7 +28,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
  * text (e.g., components, classes, ...) to hunt trace links.
  */
 public class Artemis extends ArdocoRunner {
-    protected Artemis(String projectName) {
+    public Artemis(String projectName) {
         super(projectName);
     }
 
@@ -39,11 +41,12 @@ public class Artemis extends ArdocoRunner {
      * @param additionalConfigs         an immutable sorted map containing additional configurations as key-value pairs
      * @param outputDir                 the directory where the output will be saved
      * @param llm                       the large language model used, for example, for Named Entity Recognition (NER)
+     * @param strategies                the list of artemis strategies to be used for Named Entity Recognition (NER)
      */
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
-            ImmutableSortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel llm) {
+            ImmutableSortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel llm, List<ArtemisNerStrategy> strategies) {
         setOutputDirectory(outputDir);
-        setUp(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llm);
+        setUp(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llm, strategies);
     }
 
     /**
@@ -54,22 +57,22 @@ public class Artemis extends ArdocoRunner {
      * @param codeConfiguration         the configuration for the code model, allowing null if not required
      * @param additionalConfigs         an immutable sorted map containing additional configurations as key-value pairs
      * @param llm                       the large language model used, for example, for Named Entity Recognition (NER)
+     * @param strategies                the list of artemis strategies to be used for Named Entity Recognition (NER)
      */
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
-            ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm) {
+            ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm, List<ArtemisNerStrategy> strategies) {
         if ((architectureConfiguration != null && architectureConfiguration.metamodel() != null) || (codeConfiguration != null && codeConfiguration
                 .metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
         DataRepositoryHelper.putInputText(getArdoco().getDataRepository(), CommonUtilities.readInputText(inputText));
-        definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs, llm);
+        definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs, llm, strategies);
         isSetUp = true;
     }
 
     private void definePipeline(@Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
-            ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm) {
+            ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llm, List<ArtemisNerStrategy> strategies) {
         var dataRepository = getArdoco().getDataRepository();
-        var strategies = List.of(new ComponentArtemisNerStrategy(), new ClassArtemisNerStrategy(), new DatafileArtemisNerStrategy()); //further strategies can be added here
 
         getArdoco().addPipelineStep(ArtemisPreprocessing.get(additionalConfigs, dataRepository, architectureConfiguration != null ?
                 architectureConfiguration.withMetamodel(Metamodel.ARCHITECTURE_WITH_COMPONENTS) :

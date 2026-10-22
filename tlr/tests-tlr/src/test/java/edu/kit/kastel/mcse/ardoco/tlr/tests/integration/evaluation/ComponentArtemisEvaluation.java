@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import java.io.File;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Artemis;
+
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
@@ -43,8 +45,9 @@ public class ComponentArtemisEvaluation extends AbstractArtemisEvaluation {
                 .getEvaluationProject()
                 .getArchitectureModel(architectureModelFormat), architectureModelFormat);
 
-        return ArtemisEvaluationRunnerFactory.createRunner(projectName, documentationFile, architectureConfiguration, null, SortedMaps.immutable.empty(),
-                outputDirectory, llmForNer, List.of(strategy));
+        Artemis artemis = new Artemis(projectName);
+        artemis.setUp(documentationFile, architectureConfiguration, null, SortedMaps.immutable.empty(), outputDirectory, llmForNer, List.of(strategy));
+        return artemis;
     }
 
     @Override
