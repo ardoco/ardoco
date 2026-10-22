@@ -1,8 +1,11 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies;
 
+import java.util.Objects;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
@@ -15,6 +18,8 @@ import edu.kit.kastel.mcse.ardoco.naer.recognizer.Prompt;
  * this strategy.
  */
 public interface ArtemisNerStrategy {
+
+    String PROMPT_RESOURCE_ROOT = "/artemis/prompts/";
 
     /**
      * Creates the prompt used to identify named entities for this strategy.
@@ -58,5 +63,20 @@ public interface ArtemisNerStrategy {
      */
     default String getId() {
         return getNamedEntityType().name() + "Artemis";
+    }
+
+    /**
+     * Reads a prompt from the classpath resources.
+     *
+     * @param resourceName the resource file name below {@link #PROMPT_RESOURCE_ROOT}
+     * @return the prompt text
+     */
+    default String readPromptResource(String resourceName) {
+        try (var inputStream = Objects.requireNonNull(getClass().getResourceAsStream(PROMPT_RESOURCE_ROOT + resourceName),
+                "Prompt resource not found: " + PROMPT_RESOURCE_ROOT + resourceName)) {
+            return CommonUtilities.readInputText(inputStream);
+        } catch (java.io.IOException e) {
+            throw new IllegalStateException("Could not read prompt resource: " + PROMPT_RESOURCE_ROOT + resourceName, e);
+        }
     }
 }
