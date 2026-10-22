@@ -29,5 +29,6 @@ public class ArtemisConnectionGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
+        // No state initialization is required here because the Artemis connection states are created by ArtemisNer.
     }
 }
