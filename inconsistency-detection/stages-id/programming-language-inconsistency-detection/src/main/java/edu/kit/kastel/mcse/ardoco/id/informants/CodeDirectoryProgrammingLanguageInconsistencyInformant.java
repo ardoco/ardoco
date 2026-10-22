@@ -13,7 +13,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 /**
- * This class provides functionality for detecting inconsistencies in programming language-related statements within SAD by examining the code directory files.
+ * Informant that detects inconsistencies between documented programming language statements and the source-code directory.
+ * <p>
+ * The informant validates programming language occurrences extracted from the documentation by using an LLM agent with read-only access to the configured code
+ * project directory. Statements that cannot be supported by the directory contents are reported as programming language inconsistencies.
+ * </p>
  */
 public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends AbstractProgrammingLanguageInconsistencyInformant {
 

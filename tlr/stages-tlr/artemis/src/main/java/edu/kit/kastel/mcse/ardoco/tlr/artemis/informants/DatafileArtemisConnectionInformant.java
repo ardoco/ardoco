@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+
 import org.eclipse.collections.api.factory.Lists;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
@@ -15,6 +17,14 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Artemis connection informant that links named architecture entities from the documentation to code-file entities in the code model.
+ * <p>
+ * The informant compares recognized named architecture entities with code files by matching the entity name against the complete file name. For every matching
+ * code file, it creates trace links from all textual occurrences of the named entity to the corresponding code-file entity and records named entities that
+ * remain unlinked.
+ * </p>
+ */
 public class DatafileArtemisConnectionInformant extends ArtemisConnectionInformant {
 
     public DatafileArtemisConnectionInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {
@@ -27,8 +37,8 @@ public class DatafileArtemisConnectionInformant extends ArtemisConnectionInforma
 
     @Override
     protected void process() {
-        var state = getConnectionState();
-        var codeModel = (CodeModelWithCompilationUnits) getModelStatesData().getModel(strategy.getMetamodel());
+        var state = DataRepositoryHelper.getArtemisConnectionStates(dataRepository).getState(strategy.getTarget());
+        var codeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository).getModel(strategy.getMetamodel());
         var datafiles = getCodeFiles(codeModel);
 
         var namedEntities = state.getNamedEntities();

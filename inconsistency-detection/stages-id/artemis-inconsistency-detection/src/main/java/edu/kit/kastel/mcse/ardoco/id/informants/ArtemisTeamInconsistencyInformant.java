@@ -7,6 +7,13 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Informant that detects named text entities without a corresponding model entity (TEAM).
+ * <p>
+ * The informant evaluates the unlinked named entities in the Artemis connection state of its configured target and reports each occurrence as a
+ * {@link TextEntityAbsentFromModelInconsistency}.
+ * </p>
+ */
 public class ArtemisTeamInconsistencyInformant extends ArtemisInconsistencyInformant {
     public static final double DEFAULT_PROBABILITY = 0.92;
 

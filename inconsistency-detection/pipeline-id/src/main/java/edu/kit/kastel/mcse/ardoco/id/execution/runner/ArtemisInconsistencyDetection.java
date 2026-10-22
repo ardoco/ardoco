@@ -21,6 +21,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+/**
+ * Runner for the Artemis-based inconsistency detection pipeline.
+ * <p>
+ * This runner configures ARDoCo to process an input text together with optional architecture and code model. It assigns the metamodels required by the Artemis
+ * pipeline, initializes the input data, and registers the Artemis preprocessing, named entity recognition, connection generation, and inconsistency checking
+ * stages.
+ * </p>
+ */
 public class ArtemisInconsistencyDetection extends ArdocoRunner {
 
     public ArtemisInconsistencyDetection(String projectName) {

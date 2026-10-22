@@ -18,6 +18,14 @@ import edu.kit.kastel.mcse.ardoco.id.states.ProgrammingLanguageInconsistencyStat
 import edu.kit.kastel.mcse.ardoco.id.states.ProgrammingLanguageStatement;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Base informant for detecting inconsistencies between programming language statements in the documentation and the available code representation.
+ * <p>
+ * This informant processes programming language named entities found in the documentation, validates each occurrence, and stores either validated statements or
+ * detected inconsistencies in the {@link ProgrammingLanguageInconsistencyState}. Subclasses provide the concrete validation mechanism, for example by checking
+ * a code model or a source-code directory.
+ * </p>
+ */
 public abstract class AbstractProgrammingLanguageInconsistencyInformant extends Informant {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractProgrammingLanguageInconsistencyInformant.class);

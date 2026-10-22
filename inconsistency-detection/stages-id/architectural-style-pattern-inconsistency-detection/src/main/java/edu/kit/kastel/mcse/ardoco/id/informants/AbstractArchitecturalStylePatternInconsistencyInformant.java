@@ -20,6 +20,13 @@ import edu.kit.kastel.mcse.ardoco.id.states.ArchitecturalStylePatternInconsisten
 import edu.kit.kastel.mcse.ardoco.id.states.ArchitecturalStylePatternStatement;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Base informant for detecting inconsistencies between documented architectural styles or patterns and the available code representation.
+ * <p>
+ * This informant processes architectural style or pattern named entities found in the documentation, validates each occurrence, and stores either validated
+ * statements or detected inconsistencies in the {@link ArchitecturalStylePatternInconsistencyState}. Subclasses provide the concrete validation mechanism, for
+ * example by checking a code model or a source-code directory.
+ */
 public abstract class AbstractArchitecturalStylePatternInconsistencyInformant extends Informant {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractArchitecturalStylePatternInconsistencyInformant.class);

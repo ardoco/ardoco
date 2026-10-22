@@ -4,6 +4,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 
@@ -15,6 +17,14 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Artemis connection informant that links named architecture entities from the documentation to component model entities.
+ * <p>
+ * The informant performs matching in multiple stages. It first applies strong name-based similarity, then weaker token-based similarity, and finally
+ * embedding-based semantic similarity for entities that could not be linked by the previous steps. Created trace links are stored in the Artemis connection
+ * state, while entities without a match are retained as unlinked named architecture entities.
+ * </p>
+ */
 public class ComponentArtemisConnectionInformant extends ArtemisConnectionInformant {
 
     public ComponentArtemisConnectionInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {
@@ -25,8 +35,8 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
     protected void process() {
         var similarityUtils = SimilarityUtils.getInstance();
 
-        var state = getConnectionState();
-        var modelEndpoints = getModelStatesData().getModel(strategy.getMetamodel()).getEndpoints();
+        var state = DataRepositoryHelper.getArtemisConnectionStates(dataRepository).getState(strategy.getTarget());
+        var modelEndpoints = DataRepositoryHelper.getModelStatesData(dataRepository).getModel(strategy.getMetamodel()).getEndpoints();
 
         var namedEntities = state.getNamedEntities();
         var unlinkedNamedEntities = Lists.mutable.withAll(namedEntities);

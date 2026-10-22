@@ -13,6 +13,12 @@ import edu.kit.kastel.mcse.ardoco.id.informants.validators.ArchitecturalStylePat
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+/**
+ * Informant that detects inconsistencies between documented architectural styles or patterns and the code model stored in the data repository.
+ * <p>
+ * The informant validates architectural style or pattern statements from the documentation against the available code model. Validation is delegated to an
+ * LLM-based validation agent equipped with read-only tools for inspecting the code model.
+ */
 public class CodeModelArchitecturalStylePatternInconsistencyInformant extends AbstractArchitecturalStylePatternInconsistencyInformant {
 
     private static final Logger logger = LoggerFactory.getLogger(CodeModelArchitecturalStylePatternInconsistencyInformant.class);

@@ -32,6 +32,14 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Base class for Artemis informants that create trace links between named architecture entities and model entities.
+ * <p>
+ * This informant provides common matching functionality for concrete connection informants, including strong and weak name-based similarity checks,
+ * embedding-based similarity checks, and trace-link creation for all occurrences of a matched named architecture entity. Subclasses define the concrete model
+ * elements to match against and decide how the resulting trace links and unlinked entities are added to the Artemis connection state.
+ * </p>
+ */
 @Deterministic
 public abstract class ArtemisConnectionInformant extends Informant {
     public static final double DEFAULT_PROBABILITY = 0.92;
@@ -45,15 +53,6 @@ public abstract class ArtemisConnectionInformant extends Informant {
     protected ArtemisConnectionInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {
         super(strategy.getId() + "ConnectionInformant", dataRepository);
         this.strategy = strategy;
-    }
-
-    protected ArtemisConnectionState getConnectionState() {
-        ArtemisConnectionStates states = dataRepository.getData(ArtemisConnectionStates.ID, ArtemisConnectionStatesImpl.class).orElseThrow();
-        return states.getState(strategy.getTarget());
-    }
-
-    protected ModelStates getModelStatesData() {
-        return DataRepositoryHelper.getModelStatesData(dataRepository);
     }
 
     protected boolean areStronglySimilar(SimilarityUtils similarityUtils, NamedArchitectureEntity namedEntity, ModelEntity modelEndpoint) {

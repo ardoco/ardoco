@@ -22,6 +22,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+/**
+ * Informant that identifies architecturally relevant named entities for an Artemis target in SAD.
+ * <p>
+ * The informant uses a configured {@link LargeLanguageModel} together with the prompt provided by an {@link ArtemisNerStrategy} to perform named entity
+ * recognition on the software architecture documentation. Recognized entities are transformed into {@link NamedArchitectureEntity} instances, including their
+ * alternative names and textual occurrences, and are stored in the corresponding Artemis connection state.
+ * </p>
+ */
 @Deterministic
 public class ArtemisNerInformant extends Informant {
 

@@ -9,6 +9,13 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Factory for creating the Artemis inconsistency detection agents for a set of NER strategies.
+ * <p>
+ * For each strategy, this utility creates an agent that detects text entities without corresponding model entities (TEAM). If the strategy supports
+ * model-entity-absent-from-text inconsistencies, it additionally creates the respective MEAT inconsistency agent.
+ * </p>
+ */
 public final class ArtemisInconsistencyAgent {
 
     private ArtemisInconsistencyAgent() {

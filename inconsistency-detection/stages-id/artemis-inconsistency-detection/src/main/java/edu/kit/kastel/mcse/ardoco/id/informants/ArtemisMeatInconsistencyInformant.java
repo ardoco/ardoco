@@ -12,6 +12,13 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+/**
+ * Informant that detects model entities without a corresponding named text entity (MEAT).
+ * <p>
+ * The informant compares the endpoints of the model configured by its Artemis NER strategy with the model entities referenced by existing Artemis trace links.
+ * Model endpoints without a trace link are reported as {@link ModelEntityAbsentFromTextInconsistency}.
+ * </p>
+ */
 @Deterministic
 public class ArtemisMeatInconsistencyInformant extends ArtemisInconsistencyInformant {
 
