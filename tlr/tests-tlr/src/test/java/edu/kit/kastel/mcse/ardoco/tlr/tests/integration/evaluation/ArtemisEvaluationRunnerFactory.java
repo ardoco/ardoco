@@ -14,7 +14,6 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
@@ -56,7 +55,6 @@ final class ArtemisEvaluationRunnerFactory {
 
                 getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llm, strategies));
                 getArdoco().addPipelineStep(ArtemisConnectionGenerator.get(additionalConfigs, dataRepository, strategies));
-                getArdoco().addPipelineStep(ArtemisPostprocessing.get(additionalConfigs, dataRepository));
 
                 setOutputDirectory(outputDirectory);
                 isSetUp = true;

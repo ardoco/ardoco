@@ -28,7 +28,6 @@ import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artem
 import edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.artemis.evalruns.HeldBackClassesRun;
 import edu.kit.kastel.mcse.ardoco.id.tests.tasks.ClassArtemisInconsistencyTask;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
@@ -152,7 +151,6 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
                         .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
                 pipelineSteps.add(ArtemisNer.get(additionalConfigs.toImmutable(), dataRepository, llm, strategies));
                 pipelineSteps.add(new HoldbackClassArtemisConnectionInformant(dataRepository, strategies.getFirst(), heldBackClassNames));
-                pipelineSteps.add(ArtemisPostprocessing.get(additionalConfigs.toImmutable(), dataRepository));
                 pipelineSteps.add(ArtemisInconsistencyChecker.get(additionalConfigs.toImmutable(), dataRepository, strategies));
 
                 return pipelineSteps;

@@ -15,7 +15,6 @@ import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.id.ArtemisInconsistencyChecker;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
-import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPostprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisPreprocessing;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
@@ -65,7 +64,6 @@ public class ArtemisInconsistencyDetection extends ArdocoRunner {
         getArdoco().addPipelineStep(ArtemisPreprocessing.get(additionalConfigs, dataRepository, architectureConfigWithMetamodel, codeConfigWithMetamodel));
         getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llm, strategies));
         getArdoco().addPipelineStep(ArtemisConnectionGenerator.get(additionalConfigs, dataRepository, strategies));
-        getArdoco().addPipelineStep(ArtemisPostprocessing.get(additionalConfigs, dataRepository));
         getArdoco().addPipelineStep(ArtemisInconsistencyChecker.get(additionalConfigs, dataRepository, strategies));
     }
 }
