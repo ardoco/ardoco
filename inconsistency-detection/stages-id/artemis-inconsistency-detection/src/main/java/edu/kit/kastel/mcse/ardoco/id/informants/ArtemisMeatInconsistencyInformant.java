@@ -24,9 +24,8 @@ public class ArtemisMeatInconsistencyInformant extends ArtemisInconsistencyInfor
     public void process() {
         var modelStates = DataRepositoryHelper.getModelStatesData(getDataRepository());
         var model = modelStates.getModel(getStrategy().getMetamodel());
-        var result = new ArdocoResult(getDataRepository());
-        var traceabilityState = result.getArtemisConnectionState(getTarget());
-        var inconsistencyState = result.getArtemisInconsistencyState(getTarget());
+        var traceabilityState = DataRepositoryHelper.getArtemisConnectionStates(getDataRepository()).getState(getTarget());
+        var inconsistencyState = DataRepositoryHelper.getArtemisInconsistencyStates(getDataRepository()).getState(getTarget());
 
         Set<String> linkedModelEntityIds = traceabilityState.getTraceLinks()
                 .stream()

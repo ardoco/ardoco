@@ -35,6 +35,7 @@ public class CodeModelReadOnlyTools {
     private static final int MAX_DIRECTORY_ENTRIES = 200;
     private static final int MAX_TREE_ENTRIES = 500;
     private static final int MAX_TREE_DEPTH = 8;
+    public static final String PATH_DOES_NOT_EXIST = "Path does not exist: ";
 
     private final DataRepository dataRepository;
     private CodeModelWithCompilationUnits codeModel;
@@ -58,7 +59,7 @@ public class CodeModelReadOnlyTools {
         String normalizedPath = normalizeDirectoryPath(path);
 
         if (!directoryExists(normalizedPath)) {
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         }
 
         Set<String> entries = new TreeSet<>();
@@ -101,7 +102,7 @@ public class CodeModelReadOnlyTools {
         String normalizedPath = normalizeDirectoryPath(path);
 
         if (!directoryExists(normalizedPath)) {
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         }
 
         Set<TreeEntry> entries = new TreeSet<>();
@@ -225,7 +226,7 @@ public class CodeModelReadOnlyTools {
                 return directoryInfo(directoryPath);
             }
 
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         });
     }
 

@@ -49,6 +49,7 @@ public class CodeDirectoryReadOnlyTools {
 
     // Files/directories that usually contain generated dependencies, IDE metadata, or other things an AI agent normally does not need to inspect:
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(".git", ".idea", ".gradle", ".mvn", "target", "build", "node_modules", "out", "bin");
+    public static final String PATH_DOES_NOT_EXIST = "Path does not exist: ";
 
     private final Path projectRoot;
     private final Path realProjectRoot;
@@ -88,7 +89,7 @@ public class CodeDirectoryReadOnlyTools {
         Path directory = resolveInsideProject(path);
 
         if (!Files.exists(directory)) {
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         }
 
         if (!Files.isDirectory(directory)) {
@@ -125,7 +126,7 @@ public class CodeDirectoryReadOnlyTools {
         Path root = resolveInsideProject(path);
 
         if (!Files.exists(root)) {
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         }
 
         if (!Files.isDirectory(root)) {
@@ -443,7 +444,7 @@ public class CodeDirectoryReadOnlyTools {
         Path file = resolveInsideProject(path);
 
         if (!Files.exists(file)) {
-            return "Path does not exist: " + path;
+            return PATH_DOES_NOT_EXIST + path;
         }
 
         try {
