@@ -33,10 +33,13 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
 
     private final ArchitecturalStylePatternInconsistencyDetectionTask task;
     private final LargeLanguageModel llmForNer;
+    private final LargeLanguageModel validationAgentLlm;
 
-    public ArchitecturalStylePatternInconsistencyDetectionEvaluation(ArchitecturalStylePatternInconsistencyDetectionTask task, LargeLanguageModel llmForNer) {
+    public ArchitecturalStylePatternInconsistencyDetectionEvaluation(ArchitecturalStylePatternInconsistencyDetectionTask task, LargeLanguageModel llmForNer,
+            LargeLanguageModel validationAgentLlm) {
         this.task = task;
         this.llmForNer = llmForNer;
+        this.validationAgentLlm = validationAgentLlm;
     }
 
     private static String normalizeArchitecturalStylePattern(String name) {
@@ -92,7 +95,7 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
         };
 
         var runner = new ArchitecturalStylePatternInconsistencyDetection(projectName);
-        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer);
+        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer, validationAgentLlm);
 
         return new ArdocoResult(Objects.requireNonNull(runner.runWithoutSaving()));
     }
@@ -109,7 +112,7 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
         };
 
         var runner = new ArchitecturalStylePatternInconsistencyDetection(projectName);
-        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer);
+        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer, validationAgentLlm);
 
         return new ArdocoResult(Objects.requireNonNull(runner.runWithoutSaving()));
     }

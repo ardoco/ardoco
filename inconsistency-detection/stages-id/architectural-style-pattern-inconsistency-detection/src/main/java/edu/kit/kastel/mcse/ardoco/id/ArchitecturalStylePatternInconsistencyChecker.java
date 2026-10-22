@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.List;
 
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -23,16 +25,17 @@ public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecu
     /**
      * Creates and configures an instance of {@link ArchitecturalStylePatternInconsistencyChecker} for analyzing a code directory.
      *
-     * @param additionalConfigs the additional configuration
-     * @param dataRepository    the data repository
-     * @param nerStrategy       the named entity recognition strategy to be used for processing architectural elements in the code directory
-     * @param codeProjectPath   the path to the code directory that will be analyzed for architectural style pattern inconsistencies
+     * @param additionalConfigs  the additional configuration
+     * @param dataRepository     the data repository
+     * @param nerStrategy        the named entity recognition strategy to be used for processing architectural elements in the code directory
+     * @param codeProjectPath    the path to the code directory that will be analyzed for architectural style pattern inconsistencies
+     * @param validationAgentLlm the large language model used for validation tasks during the inconsistency analysis
      * @return a configured instance of {@link ArchitecturalStylePatternInconsistencyChecker} with an associated agent for analyzing the specified code
-     *         directory
+     * directory
      */
     public static ArchitecturalStylePatternInconsistencyChecker getForCodeDirectory(ImmutableSortedMap<String, String> additionalConfigs,
-            DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath) {
-        var agent = new CodeDirectoryArchitecturalStylePatternInconsistencyAgent(dataRepository, nerStrategy, codeProjectPath);
+            DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath, LargeLanguageModel validationAgentLlm) {
+        var agent = new CodeDirectoryArchitecturalStylePatternInconsistencyAgent(dataRepository, nerStrategy, codeProjectPath, validationAgentLlm);
         var checker = new ArchitecturalStylePatternInconsistencyChecker(dataRepository, agent);
         checker.applyConfiguration(additionalConfigs);
         return checker;
@@ -44,11 +47,12 @@ public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecu
      * @param additionalConfigs the additional configuration
      * @param dataRepository    the data repository
      * @param nerStrategy       the named entity recognition strategy to be used for processing architectural elements in the code model
+     * @param validationAgentLlm the large language model used for validation tasks during the inconsistency analysis
      * @return a configured instance of {@link ArchitecturalStylePatternInconsistencyChecker} with an associated agent for analyzing the specified code model
      */
     public static ArchitecturalStylePatternInconsistencyChecker getForCodeModel(ImmutableSortedMap<String, String> additionalConfigs,
-            DataRepository dataRepository, ArtemisNerStrategy nerStrategy) {
-        var agent = new CodeModelArchitecturalStylePatternInconsistencyAgent(dataRepository, nerStrategy);
+            DataRepository dataRepository, ArtemisNerStrategy nerStrategy, LargeLanguageModel validationAgentLlm) {
+        var agent = new CodeModelArchitecturalStylePatternInconsistencyAgent(dataRepository, nerStrategy, validationAgentLlm);
         var checker = new ArchitecturalStylePatternInconsistencyChecker(dataRepository, agent);
         checker.applyConfiguration(additionalConfigs);
         return checker;

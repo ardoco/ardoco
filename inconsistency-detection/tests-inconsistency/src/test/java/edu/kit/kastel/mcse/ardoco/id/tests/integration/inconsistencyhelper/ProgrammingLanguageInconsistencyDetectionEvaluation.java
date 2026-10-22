@@ -33,10 +33,13 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
 
     private final ProgrammingLanguageInconsistencyDetectionTask task;
     private final LargeLanguageModel llmForNer;
+    private final LargeLanguageModel validationAgentLlm;
 
-    public ProgrammingLanguageInconsistencyDetectionEvaluation(ProgrammingLanguageInconsistencyDetectionTask task, LargeLanguageModel llmForNer) {
+    public ProgrammingLanguageInconsistencyDetectionEvaluation(ProgrammingLanguageInconsistencyDetectionTask task, LargeLanguageModel llmForNer,
+            LargeLanguageModel validationAgentLlm) {
         this.task = task;
         this.llmForNer = llmForNer;
+        this.validationAgentLlm = validationAgentLlm;
     }
 
     public SingleClassificationResult<String> runInconsistencyDetectionEvaluation(CodeConfiguration.CodeConfigurationType configurationType) {
@@ -72,7 +75,7 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
         };
 
         var runner = new ProgrammingLanguageInconsistencyDetection(projectName);
-        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer);
+        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer, validationAgentLlm);
 
         return new ArdocoResult(Objects.requireNonNull(runner.runWithoutSaving()));
     }
@@ -89,7 +92,7 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
         };
 
         var runner = new ProgrammingLanguageInconsistencyDetection(projectName);
-        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer);
+        runner.setUp(documentationFile, codeConfiguration, SortedMaps.immutable.empty(), llmForNer, validationAgentLlm);
 
         return new ArdocoResult(Objects.requireNonNull(runner.runWithoutSaving()));
     }

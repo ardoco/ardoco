@@ -26,20 +26,20 @@ public class CodeModelArchitecturalStylePatternInconsistencyInformant extends Ab
 
     private final ArchitecturalStylePatternValidationLlmAgent validationAgent;
 
-    public CodeModelArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy) {
+    public CodeModelArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy,
+            LargeLanguageModel validationAgentLlm) {
         super("CodeModelArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy, ArchitecturalStylePatternStatementValidatorRegistry
                 .withDefaultValidators());
 
-        var llm = LargeLanguageModel.GPT_5_4_MINI;
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
 
         this.validationAgent = AiServices.builder(ArchitecturalStylePatternValidationLlmAgent.class)
-                .chatModel(llm.createUncached())
+                .chatModel(validationAgentLlm.createUncached())
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();
 
-        logger.info("Using {} for architectural style/pattern inconsistency-detection based on code model.", llm.getHumanReadableName());
+        logger.info("Using {} for architectural style/pattern inconsistency-detection based on code model.", validationAgentLlm.getHumanReadableName());
     }
 
     @Override

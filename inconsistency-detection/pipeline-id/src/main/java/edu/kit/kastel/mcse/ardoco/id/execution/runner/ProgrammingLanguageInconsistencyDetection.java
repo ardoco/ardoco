@@ -27,12 +27,13 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel llmForNer) {
+            LargeLanguageModel llmForNer, LargeLanguageModel validationAgentLlm) {
         setOutputDirectory(outputDir);
-        setUp(inputText, codeConfiguration, additionalConfigs, llmForNer);
+        setUp(inputText, codeConfiguration, additionalConfigs, llmForNer, validationAgentLlm);
     }
 
-    public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
+    public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
+            LargeLanguageModel validationAgentLlm) {
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
@@ -41,11 +42,12 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
         DataRepository dataRepository = getArdoco().getDataRepository();
         DataRepositoryHelper.putInputText(dataRepository, text);
 
-        definePipeline(codeConfiguration, llmForNer, additionalConfigs);
+        definePipeline(codeConfiguration, llmForNer, additionalConfigs, validationAgentLlm);
         isSetUp = true;
     }
 
-    private void definePipeline(CodeConfiguration codeConfiguration, LargeLanguageModel llmForNer, ImmutableSortedMap<String, String> additionalConfigs) {
+    private void definePipeline(CodeConfiguration codeConfiguration, LargeLanguageModel llmForNer, ImmutableSortedMap<String, String> additionalConfigs,
+            LargeLanguageModel validationAgentLlm) {
         var dataRepository = getArdoco().getDataRepository();
         var nerStrategy = new ProgrammingLanguageNerStrategy();
 
@@ -56,10 +58,11 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
             case CodeConfiguration.CodeConfigurationType.ACM_FILE -> {
                 getArdoco().addPipelineStep(ModelProviderAgent.getModelProviderAgent(dataRepository, SortedMaps.immutable.empty(), null, codeConfiguration
                         .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
-                getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy));
+                getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy,
+                        validationAgentLlm));
             }
             case CodeConfiguration.CodeConfigurationType.DIRECTORY -> getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeDirectory(
-                    additionalConfigs, dataRepository, nerStrategy, codeConfiguration.code().getAbsolutePath()));
+                    additionalConfigs, dataRepository, nerStrategy, codeConfiguration.code().getAbsolutePath(), validationAgentLlm));
             default -> throw new IllegalArgumentException(
                     "Unsupported code configuration type for programming language inconsistency detection: " + codeConfiguration.type());
         }

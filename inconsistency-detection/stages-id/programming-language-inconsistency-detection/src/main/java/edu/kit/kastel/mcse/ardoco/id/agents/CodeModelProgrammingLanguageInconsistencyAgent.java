@@ -7,11 +7,12 @@ import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
 import edu.kit.kastel.mcse.ardoco.id.informants.CodeModelProgrammingLanguageInconsistencyInformant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class CodeModelProgrammingLanguageInconsistencyAgent extends PipelineAgent {
 
-    public CodeModelProgrammingLanguageInconsistencyAgent(DataRepository dataRepository, ArtemisNerStrategy nerStrategy) {
-        super(List.of(new CodeModelProgrammingLanguageInconsistencyInformant(dataRepository, nerStrategy)), "CodeModelProgrammingLanguageInconsistencyAgent",
+    public CodeModelProgrammingLanguageInconsistencyAgent(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, LargeLanguageModel validationAgentLlm) {
+        super(List.of(new CodeModelProgrammingLanguageInconsistencyInformant(dataRepository, nerStrategy, validationAgentLlm)), "CodeModelProgrammingLanguageInconsistencyAgent",
                 dataRepository);
     }
 }

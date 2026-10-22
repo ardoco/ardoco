@@ -31,6 +31,7 @@ class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
     private static final Logger logger = LoggerFactory.getLogger(ArchitecturalStylePatternInconsistencyDetectionEvaluationIT.class);
 
     private static final LargeLanguageModel LLM = LargeLanguageModel.GPT_5_5;
+    private static final LargeLanguageModel VALIDATION_AGENT_LLM = LargeLanguageModel.GPT_5_4_MINI;
 
     private static Stream<Arguments> projectsXCodeConfigurationTypes() {
         return Arrays.stream(ArchitecturalStylePatternInconsistencyDetectionTask.values())
@@ -44,7 +45,7 @@ class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
     @MethodSource("projectsXCodeConfigurationTypes")
     void architecturalStylePatternInconsistencyDetectionIT(ArchitecturalStylePatternInconsistencyDetectionTask task,
             CodeConfiguration.CodeConfigurationType configurationType) {
-        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         SingleClassificationResult<String> result = evaluation.runInconsistencyDetectionEvaluation(configurationType);
 
@@ -57,7 +58,7 @@ class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
     @ParameterizedTest(name = "Evaluating architectural style/pattern NER for {0}")
     @EnumSource(ArchitecturalStylePatternInconsistencyDetectionTask.class)
     void architecturalStylePatternNerIT(ArchitecturalStylePatternInconsistencyDetectionTask task) {
-        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         SingleClassificationResult<String> result = evaluation.runNerEvaluation();
 
@@ -71,7 +72,7 @@ class ArchitecturalStylePatternInconsistencyDetectionEvaluationIT {
     @MethodSource("projectsXCodeConfigurationTypes")
     void architecturalStylePatternInconsistencyDetectionExtendedIT(ArchitecturalStylePatternInconsistencyDetectionTask task,
             CodeConfiguration.CodeConfigurationType configurationType) {
-        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ArchitecturalStylePatternInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         var results = evaluation.runInconsistencyDetectionExtendedEvaluation(configurationType);
 

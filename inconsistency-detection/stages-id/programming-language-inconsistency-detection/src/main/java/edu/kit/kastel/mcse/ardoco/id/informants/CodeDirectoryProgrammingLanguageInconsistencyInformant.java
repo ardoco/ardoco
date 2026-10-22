@@ -27,17 +27,17 @@ public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends Abst
     private final String codeProjectPath;
     private final ProgrammingLanguageValidationLlmAgent validationAgent;
 
-    public CodeDirectoryProgrammingLanguageInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath) {
+    public CodeDirectoryProgrammingLanguageInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath,
+            LargeLanguageModel validationAgentLlm) {
         super("CodeDirectoryProgrammingLanguageInconsistencyInformant", dataRepository, nerStrategy);
         this.codeProjectPath = codeProjectPath;
 
-        var llm = LargeLanguageModel.GPT_5_4_MINI;
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(llm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
+                .chatModel(validationAgentLlm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
                 .tools(new CodeDirectoryReadOnlyTools(codeProjectPath))
                 .build();
 
-        logger.info("Using {} for programming language inconsistency-detection based on code directory.", llm.getHumanReadableName());
+        logger.info("Using {} for programming language inconsistency-detection based on code directory.", validationAgentLlm.getHumanReadableName());
     }
 
     @Override

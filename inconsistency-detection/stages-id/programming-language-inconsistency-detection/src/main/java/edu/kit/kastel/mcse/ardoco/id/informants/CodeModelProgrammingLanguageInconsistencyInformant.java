@@ -26,18 +26,18 @@ public class CodeModelProgrammingLanguageInconsistencyInformant extends Abstract
 
     private final ProgrammingLanguageValidationLlmAgent validationAgent;
 
-    public CodeModelProgrammingLanguageInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy) {
+    public CodeModelProgrammingLanguageInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy,
+            LargeLanguageModel validationAgentLlm) {
         super("CodeModelProgrammingLanguageInconsistencyInformant", dataRepository, nerStrategy);
 
-        var llm = LargeLanguageModel.GPT_5_4_MINI;
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(llm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
+                .chatModel(validationAgentLlm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();
 
-        logger.info("Using {} for programming language inconsistency-detection based on code model.", llm.getHumanReadableName());
+        logger.info("Using {} for programming language inconsistency-detection based on code model.", validationAgentLlm.getHumanReadableName());
     }
 
     @Override

@@ -30,11 +30,6 @@ public record ProgrammingLanguageStatement(int sentenceNumber, ProgrammingLangua
 
         String normalizedName = programmingLanguageName.trim().toLowerCase(Locale.ROOT);
 
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
         return Arrays.stream(ProgrammingLanguage.values())
                 .filter(language -> language != ProgrammingLanguage.OTHER)
                 .filter(language -> language.name().toLowerCase(Locale.ROOT).equals(normalizedName))

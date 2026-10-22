@@ -27,12 +27,13 @@ public class ArchitecturalStylePatternInconsistencyDetection extends ArdocoRunne
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel llmForNer) {
+            LargeLanguageModel llmForNer, LargeLanguageModel validationAgentLlm) {
         setOutputDirectory(outputDir);
-        setUp(inputText, codeConfiguration, additionalConfigs, llmForNer);
+        setUp(inputText, codeConfiguration, additionalConfigs, llmForNer, validationAgentLlm);
     }
 
-    public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer) {
+    public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
+            LargeLanguageModel validationAgentLlm) {
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
@@ -41,11 +42,12 @@ public class ArchitecturalStylePatternInconsistencyDetection extends ArdocoRunne
         DataRepository dataRepository = getArdoco().getDataRepository();
         DataRepositoryHelper.putInputText(dataRepository, text);
 
-        definePipeline(codeConfiguration, llmForNer, additionalConfigs);
+        definePipeline(codeConfiguration, llmForNer, additionalConfigs, validationAgentLlm);
         isSetUp = true;
     }
 
-    private void definePipeline(CodeConfiguration codeConfiguration, LargeLanguageModel llmForNer, ImmutableSortedMap<String, String> additionalConfigs) {
+    private void definePipeline(CodeConfiguration codeConfiguration, LargeLanguageModel llmForNer, ImmutableSortedMap<String, String> additionalConfigs,
+            LargeLanguageModel validationAgentLlm) {
         Ardoco ardoco = getArdoco();
         var dataRepository = ardoco.getDataRepository();
         var nerStrategy = new ArchitecturalStylePatternNerStrategy();
@@ -57,10 +59,11 @@ public class ArchitecturalStylePatternInconsistencyDetection extends ArdocoRunne
             case ACM_FILE -> {
                 ardoco.addPipelineStep(ModelProviderAgent.getModelProviderAgent(dataRepository, SortedMaps.immutable.empty(), null, codeConfiguration
                         .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
-                ardoco.addPipelineStep(ArchitecturalStylePatternInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy));
+                ardoco.addPipelineStep(ArchitecturalStylePatternInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy,
+                        validationAgentLlm));
             }
             case DIRECTORY -> ardoco.addPipelineStep(ArchitecturalStylePatternInconsistencyChecker.getForCodeDirectory(additionalConfigs, dataRepository,
-                    nerStrategy, codeConfiguration.code().getAbsolutePath()));
+                    nerStrategy, codeConfiguration.code().getAbsolutePath(), validationAgentLlm));
             default -> throw new IllegalArgumentException(
                     "Unsupported code configuration type for architectural style/pattern inconsistency detection: " + codeConfiguration.type());
         }

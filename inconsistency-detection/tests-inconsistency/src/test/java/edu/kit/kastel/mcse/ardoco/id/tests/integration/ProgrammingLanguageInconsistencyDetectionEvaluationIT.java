@@ -31,6 +31,7 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
     private static final Logger logger = LoggerFactory.getLogger(ProgrammingLanguageInconsistencyDetectionEvaluationIT.class);
 
     private static final LargeLanguageModel LLM = LargeLanguageModel.GPT_5_5;
+    private static final LargeLanguageModel VALIDATION_AGENT_LLM = LargeLanguageModel.GPT_5_4_MINI;
 
     private static Stream<Arguments> projectsXCodeConfigurationTypes() {
         return Arrays.stream(ProgrammingLanguageInconsistencyDetectionTask.values())
@@ -44,7 +45,7 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
     @MethodSource("projectsXCodeConfigurationTypes")
     void programmingLanguageInconsistencyDetectionIT(ProgrammingLanguageInconsistencyDetectionTask task,
             CodeConfiguration.CodeConfigurationType configurationType) {
-        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         SingleClassificationResult<String> result = evaluation.runInconsistencyDetectionEvaluation(configurationType);
 
@@ -58,7 +59,7 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
     @MethodSource("projectsXCodeConfigurationTypes")
     void programmingLanguageInconsistencyDetectionExtendedIT(ProgrammingLanguageInconsistencyDetectionTask task,
             CodeConfiguration.CodeConfigurationType configurationType) {
-        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         var results = evaluation.runInconsistencyDetectionExtendedEvaluation(configurationType);
 
@@ -79,7 +80,7 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
     @ParameterizedTest(name = "Evaluating programming language NER for {0}")
     @EnumSource(ProgrammingLanguageInconsistencyDetectionTask.class)
     void programmingLanguageNerIT(ProgrammingLanguageInconsistencyDetectionTask task) {
-        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM);
+        var evaluation = new ProgrammingLanguageInconsistencyDetectionEvaluation(task, LLM, VALIDATION_AGENT_LLM);
 
         SingleClassificationResult<String> result = evaluation.runNerEvaluation();
 

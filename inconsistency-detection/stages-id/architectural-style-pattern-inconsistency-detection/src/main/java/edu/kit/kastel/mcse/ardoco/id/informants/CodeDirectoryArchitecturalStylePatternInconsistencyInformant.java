@@ -27,19 +27,19 @@ public class CodeDirectoryArchitecturalStylePatternInconsistencyInformant extend
     private final String codeProjectPath;
     private final ArchitecturalStylePatternValidationLlmAgent validationAgent;
 
-    public CodeDirectoryArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath) {
+    public CodeDirectoryArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath,
+            LargeLanguageModel validationAgentLlm) {
         super("CodeDirectoryArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy, ArchitecturalStylePatternStatementValidatorRegistry
                 .withDefaultValidators());
 
         this.codeProjectPath = codeProjectPath;
 
-        var llm = LargeLanguageModel.GPT_5_4_MINI;
         this.validationAgent = AiServices.builder(ArchitecturalStylePatternValidationLlmAgent.class)
-                .chatModel(llm.createUncached())
+                .chatModel(validationAgentLlm.createUncached())
                 .tools(new CodeDirectoryReadOnlyTools(codeProjectPath))
                 .build();
 
-        logger.info("Using {} for architectural style/pattern inconsistency-detection based on code directory.", llm.getHumanReadableName());
+        logger.info("Using {} for architectural style/pattern inconsistency-detection based on code directory.", validationAgentLlm.getHumanReadableName());
     }
 
     @Override
