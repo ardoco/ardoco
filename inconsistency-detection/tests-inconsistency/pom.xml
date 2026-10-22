@@ -30,6 +30,12 @@
       <version>${revision}</version>
     </dependency>
     <dependency>
+      <groupId>io.github.ardoco.id</groupId>
+      <artifactId>programming-language-inconsistency-detection</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>connection-generator</artifactId>
       <version>${revision}</version>
@@ -65,12 +71,6 @@
       <version>${revision}</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>io.github.ardoco.id</groupId>
-          <artifactId>programming-language-inconsistency-detection</artifactId>
-          <version>${revision}</version>
-          <scope>test</scope>
-      </dependency>
   </dependencies>
 
   <build>

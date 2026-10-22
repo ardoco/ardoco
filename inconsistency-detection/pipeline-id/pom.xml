@@ -20,6 +20,12 @@
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.id</groupId>
+      <artifactId>architectural-style-pattern-inconsistency-detection</artifactId>
+      <version>${revision}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.id</groupId>
       <artifactId>artemis-inconsistency-detection</artifactId>
       <version>${revision}</version>
     </dependency>
@@ -29,9 +35,9 @@
       <version>${revision}</version>
     </dependency>
     <dependency>
-        <groupId>io.github.ardoco.id</groupId>
-        <artifactId>programming-language-inconsistency-detection</artifactId>
-        <version>${revision}</version>
+      <groupId>io.github.ardoco.id</groupId>
+      <artifactId>programming-language-inconsistency-detection</artifactId>
+      <version>${revision}</version>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
@@ -58,12 +64,6 @@
       <artifactId>text-preprocessing</artifactId>
       <version>${revision}</version>
     </dependency>
-      <dependency>
-          <groupId>io.github.ardoco.id</groupId>
-          <artifactId>architectural-style-pattern-inconsistency-detection</artifactId>
-          <version>${revision}</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 
   <profiles>

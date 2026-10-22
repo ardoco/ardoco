@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.ArrayList;
@@ -65,8 +66,8 @@ public abstract class AbstractProgrammingLanguageInconsistencyInformant extends 
                     inconsistencies.add(new ProgrammingLanguageInconsistency(statement, validationResult.explanation()));
                 }
 
-                logger.debug("Validated programming-language statement '{}':\nvalid={}, explanation={}", statement, validationResult.valid(),
-                        validationResult.explanation());
+                logger.debug("Validated programming-language statement '{}':\nvalid={}, explanation={}", statement, validationResult.valid(), validationResult
+                        .explanation());
             }
         }
 
@@ -82,7 +83,7 @@ public abstract class AbstractProgrammingLanguageInconsistencyInformant extends 
      * @param fullDocumentationText   the full text of the documentation being analyzed
      * @param sentenceText            the specific sentence containing the programming language statement
      * @return a {@code ProgrammingLanguageValidationResult} that indicates whether the statement is valid and provides an explanation for its validity or
-     * inconsistency
+     *         inconsistency
      */
     protected abstract ProgrammingLanguageValidationResult validateProgrammingLanguageStatement(String namedEntityOccurrence, String programmingLanguageName,
             String fullDocumentationText, String sentenceText);

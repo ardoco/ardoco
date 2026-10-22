@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
 
 import java.io.File;
@@ -98,8 +99,8 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
 
     private ArdocoResult runExtendedArdoco(CodeConfiguration.CodeConfigurationType configurationType, int runIndex) {
         String projectName = task.getEvaluationProject().name();
-        File documentationFile = EvaluationHelper.loadFileFromResources(
-                "/architectural-style-pattern-text-extensions/" + projectName.toLowerCase(Locale.ROOT) + "/extension-" + runIndex + ".txt");
+        File documentationFile = EvaluationHelper.loadFileFromResources("/architectural-style-pattern-text-extensions/" + projectName.toLowerCase(
+                Locale.ROOT) + "/extension-" + runIndex + ".txt");
 
         CodeConfiguration codeConfiguration = switch (configurationType) {
             case DIRECTORY -> new CodeConfiguration(task.getCodeDirectory(), CodeConfiguration.CodeConfigurationType.DIRECTORY);
@@ -121,9 +122,7 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
         Set<String> expected = getExpectedInvalidOccurrences();
         Set<String> actual = getActualInvalidOccurrences(result);
 
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actual, expected,
-                        null); // confusionMatrixSum=sentences x architecturalStylePatterns x 2 (not calculatable because #patterns is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actual, expected, null); // confusionMatrixSum=sentences x architecturalStylePatterns x 2 (not calculatable because #patterns is not fixed)
     }
 
     private SingleClassificationResult<String> evaluateExtendedInconsistencyDetection(ArdocoResult result, int runIndex) {
@@ -131,9 +130,7 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
         expected.addAll(getExpectedExtendedInvalidOccurrences(runIndex));
         Set<String> actual = getActualInvalidOccurrences(result);
 
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actual, expected,
-                        null); // confusionMatrixSum=sentences x architecturalStylePatterns x 2 (not calculatable because #patterns is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actual, expected, null); // confusionMatrixSum=sentences x architecturalStylePatterns x 2 (not calculatable because #patterns is not fixed)
     }
 
     private Set<String> getExpectedInvalidOccurrences() {
@@ -198,9 +195,7 @@ public class ArchitecturalStylePatternInconsistencyDetectionEvaluation {
 
         Set<String> actualOccurrences = getActualNerOccurrences(result);
 
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actualOccurrences, expectedOccurrences,
-                        null); // confusionMatrixSum=sentences x architecturalStylePatterns (not calculatable because #patterns is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actualOccurrences, expectedOccurrences, null); // confusionMatrixSum=sentences x architecturalStylePatterns (not calculatable because #patterns is not fixed)
     }
 
     private Set<String> getActualNerOccurrences(ArdocoResult result) {

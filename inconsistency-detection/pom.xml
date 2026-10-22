@@ -49,11 +49,11 @@
       <timezone>GMT+1</timezone>
     </developer>
   </developers>
-    <modules>
-        <module>stages-id/architectural-style-pattern-inconsistency-detection</module>
-    </modules>
+  <modules>
+    <module>stages-id/architectural-style-pattern-inconsistency-detection</module>
+  </modules>
 
-    <scm>
+  <scm>
     <connection>scm:git:git://github.com/ardoco/InconsistencyDetection.git</connection>
     <developerConnection>scm:git:ssh://github.com:ardoco/InconsistencyDetection.git</developerConnection>
     <tag>HEAD</tag>

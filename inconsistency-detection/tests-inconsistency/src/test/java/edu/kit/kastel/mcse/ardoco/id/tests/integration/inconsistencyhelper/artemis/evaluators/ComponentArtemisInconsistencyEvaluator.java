@@ -40,8 +40,8 @@ public class ComponentArtemisInconsistencyEvaluator implements ArtemisInconsiste
     @Override
     public SingleClassificationResult<String> evaluateMeat(ComponentArtemisInconsistencyTask project, ArdocoResult result) {
         Set<String> expectedUnmentionedModelElements = new LinkedHashSet<>(project.getUnmentionedModelElementIds());
-        Set<String> actualUnmentionedModelElements = result.getArtemisInconsistencyState(
-                        new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT))
+        Set<String> actualUnmentionedModelElements = result.getArtemisInconsistencyState(new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS,
+                NamedEntityType.COMPONENT))
                 .getInconsistenciesOfType(ModelEntityAbsentFromTextInconsistency.class)
                 .stream()
                 .map(ModelEntityAbsentFromTextInconsistency::getModelInstanceUid)

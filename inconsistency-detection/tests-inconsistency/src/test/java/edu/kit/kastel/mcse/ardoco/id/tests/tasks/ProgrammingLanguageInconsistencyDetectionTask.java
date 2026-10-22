@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.tasks;
 
 import java.io.File;
@@ -16,22 +17,22 @@ public enum ProgrammingLanguageInconsistencyDetectionTask {
     TEAMMATES( //
             EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_programming_language_inconsistencies_sad_2021-code_2023.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     SCONS( //
             EvaluationProject.SCONS, //
             "/benchmark/scons/goldstandards/goldstandard_programming_language_inconsistencies_sad_2024-code_2024.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     ROD( //
             EvaluationProject.ROD, //
             "/benchmark/rod/goldstandards/goldstandard_programming_language_inconsistencies_sad_2024-code_2024.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     ZENGARDEN( //
             EvaluationProject.ZENGARDEN, //
             "/benchmark/zengarden/goldstandards/goldstandard_programming_language_inconsistencies_sad_2014-code_2014.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     );
 
     private final EvaluationProject evaluationProject;

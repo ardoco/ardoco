@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.readonlytools;
 
 import java.nio.file.FileSystems;
@@ -244,8 +245,8 @@ public class CodeModelReadOnlyTools {
                 Directory: %s
                 Has compilation unit: %s
                 Compilation unit id: %s
-                """.formatted(path, fileNameOf(path), codeFile.getExtension(), directory, codeFile.hasCompilationUnit(),
-                codeFile.getCompilationUnitId().orElse(""));
+                """.formatted(path, fileNameOf(path), codeFile.getExtension(), directory, codeFile.hasCompilationUnit(), codeFile.getCompilationUnitId()
+                .orElse(""));
     }
 
     private String directoryInfo(String directoryPath) {

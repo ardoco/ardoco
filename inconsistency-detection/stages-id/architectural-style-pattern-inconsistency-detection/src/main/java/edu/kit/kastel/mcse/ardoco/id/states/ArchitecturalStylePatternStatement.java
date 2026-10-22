@@ -1,9 +1,10 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.states;
-
-import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 import java.util.Locale;
 import java.util.Objects;
+
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 
 @Deterministic
 public record ArchitecturalStylePatternStatement(int sentenceNumber, String architecturalStylePatternName, String normalizedArchitecturalStylePatternName,

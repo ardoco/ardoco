@@ -19,7 +19,6 @@ public class ArtemisTeamInconsistencyInformant extends ArtemisInconsistencyInfor
         var traceabilityState = result.getArtemisConnectionState(getTarget());
         var inconsistencyState = result.getArtemisInconsistencyState(getTarget());
 
-
         for (var namedEntity : traceabilityState.getUnlinkedNamedEntities()) {
             for (var occurrence : namedEntity.getOccurrences()) {
                 var sentenceNumber = occurrence.getSentenceNumber();

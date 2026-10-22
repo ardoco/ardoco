@@ -148,7 +148,7 @@ public final class InconsistencyDetectionEvaluationUtil {
      * @param results         the results
      * @param expectedResults the expected results
      */
-    public static  void logExtendedResultsWithExpected(Logger logger, String name, SingleClassificationResult<?> results, ExpectedResults expectedResults) {
+    public static void logExtendedResultsWithExpected(Logger logger, String name, SingleClassificationResult<?> results, ExpectedResults expectedResults) {
         var infoString = String.format(Locale.ENGLISH, """
 
                 %s:
@@ -167,13 +167,13 @@ public final class InconsistencyDetectionEvaluationUtil {
 
                         \tAccuracy:%9.2f (min. expected: %.2f)
                         \tSpecificity:%6.2f (min. expected: %.2f)""",//
-                result.getAccuracy(), expectedResults.accuracy(), result.getSpecificity(), expectedResults.specificity())//
+                        result.getAccuracy(), expectedResults.accuracy(), result.getSpecificity(), expectedResults.specificity())//
                 + String.format(Locale.ENGLISH, """
 
                         \tPhi Coef.:%8.2f (min. expected: %.2f)
                         \tPhi/PhiMax:%7.2f (Phi Max: %.2f)
                         %s""",//
-                result.getPhiCoefficient(), expectedResults.phiCoefficient(), result.getPhiOverPhiMax(), result.getPhiCoefficientMax(), toRow(result));
+                        result.getPhiCoefficient(), expectedResults.phiCoefficient(), result.getPhiOverPhiMax(), result.getPhiCoefficientMax(), toRow(result));
     }
 
     private static String toRow(SingleClassificationResult<?> result) {

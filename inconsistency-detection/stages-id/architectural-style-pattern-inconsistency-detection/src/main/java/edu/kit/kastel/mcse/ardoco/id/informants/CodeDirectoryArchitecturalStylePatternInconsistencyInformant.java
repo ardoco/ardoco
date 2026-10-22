@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import org.slf4j.Logger;
@@ -21,8 +22,8 @@ public class CodeDirectoryArchitecturalStylePatternInconsistencyInformant extend
     private final ArchitecturalStylePatternValidationLlmAgent validationAgent;
 
     public CodeDirectoryArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath) {
-        super("CodeDirectoryArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy,
-                ArchitecturalStylePatternStatementValidatorRegistry.withDefaultValidators());
+        super("CodeDirectoryArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy, ArchitecturalStylePatternStatementValidatorRegistry
+                .withDefaultValidators());
 
         this.codeProjectPath = codeProjectPath;
 

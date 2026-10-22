@@ -1,9 +1,10 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.states;
 
 import java.util.Objects;
 
-public record ProgrammingLanguageInconsistency(ProgrammingLanguageStatement statement, String explanation)
-        implements Comparable<ProgrammingLanguageInconsistency> {
+public record ProgrammingLanguageInconsistency(ProgrammingLanguageStatement statement, String explanation) implements
+        Comparable<ProgrammingLanguageInconsistency> {
 
     public ProgrammingLanguageInconsistency {
         Objects.requireNonNull(statement, "statement must not be null");

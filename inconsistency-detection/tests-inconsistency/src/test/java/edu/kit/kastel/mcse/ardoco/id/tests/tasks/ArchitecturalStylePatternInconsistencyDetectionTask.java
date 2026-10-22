@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.tasks;
 
 import java.io.File;
@@ -7,7 +8,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.langchain4j.model.chat.request.ChatRequest;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.EvaluationProject;
@@ -17,22 +17,22 @@ public enum ArchitecturalStylePatternInconsistencyDetectionTask {
     TEAMMATES( //
             EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_architectural_style_pattern_inconsistencies_sad_2021-code_2023.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     BEETS( //
             EvaluationProject.BEETS, //
             "/benchmark/beets/goldstandards/goldstandard_architectural_style_pattern_inconsistencies_sad_2013-code_2013.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     ROD( //
             EvaluationProject.ROD, //
             "/benchmark/rod/goldstandards/goldstandard_architectural_style_pattern_inconsistencies_sad_2013-code_2013.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     ), //
     CORONAWARNAPP( //
             EvaluationProject.CORONAWARNAPP, //
             "/benchmark/coronawarnapp/goldstandards/goldstandard_architectural_style_pattern_inconsistencies_sad_2023-code_2023.csv", //
-            new ExpectedResults(.420, .420, .420, .420, .420, .420) //
+            new ExpectedResults(.420, .420, .420, .420, .420, .420)//
     );
 
     private final EvaluationProject evaluationProject;

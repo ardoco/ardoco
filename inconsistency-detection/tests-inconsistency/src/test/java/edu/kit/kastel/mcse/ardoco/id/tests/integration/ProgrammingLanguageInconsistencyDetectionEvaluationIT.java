@@ -1,9 +1,9 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration;
 
 import static edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper.InconsistencyDetectionEvaluationUtil.logExtendedResultsWithExpected;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -70,8 +70,8 @@ class ProgrammingLanguageInconsistencyDetectionEvaluationIT {
                 .filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE)
                 .findFirst()
                 .orElseThrow();
-        logExtendedResultsWithExpected(logger, this, task.getEvaluationProject().name() + " programming language ID extended", weightedAverageResult,
-                task.getExpectedResults());
+        logExtendedResultsWithExpected(logger, this, task.getEvaluationProject().name() + " programming language ID extended", weightedAverageResult, task
+                .getExpectedResults());
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")

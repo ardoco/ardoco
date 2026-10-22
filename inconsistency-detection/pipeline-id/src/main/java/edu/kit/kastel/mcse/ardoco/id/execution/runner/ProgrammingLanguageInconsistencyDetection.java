@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.execution.runner;
 
 import java.io.File;
@@ -52,16 +53,15 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
         getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llmForNer, List.of(nerStrategy)));
 
         switch (codeConfiguration.type()) {
-        case CodeConfiguration.CodeConfigurationType.ACM_FILE -> {
-            getArdoco().addPipelineStep(ModelProviderAgent.getModelProviderAgent(dataRepository, SortedMaps.immutable.empty(), null,
-                    codeConfiguration.withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
-            getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy));
-        }
-        case CodeConfiguration.CodeConfigurationType.DIRECTORY -> getArdoco().addPipelineStep(
-                ProgrammingLanguageInconsistencyChecker.getForCodeDirectory(additionalConfigs, dataRepository, nerStrategy,
-                        codeConfiguration.code().getAbsolutePath()));
-        default -> throw new IllegalArgumentException(
-                "Unsupported code configuration type for programming language inconsistency detection: " + codeConfiguration.type());
+            case CodeConfiguration.CodeConfigurationType.ACM_FILE -> {
+                getArdoco().addPipelineStep(ModelProviderAgent.getModelProviderAgent(dataRepository, SortedMaps.immutable.empty(), null, codeConfiguration
+                        .withMetamodel(Metamodel.CODE_WITH_COMPILATION_UNITS)));
+                getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeModel(additionalConfigs, dataRepository, nerStrategy));
+            }
+            case CodeConfiguration.CodeConfigurationType.DIRECTORY -> getArdoco().addPipelineStep(ProgrammingLanguageInconsistencyChecker.getForCodeDirectory(
+                    additionalConfigs, dataRepository, nerStrategy, codeConfiguration.code().getAbsolutePath()));
+            default -> throw new IllegalArgumentException(
+                    "Unsupported code configuration type for programming language inconsistency detection: " + codeConfiguration.type());
         }
 
     }

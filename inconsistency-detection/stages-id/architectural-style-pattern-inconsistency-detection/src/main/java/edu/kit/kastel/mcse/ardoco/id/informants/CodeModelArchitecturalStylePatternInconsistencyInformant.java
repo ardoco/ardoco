@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import org.slf4j.Logger;
@@ -20,8 +21,8 @@ public class CodeModelArchitecturalStylePatternInconsistencyInformant extends Ab
     private final ArchitecturalStylePatternValidationLlmAgent validationAgent;
 
     public CodeModelArchitecturalStylePatternInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy) {
-        super("CodeModelArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy,
-                ArchitecturalStylePatternStatementValidatorRegistry.withDefaultValidators());
+        super("CodeModelArchitecturalStylePatternInconsistencyInformant", dataRepository, nerStrategy, ArchitecturalStylePatternStatementValidatorRegistry
+                .withDefaultValidators());
 
         var llm = LargeLanguageModel.GPT_5_4_MINI;
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);

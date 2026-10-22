@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.integration.inconsistencyhelper;
 
 import java.io.File;
@@ -78,8 +79,8 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
 
     private ArdocoResult runExtendedArdoco(CodeConfiguration.CodeConfigurationType configurationType, int runIndex) {
         String projectName = task.getEvaluationProject().name();
-        File documentationFile = EvaluationHelper.loadFileFromResources(
-                "/programming-language-text-extensions/" + projectName.toLowerCase(Locale.ROOT) + "/extension-" + runIndex + ".txt");
+        File documentationFile = EvaluationHelper.loadFileFromResources("/programming-language-text-extensions/" + projectName.toLowerCase(
+                Locale.ROOT) + "/extension-" + runIndex + ".txt");
 
         CodeConfiguration codeConfiguration = switch (configurationType) {
             case DIRECTORY -> new CodeConfiguration(task.getCodeDirectory(), CodeConfiguration.CodeConfigurationType.DIRECTORY);
@@ -100,18 +101,14 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
     private SingleClassificationResult<String> evaluateInconsistencyDetection(ArdocoResult result) {
         Set<String> expected = getExpectedInvalidOccurrences();
         Set<String> actual = getActualInvalidOccurrences(result);
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actual, expected,
-                        null);//confusionMatrixSum=sentences x programmingLanguages x 2 (not calculatable because #programmingLanguages is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actual, expected, null);//confusionMatrixSum=sentences x programmingLanguages x 2 (not calculatable because #programmingLanguages is not fixed)
     }
 
     private SingleClassificationResult<String> evaluateExtendedInconsistencyDetection(ArdocoResult result, int runIndex) {
         Set<String> expected = getExpectedInvalidOccurrences();
         expected.addAll(getExpectedExtendedInvalidOccurrences(runIndex));
         Set<String> actual = getActualInvalidOccurrences(result);
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actual, expected,
-                        null);//confusionMatrixSum=sentences x programmingLanguages x 2 (not calculatable because #programmingLanguages is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actual, expected, null);//confusionMatrixSum=sentences x programmingLanguages x 2 (not calculatable because #programmingLanguages is not fixed)
     }
 
     private Set<String> getExpectedInvalidOccurrences() {
@@ -176,9 +173,7 @@ public class ProgrammingLanguageInconsistencyDetectionEvaluation {
 
         Set<String> actualOccurrences = getActualNerOccurrences(result);
 
-        return ClassificationMetricsCalculator.getInstance()
-                .calculateMetrics(actualOccurrences, expectedOccurrences,
-                        null); //confusionMatrixSum=sentences x programmingLanguages (not calculatable because #programmingLanguages is not fixed)
+        return ClassificationMetricsCalculator.getInstance().calculateMetrics(actualOccurrences, expectedOccurrences, null); //confusionMatrixSum=sentences x programmingLanguages (not calculatable because #programmingLanguages is not fixed)
     }
 
     private Set<String> getActualNerOccurrences(ArdocoResult result) {

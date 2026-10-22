@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.readonlytools;
 
 import java.io.BufferedReader;

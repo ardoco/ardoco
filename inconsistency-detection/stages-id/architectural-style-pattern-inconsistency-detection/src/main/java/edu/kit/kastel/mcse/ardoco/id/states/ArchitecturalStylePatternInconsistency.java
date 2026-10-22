@@ -1,9 +1,10 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.states;
 
 import java.util.Objects;
 
-public record ArchitecturalStylePatternInconsistency(ArchitecturalStylePatternStatement statement, String explanation)
-        implements Comparable<ArchitecturalStylePatternInconsistency> {
+public record ArchitecturalStylePatternInconsistency(ArchitecturalStylePatternStatement statement, String explanation) implements
+        Comparable<ArchitecturalStylePatternInconsistency> {
 
     public ArchitecturalStylePatternInconsistency {
         Objects.requireNonNull(statement, "statement must not be null");

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants.validators;
 
 import java.util.List;
@@ -18,8 +19,7 @@ public class ArchitecturalStylePatternStatementValidatorRegistry {
     }
 
     public static ArchitecturalStylePatternStatementValidatorRegistry withDefaultValidators() {
-        return new ArchitecturalStylePatternStatementValidatorRegistry(
-                List.of()); //specific validators (implementations of the ArchitecturalStylePatternStatementValidator interface) can be added here
+        return new ArchitecturalStylePatternStatementValidatorRegistry(List.of()); //specific validators (implementations of the ArchitecturalStylePatternStatementValidator interface) can be added here
     }
 
     static String normalize(String name) {

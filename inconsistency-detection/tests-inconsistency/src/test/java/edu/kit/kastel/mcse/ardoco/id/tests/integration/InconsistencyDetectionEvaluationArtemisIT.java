@@ -153,8 +153,8 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
         var metrics = ClassificationMetricsCalculator.getInstance();
         if (results.size() == 1) {
-            logExtendedResultsWithExpected(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, results.getFirst(),
-                    project.getExpectedResults());
+            logExtendedResultsWithExpected(logger, project.getEvaluationProject().name() + " " + configuration.name() + logSuffix, results.getFirst(), project
+                    .getExpectedResults());
             ArtemisInconsistencyEvaluationWriter.writeTeamResult(project, configuration, results.getFirst(), logSuffix);
         } else {
             var weightedAverageResult = metrics.calculateAverages(results, null)
