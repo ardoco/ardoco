@@ -4,8 +4,6 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation;
 import java.io.File;
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.execution.Artemis;
-
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 
@@ -16,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Art
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ClassArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.execution.Artemis;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;

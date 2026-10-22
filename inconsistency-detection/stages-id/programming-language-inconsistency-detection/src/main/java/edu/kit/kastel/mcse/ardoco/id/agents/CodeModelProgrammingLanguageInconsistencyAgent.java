@@ -11,8 +11,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class CodeModelProgrammingLanguageInconsistencyAgent extends PipelineAgent {
 
-    public CodeModelProgrammingLanguageInconsistencyAgent(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, LargeLanguageModel validationAgentLlm) {
-        super(List.of(new CodeModelProgrammingLanguageInconsistencyInformant(dataRepository, nerStrategy, validationAgentLlm)), "CodeModelProgrammingLanguageInconsistencyAgent",
-                dataRepository);
+    public CodeModelProgrammingLanguageInconsistencyAgent(DataRepository dataRepository, ArtemisNerStrategy nerStrategy,
+            LargeLanguageModel validationAgentLlm) {
+        super(List.of(new CodeModelProgrammingLanguageInconsistencyInformant(dataRepository, nerStrategy, validationAgentLlm)),
+                "CodeModelProgrammingLanguageInconsistencyAgent", dataRepository);
     }
 }

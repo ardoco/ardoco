@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -15,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.id.agents.CodeModelArchitecturalStylePatternIn
 import edu.kit.kastel.mcse.ardoco.id.states.ArchitecturalStylePatternInconsistencyState;
 import edu.kit.kastel.mcse.ardoco.id.states.ArchitecturalStylePatternInconsistencyStateImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecutionStage {
 
@@ -31,7 +30,7 @@ public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecu
      * @param codeProjectPath    the path to the code directory that will be analyzed for architectural style pattern inconsistencies
      * @param validationAgentLlm the large language model used for validation tasks during the inconsistency analysis
      * @return a configured instance of {@link ArchitecturalStylePatternInconsistencyChecker} with an associated agent for analyzing the specified code
-     * directory
+     *         directory
      */
     public static ArchitecturalStylePatternInconsistencyChecker getForCodeDirectory(ImmutableSortedMap<String, String> additionalConfigs,
             DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath, LargeLanguageModel validationAgentLlm) {
@@ -44,9 +43,9 @@ public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecu
     /**
      * Creates and configures an instance of {@link ArchitecturalStylePatternInconsistencyChecker} for analyzing a code model.
      *
-     * @param additionalConfigs the additional configuration
-     * @param dataRepository    the data repository
-     * @param nerStrategy       the named entity recognition strategy to be used for processing architectural elements in the code model
+     * @param additionalConfigs  the additional configuration
+     * @param dataRepository     the data repository
+     * @param nerStrategy        the named entity recognition strategy to be used for processing architectural elements in the code model
      * @param validationAgentLlm the large language model used for validation tasks during the inconsistency analysis
      * @return a configured instance of {@link ArchitecturalStylePatternInconsistencyChecker} with an associated agent for analyzing the specified code model
      */

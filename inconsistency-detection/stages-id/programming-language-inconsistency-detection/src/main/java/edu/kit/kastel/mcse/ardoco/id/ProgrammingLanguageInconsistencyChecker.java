@@ -3,8 +3,6 @@ package edu.kit.kastel.mcse.ardoco.id;
 
 import java.util.List;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -15,6 +13,7 @@ import edu.kit.kastel.mcse.ardoco.id.agents.CodeModelProgrammingLanguageInconsis
 import edu.kit.kastel.mcse.ardoco.id.states.ProgrammingLanguageInconsistencyState;
 import edu.kit.kastel.mcse.ardoco.id.states.ProgrammingLanguageInconsistencyStateImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
 public class ProgrammingLanguageInconsistencyChecker extends AbstractExecutionStage {
 
