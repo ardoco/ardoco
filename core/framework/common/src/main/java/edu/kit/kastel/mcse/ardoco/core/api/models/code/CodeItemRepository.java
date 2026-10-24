@@ -54,11 +54,7 @@ public class CodeItemRepository implements Serializable {
      * @return list of all class units present in the repository
      */
     public List<ClassUnit> getAllClassUnits() {
-        return this.repository.values()
-                .stream()
-                .filter(ClassUnit.class::isInstance)
-                .map(ClassUnit.class::cast)
-                .toList();
+        return this.repository.values().stream().filter(ClassUnit.class::isInstance).map(ClassUnit.class::cast).toList();
     }
 
     /**
