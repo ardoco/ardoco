@@ -14,7 +14,7 @@ sentenceID,file
 384,application-staging.yaml
 384,bootstrap-connect-ppdd.yaml
 384,application-efgs.yaml
-384,application-disable-efgs.yam
+384,application-disable-efgs.yaml
 384,application-metrics.yaml
 384,application-security.yaml
 384,application-cdn.yaml
