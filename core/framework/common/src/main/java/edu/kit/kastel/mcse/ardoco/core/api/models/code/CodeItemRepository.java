@@ -56,8 +56,8 @@ public class CodeItemRepository implements Serializable {
     public List<ClassUnit> getAllClassUnits() {
         return this.repository.values()
                 .stream()
-                .flatMap(codeItem -> codeItem.getAllDataTypes().stream())
-                .flatMap(datatype -> datatype.getAllClassUnits().stream())
+                .filter(ClassUnit.class::isInstance)
+                .map(ClassUnit.class::cast)
                 .toList();
     }
 
