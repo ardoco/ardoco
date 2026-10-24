@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.SortedSet;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -45,6 +46,11 @@ public final class ClassUnit extends Datatype {
      */
     public ClassUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, int startLine, int endLine) {
         super(codeItemRepository, name, content, startLine, endLine);
+    }
+
+    @Override
+    public List<ClassUnit> getAllClassUnits() {
+        return List.of(this);
     }
 
     @Override

@@ -1,0 +1,15 @@
+sentence,style/pattern,valid
+130,abstract factory pattern,false
+132,event-driven architecture,false
+134,blackboard architectural pattern,false
+136,mediator pattern,false
+138,broker architectural pattern,false
+142,decorator pattern,false
+144,state pattern,false
+146,flyweight pattern,false
+
+126,facade pattern,false
+128,hexagonal architecture,false
+129,adapter,false
+133,observer pattern,false
+140,layered architecture,false

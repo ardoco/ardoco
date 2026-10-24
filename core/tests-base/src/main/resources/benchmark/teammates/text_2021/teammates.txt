@@ -69,10 +69,10 @@ Seventh, the corresponding AutomatedAction will be performed, interacting with t
 GAE server sends such automated requests through two different configurations.
 These configurations are cron jobs or task queue workers.
 Cron jobs are jobs that are automatically scheduled for a specified period of time, e.g. scheduling feedback session opening reminders.
-It is configured in cron.xml.
+It is configured in cron.yaml.
 Task queue workers are hybrids of user-invoked and GAE-invoked in that they are queued by users (i.e. users request for the tasks to be added to queue), but executed by GAE (i.e. GAE determines when and which tasks in the queue are executed at any point of time).
 This is typically used for tasks that may take a long time to finish and can exceed the 1 minute standard request processing limit imposed by GAE.
-It is configured in queue.xml as well as the TaskQueue nested class of the Const class.
+It is configured in queue.yaml as well as the TaskQueue nested class of the Const class.
 Since the high-level workflow of processing a request is same for any request (differing by the two request types only), we use the Template Method pattern to abstract the process flow into the Action and AutomatedAction classes.
 The Logic component handles the business logic of TEAMMATES.
 In particular, it is responsible for the following.

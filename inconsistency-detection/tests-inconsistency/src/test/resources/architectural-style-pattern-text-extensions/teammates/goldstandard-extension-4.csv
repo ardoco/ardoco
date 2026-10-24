@@ -1,0 +1,15 @@
+sentence,style/pattern,valid
+199,hexagonal architecture,false
+201,dependency injection,false
+203,command pattern,false
+205,chain of responsibility pattern,false
+207,repository pattern,false
+208,data mapper,false
+209,command query responsibility segregation,false
+211,event-driven architecture,false
+212,outbox pattern,false
+213,observer pattern,false
+215,strategy pattern,false
+216,adapter pattern,false
+217,state pattern,false
+218,blackboard pattern,false
