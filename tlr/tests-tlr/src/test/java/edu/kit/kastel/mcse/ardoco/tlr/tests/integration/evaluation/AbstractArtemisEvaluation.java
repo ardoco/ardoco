@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.junit.jupiter.api.Assertions;
 
@@ -44,7 +45,7 @@ public abstract class AbstractArtemisEvaluation extends AbstractEvaluation {
 
         ArtemisNerStrategy strategy = getStrategy();
         var goldStandard = project.getTlrTask().getExpectedTraceLinks();
-        var evaluationResults = calculateEvaluationResults(result, goldStandard.stream().toList(), strategy);
+        var evaluationResults = calculateEvaluationResults(result, Lists.mutable.ofAll(goldStandard), strategy);
 
         var expectedResults = project.getExpectedResults();
         logExtendedResultsWithExpected(project.getName(), evaluationResults, expectedResults);
