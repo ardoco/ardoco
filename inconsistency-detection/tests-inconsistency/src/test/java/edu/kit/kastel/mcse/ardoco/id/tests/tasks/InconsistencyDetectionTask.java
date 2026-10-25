@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests.tasks;
 
 import java.io.File;
@@ -19,35 +19,35 @@ public enum InconsistencyDetectionTask {
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016_UME.csv", //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv", //
             "/configurations/ms/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.048, .515, .089, .372, -.060, .362) //
+            , new ExpectedResults(.048, .515, .089, .372, -.060, .362)//
     ), //
 
     TEASTORE(EvaluationProject.TEASTORE, //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020_UME.csv", //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020.csv", //
             "/configurations/ts/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.537, .518, .527, .946, .499, .972) //
+            , new ExpectedResults(.537, .518, .527, .946, .499, .972)//
     ), //
 
     TEAMMATES(EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/tm/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.092, .701, .164, .743, .187, .745) //
+            , new ExpectedResults(.092, .701, .164, .743, .187, .745)//
     ), //
 
     BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/bbb/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.155, .112, .130, .910, .085, .960) //
+            , new ExpectedResults(.155, .112, .130, .910, .085, .960)//
     ), //
 
     JABREF(EvaluationProject.JABREF, //
             "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/jabref/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/jabref/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(1.0, .444, .615, .871, .617, 1.0) //
+            , new ExpectedResults(1.0, .444, .615, .871, .617, 1.0)//
     ); //
 
     private final EvaluationProject project;
