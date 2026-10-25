@@ -19,28 +19,28 @@ public enum InconsistencyDetectionTask {
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016_UME.csv", //
             "/benchmark/mediastore/goldstandards/goldstandard_sad_2016-sam_2016.csv", //
             "/configurations/ms/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.127, .793, .22, .685, .227, .679) //
+            , new ExpectedResults(.048, .515, .089, .372, -.060, .362) //
     ), //
 
     TEASTORE(EvaluationProject.TEASTORE, //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020_UME.csv", //
             "/benchmark/teastore/goldstandards/goldstandard_sad_2020-sam_2020.csv", //
             "/configurations/ts/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.95, .703, .808, .98, .808, .998) //
+            , new ExpectedResults(.537, .518, .527, .946, .499, .972) //
     ), //
 
     TEAMMATES(EvaluationProject.TEAMMATES, //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/teammates/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/tm/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.147, .745, .245, .852, .287, .856) //
+            , new ExpectedResults(.092, .701, .164, .743, .187, .745) //
     ), //
 
     BIGBLUEBUTTON(EvaluationProject.BIGBLUEBUTTON, //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021_UME.csv", //
             "/benchmark/bigbluebutton/goldstandards/goldstandard_sad_2021-sam_2021.csv", //
             "/configurations/bbb/filterlists_all.txt" // options: filterlists_none.txt, filterlists_onlyCommon.txt, filterlists_all.txt
-            , new ExpectedResults(.685, .403, .510, .954, .507, .988) //
+            , new ExpectedResults(.155, .112, .130, .910, .085, .960) //
     ), //
 
     JABREF(EvaluationProject.JABREF, //

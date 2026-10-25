@@ -219,7 +219,7 @@ class InconsistencyDetectionEvaluationIT {
                 .stream()
                 .map(l -> l + " -> " + removedElement.getName().toLowerCase())
                 .toList());
-        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i -> i.sentence() + " -> " + removedElement.getName().toLowerCase()).toList());
+        var actualSentences = Lists.immutable.ofAll(inconsistencies.stream().map(i -> i.sentence() + " -> " + i.name().toLowerCase()).toList());
 
         return InconsistencyDetectionEvaluationIT.calculateEvaluationResults(arDoCoResult, expectedLines, actualSentences);
     }
