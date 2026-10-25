@@ -50,8 +50,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
     @DisplayName("Evaluate ArTEMiS Component MEAT inconsistency detection")
     @ParameterizedTest(name = "Evaluating ArTEMiS Component MEAT for {0}")
-    @EnumSource(value = ComponentArtemisInconsistencyTask.class, names = { "BIGBLUEBUTTON" })
-    //@EnumSource(ComponentArtemisInconsistencyTask.class) //use this for all evaluation projects
+    @EnumSource(ComponentArtemisInconsistencyTask.class)
     @Order(1)
     void componentMeatInconsistencyIT(ComponentArtemisInconsistencyTask project) {
         var configuration = ArtemisInconsistencyEvaluationConfiguration.component();
@@ -73,7 +72,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection")
     @ParameterizedTest(name = "Evaluating ArTEMiS Class TEAM for {0}")
-    @EnumSource(value = ClassArtemisInconsistencyTask.class, names = { "TEAMMATES" })
+    @EnumSource(ClassArtemisInconsistencyTask.class)
     @Order(3)
     void classTeamInconsistencyIT(ClassArtemisInconsistencyTask project) {
         var configuration = ArtemisInconsistencyEvaluationConfiguration.clazz();
@@ -84,7 +83,7 @@ class InconsistencyDetectionEvaluationArtemisIT {
 
     @DisplayName("Evaluate ArTEMiS Class TEAM inconsistency detection using holdbacks")
     @ParameterizedTest(name = "Evaluating ArTEMiS Class TEAM holdback for {0}")
-    @EnumSource(value = ClassArtemisInconsistencyTask.class, names = { "TEAMMATES" })
+    @EnumSource(ClassArtemisInconsistencyTask.class)
     @Order(4)
     void classTeamHoldbackInconsistencyIT(ClassArtemisInconsistencyTask project) {
         int numberOfRuns = 3;

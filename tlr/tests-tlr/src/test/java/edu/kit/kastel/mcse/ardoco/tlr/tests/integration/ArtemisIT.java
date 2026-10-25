@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -103,7 +105,7 @@ public class ArtemisIT extends AbstractArdocoIT {
             Assertions.assertNotNull(result);
             results.add(result);
         }
-        averageAndLog(results); // here we could use the ClassificationMetricCalculator in future to get more meaningful aggregation metrics
+        averageAndLog(results);
     }
 
     @EnabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
