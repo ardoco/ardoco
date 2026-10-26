@@ -6,7 +6,7 @@ tags: [build-system, maven, ci-cd, code-quality, environment, publishing, extern
 openwiki:
   roles: [operations, delivery]
   change_kinds: [build, ci, dependencies]
-  source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml]
+  source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml, core/.github/workflows/format.yml, tlr/.github/workflows/format.yml, inconsistency-detection/.github/workflows/format.yml]
   invariants: ["flatten-maven-plugin pinned to 1.7.3 due to upstream NPE in 1.8.0", "JDK 21+ and Maven 3.9+ required", "Docs/openwiki paths do not trigger Maven verify"]
   validation_commands: ["mvn clean verify", "mvn spotless:check"]
 sources:
@@ -20,6 +20,8 @@ sources:
     resource: repo://.github/workflows/verify.yml
   - id: openwiki-source-ea70eb6c045047448e446296
     resource: repo://.gitignore
+  - id: openwiki-source-95e70d5fed9ac06e781a7ac8
+    resource: repo://core/.github/workflows/format.yml
   - id: openwiki-source-64c4c51956e735b4f8b4f2ad
     resource: repo://core/.mvn/jvm.config
   - id: openwiki-source-85d7e1bba1ef1c69d3421831
@@ -54,6 +56,8 @@ sources:
     resource: repo://docs/LiSSA.md
   - id: openwiki-source-e0619056900a3044357585a9
     resource: repo://docs/Text-Preprocessing-Microservice.md
+  - id: openwiki-source-e7930f246892d4e52fe8124a
+    resource: repo://inconsistency-detection/.github/workflows/format.yml
   - id: openwiki-source-b40e29eb69418d1b82bc9a2b
     resource: repo://inconsistency-detection/pom.xml
   - id: openwiki-source-17e801a0d4e1b83de6d7102e
@@ -62,6 +66,8 @@ sources:
     resource: repo://pom.xml
   - id: openwiki-source-05268939a714aa11095abad9
     resource: repo://sample.env
+  - id: openwiki-source-90c4930e80176d0f2e97e712
+    resource: repo://tlr/.github/workflows/format.yml
   - id: openwiki-source-ca56ac93c4121e1f63ec2ebf
     resource: repo://tlr/pom.xml
   - id: openwiki-source-a00658cbd869dbe3ba0ef3e8
@@ -94,10 +100,10 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
   - id: openwiki-source-14f886f1a214908e7068814d
     resource: repo://tlr/update_integration_tests.sh
-generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+generated: { by: "openwiki/0.7.2", at: "2026-10-26T11:42:02.687Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T11:24:11.899Z
+    at: 2026-10-26T11:42:02.687Z
 ---
 
 # Operations
@@ -251,7 +257,7 @@ Located in `/.github/workflows/`:
 | Workflow | File | Purpose |
 |----------|------|---------|
 | Maven Verify | [`verify.yml`](../.github/workflows/verify.yml) | Runs Maven verify on push to `main` (ignoring `v*` tags and `docs/**`, `openwiki/**` paths) and on pull requests, via the reusable `ardoco/actions` workflow with `with-submodules: true` and `deploy: false`. The call site passes empty `CENTRAL_USER`, `CENTRAL_TOKEN`, and `GPG_KEY` secrets, so CI verifies without publishing. |
-| Format | [`format.yml`](../.github/workflows/format.yml) | On pull requests to `main` and manual dispatch: checks out with submodules and full history, runs `mvn -B spotless:apply`, and auto-commits the reformat as "Apply formatting changes" using the JDK version exported from the POM. |
+| Format | [`format.yml`](../.github/workflows/format.yml) | On pull requests to `main` and manual dispatch: checks out with submodules and full history (`actions/checkout@v7`), determines the Java major version by probing `maven.compiler.target`, `maven.compiler.release`, and `java.version` in the POM with `mvn help:evaluate` (the job fails with an error if none resolves), sets up Temurin with Maven caching via `actions/setup-java@v6`, runs `mvn -B spotless:apply`, and auto-commits the reformat as "Apply formatting changes" via `stefanzweifel/git-auto-commit-action@v7` — Spotless violations on a PR are fixed by a bot commit rather than failing the build. |
 | Docs | [`docs.yml`](../.github/workflows/docs.yml) | On pushes to `main` (and version tags) touching `docs/**`, `openwiki/**`, or the workflow itself: republishes the GitHub Wiki from `/docs` plus `/openwiki` (see [Wiki Publishing](#wiki-publishing)). |
 | OpenWiki Update | [`openwiki.yml`](../.github/workflows/openwiki.yml) | Weekly (Monday 06:00 UTC) plus `workflow_dispatch` run that delegates to the shared `ardoco/actions` OpenWiki reusable workflow, passing the `OPENROUTER_API_KEY` secret; the call site declares `contents: write` and `pull-requests: write`. The reusable workflow performs the commit-relevance check, installs OpenWiki, runs `openwiki --update`, and opens the update PR. |
 
@@ -269,7 +275,7 @@ Located in `/.github/workflows/`:
 
 ### Module-Level Workflows and Sync Scripts
 
-Each module tree (`core`, `tlr`, `inconsistency-detection`) carries its own `.github/workflows/` (`verify.yml`, `format.yml`) replicating the root workflows for the standalone repositories, including `with-submodules: true` / `submodules: true`. The `tlr` and `inconsistency-detection` trees also contain `update_integration_tests.sh`, which syncs the `tests/integration-tests` prefix from the `ardoco/IntegrationTests` repository via `git subtree pull`:
+Each module tree (`core`, `tlr`, `inconsistency-detection`) carries its own `.github/workflows/` (`verify.yml`, `format.yml`) replicating the root workflows for the standalone repositories, including `with-submodules: true` / `submodules: true`. The module `format.yml` copies are identical to each other and step-for-step the same as the root Format workflow (same triggers, same inline POM-based Java-version probe, `mvn -B spotless:apply`, `git-auto-commit-action@v7` "Apply formatting changes" commit), but they still pin `actions/checkout@v6` and `actions/setup-java@v5` where the root has already moved to `actions/checkout@v7` and `actions/setup-java@v6`. The `tlr` and `inconsistency-detection` trees also contain `update_integration_tests.sh`, which syncs the `tests/integration-tests` prefix from the `ardoco/IntegrationTests` repository via `git subtree pull`:
 
 ```bash
 git remote add -f integrationTests git@github.com:ardoco/IntegrationTests.git
