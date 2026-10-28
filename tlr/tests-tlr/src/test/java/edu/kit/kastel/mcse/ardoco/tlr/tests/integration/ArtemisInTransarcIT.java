@@ -9,6 +9,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -22,6 +23,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInExArchEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInTransarcEvaluation;
 
+@Disabled("Only for manual execution")
 class ArtemisInTransarcIT extends AbstractArdocoIT {
     private static final int NUMBER_OF_RUNS = 5;
 

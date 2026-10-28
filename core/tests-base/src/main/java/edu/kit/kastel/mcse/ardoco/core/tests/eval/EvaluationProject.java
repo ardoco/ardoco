@@ -44,7 +44,42 @@ public enum EvaluationProject {
             "/benchmark/jabref/text_2021/jabref.txt", //
             "https://github.com/ardoco/jabref.git", //
             "6269698cae437610ec79c38e6dd611eef7e88afe", //
-            "/benchmark/jabref/model_2023/code/codeModel.acm");
+            "/benchmark/jabref/model_2023/code/codeModel.acm"), //
+
+    ZENGARDEN(//
+            "/benchmark/zengarden/notAvailable", //
+            "/benchmark/zengarden/text_2014/zengarden.txt", //
+            "https://github.com/mhroth/ZenGarden.git", //
+            "82cb13a7c1bb227104a0c9f7994b1a65733fc20e", //
+            "/benchmark/zengarden/model_2014/code/codeModel.acm"),//
+
+    SCONS(//
+            "/benchmark/scons/notAvailable", //
+            "/benchmark/scons/text_2024/scons.txt", //
+            "https://github.com/SCons/scons.git", //
+            "a20098e4d90c3ef0e6e938e350ad2b20f5d9e780", //
+            "/benchmark/scons/model_2024/code/codeModel.acm"),//
+
+    BEETS(//
+            "/benchmark/beets/notAvailable", //
+            "/benchmark/beets/text_2013/beets.txt", //
+            "https://github.com/steinitzu/beets.git", //
+            "1fbbe6154698ce50f1a7e8d32af9a6376e2c7ede", //
+            "/benchmark/beets/model_2013/code/codeModel.acm"),//
+
+    ROD(//
+            "/benchmark/rod/notAvailable", //
+            "/benchmark/rod/text_2013/rod.txt", //
+            "https://github.com/apohllo/rod.git", //
+            "efea5ae07458c45ef5fca60b3ab003d47fc894cc", //
+            "/benchmark/rod/model_2013/code/codeModel.acm"),//
+
+    CORONAWARNAPP(//
+            "/benchmark/coronawarnapp/notAvailable", //
+            "/benchmark/coronawarnapp/text_2023/coronawarnapp.txt", //
+            "https://github.com/corona-warn-app/cwa-server.git", //
+            "c61d55f6f83b6d005cb6aca9e9b455afac572d72", //
+            "/benchmark/coronawarnapp/model_2023/code/codeModel.acm");//
 
     private static final Logger logger = LoggerFactory.getLogger(EvaluationProject.class);
 
@@ -75,8 +110,7 @@ public enum EvaluationProject {
     }
 
     /**
-     * Get the code model for this project. The code will be cloned from
-     * the repository and the folder will be returned.
+     * Get the code model for this project. The code will be cloned from the repository and the folder will be returned.
      *
      * @return the folder containing the code
      * @see #getCodeDirectoryWithoutCloning()
@@ -100,7 +134,7 @@ public enum EvaluationProject {
 
     /**
      * Get the location where the code for this project will be stored.
-     * 
+     *
      * @return the location of the code
      * @see #getCodeDirectory()
      */

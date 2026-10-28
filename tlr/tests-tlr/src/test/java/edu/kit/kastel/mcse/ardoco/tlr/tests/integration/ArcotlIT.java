@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArcotlEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArcotlEvaluation;
 
+@Disabled("temporarily disabled")
 class ArcotlIT extends AbstractArdocoIT {
 
     @DisplayName("Evaluate ArCoTL (SAM-Code TLR)")

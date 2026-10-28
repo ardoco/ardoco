@@ -1,0 +1,18 @@
+sentence,style/pattern,valid
+124,repository pattern,false
+126,command objects,false
+127,chain of responsibility pattern,false
+129,abstract factory,false
+130,observer pattern,false
+131,event-driven architectural style,false
+132,blackboard architectural pattern,false
+133,state pattern,false
+134,facade,false
+120,adapter,false
+120,hexagonal architecture,false
+121,adapter,false
+125,unit of work,false
+127,adapter,false
+131,facade pattern,false
+122,pipe-and-filter,false
+128,strategy pattern,false

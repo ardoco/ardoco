@@ -1,0 +1,11 @@
+sentence,style/pattern,valid
+200,microkernel architectural style,false
+202,broker architectural pattern,false
+204,blackboard architectural pattern,false
+206,state pattern,false
+208,observer pattern,false
+210,adapter pattern,true???
+212,builder pattern,false
+214,memento pattern,false
+216,specification pattern,false
+218,circuit breaker pattern,false

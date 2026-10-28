@@ -1,0 +1,5 @@
+line,pattern/style,valid
+23,singleton,false
+49,dirty-flags,true
+116,pipeline,true
+119,pipeline,true
