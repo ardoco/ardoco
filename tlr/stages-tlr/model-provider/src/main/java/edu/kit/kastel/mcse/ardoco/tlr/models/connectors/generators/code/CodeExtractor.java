@@ -1,16 +1,12 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel.CodeModelDto;
@@ -20,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.magika.FileTypePredictor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public abstract class CodeExtractor extends Extractor {
     private static final Logger logger = LoggerFactory.getLogger(CodeExtractor.class);
@@ -39,10 +37,9 @@ public abstract class CodeExtractor extends Extractor {
 
     public void writeOutCodeModel(CodeModel codeModel, File outputFile) {
         ObjectMapper objectMapper = createObjectMapper();
-        objectMapper.registerModule(new Jdk8Module());
         try {
             objectMapper.writeValue(outputFile, codeModel.createCodeModelDto());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             logger.warn("An exception occurred when writing the code model.", e);
         }
     }
@@ -61,7 +58,6 @@ public abstract class CodeExtractor extends Extractor {
         if (codeModelFile != null && codeModelFile.isFile()) {
             logger.info("Reading in existing code model.");
             ObjectMapper objectMapper = createObjectMapper();
-            objectMapper.registerModule(new Jdk8Module());
             try {
                 CodeModelDto content = objectMapper.readValue(codeModelFile, CodeModelDto.class);
 
@@ -71,7 +67,7 @@ public abstract class CodeExtractor extends Extractor {
                     default -> throw new IllegalStateException("Unexpected value: " + metamodelToExtract);
                 };
 
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 logger.warn("An exception occurred when reading the code model.", e);
             }
         }
