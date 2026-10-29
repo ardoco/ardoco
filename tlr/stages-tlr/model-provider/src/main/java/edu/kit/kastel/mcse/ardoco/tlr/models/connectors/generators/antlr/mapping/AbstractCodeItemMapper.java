@@ -1,9 +1,11 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping;
 
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
@@ -41,7 +43,7 @@ public abstract class AbstractCodeItemMapper implements CodeItemMapper {
 
     protected abstract List<Element> getContentOfIdentifier(ElementIdentifier identifier);
 
-    protected CodeItem buildCodeItemFromStrategy(Element element) {
+    protected @Nullable CodeItem buildCodeItemFromStrategy(Element element) {
         return collection.buildCodeItem(element);
     }
 

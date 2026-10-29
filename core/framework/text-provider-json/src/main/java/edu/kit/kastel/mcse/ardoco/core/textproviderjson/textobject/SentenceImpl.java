@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.io.Serial;
@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Sentence;
@@ -25,7 +26,7 @@ public class SentenceImpl implements Sentence {
 
     private final String text;
 
-    public SentenceImpl(int sentenceNumber, String text, ImmutableList<Word> words) {
+    public SentenceImpl(int sentenceNumber, String text, @Nullable ImmutableList<Word> words) {
         this.sentenceNumber = sentenceNumber;
         this.text = text;
         this.words = words == null ? Lists.mutable.empty() : words.toList();

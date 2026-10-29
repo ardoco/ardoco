@@ -1,5 +1,7 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
@@ -10,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.element
  */
 public interface CodeItemMapper {
 
-    public CodeItem buildCodeItem(Element element);
+    public @Nullable CodeItem buildCodeItem(Element element);
 
     public boolean supports(Element element);
 

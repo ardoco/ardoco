@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,7 +32,7 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     private static final long serialVersionUID = -7941299662945801101L;
 
     @JsonProperty
-    private String parentId;
+    private @Nullable String parentId;
     @JsonProperty
     private List<String> content;
 
@@ -109,7 +111,7 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
      *
      * @return parent code module, or null if none
      */
-    public CodeModule getParent() {
+    public @Nullable CodeModule getParent() {
         CodeItem codeItem = this.codeItemRepository.getCodeItem(this.parentId);
         if (codeItem instanceof CodeModule codeModule) {
             return codeModule;

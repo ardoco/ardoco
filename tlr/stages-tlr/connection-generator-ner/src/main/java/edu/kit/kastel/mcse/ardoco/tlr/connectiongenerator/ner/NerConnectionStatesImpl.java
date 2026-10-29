@@ -1,8 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner;
 
 import java.io.Serial;
 import java.util.EnumMap;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
@@ -27,7 +29,7 @@ public class NerConnectionStatesImpl implements NerConnectionStates {
     }
 
     @Override
-    public NerConnectionStateImpl getNerConnectionState(Metamodel metamodel) {
+    public @Nullable NerConnectionStateImpl getNerConnectionState(Metamodel metamodel) {
         return connectionStates.get(metamodel);
     }
 

@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -28,7 +30,7 @@ public final class CodeCompilationUnit extends CodeModule {
     @JsonProperty
     private ProgrammingLanguage language;
     @JsonProperty
-    private List<String> importedModuleNames;
+    private @Nullable List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
@@ -50,7 +52,7 @@ public final class CodeCompilationUnit extends CodeModule {
      * @param importedModuleNames the names of imported modules declared in this compilation unit
      */
     public CodeCompilationUnit(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, List<String> pathElements,
-            String extension, ProgrammingLanguage language, List<String> importedModuleNames) {
+            String extension, ProgrammingLanguage language, @Nullable List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.pathElements = new ArrayList<>(pathElements);
         this.extension = extension;
@@ -69,7 +71,7 @@ public final class CodeCompilationUnit extends CodeModule {
      * @return a new CodeCompilationUnit with name, pathElements, and extension derived from the path
      */
     public static CodeCompilationUnit fromRelativePath(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content,
-            ProgrammingLanguage language, String relativePath, List<String> importedModuleNames) {
+            ProgrammingLanguage language, String relativePath, @Nullable List<String> importedModuleNames) {
         int lastSlash = relativePath.lastIndexOf('/');
         int lastDot = relativePath.lastIndexOf('.');
         String name = relativePath.substring(lastSlash + 1, lastDot > lastSlash ? lastDot : relativePath.length());

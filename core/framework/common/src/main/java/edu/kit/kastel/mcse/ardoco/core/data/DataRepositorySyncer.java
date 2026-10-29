@@ -1,5 +1,7 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.core.data;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
@@ -20,7 +22,7 @@ public final class DataRepositorySyncer {
      * @param nounMapping    the noun mapping to delete
      * @param replacement    the replacement noun mapping, if any
      */
-    public static void onNounMappingDeletion(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement) {
+    public static void onNounMappingDeletion(DataRepository dataRepository, NounMapping nounMapping, @Nullable NounMapping replacement) {
         // We need to inform the recommendation state
         var recommendationStates = dataRepository.getData(RecommendationStates.ID, RecommendationStates.class);
         if (recommendationStates.isEmpty()) {

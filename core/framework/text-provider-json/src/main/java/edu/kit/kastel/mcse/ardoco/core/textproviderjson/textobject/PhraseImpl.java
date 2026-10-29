@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.io.Serial;
@@ -13,6 +13,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PhraseType;
@@ -28,14 +29,14 @@ public class PhraseImpl implements Phrase {
     private final PhraseType type;
     private MutableList<Phrase> childPhrases;
     private MutableList<Word> nonPhraseWords;
-    private MutableList<Word> phraseWords;
-    private MutableList<Word> containedWords;
-    private MutableList<Phrase> subphrases;
-    private MutableSortedMap<Word, Integer> phraseVector;
+    private @Nullable MutableList<Word> phraseWords;
+    private @Nullable MutableList<Word> containedWords;
+    private @Nullable MutableList<Phrase> subphrases;
+    private @Nullable MutableSortedMap<Word, Integer> phraseVector;
     private int sentenceNo = -1;
-    private String text;
+    private @Nullable String text;
 
-    public PhraseImpl(ImmutableList<Word> nonPhraseWords, PhraseType type, List<Phrase> childPhrases) {
+    public PhraseImpl(@Nullable ImmutableList<Word> nonPhraseWords, PhraseType type, List<Phrase> childPhrases) {
         this.nonPhraseWords = nonPhraseWords == null ? Lists.mutable.empty() : nonPhraseWords.toList();
         this.type = type;
         this.childPhrases = Lists.mutable.ofAll(childPhrases);

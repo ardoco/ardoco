@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.io.Serial;
@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an entity that is part of the code model.
@@ -19,7 +20,7 @@ public non-sealed class CodeEntity extends ModelEntity {
      *
      * @param name the name of the code entity
      */
-    protected CodeEntity(String name) {
+    protected CodeEntity(@Nullable String name) {
         super(name);
     }
 

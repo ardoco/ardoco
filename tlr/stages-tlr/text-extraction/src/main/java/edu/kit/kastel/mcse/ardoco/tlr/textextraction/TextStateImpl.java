@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.io.Serial;
@@ -9,6 +9,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.ordered.SortedIterable;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -79,7 +80,7 @@ public class TextStateImpl extends AbstractState implements TextState {
     }
 
     @Override
-    public ImmutableList<NounMapping> getMappingsThatCouldBeMultipleKinds(Word word, MappingKind... kinds) {
+    public ImmutableList<NounMapping> getMappingsThatCouldBeMultipleKinds(@Nullable Word word, MappingKind... kinds) {
         if (kinds.length == 0) {
             throw new IllegalArgumentException("You need to provide some mapping kinds!");
         }
@@ -132,7 +133,7 @@ public class TextStateImpl extends AbstractState implements TextState {
     }
 
     @Override
-    public void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement, boolean cascade) {
+    public void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, @Nullable NounMapping replacement, boolean cascade) {
 
         if (cascade) {
             PhraseMapping phraseMapping = this.getPhraseMappingByNounMapping(nounMapping);
