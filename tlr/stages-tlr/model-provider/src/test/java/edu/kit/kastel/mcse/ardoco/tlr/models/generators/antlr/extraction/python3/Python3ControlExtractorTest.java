@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
+import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.PythonLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Element;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements.Type;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3.Python3ElementExtractor;
@@ -119,7 +119,7 @@ class Python3ControlExtractorTest {
     private List<Element> extractBasicElementsFromFile(String filePath) throws IOException {
         Python3ElementExtractor extractor = new Python3ElementExtractor();
         Path path = Path.of(filePath);
-        Python3Lexer lexer = new Python3Lexer(CharStreams.fromPath(path));
+        PythonLexer lexer = new PythonLexer(CharStreams.fromPath(path));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         extractor.extractElements(tokenStream);
         return extractor.getElements().getFunctions();
