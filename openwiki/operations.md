@@ -100,10 +100,10 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
   - id: openwiki-source-14f886f1a214908e7068814d
     resource: repo://tlr/update_integration_tests.sh
-generated: { by: "openwiki/0.7.2", at: "2026-10-26T11:42:02.687Z" }
+generated: { by: "openwiki/0.7.3", at: "2026-11-02T13:59:02.713Z" }
 verified:
-  - by: openwiki/0.7.2
-    at: 2026-10-26T11:42:02.687Z
+  - by: openwiki/0.7.3
+    at: 2026-11-02T13:59:02.713Z
 ---
 
 # Operations
@@ -188,7 +188,7 @@ The root POM's `dependencyManagement` pins the versions shared by all modules:
 | JavaParser | 3.28.2 | Java code parsing |
 | JUnit (Jupiter) | 6.1.3 | testing |
 | Mockito | 5.23.0 | mocking |
-| SLF4J | 2.0.18 | logging |
+| SLF4J | 2.0.20 | logging |
 | ArchUnit (`archunit-junit5`) | 1.5.0 | architecture tests |
 | ANTLR runtime | 4.13.2 | code-model parsers |
 | `io.github.ardoco:metrics` | 0.3.0 | evaluation metrics (used by `tests-base`) |
@@ -204,7 +204,7 @@ Two notable dependencies are **not** versioned in the root POM:
 
 ### Spotless
 
-ARDoCo uses [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) (3.10.1, configured once in the root `pluginManagement` and inherited by every module) for consistent code formatting:
+ARDoCo uses [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) (3.10.4, configured once in the root `pluginManagement` and inherited by every module) for consistent code formatting:
 
 ```bash
 mvn spotless:apply   # Apply formatting before committing

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0ac5db1a03b009f0d3bea247c04d6b86687a35dc10a91e349c71df1053dc4c41",
+  "pageVersion": "sha256:e97a0067252d256dc6f2d6d53d8ad565263395d015f1bc804e78a011fb052236",
   "claims": [
     {
       "id": "claim_1123c509f09b44349db6e6ea625403c6",
@@ -74,7 +74,7 @@
     },
     {
       "id": "claim_5efcf1c854b54bd4a7469e556011111a",
-      "statement": "The root POM dependencyManagement pins Jackson 2.22.2 (jackson-bom), JUnit 6.1.3, Mockito 5.23.0, SLF4J 2.0.18, Eclipse Collections 13.0.0, JavaParser 3.28.2, Stanford CoreNLP 4.5.10, ArchUnit 1.5.0, ANTLR 4.13.2, and io.github.ardoco:metrics 0.3.0; opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), and tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.19.0 for its OpenAI/Ollama clients.",
+      "statement": "The root POM dependencyManagement pins Jackson 2.22.2 (jackson-bom), JUnit 6.1.3, Mockito 5.23.0, SLF4J 2.0.20, Eclipse Collections 13.0.0, JavaParser 3.28.2, Stanford CoreNLP 4.5.10, ArchUnit 1.5.0, ANTLR 4.13.2, and io.github.ardoco:metrics 0.3.0; opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), and tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.19.0 for its OpenAI/Ollama clients.",
       "evidence": [
         {
           "resource": "repo://core/framework/common/pom.xml#L44-L54",
@@ -82,7 +82,7 @@
         },
         {
           "resource": "repo://pom.xml#L78-L89",
-          "version": "repo-lines-v1:sha256:989dfbe2cac743096090cafa01c8b9f1a85968d1d229f6160050c6be772dc906:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyOGY5OTAxY2Y5MmI4Zjc0MWZlZjUxYjM4ZGRlMTc1NWUyMzY4ZDQyZDIzZTk2ODcxNjg0OWRhZjlmMDBiMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwOGUyODkxOTRjNmZlMTI4YzZmYWRhMzM5ZWFmZjU4YzIyYjk3NmU5MmYxMTgyYTk4NzA4MzZlZWE1NjEyZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3Mzc0Mzg2NTA0MTk5YzVjOGFmYjlmODVlZGU5ODQ0NzZjNmFlMzU3YWVjODllMDA4YjQ2YWY4ODcyYzcwZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2RkZWRkMTViMTNjMjI1OTlhN2JjOWI3OTZkMTFlMjg0MWNkY2RiYTAzYThmZWNhOWUzMGYyNzgzZDcxNTQifQ"
+          "version": "repo-lines-v1:sha256:adcfc2314cdaa296f44bd14593881d441093f5e8d56d6e841f37c15f40156a42:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyOGY5OTAxY2Y5MmI4Zjc0MWZlZjUxYjM4ZGRlMTc1NWUyMzY4ZDQyZDIzZTk2ODcxNjg0OWRhZjlmMDBiMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwOGUyODkxOTRjNmZlMTI4YzZmYWRhMzM5ZWFmZjU4YzIyYjk3NmU5MmYxMTgyYTk4NzA4MzZlZWE1NjEyZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3Mzc0Mzg2NTA0MTk5YzVjOGFmYjlmODVlZGU5ODQ0NzZjNmFlMzU3YWVjODllMDA4YjQ2YWY4ODcyYzcwZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2RkZWRkMTViMTNjMjI1OTlhN2JjOWI3OTZkMTFlMjg0MWNkY2RiYTAzYThmZWNhOWUzMGYyNzgzZDcxNTQifQ"
         },
         {
           "resource": "repo://tlr/stages-tlr/code-traceability/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/codetraceability/informants/arcotl/NameComparisonUtils.java#L206-L234",
@@ -158,11 +158,15 @@
     },
     {
       "id": "claim_1e37ae20c4284df4bda2453d5bef6b2d",
-      "statement": "The build's current version baseline is the CI-friendly <revision>2.2.0-SNAPSHOT</revision> property in the root POM (resolved by the pinned flatten-maven-plugin, spotless.version=3.10.1), and the root POM's global dependency block applies jspecify 1.0.1 plus the test-scoped archunit-junit5, assertj-core, and junit-jupiter stack to every module; docs/** and openwiki/** paths are excluded from CI Maven verify.",
+      "statement": "The build's current version baseline is the CI-friendly <revision>2.2.0-SNAPSHOT</revision> property in the root POM (resolved by the pinned flatten-maven-plugin, spotless.version=3.10.4), and the root POM's global dependency block applies jspecify 1.0.1 plus the test-scoped archunit-junit5, assertj-core, and junit-jupiter stack to every module; docs/** and openwiki/** paths are excluded from CI Maven verify.",
       "evidence": [
         {
-          "resource": "repo://pom.xml#L203-L218",
-          "version": "repo-lines-v1:sha256:52820d3ffbf557c9c6c705f53950fb8ede30d07ddd410d5a0fed3217b3f89fb6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMTdhMGMyZDIxNjA1MWQwODBlYTYwM2EyZmVjNjMzMDNiYjI1NTFhMGFlNTVlMzgzYTkzNzQ2MTM5MjBkOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3NmY0YjU0MDYyMTU2ZjRjNTM0NmM3YzMxOTI1ZWUzMTRhOGM2NDU0YWIzNzJjMjgxODU5MjJhY2IwOTkxODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NDcwZGRlMDJmOWJiZTdkMDA5ODkwZDAzOGQ2ZWJkMTQxNmZkMTBiOTc0NDA4ZGMzMjY2M2YwNmQ0NDU5NGUifQ"
+          "resource": "repo://.github/workflows/verify.yml#L9-L17",
+          "version": "repo-lines-v1:sha256:d9e9f96c66bc7a8b7bd6504f8cc526385b82c4a6acb744c9c4c1041da9d87544:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY0NmZmN2Q4ZGEwMDJhNzE1M2FjYWY2ODk4YjhlNjFhZGIxMTRhODAwYjVjOTc1MDQxMGVmNjdmMDE0NTk5NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjFjZDQyMTg3ODJmMmE0YjkwOTg2YzkxMjZlZGYwYmMxYTg2ZTU2NTkxMzIzMTlhYzExMzk2ZDU1MGI4OTZiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjMzNzlmYjc1Mjk5NTQ2NGY0ODEyYWQ2MmQxNDgwZjg0OGQ0YmQ0MGYxMGVjMjM4ZGUxODlkNzFiYzcxOTVhYyJ9"
+        },
+        {
+          "resource": "repo://pom.xml#L203-L233",
+          "version": "repo-lines-v1:sha256:bd4f2b40fc66f1002c3f266c82c5107857ee39e45bd44d1770d9ba343d2a644e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMTdhMGMyZDIxNjA1MWQwODBlYTYwM2EyZmVjNjMzMDNiYjI1NTFhMGFlNTVlMzgzYTkzNzQ2MTM5MjBkOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3NmY0YjU0MDYyMTU2ZjRjNTM0NmM3YzMxOTI1ZWUzMTRhOGM2NDU0YWIzNzJjMjgxODU5MjJhY2IwOTkxODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhNTMxYTQ3ZTg2MGY3ZWIwMjcyNzMyNTE0OWYyM2E2NGQ4NWZlMGFjMDdjYjE0NTBjZDhkYjgyZjY2Yzk5MDIifQ"
         },
         {
           "resource": "repo://pom.xml#L66-L68",
@@ -170,7 +174,7 @@
         },
         {
           "resource": "repo://pom.xml#L78-L81",
-          "version": "repo-lines-v1:sha256:54807be6b7b520054c0854130a27757e9e09b393b836fe5dbf570b67ef9d141b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzI4Zjk5MDFjZjkyYjhmNzQxZmVmNTFiMzhkZGUxNzU1ZTIzNjhkNDJkMjNlOTY4NzE2ODQ5ZGFmOWYwMGIwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczYWRmMzFlZTY2OTRhYWVkODVmYzdhNDQwOTc2MDk0MzNlNWYxYmZhNzNjODc5ZmYzODBjNjQ0M2FjZjA5ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTczNzQzODY1MDQxOTljNWM4YWZiOWY4NWVkZTk4NDQ3NmM2YWUzNTdhZWM4OWUwMDhiNDZhZjg4NzJjNzBmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODYzZGY0NWNmM2RhNjMyY2YxNmY4ZjM1MGFhZGFkYzdjZDY0YTEwNWJmMmYxOGMzMTZhMTk3ZWJhMjIzNjg2ZiJ9"
+          "version": "repo-lines-v1:sha256:9775d834864702ab7be01a8e3e4a2e895cee6dafd67edc6681b3c8130916f501:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzI4Zjk5MDFjZjkyYjhmNzQxZmVmNTFiMzhkZGUxNzU1ZTIzNjhkNDJkMjNlOTY4NzE2ODQ5ZGFmOWYwMGIwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWIzZjJmODE2MWNiMWY2MWVjNmZmYTgyYjlmMDU1N2U0NmFiMjE4YjNiZWI4ZTZlZDc3NzBkOTcxZjRiZjI2MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTczNzQzODY1MDQxOTljNWM4YWZiOWY4NWVkZTk4NDQ3NmM2YWUzNTdhZWM4OWUwMDhiNDZhZjg4NzJjNzBmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODYzZGY0NWNmM2RhNjMyY2YxNmY4ZjM1MGFhZGFkYzdjZDY0YTEwNWJmMmYxOGMzMTZhMTk3ZWJhMjIzNjg2ZiJ9"
         }
       ]
     },
@@ -396,7 +400,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.2",
-    "at": "2026-10-26T11:42:02.687Z"
+    "by": "openwiki/0.7.3",
+    "at": "2026-11-02T13:59:02.713Z"
   }
 }
