@@ -1,0 +1,32 @@
+Given the last answer (see below), for each component, return a JSON object containing:
+- "name": the primary name of the component (use the most descriptive name).
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the component appears or is referenced.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": ["DB"],
+        "occurrences": ["It forwards valid credentials to the UserDatabase.", "The DB then validates the credentials."]
+    }
+]

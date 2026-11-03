@@ -1,0 +1,17 @@
+sentence,style/pattern,valid
+122,unit of work,false
+128,observer,false
+134,chain of responsibility,false
+120,hexagonal architecture,false
+121,repository pattern,false
+120,adapter,false
+121,adapter,false
+124,command query responsibility segregation,false
+125,pipe-and-filter,false
+127,microkernel,false
+128,template method,false
+129,strategy,false
+130,factory method,false
+131,proxy,false
+132,observer pattern,false
+134,chain of responsibility pattern,false

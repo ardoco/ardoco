@@ -1,0 +1,7 @@
+sentence,language,valid
+199,typescript,false
+200,typescript,true
+201,javascript,true
+202,python,false
+203,c,false
+204,java,true
