@@ -14,7 +14,6 @@ public class SimpleTextProvider extends Informant {
 
     @Override
     protected void process() {
-        // Sole-store / resume: if SimpleText already in DR or Neo4j, do not re-tokenize.
         if (DataRepositoryHelper.hasSimpleText(this.getDataRepository())) {
             DataRepositoryHelper.getSimpleText(this.getDataRepository());
             return;

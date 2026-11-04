@@ -119,8 +119,7 @@ public class TextStateImpl extends AbstractState implements TextState {
     }
 
     /**
-     * Adds a noun mapping. When {@code persist} is false, skips Neo4j dual-write
-     * (used for load-on-resume hydrate).
+     * Adds a noun mapping. When {@code persist} is false, skips Neo4j dual-write.
      */
     public void addNounMapping(NounMapping nounMapping, boolean persist) {
         if (this.nounMappings.contains(nounMapping)) {

@@ -31,7 +31,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 /**
  * The Class NounMapping is a basic realization of {@link NounMapping}.
  *
- * <p>{@code ardocoId} is a UUID so Neo4j upserts stay unique across JVM restarts / pipeline resume.
+ * <p>{@code ardocoId} is a UUID so Neo4j upserts stay unique across JVM restarts.
  * In-process merges still keep the earliest mapping's id via {@link #ardocoIdOfEarliest}.
  * {@link #CREATION_TIME_COUNTER} is only for in-run merge ordering, not graph identity.
  */
@@ -290,7 +290,7 @@ public class NounMappingImpl implements NounMapping {
     }
 
     /**
-     * Advances the in-process creation-time counter (e.g. when hydrating mappings from Neo4j).
+     * Advances the in-process creation-time counter (e.g. when stored mappings are mapped back to the domain).
      */
     public static long nextEarliestCreationTime() {
         return CREATION_TIME_COUNTER.incrementAndGet();

@@ -12,7 +12,7 @@ public class NamedArchitectureEntityOccurrence extends TextEntity {
     }
 
     /**
-     * Resume / persistence constructor with a stable id.
+     * Constructor with a predefined, stable id, used when a persisted entity is mapped back to the domain.
      */
     public NamedArchitectureEntityOccurrence(String id, String name, int sentenceNumber) {
         super(name, id);

@@ -58,7 +58,6 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         assertThat(restored.getOccurrences()).hasSize(1);
         assertThat(restored.getOccurrences().get(0).getSentenceNumber()).isEqualTo(2);
 
-        // Also verify SimpleText coexists (NER depends on it for resume paths)
         persistenceHandler.saveSimpleText(new PlainSimpleText("line1\nline2", List.of("line1", "line2")), SimplePreprocessingData.ID);
         assertThat(persistenceHandler.hasSimpleText(SimplePreprocessingData.ID)).isTrue();
 

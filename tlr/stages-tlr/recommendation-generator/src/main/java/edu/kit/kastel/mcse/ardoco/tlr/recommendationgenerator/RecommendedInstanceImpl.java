@@ -27,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
  * This class represents recommended instances. These instances should be contained by the model. The likelihood is measured by the probability. Every
  * recommended instance has a unique name.
  *
- * <p>Entity {@code id} is a UUID for new instances. A predefined id can be supplied for Neo4j read-back via
+ * <p>Entity {@code id} is a UUID for new instances. A predefined id can be supplied when mapping a persisted instance back via
  * {@link #RecommendedInstanceImpl(String, String, String)}. {@code equals}/{@code hashCode}/{@code compareTo} use
  * name and type only, so restoring an id does not change collection semantics.
  */
@@ -50,7 +50,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     private Metamodel metamodel;
 
     /**
-     * Creates a recommended instance with a predefined entity id (e.g. mapper {@code toDomain} / Neo4j resume).
+     * Creates a recommended instance with a predefined entity id (e.g. mapper {@code toDomain}).
      * Collection equality remains based on {@code name} and {@code type} only.
      *
      * @param name the name of the instance
@@ -110,7 +110,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     /**
-     * Restores a recommended instance with a predefined id and mappings (Neo4j read-back).
+     * Restores a recommended instance with a predefined id and mappings.
      *
      * @param name        the name of the instance
      * @param type        the type of the instance

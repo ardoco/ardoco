@@ -66,7 +66,7 @@ public class RecommendedInstanceMapper {
 
     /**
      * Restores a domain RecommendedInstance. {@code nounMappingsById} must contain the NounMappings
-     * already loaded for this resume (TextState hydrate first).
+     * the instance references.
      */
     public RecommendedInstance toDomain(RecommendedInstanceNode node, SortedMap<String, NounMapping> nounMappingsById) {
         ImmutableList<NounMapping> nameMappings = resolveDomainMappings(node.getNameMappings(), nounMappingsById);

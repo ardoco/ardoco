@@ -103,7 +103,7 @@ public abstract class RecommendedInstance extends TextEntity {
     public abstract void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
 
     /**
-     * Metamodel bucket for this instance when set (Neo4j resume). {@code null} during a normal pipeline run until the recommendation stage assigns it.
+     * Metamodel bucket of this instance. {@code null} until the recommendation stage assigns it.
      *
      * @return the metamodel, or {@code null} if unknown
      */
@@ -112,7 +112,7 @@ public abstract class RecommendedInstance extends TextEntity {
     }
 
     /**
-     * Assigns the metamodel bucket (Neo4j resume). Implemented by {@code RecommendedInstanceImpl}.
+     * Assigns the metamodel bucket. Implemented by {@code RecommendedInstanceImpl}.
      *
      * @param metamodel the metamodel
      */

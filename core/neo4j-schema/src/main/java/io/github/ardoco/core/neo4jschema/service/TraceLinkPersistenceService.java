@@ -420,7 +420,7 @@ public class TraceLinkPersistenceService {
 
     /**
      * Loads RecommendationModelTraceLinks (RI → Architecture or RI → Code). Endpoints are resolved from the provided maps
-     * (already hydrated RecommendationStates + architecture/code models).
+     * of recommended instances and architecture or code items.
      */
     @Transactional(readOnly = true)
     public List<RecommendationModelTraceLink> loadAllRecommendationArchitectureTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,

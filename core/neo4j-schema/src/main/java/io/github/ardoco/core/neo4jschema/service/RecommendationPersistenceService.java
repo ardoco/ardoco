@@ -23,8 +23,8 @@ import io.github.ardoco.core.neo4jschema.mapper.RecommendedInstanceMapper;
 import io.github.ardoco.core.neo4jschema.repository.recommendation.RecommendedInstanceRepository;
 
 /**
- * Persists RecommendationStates with Spring Data Neo4j.
- * Dual-write today; {@link #loadRecommendedInstances} supports load-on-resume.
+ * Persists RecommendationStates with Spring Data Neo4j, alongside the in-memory state.
+ * {@link #loadRecommendedInstances} maps stored instances back to the domain.
  */
 @Service
 public class RecommendationPersistenceService {
@@ -105,8 +105,8 @@ public class RecommendationPersistenceService {
     }
 
     /**
-     * Loads recommended instances for a metamodel. {@code nounMappingsById} must already be hydrated
-     * (TextState resume before RecommendationStates).
+     * Loads recommended instances for a metamodel. {@code nounMappingsById} must contain the NounMappings
+     * the instances reference.
      */
     @Transactional(readOnly = true)
     public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {

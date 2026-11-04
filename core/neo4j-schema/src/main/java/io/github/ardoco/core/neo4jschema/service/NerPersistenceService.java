@@ -95,7 +95,6 @@ public class NerPersistenceService {
                 ? entityRepository.findByMetamodelAndUnlinked(metamodel.name(), true)
                 : entityRepository.findByMetamodelAndUnlinked(metamodel.name(), false);
         if (!unlinkedOnly) {
-            // Also include unlinked when loading "all linked" is false: for hydrate we load both sets separately.
             // When unlinkedOnly is false, load linked entities only (unlinked=false).
         }
         List<NamedArchitectureEntity> result = new ArrayList<>();

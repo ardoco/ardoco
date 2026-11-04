@@ -22,7 +22,7 @@ public class NamedArchitectureEntity implements Comparable<NamedArchitectureEnti
     }
 
     /**
-     * Resume / persistence constructor with a stable id.
+     * Constructor with a predefined, stable id, used when a persisted entity is mapped back to the domain.
      */
     public NamedArchitectureEntity(String id, String name, SortedSet<String> alternativeNames, List<NamedArchitectureEntityOccurrence> occurrences) {
         this.id = Objects.requireNonNull(id);

@@ -22,8 +22,8 @@ import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
 import io.github.ardoco.core.neo4jschema.repository.textextraction.NounMappingRepository;
 
 /**
- * Persists TextState noun mappings with Spring Data Neo4j.
- * Dual-write today; {@link #loadAllNounMappings(Text)} supports load-on-resume.
+ * Persists TextState noun mappings with Spring Data Neo4j, alongside the in-memory state.
+ * {@link #loadAllNounMappings(Text)} maps stored mappings back to the domain.
  */
 @Service
 public class TextStatePersistenceService {
