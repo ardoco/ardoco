@@ -31,6 +31,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jTextInconsistency;
+import io.github.ardoco.core.neo4jschema.service.MissingTraceLinkEndpointException;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelEqualityHelper;
 import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelFactory;
@@ -173,15 +174,15 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
 
-        persistenceHandler.saveTraceLinks(List.of(link));
+        Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(List.of(link)));
 
         var loaded = persistenceHandler.loadArchitectureCodeTraceLinks();
         Assertions.assertTrue(loaded.stream().noneMatch(l -> l.getFirstEndpoint().getId().equals("ghost_id")));
     }
 
     @Test
-    @DisplayName("Facade: a trace link with a missing endpoint is counted and warned, not dropped silently")
-    void testMissingEndpointTraceLinkIsCountedAndWarned() {
+    @DisplayName("Facade: a trace link with a missing endpoint is an error naming the type and id, and no edge is written")
+    void testMissingEndpointTraceLinkIsAnError() {
         var codeModel = CodeModelFactory.createCodeModel();
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
         var archModel = ArchitectureModelFactory.createArchitectureModel();
@@ -192,8 +193,10 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         traceLinkServiceLogger.addAppender(appender);
+        MissingTraceLinkEndpointException thrown;
         try {
-            persistenceHandler.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(archEntity, codeItem)));
+            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class,
+                    () -> persistenceHandler.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(archEntity, codeItem))));
         } finally {
             traceLinkServiceLogger.detachAppender(appender);
         }
@@ -203,8 +206,13 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
                 """).fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(0L);
         Assertions.assertEquals(0L, edgeCount, "No edge must be created when an endpoint is unresolved");
 
-        boolean warned = appender.list.stream().anyMatch(event -> event.getLevel() == Level.WARN && event.getFormattedMessage().contains("source endpoint"));
-        Assertions.assertTrue(warned, "An unresolved endpoint must be logged as a WARN, not dropped silently");
+        List<String> errors = appender.list.stream().filter(event -> event.getLevel() == Level.ERROR).map(ILoggingEvent::getFormattedMessage).toList();
+        Assertions.assertEquals(1, errors.size(), errors.toString());
+        String error = errors.getFirst();
+        Assertions.assertTrue(error.contains("ARCHITECTURE_CODE: 1 (source 1, target 0)"), error);
+        Assertions.assertTrue(error.contains(archEntity.getId()), error);
+        Assertions.assertEquals(error, thrown.getMessage());
+        Assertions.assertTrue(appender.list.stream().noneMatch(event -> event.getLevel() == Level.WARN), appender.list.toString());
     }
 
     @Test

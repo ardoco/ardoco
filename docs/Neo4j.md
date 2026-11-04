@@ -39,6 +39,7 @@ With `storage=neo4j`:
 - If no `PersistenceHandler` is registered yet, one is bootstrapped via `ServiceLoader` (the `neo4j-schema` module must be on the classpath). The connection is read from `PersistenceBridge::neo4jUri` / `neo4jUsername` / `neo4jPassword`, then the environment variables `NEO4J_URI` / `NEO4J_USERNAME` / `NEO4J_PASSWORD`, then the defaults `bolt://127.0.0.1:7687` / `neo4j` / `password`. If that fails, the configuration fails.
 - The database is cleaned at the start of the run; on success the knowledge graph is exported as JSON (`knowledgeGraph_<project>.json` in the output directory) and the database is wiped; on failure the database is wiped and the exception is rethrown.
 - Every persistence failure aborts the run; nothing is swallowed.
+- A trace link that cannot be written is such a failure: the trace links of a pipeline stage are written together after the stage, and if any of them has an endpoint node that does not exist in the graph, a type that cannot be determined, or an endpoint without a resolvable id, one ERROR names the counts per link type and side plus up to 5 examples per type, and a `MissingTraceLinkEndpointException` is thrown. The run then fails like any other failed run: the database is wiped, no knowledge graph is exported and no output files are written.
 
 ## 3. Architecture
 The architecture of the Neo4j-Schema follows a layered architecture pattern:
@@ -204,6 +205,7 @@ Tracelinks are represented in the graph as relationships between nodes of the ar
 All the nodes between which a tracelink can be established also have the `traceable` label.
 The relationship between tracelinks is called `TRACES_TO` and has the properties `traceLinkType`, which specifies the Type of Tracelink such as
 `ARCHITECTURE_CODE` or `SENTENCE_ARCHITECTURE`  and `confidence` which represents the confidence of the tracelink (if given).
+Both endpoint nodes must already exist when the trace links of a stage are written; a missing endpoint fails the run with a `MissingTraceLinkEndpointException` instead of silently dropping the link.
 Transitive Tracelinks are not explicitly represented in the graph, but can be inferred by traversing the graph. 
 For example, if there is a tracelink between an architecture component and a code component, and there is a tracelink between the code component and a sentence, 
 we can infer that there is a transitive tracelink between the architecture component and the sentence.

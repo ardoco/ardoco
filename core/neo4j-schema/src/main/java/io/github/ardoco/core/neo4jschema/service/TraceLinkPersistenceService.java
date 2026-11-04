@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -125,31 +126,33 @@ public class TraceLinkPersistenceService {
      * Saves a collection of trace links to the database. It assumes that the elements between which the links exist are already present in the database. Each
      * trace link is resolved into one row per relationship (a transitive link into its two legs), with its TraceLinkType determined from the link's class and
      * the types of its endpoints. Rows are deduplicated by (source, target, type), the last occurrence winning, and written in batched {@code UNWIND} queries
-     * of at most {@value #WRITE_CHUNK_SIZE} rows, one query shape per source label. A link that cannot be mapped to a known type is skipped; rows whose
-     * endpoints are not found are reported.
+     * of at most {@value #WRITE_CHUNK_SIZE} rows, one query shape per source label. Rows whose endpoints are not found, links that cannot be mapped to a
+     * known type and endpoints without a resolvable id are collected over all chunks and reported as one ERROR after the last chunk.
      *
      * @param traceLinks A collection of trace links to be saved into the database. This collection can contain different types of trace links, such as
      *                   ArchitectureCodeTraceLink, SentenceModelTraceLink or TransitiveTracelink
-     * @return true if the trace links were processed (even if some were skipped due to unknown types)
+     * @return true if every trace link was written
+     * @throws MissingTraceLinkEndpointException if any row was not written, any link type could not be determined or any endpoint id could not be resolved
      */
     public boolean saveTracelinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
         Map<RowKey, TraceLinkRow> rows = new LinkedHashMap<>();
+        TraceLinkWriteErrors errors = new TraceLinkWriteErrors();
         int rowsBeforeDedup = 0;
         int skippedLinks = 0;
         for (TraceLink<?, ?> link : traceLinks) {
             if (link instanceof TransitiveTraceLink<?, ?> transitive) {
-                putRow(rows, transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE);
-                putRow(rows, transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE);
+                putRow(rows, transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE, errors);
+                putRow(rows, transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE, errors);
                 rowsBeforeDedup += 2;
                 continue;
             }
             TraceLinkType type = determineType(link);
             if (type == null) {
-                logger.warn("Could not determine a TraceLinkType for link of class {}; skipping", link.getClass().getName());
+                errors.recordUnknownType(link.getClass().getName());
                 skippedLinks++;
                 continue;
             }
-            putRow(rows, link, type);
+            putRow(rows, link, type, errors);
             rowsBeforeDedup++;
         }
 
@@ -163,18 +166,21 @@ public class TraceLinkPersistenceService {
             }
         }
 
-        MissingEndpointTracker tracker = new MissingEndpointTracker();
-        int queries = writeRows(traceableSourceRows, TRACEABLE_SOURCE_QUERY, tracker);
-        queries += writeRows(recommendationSourceRows, RECOMMENDATION_SOURCE_QUERY, tracker);
-        tracker.logSummaryIfAny();
+        int queries = writeRows(traceableSourceRows, TRACEABLE_SOURCE_QUERY, errors);
+        queries += writeRows(recommendationSourceRows, RECOMMENDATION_SOURCE_QUERY, errors);
         logger.debug("saveTracelinks: {} trace links, {} rows before dedup, {} after dedup, {} UNWIND queries, {} rows not written, {} links skipped",
-                traceLinks.size(), rowsBeforeDedup, rows.size(), queries, tracker.rowsNotWritten(), skippedLinks);
+                traceLinks.size(), rowsBeforeDedup, rows.size(), queries, errors.rowsNotWritten(), skippedLinks);
+        if (errors.hasErrors()) {
+            String message = errors.message();
+            logger.error(message);
+            throw new MissingTraceLinkEndpointException(message);
+        }
         return true;
     }
 
-    private void putRow(Map<RowKey, TraceLinkRow> rows, TraceLink<?, ?> link, TraceLinkType type) {
-        String sourceId = getEndpointId(link.getFirstEndpoint());
-        String targetId = getEndpointId(link.getSecondEndpoint());
+    private void putRow(Map<RowKey, TraceLinkRow> rows, TraceLink<?, ?> link, TraceLinkType type, TraceLinkWriteErrors errors) {
+        String sourceId = getEndpointId(link.getFirstEndpoint(), errors);
+        String targetId = getEndpointId(link.getSecondEndpoint(), errors);
         double confidence = -1.0;
         if (isRecommendationType(type) && link instanceof RecommendationModelTraceLink rmtl) {
             confidence = rmtl.getConfidence();
@@ -188,7 +194,7 @@ public class TraceLinkPersistenceService {
         return type == TraceLinkType.RECOMMENDATION_ARCHITECTURE || type == TraceLinkType.RECOMMENDATION_CODE;
     }
 
-    private int writeRows(List<TraceLinkRow> rows, String query, MissingEndpointTracker tracker) {
+    private int writeRows(List<TraceLinkRow> rows, String query, TraceLinkWriteErrors errors) {
         int queries = 0;
         for (int start = 0; start < rows.size(); start += WRITE_CHUNK_SIZE) {
             List<Map<String, Object>> parameters = new ArrayList<>();
@@ -198,7 +204,7 @@ public class TraceLinkPersistenceService {
             Collection<Map<String, Object>> unresolved = neo4jClient.query(query).bind(parameters).to("rows").fetch().all();
             queries++;
             for (Map<String, Object> result : unresolved) {
-                tracker.record(String.valueOf(result.get("type")), String.valueOf(result.get("sourceId")), String.valueOf(result.get("targetId")),
+                errors.recordMissingEndpoint(String.valueOf(result.get("type")), String.valueOf(result.get("sourceId")), String.valueOf(result.get("targetId")),
                         Boolean.TRUE.equals(result.get("sourceMissing")), Boolean.TRUE.equals(result.get("targetMissing")));
             }
         }
@@ -232,7 +238,7 @@ public class TraceLinkPersistenceService {
         return null;
     }
 
-    private String getEndpointId(Object endpoint) {
+    private String getEndpointId(Object endpoint, TraceLinkWriteErrors errors) {
         if (endpoint instanceof SentenceEntity se) {
             Sentence s = se.getSentence();
             if (s.getWords().isEmpty() && s.getPhrases().isEmpty() && s.getText().equals(String.valueOf(s.getSentenceNumber()))) {
@@ -248,9 +254,9 @@ public class TraceLinkPersistenceService {
         }
         if (endpoint instanceof ModelEntity me)
             return me.getId();
-        logger.warn("getEndpointId: unrecognized endpoint type {}; falling back to toString(), which will never match a persisted node's id",
-                endpoint.getClass().getName());
-        return endpoint.toString();
+        String fallbackId = endpoint.toString();
+        errors.recordFallbackId(endpoint.getClass().getName(), fallbackId);
+        return fallbackId;
     }
 
     private record RowKey(String sourceId, String targetId, TraceLinkType type) {
@@ -259,43 +265,80 @@ public class TraceLinkPersistenceService {
     private record TraceLinkRow(String sourceId, String targetId, TraceLinkType type, double confidence) {
     }
 
-    private final class MissingEndpointTracker {
-        private int rowsNotWritten;
-        private int sourceMissingCount;
-        private int targetMissingCount;
-        private final List<String> sourceMissingExamples = new ArrayList<>();
-        private final List<String> targetMissingExamples = new ArrayList<>();
+    private static final class TraceLinkWriteErrors {
+        private static final int MAX_EXAMPLES = 5;
 
-        void record(String type, String sourceId, String targetId, boolean sourceMissing, boolean targetMissing) {
+        private int rowsNotWritten;
+        private final SortedMap<String, MissingEndpointCounts> missingByType = new TreeMap<>();
+        private final List<String> unknownTypeExamples = new ArrayList<>();
+        private int unknownTypeLinks;
+        private final List<String> fallbackIdExamples = new ArrayList<>();
+        private int fallbackIds;
+
+        void recordMissingEndpoint(String type, String sourceId, String targetId, boolean sourceMissing, boolean targetMissing) {
             rowsNotWritten++;
+            MissingEndpointCounts counts = missingByType.computeIfAbsent(type, ignored -> new MissingEndpointCounts());
+            counts.rows++;
             if (sourceMissing) {
-                sourceMissingCount++;
-                addExample(sourceMissingExamples, type + ": " + sourceId);
+                counts.sourceMissing++;
             }
             if (targetMissing) {
-                targetMissingCount++;
-                addExample(targetMissingExamples, type + ": " + targetId);
+                counts.targetMissing++;
             }
+            String side = sourceMissing && targetMissing ? "source and target missing" : sourceMissing ? "source missing" : "target missing";
+            addExample(counts.examples, type + ": " + sourceId + " -> " + targetId + " (" + side + ")");
+        }
+
+        void recordUnknownType(String linkClass) {
+            unknownTypeLinks++;
+            addExample(unknownTypeExamples, linkClass);
+        }
+
+        void recordFallbackId(String endpointClass, String fallbackId) {
+            fallbackIds++;
+            addExample(fallbackIdExamples, endpointClass + ": " + fallbackId);
         }
 
         int rowsNotWritten() {
             return rowsNotWritten;
         }
 
-        void logSummaryIfAny() {
-            if (sourceMissingCount > 0) {
-                logger.warn("saveTracelinks: {} trace link source endpoint(s) not found (examples: {})", sourceMissingCount, sourceMissingExamples);
+        boolean hasErrors() {
+            return rowsNotWritten > 0 || unknownTypeLinks > 0 || fallbackIds > 0;
+        }
+
+        String message() {
+            List<String> parts = new ArrayList<>();
+            if (rowsNotWritten > 0) {
+                List<String> perType = new ArrayList<>();
+                List<String> examples = new ArrayList<>();
+                missingByType.forEach((type, counts) -> {
+                    perType.add(type + ": " + counts.rows + " (source " + counts.sourceMissing + ", target " + counts.targetMissing + ")");
+                    examples.addAll(counts.examples);
+                });
+                parts.add(rowsNotWritten + " trace link(s) not written, endpoint missing - " + String.join(", ", perType) + "; examples: " + examples);
             }
-            if (targetMissingCount > 0) {
-                logger.warn("saveTracelinks: {} trace link target endpoint(s) not found (examples: {})", targetMissingCount, targetMissingExamples);
+            if (unknownTypeLinks > 0) {
+                parts.add(unknownTypeLinks + " trace link(s) not written, type could not be determined - examples: " + unknownTypeExamples);
             }
+            if (fallbackIds > 0) {
+                parts.add(fallbackIds + " endpoint id(s) fell back to toString() and cannot match a node - examples: " + fallbackIdExamples);
+            }
+            return "saveTracelinks: " + String.join("; ", parts);
         }
 
         private static void addExample(List<String> examples, String example) {
-            if (examples.size() < 5) {
+            if (examples.size() < MAX_EXAMPLES) {
                 examples.add(example);
             }
         }
+    }
+
+    private static final class MissingEndpointCounts {
+        private int rows;
+        private int sourceMissing;
+        private int targetMissing;
+        private final List<String> examples = new ArrayList<>();
     }
 
     /**

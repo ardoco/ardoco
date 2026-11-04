@@ -35,6 +35,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendedInstanceImpl;
+import io.github.ardoco.core.neo4jschema.service.MissingTraceLinkEndpointException;
 import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
 import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelFactory;
 import io.github.ardoco.core.neo4jschema.util.models.CodeModelFactory;
@@ -133,7 +134,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
     }
 
     @Test
-    @DisplayName("In a mixed batch, rows with both endpoints are written and rows with a missing endpoint are reported per side")
+    @DisplayName("In a mixed batch, rows with both endpoints are written and rows with a missing endpoint fail the call with one ERROR")
     void reportsMissingEndpointsInAMixedBatch() {
         Text text = TextFactory.createComplexText("batch_missing_doc");
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
@@ -141,14 +142,22 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
                 new ArchitectureCodeTraceLink(new ArchitectureMethod("ghost-source-id", "ghostSource"), codeItem),
                 new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghost-target-id", "ghostTarget")));
 
-        List<ILoggingEvent> events = captureTraceLinkServiceLog(() -> persistenceHandler.saveTraceLinks(links));
+        List<MissingTraceLinkEndpointException> thrown = new ArrayList<>();
+        List<ILoggingEvent> events = captureTraceLinkServiceLog(() -> thrown.add(Assertions.assertThrows(MissingTraceLinkEndpointException.class,
+                () -> persistenceHandler.saveTraceLinks(links))));
 
         Assertions.assertEquals(1L, countTraceLinks("ARCHITECTURE_CODE"));
         Assertions.assertEquals(0L, countTraceLinks("SENTENCE_ARCHITECTURE"));
-        Assertions.assertTrue(warnings(events).stream().anyMatch(message -> message.contains("source endpoint") && message.contains("ghost-source-id")),
-                warnings(events).toString());
-        Assertions.assertTrue(warnings(events).stream().anyMatch(message -> message.contains("target endpoint") && message.contains("ghost-target-id")),
-                warnings(events).toString());
+        List<String> errors = errors(events);
+        Assertions.assertEquals(1, errors.size(), errors.toString());
+        String error = errors.getFirst();
+        Assertions.assertTrue(error.contains("2 trace link(s) not written"), error);
+        Assertions.assertTrue(error.contains("ARCHITECTURE_CODE: 1 (source 1, target 0)"), error);
+        Assertions.assertTrue(error.contains("SENTENCE_ARCHITECTURE: 1 (source 0, target 1)"), error);
+        Assertions.assertTrue(error.contains("ghost-source-id"), error);
+        Assertions.assertTrue(error.contains("ghost-target-id"), error);
+        Assertions.assertEquals(error, thrown.getFirst().getMessage());
+        Assertions.assertTrue(events.stream().noneMatch(event -> event.getLevel() == Level.WARN), events.toString());
         Assertions.assertTrue(debugSummaries(events).getFirst().contains("2 rows not written"), debugSummaries(events).getFirst());
     }
 
@@ -211,7 +220,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
                 .toList();
     }
 
-    private static List<String> warnings(List<ILoggingEvent> events) {
-        return events.stream().filter(event -> event.getLevel() == Level.WARN).map(ILoggingEvent::getFormattedMessage).toList();
+    private static List<String> errors(List<ILoggingEvent> events) {
+        return events.stream().filter(event -> event.getLevel() == Level.ERROR).map(ILoggingEvent::getFormattedMessage).toList();
     }
 }

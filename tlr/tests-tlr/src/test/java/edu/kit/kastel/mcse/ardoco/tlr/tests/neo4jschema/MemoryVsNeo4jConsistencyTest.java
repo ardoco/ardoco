@@ -93,11 +93,11 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         Assertions.assertNotNull(neo4jResult, testCase.name() + ": neo4j run must produce a result");
         Map<String, String> neo4jFiles = readOutputFiles(neo4jDir);
 
-        List<String> warnings = appender.list.stream()
-                .filter(event -> event.getLevel() == Level.WARN)
-                .map(ILoggingEvent::getFormattedMessage)
+        List<String> warningsAndErrors = appender.list.stream()
+                .filter(event -> event.getLevel().isGreaterOrEqual(Level.WARN))
+                .map(event -> event.getLevel() + " " + event.getFormattedMessage())
                 .toList();
-        Assertions.assertTrue(warnings.isEmpty(), testCase.name() + ": unexpected persistence warnings: " + warnings);
+        Assertions.assertTrue(warningsAndErrors.isEmpty(), testCase.name() + ": unexpected persistence WARN/ERROR events: " + warningsAndErrors);
 
         Assertions.assertEquals(memoryFiles.keySet(), neo4jFiles.keySet(), testCase.name() + ": output file sets must match between runs");
         for (var entry : memoryFiles.entrySet()) {
@@ -125,7 +125,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         Set<String> expectedKeys = collectExpectedTraceLinks(dataRepository);
         Set<String> actualKeys = graph.traceLinkKeys();
         StringBuilder sizesLog = new StringBuilder(testCase.name());
-        sizesLog.append(": expected total=").append(expectedKeys.size()).append(" actual total=").append(actualKeys.size());
+        sizesLog.append(": persistence WARN/ERROR events=").append(warningsAndErrors.size());
+        sizesLog.append(" expected total=").append(expectedKeys.size()).append(" actual total=").append(actualKeys.size());
         for (String type : TRACE_LINK_TYPES) {
             sizesLog.append(" ").append(type).append(" expected=").append(countByType(expectedKeys, type)).append(" actual=")
                     .append(countByType(actualKeys, type));
