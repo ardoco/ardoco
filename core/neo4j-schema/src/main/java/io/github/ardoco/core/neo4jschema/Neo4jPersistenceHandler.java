@@ -2,7 +2,6 @@
 package io.github.ardoco.core.neo4jschema;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -147,8 +146,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Override
     public boolean saveTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
         logger.info("Saving {} Transitive/Sentence-Model/ArchitectureCode Tracelinks", traceLinks.size());
-        Set<TraceLink<?, ?>> uniqueLinks = new HashSet<>(traceLinks);
-        return this.traceLinkService.saveTracelinks(uniqueLinks);
+        return this.traceLinkService.saveTracelinks(traceLinks);
     }
 
     public Collection<ArchitectureCodeTraceLink> loadArchitectureCodeTraceLinks() {

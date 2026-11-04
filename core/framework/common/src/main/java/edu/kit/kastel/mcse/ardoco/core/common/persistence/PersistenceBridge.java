@@ -379,8 +379,8 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
 
         private void flushTraceLinks() {
-            for (List<TraceLink<?, ?>> batch : chunk(this.pendingTraceLinks)) {
-                getHandler().saveTraceLinks(batch);
+            if (!this.pendingTraceLinks.isEmpty()) {
+                getHandler().saveTraceLinks(this.pendingTraceLinks);
             }
         }
 
