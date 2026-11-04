@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,9 +22,6 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -74,7 +70,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         Files.createDirectories(memoryDir.toPath());
         Files.createDirectories(neo4jDir.toPath());
 
-        ArdocoRunner memoryRunner = testCase.runnerFactory().apply(getConfigsWithPersistence(false), memoryDir);
+        ArdocoRunner memoryRunner = testCase.runnerFactory().apply(getConfigsWithMemoryStorage(), memoryDir);
         testRunnerAssertions(memoryRunner);
         ArdocoResult memoryResult = memoryRunner.run();
         Assertions.assertNotNull(memoryResult, testCase.name() + ": memory run must produce a result");
@@ -111,7 +107,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
         File exportedJsonFile = new File(neo4jDir, "knowledgeGraph_" + testCase.project() + ".json");
         Assertions.assertTrue(exportedJsonFile.isFile(), testCase.name() + ": exported knowledge graph JSON must exist");
-        Graph graph = Graph.read(exportedJsonFile);
+        PersistenceTestSupport.ExportedGraph graph = PersistenceTestSupport.ExportedGraph.read(exportedJsonFile);
 
         Assertions.assertEquals(1L, graph.countNodesWithLabel("RunMetadata"), testCase.name() + ": exactly one RunMetadata node is expected");
         Assertions.assertEquals(0L, graph.countDanglingRelationships(), testCase.name() + ": no relationship may reference a missing node");
@@ -429,89 +425,6 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         @Override
         public String toString() {
             return name();
-        }
-    }
-
-    private record Graph(long nodeCount, long relationshipCount, List<JsonNode> nodes, List<JsonNode> relationships) {
-
-        static Graph read(File file) throws IOException {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(file);
-            List<JsonNode> nodes = new ArrayList<>();
-            root.get("nodes").forEach(nodes::add);
-            List<JsonNode> relationships = new ArrayList<>();
-            root.get("relationships").forEach(relationships::add);
-            return new Graph(root.get("nodeCount").asLong(), root.get("relationshipCount").asLong(), nodes, relationships);
-        }
-
-        private Map<String, JsonNode> nodesById() {
-            Map<String, JsonNode> byId = new HashMap<>();
-            for (JsonNode node : nodes) {
-                byId.put(node.get("id").asText(), node);
-            }
-            return byId;
-        }
-
-        long countNodesWithLabel(String label) {
-            return nodes.stream().filter(node -> node.get("labels").toString().contains("\"" + label + "\"")).count();
-        }
-
-        long countDanglingRelationships() {
-            Map<String, JsonNode> byId = nodesById();
-            return relationships.stream()
-                    .filter(rel -> !byId.containsKey(rel.get("startNodeId").asText()) || !byId.containsKey(rel.get("endNodeId").asText()))
-                    .count();
-        }
-
-        long countDuplicateTraceLinks() {
-            Set<String> seen = new HashSet<>();
-            long duplicates = 0;
-            for (JsonNode rel : relationships) {
-                if (!"TRACES_TO".equals(rel.get("type").asText())) {
-                    continue;
-                }
-                String key = rel.get("startNodeId").asText() + "|" + rel.get("endNodeId").asText() + "|" + rel.get("properties").get("traceLinkType")
-                        .asText();
-                if (!seen.add(key)) {
-                    duplicates++;
-                }
-            }
-            return duplicates;
-        }
-
-        long countDuplicateTraceableArdocoIds() {
-            Map<String, Integer> counts = new HashMap<>();
-            for (JsonNode node : nodes) {
-                JsonNode ardocoId = node.get("properties").get("ardocoId");
-                if (ardocoId == null) {
-                    continue;
-                }
-                counts.merge(ardocoId.asText(), 1, Integer::sum);
-            }
-            return counts.values().stream().filter(count -> count > 1).count();
-        }
-
-        Set<String> traceLinkKeys() {
-            Map<String, JsonNode> byId = nodesById();
-            Set<String> keys = new HashSet<>();
-            for (JsonNode rel : relationships) {
-                if (!"TRACES_TO".equals(rel.get("type").asText())) {
-                    continue;
-                }
-                JsonNode source = byId.get(rel.get("startNodeId").asText());
-                JsonNode target = byId.get(rel.get("endNodeId").asText());
-                if (source == null || target == null) {
-                    continue;
-                }
-                JsonNode sourceArdocoId = source.get("properties").get("ardocoId");
-                JsonNode targetArdocoId = target.get("properties").get("ardocoId");
-                if (sourceArdocoId == null || targetArdocoId == null) {
-                    continue;
-                }
-                String type = rel.get("properties").get("traceLinkType").asText();
-                keys.add(sourceArdocoId.asText() + "|" + targetArdocoId.asText() + "|" + type);
-            }
-            return keys;
         }
     }
 }

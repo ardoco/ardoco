@@ -44,7 +44,7 @@ public final class DataRepositorySyncer {
      * @param nounMapping    the mapping that was just merged or updated
      */
     public static void repersistRecommendedInstancesReferencing(DataRepository dataRepository, NounMapping nounMapping) {
-        if (!PersistenceBridge.shouldPersistRecommendations()) {
+        if (!PersistenceBridge.isNeo4jStorage()) {
             return;
         }
         var recommendationStates = dataRepository.getData(RecommendationStates.ID, RecommendationStates.class);

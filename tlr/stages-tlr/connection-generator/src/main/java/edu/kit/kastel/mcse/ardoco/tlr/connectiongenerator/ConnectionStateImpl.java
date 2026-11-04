@@ -72,7 +72,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
         // Persist RI→Architecture and RI→Code instance links (and derived sentence→model edges).
-        boolean shouldPersist = PersistenceBridge.isAvailable() && (modelEntity instanceof ArchitectureEntity || modelEntity instanceof CodeItem);
+        boolean persistLinks = PersistenceBridge.isNeo4jStorage() && (modelEntity instanceof ArchitectureEntity || modelEntity instanceof CodeItem);
         MutableList<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Lists.mutable.empty();
         MutableList<TraceLink<?, ?>> instanceLinksToPersist = Lists.mutable.empty();
 
@@ -80,7 +80,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
 
-            if (shouldPersist) {
+            if (persistLinks) {
                 linksToPersist.addAll(generateLinksFromInstance(recommendedModelInstance, modelEntity));
                 instanceLinksToPersist.add(newInstanceLink);
             }
@@ -93,7 +93,7 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                 var newTypeMappings = newInstanceLink.getFirstEndpoint().getTypeMappings();
                 existingInstanceLink.getFirstEndpoint().addMappings(newNameMappings, newTypeMappings);
 
-                if (shouldPersist) {
+                if (persistLinks) {
                     for (var nm : newNameMappings) {
                         linksToPersist.addAll(generateLinksFromNameMapping(nm, modelEntity));
                     }

@@ -63,17 +63,16 @@ public final class DataRepositoryHelper {
 
     /**
      * Put the given input text into the given {@link DataRepository}. This will override existing data!
-     * Dual-writes to Neo4j Project metadata when persistence is available and project name is known.
+     * Dual-writes to Neo4j Project metadata in Neo4j storage mode when the project name is known.
      *
      * @param dataRepository the dataRepository
      * @param inputText      the input inputText
      */
     public static void putInputText(DataRepository dataRepository, String inputText) {
         dataRepository.addData(InputTextData.ID, new InputTextData(inputText));
-        if (PersistenceBridge.isAvailable() && hasProjectPipelineData(dataRepository)) {
+        if (PersistenceBridge.isNeo4jStorage() && hasProjectPipelineData(dataRepository)) {
             String projectName = getProjectPipelineData(dataRepository).getProjectName();
-            PersistenceBridge.runQuietly("saveProjectMetadata",
-                    () -> PersistenceBridge.getHandler().saveProjectMetadata(projectName, inputText));
+            PersistenceBridge.getHandler().saveProjectMetadata(projectName, inputText);
         }
     }
 
@@ -274,26 +273,23 @@ public final class DataRepositoryHelper {
      * @param preprocessingData the preprocessingData
      */
     public static void putPreprocessingData(DataRepository dataRepository, PreprocessingData preprocessingData) {
-        // Keep in-memory state even if Neo4j is down (fault isolation).
         dataRepository.addData(PreprocessingData.ID, preprocessingData);
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.runQuietly("savePreprocessedText",
-                    () -> PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID));
+        if (PersistenceBridge.isNeo4jStorage()) {
+            PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID);
         }
     }
 
     /**
      * Put the given {@link SimplePreprocessingData} into the given {@link DataRepository}. This will override existing data!
-     * Dual-writes SimpleText to Neo4j when persistence is available.
+     * Dual-writes SimpleText to Neo4j in Neo4j storage mode.
      *
      * @param dataRepository    the dataRepository
      * @param preprocessingData the preprocessingData
      */
     public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
         dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
-        if (PersistenceBridge.isAvailable()) {
-            PersistenceBridge.runQuietly("saveSimpleText",
-                    () -> PersistenceBridge.getHandler().saveSimpleText(preprocessingData.getText(), SimplePreprocessingData.ID));
+        if (PersistenceBridge.isNeo4jStorage()) {
+            PersistenceBridge.getHandler().saveSimpleText(preprocessingData.getText(), SimplePreprocessingData.ID);
         }
     }
 }

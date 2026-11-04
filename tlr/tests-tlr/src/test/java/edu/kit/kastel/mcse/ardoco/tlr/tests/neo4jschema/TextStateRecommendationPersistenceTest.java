@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 
 import java.io.File;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,120 +12,40 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupport;
 
-/**
- * Phase 4: SWATTR dual-write of TextState and RecommendationStates is gated by flags.
- * Existing {@link TraceLinkPersistenceTest} stays Stage 0 unless Maven {@code -D} flags are set.
- */
 public class TextStateRecommendationPersistenceTest extends AbstractPersistenceTest {
 
     @Test
-    @DisplayName("SWATTR with Neo4j does not write NounMapping or RecommendedInstance when new flags are off")
-    void testSwattrDoesNotWriteTextStateOrRecommendationsWhenFlagsOff() {
-        runSwattr(true, false, false);
-
-        Assertions.assertEquals(0, countNodesWithLabel("NounMapping"));
-        Assertions.assertEquals(0, countNodesWithLabel("RecommendedInstance"));
-        Assertions.assertEquals(0, countRelationshipsWithType("MAPS_WORD"));
-        Assertions.assertEquals(0, countRelationshipsWithType("HAS_NAME_MAPPING"));
-        Assertions.assertTrue(countRelationshipsWithType("TRACES_TO") > 0);
-    }
-
-    @Test
-    @DisplayName("SWATTR with Neo4j writes NounMappings when persistTextState is on")
-    void testSwattrWritesNounMappingsWhenTextStateFlagOn() {
-        runSwattr(true, true, false);
-
-        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
-        Assertions.assertTrue(countRelationshipsWithType("MAPS_WORD") > 0);
-        Assertions.assertTrue(countRelationshipsWithType("IN_PHRASE") > 0,
-                "NounMappings should link to Phrase nodes via contained word positions");
-        Assertions.assertEquals(0, countNodesWithLabel("RecommendedInstance"));
-        Assertions.assertEquals(0, countRelationshipsWithType("HAS_NAME_MAPPING"));
-    }
-
-    @Test
-    @DisplayName("SWATTR with persistRecommendations only still writes NounMappings (TextState auto-enabled)")
-    void testSwattrRecommendationsOnlyAutoEnablesTextState() {
-        runSwattr(true, false, true);
-
-        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
-        Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
-        Assertions.assertTrue(countRelationshipsWithType("HAS_NAME_MAPPING") > 0);
-    }
-
-    @Test
-    @DisplayName("SWATTR with Neo4j writes RecommendedInstances linked to NounMappings when both flags are on")
-    void testSwattrWritesRecommendedInstancesWhenBothFlagsOn() {
-        runSwattr(true, true, true);
-
-        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
-        Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
-        Assertions.assertTrue(countRelationshipsWithType("HAS_NAME_MAPPING") > 0);
-        Assertions.assertTrue(countRelationshipsWithType("TRACES_TO") > 0);
-        Assertions.assertTrue(countRecommendationArchitectureLinks() > 0,
-                "ConnectionState instance links (RI→Architecture) should be persisted");
-    }
-
-    @Test
-    @DisplayName("Dual-write leaves a consistent graph: every RecommendedInstance has a mapping edge, every NounMapping maps a word")
-    void testDualWriteGraphIsConsistent() {
-        runSwattr(true, true, true);
-
-        Assertions.assertTrue(countNodesWithLabel("NounMapping") > 0);
-        Assertions.assertTrue(countNodesWithLabel("RecommendedInstance") > 0);
-        Assertions.assertEquals(0, countRecommendedInstancesWithoutMappingEdges(),
-                "Every persisted RecommendedInstance must have HAS_NAME_MAPPING or HAS_TYPE_MAPPING");
-        Assertions.assertEquals(0, countNounMappingsWithoutMapsWordEdge(), "Every persisted NounMapping must map at least one Word");
-    }
-
-    private long countRecommendedInstancesWithoutMappingEdges() {
-        return neo4jClient.query("""
-                MATCH (ri:RecommendedInstance)
-                WHERE NOT (ri)-[:HAS_NAME_MAPPING|:HAS_TYPE_MAPPING]->()
-                RETURN count(ri) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
-    }
-
-    private long countNounMappingsWithoutMapsWordEdge() {
-        return neo4jClient.query("""
-                MATCH (nm:NounMapping)
-                WHERE NOT (nm)-[:MAPS_WORD]->()
-                RETURN count(nm) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
-    }
-
-    private long countRecommendationArchitectureLinks() {
-        return neo4jClient.query("""
-                MATCH (:RecommendedInstance)-[r:TRACES_TO]->()
-                WHERE r.traceLinkType = 'RECOMMENDATION_ARCHITECTURE'
-                RETURN count(r) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
-    }
-
-    private void runSwattr(boolean usePersistence, boolean persistTextState, boolean persistRecommendations) {
+    @DisplayName("SWATTR with storage=neo4j exports NounMappings and RecommendedInstances as a consistent graph")
+    void testSwattrNeo4jStorageWritesConsistentTextStateAndRecommendations() {
         clearNeo4jGraph();
+        deleteExportedGraph();
         var runner = new Swattr(projectName);
-        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithPersistence(usePersistence,
-                persistTextState, persistRecommendations), outputDir);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithNeo4jStorage(), outputDir);
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
         Assertions.assertEquals(20, result.getArchitectureTraceLinks().size());
 
-        pauseForNeo4jInspection();
+        PersistenceTestSupport.ExportedGraph graph = readExportedGraph();
+        Assertions.assertTrue(graph.countNodesWithLabel("NounMapping") > 0);
+        Assertions.assertTrue(graph.countNodesWithLabel("RecommendedInstance") > 0);
+        Assertions.assertTrue(graph.countRelationshipsWithType("MAPS_WORD") > 0);
+        Assertions.assertTrue(graph.countRelationshipsWithType("IN_PHRASE") > 0, "NounMappings should link to Phrase nodes via contained word positions");
+        Assertions.assertTrue(graph.countRelationshipsWithType("HAS_NAME_MAPPING") > 0);
+        Assertions.assertTrue(graph.countRelationshipsWithType("TRACES_TO") > 0);
+        Assertions.assertTrue(graph.countTraceLinksOfType("RECOMMENDATION_ARCHITECTURE") > 0,
+                "ConnectionState instance links (RI to architecture) should be persisted");
+        Assertions.assertEquals(0, graph.countNodesWithLabelWithoutOutgoing("RecommendedInstance", Set.of("HAS_NAME_MAPPING", "HAS_TYPE_MAPPING")),
+                "Every persisted RecommendedInstance must have HAS_NAME_MAPPING or HAS_TYPE_MAPPING");
+        Assertions.assertEquals(0, graph.countNodesWithLabelWithoutOutgoing("NounMapping", Set.of("MAPS_WORD")),
+                "Every persisted NounMapping must map at least one Word");
+        Assertions.assertEquals(0L, countAllNodesInDatabase(), "storage=neo4j must leave the database empty after the run");
+    }
+
+    private long countAllNodesInDatabase() {
+        return neo4jClient.query("MATCH (n) RETURN count(n) AS c").fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 }

@@ -19,6 +19,7 @@ import org.testcontainers.containers.Neo4jContainer;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.execution.CodeRunnerBaseTest;
 import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
+import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupport;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 
@@ -148,7 +149,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
             }
         }
         graphOwnedByTest = true;
-        PersistenceBridge.setFailOnPersistenceError(true);
+        PersistenceBridge.setHandler(neo4jPersistenceHandler);
         System.out.println("----------------------------------------------------------");
         System.out.println("test database: " + (USE_LOCAL_NEO4J ? "local Neo4j Desktop" : "Testcontainers (isolated)"));
         System.out.println("neo4j browser: " + neo4jBrowserUrl());
@@ -179,7 +180,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
             clearNeo4jGraph();
             System.out.println(">>> Neo4j graph cleared.");
         } finally {
-            PersistenceBridge.setFailOnPersistenceError(false);
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
         }
     }
 
@@ -249,64 +250,42 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         System.out.println(">>> Pause finished; continuing assertions, then teardown clear.");
     }
 
-    protected ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled) {
-        boolean persistRecommendations = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistRecommendations", "false"));
-        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false"));
-        return getConfigsWithPersistence(enabled, persistTextState, persistRecommendations);
+    protected ImmutableSortedMap<String, String> getConfigsWithMemoryStorage() {
+        return getConfigsWithStorage(false);
     }
 
-    protected ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled, boolean persistTextState, boolean persistRecommendations) {
-        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
-        additionalConfigs.putAll(configs.toSortedMap());
-        putPersistenceFlags(additionalConfigs, enabled, persistTextState, persistRecommendations);
-        return additionalConfigs.toImmutable();
-    }
-
-    /**
-     * Configs for the Neo4j-mode run lifecycle ({@code PersistenceBridge::storage=neo4j}): forces every write flag
-     * and fail-fast on, unlike {@link #getConfigsWithPersistence(boolean)} which sets the individual legacy flags.
-     */
     protected ImmutableSortedMap<String, String> getConfigsWithNeo4jStorage() {
+        return getConfigsWithStorage(true);
+    }
+
+    protected ImmutableSortedMap<String, String> getConfigsWithStorage(boolean neo4jStorage) {
         ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
         MutableSortedMap<String, String> result = SortedMaps.mutable.empty();
         result.putAll(configs.toSortedMap());
-        result.put("PersistenceBridge::storage", "neo4j");
+        result.put("PersistenceBridge::storage", neo4jStorage ? "neo4j" : "memory");
         return result.toImmutable();
     }
 
-    protected ImmutableSortedMap<String, String> getInconsistencyConfigsWithPersistence(boolean enabled) throws Exception {
+    protected void deleteExportedGraph() {
+        File file = new File(outputDir, "knowledgeGraph_" + projectName + ".json");
+        if (file.exists() && !file.delete()) {
+            throw new IllegalStateException("Could not delete stale knowledge graph export " + file.getAbsolutePath());
+        }
+    }
+
+    protected PersistenceTestSupport.ExportedGraph readExportedGraph() {
+        return PersistenceTestSupport.readExportedGraph(new File(outputDir), projectName);
+    }
+
+    protected ImmutableSortedMap<String, String> getInconsistencyConfigsWithStorage(boolean neo4jStorage) throws Exception {
         var resource = getClass().getResource("/teastore/inconsistencyConfig.txt");
         if (resource == null) {
             throw new FileNotFoundException("Could not find config in resources");
         }
-        boolean persistRecommendations = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistRecommendations", "false"));
-        boolean persistTextState = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistTextState", "false"));
         ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(resource.toURI()));
-        MutableSortedMap<String, String> additionalConfigs = configs.toSortedMap();
-        putPersistenceFlags(additionalConfigs, enabled, persistTextState, persistRecommendations);
-        return additionalConfigs.toImmutable();
-    }
-
-    private static void putPersistenceFlags(MutableSortedMap<String, String> additionalConfigs, boolean enabled, boolean persistTextState,
-            boolean persistRecommendations) {
-        additionalConfigs.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
-        additionalConfigs.put("PersistenceBridge::persistTextState", String.valueOf(persistTextState));
-        additionalConfigs.put("PersistenceBridge::persistRecommendations", String.valueOf(persistRecommendations));
-        boolean persistNer = Boolean.parseBoolean(System.getProperty("ardoco.neo4j.persistNerConnection", "false"));
-        additionalConfigs.put("PersistenceBridge::persistNerConnection", String.valueOf(persistNer));
-    }
-
-    protected ImmutableSortedMap<String, String> getConfigsWithPersistence(boolean enabled, boolean persistTextState, boolean persistRecommendations,
-            boolean persistNerConnection) {
-        ImmutableSortedMap<String, String> configs = ConfigurationHelper.loadAdditionalConfigs(new File(additionalConfigs));
-        MutableSortedMap<String, String> map = SortedMaps.mutable.empty();
-        map.putAll(configs.toSortedMap());
-        map.put("PersistenceBridge::usePersistence", String.valueOf(enabled));
-        map.put("PersistenceBridge::persistTextState", String.valueOf(persistTextState));
-        map.put("PersistenceBridge::persistRecommendations", String.valueOf(persistRecommendations));
-        map.put("PersistenceBridge::persistNerConnection", String.valueOf(persistNerConnection));
-        return map.toImmutable();
+        MutableSortedMap<String, String> result = configs.toSortedMap();
+        result.put("PersistenceBridge::storage", neo4jStorage ? "neo4j" : "memory");
+        return result.toImmutable();
     }
 
     /**

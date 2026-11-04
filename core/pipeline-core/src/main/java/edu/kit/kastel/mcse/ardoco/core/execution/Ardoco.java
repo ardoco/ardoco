@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceStorage;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.RunMetadataFilter;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
@@ -91,7 +90,7 @@ public final class Ardoco extends Pipeline {
      */
     @Override
     public void run() {
-        boolean neo4jMode = PersistenceBridge.storageStatic == PersistenceStorage.NEO4J;
+        boolean neo4jMode = PersistenceBridge.isNeo4jStorage();
         if (neo4jMode) {
             classLogger.info("Neo4j mode: cleaning the database before the run (a crashed earlier run may have left data behind)");
             PersistenceBridge.getHandler().deleteAllData();
@@ -168,7 +167,7 @@ public final class Ardoco extends Pipeline {
      * transient per-run store like the {@link DataRepository}, so nothing but the exported graph survives. The
      * export directory is {@link #runAndSave}'s output directory if set, otherwise
      * {@link #resolveConfiguredExportDirectory} - which always returns a usable directory, falling back to a default
-     * one, so the wipe below never discards the graph silently. Both steps are unguarded (no {@code runQuietly}): a
+     * one, so the wipe below never discards the graph silently. Both steps are unguarded: a
      * failure here means the run's one deliverable - the knowledge graph - was not safely captured, so the run must
      * abort rather than silently lose it.
      */

@@ -52,8 +52,8 @@ public final class ModelStates implements PipelineStepData {
      */
     public void addModel(Metamodel id, Model model) {
         this.models.put(id, model);
-        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isAvailable() && persistedModels.add(model)) {
-            PersistenceBridge.runQuietly("saveModel", () -> PersistenceBridge.getHandler().saveModel(id, model));
+        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isNeo4jStorage() && persistedModels.add(model)) {
+            PersistenceBridge.getHandler().saveModel(id, model);
         }
     }
 

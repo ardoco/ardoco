@@ -22,7 +22,7 @@ class NounMappingMergePersistenceTest extends AbstractPersistenceTest {
     @DisplayName("deleteNounMapping removes merged-away NounMapping node from Neo4j")
     void testDeleteNounMappingRemovesLoserAfterMerge() {
         PersistenceBridge.setHandler(persistenceHandler);
-        PersistenceBridge.getInstance().applyConfiguration(getConfigsWithPersistence(true, true, false));
+        PersistenceBridge.getInstance().applyConfiguration(getConfigsWithNeo4jStorage());
 
         String winnerId = "nm-winner-merge-test";
         String loserId = "nm-loser-merge-test";

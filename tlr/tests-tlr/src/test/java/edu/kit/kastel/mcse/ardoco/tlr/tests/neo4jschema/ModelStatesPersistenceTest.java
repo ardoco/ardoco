@@ -31,7 +31,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     void testAddModelThenGetModelPreservesEndpoints() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithPersistence(true, false, false));
+                .applyConfiguration(getConfigsWithNeo4jStorage());
 
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel original = extractor.extractModel();
@@ -57,7 +57,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     void testSaveModelRoundTripsArchitectureModel() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithPersistence(true, false, false));
+                .applyConfiguration(getConfigsWithNeo4jStorage());
 
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel original = extractor.extractModel();
@@ -74,7 +74,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     void testSaveModelRoundTripsCodeModel() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithPersistence(true, false, false));
+                .applyConfiguration(getConfigsWithNeo4jStorage());
 
         CodeModel original = CodeExtractor.readInCodeModel(codeConfiguration.code(), Metamodel.CODE_WITH_COMPILATION_UNITS);
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS, original);

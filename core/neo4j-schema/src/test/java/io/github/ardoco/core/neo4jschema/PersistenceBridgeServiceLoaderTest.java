@@ -58,10 +58,9 @@ class PersistenceBridgeServiceLoaderTest {
 
         PersistenceBridge.getInstance().applyConfiguration(configFor(container.getBoltUrl(), "neo4j", container.getAdminPassword()));
 
-        Assertions.assertTrue(PersistenceBridge.isAvailable());
+        Assertions.assertTrue(PersistenceBridge.isNeo4jStorage());
         PersistenceHandler handler = PersistenceBridge.getHandler();
         Assertions.assertInstanceOf(Neo4jPersistenceHandler.class, handler);
-        Assertions.assertTrue(PersistenceBridge.shouldFailOnPersistenceError(), "storage=neo4j must imply fail-fast");
 
         // A property-precedence bug once caused the provider to silently connect to a live Neo4j Desktop instance
         // instead of this container (see the session notes). Prove the handler is actually talking to THIS

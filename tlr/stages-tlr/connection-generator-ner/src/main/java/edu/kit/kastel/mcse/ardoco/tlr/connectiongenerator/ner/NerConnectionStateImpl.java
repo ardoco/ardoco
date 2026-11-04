@@ -85,7 +85,7 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     }
 
     private void dualWriteEntities(Collection<NamedArchitectureEntity> entities, boolean unlinked) {
-        if (!PersistenceBridge.shouldPersistNerConnection() || this.metamodel == null || entities == null || entities.isEmpty()) {
+        if (!PersistenceBridge.isNeo4jStorage() || this.metamodel == null || entities == null || entities.isEmpty()) {
             return;
         }
         for (NamedArchitectureEntity entity : entities) {
@@ -94,9 +94,6 @@ public class NerConnectionStateImpl extends AbstractState implements NerConnecti
     }
 
     private void dualWriteTraceLink(TraceLink<NamedArchitectureEntityOccurrence, ModelEntity> link) {
-        if (!PersistenceBridge.shouldPersistNerConnection()) {
-            return;
-        }
         PersistenceBridge.saveTraceLinks(List.of(link));
     }
 

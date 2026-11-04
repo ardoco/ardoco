@@ -1,26 +1,24 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
-import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
-/**
- * Shared assertions for Neo4j persistence tests (active metamodels only — not {@link Metamodel#values()}).
- */
 public final class PersistenceTestSupport {
 
     private PersistenceTestSupport() {
@@ -30,65 +28,122 @@ public final class PersistenceTestSupport {
         return dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
     }
 
-    public static long countRecommendedInstances(RecommendationStates recommendationStates, Collection<Metamodel> activeMetamodels) {
-        long total = 0;
-        for (Metamodel metamodel : activeMetamodels) {
-            var state = recommendationStates.getRecommendationState(metamodel);
-            if (state != null) {
-                total += state.getRecommendedInstances().size();
-            }
+    public static ExportedGraph readExportedGraph(File outputDirectory, String projectName) {
+        File file = new File(outputDirectory, "knowledgeGraph_" + projectName + ".json");
+        if (!file.isFile()) {
+            throw new IllegalStateException("Exported knowledge graph not found: " + file.getAbsolutePath());
         }
-        return total;
+        try {
+            return ExportedGraph.read(file);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    public static SortedSet<String> nounMappingSemanticKeys(TextState textState) {
-        SortedSet<String> keys = new TreeSet<>();
-        for (NounMapping mapping : textState.getNounMappings()) {
-            keys.add(mapping.getReference() + "|" + mapping.getKind());
-        }
-        return keys;
-    }
+    public record ExportedGraph(long nodeCount, long relationshipCount, List<JsonNode> nodes, List<JsonNode> relationships) {
 
-    /**
-     * Per-RI fingerprint of linked NounMapping ids (name + type mappings) for resume parity.
-     */
-    public static SortedSet<String> recommendedInstanceNounMappingKeys(RecommendationStates recommendationStates, Collection<Metamodel> activeMetamodels) {
-        SortedSet<String> keys = new TreeSet<>();
-        for (Metamodel metamodel : activeMetamodels) {
-            var state = recommendationStates.getRecommendationState(metamodel);
-            if (state == null) {
-                continue;
-            }
-            for (RecommendedInstance ri : state.getRecommendedInstances()) {
-                SortedSet<String> mappingIds = new TreeSet<>();
-                ri.getNameMappings().forEach(nm -> mappingIds.add("n:" + nm.getArdocoId()));
-                ri.getTypeMappings().forEach(nm -> mappingIds.add("t:" + nm.getArdocoId()));
-                String mappings = mappingIds.stream().collect(Collectors.joining(","));
-                keys.add(ri.getId() + "|" + mappings);
-            }
+        public static ExportedGraph read(File file) throws IOException {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(file);
+            List<JsonNode> nodes = new ArrayList<>();
+            root.get("nodes").forEach(nodes::add);
+            List<JsonNode> relationships = new ArrayList<>();
+            root.get("relationships").forEach(relationships::add);
+            return new ExportedGraph(root.get("nodeCount").asLong(), root.get("relationshipCount").asLong(), nodes, relationships);
         }
-        return keys;
-    }
 
-    public static SortedSet<String> recommendedInstanceSemanticKeys(RecommendationStates recommendationStates, Collection<Metamodel> activeMetamodels) {
-        SortedSet<String> keys = new TreeSet<>();
-        for (Metamodel metamodel : activeMetamodels) {
-            var state = recommendationStates.getRecommendationState(metamodel);
-            if (state == null) {
-                continue;
+        private Map<String, JsonNode> nodesById() {
+            Map<String, JsonNode> byId = new HashMap<>();
+            for (JsonNode node : nodes) {
+                byId.put(node.get("id").asText(), node);
             }
-            for (RecommendedInstance ri : state.getRecommendedInstances()) {
-                keys.add(ri.getName().toLowerCase() + "|" + ri.getType().toLowerCase());
-            }
+            return byId;
         }
-        return keys;
-    }
 
-    public static SortedSet<String> architectureTraceLinkSemanticKeys(ArdocoResult result) {
-        SortedSet<String> keys = new TreeSet<>();
-        for (TraceLink<SentenceEntity, ModelEntity> link : result.getArchitectureTraceLinks()) {
-            keys.add(link.getFirstEndpoint().getSentence().getSentenceNumber() + "|" + link.getSecondEndpoint().getId());
+        public long countNodesWithLabel(String label) {
+            return nodes.stream().filter(node -> node.get("labels").toString().contains("\"" + label + "\"")).count();
         }
-        return keys;
+
+        public long countRelationshipsWithType(String type) {
+            return relationships.stream().filter(rel -> type.equals(rel.get("type").asText())).count();
+        }
+
+        public long countTraceLinksOfType(String traceLinkType) {
+            return relationships.stream()
+                    .filter(rel -> "TRACES_TO".equals(rel.get("type").asText()))
+                    .filter(rel -> traceLinkType.equals(rel.get("properties").get("traceLinkType").asText()))
+                    .count();
+        }
+
+        public long countNodesWithLabelWithoutOutgoing(String label, Set<String> relationshipTypes) {
+            Set<String> withOutgoing = new HashSet<>();
+            for (JsonNode rel : relationships) {
+                if (relationshipTypes.contains(rel.get("type").asText())) {
+                    withOutgoing.add(rel.get("startNodeId").asText());
+                }
+            }
+            return nodes.stream()
+                    .filter(node -> node.get("labels").toString().contains("\"" + label + "\""))
+                    .filter(node -> !withOutgoing.contains(node.get("id").asText()))
+                    .count();
+        }
+
+        public long countDanglingRelationships() {
+            Map<String, JsonNode> byId = nodesById();
+            return relationships.stream()
+                    .filter(rel -> !byId.containsKey(rel.get("startNodeId").asText()) || !byId.containsKey(rel.get("endNodeId").asText()))
+                    .count();
+        }
+
+        public long countDuplicateTraceLinks() {
+            Set<String> seen = new HashSet<>();
+            long duplicates = 0;
+            for (JsonNode rel : relationships) {
+                if (!"TRACES_TO".equals(rel.get("type").asText())) {
+                    continue;
+                }
+                String key = rel.get("startNodeId").asText() + "|" + rel.get("endNodeId").asText() + "|" + rel.get("properties").get("traceLinkType")
+                        .asText();
+                if (!seen.add(key)) {
+                    duplicates++;
+                }
+            }
+            return duplicates;
+        }
+
+        public long countDuplicateTraceableArdocoIds() {
+            Map<String, Integer> counts = new HashMap<>();
+            for (JsonNode node : nodes) {
+                JsonNode ardocoId = node.get("properties").get("ardocoId");
+                if (ardocoId == null) {
+                    continue;
+                }
+                counts.merge(ardocoId.asText(), 1, Integer::sum);
+            }
+            return counts.values().stream().filter(count -> count > 1).count();
+        }
+
+        public Set<String> traceLinkKeys() {
+            Map<String, JsonNode> byId = nodesById();
+            Set<String> keys = new HashSet<>();
+            for (JsonNode rel : relationships) {
+                if (!"TRACES_TO".equals(rel.get("type").asText())) {
+                    continue;
+                }
+                JsonNode source = byId.get(rel.get("startNodeId").asText());
+                JsonNode target = byId.get(rel.get("endNodeId").asText());
+                if (source == null || target == null) {
+                    continue;
+                }
+                JsonNode sourceArdocoId = source.get("properties").get("ardocoId");
+                JsonNode targetArdocoId = target.get("properties").get("ardocoId");
+                if (sourceArdocoId == null || targetArdocoId == null) {
+                    continue;
+                }
+                String type = rel.get("properties").get("traceLinkType").asText();
+                keys.add(sourceArdocoId.asText() + "|" + targetArdocoId.asText() + "|" + type);
+            }
+            return keys;
+        }
     }
 }

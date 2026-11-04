@@ -40,13 +40,13 @@ class PersistenceBridgeDeferredWritesTest {
     @BeforeEach
     void setUp() {
         PersistenceBridge.setHandler(recordingHandler(this.calls, () -> this.failRecommendedInstanceSaves));
-        configure("true", "true");
+        configure("neo4j");
     }
 
     @AfterEach
     void tearDown() {
         PersistenceBridge.setHandler(null);
-        configure("false", "false");
+        configure("memory");
     }
 
     @Test
@@ -91,7 +91,6 @@ class PersistenceBridgeDeferredWritesTest {
     @Test
     @DisplayName("Recommended-instance saves are deferred to the end of the scope and batched into one call")
     void recommendedInstanceSavesAreDeferredAndDeduplicated() {
-        configure("true", "true", "true");
         RecommendedInstance ri = new StubRecommendedInstance("ri-1");
         PersistenceBridge.withDeferredWrites(() -> {
             PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
@@ -104,21 +103,20 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
-    @DisplayName("If a deferred batch fails, obsolete noun mappings are not deleted (no link is lost)")
-    void failedDeferredSaveSkipsDeletions() {
-        configure("true", "true", "true");
+    @DisplayName("If a deferred batch fails, the failure propagates and the rest of the scope, including deletions, is not flushed")
+    void failedDeferredBatchPropagatesAndSkipsTheRest() {
         this.failRecommendedInstanceSaves = true;
         RecommendedInstance ri = new StubRecommendedInstance("ri-2");
-        PersistenceBridge.withDeferredWrites(() -> {
+        IllegalStateException thrown = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.withDeferredWrites(() -> {
             PersistenceBridge.deleteNounMapping("first");
             PersistenceBridge.deleteNounMapping("second");
             PersistenceBridge.saveNounMapping(nounMapping("first"));
             PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
             return null;
-        });
-        // The NounMapping batch succeeds independently of the RecommendedInstance batch; only the latter fails.
+        }));
+        Assertions.assertEquals("simulated Neo4j failure", thrown.getMessage());
         Assertions.assertEquals(List.of("saveNounMappings:[first]", "saveRecommendedInstances:[ri-2]"), this.calls,
-                "The obsolete noun mapping 'second' must not be deleted after the failed batch");
+                "Nothing after the failed batch may be flushed, in particular not the deletion of 'second'");
     }
 
     @Test
@@ -149,9 +147,9 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
-    @DisplayName("Without TextState persistence nothing is written, inside or outside a scope")
-    void nothingIsWrittenWhenTextStatePersistenceIsOff() {
-        configure("true", "false");
+    @DisplayName("In memory storage nothing is written, inside or outside a scope")
+    void nothingIsWrittenInMemoryStorage() {
+        configure("memory");
         PersistenceBridge.deleteNounMapping("a");
         PersistenceBridge.withDeferredWrites(() -> {
             PersistenceBridge.saveNounMapping(nounMapping("b"));
@@ -165,10 +163,6 @@ class PersistenceBridgeDeferredWritesTest {
     @DisplayName("A stage scope flushes every kind in the fixed order: NounMappings, RecommendedInstances, NER entities, trace links, "
             + "inconsistencies, deletions last - trace links and inconsistencies match their endpoints by id, so those must already exist")
     void stageFlushOrderCoversAllKinds() {
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true",
-                        "PersistenceBridge::persistRecommendations", "true", "PersistenceBridge::persistNerConnection", "true"));
-
         RecommendedInstance ri = new StubRecommendedInstance("ri-order");
         NamedArchitectureEntity entity = new NamedArchitectureEntity("entity-order", new TreeSet<>(), List.of());
         TraceLink<?, ?> traceLink = stubTraceLink("order");
@@ -189,15 +183,8 @@ class PersistenceBridgeDeferredWritesTest {
                 "saveTraceLinks:1", "addInconsistencies:1", "deleteNounMapping:obsolete"), this.calls);
     }
 
-    private static void configure(String usePersistence, String persistTextState) {
-        configure(usePersistence, persistTextState, "false");
-    }
-
-    private static void configure(String usePersistence, String persistTextState, String persistRecommendations) {
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", usePersistence, "PersistenceBridge::persistTextState",
-                        persistTextState, "PersistenceBridge::persistRecommendations", persistRecommendations, "PersistenceBridge::persistNerConnection",
-                        "false"));
+    private static void configure(String storage) {
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", storage));
     }
 
     private static NounMapping nounMapping(String ardocoId) {

@@ -19,7 +19,6 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupport;
@@ -31,28 +30,20 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupp
  * per metamodel (previously the architecture state also returned the sentence links of the code metamodel, TeaStore: 120 instead of 20).
  * <p>
  * (2) Graph check: nothing reads Neo4j during a run (memory is authoritative, {@code ConnectionState#getTraceLinks()} has no database fallback), so
- * metamodel correctness of the persisted graph is checked directly via {@code TRACES_TO} counts per type instead of a read-back API: the number of
- * {@code SENTENCE_ARCHITECTURE}/{@code SENTENCE_CODE} trace links written for each metamodel must equal the in-memory count of the same run.
+ * metamodel correctness of the persisted graph is checked directly via {@code TRACES_TO} counts per type in the exported knowledge graph instead of a
+ * read-back API: the number of {@code SENTENCE_ARCHITECTURE}/{@code SENTENCE_CODE} trace links written for each metamodel must equal the in-memory
+ * count of the same run.
  */
 class SentenceTraceLinkReadBackTest extends AbstractPersistenceTest {
 
     @Test
-    @DisplayName("TransArC with base persistence: sentence trace links per metamodel equal the DataRepository-only run; the written graph matches by type")
-    void testBasePersistenceSentenceTraceLinks() {
-        assertSentenceTraceLinkParityAndGraphCounts(false, false);
-    }
-
-    @Test
-    @DisplayName("TransArC with TextState/Recommendation dual-write: sentence trace links per metamodel equal the DataRepository-only run; the written graph matches by type")
-    void testDualWriteSentenceTraceLinks() {
-        assertSentenceTraceLinkParityAndGraphCounts(true, true);
-    }
-
-    private void assertSentenceTraceLinkParityAndGraphCounts(boolean persistTextState, boolean persistRecommendations) {
+    @DisplayName("TransArC with storage=neo4j: sentence trace links per metamodel equal the DataRepository-only run; the exported graph matches by type")
+    void testNeo4jStorageSentenceTraceLinks() {
         clearNeo4jGraph();
-        Map<Metamodel, SortedSet<String>> baseline = runTransarcAndCollectSentenceLinks(false, false, false);
+        Map<Metamodel, SortedSet<String>> baseline = runTransarcAndCollectSentenceLinks(false);
         clearNeo4jGraph();
-        Map<Metamodel, SortedSet<String>> withPersistence = runTransarcAndCollectSentenceLinks(true, persistTextState, persistRecommendations);
+        deleteExportedGraph();
+        Map<Metamodel, SortedSet<String>> withPersistence = runTransarcAndCollectSentenceLinks(true);
 
         // (1) Normal run: memory is authoritative, links are identical per metamodel.
         Assertions.assertEquals(baseline.keySet(), withPersistence.keySet(), "Active metamodels must match");
@@ -62,35 +53,18 @@ class SentenceTraceLinkReadBackTest extends AbstractPersistenceTest {
         }
 
         // (2) Graph check: the persisted TRACES_TO counts per type must match the in-memory counts of the same run.
-        Assertions.assertTrue(PersistenceBridge.isAvailable(), "Persistence must be available after the persistence-enabled run");
+        PersistenceTestSupport.ExportedGraph graph = readExportedGraph();
         for (Metamodel metamodel : baseline.keySet()) {
             String traceLinkType = metamodel.isArchitectureModel() ? "SENTENCE_ARCHITECTURE" : "SENTENCE_CODE";
-            Assertions.assertEquals(baseline.get(metamodel).size(), countTraceLinksByType(traceLinkType),
+            Assertions.assertEquals(baseline.get(metamodel).size(), graph.countTraceLinksOfType(traceLinkType),
                     "Persisted " + traceLinkType + " count must equal the in-memory sentence trace links of " + metamodel);
         }
-
-        pauseForNeo4jInspection();
     }
 
-    private long countTraceLinksByType(String traceLinkType) {
-        return neo4jClient.query("""
-                MATCH (:Sentence)-[r:TRACES_TO]->(:Traceable)
-                WHERE r.traceLinkType = $type
-                RETURN count(r) AS c
-                """)
-                .bind(traceLinkType)
-                .to("type")
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
-    }
-
-    private Map<Metamodel, SortedSet<String>> runTransarcAndCollectSentenceLinks(boolean usePersistence, boolean persistTextState,
-            boolean persistRecommendations) {
+    private Map<Metamodel, SortedSet<String>> runTransarcAndCollectSentenceLinks(boolean neo4jStorage) {
         var runner = new Transarc(projectName);
         runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
-                getConfigsWithPersistence(usePersistence, persistTextState, persistRecommendations), new File(outputDir));
+                getConfigsWithStorage(neo4jStorage), new File(outputDir));
         testRunnerAssertions(runner);
         var result = runner.run();
         Assertions.assertNotNull(result);

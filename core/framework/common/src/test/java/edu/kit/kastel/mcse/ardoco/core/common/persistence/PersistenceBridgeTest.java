@@ -2,14 +2,17 @@
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.List;
 
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
@@ -18,166 +21,120 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 
-/**
- * Unit tests for {@link PersistenceBridge} configuration and fault isolation.
- */
 class PersistenceBridgeTest {
 
     @AfterEach
-    void resetFlags() {
-        PersistenceBridge.setFailOnPersistenceError(false);
+    void resetStorage() {
         PersistenceBridge.setHandler(null);
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "false", "PersistenceBridge::persistTextState", "false",
-                        "PersistenceBridge::persistRecommendations", "false", "PersistenceBridge::persistNerConnection", "false"));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.empty());
     }
 
     @Test
-    @DisplayName("persistRecommendations without persistTextState auto-enables TextState persistence")
-    void persistRecommendationsImpliesPersistTextState() {
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "false",
-                        "PersistenceBridge::persistRecommendations", "true"));
+    @DisplayName("storage=neo4j enables writes and exposes the registered handler")
+    void storageNeo4jEnablesWrites() {
+        ThrowingPersistenceHandler throwingHandler = new ThrowingPersistenceHandler();
+        PersistenceBridge.setHandler(throwingHandler);
 
-        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
-        Assertions.assertTrue(PersistenceBridge.persistRecommendationsStatic);
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+        Assertions.assertEquals(PersistenceStorage.NEO4J, PersistenceBridge.getStorage());
+        Assertions.assertTrue(PersistenceBridge.isNeo4jStorage());
+        Assertions.assertSame(throwingHandler, PersistenceBridge.getHandler());
     }
 
     @Test
-    @DisplayName("persistTextState alone does not enable recommendations")
-    void persistTextStateDoesNotEnableRecommendations() {
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true",
-                        "PersistenceBridge::persistRecommendations", "false"));
-
-        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
-        Assertions.assertFalse(PersistenceBridge.persistRecommendationsStatic);
-    }
-
-    @Test
-    @DisplayName("runQuietly swallows Neo4j RuntimeExceptions and continues")
-    void runQuietlyIsolatesFailures() {
-        AtomicBoolean ran = new AtomicBoolean(false);
-        Assertions.assertDoesNotThrow(() -> PersistenceBridge.runQuietly("test-op", () -> {
-            ran.set(true);
-            throw new RuntimeException("simulated Neo4j down");
-        }));
-        Assertions.assertTrue(ran.get());
-    }
-
-    @Test
-    @DisplayName("callQuietly rethrows when fail-on-persistence-error is enabled")
-    void callQuietlyRethrowsInStrictMode() {
-        PersistenceBridge.setFailOnPersistenceError(true);
-        Assertions.assertThrows(RuntimeException.class, () -> PersistenceBridge.callQuietly("test-op", () -> {
-            throw new RuntimeException("simulated Neo4j down");
-        }, "fallback"));
-    }
-
-    @Test
-    @DisplayName("callQuietly returns fallback when Neo4j throws")
-    void callQuietlyReturnsFallback() {
-        String result = PersistenceBridge.callQuietly("test-op", () -> {
-            throw new RuntimeException("simulated Neo4j down");
-        }, "fallback");
-        Assertions.assertEquals("fallback", result);
-    }
-
-    @Test
-    @DisplayName("failing handler does not abort dual-write style saveNounMapping call site")
-    void failingHandlerDoesNotAbortDualWrite() {
+    @DisplayName("storage resets to memory when applyConfiguration omits the key, instead of keeping the previous run's value")
+    void storageResetsToMemoryWhenAbsent() {
         PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true",
-                        "PersistenceBridge::persistRecommendations", "false"));
-
-        Assertions.assertDoesNotThrow(() -> PersistenceBridge.runQuietly("saveNounMapping", () -> PersistenceBridge.getHandler().saveNounMapping(null)));
-    }
-
-    @Test
-    @DisplayName("storage=neo4j forces all write flags on and fail-fast, even if an explicit flag was set to false")
-    void storageNeo4jDerivesAllFlags() {
-        PersistenceBridge.setHandler(new ThrowingPersistenceHandler()); // handler already registered: bootstrap via ServiceLoader is skipped
-
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j", "PersistenceBridge::persistNerConnection", "false"));
-
-        Assertions.assertEquals(PersistenceStorage.NEO4J, PersistenceBridge.storageStatic);
-        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic);
-        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
-        Assertions.assertTrue(PersistenceBridge.persistRecommendationsStatic);
-        Assertions.assertTrue(PersistenceBridge.persistNerConnectionStatic, "storage=neo4j overrides an explicit persistNerConnection=false");
-        Assertions.assertTrue(PersistenceBridge.shouldFailOnPersistenceError(), "storage=neo4j implies fail-fast without an explicit setFailOnPersistenceError");
-    }
-
-    @Test
-    @DisplayName("storage=memory (default) leaves the individual flags exactly as configured")
-    void storageMemoryLeavesExplicitFlagsAlone() {
-        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
-
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true", "PersistenceBridge::persistTextState", "true"));
-
-        Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.storageStatic);
-        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic);
-        Assertions.assertTrue(PersistenceBridge.persistTextStateStatic);
-        Assertions.assertFalse(PersistenceBridge.persistNerConnectionStatic);
-        Assertions.assertFalse(PersistenceBridge.shouldFailOnPersistenceError(), "memory storage must not derive fail-fast");
-    }
-
-    @Test
-    @DisplayName("every flag resets to its default when applyConfiguration omits its key, instead of keeping the previous run's value")
-    void flagsResetWhenKeysAreAbsent() {
-        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
-        var allOn = org.eclipse.collections.api.factory.SortedMaps.mutable.<String, String>empty();
-        allOn.put("PersistenceBridge::storage", "neo4j");
-        allOn.put("PersistenceBridge::usePersistence", "true");
-        allOn.put("PersistenceBridge::persistTextState", "true");
-        allOn.put("PersistenceBridge::persistRecommendations", "true");
-        allOn.put("PersistenceBridge::persistNerConnection", "true");
-        PersistenceBridge.getInstance().applyConfiguration(allOn.toImmutable());
-        Assertions.assertTrue(PersistenceBridge.usePersistenceStatic, "sanity check: flags are on before the empty reconfiguration");
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+        Assertions.assertTrue(PersistenceBridge.isNeo4jStorage());
 
         PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.empty());
 
-        Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.storageStatic);
-        Assertions.assertFalse(PersistenceBridge.usePersistenceStatic);
-        Assertions.assertFalse(PersistenceBridge.persistTextStateStatic);
-        Assertions.assertFalse(PersistenceBridge.persistRecommendationsStatic);
-        Assertions.assertFalse(PersistenceBridge.persistNerConnectionStatic);
-        Assertions.assertFalse(PersistenceBridge.shouldFailOnPersistenceError(), "the derived fail-fast value must not leak into the next run either");
+        Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.getStorage());
+        Assertions.assertFalse(PersistenceBridge.isNeo4jStorage());
+        Assertions.assertNull(PersistenceBridge.getHandler());
     }
 
     @Test
-    @DisplayName("the explicit fail-on-persistence-error override is independent of storage and survives storage=memory")
-    void explicitFailOnPersistenceErrorIsIndependentOfStorage() {
-        PersistenceBridge.setFailOnPersistenceError(true);
-
+    @DisplayName("storage=memory never calls the handler")
+    void storageMemoryWritesNothing() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
         PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
 
-        Assertions.assertTrue(PersistenceBridge.shouldFailOnPersistenceError(), "the explicit override must not be reset by applyConfiguration");
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveNounMapping(null));
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.deleteNounMapping("id"));
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveRecommendedInstance(null, Metamodel.ARCHITECTURE_WITH_COMPONENTS));
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveNamedArchitectureEntity(null, Metamodel.ARCHITECTURE_WITH_COMPONENTS, false));
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveTraceLinks(List.of(new FakeTraceLink())));
+    }
+
+    @Test
+    @DisplayName("in storage=neo4j a failing write propagates instead of being swallowed")
+    void writeFailurePropagatesInNeo4jStorage() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> PersistenceBridge.saveNounMapping(null));
+        Assertions.assertEquals("simulated Neo4j down", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("in storage=neo4j a missing handler is an error, never a silently skipped write")
+    void missingHandlerInNeo4jStorageIsAnError() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+        PersistenceBridge.setHandler(null);
+
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.saveNounMapping(null));
+        Assertions.assertTrue(exception.getMessage().contains("PersistenceBridge::storage=neo4j"));
     }
 
     @Test
     @DisplayName("storage=neo4j without a registered PersistenceHandlerProvider aborts with a clear message")
     void storageNeo4jWithoutProviderAborts() {
-        PersistenceBridge.setHandler(null); // no handler pre-registered, and this module has no ServiceLoader provider on its classpath
+        PersistenceBridge.setHandler(null);
 
         var config = SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j");
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class,
                 () -> PersistenceBridge.getInstance().applyConfiguration(config));
         Assertions.assertTrue(exception.getMessage().contains("PersistenceHandlerProvider"));
         Assertions.assertTrue(exception.getMessage().contains("ServiceLoader"));
+        Assertions.assertFalse(PersistenceBridge.isNeo4jStorage());
     }
 
     @Test
     @DisplayName("an invalid storage value is rejected with a clear error instead of silently defaulting")
     void invalidStorageValueIsRejected() {
-        var config = SortedMaps.immutable.with("PersistenceBridge::storage", "NEO4J"); // wrong case: values are lower-case, see PersistenceStorage
+        var config = SortedMaps.immutable.with("PersistenceBridge::storage", "NEO4J");
         Assertions.assertThrows(IllegalArgumentException.class, () -> PersistenceBridge.getInstance().applyConfiguration(config));
     }
 
-    /** Minimal handler that always fails — used to simulate Neo4j outage. */
+    static List<String> legacyKeys() {
+        return PersistenceBridge.LEGACY_KEYS;
+    }
+
+    @ParameterizedTest
+    @MethodSource("legacyKeys")
+    @DisplayName("a removed per-kind persistence flag is rejected with a message naming the key and the storage setting")
+    void legacyKeysAreRejected(String legacyKey) {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+        var config = SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j", legacyKey, "true");
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> PersistenceBridge.getInstance().applyConfiguration(config));
+        Assertions.assertTrue(exception.getMessage().contains(legacyKey));
+        Assertions.assertTrue(exception.getMessage().contains("PersistenceBridge::storage=memory|neo4j"));
+        Assertions.assertFalse(PersistenceBridge.isNeo4jStorage(), "a rejected configuration must not leave the previous neo4j mode active");
+    }
+
+    private static final class FakeTraceLink extends TraceLink<Entity, Entity> {
+        private FakeTraceLink() {
+            super(null, null);
+        }
+    }
+
     private static final class ThrowingPersistenceHandler implements PersistenceHandler {
         private RuntimeException fail() {
             return new RuntimeException("simulated Neo4j down");

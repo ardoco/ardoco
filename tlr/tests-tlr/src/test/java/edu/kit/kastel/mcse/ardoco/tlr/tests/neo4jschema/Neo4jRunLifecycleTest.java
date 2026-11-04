@@ -78,8 +78,8 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
         String json = readFile(exportFile);
         Assertions.assertTrue(json.contains("\"nodeCount\""));
         Assertions.assertTrue(json.contains("\"relationshipCount\""));
-        Assertions.assertTrue(json.contains("\"NounMapping\""), "storage=neo4j forces persistTextState on, so NounMapping nodes must be in the export");
-        Assertions.assertTrue(json.contains("\"RecommendedInstance\""), "storage=neo4j forces persistRecommendations on");
+        Assertions.assertTrue(json.contains("\"NounMapping\""), "storage=neo4j writes NounMapping nodes, so they must be in the export");
+        Assertions.assertTrue(json.contains("\"RecommendedInstance\""), "storage=neo4j writes RecommendedInstance nodes, so they must be in the export");
     }
 
     @Test

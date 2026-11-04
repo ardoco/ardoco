@@ -28,7 +28,7 @@ class SimpleTextPersistenceTest extends AbstractPersistenceTest {
     void testSimpleTextRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         String content = "First line.\nSecond line.\nThird line.";
         SimpleText original = new PlainSimpleText(content, List.of("First line.", "Second line.", "Third line."));
@@ -49,7 +49,7 @@ class SimpleTextPersistenceTest extends AbstractPersistenceTest {
     void testProjectMetadataRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         persistenceHandler.saveProjectMetadata("teastore", "raw input text");
         assertThat(persistenceHandler.hasProjectMetadata("teastore")).isTrue();

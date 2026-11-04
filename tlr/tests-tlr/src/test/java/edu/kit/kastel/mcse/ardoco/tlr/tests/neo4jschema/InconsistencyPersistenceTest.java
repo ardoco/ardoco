@@ -27,7 +27,7 @@ public class InconsistencyPersistenceTest extends AbstractPersistenceTest {
 
     private void executeInconsistencyTest(boolean persistence) throws Exception {
         var runner = new InconsistencyDetection(projectName);
-        ImmutableSortedMap<String, String> configs = getInconsistencyConfigsWithPersistence(persistence);
+        ImmutableSortedMap<String, String> configs = getInconsistencyConfigsWithStorage(persistence);
         runner.setUp(inputText, inputModelArchitecture, ModelFormat.PCM, configs, outputDir);
 
         testRunnerAssertions(runner);

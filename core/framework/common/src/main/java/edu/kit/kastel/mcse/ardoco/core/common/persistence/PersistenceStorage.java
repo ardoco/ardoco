@@ -7,11 +7,11 @@ package edu.kit.kastel.mcse.ardoco.core.common.persistence;
  * @see PersistenceBridge
  */
 public enum PersistenceStorage {
-    /** No Neo4j dual-write; the {@link edu.kit.kastel.mcse.ardoco.core.data.DataRepository DataRepository} is the only store. Default. */
+    /** No Neo4j writes; the {@link edu.kit.kastel.mcse.ardoco.core.data.DataRepository DataRepository} is the only store. Default. */
     MEMORY("memory"),
     /**
-     * Neo4j is built up during the run like the DataRepository (text, models, NounMappings, RecommendedInstances, all states), and forces
-     * every {@code PersistenceBridge} write flag (incl. NER) on.
+     * Neo4j is built up during the run alongside the DataRepository (text, models, NounMappings, RecommendedInstances, NER, trace links,
+     * inconsistencies).
      */
     NEO4J("neo4j");
 

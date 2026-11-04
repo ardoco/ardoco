@@ -41,8 +41,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
     void testNerEntityRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
-                        "PersistenceBridge::persistNerConnection", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
         var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
@@ -71,8 +70,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
     void testNerArchitectureTraceLinkRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
-                        "PersistenceBridge::persistNerConnection", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, mm);
@@ -107,8 +105,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
     void testNerArchitectureTraceLinkConfidenceRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
-                        "PersistenceBridge::persistNerConnection", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, mm);
@@ -152,8 +149,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
     void testUnlinkedNerEntityRoundTrip() {
         PersistenceBridge.setHandler(persistenceHandler);
         PersistenceBridge.getInstance()
-                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true",
-                        "PersistenceBridge::persistNerConnection", "true"));
+                .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
         var occurrence = new NamedArchitectureEntityOccurrence("Logger", 5);

@@ -30,8 +30,7 @@ class ModelStatesTest {
     void resetFlags() {
         PersistenceBridge.setHandler(null);
         PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "false", "PersistenceBridge::persistTextState", "false",
-                        "PersistenceBridge::persistRecommendations", "false", "PersistenceBridge::persistNerConnection", "false"));
+                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
     }
 
     @Test
@@ -39,7 +38,7 @@ class ModelStatesTest {
     void addModelPersistsSameModelObjectOnlyOnce() {
         AtomicInteger saveCount = new AtomicInteger();
         PersistenceBridge.setHandler(new CountingPersistenceHandler(saveCount));
-        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true"));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         ArchitectureModelWithComponentsAndInterfaces model = new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>());
 
@@ -58,7 +57,7 @@ class ModelStatesTest {
     void addModelPersistsDistinctModelsSeparately() {
         AtomicInteger saveCount = new AtomicInteger();
         PersistenceBridge.setHandler(new CountingPersistenceHandler(saveCount));
-        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true"));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         ModelStates modelStates = new ModelStates();
         modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>()));
@@ -72,7 +71,7 @@ class ModelStatesTest {
     void addModelPersistsDistinctModelObjectsWithSameId() {
         AtomicInteger saveCount = new AtomicInteger();
         PersistenceBridge.setHandler(new CountingPersistenceHandler(saveCount));
-        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::usePersistence", "true"));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         // IdentifierProvider.reset() runs before every extraction (see ModelProviderInformant.process()), so two
         // distinct models extracted in the same run (e.g. a PCM architecture model and a code model read from a

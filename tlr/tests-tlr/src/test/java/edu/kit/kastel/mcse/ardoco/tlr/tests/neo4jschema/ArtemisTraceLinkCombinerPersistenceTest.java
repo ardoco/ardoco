@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
         DataRepository dataRepository = new DataRepository();
         try {
             PersistenceBridge.setHandler(persistenceHandler);
-            PersistenceBridge.usePersistenceStatic = true;
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
             ModelStates modelStates = new ModelStates();
             modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, archModel);
@@ -90,7 +91,7 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
                         "TraceLinkCombiner's ArTEMiS placeholder sentence text must still equal its own sentence number");
             }
         } finally {
-            PersistenceBridge.usePersistenceStatic = false;
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
             PersistenceBridge.setHandler(null);
         }
 

@@ -1,6 +1,6 @@
 # Neo4j-Schema
 This component provides functionality to save and load architecture models, code models and preprocessed texts in a Neo4j graph database.
-Moreover, it provides functionality to insert and retrieve tracelinks and inconsistencies, and optionally to dual-write TextState (`NounMapping`) and RecommendationStates (`RecommendedInstance`) for inspection and load-on-resume.
+Moreover, it provides functionality to insert and retrieve tracelinks and inconsistencies, and, with `PersistenceBridge::storage=neo4j`, to write TextState (`NounMapping`), RecommendationStates (`RecommendedInstance`) and NER results alongside the in-memory `DataRepository` as the run's knowledge graph.
 The component is designed to be used in conjunction with other components of the ARDoCo Core, such as the Architecture Model and Code Model components.
 
 ## 1. Overview
@@ -18,29 +18,27 @@ This allows the neo4j module to be easily switched on or off. Moreover, the depl
 - ``SPRING_NEO4J_AUTHENTICATION_USERNAME``: Username for database authentication. Defaults to "neo4j".
 - ``SPRING_NEO4J_AUTHENTICATION_PASSWORD``: Password for database authentication. Defaults to "password".
 
-### 2.1 Per-runner PersistenceBridge flags
+### 2.1 Per-runner storage setting
 
-Even when Neo4j is globally enabled, individual runners control dual-write via additional config (all default **`false`** so existing Stage-0 tests stay unchanged):
+Each runner selects the storage via its additional configuration. `PersistenceBridge::storage` is the only persistence switch:
 
-| Config key | Meaning |
+| Value | Meaning |
 |---|---|
-| `PersistenceBridge::usePersistence` | Master switch; requires the Neo4j module (`Neo4jBridgeActivator`). |
-| `PersistenceBridge::persistTextState` | Dual-write `NounMapping` nodes (`MAPS_WORD`, `IN_PHRASE`, …). |
-| `PersistenceBridge::persistRecommendations` | Dual-write `RecommendedInstance` nodes. **Implies** `persistTextState` (auto-enabled with an INFO log if recommendations are on alone), because RI edges resolve `NounMapping` by `ardocoId`. |
-| `PersistenceBridge::persistNerConnection` | Dual-write NER named entities / occurrence→model links (`NamedArchitectureEntity`, `NER_ARCHITECTURE`). Default **false**. |
+| `memory` (default, also when the key is absent) | Nothing is written to Neo4j; the in-memory `DataRepository` is the only store. |
+| `neo4j` | The `DataRepository` stays the working store; everything persisted (text, SimpleText, project and run metadata, architecture and code models, `NounMapping`, `RecommendedInstance`, NER entities, all trace-link kinds, inconsistencies) is written to Neo4j alongside it, batched per pipeline stage. |
 
-Example (SWATTR additional configs):
+Example (additional configs):
 
 ```
-PersistenceBridge::usePersistence=true
-PersistenceBridge::persistTextState=true
-PersistenceBridge::persistRecommendations=true
-PersistenceBridge::persistNerConnection=true
+PersistenceBridge::storage=neo4j
 ```
 
-When `usePersistence` is on, **SimpleText** and **Project** metadata (`InputTextData` + project name) are dual-written without a separate flag (thin slices).
+The value is matched exactly (lower case); any other value fails the configuration. The former per-kind flags `PersistenceBridge::usePersistence`, `PersistenceBridge::persistTextState`, `PersistenceBridge::persistRecommendations` and `PersistenceBridge::persistNerConnection` no longer exist: a configuration that still contains one of them fails with a message naming the key and `PersistenceBridge::storage=memory|neo4j`.
 
-Neo4j failures are isolated via `PersistenceBridge.runQuietly` / `callQuietly` so a down database does not abort the pipeline.
+With `storage=neo4j`:
+- If no `PersistenceHandler` is registered yet, one is bootstrapped via `ServiceLoader` (the `neo4j-schema` module must be on the classpath). The connection is read from `PersistenceBridge::neo4jUri` / `neo4jUsername` / `neo4jPassword`, then the environment variables `NEO4J_URI` / `NEO4J_USERNAME` / `NEO4J_PASSWORD`, then the defaults `bolt://127.0.0.1:7687` / `neo4j` / `password`. If that fails, the configuration fails.
+- The database is cleaned at the start of the run; on success the knowledge graph is exported as JSON (`knowledgeGraph_<project>.json` in the output directory) and the database is wiped; on failure the database is wiped and the exception is rethrown.
+- Every persistence failure aborts the run; nothing is swallowed.
 
 ## 3. Architecture
 The architecture of the Neo4j-Schema follows a layered architecture pattern:
@@ -91,7 +89,8 @@ pass a predefined id to them instead of generating a new id to keep the same id 
 ## 5. Performance Optimizations
 - **Pagination**: DocumentationPersistenceService uses manual pagination to retrieve sentences in batches (default size: 100), avoiding large individual query overhead.
 - **Direct Persistence**: InconsistencyPersistenceService optimizes save operations by persisting data directly rather than mapping to a Java object first.
-- **Caching**: ModelStates.java implements a cache to avoid redundant database fetches after the initial load.
+- **Batched writes**: with `storage=neo4j`, writes made during a pipeline stage are collected and flushed once at the end of the stage (`PersistenceBridge.withDeferredWrites`), in chunks of 2000 items; models and text are written as batched Cypher.
+- **No reads during a run**: the in-memory `DataRepository` is authoritative; nothing is read back from Neo4j while the pipeline runs.
 
 ## 6.  Tests
 Tests in the neo4j-schema module directly primarily test the Neo4jPersistenceHandler class and the neo4j-schema module in general.
@@ -101,7 +100,7 @@ To verify whether the pipelines which use the neo4j-schema module work as expect
 the number of expected tracelinks and inconsistencies match with the number of tracelinks and inconsistencies retrieved of the traceview-website.
 Currently, these numbers are hardcoded in the tests.
 
-**Recommendation / TextState dual-write** is covered by `TextStateRecommendationPersistenceTest` (flag matrix: flags off, TextState only, recommendations-only auto-enables TextState, both on, load-on-resume). Default SWATTR Neo4j tests leave `persistRecommendations` / `persistTextState` **off** so Stage-0 behaviour is unchanged.
+**Recommendation / TextState writes** are covered by `TextStateRecommendationPersistenceTest` (a SWATTR run with `storage=neo4j`; the graph is checked in the exported knowledge graph JSON, since the database is wiped after the run). `MemoryVsNeo4jConsistencyTest` (opt-in via `-Dardoco.tests.memoryVsNeo4j=true`) compares `storage=memory` and `storage=neo4j` runs of TransArC, SWATTR, ArDoCode and ArCoTL on several projects: identical output files, and every in-memory trace link present in the exported graph.
 
 ### 6.1 Debugging Neo4j Tests
 In order to debug Neo4j tests it may help to look at the visual representation of the graph. To do so, you can use the Neo4j Browser.
@@ -127,32 +126,31 @@ To access the Neo4j Browser, you can follow these steps:
 
 ## 7. Implementation Remarks & Future Work
 
-### 7.1 TextState and RecommendationStates (dual-write)
+### 7.1 TextState and RecommendationStates
 
-ARDoCo can optionally mirror intermediate TLR state into Neo4j for inspection and load-on-resume:
+With `storage=neo4j`, ARDoCo also writes intermediate TLR state into Neo4j as part of the run's knowledge graph:
 
 | Node | Key properties | Typical relationships |
 |---|---|---|
 | `NounMapping` | `ardocoId`, `reference`, `kind`, probabilities, surface forms | `MAPS_WORD`, `HAS_REFERENCE_WORD`, `IN_PHRASE` → Word/Phrase |
 | `RecommendedInstance` | `ardocoId`, `name`, `type`, `probability`, `metamodel` | `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING` → `NounMapping`; may also participate in `TRACES_TO` (`RECOMMENDATION_ARCHITECTURE`) |
 
-**Write path:** `RecommendationStateImpl` / `RecommendedInstanceImpl` call `PersistenceBridge.saveRecommendedInstance` when `persistRecommendations` is on (upsert by `ardocoId`). Text extraction dual-writes NounMappings when `persistTextState` is on.
+**Write path:** `RecommendationStateImpl` / `RecommendedInstanceImpl` call `PersistenceBridge.saveRecommendedInstance` (upsert by `ardocoId`); text extraction writes NounMappings via `PersistenceBridge.saveNounMapping`. Both only act with `storage=neo4j` and are flushed per stage.
 
-**Read path:** Load-on-resume APIs (`loadNounMappings`, `loadRecommendedInstances`) hydrate the in-memory states once at stage start. Dual-write remains transitional; Neo4j as sole store is the end vision.
+**Read path:** none during a run; the in-memory states are authoritative. The graph is kept only as the exported JSON.
 
-**Design note vs early “BASED_ON_WORD” sketch:** RIs link to `NounMapping` nodes (not only Word positions). That preserves name/type evidence structure and enables resume; it requires TextState persistence whenever recommendations are persisted.
+**Design note vs early “BASED_ON_WORD” sketch:** RIs link to `NounMapping` nodes (not only Word positions). That preserves the name/type evidence structure in the graph.
 
 #### Cons of keeping recommendations in Neo4j
 
 - **Graph noise / size:** SWATTR creates many candidates; Browser and storage grow vs only final `TRACES_TO`.
 - **Not final TLR output:** RIs are intermediate; classic Neo4j docs targeted text, models, links, and inconsistencies.
 - **Write amplification:** Add/merge/update of RIs can trigger Neo4j writes mid-pipeline (latency).
-- **Coupling to TextState:** Without NounMappings in the graph, `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING` cannot resolve (hence auto-enable of `persistTextState`).
-- **Sync risk:** DataRepository remains the runtime source of truth during a live run; Neo4j can lag if a write fails (failures are logged and swallowed).
+- **Coupling to TextState:** `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING` resolve `NounMapping` nodes by `ardocoId`, so both are always written together.
 - **Cleanup / idempotency:** Merges must upsert by stable `ardocoId`, not blind insert.
-- **Test cost:** Flagged runs are slower; `@AfterEach` still clears the graph via `MATCH (n) DETACH DELETE n`.
+- **Test cost:** `storage=neo4j` runs are slower than `storage=memory` runs.
 
-#### Browser checks (after a flagged SWATTR run)
+#### Cypher checks (on a graph re-imported from the export, or while a run is paused in a debugger)
 
 ```cypher
 MATCH (r:RecommendedInstance) RETURN r.name, r.type, r.probability, r.metamodel LIMIT 50;
@@ -168,14 +166,9 @@ RETURN count(rel) AS riToArchitecture;
 - Improve speed of inconsistency saving and retrieving
 - Currently, the `getTransitiveTracelinks()` method only retrieves transitive tracelinks from Sentence to Code with an architecture item as intermediate node.
   In case other types of transitive tracelinks are needed the `loadTransitiveTraceLinks()` Method in the TraceLinkPersistenceService class needs to be extended.
-- Remaining dual-write scaffolding removal (sole-store cutover) is gated on green Suites A–E + professor merge; load-on-resume for covered slices is in place (SimpleText, Project metadata, NER, RI→Code). See `Neo4j info/Neo4j-Remaining-Coverage-Plan.md`.
 
 ### Further Implementation Remarks
-The class `ConnectionstateImpl.java` in ARDoCo has a `getTraceLinks()` method and a `addToLinks()` method which work together for SentenceModelTracelinks.
-However, only for SentenceArchitecture tracelinks, getTraceLinks returns the actual final SentenceArchitecture tracelinks.
-SentenceCode tracelinks from this method will get further processed by `ArchitectureLinkToCodeLinkTransformerInformant.java` and
-then saved in the CodeTraceAbilityState. Thus, in `connectionstateImpl.java`, `addToLinks()` only adds SentenceArchitecture tracelinks to neo4j, but not SentenceCode tracelinks.
-Similarly, `getTraceLinks()` only retrieves SentenceArchitecture tracelinks from neo4j.
+`ConnectionStateImpl.addToLinks()` writes the sentence-level trace links derived from an instance link (`SENTENCE_ARCHITECTURE` / `SENTENCE_CODE`) and the instance link itself (`RECOMMENDATION_ARCHITECTURE` / `RECOMMENDATION_CODE`). `getTraceLinks()` works on the in-memory state only.
 
 To store the models, the models are saved with their Metamodeltype. Only one model per Metamodeltype can be stored in the database. If a model of the same type is already stored, it will be overwritten.
 Thus, to load a model, it is enough specify the metamodel for which a model should be loaded. This is important to keep the method signature
@@ -228,15 +221,15 @@ TextInconsistencies:
 ModelInconsistencies:
 ![MEAT.png](../core/neo4j-schema/MEAT.png)
 
-### RecommendationStates / TextState (optional dual-write)
-When `persistRecommendations` / `persistTextState` are enabled, the graph also contains:
+### RecommendationStates / TextState and further nodes
+With `storage=neo4j`, the graph also contains:
 
 - `NounMapping` nodes linked into the preprocessed text via `MAPS_WORD` / `IN_PHRASE`
 - `RecommendedInstance` nodes linked to those mappings via `HAS_NAME_MAPPING` / `HAS_TYPE_MAPPING`
-- Optional `TRACES_TO` edges with `traceLinkType = RECOMMENDATION_ARCHITECTURE` or `RECOMMENDATION_CODE` from ConnectionState
-- Thin `SimpleText` nodes (raw text + lines) when `usePersistence` is on
-- `Project` nodes for project name + raw input text
-- When `persistNerConnection` is on: `NamedArchitectureEntity` / `NamedArchitectureEntityOccurrence` and `TRACES_TO` with `NER_ARCHITECTURE`
+- `TRACES_TO` edges with `traceLinkType = RECOMMENDATION_ARCHITECTURE` or `RECOMMENDATION_CODE` from ConnectionState
+- Thin `SimpleText` nodes (raw text + lines) for pipelines that use SimpleText
+- `Project` nodes for project name + raw input text, and one `RunMetadata` node per run
+- For pipelines with a NER stage: `NamedArchitectureEntity` / `NamedArchitectureEntityOccurrence` and `TRACES_TO` with `NER_ARCHITECTURE`
 
 ```cypher
 MATCH (s:SimpleText) RETURN s.identifier, size(s.lines) AS lines
@@ -249,8 +242,4 @@ WHERE r.traceLinkType = 'RECOMMENDATION_CODE'
 RETURN count(r)
 ```
 
-See §7.1 for flags, cons, and example Cypher.
-
-### Sole-store readiness (Phase 5)
-
-Covered slices load from Neo4j when the in-memory `DataRepository` is empty (`DataRepositoryHelper` / stage hydrate). Dual-write remains flag-gated until Suites A–E stay green and the professor merge process allows removing transitional scaffolding.
+See §2.1 for the storage setting and §7.1 for cons and example Cypher.

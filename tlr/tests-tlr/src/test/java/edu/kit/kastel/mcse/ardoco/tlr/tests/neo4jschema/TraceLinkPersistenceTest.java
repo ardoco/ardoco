@@ -21,13 +21,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 
 /**
- * End-to-end checks that TLR pipelines write (or skip) Neo4j persistence correctly.
- *
- * <p><b>Inspection vs cleanup:</b> after a persistence-enabled run,
- * {@link AbstractPersistenceTest#pauseForNeo4jInspection()} keeps data visible in Browser
- * for {@code -Dardoco.neo4j.pauseSeconds=N} seconds. When the test method ends,
- * the base class {@code @AfterEach} clears the entire Neo4j graph so test results are
- * not left stored in Desktop.
+ * End-to-end checks that TLR pipelines write (or skip) Neo4j persistence correctly. With {@code storage=neo4j} the run wipes the database at its
+ * end; the exported knowledge graph JSON is what remains to inspect.
  */
 public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
@@ -45,17 +40,12 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     private void runAndAssertArcotl(boolean persistence) {
         var runner = new Arcotl(projectName);
-        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, getConfigsWithPersistence(
+        runner.setUp(new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), this.codeConfiguration, getConfigsWithStorage(
                 persistence), new File(directory.toFile(), "output"));
 
         testRunnerAssertions(runner);
         var result = runner.run();
         Assertions.assertNotNull(result);
-
-        // Pause while data is still in Neo4j; @AfterEach clears after this method returns.
-        if (persistence) {
-            pauseForNeo4jInspection();
-        }
 
         Assertions.assertEquals(164, result.getSamCodeTraceLinks().size());
     }
@@ -63,16 +53,11 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
     private void runAndAssertTransarc(boolean persistence) {
         var runner = new Transarc(projectName);
         runner.setUp(new File(inputText), new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), codeConfiguration,
-                getConfigsWithPersistence(persistence), new File(outputDir));
+                getConfigsWithStorage(persistence), new File(outputDir));
 
         testRunnerAssertions(runner);
         var result = runner.run();
         Assertions.assertNotNull(result);
-
-        // Timed pause (Maven-friendly). Enabled only via -Dardoco.neo4j.pauseSeconds=N
-        if (persistence) {
-            pauseForNeo4jInspection();
-        }
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks = result.getSadCodeTraceLinks();
         Assertions.assertFalse(traceLinks.isEmpty());
@@ -95,19 +80,12 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     private void runAndAssertSwattr(boolean persistence) {
         var runner = new Swattr(projectName);
-        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithPersistence(persistence),
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithStorage(persistence),
                 outputDir);
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
-
-        // After SWATTR writes SAD↔SAM links, optionally pause for Browser inspection.
-        // Example: "-Dardoco.neo4j.pauseSeconds=300" → wait 5 minutes, then @AfterEach clears.
-        // Without that property the call is a no-op; graph is still cleared after the test.
-        if (persistence) {
-            pauseForNeo4jInspection();
-        }
 
         int linkCount = result.getArchitectureTraceLinks().size();
         Assertions.assertEquals(20, linkCount);
@@ -127,15 +105,11 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
 
     private void runAndAssertArdocode(boolean persistence) {
         var runner = new Ardocode(projectName);
-        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithPersistence(persistence), new File(outputDir));
+        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithStorage(persistence), new File(outputDir));
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
-
-        if (persistence) {
-            pauseForNeo4jInspection();
-        }
 
         ImmutableList<TraceLink<SentenceEntity, ? extends ModelEntity>> links = result.getSadCodeTraceLinks();
 
@@ -144,31 +118,19 @@ public class TraceLinkPersistenceTest extends AbstractPersistenceTest {
     }
 
     @Test
-    @DisplayName("ARDoCode with TextState/Recommendations flags writes RI→Code instance links")
-    void testArDoCodeWritesRecommendationCodeLinksWhenFlagsOn() {
+    @DisplayName("ARDoCode with storage=neo4j writes RI→Code instance links")
+    void testArDoCodeWritesRecommendationCodeLinksWithNeo4jStorage() {
+        deleteExportedGraph();
         var runner = new Ardocode(projectName);
-        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithPersistence(true, true, true), new File(outputDir));
+        runner.setUp(new File(inputText), codeConfiguration, getConfigsWithNeo4jStorage(), new File(outputDir));
 
         testRunnerAssertions(runner);
         ArdocoResult result = runner.run();
         Assertions.assertNotNull(result);
         Assertions.assertFalse(result.getSadCodeTraceLinks().isEmpty());
 
-        long riCodeLinks = countRecommendationCodeLinks();
+        long riCodeLinks = readExportedGraph().countTraceLinksOfType("RECOMMENDATION_CODE");
         Assertions.assertTrue(riCodeLinks > 0, "Expected RECOMMENDATION_CODE TRACES_TO links when recommendations persist against a code model");
-        pauseForNeo4jInspection();
-    }
-
-    private long countRecommendationCodeLinks() {
-        return neo4jClient.query("""
-                MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
-                WHERE r.traceLinkType = 'RECOMMENDATION_CODE'
-                RETURN count(r) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
     }
 
     @Test
