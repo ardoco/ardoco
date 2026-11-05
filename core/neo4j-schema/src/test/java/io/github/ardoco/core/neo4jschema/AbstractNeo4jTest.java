@@ -17,6 +17,7 @@ public abstract class AbstractNeo4jTest {
         registry.add("spring.neo4j.uri", neo4jContainer::getBoltUrl);
         registry.add("spring.neo4j.authentication.username", () -> "neo4j");
         registry.add("spring.neo4j.authentication.password", neo4jContainer::getAdminPassword);
+        registry.add("ardoco.persistence.neo4j.enabled", () -> "true");
     }
 
 }
