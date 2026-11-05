@@ -14,7 +14,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +43,6 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
     @Autowired
     private TextNodeRepository textNodeRepository;
-
-    @AfterEach
-    void tearDown() {
-        textNodeRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("Should persist a Text object and retrieve it as a Graph Node")
