@@ -70,7 +70,7 @@ public interface NounMappingRepository extends Neo4jRepository<NounMappingNode, 
      * Each map in {@code items} has the same shape as the scalar parameters of {@link #saveWithLinks}: {@code ardocoId} (String), {@code props}
      * (Map), {@code wordPositions} (List of Integer), {@code referencePositions} (List of Integer), {@code phraseIds} (List of String).
      *
-     * @return the total number of requested link targets that were not found, summed across all items
+     * @return one description per item with requested link targets that were not found (empty if all edges were created)
      */
     @Query("""
             UNWIND $items AS item
@@ -91,7 +91,9 @@ public interface NounMappingRepository extends Neo4jRepository<NounMappingNode, 
             OPTIONAL MATCH (p:Phrase) WHERE p.id IN item.phraseIds
             WITH item, words, referenceWords, collect(DISTINCT p) AS phrases, nm
             FOREACH (phrase IN phrases | MERGE (nm)-[:IN_PHRASE]->(phrase))
-            RETURN sum((size(item.wordPositions) - size(words)) + (size(item.referencePositions) - size(referenceWords)) + (size(item.phraseIds) - size(phrases))) AS totalMissing
+            WITH item, (size(item.wordPositions) - size(words)) + (size(item.referencePositions) - size(referenceWords)) + (size(item.phraseIds) - size(phrases)) AS missing
+            WHERE missing > 0
+            RETURN item.ardocoId + ': ' + toString(missing) + ' word/phrase target(s) missing' AS unresolved
             """)
-    Long saveAllWithLinks(@Param("items") List<Map<String, Object>> items);
+    List<String> saveAllWithLinks(@Param("items") List<Map<String, Object>> items);
 }

@@ -4,6 +4,7 @@ package io.github.ardoco.core.neo4jschema;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
+import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureComponentNode;
-import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
 import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
-import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
 import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;
 import io.github.ardoco.core.neo4jschema.util.FakeArchitectureEntity;
@@ -31,9 +31,6 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
 
     @Autowired
     private InconsistencyPersistenceService persistenceService;
-
-    @Autowired
-    private SentenceNodeRepository sentenceNodeRepository;
 
     @Autowired
     private TraceableNodeRepository traceableNodeRepository;
@@ -70,8 +67,9 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
     void shouldPersistTextInconsistencyAndRetrieveCorrectly() {
         int sentenceNum = 5;
         String sentenceText = "The system shall provide a Login component.";
-        SentenceNode sentenceNode = new SentenceNode(sentenceNum, sentenceText);
-        sentenceNodeRepository.save(sentenceNode);
+        neo4jClient.query("CREATE (:Text {ardocoId: $textId})-[:HAS_SENTENCE]->(:Sentence:Traceable {ardocoId: 'inconsistency-test-sentence', "
+                + "sentenceNumber: $sentenceIndex, text: $text})").bindAll(Map.of("textId", PreprocessingData.ID, "sentenceIndex", sentenceNum - 1, "text",
+                        sentenceText)).run();
 
         String name = "inconsistency";
         double confidence = 0.85;

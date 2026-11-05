@@ -118,8 +118,11 @@ public class ArchitecturePersistenceService {
         createNodesByLabel("ArchitectureInterface:ArchitectureItem:Traceable", interfaceProps(interfaces.keySet()));
         createNodesByLabel("ArchitectureMethod:ArchitectureItem:Traceable", methodProps(methods.keySet()));
 
-        createModelToItemEdges("HAS_COMPONENT", modelNode.getModelId(), modelNode.getComponents().stream().map(ArchitectureComponentNode::getArdocoId).toList());
-        createModelToItemEdges("HAS_INTERFACE", modelNode.getModelId(), modelNode.getInterfaces().stream().map(ArchitectureInterfaceNode::getArdocoId).toList());
+        LinkTargetErrors errors = new LinkTargetErrors("ArchitectureModel " + modelNode.getModelId());
+        createModelToItemEdges("HAS_COMPONENT", modelNode.getModelId(), modelNode.getComponents().stream().map(ArchitectureComponentNode::getArdocoId).toList(),
+                errors);
+        createModelToItemEdges("HAS_INTERFACE", modelNode.getModelId(), modelNode.getInterfaces().stream().map(ArchitectureInterfaceNode::getArdocoId).toList(),
+                errors);
 
         List<Map<String, Object>> subcomponentEdges = new ArrayList<>();
         List<Map<String, Object>> providesEdges = new ArrayList<>();
@@ -134,10 +137,11 @@ public class ArchitecturePersistenceService {
             addEdges(methodEdges, iface.getArdocoId(), iface.getMethodSignatures());
         }
 
-        createTraceableToTraceableEdges("HAS_SUBCOMPONENT", subcomponentEdges, "HAS_SUBCOMPONENT target(s) not found");
-        createTraceableToTraceableEdges("PROVIDES_INTERFACE", providesEdges, "PROVIDES_INTERFACE target(s) not found");
-        createTraceableToTraceableEdges("REQUIRES_INTERFACE", requiresEdges, "REQUIRES_INTERFACE target(s) not found");
-        createTraceableToTraceableEdges("HAS_METHOD", methodEdges, "HAS_METHOD target(s) not found");
+        createTraceableToTraceableEdges("HAS_SUBCOMPONENT", subcomponentEdges, errors);
+        createTraceableToTraceableEdges("PROVIDES_INTERFACE", providesEdges, errors);
+        createTraceableToTraceableEdges("REQUIRES_INTERFACE", requiresEdges, errors);
+        createTraceableToTraceableEdges("HAS_METHOD", methodEdges, errors);
+        errors.throwIfAny(logger);
     }
 
     /** Breadth-first walk from {@code roots}, following {@code children}, de-duplicated by Java identity. */
@@ -217,53 +221,45 @@ public class ArchitecturePersistenceService {
         }
     }
 
-    private void createModelToItemEdges(String relationshipType, String modelId, List<String> itemIds) {
+    private void createModelToItemEdges(String relationshipType, String modelId, List<String> itemIds, LinkTargetErrors errors) {
         if (itemIds.isEmpty()) {
             return;
         }
         for (List<String> idChunk : chunk(itemIds, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
                     MATCH (m:ArchitectureModel {modelId: $modelId})
-                    UNWIND $itemIds AS itemId
-                    OPTIONAL MATCH (n:Traceable {ardocoId: itemId})
-                    WITH m, itemId, n
-                    FOREACH (ignore IN CASE WHEN n IS NOT NULL THEN [1] ELSE [] END | CREATE (m)-[:%s]->(n))
-                    RETURN sum(CASE WHEN n IS NULL THEN 1 ELSE 0 END) AS missing
-                    """.formatted(relationshipType))
-                    .bind(modelId)
-                    .to("modelId")
-                    .bind(idChunk)
-                    .to("itemIds")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("{}: {} item(s) not found while linking to ArchitectureModel {}", relationshipType, missing, modelId);
-            }
+                    UNWIND range(0, size($itemIds) - 1) AS index
+                    WITH m, index, $itemIds[index] AS itemId
+                    OPTIONAL MATCH (n:ArchitectureItem:Traceable {ardocoId: itemId}) USING INDEX SEEK n:Traceable(ardocoId)
+                    WITH m, index, itemId, collect(n) AS targets
+                    FOREACH (target IN CASE WHEN size(targets) = 1 THEN targets ELSE [] END | CREATE (m)-[:%s]->(target))
+                    WITH itemId, size(targets) AS targetMatches
+                    WHERE targetMatches <> 1
+                    RETURN $modelId AS sourceId, itemId AS targetId, 1 AS sourceMatches, targetMatches
+                    """.formatted(relationshipType)).bind(modelId).to("modelId").bind(idChunk).to("itemIds").fetch().all());
+            errors.recordEdges(relationshipType, unresolved);
         }
     }
 
-    private void createTraceableToTraceableEdges(String relationshipType, List<Map<String, Object>> edges, String missingWarning) {
+    private void createTraceableToTraceableEdges(String relationshipType, List<Map<String, Object>> edges, LinkTargetErrors errors) {
         if (edges.isEmpty()) {
             return;
         }
         for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
-                    UNWIND $edges AS edge
-                    OPTIONAL MATCH (s:Traceable {ardocoId: edge.sourceId})
-                    OPTIONAL MATCH (t:Traceable {ardocoId: edge.targetId})
-                    WITH s, t
-                    FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END | CREATE (s)-[:%s]->(t))
-                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
-                    """.formatted(relationshipType))
-                    .bind(chunk)
-                    .to("edges")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("{}: {}", missingWarning, missing);
-            }
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
+                    UNWIND range(0, size($edges) - 1) AS index
+                    WITH index, $edges[index] AS edge
+                    OPTIONAL MATCH (s:ArchitectureItem:Traceable {ardocoId: edge.sourceId}) USING INDEX SEEK s:Traceable(ardocoId)
+                    WITH index, edge, collect(s) AS sources
+                    OPTIONAL MATCH (t:ArchitectureItem:Traceable {ardocoId: edge.targetId}) USING INDEX SEEK t:Traceable(ardocoId)
+                    WITH index, edge, sources, collect(t) AS targets
+                    FOREACH (s IN CASE WHEN size(sources) = 1 AND size(targets) = 1 THEN sources ELSE [] END |
+                        FOREACH (t IN targets | CREATE (s)-[:%s]->(t)))
+                    WITH edge, size(sources) AS sourceMatches, size(targets) AS targetMatches
+                    WHERE sourceMatches <> 1 OR targetMatches <> 1
+                    RETURN edge.sourceId AS sourceId, edge.targetId AS targetId, sourceMatches, targetMatches
+                    """.formatted(relationshipType)).bind(chunk).to("edges").fetch().all());
+            errors.recordEdges(relationshipType, unresolved);
         }
     }
 

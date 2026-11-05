@@ -3,13 +3,18 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistency;
@@ -26,8 +31,6 @@ import io.github.ardoco.core.neo4jschema.entities.inconsistencies.TextInconsiste
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceableNode;
 import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
-import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
-import io.github.ardoco.core.neo4jschema.repository.documentation.SentenceNodeRepository;
 import io.github.ardoco.core.neo4jschema.repository.inconsistencies.InconsistencyNodeRepository;
 
 @Service
@@ -35,62 +38,115 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
 
     private static final Logger logger = LoggerFactory.getLogger(InconsistencyPersistenceService.class);
 
-    private final TraceableNodeRepository traceableNodeRepository;
-    private final SentenceNodeRepository sentenceNodeRepository;
+    private static final int WRITE_CHUNK_SIZE = 2000;
+
+    private static final String TEXT_INCONSISTENCY_QUERY = """
+            UNWIND $rows AS row
+            OPTIONAL MATCH (s:Sentence {sentenceNumber: row.sentenceIndex}) USING INDEX SEEK s:Sentence(sentenceNumber)
+            WHERE EXISTS { MATCH (:Text {ardocoId: $textId})-[:HAS_SENTENCE]->(s) }
+            WITH row, collect(s) AS targets
+            FOREACH (s IN CASE WHEN size(targets) = 1 THEN targets ELSE [] END |
+                MERGE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {reason: row.reason, type: row.type})
+                ON CREATE SET i.id = randomUUID(), i.name = row.name, i.sentenceNumber = row.sentenceNumber, i.confidence = row.confidence)
+            WITH row, size(targets) AS matches
+            WHERE matches <> 1
+            RETURN row.sentenceNumber AS sentenceNumber, row.reason AS reason, matches
+            """;
+
+    private static final String MODEL_INCONSISTENCY_QUERY = """
+            UNWIND $rows AS row
+            OPTIONAL MATCH (t:Traceable {ardocoId: row.uid}) USING INDEX SEEK t:Traceable(ardocoId)
+            WHERE t:ArchitectureItem OR t:CodeItem
+            WITH row, collect(t) AS targets
+            FOREACH (t IN CASE WHEN size(targets) = 1 THEN targets ELSE [] END |
+                MERGE (t)-[:HAS_INCONSISTENCY]->(i:ModelInconsistency:Inconsistency {reason: row.reason})
+                ON CREATE SET i.id = randomUUID(), i.modelArdocoId = row.uid, i.type = "ModelEntityAbsentFromText")
+            WITH row, size(targets) AS matches
+            WHERE matches <> 1
+            RETURN row.uid AS uid, row.reason AS reason, matches
+            """;
+
     private final InconsistencyNodeRepository inconsistencyRepository;
+    private final Neo4jClient neo4jClient;
 
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
 
-    public InconsistencyPersistenceService(SentenceNodeRepository sentenceNodeRepository, ArchitectureModelMapper archMapper, CodeModelMapper codeMapper,
-            TraceableNodeRepository traceableNodeRepository, InconsistencyNodeRepository inconsistencyRepository) {
+    public InconsistencyPersistenceService(ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, InconsistencyNodeRepository inconsistencyRepository,
+            Neo4jClient neo4jClient) {
         this.archMapper = archMapper;
         this.codeMapper = codeMapper;
-        this.traceableNodeRepository = traceableNodeRepository;
-        this.sentenceNodeRepository = sentenceNodeRepository;
         this.inconsistencyRepository = inconsistencyRepository;
+        this.neo4jClient = neo4jClient;
     }
 
     /**
-     * Adds a collection of inconsistencies to the database. For each inconsistency, it checks if an equivalent inconsistency already exists to prevent
-     * duplicates.
+     * Adds a collection of inconsistencies to the database in one batched {@code UNWIND} query per inconsistency kind (chunks of at most
+     * {@value #WRITE_CHUNK_SIZE} rows); no entity is loaded. A text inconsistency carries the 1-based sentence number of the output file and is attached
+     * to the {@code Sentence} with {@code sentenceNumber = n - 1} of the run's text ({@code Text {ardocoId: PreprocessingData.ID}}); the inconsistency
+     * node keeps the 1-based number. A model inconsistency is attached to the architecture or code item with its uid. {@code MERGE} on (parent, reason,
+     * type) keeps the write idempotent. A missing or ambiguous parent, or an unknown inconsistency type, is logged as one ERROR and thrown as a
+     * {@link MissingLinkTargetException} after all rows were written.
      *
      * @param inconsistencies The collection of inconsistencies to be added to the database. This collection can contain both model-based and text-based
      *                        inconsistencies.
-     * @return true if the inconsistencies were successfully added (or already exist)
+     * @return true if every inconsistency was attached
      */
     @Transactional
     public boolean addInconsistencies(Collection<? extends Inconsistency> inconsistencies) {
+        Map<String, Map<String, Object>> textRows = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> modelRows = new LinkedHashMap<>();
+        LinkTargetErrors errors = new LinkTargetErrors("Inconsistency");
 
         for (Inconsistency inconsistency : inconsistencies) {
             String reason = inconsistency.getReason();
-
             if (inconsistency instanceof ModelInconsistency mi) {
                 String uid = mi.getModelInstanceUid();
-                if (!inconsistencyRepository.existsModelInconsistency(uid, reason)) {
-                    this.traceableNodeRepository.findByArdocoId(uid).ifPresentOrElse(parent -> {
-                        inconsistencyRepository.saveModelInconsistency(uid, uid, reason);
-                    }, () -> logger.warn("No TraceableNode found in Neo4j for Ardoco ID: {}. Skipping inconsistency with reason: {}", uid, reason));
-                }
-
+                modelRows.put(uid + "\n" + reason, Map.of("uid", uid, "reason", reason));
             } else if (inconsistency instanceof TextInconsistency ti) {
-                int num = ti.getSentenceNumber();
+                int sentenceNumber = ti.getSentenceNumber();
                 String type = ti.getType();
-
-                if (!inconsistencyRepository.existsTextInconsistency(num, reason, type)) {
-                    this.sentenceNodeRepository.findBySentenceNumber(num).ifPresentOrElse(parent -> {
-                        String name = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.name() : "unknown";
-                        double conf = (ti instanceof TextEntityAbsentFromModelInconsistency team) ? team.confidence() : -1.0;
-                        inconsistencyRepository.saveTextInconsistency(num, name, conf, reason, type);
-                    }, () -> logger.warn("No TraceableNode found in Neo4j for SentenceNumber: {}. Skipping inconsistency with reason: {}", num, reason));
-                }
+                Map<String, Object> row = new HashMap<>();
+                row.put("sentenceNumber", sentenceNumber);
+                row.put("sentenceIndex", sentenceNumber - 1);
+                row.put("name", ti instanceof TextEntityAbsentFromModelInconsistency team ? team.name() : "unknown");
+                row.put("confidence", ti instanceof TextEntityAbsentFromModelInconsistency team ? team.confidence() : -1.0);
+                row.put("reason", reason);
+                row.put("type", type);
+                textRows.put(sentenceNumber + "\n" + reason + "\n" + type, row);
             } else {
-                logger.warn("Unknown inconsistency type encountered: {}. Skipping this inconsistency with reason: {}", inconsistency.getClass().getName(),
-                        reason);
+                errors.missing("unknown inconsistency type", 1, inconsistency.getClass().getName());
             }
         }
 
+        for (List<Map<String, Object>> chunk : chunk(new ArrayList<>(textRows.values()))) {
+            for (Map<String, Object> unresolved : neo4jClient.query(TEXT_INCONSISTENCY_QUERY)
+                    .bind(PreprocessingData.ID)
+                    .to("textId")
+                    .bind(chunk)
+                    .to("rows")
+                    .fetch()
+                    .all()) {
+                errors.recordEdge("HAS_INCONSISTENCY (Sentence)", "sentence " + unresolved.get("sentenceNumber"), unresolved.get("reason"),
+                        ((Number) unresolved.get("matches")).longValue(), 1);
+            }
+        }
+        for (List<Map<String, Object>> chunk : chunk(new ArrayList<>(modelRows.values()))) {
+            for (Map<String, Object> unresolved : neo4jClient.query(MODEL_INCONSISTENCY_QUERY).bind(chunk).to("rows").fetch().all()) {
+                errors.recordEdge("HAS_INCONSISTENCY (model item)", unresolved.get("uid"), unresolved.get("reason"), ((Number) unresolved.get("matches"))
+                        .longValue(), 1);
+            }
+        }
+        errors.throwIfAny(logger);
         return true;
+    }
+
+    private static List<List<Map<String, Object>>> chunk(List<Map<String, Object>> rows) {
+        List<List<Map<String, Object>>> chunks = new ArrayList<>();
+        for (int start = 0; start < rows.size(); start += WRITE_CHUNK_SIZE) {
+            chunks.add(rows.subList(start, Math.min(start + WRITE_CHUNK_SIZE, rows.size())));
+        }
+        return chunks;
     }
 
     /**
@@ -123,7 +179,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
             if (inc instanceof ModelInconsistency mi) {
                 modelIds.add(mi.getModelInstanceUid());
             } else if (inc instanceof TextInconsistency ti) {
-                sentenceNumbers.add(ti.getSentenceNumber());
+                sentenceNumbers.add(ti.getSentenceNumber() - 1);
             }
         }
 

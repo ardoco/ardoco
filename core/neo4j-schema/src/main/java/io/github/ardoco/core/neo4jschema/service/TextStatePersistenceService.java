@@ -52,13 +52,16 @@ public class TextStatePersistenceService {
         String ardocoId = mapping.getArdocoId();
         List<Integer> wordPositions = NounMappingMapper.positionsOf(mapping.getWords());
         List<Integer> referencePositions = NounMappingMapper.positionsOf(mapping.getReferenceWords());
-        List<String> phraseIds = nounMappingMapper.resolvePhraseIds(mapping);
+        List<String> unresolvedPhrases = new ArrayList<>();
+        List<String> phraseIds = nounMappingMapper.resolvePhraseIds(mapping, unresolvedPhrases);
 
         Long missing = nounMappingRepository.saveWithLinks(ardocoId, nounMappingMapper.toProperties(mapping), wordPositions, referencePositions, phraseIds);
+        LinkTargetErrors errors = new LinkTargetErrors("NounMapping");
+        unresolvedPhrases.forEach(description -> errors.missing("IN_PHRASE", 1, description));
         if (missing != null && missing > 0) {
-            logger.warn("NounMapping {}: {} link targets not found (requested: {} words, {} reference words, {} phrases; target nodes missing)", ardocoId,
-                    missing, wordPositions.size(), referencePositions.size(), phraseIds.size());
+            errors.missing("MAPS_WORD/HAS_REFERENCE_WORD/IN_PHRASE", missing, ardocoId + ": " + missing + " word/phrase target(s) missing");
         }
+        errors.throwIfAny(logger);
         logger.debug("Saved NounMapping {} ({} words, {} phrases)", ardocoId, wordPositions.size(), phraseIds.size());
     }
 
@@ -74,20 +77,22 @@ public class TextStatePersistenceService {
             return;
         }
         List<Map<String, Object>> items = new ArrayList<>(mappings.size());
+        List<String> unresolvedPhrases = new ArrayList<>();
         for (NounMapping mapping : mappings) {
             Map<String, Object> item = new HashMap<>();
             item.put("ardocoId", mapping.getArdocoId());
             item.put("props", nounMappingMapper.toProperties(mapping));
             item.put("wordPositions", NounMappingMapper.positionsOf(mapping.getWords()));
             item.put("referencePositions", NounMappingMapper.positionsOf(mapping.getReferenceWords()));
-            item.put("phraseIds", nounMappingMapper.resolvePhraseIds(mapping));
+            item.put("phraseIds", nounMappingMapper.resolvePhraseIds(mapping, unresolvedPhrases));
             items.add(item);
         }
 
-        Long missing = nounMappingRepository.saveAllWithLinks(items);
-        if (missing != null && missing > 0) {
-            logger.warn("Batch NounMapping save: {} link target(s) not found across {} noun mapping(s) (target nodes missing)", missing, mappings.size());
-        }
+        List<String> unresolvedItems = nounMappingRepository.saveAllWithLinks(items);
+        LinkTargetErrors errors = new LinkTargetErrors("NounMapping");
+        unresolvedPhrases.forEach(description -> errors.missing("IN_PHRASE", 1, description));
+        unresolvedItems.forEach(description -> errors.missing("MAPS_WORD/HAS_REFERENCE_WORD/IN_PHRASE", 1, description));
+        errors.throwIfAny(logger);
         logger.debug("Saved {} NounMappings in one batch", mappings.size());
     }
 

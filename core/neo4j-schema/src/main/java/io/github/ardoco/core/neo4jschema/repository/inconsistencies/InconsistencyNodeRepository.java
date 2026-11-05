@@ -26,12 +26,6 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
     @Query("MATCH (i:TextInconsistency)<-[:HAS_INCONSISTENCY]-(s:Sentence) WHERE s.sentenceNumber IN $sentenceNumbers DETACH DELETE i")
     void deleteBySentenceNumbers(@Param("sentenceNumbers") List<Integer> sentenceNumbers);
 
-    @Query("RETURN EXISTS { MATCH (t:Traceable {ardocoId: $ardocoId})-[:HAS_INCONSISTENCY]->(i:ModelInconsistency {reason: $reason}) }")
-    boolean existsModelInconsistency(@Param("ardocoId") String ardocoId, @Param("reason") String reason);
-
-    @Query("RETURN EXISTS { MATCH (s:Sentence {sentenceNumber: $num})-[:HAS_INCONSISTENCY]->(i:TextInconsistency {reason: $reason, type: $type}) }")
-    boolean existsTextInconsistency(@Param("num") int num, @Param("reason") String reason, @Param("type") String type);
-
     @Query("MATCH (i:Inconsistency)<-[:HAS_INCONSISTENCY]-(:ArchitectureItem) DETACH DELETE i")
     void deleteInconsistenciesForArchitectureItems();
 
@@ -40,30 +34,5 @@ public interface InconsistencyNodeRepository extends Neo4jRepository<Inconsisten
 
     @Query("MATCH (n:TextInconsistency) DETACH DELETE n")
     void deleteTextInconsistencies();
-
-    @Query("""
-            MATCH (parent:Traceable {ardocoId: $ardocoId})
-            CREATE (parent)-[:HAS_INCONSISTENCY]->(i:ModelInconsistency:Inconsistency {
-                id: randomUUID(),
-                modelArdocoId: $uid,
-                reason: $reason,
-                type: "ModelEntityAbsentFromText"
-            })
-            """)
-    void saveModelInconsistency(@Param("ardocoId") String parentArdocoId, @Param("uid") String uid, @Param("reason") String reason);
-
-    @Query("""
-            MATCH (s:Sentence {sentenceNumber: $num})
-            CREATE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {
-                id: randomUUID(),
-                name: $name,
-                sentenceNumber: $num,
-                confidence: $conf,
-                reason: $reason,
-                type: $type
-            })
-            """)
-    void saveTextInconsistency(@Param("num") int num, @Param("name") String name, @Param("conf") double conf, @Param("reason") String reason,
-            @Param("type") String type);
 
 }

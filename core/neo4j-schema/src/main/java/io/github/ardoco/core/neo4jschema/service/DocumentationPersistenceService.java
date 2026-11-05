@@ -192,13 +192,15 @@ public class DocumentationPersistenceService {
         createPhraseNodes(phraseIds);
 
         createHasSentenceEdges(textNode.getArdocoId(), sentences);
-        createNextSentenceEdges(sentences);
-        createContainsWordEdges(sentences);
-        createNextWordEdges(sentences);
-        createDependencyEdges(sentences);
-        createHasRootPhraseEdges(sentences, phraseIds);
-        createPhraseContainsWordEdges(phraseIds);
-        createHasChildPhraseEdges(phraseIds);
+        LinkTargetErrors errors = new LinkTargetErrors("Text " + textNode.getArdocoId());
+        createNextSentenceEdges(sentences, errors);
+        createContainsWordEdges(sentences, errors);
+        createNextWordEdges(sentences, errors);
+        createDependencyEdges(sentences, errors);
+        createHasRootPhraseEdges(sentences, phraseIds, errors);
+        createPhraseContainsWordEdges(phraseIds, errors);
+        createHasChildPhraseEdges(phraseIds, errors);
+        errors.throwIfAny(logger);
     }
 
     private void createSentenceNodes(List<SentenceNode> sentences) {
@@ -286,25 +288,25 @@ public class DocumentationPersistenceService {
                 """, Map.of("textArdocoId", textArdocoId), "ids", sentenceIds);
     }
 
-    private void createNextSentenceEdges(List<SentenceNode> sentences) {
+    private void createNextSentenceEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (int i = 0; i < sentences.size() - 1; i++) {
             edges.add(Map.of("fromId", sentences.get(i).getArdocoId(), "toId", sentences.get(i + 1).getArdocoId()));
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Sentence", "ardocoId", "NEXT_SENTENCE", edges);
+        createMatchedPairEdges("Sentence", "ardocoId", "Sentence", "ardocoId", "NEXT_SENTENCE", edges, errors);
     }
 
-    private void createContainsWordEdges(List<SentenceNode> sentences) {
+    private void createContainsWordEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             for (var w : s.getWords()) {
                 edges.add(Map.of("fromId", s.getArdocoId(), "toId", w.getPosition()));
             }
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Word", "position", "CONTAINS_WORD", edges);
+        createMatchedPairEdges("Sentence", "ardocoId", "Word", "position", "CONTAINS_WORD", edges, errors);
     }
 
-    private void createNextWordEdges(List<SentenceNode> sentences) {
+    private void createNextWordEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             var words = s.getWords();
@@ -312,10 +314,10 @@ public class DocumentationPersistenceService {
                 edges.add(Map.of("fromId", words.get(i).getPosition(), "toId", words.get(i + 1).getPosition()));
             }
         }
-        createMatchedPairEdges("Word", "position", "Word", "position", "NEXT_WORD", edges);
+        createMatchedPairEdges("Word", "position", "Word", "position", "NEXT_WORD", edges, errors);
     }
 
-    private void createDependencyEdges(List<SentenceNode> sentences) {
+    private void createDependencyEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             for (var w : s.getWords()) {
@@ -328,78 +330,70 @@ public class DocumentationPersistenceService {
             return;
         }
         for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
                     UNWIND $edges AS edge
                     OPTIONAL MATCH (s:Word {position: edge.fromId})
                     OPTIONAL MATCH (t:Word {position: edge.toId})
                     WITH s, t, edge
                     FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END |
                         CREATE (s)-[:DEPENDENCY {dependencyType: edge.type}]->(t))
-                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
-                    """)
-                    .bind(chunk)
-                    .to("edges")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("DEPENDENCY: {} endpoint(s) not found", missing);
-            }
+                    WITH s, t, edge
+                    WHERE s IS NULL OR t IS NULL
+                    RETURN edge.fromId AS sourceId, edge.toId AS targetId, CASE WHEN s IS NULL THEN 0 ELSE 1 END AS sourceMatches,
+                        CASE WHEN t IS NULL THEN 0 ELSE 1 END AS targetMatches
+                    """).bind(chunk).to("edges").fetch().all());
+            errors.recordEdges("DEPENDENCY", unresolved);
         }
     }
 
-    private void createHasRootPhraseEdges(List<SentenceNode> sentences, Map<PhraseNode, String> phraseIds) {
+    private void createHasRootPhraseEdges(List<SentenceNode> sentences, Map<PhraseNode, String> phraseIds, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             for (PhraseNode root : s.getRootPhrases()) {
                 edges.add(Map.of("fromId", s.getArdocoId(), "toId", phraseIds.get(root)));
             }
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Phrase", "id", "HAS_ROOT_PHRASE", edges);
+        createMatchedPairEdges("Sentence", "ardocoId", "Phrase", "id", "HAS_ROOT_PHRASE", edges, errors);
     }
 
-    private void createPhraseContainsWordEdges(Map<PhraseNode, String> phraseIds) {
+    private void createPhraseContainsWordEdges(Map<PhraseNode, String> phraseIds, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
             for (var w : entry.getKey().getContainedWords()) {
                 edges.add(Map.of("fromId", entry.getValue(), "toId", w.getPosition()));
             }
         }
-        createMatchedPairEdges("Phrase", "id", "Word", "position", "CONTAINS_WORD", edges);
+        createMatchedPairEdges("Phrase", "id", "Word", "position", "CONTAINS_WORD", edges, errors);
     }
 
-    private void createHasChildPhraseEdges(Map<PhraseNode, String> phraseIds) {
+    private void createHasChildPhraseEdges(Map<PhraseNode, String> phraseIds, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
             for (PhraseNode child : entry.getKey().getChildPhrases()) {
                 edges.add(Map.of("fromId", entry.getValue(), "toId", phraseIds.get(child)));
             }
         }
-        createMatchedPairEdges("Phrase", "id", "Phrase", "id", "HAS_CHILD_PHRASE", edges);
+        createMatchedPairEdges("Phrase", "id", "Phrase", "id", "HAS_CHILD_PHRASE", edges, errors);
     }
 
     private void createMatchedPairEdges(String fromLabel, String fromKey, String toLabel, String toKey, String relationshipType,
-            List<Map<String, Object>> edges) {
+            List<Map<String, Object>> edges, LinkTargetErrors errors) {
         if (edges.isEmpty()) {
             return;
         }
         for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
                     UNWIND $edges AS edge
                     OPTIONAL MATCH (s:%s {%s: edge.fromId})
                     OPTIONAL MATCH (t:%s {%s: edge.toId})
-                    WITH s, t
+                    WITH s, t, edge
                     FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END | CREATE (s)-[:%s]->(t))
-                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
-                    """.formatted(fromLabel, fromKey, toLabel, toKey, relationshipType))
-                    .bind(chunk)
-                    .to("edges")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("{}: {} endpoint(s) not found", relationshipType, missing);
-            }
+                    WITH s, t, edge
+                    WHERE s IS NULL OR t IS NULL
+                    RETURN edge.fromId AS sourceId, edge.toId AS targetId, CASE WHEN s IS NULL THEN 0 ELSE 1 END AS sourceMatches,
+                        CASE WHEN t IS NULL THEN 0 ELSE 1 END AS targetMatches
+                    """.formatted(fromLabel, fromKey, toLabel, toKey, relationshipType)).bind(chunk).to("edges").fetch().all());
+            errors.recordEdges(relationshipType, unresolved);
         }
     }
 

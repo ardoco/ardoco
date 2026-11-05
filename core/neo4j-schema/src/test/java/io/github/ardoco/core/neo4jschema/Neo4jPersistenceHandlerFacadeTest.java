@@ -297,7 +297,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
 
         Text text = TextFactory.createComplexText("inconsistency_doc");
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
-        var sentenceNumber = text.getSentences().get(0).getSentenceNumber();
+        var sentenceNumber = text.getSentences().get(0).getSentenceNumber() + 1;
 
         var modelInc = new ModelEntityAbsentFromTextInconsistency(archEntity);
         var textInc = new TextEntityAbsentFromModelInconsistency("MissingComponent", sentenceNumber, 0.95, null);
@@ -366,14 +366,15 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @DisplayName("Facade: Delete documentation and associated inconsistencies")
     void testDeleteDocumentationCascades() {
         Text text = TextFactory.createComplexText("doc_to_delete");
-        persistenceHandler.savePreprocessedText(text, "doc_id");
+        persistenceHandler.savePreprocessedText(text, "PreprocessingData");
 
-        var textInc = new TextEntityAbsentFromModelInconsistency("Missing", text.getSentences().get(0).getSentenceNumber(), 1.0, null);
+        var textInc = new TextEntityAbsentFromModelInconsistency("Missing", text.getSentences().get(0).getSentenceNumber() + 1, 1.0, null);
         persistenceHandler.addInconsistencies(List.of(textInc));
+        Assertions.assertEquals(1, persistenceHandler.getInconsistencies().size(), "Precondition: the inconsistency is attached to the text");
 
-        persistenceHandler.deletePreprocessedText("doc_id");
+        persistenceHandler.deletePreprocessedText("PreprocessingData");
 
-        Assertions.assertFalse(persistenceHandler.hasPreprocessedText("doc_id"));
+        Assertions.assertFalse(persistenceHandler.hasPreprocessedText("PreprocessingData"));
         Assertions.assertTrue(persistenceHandler.getInconsistencies().isEmpty(), "Inconsistency should be gone after text deletion.");
 
         Long wordCount = neo4jClient.query("MATCH (w:Word) RETURN count(w)").fetchAs(Long.class).one().get();

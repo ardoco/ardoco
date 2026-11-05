@@ -63,7 +63,7 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
      * Each map in {@code items} has the same shape as the scalar parameters of {@link #saveWithMappings}: {@code ardocoId} (String), {@code props}
      * (Map), {@code nameMappingIds} (List of String), {@code typeMappingIds} (List of String).
      *
-     * @return the total number of requested NounMapping targets that were not found, summed across all items
+     * @return one description per item with requested NounMapping targets that were not found (empty if all edges were created)
      */
     @Query("""
             UNWIND $items AS item
@@ -80,7 +80,9 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
             OPTIONAL MATCH (t:NounMapping) WHERE t.ardocoId IN item.typeMappingIds
             WITH item, names, collect(DISTINCT t) AS types, ri
             FOREACH (typeMapping IN types | MERGE (ri)-[:HAS_TYPE_MAPPING]->(typeMapping))
-            RETURN sum((size(item.nameMappingIds) - size(names)) + (size(item.typeMappingIds) - size(types))) AS totalMissing
+            WITH item, (size(item.nameMappingIds) - size(names)) + (size(item.typeMappingIds) - size(types)) AS missing
+            WHERE missing > 0
+            RETURN item.ardocoId + ': ' + toString(missing) + ' NounMapping target(s) missing' AS unresolved
             """)
-    Long saveAllWithMappings(@Param("items") List<Map<String, Object>> items);
+    List<String> saveAllWithMappings(@Param("items") List<Map<String, Object>> items);
 }

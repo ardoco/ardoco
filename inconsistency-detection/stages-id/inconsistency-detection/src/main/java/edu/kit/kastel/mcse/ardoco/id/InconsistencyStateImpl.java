@@ -35,11 +35,12 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public boolean addInconsistency(Inconsistency inconsistency) {
-        if (!inconsistencies.contains(inconsistency)) {
-            inconsistencies.add(inconsistency);
+        if (inconsistencies.contains(inconsistency)) {
+            return false;
         }
+        inconsistencies.add(inconsistency);
         PersistenceBridge.addInconsistencies(List.of(inconsistency));
-        return inconsistencies.contains(inconsistency);
+        return true;
     }
 
     /**

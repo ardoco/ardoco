@@ -256,10 +256,13 @@ public class CodePersistenceService {
 
         Collection<CodeItemNode> items = modelNode.getAllRepositoryItems();
         createCodeItemNodes(items);
-        createContainsCodeItemEdges(items);
-        createHasRepositoryItemEdges(modelNode.getModelId(), items);
-        createContainsCodeRootEdges(modelNode.getModelId(), modelNode.getContent());
-        createDatatypeReferenceEdges(items);
+        LinkTargetErrors errors = new LinkTargetErrors("CodeModel " + modelNode.getModelId());
+        createContainsCodeItemEdges(items, errors);
+        createModelToItemEdges("HAS_REPOSITORY_ITEM", modelNode.getModelId(), items.stream().map(CodeItemNode::getArdocoId).toList(), errors);
+        createModelToItemEdges("CONTAINS_CODE_ROOT", modelNode.getModelId(), modelNode.getContent().stream().map(CodeItemNode::getArdocoId).toList(),
+                errors);
+        createDatatypeReferenceEdges(items, errors);
+        errors.throwIfAny(logger);
     }
 
     /**
@@ -352,69 +355,38 @@ public class CodePersistenceService {
     }
 
     /** {@code CONTAINS_CODE_ITEM}: only for children actually resolvable in the model (mirrors the in-memory node graph, not the raw {@code contentIds}). */
-    private void createContainsCodeItemEdges(Collection<CodeItemNode> items) {
+    private void createContainsCodeItemEdges(Collection<CodeItemNode> items, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (CodeItemNode parent : items) {
             for (CodeItemNode child : parent.getContent()) {
-                edges.add(Map.of("parentId", parent.getArdocoId(), "childId", child.getArdocoId()));
+                edges.add(Map.of("sourceId", parent.getArdocoId(), "targetId", child.getArdocoId()));
             }
         }
-        createTraceableToTraceableEdges("CONTAINS_CODE_ITEM", edges, "parentId", "childId", "CONTAINS_CODE_ITEM target(s) not found");
+        createTraceableToTraceableEdges("CONTAINS_CODE_ITEM", edges, errors);
     }
 
-    private void createHasRepositoryItemEdges(String modelId, Collection<CodeItemNode> items) {
-        List<String> itemIds = items.stream().map(CodeItemNode::getArdocoId).toList();
-        for (List<String> idChunk : chunk(itemIds, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
-                    MATCH (m:CodeModel {modelId: $modelId})
-                    UNWIND $itemIds AS itemId
-                    OPTIONAL MATCH (n:Traceable {ardocoId: itemId})
-                    WITH m, itemId, n
-                    FOREACH (ignore IN CASE WHEN n IS NOT NULL THEN [1] ELSE [] END | CREATE (m)-[:HAS_REPOSITORY_ITEM]->(n))
-                    RETURN sum(CASE WHEN n IS NULL THEN 1 ELSE 0 END) AS missing
-                    """)
-                    .bind(modelId)
-                    .to("modelId")
-                    .bind(idChunk)
-                    .to("itemIds")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("HAS_REPOSITORY_ITEM: {} item(s) not found while linking to CodeModel {}", missing, modelId);
-            }
-        }
-    }
-
-    private void createContainsCodeRootEdges(String modelId, Collection<CodeItemNode> roots) {
-        if (roots.isEmpty()) {
+    private void createModelToItemEdges(String relationshipType, String modelId, List<String> itemIds, LinkTargetErrors errors) {
+        if (itemIds.isEmpty()) {
             return;
         }
-        List<String> rootIds = roots.stream().map(CodeItemNode::getArdocoId).toList();
-        for (List<String> idChunk : chunk(rootIds, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
+        for (List<String> idChunk : chunk(itemIds, BATCH_CHUNK_SIZE)) {
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
                     MATCH (m:CodeModel {modelId: $modelId})
-                    UNWIND $rootIds AS rootId
-                    OPTIONAL MATCH (n:Traceable {ardocoId: rootId})
-                    WITH m, rootId, n
-                    FOREACH (ignore IN CASE WHEN n IS NOT NULL THEN [1] ELSE [] END | CREATE (m)-[:CONTAINS_CODE_ROOT]->(n))
-                    RETURN sum(CASE WHEN n IS NULL THEN 1 ELSE 0 END) AS missing
-                    """)
-                    .bind(modelId)
-                    .to("modelId")
-                    .bind(idChunk)
-                    .to("rootIds")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("CONTAINS_CODE_ROOT: {} root(s) not found while linking to CodeModel {}", missing, modelId);
-            }
+                    UNWIND range(0, size($itemIds) - 1) AS index
+                    WITH m, index, $itemIds[index] AS itemId
+                    OPTIONAL MATCH (n:CodeItem:Traceable {ardocoId: itemId}) USING INDEX SEEK n:Traceable(ardocoId)
+                    WITH m, index, itemId, collect(n) AS targets
+                    FOREACH (target IN CASE WHEN size(targets) = 1 THEN targets ELSE [] END | CREATE (m)-[:%s]->(target))
+                    WITH itemId, size(targets) AS targetMatches
+                    WHERE targetMatches <> 1
+                    RETURN $modelId AS sourceId, itemId AS targetId, 1 AS sourceMatches, targetMatches
+                    """.formatted(relationshipType)).bind(modelId).to("modelId").bind(idChunk).to("itemIds").fetch().all());
+            errors.recordEdges(relationshipType, unresolved);
         }
     }
 
     /** {@code EXTENDS}/{@code IMPLEMENTS}/{@code REFERENCES_DATATYPE}, from the verbatim id-list properties (not the {@code Set<DatatypeNode>} fields). */
-    private void createDatatypeReferenceEdges(Collection<CodeItemNode> items) {
+    private void createDatatypeReferenceEdges(Collection<CodeItemNode> items, LinkTargetErrors errors) {
         List<Map<String, Object>> extendsEdges = new ArrayList<>();
         List<Map<String, Object>> implementsEdges = new ArrayList<>();
         List<Map<String, Object>> referencesEdges = new ArrayList<>();
@@ -426,9 +398,9 @@ public class CodePersistenceService {
             addEdges(implementsEdges, dt.getArdocoId(), dt.getImplementedDataTypesIds());
             addEdges(referencesEdges, dt.getArdocoId(), dt.getDatatypeReferencesIds());
         }
-        createTraceableToTraceableEdges("EXTENDS", extendsEdges, "sourceId", "targetId", "EXTENDS target(s) not found");
-        createTraceableToTraceableEdges("IMPLEMENTS", implementsEdges, "sourceId", "targetId", "IMPLEMENTS target(s) not found");
-        createTraceableToTraceableEdges("REFERENCES_DATATYPE", referencesEdges, "sourceId", "targetId", "REFERENCES_DATATYPE target(s) not found");
+        createTraceableToTraceableEdges("EXTENDS", extendsEdges, errors);
+        createTraceableToTraceableEdges("IMPLEMENTS", implementsEdges, errors);
+        createTraceableToTraceableEdges("REFERENCES_DATATYPE", referencesEdges, errors);
     }
 
     private static void addEdges(List<Map<String, Object>> edges, String sourceId, List<String> targetIds) {
@@ -440,28 +412,25 @@ public class CodePersistenceService {
         }
     }
 
-    private void createTraceableToTraceableEdges(String relationshipType, List<Map<String, Object>> edges, String sourceKey, String targetKey,
-            String missingWarning) {
+    private void createTraceableToTraceableEdges(String relationshipType, List<Map<String, Object>> edges, LinkTargetErrors errors) {
         if (edges.isEmpty()) {
             return;
         }
         for (List<Map<String, Object>> chunk : chunk(edges, BATCH_CHUNK_SIZE)) {
-            Long missing = neo4jClient.query("""
-                    UNWIND $edges AS edge
-                    OPTIONAL MATCH (s:Traceable {ardocoId: edge.%s})
-                    OPTIONAL MATCH (t:Traceable {ardocoId: edge.%s})
-                    WITH s, t
-                    FOREACH (ignore IN CASE WHEN s IS NOT NULL AND t IS NOT NULL THEN [1] ELSE [] END | CREATE (s)-[:%s]->(t))
-                    RETURN sum(CASE WHEN s IS NULL OR t IS NULL THEN 1 ELSE 0 END) AS missing
-                    """.formatted(sourceKey, targetKey, relationshipType))
-                    .bind(chunk)
-                    .to("edges")
-                    .fetchAs(Long.class)
-                    .one()
-                    .orElse(0L);
-            if (missing != null && missing > 0) {
-                logger.warn("{}: {}", missingWarning, missing);
-            }
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
+                    UNWIND range(0, size($edges) - 1) AS index
+                    WITH index, $edges[index] AS edge
+                    OPTIONAL MATCH (s:CodeItem:Traceable {ardocoId: edge.sourceId}) USING INDEX SEEK s:Traceable(ardocoId)
+                    WITH index, edge, collect(s) AS sources
+                    OPTIONAL MATCH (t:CodeItem:Traceable {ardocoId: edge.targetId}) USING INDEX SEEK t:Traceable(ardocoId)
+                    WITH index, edge, sources, collect(t) AS targets
+                    FOREACH (s IN CASE WHEN size(sources) = 1 AND size(targets) = 1 THEN sources ELSE [] END |
+                        FOREACH (t IN targets | CREATE (s)-[:%s]->(t)))
+                    WITH edge, size(sources) AS sourceMatches, size(targets) AS targetMatches
+                    WHERE sourceMatches <> 1 OR targetMatches <> 1
+                    RETURN edge.sourceId AS sourceId, edge.targetId AS targetId, sourceMatches, targetMatches
+                    """.formatted(relationshipType)).bind(chunk).to("edges").fetch().all());
+            errors.recordEdges(relationshipType, unresolved);
         }
     }
 

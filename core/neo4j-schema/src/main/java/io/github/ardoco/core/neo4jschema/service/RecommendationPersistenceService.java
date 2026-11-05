@@ -59,8 +59,9 @@ public class RecommendationPersistenceService {
         long missing = orZero(recommendedInstanceRepository.saveWithMappings(ardocoId, recommendedInstanceMapper.toProperties(recommendedInstance, metamodel),
                 nameMappingIds, typeMappingIds));
         if (missing > 0) {
-            logger.warn("RecommendedInstance {} ({}): {} of {} name/type mappings not linked (NounMapping nodes missing)", ardocoId,
-                    recommendedInstance.getName(), missing, nameMappingIds.size() + typeMappingIds.size());
+            LinkTargetErrors errors = new LinkTargetErrors("RecommendedInstance");
+            errors.missing("HAS_NAME_MAPPING/HAS_TYPE_MAPPING", missing, ardocoId + ": " + missing + " NounMapping target(s) missing");
+            errors.throwIfAny(logger);
         }
         logger.debug("Saved RecommendedInstance {} ({})", ardocoId, recommendedInstance.getName());
     }
@@ -88,11 +89,10 @@ public class RecommendationPersistenceService {
             items.add(item);
         }
 
-        Long missing = recommendedInstanceRepository.saveAllWithMappings(items);
-        if (missing != null && missing > 0) {
-            logger.warn("Batch RecommendedInstance save: {} name/type mapping(s) not linked across {} instance(s) (NounMapping nodes missing)", missing,
-                    recommendedInstances.size());
-        }
+        List<String> unresolvedItems = recommendedInstanceRepository.saveAllWithMappings(items);
+        LinkTargetErrors errors = new LinkTargetErrors("RecommendedInstance");
+        unresolvedItems.forEach(description -> errors.missing("HAS_NAME_MAPPING/HAS_TYPE_MAPPING", 1, description));
+        errors.throwIfAny(logger);
         logger.debug("Saved {} RecommendedInstances in one batch ({})", recommendedInstances.size(), metamodel);
     }
 

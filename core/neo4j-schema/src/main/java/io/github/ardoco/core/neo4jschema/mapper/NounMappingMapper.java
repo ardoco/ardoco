@@ -88,22 +88,22 @@ public class NounMappingMapper {
      * Resolves the ids of the existing Phrase nodes (from the preprocessed text graph) that correspond to the phrases of the given noun mapping.
      * Phrases are matched by phrase type and exact word positions; only ids are loaded, never {@code PhraseNode} objects.
      *
-     * @param mapping the domain noun mapping
-     * @return distinct Phrase ids; phrases without a match are logged and skipped
+     * @param mapping    the domain noun mapping
+     * @param unresolved receives one description per phrase that has no contained words or no matching Phrase node
+     * @return distinct Phrase ids of the phrases that were matched
      */
-    public List<String> resolvePhraseIds(NounMapping mapping) {
+    public List<String> resolvePhraseIds(NounMapping mapping, List<String> unresolved) {
         Set<String> phraseIds = new LinkedHashSet<>();
         for (Phrase phrase : mapping.getPhrases()) {
             List<Integer> phraseWordPositions = phrase.getContainedWords().collect(Word::getPosition).toList();
             if (phraseWordPositions.isEmpty()) {
-                logger.warn("Skipping IN_PHRASE for NounMapping {}: phrase has no contained words", mapping.getArdocoId());
+                unresolved.add(mapping.getArdocoId() + ": phrase without contained words");
                 continue;
             }
             List<String> matches = documentationGraphRepository.findPhraseIdByTypeAndExactWordPositions(phrase.getPhraseType().name(),
                     phraseWordPositions);
             if (matches.isEmpty()) {
-                logger.warn("No Phrase matched for NounMapping {} (type={}, positions={})", mapping.getArdocoId(), phrase.getPhraseType(),
-                        phraseWordPositions);
+                unresolved.add(mapping.getArdocoId() + ": no Phrase " + phrase.getPhraseType() + " " + phraseWordPositions);
             } else {
                 phraseIds.add(matches.get(0));
             }
