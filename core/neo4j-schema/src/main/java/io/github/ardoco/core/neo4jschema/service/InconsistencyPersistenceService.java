@@ -86,7 +86,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
      * to the {@code Sentence} with {@code sentenceNumber = n - 1} of the run's text ({@code Text {ardocoId: PreprocessingData.ID}}); the inconsistency
      * node keeps the 1-based number. A model inconsistency is attached to the architecture or code item with its uid. {@code MERGE} on (parent, reason,
      * type) keeps the write idempotent. A missing or ambiguous parent, or an unknown inconsistency type, is logged as one ERROR and thrown as a
-     * {@link MissingLinkTargetException} after all rows were written.
+     * {@link MissingLinkTargetException} after the last chunk; the call runs in one transaction, so the exception rolls back all of its rows.
      *
      * @param inconsistencies The collection of inconsistencies to be added to the database. This collection can contain both model-based and text-based
      *                        inconsistencies.
