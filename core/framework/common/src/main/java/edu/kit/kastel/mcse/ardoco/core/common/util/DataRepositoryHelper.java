@@ -63,17 +63,13 @@ public final class DataRepositoryHelper {
 
     /**
      * Put the given input text into the given {@link DataRepository}. This will override existing data!
-     * Dual-writes to Neo4j Project metadata in Neo4j storage mode when the project name is known.
+     * The Neo4j Project node is written by the run itself, after its start-of-run clean.
      *
      * @param dataRepository the dataRepository
      * @param inputText      the input inputText
      */
     public static void putInputText(DataRepository dataRepository, String inputText) {
         dataRepository.addData(InputTextData.ID, new InputTextData(inputText));
-        if (PersistenceBridge.isNeo4jStorage() && hasProjectPipelineData(dataRepository)) {
-            String projectName = getProjectPipelineData(dataRepository).getProjectName();
-            PersistenceBridge.getHandler().saveProjectMetadata(projectName, inputText);
-        }
     }
 
     /**

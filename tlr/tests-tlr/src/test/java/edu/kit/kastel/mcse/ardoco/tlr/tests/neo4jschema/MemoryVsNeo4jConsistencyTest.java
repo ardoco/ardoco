@@ -181,7 +181,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         all.add(teaStoreCase("transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(), transarcFileChecks(),
                 Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 100, "ARCHITECTURE_CODE", 155, "RECOMMENDATION_CODE", 25,
                         "RECOMMENDATION_ARCHITECTURE", 7),
-                new FixedCensus(5713, 19277, 3819)));
+                new FixedCensus(5714, 19277, 3819)));
         all.add(teaStoreCase("swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(), swattrFileChecks(), null, null));
         all.add(teaStoreCase("ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(), ardocodeRequiredLabels(), Map.of(), null, null));
         all.add(teaStoreCase("arcotl", MemoryVsNeo4jConsistencyTest::arcotl, textLabels(), arcotlRequiredLabels(), arcotlFileChecks(), null, null));
@@ -190,7 +190,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
                 transarcFileChecks(),
                 Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1957, "RECOMMENDATION_CODE", 18,
                         "RECOMMENDATION_ARCHITECTURE", 5),
-                new FixedCensus(28647, 71377, 27966)));
+                new FixedCensus(28648, 71377, 27966)));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(),
                 swattrFileChecks(), null, null));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(),
@@ -288,15 +288,15 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
     }
 
     private static Set<String> transarcRequiredLabels() {
-        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "ArchitectureItem", "CodeItem", "RunMetadata");
+        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "ArchitectureItem", "CodeItem", "RunMetadata", "Project");
     }
 
     private static Set<String> swattrRequiredLabels() {
-        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "ArchitectureItem", "RunMetadata");
+        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "ArchitectureItem", "RunMetadata", "Project");
     }
 
     private static Set<String> ardocodeRequiredLabels() {
-        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "CodeItem", "RunMetadata");
+        return Set.of("Text", "Sentence", "Word", "Phrase", "NounMapping", "RecommendedInstance", "CodeItem", "RunMetadata", "Project");
     }
 
     private static Set<String> arcotlRequiredLabels() {

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
@@ -99,6 +100,7 @@ public final class Ardoco extends Pipeline {
         try {
             if (neo4jMode) {
                 writeRunMetadataStart();
+                writeProjectMetadata();
             }
             super.run();
         } catch (RuntimeException | Error ex) {
@@ -126,6 +128,12 @@ public final class Ardoco extends Pipeline {
             throw new IllegalStateException("Failed to serialize the run configuration for run metadata", e);
         }
         PersistenceBridge.getHandler().saveRunMetadataStart(this.projectName, Instant.now().toString(), configurationJson);
+    }
+
+    private void writeProjectMetadata() {
+        this.getDataRepository()
+                .getData(InputTextData.ID, InputTextData.class)
+                .ifPresent(inputText -> PersistenceBridge.getHandler().saveProjectMetadata(this.projectName, inputText.getText()));
     }
 
     /**

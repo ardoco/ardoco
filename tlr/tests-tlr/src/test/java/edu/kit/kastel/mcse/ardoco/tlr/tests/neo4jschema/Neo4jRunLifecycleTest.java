@@ -24,6 +24,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
@@ -80,6 +81,24 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
         Assertions.assertTrue(json.contains("\"relationshipCount\""));
         Assertions.assertTrue(json.contains("\"NounMapping\""), "storage=neo4j writes NounMapping nodes, so they must be in the export");
         Assertions.assertTrue(json.contains("\"RecommendedInstance\""), "storage=neo4j writes RecommendedInstance nodes, so they must be in the export");
+    }
+
+    @Test
+    @DisplayName("A Neo4j-mode run exports exactly one Project node with the project name and the full input text")
+    void successfulRunExportsProjectNodeWithInputText() {
+        clearNeo4jGraph();
+        var runner = new Swattr(projectName);
+        runner.setUp(inputText, new ArchitectureConfiguration(new File(inputModelArchitecture), ModelFormat.PCM), getConfigsWithNeo4jStorage(), outputDir);
+        testRunnerAssertions(runner);
+
+        Assertions.assertNotNull(runner.run());
+
+        String expectedInputText = runner.getArdoco().getDataRepository().getData(InputTextData.ID, InputTextData.class).orElseThrow().getText();
+        List<JsonNode> projectNodes = nodesWithLabel(readFile(knowledgeGraphFile()), "Project");
+        Assertions.assertEquals(1, projectNodes.size(), "exactly one Project node must be exported");
+        JsonNode properties = projectNodes.getFirst().get("properties");
+        Assertions.assertEquals(projectName, properties.get("projectName").asText());
+        Assertions.assertEquals(expectedInputText, properties.get("inputText").asText());
     }
 
     @Test
