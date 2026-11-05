@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
  */
 
 public class Element {
-    protected ElementIdentifier identifierOfParent;
+    protected @Nullable ElementIdentifier identifierOfParent;
     protected final ElementIdentifier identifier;
     private int startLine;
     private int endLine;

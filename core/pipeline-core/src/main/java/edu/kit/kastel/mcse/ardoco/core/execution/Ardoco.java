@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ public final class Ardoco extends Pipeline {
      * @param outputDir the directory where output files should be saved
      * @return the ARDoCo result containing all analysis data, or null if the pipeline is not properly initialized
      */
-    public ArdocoResult runAndSave(File outputDir) {
+    public @Nullable ArdocoResult runAndSave(File outputDir) {
         classLogger.info("Starting {}", this.projectName);
 
         if (!this.hasPipelineSteps()) {

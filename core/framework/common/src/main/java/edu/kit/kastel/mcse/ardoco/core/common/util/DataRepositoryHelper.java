@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
@@ -217,7 +219,7 @@ public final class DataRepositoryHelper {
      * @param dataRepository the DataRepository to access
      * @return the state
      */
-    public static InconsistencyStates getInconsistencyStates(DataRepository dataRepository) {
+    public static @Nullable InconsistencyStates getInconsistencyStates(DataRepository dataRepository) {
         if (hasInconsistencyStates(dataRepository)) {
             return dataRepository.getData(InconsistencyStates.ID, InconsistencyStates.class).orElseThrow();
         }
@@ -242,7 +244,7 @@ public final class DataRepositoryHelper {
      * @param dataRepository the DataRepository to access
      * @return the state
      */
-    public static CodeTraceabilityState getCodeTraceabilityState(DataRepository dataRepository) {
+    public static @Nullable CodeTraceabilityState getCodeTraceabilityState(DataRepository dataRepository) {
         if (hasCodeTraceabilityState(dataRepository)) {
             return dataRepository.getData(CodeTraceabilityState.ID, CodeTraceabilityState.class).orElseThrow();
         }

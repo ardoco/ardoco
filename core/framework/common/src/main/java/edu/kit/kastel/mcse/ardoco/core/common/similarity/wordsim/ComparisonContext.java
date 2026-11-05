@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 
 /**
@@ -10,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
  * The fields {@code firstString} and {@code secondString} are always non-null.
  * The field {@code lemmatize} decides whether the lemmatized version of both words should be used for comparison.
  */
-public record ComparisonContext(String firstString, String secondString, Word firstWord, Word secondWord, boolean lemmatize) {
+public record ComparisonContext(String firstString, String secondString, @Nullable Word firstWord, @Nullable Word secondWord, boolean lemmatize) {
 
     /**
      * Constructs a string-based context with the default match function and no lemmatization.
@@ -62,7 +64,7 @@ public record ComparisonContext(String firstString, String secondString, Word fi
         return this.findAppropriateTerm(this.secondString, this.secondWord);
     }
 
-    private String findAppropriateTerm(String string, Word word) {
+    private String findAppropriateTerm(String string, @Nullable Word word) {
         Objects.requireNonNull(string);
 
         if (word != null) {

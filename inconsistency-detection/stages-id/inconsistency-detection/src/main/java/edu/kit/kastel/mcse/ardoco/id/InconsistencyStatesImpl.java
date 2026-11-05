@@ -1,8 +1,10 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.io.Serial;
 import java.util.EnumMap;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
@@ -26,7 +28,7 @@ public class InconsistencyStatesImpl implements InconsistencyStates {
     }
 
     @Override
-    public InconsistencyState getInconsistencyState(Metamodel metamodel) {
+    public @Nullable InconsistencyState getInconsistencyState(Metamodel metamodel) {
         return inconsistencyStates.get(metamodel);
     }
 }

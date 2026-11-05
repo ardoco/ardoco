@@ -1,7 +1,8 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -49,6 +50,6 @@ public interface RecommendationState extends IConfigurable {
      * @param nounMapping the noun mapping to delete
      * @param replacement the replacement noun mapping
      */
-    void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
+    void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement);
 
 }

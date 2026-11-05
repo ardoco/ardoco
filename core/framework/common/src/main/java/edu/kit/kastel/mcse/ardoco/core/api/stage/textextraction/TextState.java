@@ -1,8 +1,9 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import org.eclipse.collections.api.block.predicate.Predicate;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -30,7 +31,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param replacement    the replacement noun mapping (optional)
      * @param cascade        whether to cascade the removal
      */
-    void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement, boolean cascade);
+    void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, @Nullable NounMapping replacement, boolean cascade);
 
     /**
      * Adds a phrase mapping to the state.
@@ -94,7 +95,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param kind the mapping kind
      * @return the noun mappings that could be of the specified kind
      */
-    default ImmutableList<NounMapping> getMappingsThatCouldBeOfKind(Word word, MappingKind kind) {
+    default ImmutableList<NounMapping> getMappingsThatCouldBeOfKind(@Nullable Word word, MappingKind kind) {
         return this.getNounMappingsByWord(word).select(mapping -> mapping.getProbabilityForKind(kind) > 0);
     }
 
@@ -105,7 +106,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param kinds the mapping kinds
      * @return the noun mappings that could be of multiple specified kinds
      */
-    ImmutableList<NounMapping> getMappingsThatCouldBeMultipleKinds(Word word, MappingKind... kinds);
+    ImmutableList<NounMapping> getMappingsThatCouldBeMultipleKinds(@Nullable Word word, MappingKind... kinds);
 
     /**
      * Retrieves noun mappings associated with the given word.
@@ -113,7 +114,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param word the word
      * @return the noun mappings associated with the word
      */
-    default ImmutableList<NounMapping> getNounMappingsByWord(Word word) {
+    default ImmutableList<NounMapping> getNounMappingsByWord(@Nullable Word word) {
         return this.getNounMappings().select(nm -> nm.getWords().contains(word));
     }
 
@@ -124,7 +125,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param kind the mapping kind
      * @return the noun mappings associated with the word and of the specified kind
      */
-    default ImmutableList<NounMapping> getNounMappingsByWordAndKind(Word word, MappingKind kind) {
+    default ImmutableList<NounMapping> getNounMappingsByWordAndKind(@Nullable Word word, MappingKind kind) {
         return this.getNounMappings().select(n -> n.getWords().contains(word)).select(this.nounMappingIsOfKind(kind)).toImmutable();
     }
 

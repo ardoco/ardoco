@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
 import java.net.URI;
@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public final class JavaExtractor extends CodeExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     /**
      * Creates a new JavaExtractor instance.

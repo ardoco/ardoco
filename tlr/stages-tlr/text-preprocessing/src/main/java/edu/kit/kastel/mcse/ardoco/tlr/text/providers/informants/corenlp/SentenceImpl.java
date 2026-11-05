@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.util.Objects;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ class SentenceImpl implements Sentence {
 
     private final TextImpl parent;
     private final transient CoreSentence coreSentence;
-    private SemanticGraph semanticGraph;
+    private @Nullable SemanticGraph semanticGraph;
     private final int sentenceNumber;
 
     private final String text;

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -51,7 +52,7 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
      * @return the created noun mapping
      */
     public NounMapping createNounMappingStateless(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
-            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
+            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, @Nullable String reference) {
         if (reference == null) {
             reference = this.calculateNounMappingReference(referenceWords);
         }
@@ -61,7 +62,7 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
 
     @Override
     public NounMapping addNounMapping(ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
-            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
+            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, @Nullable String reference) {
         //Do not add noun mappings to the state, which do not have any claimants
         if (distribution.valuesView().noneSatisfy(d -> !d.getClaimants().isEmpty())) {
             throw new IllegalArgumentException("Atleast 1 claimant is required");
@@ -74,7 +75,7 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
 
     @Override
     public NounMapping addNounMapping(ImmutableSortedSet<Word> words, MappingKind kind, Claimant claimant, double probability,
-            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
+            ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, @Nullable String reference) {
         MutableSortedMap<MappingKind, Confidence> distribution = SortedMaps.mutable.empty();
         distribution.put(MappingKind.NAME, new Confidence(DEFAULT_AGGREGATOR));
         distribution.put(MappingKind.TYPE, new Confidence(DEFAULT_AGGREGATOR));
@@ -135,8 +136,8 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
     }
 
     @Override
-    public NounMappingImpl mergeNounMappingsStateless(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords,
-            String reference, MappingKind mappingKind, Claimant claimant, double probability) {
+    public NounMappingImpl mergeNounMappingsStateless(NounMapping firstNounMapping, NounMapping secondNounMapping, @Nullable ImmutableList<Word> referenceWords,
+            @Nullable String reference, MappingKind mappingKind, Claimant claimant, double probability) {
 
         MutableSortedSet<Word> mergedWords = firstNounMapping.getWords().toSortedSet();
         mergedWords.add(secondNounMapping.getReferenceWords().get(0));
@@ -168,8 +169,8 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
     }
 
     @Override
-    public NounMappingImpl mergeNounMappings(NounMapping firstNounMapping, NounMapping secondNounMapping, ImmutableList<Word> referenceWords, String reference,
-            MappingKind mappingKind, Claimant claimant, double probability) {
+    public NounMappingImpl mergeNounMappings(NounMapping firstNounMapping, NounMapping secondNounMapping, @Nullable ImmutableList<Word> referenceWords,
+            @Nullable String reference, MappingKind mappingKind, Claimant claimant, double probability) {
         var mergedNounMapping = this.mergeNounMappingsStateless(firstNounMapping, secondNounMapping, referenceWords, reference, mappingKind, claimant,
                 probability);
 

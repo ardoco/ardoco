@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.jspecify.annotations.Nullable;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class ConfigurationHelper {
      * @param additionalConfigsFile the file containing the additional configurations
      * @return a map with the additional configurations
      */
-    public static ImmutableSortedMap<String, String> loadAdditionalConfigs(File additionalConfigsFile) {
+    public static ImmutableSortedMap<String, String> loadAdditionalConfigs(@Nullable File additionalConfigsFile) {
         MutableSortedMap<String, String> additionalConfigs = SortedMaps.mutable.empty();
         if (additionalConfigsFile != null && (!additionalConfigsFile.exists() || !additionalConfigsFile.isFile())) {
             throw new IllegalArgumentException("File " + additionalConfigsFile.getAbsolutePath() + " is not a valid configuration file!");

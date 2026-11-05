@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -23,7 +25,7 @@ public final class CodeAssembly extends CodeModule {
     private String language;
 
     @JsonProperty
-    private List<String> importedModuleNames;
+    private @Nullable List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
@@ -67,7 +69,7 @@ public final class CodeAssembly extends CodeModule {
      * @param importedModuleNames the names of imported modules declared in this assembly
      */
     public CodeAssembly(CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language,
-            List<String> importedModuleNames) {
+            @Nullable List<String> importedModuleNames) {
         super(codeItemRepository, name, content);
         this.language = language;
         this.importedModuleNames = importedModuleNames != null ? new ArrayList<>(importedModuleNames) : new ArrayList<>();

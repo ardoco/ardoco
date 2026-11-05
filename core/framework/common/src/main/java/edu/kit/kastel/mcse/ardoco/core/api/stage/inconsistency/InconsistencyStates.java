@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
@@ -19,5 +21,6 @@ public interface InconsistencyStates extends PipelineStepData {
      * @param metamodel the metamodel
      * @return the inconsistency state
      */
+    @Nullable
     InconsistencyState getInconsistencyState(Metamodel metamodel);
 }
