@@ -30,9 +30,9 @@ import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandlerProv
  * started. A JVM shutdown hook closes the context so it never outlives the process. All of this is synchronized: two
  * concurrent callers never start two contexts.
  *
- * <p>Note: starting this context also activates {@link Neo4jBridgeActivator} inside it (it sets
- * {@code ardoco.persistence.neo4j.enabled=true}), which calls {@code PersistenceBridge.setHandler(...)} itself with
- * the same handler bean this class returns. That duplicate registration is harmless (same bean, same effect).
+ * <p>Note: this context sets {@code ardoco.persistence.neo4j.register-bridge=false}, so its {@link Neo4jBridgeActivator}
+ * does not register the handler itself; {@code PersistenceBridge} registers it only after {@link #createHandler} has
+ * verified the connection. Closing the context (re-bootstrap or JVM shutdown) clears the handler from the bridge.
  */
 public final class Neo4jPersistenceHandlerProvider implements PersistenceHandlerProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jPersistenceHandlerProvider.class);
@@ -79,6 +79,7 @@ public final class Neo4jPersistenceHandlerProvider implements PersistenceHandler
         connectionProperties.put("spring.neo4j.authentication.username", username);
         connectionProperties.put("spring.neo4j.authentication.password", password);
         connectionProperties.put("ardoco.persistence.neo4j.enabled", "true");
+        connectionProperties.put("ardoco.persistence.neo4j.register-bridge", "false");
         connectionProperties.put("spring.neo4j.pool.metrics-enabled", "false");
 
         ConfigurableApplicationContext started = new SpringApplicationBuilder(Neo4jPersistenceContext.class).web(WebApplicationType.NONE)

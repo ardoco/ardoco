@@ -1,8 +1,12 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.persistence;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -63,6 +67,8 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     private static PersistenceHandler handler;
 
+    private static String bootstrappedConnection;
+
     private static PersistenceStorage storageStatic = PersistenceStorage.MEMORY;
 
     /** Resolved Neo4j URI of the last {@link #applyConfiguration}, for diagnostics; never the password. */
@@ -95,6 +101,13 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static void setHandler(PersistenceHandler newHandler) {
         handler = newHandler;
+        bootstrappedConnection = null;
+    }
+
+    public static void clearHandlerIfRegistered(PersistenceHandler registered) {
+        if (handler == registered) {
+            setHandler(null);
+        }
     }
 
     public static PersistenceStorage getStorage() {
@@ -440,10 +453,23 @@ public class PersistenceBridge extends AbstractConfigurable {
         neo4jUriStatic = this.neo4jUri;
         neo4jUsernameStatic = this.neo4jUsername;
 
-        if (this.storage == PersistenceStorage.NEO4J && handler == null) {
-            bootstrapHandler(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
+        if (this.storage == PersistenceStorage.NEO4J) {
+            String connection = connectionKey(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
+            if (handler == null || (bootstrappedConnection != null && !bootstrappedConnection.equals(connection))) {
+                bootstrapHandler(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
+                bootstrappedConnection = connection;
+            }
         }
         storageStatic = this.storage;
+    }
+
+    private static String connectionKey(String uri, String username, String password) {
+        try {
+            byte[] passwordDigest = MessageDigest.getInstance("SHA-256").digest(password.getBytes(StandardCharsets.UTF_8));
+            return uri + "\n" + username + "\n" + HexFormat.of().formatHex(passwordDigest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
     }
 
     /**
@@ -463,13 +489,22 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
-     * Looks up a {@link PersistenceHandlerProvider} via {@link ServiceLoader} and registers the handler it creates.
-     * Only called when no handler is registered yet (a test, the Spring activator, or an earlier run in this JVM
-     * may already have set one; that handler wins).
+     * Looks up a {@link PersistenceHandlerProvider} via {@link ServiceLoader} and registers the handler it creates, after the provider's
+     * connectivity check. Called when no handler is registered yet, or when the handler was bootstrapped here for other connection settings (a
+     * handler set by a test or the Spring activator wins). On any failure no handler stays registered, so the next configuration bootstraps again.
      *
      * @throws IllegalStateException if no provider is registered, or the provider could not connect
      */
     private static void bootstrapHandler(String uri, String username, String password) {
+        try {
+            createAndRegisterHandler(uri, username, password);
+        } catch (RuntimeException ex) {
+            setHandler(null);
+            throw ex;
+        }
+    }
+
+    private static void createAndRegisterHandler(String uri, String username, String password) {
         PersistenceHandlerProvider provider = ServiceLoader.load(PersistenceHandlerProvider.class)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(

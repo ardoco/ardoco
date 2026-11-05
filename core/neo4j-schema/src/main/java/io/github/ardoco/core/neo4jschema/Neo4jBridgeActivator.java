@@ -3,11 +3,13 @@ package io.github.ardoco.core.neo4jschema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 /**
  * This component automatically registers the Neo4j implementation with the static PersistenceBridge
@@ -19,15 +21,25 @@ public class Neo4jBridgeActivator {
     private static final Logger logger = LoggerFactory.getLogger(Neo4jBridgeActivator.class);
 
     private final Neo4jPersistenceHandler handler;
+    private final boolean registerWithBridge;
 
-    public Neo4jBridgeActivator(Neo4jPersistenceHandler handler) {
+    public Neo4jBridgeActivator(Neo4jPersistenceHandler handler, @Value("${ardoco.persistence.neo4j.register-bridge:true}") boolean registerWithBridge) {
         this.handler = handler;
+        this.registerWithBridge = registerWithBridge;
     }
 
     @PostConstruct
     public void activate() {
+        if (!this.registerWithBridge) {
+            return;
+        }
         // Plug the implementation into the static bridge so the persistence handler can be used by other components.
         PersistenceBridge.setHandler(this.handler);
         logger.info("Neo4j Persistence has been plugged into the ArDoCo Core Framework.");
+    }
+
+    @PreDestroy
+    public void deactivate() {
+        PersistenceBridge.clearHandlerIfRegistered(this.handler);
     }
 }

@@ -89,6 +89,40 @@ class PersistenceBridgeServiceLoaderTest {
         Assertions.assertFalse(exception.getMessage().contains("wrong-password"), "the password must never appear in an error message");
     }
 
+    @Test
+    @DisplayName("A run configured for a second database after a first one writes to the second database")
+    void changedConnectionSettingsRebootstrapTheHandler() {
+        try (Neo4jContainer<?> second = new Neo4jContainer<>("neo4j:5")) {
+            second.start();
+            PersistenceBridge.setHandler(null);
+            PersistenceBridge.getInstance().applyConfiguration(configFor(container.getBoltUrl(), "neo4j", container.getAdminPassword()));
+            PersistenceBridge.getInstance().applyConfiguration(configFor(second.getBoltUrl(), "neo4j", second.getAdminPassword()));
+
+            String marker = "rebootstrap-marker-" + System.nanoTime();
+            PersistenceBridge.getHandler().saveProjectMetadata(marker, "x");
+
+            Assertions.assertEquals(1, countProjects(second.getBoltUrl(), second.getAdminPassword(), marker), "the marker must be in the second database");
+            Assertions.assertEquals(0, countProjects(container.getBoltUrl(), container.getAdminPassword(), marker), "the marker must not be in the first "
+                    + "database");
+        }
+    }
+
+    @Test
+    @DisplayName("An unreachable database configured twice fails both times")
+    void unreachableDatabaseFailsEveryTime() {
+        PersistenceBridge.setHandler(null);
+        ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
+
+        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
+        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
+    }
+
+    private static long countProjects(String boltUrl, String password, String projectName) {
+        try (Driver directDriver = GraphDatabase.driver(boltUrl, AuthTokens.basic("neo4j", password)); Session session = directDriver.session()) {
+            return session.run("MATCH (p:Project {projectName: $name}) RETURN count(p) AS c", Map.of("name", projectName)).single().get("c").asLong();
+        }
+    }
+
     private static ImmutableSortedMap<String, String> configFor(String uri, String username, String password) {
         return SortedMaps.immutable.with(//
                 "PersistenceBridge::storage", "neo4j", //
