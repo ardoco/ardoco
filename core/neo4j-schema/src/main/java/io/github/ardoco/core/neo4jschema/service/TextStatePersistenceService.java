@@ -53,7 +53,7 @@ public class TextStatePersistenceService {
         List<Integer> wordPositions = NounMappingMapper.positionsOf(mapping.getWords());
         List<Integer> referencePositions = NounMappingMapper.positionsOf(mapping.getReferenceWords());
         List<String> unresolvedPhrases = new ArrayList<>();
-        List<String> phraseIds = nounMappingMapper.resolvePhraseIds(mapping, unresolvedPhrases);
+        List<String> phraseIds = nounMappingMapper.resolvePhraseIds(List.of(mapping), unresolvedPhrases).get(ardocoId);
 
         Long missing = nounMappingRepository.saveWithLinks(ardocoId, nounMappingMapper.toProperties(mapping), wordPositions, referencePositions, phraseIds);
         LinkTargetErrors errors = new LinkTargetErrors("NounMapping");
@@ -78,13 +78,14 @@ public class TextStatePersistenceService {
         }
         List<Map<String, Object>> items = new ArrayList<>(mappings.size());
         List<String> unresolvedPhrases = new ArrayList<>();
+        Map<String, List<String>> phraseIdsByMapping = nounMappingMapper.resolvePhraseIds(mappings, unresolvedPhrases);
         for (NounMapping mapping : mappings) {
             Map<String, Object> item = new HashMap<>();
             item.put("ardocoId", mapping.getArdocoId());
             item.put("props", nounMappingMapper.toProperties(mapping));
             item.put("wordPositions", NounMappingMapper.positionsOf(mapping.getWords()));
             item.put("referencePositions", NounMappingMapper.positionsOf(mapping.getReferenceWords()));
-            item.put("phraseIds", nounMappingMapper.resolvePhraseIds(mapping, unresolvedPhrases));
+            item.put("phraseIds", phraseIdsByMapping.get(mapping.getArdocoId()));
             items.add(item);
         }
 
@@ -100,6 +101,15 @@ public class TextStatePersistenceService {
     public void deleteNounMapping(String ardocoId) {
         nounMappingRepository.deleteByArdocoId(ardocoId);
         logger.debug("Deleted NounMapping {}", ardocoId);
+    }
+
+    @Transactional
+    public void deleteNounMappings(Collection<String> ardocoIds) {
+        if (ardocoIds.isEmpty()) {
+            return;
+        }
+        nounMappingRepository.deleteAllByArdocoIds(new ArrayList<>(ardocoIds));
+        logger.debug("Deleted {} NounMappings in one batch", ardocoIds.size());
     }
 
     public boolean hasNounMappings() {

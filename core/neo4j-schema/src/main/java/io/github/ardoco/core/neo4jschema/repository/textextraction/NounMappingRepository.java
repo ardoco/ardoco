@@ -28,6 +28,9 @@ public interface NounMappingRepository extends Neo4jRepository<NounMappingNode, 
     @Query("MATCH (nm:NounMapping {ardocoId: $ardocoId}) DETACH DELETE nm")
     void deleteByArdocoId(@Param("ardocoId") String ardocoId);
 
+    @Query("UNWIND $ardocoIds AS ardocoId MATCH (nm:NounMapping {ardocoId: ardocoId}) DETACH DELETE nm")
+    void deleteAllByArdocoIds(@Param("ardocoIds") List<String> ardocoIds);
+
     /**
      * Creates or updates the NounMapping node and replaces its outgoing MAPS_WORD, HAS_REFERENCE_WORD and IN_PHRASE edges in one round trip.
      * Word nodes are matched by position and Phrase nodes by id (both indexed); neither is written.

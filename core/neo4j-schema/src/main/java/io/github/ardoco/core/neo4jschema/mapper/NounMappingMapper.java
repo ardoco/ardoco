@@ -2,7 +2,9 @@
 package io.github.ardoco.core.neo4jschema.mapper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -28,7 +31,6 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.NounMappingImpl;
 import io.github.ardoco.core.neo4jschema.entities.documentation.WordNode;
 import io.github.ardoco.core.neo4jschema.entities.textextraction.NounMappingNode;
-import io.github.ardoco.core.neo4jschema.repository.documentation.DocumentationGraphRepository;
 
 /**
  * Maps between domain {@link NounMapping} and Neo4j {@link NounMappingNode}.
@@ -43,10 +45,23 @@ public class NounMappingMapper {
     public static final Claimant RESUME_CLAIMANT = new Claimant() {
     };
 
-    private final DocumentationGraphRepository documentationGraphRepository;
+    private static final int LOOKUP_CHUNK_SIZE = 2000;
 
-    public NounMappingMapper(DocumentationGraphRepository documentationGraphRepository) {
-        this.documentationGraphRepository = documentationGraphRepository;
+    private static final String PHRASE_LOOKUP_QUERY = """
+            UNWIND $phrases AS phrase
+            MATCH (w:Word {position: phrase.positions[0]}) USING INDEX SEEK w:Word(position)
+            MATCH (p:Phrase {phraseType: phrase.type})-[:CONTAINS_WORD]->(w)
+            MATCH (p)-[:CONTAINS_WORD]->(contained:Word)
+            WITH phrase, p, collect(DISTINCT contained.position) AS phrasePositions
+            WHERE size(phrasePositions) = size(phrase.positions) AND ALL(position IN phrase.positions WHERE position IN phrasePositions)
+            WITH phrase, collect(p.id) AS phraseIds
+            RETURN phrase.key AS key, phraseIds[0] AS phraseId
+            """;
+
+    private final Neo4jClient neo4jClient;
+
+    public NounMappingMapper(Neo4jClient neo4jClient) {
+        this.neo4jClient = neo4jClient;
     }
 
     /**
@@ -85,30 +100,56 @@ public class NounMappingMapper {
     }
 
     /**
-     * Resolves the ids of the existing Phrase nodes (from the preprocessed text graph) that correspond to the phrases of the given noun mapping.
-     * Phrases are matched by phrase type and exact word positions; only ids are loaded, never {@code PhraseNode} objects.
+     * Resolves the ids of the existing Phrase nodes (from the preprocessed text graph) that correspond to the phrases of the given noun mappings,
+     * with one batched lookup per {@value #LOOKUP_CHUNK_SIZE} phrases. Phrases are matched by phrase type and exact word positions, starting from
+     * the indexed position of their first word; only ids are loaded, never {@code PhraseNode} objects.
      *
-     * @param mapping    the domain noun mapping
+     * @param mappings   the domain noun mappings
      * @param unresolved receives one description per phrase that has no contained words or no matching Phrase node
-     * @return distinct Phrase ids of the phrases that were matched
+     * @return per noun-mapping ardocoId, the distinct Phrase ids of the phrases that were matched
      */
-    public List<String> resolvePhraseIds(NounMapping mapping, List<String> unresolved) {
-        Set<String> phraseIds = new LinkedHashSet<>();
-        for (Phrase phrase : mapping.getPhrases()) {
-            List<Integer> phraseWordPositions = phrase.getContainedWords().collect(Word::getPosition).toList();
-            if (phraseWordPositions.isEmpty()) {
-                unresolved.add(mapping.getArdocoId() + ": phrase without contained words");
-                continue;
-            }
-            List<String> matches = documentationGraphRepository.findPhraseIdByTypeAndExactWordPositions(phrase.getPhraseType().name(),
-                    phraseWordPositions);
-            if (matches.isEmpty()) {
-                unresolved.add(mapping.getArdocoId() + ": no Phrase " + phrase.getPhraseType() + " " + phraseWordPositions);
-            } else {
-                phraseIds.add(matches.get(0));
+    public Map<String, List<String>> resolvePhraseIds(Collection<NounMapping> mappings, List<String> unresolved) {
+        Map<String, List<String>> phraseIdsByMapping = new LinkedHashMap<>();
+        List<Map<String, Object>> lookups = new ArrayList<>();
+        Map<String, String> mappingByKey = new HashMap<>();
+        Map<String, String> descriptionByKey = new HashMap<>();
+        for (NounMapping mapping : mappings) {
+            phraseIdsByMapping.putIfAbsent(mapping.getArdocoId(), new ArrayList<>());
+            int index = 0;
+            for (Phrase phrase : mapping.getPhrases()) {
+                List<Integer> phraseWordPositions = phrase.getContainedWords().collect(Word::getPosition).toList();
+                if (phraseWordPositions.isEmpty()) {
+                    unresolved.add(mapping.getArdocoId() + ": phrase without contained words");
+                    continue;
+                }
+                String key = mapping.getArdocoId() + "#" + index++;
+                lookups.add(Map.of("key", key, "type", phrase.getPhraseType().name(), "positions", phraseWordPositions));
+                mappingByKey.put(key, mapping.getArdocoId());
+                descriptionByKey.put(key, mapping.getArdocoId() + ": no Phrase " + phrase.getPhraseType() + " " + phraseWordPositions);
             }
         }
-        return new ArrayList<>(phraseIds);
+
+        Map<String, String> phraseIdByKey = new HashMap<>();
+        for (int start = 0; start < lookups.size(); start += LOOKUP_CHUNK_SIZE) {
+            List<Map<String, Object>> chunk = lookups.subList(start, Math.min(start + LOOKUP_CHUNK_SIZE, lookups.size()));
+            for (Map<String, Object> row : neo4jClient.query(PHRASE_LOOKUP_QUERY).bind(chunk).to("phrases").fetch().all()) {
+                phraseIdByKey.put((String) row.get("key"), (String) row.get("phraseId"));
+            }
+        }
+
+        for (Map<String, Object> lookup : lookups) {
+            String key = (String) lookup.get("key");
+            String phraseId = phraseIdByKey.get(key);
+            if (phraseId == null) {
+                unresolved.add(descriptionByKey.get(key));
+                continue;
+            }
+            List<String> phraseIds = phraseIdsByMapping.get(mappingByKey.get(key));
+            if (!phraseIds.contains(phraseId)) {
+                phraseIds.add(phraseId);
+            }
+        }
+        return phraseIdsByMapping;
     }
 
     /**

@@ -67,7 +67,7 @@ class PersistenceBridgeDeferredWritesTest {
             Assertions.assertTrue(this.calls.isEmpty(), "Noun-mapping saves must also be deferred inside the scope, batched with the rest");
             return null;
         });
-        Assertions.assertEquals(List.of("saveNounMappings:[first]", "deleteNounMapping:second"), this.calls);
+        Assertions.assertEquals(List.of("saveNounMappings:[first]", "deleteNounMappings:[second]"), this.calls);
     }
 
     @Test
@@ -85,7 +85,7 @@ class PersistenceBridgeDeferredWritesTest {
             return null;
         });
         // One batched save for both surviving ids (A and C), not one call per save; B and the re-deleted A are deleted last.
-        Assertions.assertEquals(List.of("saveNounMappings:[A, C]", "deleteNounMapping:B", "deleteNounMapping:A"), this.calls);
+        Assertions.assertEquals(List.of("saveNounMappings:[A, C]", "deleteNounMappings:[B, A]"), this.calls);
     }
 
     @Test
@@ -99,7 +99,7 @@ class PersistenceBridgeDeferredWritesTest {
             Assertions.assertTrue(this.calls.isEmpty(), "Recommended-instance saves must be deferred inside the scope");
             return null;
         });
-        Assertions.assertEquals(List.of("saveRecommendedInstances:[ri-1]", "deleteNounMapping:old"), this.calls);
+        Assertions.assertEquals(List.of("saveRecommendedInstances:[ri-1]", "deleteNounMappings:[old]"), this.calls);
     }
 
     @Test
@@ -130,7 +130,7 @@ class PersistenceBridgeDeferredWritesTest {
             Assertions.assertTrue(this.calls.isEmpty(), "Inner scope must not flush");
             return null;
         });
-        Assertions.assertEquals(List.of("deleteNounMapping:x"), this.calls);
+        Assertions.assertEquals(List.of("deleteNounMappings:[x]"), this.calls);
     }
 
     @Test
@@ -180,7 +180,7 @@ class PersistenceBridgeDeferredWritesTest {
         });
 
         Assertions.assertEquals(List.of("saveNounMappings:[order]", "saveRecommendedInstances:[ri-order]", "saveNamedArchitectureEntities:1",
-                "saveTraceLinks:1", "addInconsistencies:1", "deleteNounMapping:obsolete"), this.calls);
+                "saveTraceLinks:1", "addInconsistencies:1", "deleteNounMappings:[obsolete]"), this.calls);
     }
 
     private static void configure(String storage) {
@@ -248,6 +248,9 @@ class PersistenceBridgeDeferredWritesTest {
                 return null;
             case "deleteNounMapping":
                 calls.add("deleteNounMapping:" + args[0]);
+                return null;
+            case "deleteNounMappings":
+                calls.add("deleteNounMappings:" + idsOf((Collection<?>) args[0], item -> (String) item));
                 return null;
             case "saveRecommendedInstance":
                 calls.add("saveRecommendedInstance:" + ((RecommendedInstance) args[0]).getId());

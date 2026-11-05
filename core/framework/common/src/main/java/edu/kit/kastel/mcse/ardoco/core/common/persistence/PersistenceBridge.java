@@ -348,8 +348,8 @@ public class PersistenceBridge extends AbstractConfigurable {
             flushNamedArchitectureEntitySaves();
             flushTraceLinks();
             flushInconsistencies();
-            for (String ardocoId : this.pendingNounMappingDeletions) {
-                getHandler().deleteNounMapping(ardocoId);
+            for (List<String> batch : chunk(new ArrayList<>(this.pendingNounMappingDeletions))) {
+                getHandler().deleteNounMappings(batch);
             }
             logFlush();
         }

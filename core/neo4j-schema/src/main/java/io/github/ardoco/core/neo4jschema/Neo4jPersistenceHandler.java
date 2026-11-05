@@ -253,6 +253,12 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
+    public void deleteNounMappings(Collection<String> ardocoIds) {
+        logger.debug("Deleting {} NounMappings", ardocoIds.size());
+        this.textStateService.deleteNounMappings(ardocoIds);
+    }
+
+    @Override
     public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
         logger.debug("Saving RecommendedInstance {}", recommendedInstance.getId());
         this.recommendationService.saveRecommendedInstance(recommendedInstance, metamodel);

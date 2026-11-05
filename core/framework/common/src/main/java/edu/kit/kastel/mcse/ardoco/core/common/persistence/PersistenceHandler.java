@@ -109,6 +109,10 @@ public interface PersistenceHandler {
      */
     void deleteNounMapping(String ardocoId);
 
+    default void deleteNounMappings(Collection<String> ardocoIds) {
+        ardocoIds.forEach(this::deleteNounMapping);
+    }
+
     /**
      * Saves (upserts) a recommended instance. Dual-write: does not replace in-memory RecommendationState.
      *
