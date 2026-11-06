@@ -33,9 +33,6 @@
 // $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
 
 parser grammar JavaParser;
-@header {
-package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java;
-}
 
 options {
     tokenVocab = JavaLexer;
