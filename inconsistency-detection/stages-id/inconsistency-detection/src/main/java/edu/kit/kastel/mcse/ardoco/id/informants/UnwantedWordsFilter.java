@@ -1,9 +1,8 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,13 +11,13 @@ import java.util.regex.Pattern;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
 
 // This is only a prototype. It should be improved, e.g, using following ideas:
 // - use ComputerScienceWords
@@ -121,7 +120,7 @@ public class UnwantedWordsFilter extends Filter {
             return Collections.unmodifiableList(createObjectMapper().readValue(this.getClass().getResourceAsStream("/unwanted_words_filter_common.json"),
                     new TypeReference<List<String>>() {
                     }));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             this.getLogger().error(e.getMessage(), e);
             return List.of();
         }
