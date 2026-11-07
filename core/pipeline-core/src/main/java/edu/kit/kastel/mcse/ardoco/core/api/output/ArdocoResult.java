@@ -340,8 +340,7 @@ public record ArdocoResult(DataRepository dataRepository) {
      * @return the Text
      */
     public Text getText() {
-        //        var preprocessingData = this.getPreprocessingData();
-        //        return preprocessingData.getText();
-        return DataRepositoryHelper.getAnnotatedText(this.dataRepository);
+        var preprocessingData = this.getPreprocessingData();
+        return preprocessingData.getText();
     }
 }

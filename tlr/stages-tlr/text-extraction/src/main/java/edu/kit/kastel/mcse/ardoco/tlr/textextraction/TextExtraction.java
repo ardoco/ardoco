@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2026. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.List;
@@ -41,7 +41,8 @@ public class TextExtraction extends AbstractExecutionStage {
         var dataRepository = this.getDataRepository();
         var optionalTextState = dataRepository.getData(TextState.ID, TextStateImpl.class);
         if (optionalTextState.isEmpty()) {
-            dataRepository.addData(TextState.ID, new TextStateImpl());
+            var textState = new TextStateImpl();
+            dataRepository.addData(TextState.ID, textState);
         }
     }
 }

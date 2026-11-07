@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2026. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.util.List;
@@ -46,9 +46,8 @@ public class ConnectionGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
-        var dataRepository = this.getDataRepository();
-        var activeMetamodels = dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
-        ConnectionStatesImpl connectionStates = ConnectionStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
+        var activeMetamodels = this.getDataRepository().getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
+        var connectionStates = ConnectionStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
         getDataRepository().addData(ConnectionStates.ID, connectionStates);
     }
 }

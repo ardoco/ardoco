@@ -1,12 +1,10 @@
-/* Licensed under MIT 2022-2026. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
 
-import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
-import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 
-import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
@@ -47,26 +45,15 @@ public class NameTypeInformant extends Informant {
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
 
-        // prepare models to not have to call getModel multiple times
-        var metamodels = modelStatesData.getMetamodels();
-        MutableSortedMap<Metamodel, Model> metamodelModelMap = SortedMaps.mutable.empty();
-        for (var metamodel : metamodels) {
-            var model = modelStatesData.getModel(metamodel);
-            if (model != null) {
-                metamodelModelMap.put(metamodel, model);
-            }
-        }
-
         for (var word : text.words()) {
-            this.exec(textState, textStateStrategy, metamodelModelMap, recommendationStates, word);
+            this.exec(textState, textStateStrategy, modelStatesData, recommendationStates, word);
         }
     }
 
-    private void exec(TextState textState, TextStateStrategy textStateStrategy, MutableSortedMap<Metamodel, Model> metamodelModelMap,
-            RecommendationStates recommendationStates, Word word) {
+    private void exec(TextState textState, TextStateStrategy textStateStrategy, ModelStates modelStates, RecommendationStates recommendationStates, Word word) {
 
-        for (Metamodel metamodel : metamodelModelMap.keysView()) {
-            var model = metamodelModelMap.get(metamodel);
+        for (var metamodel : modelStates.getMetamodels()) {
+            var model = modelStates.getModel(metamodel);
             if (model == null) {
                 continue;
             }

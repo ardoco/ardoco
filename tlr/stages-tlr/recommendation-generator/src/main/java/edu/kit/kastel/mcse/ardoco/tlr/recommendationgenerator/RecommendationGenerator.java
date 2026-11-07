@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2026. */
+/* Licensed under MIT 2021-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -43,9 +43,8 @@ public class RecommendationGenerator extends AbstractExecutionStage {
 
     @Override
     protected void initializeState() {
-        var dataRepository = this.getDataRepository();
-        var activeMetamodels = dataRepository.getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
-        RecommendationStatesImpl recommendationStates = (RecommendationStatesImpl) RecommendationStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
-        dataRepository.addData(RecommendationStates.ID, recommendationStates);
+        var activeMetamodels = this.getDataRepository().getData(ModelStates.ID, ModelStates.class).orElseThrow().getMetamodels();
+        var recommendationStates = RecommendationStatesImpl.build(activeMetamodels.toArray(Metamodel[]::new));
+        this.getDataRepository().addData(RecommendationStates.ID, recommendationStates);
     }
 }

@@ -52,7 +52,7 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public ImmutableSet<TraceLink<SentenceEntity, ? extends ModelEntity>> getSadCodeTraceLinks() {
-        return Sets.immutable.withAll(new LinkedHashSet<>(this.transitiveTraceLinks));
+        return this.transitiveTraceLinks.toImmutableSet();
     }
 
 }

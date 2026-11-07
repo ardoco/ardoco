@@ -48,22 +48,18 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Returns the input text as String stored within the provided {@link DataRepository}.
+     * Returns the input text as String stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw
+     * an {@link java.util.NoSuchElementException} if the data is not present.
      *
      * @param dataRepository the DataRepository to access
      * @return the text
      */
     public static String getInputText(DataRepository dataRepository) {
-        var inMemory = dataRepository.getData(InputTextData.ID, InputTextData.class);
-        if (inMemory.isPresent()) {
-            return inMemory.get().getText();
-        }
-        throw new java.util.NoSuchElementException("No InputTextData in DataRepository");
+        return dataRepository.getData(InputTextData.ID, InputTextData.class).orElseThrow().getText();
     }
 
     /**
      * Put the given input text into the given {@link DataRepository}. This will override existing data!
-     * The Neo4j Project node is written by the run itself, after its start-of-run clean.
      *
      * @param dataRepository the dataRepository
      * @param inputText      the input inputText
@@ -73,9 +69,7 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Checks whether there is annotated {@link Text} stored within the provided {@link DataRepository}.
-     * Looks only at the {@link DataRepository}, never at Neo4j, so a preprocessing provider never skips
-     * preprocessing because of what is or isn't in the database.
+     * Checks whether there is annotated {@link Text} stored within the provided {@link DataRepository}
      *
      * @param dataRepository the DataRepository to access
      * @return true, if there is {@link Text} within the {@link DataRepository}; else, false
@@ -93,15 +87,11 @@ public final class DataRepositoryHelper {
      * @return the text
      */
     public static Text getAnnotatedText(DataRepository dataRepository) {
-        var inMemory = dataRepository.getData(PreprocessingData.ID, PreprocessingData.class);
-        if (inMemory.isPresent()) {
-            return inMemory.get().getText();
-        }
-        throw new java.util.NoSuchElementException("No annotated text in DataRepository");
+        return dataRepository.getData(PreprocessingData.ID, PreprocessingData.class).orElseThrow().getText();
     }
 
     /**
-     * Checks whether there is annotated {@link SimpleText} stored within the provided {@link DataRepository}.
+     * Checks whether there is annotated {@link SimpleText} stored within the provided {@link DataRepository}
      *
      * @param dataRepository the DataRepository to access
      * @return true, if there is {@link SimpleText} within the {@link DataRepository}; else, false
@@ -111,17 +101,15 @@ public final class DataRepositoryHelper {
     }
 
     /**
-     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}.
+     * Returns the {@link SimpleText} stored within the provided {@link DataRepository}. This does not check if there actually is one and will fail and throw an
+     * {@link java.util.NoSuchElementException} if the data is not present. To make sure that there is data present, use
+     * {@link #hasAnnotatedText(DataRepository)}
      *
      * @param dataRepository the DataRepository to access
      * @return the text
      */
     public static SimpleText getSimpleText(DataRepository dataRepository) {
-        var inMemory = dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class);
-        if (inMemory.isPresent()) {
-            return inMemory.get().getText();
-        }
-        throw new java.util.NoSuchElementException("No SimplePreprocessingData in DataRepository");
+        return dataRepository.getData(SimplePreprocessingData.ID, SimplePreprocessingData.class).orElseThrow().getText();
     }
 
     /**

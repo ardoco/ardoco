@@ -64,11 +64,7 @@ public final class ModelStates implements PipelineStepData {
      * @return the corresponding {@link Model}
      */
     public Model getModel(Metamodel id) {
-        if (this.models.containsKey(id)) {
-            return this.models.get(id);
-        }
-
-        throw new IllegalArgumentException("Model with id " + id.toString() + " not found");
+        return this.models.get(id);
     }
 
 }

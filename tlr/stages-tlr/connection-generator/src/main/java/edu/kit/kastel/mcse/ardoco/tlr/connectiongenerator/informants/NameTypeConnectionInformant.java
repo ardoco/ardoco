@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2026. */
+/* Licensed under MIT 2022-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.List;
@@ -50,7 +50,6 @@ public class NameTypeConnectionInformant extends Informant {
 
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-
         for (var word : text.words()) {
             this.exec(textState, textStateStrategy, modelStates, recommendationStates, word);
         }
