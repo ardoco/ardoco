@@ -46,8 +46,8 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
             WHERE EXISTS { MATCH (:Text {ardocoId: $textId})-[:HAS_SENTENCE]->(s) }
             WITH row, collect(s) AS targets
             FOREACH (s IN CASE WHEN size(targets) = 1 THEN targets ELSE [] END |
-                MERGE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {reason: row.reason, type: row.type})
-                ON CREATE SET i.id = randomUUID(), i.name = row.name, i.sentenceNumber = row.sentenceNumber, i.confidence = row.confidence)
+                MERGE (s)-[:HAS_INCONSISTENCY]->(i:TextInconsistency:Inconsistency {reason: row.reason, type: row.type, confidence: row.confidence})
+                ON CREATE SET i.id = randomUUID(), i.name = row.name, i.sentenceNumber = row.sentenceNumber)
             WITH row, size(targets) AS matches
             WHERE matches <> 1
             RETURN row.sentenceNumber AS sentenceNumber, row.reason AS reason, matches
@@ -84,8 +84,9 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
      * Adds a collection of inconsistencies to the database in one batched {@code UNWIND} query per inconsistency kind (chunks of at most
      * {@value #WRITE_CHUNK_SIZE} rows); no entity is loaded. A text inconsistency carries the 1-based sentence number of the output file and is attached
      * to the {@code Sentence} with {@code sentenceNumber = n - 1} of the run's text ({@code Text {ardocoId: PreprocessingData.ID}}); the inconsistency
-     * node keeps the 1-based number. A model inconsistency is attached to the architecture or code item with its uid. {@code MERGE} on (parent, reason,
-     * type) keeps the write idempotent. A missing or ambiguous parent, or an unknown inconsistency type, is logged as one ERROR and thrown as a
+     * node keeps the 1-based number. A model inconsistency is attached to the architecture or code item with its uid. {@code MERGE} on (sentence, reason,
+     * type, exact confidence) for a text inconsistency and on (parent, reason) for a model inconsistency keeps the write idempotent. A missing or ambiguous
+     * parent, or an unknown inconsistency type, is logged as one ERROR and thrown as a
      * {@link MissingLinkTargetException} after the last chunk; the call runs in one transaction, so the exception rolls back all of its rows.
      *
      * @param inconsistencies The collection of inconsistencies to be added to the database. This collection can contain both model-based and text-based
@@ -106,14 +107,15 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
             } else if (inconsistency instanceof TextInconsistency ti) {
                 int sentenceNumber = ti.getSentenceNumber();
                 String type = ti.getType();
+                double confidence = ti instanceof TextEntityAbsentFromModelInconsistency team ? team.confidence() : -1.0;
                 Map<String, Object> row = new HashMap<>();
                 row.put("sentenceNumber", sentenceNumber);
                 row.put("sentenceIndex", sentenceNumber - 1);
                 row.put("name", ti instanceof TextEntityAbsentFromModelInconsistency team ? team.name() : "unknown");
-                row.put("confidence", ti instanceof TextEntityAbsentFromModelInconsistency team ? team.confidence() : -1.0);
+                row.put("confidence", confidence);
                 row.put("reason", reason);
                 row.put("type", type);
-                textRows.put(sentenceNumber + "\n" + reason + "\n" + type, row);
+                textRows.put(sentenceNumber + "\n" + reason + "\n" + type + "\n" + confidence, row);
             } else {
                 errors.missing("unknown inconsistency type", 1, inconsistency.getClass().getName());
             }

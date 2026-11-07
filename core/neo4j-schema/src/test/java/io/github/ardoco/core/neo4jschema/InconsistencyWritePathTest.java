@@ -91,6 +91,36 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
     }
 
     @Test
+    @DisplayName("Two text inconsistencies that differ only in a confidence below the rounding of their reason stay two nodes with their exact confidences")
+    void textInconsistenciesWithSameRoundedConfidenceStaySeparate() {
+        var first = new TextEntityAbsentFromModelInconsistency("database", 1, 0.7512, null);
+        var second = new TextEntityAbsentFromModelInconsistency("database", 1, 0.7488, null);
+        Assertions.assertEquals(first.getReason(), second.getReason());
+
+        persistenceHandler.addInconsistencies(List.of(first, second));
+
+        List<Double> confidences = neo4jClient.query("""
+                MATCH (:Sentence {sentenceNumber: 0})-[:HAS_INCONSISTENCY]->(i:TextInconsistency)
+                RETURN i.confidence AS confidence ORDER BY confidence
+                """).fetchAs(Double.class).all().stream().toList();
+        Assertions.assertEquals(List.of(0.7488, 0.7512), confidences);
+        Assertions.assertEquals(2L, neo4jClient.query("MATCH (i:TextInconsistency) RETURN count(i) AS c").fetchAs(Long.class).one().orElse(0L));
+    }
+
+    @Test
+    @DisplayName("The same text inconsistency saved in one call and again in a second call stays one node")
+    void sameTextInconsistencyStaysOneNode() {
+        var inconsistency = new TextEntityAbsentFromModelInconsistency("database", 1, 0.7512, null);
+
+        persistenceHandler.addInconsistencies(List.of(inconsistency, new TextEntityAbsentFromModelInconsistency("database", 1, 0.7512, null)));
+        persistenceHandler.addInconsistencies(List.of(inconsistency));
+
+        Assertions.assertEquals(1L, neo4jClient.query("MATCH (i:TextInconsistency) RETURN count(i) AS c").fetchAs(Long.class).one().orElse(0L));
+        Assertions.assertEquals(1L, neo4jClient.query("MATCH ()-[r:HAS_INCONSISTENCY]->(:TextInconsistency) RETURN count(r) AS c").fetchAs(Long.class).one()
+                .orElse(0L));
+    }
+
+    @Test
     @DisplayName("A model inconsistency without its model element fails with one ERROR naming the kind and the id")
     void modelInconsistencyWithoutParentFails() {
         var ghost = new ModelEntityAbsentFromTextInconsistency(new FakeArchitectureEntity("Ghost", "ghost-model-id", "Component"));
