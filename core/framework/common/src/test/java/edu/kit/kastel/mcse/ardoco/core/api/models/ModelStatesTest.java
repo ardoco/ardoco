@@ -29,8 +29,7 @@ class ModelStatesTest {
     @AfterEach
     void resetFlags() {
         PersistenceBridge.setHandler(null);
-        PersistenceBridge.getInstance()
-                .applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
     }
 
     @Test

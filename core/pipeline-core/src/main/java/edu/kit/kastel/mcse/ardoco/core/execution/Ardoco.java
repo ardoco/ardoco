@@ -180,8 +180,9 @@ public final class Ardoco extends Pipeline {
      * abort rather than silently lose it.
      */
     private void exportAndWipeKnowledgeGraph() {
-        File exportDirectory = this.pendingKnowledgeGraphExportDirectory != null ? this.pendingKnowledgeGraphExportDirectory
-                : resolveConfiguredExportDirectory();
+        File exportDirectory = this.pendingKnowledgeGraphExportDirectory != null ?
+                this.pendingKnowledgeGraphExportDirectory :
+                resolveConfiguredExportDirectory();
         this.pendingKnowledgeGraphExportDirectory = null;
 
         PersistenceBridge.getHandler().saveRunMetadataFinish(this.projectName, Instant.now().toString());

@@ -54,8 +54,9 @@ class InconsistencyGraphTargetTest extends AbstractPersistenceTest {
             int inconsistencySentence = target.get("properties").get("sentenceNumber").asInt();
             graphSentenceNumbers.add(inconsistencySentence);
             if (sentenceIndex != inconsistencySentence - 1) {
-                wrongTargets.add(target.get("properties").get("name").asText() + ": inconsistency sentence " + inconsistencySentence + " on Sentence "
-                        + sentenceIndex);
+                wrongTargets.add(target.get("properties")
+                        .get("name")
+                        .asText() + ": inconsistency sentence " + inconsistencySentence + " on Sentence " + sentenceIndex);
             }
         }
 

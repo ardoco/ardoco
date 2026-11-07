@@ -53,8 +53,8 @@ public interface RecommendedInstanceRepository extends Neo4jRepository<Recommend
             FOREACH (typeMapping IN types | MERGE (ri)-[:HAS_TYPE_MAPPING]->(typeMapping))
             RETURN (size($nameMappingIds) - size(names)) + (size($typeMappingIds) - size(types))
             """)
-    Long saveWithMappings(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props,
-            @Param("nameMappingIds") List<String> nameMappingIds, @Param("typeMappingIds") List<String> typeMappingIds);
+    Long saveWithMappings(@Param("ardocoId") String ardocoId, @Param("props") Map<String, Object> props, @Param("nameMappingIds") List<String> nameMappingIds,
+            @Param("typeMappingIds") List<String> typeMappingIds);
 
     /**
      * Batched form of {@link #saveWithMappings}: the same per-item upsert and edge replacement, for every item in one round trip. Used by the

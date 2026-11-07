@@ -64,14 +64,14 @@ class ModelIdCollisionPersistenceTest extends AbstractNeo4jTest {
     void sharedIdDoesNotFanOut() {
         ArchitectureMethod method = new ArchitectureMethod("doWork", SHARED_ID);
         ArchitectureInterface architectureInterface = new ArchitectureInterface("IWork", "collision_iface", new TreeSet<>(List.of(method)));
-        ArchitectureComponent component = new ArchitectureComponent("Worker", "collision_comp", new TreeSet<>(), new TreeSet<>(List.of(
-                architectureInterface)), new TreeSet<>(), "Component");
+        ArchitectureComponent component = new ArchitectureComponent("Worker", "collision_comp", new TreeSet<>(), new TreeSet<>(List.of(architectureInterface)),
+                new TreeSet<>(), "Component");
         var architectureModel = new ArchitectureModelWithComponentsAndInterfaces(List.<ArchitectureItem>of(component, architectureInterface));
 
         CodeItemRepository repository = new CodeItemRepository();
         CodePackage codePackage = new CodePackage("collision_pkg", repository, "edu.kit.collision");
-        CodeCompilationUnit compilationUnit = new CodeCompilationUnit("collision_cu", repository, "Worker", new TreeSet<>(), List.of("edu", "kit",
-                "collision"), "java", ProgrammingLanguage.JAVA);
+        CodeCompilationUnit compilationUnit = new CodeCompilationUnit("collision_cu", repository, "Worker", new TreeSet<>(), List.of("edu", "kit", "collision"),
+                "java", ProgrammingLanguage.JAVA);
         ClassUnit classUnit = new ClassUnit(SHARED_ID, repository, "Worker", new TreeSet<>());
         codePackage.addContent(compilationUnit);
         compilationUnit.setParent(codePackage);
@@ -91,13 +91,18 @@ class ModelIdCollisionPersistenceTest extends AbstractNeo4jTest {
         Assertions.assertEquals(1L, count("MATCH (:ArchitectureMethod {ardocoId: $id})-[r:TRACES_TO]->(:ClassUnit {ardocoId: $id}) RETURN count(r) AS c"),
                 "the TRACES_TO edge goes from the method to the class");
         Assertions.assertEquals(0L, count("MATCH ()-[:HAS_METHOD]->(n:CodeItem) RETURN count(n) AS c"), "HAS_METHOD must not reach a code item");
-        Assertions.assertEquals(0L, count("MATCH (:CodeModel)-[]->(n:ArchitectureItem) RETURN count(n) AS c"), "code model edges must not reach an "
-                + "architecture item");
+        Assertions.assertEquals(0L, count("MATCH (:CodeModel)-[]->(n:ArchitectureItem) RETURN count(n) AS c"),
+                "code model edges must not reach an " + "architecture item");
         Assertions.assertEquals(0L, count("MATCH (:CodeItem)-[]->(n:ArchitectureItem) RETURN count(n) AS c"), "code edges must not reach an architecture item");
     }
 
     private long count(String query) {
-        return neo4jClient.query(query).bind(SHARED_ID).to("id").fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(
-                0L);
+        return neo4jClient.query(query)
+                .bind(SHARED_ID)
+                .to("id")
+                .fetchAs(Long.class)
+                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .one()
+                .orElse(0L);
     }
 }

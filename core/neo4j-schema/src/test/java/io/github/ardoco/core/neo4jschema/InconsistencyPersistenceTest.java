@@ -67,9 +67,10 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
     void shouldPersistTextInconsistencyAndRetrieveCorrectly() {
         int sentenceNum = 5;
         String sentenceText = "The system shall provide a Login component.";
-        neo4jClient.query("CREATE (:Text {ardocoId: $textId})-[:HAS_SENTENCE]->(:Sentence:Traceable {ardocoId: 'inconsistency-test-sentence', "
-                + "sentenceNumber: $sentenceIndex, text: $text})").bindAll(Map.of("textId", PreprocessingData.ID, "sentenceIndex", sentenceNum - 1, "text",
-                        sentenceText)).run();
+        neo4jClient.query(
+                "CREATE (:Text {ardocoId: $textId})-[:HAS_SENTENCE]->(:Sentence:Traceable {ardocoId: 'inconsistency-test-sentence', " + "sentenceNumber: $sentenceIndex, text: $text})")
+                .bindAll(Map.of("textId", PreprocessingData.ID, "sentenceIndex", sentenceNum - 1, "text", sentenceText))
+                .run();
 
         String name = "inconsistency";
         double confidence = 0.85;
@@ -102,8 +103,7 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
 
         assertEquals(0L, countOrphanedModelInconsistencies(), "No model inconsistency may be left without its model element");
         var results = assertDoesNotThrow(() -> persistenceService.getInconsistencies());
-        assertTrue(results.stream()
-                .noneMatch(i -> i instanceof ModelEntityAbsentFromTextInconsistency m && "id_comp_auth".equals(m.getModelInstanceUid())));
+        assertTrue(results.stream().noneMatch(i -> i instanceof ModelEntityAbsentFromTextInconsistency m && "id_comp_auth".equals(m.getModelInstanceUid())));
     }
 
     private boolean hasInconsistencyFor(String ardocoId) {

@@ -160,8 +160,7 @@ class PersistenceBridgeDeferredWritesTest {
     }
 
     @Test
-    @DisplayName("A stage scope flushes every kind in the fixed order: NounMappings, RecommendedInstances, NER entities, trace links, "
-            + "inconsistencies, deletions last - trace links and inconsistencies match their endpoints by id, so those must already exist")
+    @DisplayName("A stage scope flushes every kind in the fixed order: NounMappings, RecommendedInstances, NER entities, trace links, " + "inconsistencies, deletions last - trace links and inconsistencies match their endpoints by id, so those must already exist")
     void stageFlushOrderCoversAllKinds() {
         RecommendedInstance ri = new StubRecommendedInstance("ri-order");
         NamedArchitectureEntity entity = new NamedArchitectureEntity("entity-order", new TreeSet<>(), List.of());
@@ -190,24 +189,23 @@ class PersistenceBridgeDeferredWritesTest {
     private static NounMapping nounMapping(String ardocoId) {
         return (NounMapping) Proxy.newProxyInstance(NounMapping.class.getClassLoader(), new Class<?>[] { NounMapping.class }, (proxy, method, args) -> {
             switch (method.getName()) {
-            case "getArdocoId":
-                return ardocoId;
-            case "toString":
-                return "NounMapping[" + ardocoId + "]";
-            case "hashCode":
-                return System.identityHashCode(proxy);
-            case "equals":
-                return proxy == args[0];
-            default:
-                return defaultValue(method.getReturnType());
+                case "getArdocoId":
+                    return ardocoId;
+                case "toString":
+                    return "NounMapping[" + ardocoId + "]";
+                case "hashCode":
+                    return System.identityHashCode(proxy);
+                case "equals":
+                    return proxy == args[0];
+                default:
+                    return defaultValue(method.getReturnType());
             }
         });
     }
 
     private static TraceLink<?, ?> stubTraceLink(String id) {
         RecommendedInstance ri = new StubRecommendedInstance("ri-" + id);
-        ArchitectureComponent target = new ArchitectureComponent("Target-" + id, "target-" + id, new TreeSet<>(), new TreeSet<>(), new TreeSet<>(),
-                "Service");
+        ArchitectureComponent target = new ArchitectureComponent("Target-" + id, "target-" + id, new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), "Service");
         return new RecommendationModelTraceLink(ri, target);
     }
 
@@ -234,48 +232,48 @@ class PersistenceBridgeDeferredWritesTest {
         return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class }, (proxy,
                 method, args) -> {
             switch (method.getName()) {
-            case "toString":
-                return "RecordingPersistenceHandler";
-            case "hashCode":
-                return System.identityHashCode(proxy);
-            case "equals":
-                return proxy == args[0];
-            case "saveNounMapping":
-                calls.add("saveNounMapping:" + ((NounMapping) args[0]).getArdocoId());
-                return null;
-            case "saveNounMappings":
-                calls.add("saveNounMappings:" + idsOf((Collection<?>) args[0], item -> ((NounMapping) item).getArdocoId()));
-                return null;
-            case "deleteNounMapping":
-                calls.add("deleteNounMapping:" + args[0]);
-                return null;
-            case "deleteNounMappings":
-                calls.add("deleteNounMappings:" + idsOf((Collection<?>) args[0], item -> (String) item));
-                return null;
-            case "saveRecommendedInstance":
-                calls.add("saveRecommendedInstance:" + ((RecommendedInstance) args[0]).getId());
-                if (failRecommendedInstanceSaves.getAsBoolean()) {
-                    throw new IllegalStateException("simulated Neo4j failure");
-                }
-                return null;
-            case "saveRecommendedInstances":
-                calls.add("saveRecommendedInstances:" + idsOf((Collection<?>) args[0], item -> ((RecommendedInstance) item).getId()));
-                if (failRecommendedInstanceSaves.getAsBoolean()) {
-                    throw new IllegalStateException("simulated Neo4j failure");
-                }
-                return null;
-            case "saveNamedArchitectureEntities":
-                calls.add("saveNamedArchitectureEntities:" + ((Collection<?>) args[0]).size());
-                return null;
-            case "saveTraceLinks":
-                calls.add("saveTraceLinks:" + ((Collection<?>) args[0]).size());
-                return true;
-            case "addInconsistencies":
-                calls.add("addInconsistencies:" + ((Collection<?>) args[0]).size());
-                return true;
-            default:
-                calls.add(method.getName());
-                return defaultValue(method.getReturnType());
+                case "toString":
+                    return "RecordingPersistenceHandler";
+                case "hashCode":
+                    return System.identityHashCode(proxy);
+                case "equals":
+                    return proxy == args[0];
+                case "saveNounMapping":
+                    calls.add("saveNounMapping:" + ((NounMapping) args[0]).getArdocoId());
+                    return null;
+                case "saveNounMappings":
+                    calls.add("saveNounMappings:" + idsOf((Collection<?>) args[0], item -> ((NounMapping) item).getArdocoId()));
+                    return null;
+                case "deleteNounMapping":
+                    calls.add("deleteNounMapping:" + args[0]);
+                    return null;
+                case "deleteNounMappings":
+                    calls.add("deleteNounMappings:" + idsOf((Collection<?>) args[0], item -> (String) item));
+                    return null;
+                case "saveRecommendedInstance":
+                    calls.add("saveRecommendedInstance:" + ((RecommendedInstance) args[0]).getId());
+                    if (failRecommendedInstanceSaves.getAsBoolean()) {
+                        throw new IllegalStateException("simulated Neo4j failure");
+                    }
+                    return null;
+                case "saveRecommendedInstances":
+                    calls.add("saveRecommendedInstances:" + idsOf((Collection<?>) args[0], item -> ((RecommendedInstance) item).getId()));
+                    if (failRecommendedInstanceSaves.getAsBoolean()) {
+                        throw new IllegalStateException("simulated Neo4j failure");
+                    }
+                    return null;
+                case "saveNamedArchitectureEntities":
+                    calls.add("saveNamedArchitectureEntities:" + ((Collection<?>) args[0]).size());
+                    return null;
+                case "saveTraceLinks":
+                    calls.add("saveTraceLinks:" + ((Collection<?>) args[0]).size());
+                    return true;
+                case "addInconsistencies":
+                    calls.add("addInconsistencies:" + ((Collection<?>) args[0]).size());
+                    return true;
+                default:
+                    calls.add(method.getName());
+                    return defaultValue(method.getReturnType());
             }
         });
     }

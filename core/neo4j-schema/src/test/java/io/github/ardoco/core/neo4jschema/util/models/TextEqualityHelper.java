@@ -54,8 +54,9 @@ public class TextEqualityHelper {
         // in more than one phrase with different types (e.g. a short token appearing in both a nested NP and its
         // enclosing FRAG), which made a (text, type) sort key pair up the wrong phrases depending on incidental
         // traversal order.
-        Comparator<Phrase> phraseComparator = Comparator
-                .<Phrase>comparingInt(p -> p.getContainedWords().isEmpty() ? -1 : p.getContainedWords().get(0).getPosition())
+        Comparator<Phrase> phraseComparator = Comparator.<Phrase>comparingInt(p -> p.getContainedWords().isEmpty() ?
+                -1 :
+                p.getContainedWords().get(0).getPosition())
                 .thenComparingInt(p -> p.getContainedWords().size())
                 .thenComparing(Phrase::getText)
                 .thenComparing(Phrase::getPhraseType);

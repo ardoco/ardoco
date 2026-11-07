@@ -27,7 +27,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -101,8 +100,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
         Assertions.assertEquals(memoryFiles.keySet(), neo4jFiles.keySet(), testCase.name() + ": output file sets must match between runs");
         for (var entry : memoryFiles.entrySet()) {
-            Assertions.assertEquals(normalize(entry.getValue()), normalize(neo4jFiles.get(entry.getKey())),
-                    testCase.name() + ": " + entry.getKey() + " must match between the memory and neo4j runs");
+            Assertions.assertEquals(normalize(entry.getValue()), normalize(neo4jFiles.get(entry.getKey())), testCase.name() + ": " + entry
+                    .getKey() + " must match between the memory and neo4j runs");
         }
 
         File exportedJsonFile = new File(neo4jDir, "knowledgeGraph_" + testCase.project() + ".json");
@@ -114,12 +113,12 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         Assertions.assertEquals(0L, graph.countDuplicateTraceLinks(), testCase.name() + ": no duplicate (source, target, type) TRACES_TO edge is expected");
         Assertions.assertEquals(0L, graph.countDuplicateTraceableArdocoIds(), testCase.name() + ": no duplicate Traceable ardocoId is expected");
         for (String forbiddenLabel : testCase.forbiddenLabels()) {
-            Assertions.assertEquals(0L, graph.countNodesWithLabel(forbiddenLabel),
-                    testCase.name() + ": label " + forbiddenLabel + " must not appear for this pipeline");
+            Assertions.assertEquals(0L, graph.countNodesWithLabel(forbiddenLabel), testCase
+                    .name() + ": label " + forbiddenLabel + " must not appear for this pipeline");
         }
         for (String requiredLabel : testCase.requiredLabels()) {
-            Assertions.assertTrue(graph.countNodesWithLabel(requiredLabel) > 0,
-                    testCase.name() + ": label " + requiredLabel + " must appear for this pipeline");
+            Assertions.assertTrue(graph.countNodesWithLabel(requiredLabel) > 0, testCase
+                    .name() + ": label " + requiredLabel + " must appear for this pipeline");
         }
 
         Set<String> expectedKeys = collectExpectedTraceLinks(dataRepository);
@@ -128,7 +127,11 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         sizesLog.append(": persistence WARN/ERROR events=").append(warningsAndErrors.size());
         sizesLog.append(" expected total=").append(expectedKeys.size()).append(" actual total=").append(actualKeys.size());
         for (String type : TRACE_LINK_TYPES) {
-            sizesLog.append(" ").append(type).append(" expected=").append(countByType(expectedKeys, type)).append(" actual=")
+            sizesLog.append(" ")
+                    .append(type)
+                    .append(" expected=")
+                    .append(countByType(expectedKeys, type))
+                    .append(" actual=")
                     .append(countByType(actualKeys, type));
         }
         logger.info(sizesLog.toString());
@@ -151,17 +154,17 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
         if (testCase.fixedTraceLinkCounts() != null) {
             for (var fixedEntry : testCase.fixedTraceLinkCounts().entrySet()) {
-                Assertions.assertEquals((long) fixedEntry.getValue(), countByType(actualKeys, fixedEntry.getKey()),
-                        testCase.name() + ": known-reference " + fixedEntry.getKey() + " count must hold");
+                Assertions.assertEquals((long) fixedEntry.getValue(), countByType(actualKeys, fixedEntry.getKey()), testCase
+                        .name() + ": known-reference " + fixedEntry.getKey() + " count must hold");
             }
         }
 
         if (testCase.fixedCensus() != null) {
             Assertions.assertEquals(testCase.fixedCensus().nodeCount(), graph.nodeCount(), testCase.name() + ": known-reference node count must hold");
-            Assertions.assertEquals(testCase.fixedCensus().relationshipCount(), graph.relationshipCount(),
-                    testCase.name() + ": known-reference relationship count must hold");
-            Assertions.assertEquals(testCase.fixedCensus().codeItemCount(), graph.countNodesWithLabel("CodeItem"),
-                    testCase.name() + ": known-reference CodeItem count must hold");
+            Assertions.assertEquals(testCase.fixedCensus().relationshipCount(), graph.relationshipCount(), testCase
+                    .name() + ": known-reference relationship count must hold");
+            Assertions.assertEquals(testCase.fixedCensus().codeItemCount(), graph.countNodesWithLabel("CodeItem"), testCase
+                    .name() + ": known-reference CodeItem count must hold");
         }
 
         Long remainingNodes = neo4jClient.query("MATCH (n) RETURN count(n) AS c")
@@ -174,23 +177,21 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
     static Stream<Case> cases() {
         String filterProperty = System.getProperty(CASES_FILTER_PROPERTY, "");
-        Set<String> filter = filterProperty.isBlank() ? Set.of()
-                : Set.of(filterProperty.split(",")).stream().map(String::trim).collect(java.util.stream.Collectors.toSet());
+        Set<String> filter = filterProperty.isBlank() ?
+                Set.of() :
+                Set.of(filterProperty.split(",")).stream().map(String::trim).collect(java.util.stream.Collectors.toSet());
 
         List<Case> all = new ArrayList<>();
-        all.add(teaStoreCase("transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(), transarcFileChecks(),
-                Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 100, "ARCHITECTURE_CODE", 155, "RECOMMENDATION_CODE", 25,
-                        "RECOMMENDATION_ARCHITECTURE", 7),
+        all.add(teaStoreCase("transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(), transarcFileChecks(), Map.of(
+                "SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 100, "ARCHITECTURE_CODE", 155, "RECOMMENDATION_CODE", 25, "RECOMMENDATION_ARCHITECTURE", 7),
                 new FixedCensus(5714, 19277, 3819)));
         all.add(teaStoreCase("swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(), swattrFileChecks(), null, null));
         all.add(teaStoreCase("ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(), ardocodeRequiredLabels(), Map.of(), null, null));
         all.add(teaStoreCase("arcotl", MemoryVsNeo4jConsistencyTest::arcotl, textLabels(), arcotlRequiredLabels(), arcotlFileChecks(), null, null));
 
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(),
-                transarcFileChecks(),
-                Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1957, "RECOMMENDATION_CODE", 18,
-                        "RECOMMENDATION_ARCHITECTURE", 5),
-                new FixedCensus(28648, 71377, 27966)));
+                transarcFileChecks(), Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1957, "RECOMMENDATION_CODE", 18,
+                        "RECOMMENDATION_ARCHITECTURE", 5), new FixedCensus(28648, 71377, 27966)));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(),
                 swattrFileChecks(), null, null));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(),
@@ -240,16 +241,15 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         File text = project.getTextFile();
         File architecture = project.getArchitectureModel(ModelFormat.PCM);
         File code = project.getCodeModelFromResources();
-        return new Case(projectName, pipelineName,
-                (configs, outputDir) -> factory.build(projectName, text, architecture, code, configs, outputDir), forbiddenLabels, requiredLabels,
-                fileRowChecksByType, fixedTraceLinkCounts, fixedCensus);
+        return new Case(projectName, pipelineName, (configs, outputDir) -> factory.build(projectName, text, architecture, code, configs, outputDir),
+                forbiddenLabels, requiredLabels, fileRowChecksByType, fixedTraceLinkCounts, fixedCensus);
     }
 
     private static ArdocoRunner transarc(String projectName, File text, File architecture, File code, ImmutableSortedMap<String, String> configs,
             File outputDir) {
         var runner = new Transarc(projectName);
-        runner.setUp(text, new ArchitectureConfiguration(architecture, ModelFormat.PCM), new CodeConfiguration(code, CodeConfiguration.CodeConfigurationType.ACM_FILE),
-                configs, outputDir);
+        runner.setUp(text, new ArchitectureConfiguration(architecture, ModelFormat.PCM), new CodeConfiguration(code,
+                CodeConfiguration.CodeConfigurationType.ACM_FILE), configs, outputDir);
         return runner;
     }
 
@@ -270,8 +270,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
     private static ArdocoRunner arcotl(String projectName, File text, File architecture, File code, ImmutableSortedMap<String, String> configs,
             File outputDir) {
         var runner = new Arcotl(projectName);
-        runner.setUp(new ArchitectureConfiguration(architecture, ModelFormat.PCM), new CodeConfiguration(code, CodeConfiguration.CodeConfigurationType.ACM_FILE),
-                configs, outputDir);
+        runner.setUp(new ArchitectureConfiguration(architecture, ModelFormat.PCM), new CodeConfiguration(code,
+                CodeConfiguration.CodeConfigurationType.ACM_FILE), configs, outputDir);
         return runner;
     }
 
@@ -368,10 +368,10 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
             }
             for (TraceLink<SentenceEntity, ? extends ModelEntity> link : codeTraceabilityState.getSadCodeTraceLinks()) {
                 if (link instanceof TransitiveTraceLink<?, ?> transitive) {
-                    @SuppressWarnings("unchecked")
-                    TraceLink<SentenceEntity, ? extends ModelEntity> firstLeg = (TraceLink<SentenceEntity, ? extends ModelEntity>) transitive.getFirstTraceLink();
-                    @SuppressWarnings("unchecked")
-                    TraceLink<? extends ModelEntity, ? extends ModelEntity> secondLeg = (TraceLink<? extends ModelEntity, ? extends ModelEntity>) transitive.getSecondTraceLink();
+                    @SuppressWarnings("unchecked") TraceLink<SentenceEntity, ? extends ModelEntity> firstLeg = (TraceLink<SentenceEntity, ? extends ModelEntity>) transitive
+                            .getFirstTraceLink();
+                    @SuppressWarnings("unchecked") TraceLink<? extends ModelEntity, ? extends ModelEntity> secondLeg = (TraceLink<? extends ModelEntity, ? extends ModelEntity>) transitive
+                            .getSecondTraceLink();
                     keys.add(key(sentenceKey(firstLeg.getFirstEndpoint()), modelKey(firstLeg.getSecondEndpoint()), "SENTENCE_ARCHITECTURE"));
                     keys.add(key(modelKey(secondLeg.getFirstEndpoint()), modelKey(secondLeg.getSecondEndpoint()), "ARCHITECTURE_CODE"));
                 } else {
@@ -408,8 +408,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
     }
 
     private record Case(String project, String pipelineName, BiFunction<ImmutableSortedMap<String, String>, File, ArdocoRunner> runnerFactory,
-            Set<String> forbiddenLabels, Set<String> requiredLabels, Map<String, String> fileRowChecksRaw, Map<String, Integer> fixedTraceLinkCounts,
-            FixedCensus fixedCensus) {
+                        Set<String> forbiddenLabels, Set<String> requiredLabels, Map<String, String> fileRowChecksRaw,
+                        Map<String, Integer> fixedTraceLinkCounts, FixedCensus fixedCensus) {
 
         String name() {
             return project + "-" + pipelineName;

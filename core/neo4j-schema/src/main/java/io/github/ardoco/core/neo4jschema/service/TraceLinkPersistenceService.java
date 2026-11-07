@@ -91,6 +91,7 @@ public class TraceLinkPersistenceService {
     private final ArchitectureModelMapper archMapper;
     private final CodeModelMapper codeMapper;
     private final DocumentationMapper documentationMapper;
+
     public TraceLinkPersistenceService(Neo4jClient neo4jClient, Neo4jMappingContext mappingContext, TraceLinkRepository traceLinkRepo,
             ArchitectureModelMapper archMapper, CodeModelMapper codeMapper, DocumentationMapper documentationMapper) {
         this.traceLinkRepo = traceLinkRepo;
@@ -240,8 +241,10 @@ public class TraceLinkPersistenceService {
                 return TraceLinkType.SENTENCE_ARCHITECTURE;
             }
             if (!(smtl.getSecondEndpoint() instanceof CodeItem)) {
-                logger.warn("SentenceModelTraceLink second endpoint is neither ArchitectureItem nor CodeItem ({}); defaulting to SENTENCE_CODE",
-                        smtl.getSecondEndpoint().getClass().getName());
+                logger.warn("SentenceModelTraceLink second endpoint is neither ArchitectureItem nor CodeItem ({}); defaulting to SENTENCE_CODE", smtl
+                        .getSecondEndpoint()
+                        .getClass()
+                        .getName());
             }
             return TraceLinkType.SENTENCE_CODE;
         }
@@ -314,8 +317,8 @@ public class TraceLinkPersistenceService {
             if (targetMatches > 1) {
                 counts.targetMissing++;
             }
-            addExample(counts.examples, type + ": " + sourceId + " -> " + targetId + " (source " + sourceMatches + " matches, target " + targetMatches
-                    + " matches)");
+            addExample(counts.examples,
+                    type + ": " + sourceId + " -> " + targetId + " (source " + sourceMatches + " matches, target " + targetMatches + " matches)");
         }
 
         void recordMissingEndpoint(String type, String sourceId, String targetId, boolean sourceMissing, boolean targetMissing) {
@@ -523,11 +526,7 @@ public class TraceLinkPersistenceService {
                 MATCH (ri:RecommendedInstance)-[r:TRACES_TO]->(t:Traceable)
                 WHERE r.traceLinkType = $type
                 RETURN ri.ardocoId AS riId, t.ardocoId AS targetId, coalesce(r.confidence, -1.0) AS confidence
-                """)
-                .bind(traceLinkType)
-                .to("type")
-                .fetch()
-                .all();
+                """).bind(traceLinkType).to("type").fetch().all();
     }
 
     /**

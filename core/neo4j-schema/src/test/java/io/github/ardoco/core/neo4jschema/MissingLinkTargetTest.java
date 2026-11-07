@@ -128,8 +128,8 @@ class MissingLinkTargetTest extends AbstractNeo4jTest {
     private static NounMapping unsavedNounMapping() {
         Text text = TextFactory.createComplexText("unsaved_noun_mapping_text");
         Word word = text.getSentences().get(0).getWords().get(1);
-        return new NounMappingImpl(SortedSets.immutable.with(word), MappingKind.NAME, TEST_CLAIMANT, 1.0, Lists.immutable.with(word), Lists.immutable.with(
-                word.getText()));
+        return new NounMappingImpl(SortedSets.immutable.with(word), MappingKind.NAME, TEST_CLAIMANT, 1.0, Lists.immutable.with(word), Lists.immutable.with(word
+                .getText()));
     }
 
     private static String assertOneErrorAndException(Executable action) {

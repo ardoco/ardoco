@@ -102,8 +102,7 @@ public final class PersistenceTestSupport {
                 if (!"TRACES_TO".equals(rel.get("type").asText())) {
                     continue;
                 }
-                String key = rel.get("startNodeId").asText() + "|" + rel.get("endNodeId").asText() + "|" + rel.get("properties").get("traceLinkType")
-                        .asText();
+                String key = rel.get("startNodeId").asText() + "|" + rel.get("endNodeId").asText() + "|" + rel.get("properties").get("traceLinkType").asText();
                 if (!seen.add(key)) {
                     duplicates++;
                 }

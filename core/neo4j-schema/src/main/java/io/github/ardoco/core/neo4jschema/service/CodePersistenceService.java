@@ -104,23 +104,16 @@ public class CodePersistenceService {
         }
 
         // 1) Every code item that belongs to the model (via HAS_REPOSITORY_ITEM), independent of hierarchy reachability.
-        Collection<Map<String, Object>> itemRows = neo4jClient.query(
-                """
-                        MATCH (m:CodeModel {modelId: $modelId})-[:HAS_REPOSITORY_ITEM]->(n:CodeItem)
-                        RETURN n.ardocoId AS id, labels(n) AS labels, properties(n) AS props
-                        """)
-                .bind(modelId)
-                .to("modelId")
-                .fetch()
-                .all();
+        Collection<Map<String, Object>> itemRows = neo4jClient.query("""
+                MATCH (m:CodeModel {modelId: $modelId})-[:HAS_REPOSITORY_ITEM]->(n:CodeItem)
+                RETURN n.ardocoId AS id, labels(n) AS labels, properties(n) AS props
+                """).bind(modelId).to("modelId").fetch().all();
 
         Map<String, CodeItemNode> nodeMap = new HashMap<>();
         for (Map<String, Object> row : itemRows) {
             String id = (String) row.get("id");
-            @SuppressWarnings("unchecked")
-            List<String> labels = (List<String>) row.get("labels");
-            @SuppressWarnings("unchecked")
-            Map<String, Object> props = (Map<String, Object>) row.get("props");
+            @SuppressWarnings("unchecked") List<String> labels = (List<String>) row.get("labels");
+            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get("props");
             nodeMap.put(id, instantiateItemNode(id, labels, props));
         }
 
@@ -157,7 +150,8 @@ public class CodePersistenceService {
         if (labels.contains("CodePackage")) {
             node = new CodePackageNode(name, id);
         } else if (labels.contains("CodeCompilationUnit")) {
-            node = new CodeCompilationUnitNode(name, id, (String) props.get("extension"), (String) props.get("language"), toStringList(props.get("pathElements")));
+            node = new CodeCompilationUnitNode(name, id, (String) props.get("extension"), (String) props.get("language"), toStringList(props.get(
+                    "pathElements")));
         } else if (labels.contains("CodeAssembly")) {
             node = new CodeAssemblyNode(name, id, (String) props.get("language"));
         } else if (labels.contains("ClassUnit")) {
@@ -217,7 +211,8 @@ public class CodePersistenceService {
     }
 
     /**
-     * Like {@link #toStringList(Object)} but preserves {@code null}: a missing/{@code null} property comes back as {@code null} (not an empty list). This lets the
+     * Like {@link #toStringList(Object)} but preserves {@code null}: a missing/{@code null} property comes back as {@code null} (not an empty list). This lets
+     * the
      * domain distinguish a {@code null} datatype-reference list from an empty one, which it treats as unequal.
      */
     private static List<String> toStringListOrNull(Object value) {
@@ -259,8 +254,7 @@ public class CodePersistenceService {
         LinkTargetErrors errors = new LinkTargetErrors("CodeModel " + modelNode.getModelId());
         createContainsCodeItemEdges(items, errors);
         createModelToItemEdges("HAS_REPOSITORY_ITEM", modelNode.getModelId(), items.stream().map(CodeItemNode::getArdocoId).toList(), errors);
-        createModelToItemEdges("CONTAINS_CODE_ROOT", modelNode.getModelId(), modelNode.getContent().stream().map(CodeItemNode::getArdocoId).toList(),
-                errors);
+        createModelToItemEdges("CONTAINS_CODE_ROOT", modelNode.getModelId(), modelNode.getContent().stream().map(CodeItemNode::getArdocoId).toList(), errors);
         createDatatypeReferenceEdges(items, errors);
         errors.throwIfAny(logger);
     }
@@ -347,10 +341,7 @@ public class CodePersistenceService {
                     UNWIND $items AS item
                     CREATE (n:%s)
                     SET n += item
-                    """.formatted(labels))
-                    .bind(chunk)
-                    .to("items")
-                    .run();
+                    """.formatted(labels)).bind(chunk).to("items").run();
         }
     }
 

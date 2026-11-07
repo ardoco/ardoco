@@ -16,8 +16,10 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
     private String name;
 
     /**
-     * The id of the parent {@code CodeModule}, if any. Stored explicitly (rather than derived from the containment hierarchy) because the domain model represents
-     * parent links and content lists independently: an item can appear in another item's content list while its own parent id is {@code null}. Deriving the parent
+     * The id of the parent {@code CodeModule}, if any. Stored explicitly (rather than derived from the containment hierarchy) because the domain model
+     * represents
+     * parent links and content lists independently: an item can appear in another item's content list while its own parent id is {@code null}. Deriving the
+     * parent
      * from containment would fabricate parent links that were not present in the original model and break round-trip equality.
      */
     private String parentModuleId;

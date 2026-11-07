@@ -96,8 +96,8 @@ class PersistenceBridgeTest {
         PersistenceBridge.setHandler(null);
 
         var config = SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j");
-        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class,
-                () -> PersistenceBridge.getInstance().applyConfiguration(config));
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance()
+                .applyConfiguration(config));
         Assertions.assertTrue(exception.getMessage().contains("PersistenceHandlerProvider"));
         Assertions.assertTrue(exception.getMessage().contains("ServiceLoader"));
         Assertions.assertFalse(PersistenceBridge.isNeo4jStorage());
@@ -122,8 +122,8 @@ class PersistenceBridgeTest {
         PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         var config = SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j", legacyKey, "true");
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> PersistenceBridge.getInstance().applyConfiguration(config));
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> PersistenceBridge.getInstance()
+                .applyConfiguration(config));
         Assertions.assertTrue(exception.getMessage().contains(legacyKey));
         Assertions.assertTrue(exception.getMessage().contains("PersistenceBridge::storage=memory|neo4j"));
         Assertions.assertFalse(PersistenceBridge.isNeo4jStorage(), "a rejected configuration must not leave the previous neo4j mode active");

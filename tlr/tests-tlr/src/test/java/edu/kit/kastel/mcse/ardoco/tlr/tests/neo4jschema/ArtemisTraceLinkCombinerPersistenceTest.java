@@ -105,7 +105,8 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
         Assertions.assertEquals(2L, countTraceLinksOfType("NER_ARCHITECTURE"), "Both saved NER occurrences get their NER_ARCHITECTURE edge");
 
         Assertions.assertEquals(2L, sentenceArchitectureEdges, "Two distinct sentences each get their own SENTENCE_ARCHITECTURE edge");
-        Assertions.assertEquals(1L, architectureCodeEdges, "Both transitive links share the same architecture-code leg, so MERGE must deduplicate it to one edge");
+        Assertions.assertEquals(1L, architectureCodeEdges,
+                "Both transitive links share the same architecture-code leg, so MERGE must deduplicate it to one edge");
     }
 
     private long countTraceLinksOfType(String traceLinkType) {

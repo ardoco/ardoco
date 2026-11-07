@@ -30,8 +30,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     @DisplayName("ModelStates addModel then getModel does not shrink endpoint count")
     void testAddModelThenGetModelPreservesEndpoints() {
         PersistenceBridge.setHandler(persistenceHandler);
-        PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithNeo4jStorage());
+        PersistenceBridge.getInstance().applyConfiguration(getConfigsWithNeo4jStorage());
 
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel original = extractor.extractModel();
@@ -44,8 +43,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
 
         ArchitectureModel afterGet = (ArchitectureModel) modelStates.getModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         Assertions.assertSame(original, afterGet, "getModel must return the in-memory instance, not reload from Neo4j");
-        Assertions.assertEquals(endpointsBefore, afterGet.getEndpoints().size(),
-                "getModel after save must not replace in-memory model with a smaller graph");
+        Assertions.assertEquals(endpointsBefore, afterGet.getEndpoints().size(), "getModel after save must not replace in-memory model with a smaller graph");
         Assertions.assertEquals(contentBefore, afterGet.getContent().size());
         assertArchitectureModelsEqual(original, afterGet);
 
@@ -56,8 +54,7 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     @DisplayName("saveModel round-trips the architecture model losslessly through Neo4j")
     void testSaveModelRoundTripsArchitectureModel() {
         PersistenceBridge.setHandler(persistenceHandler);
-        PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithNeo4jStorage());
+        PersistenceBridge.getInstance().applyConfiguration(getConfigsWithNeo4jStorage());
 
         UmlExtractor extractor = new UmlExtractor(this.inputModelArchitectureUml, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
         ArchitectureModel original = extractor.extractModel();
@@ -73,16 +70,14 @@ class ModelStatesPersistenceTest extends AbstractPersistenceTest {
     @DisplayName("saveModel round-trips the code model losslessly through Neo4j")
     void testSaveModelRoundTripsCodeModel() {
         PersistenceBridge.setHandler(persistenceHandler);
-        PersistenceBridge.getInstance()
-                .applyConfiguration(getConfigsWithNeo4jStorage());
+        PersistenceBridge.getInstance().applyConfiguration(getConfigsWithNeo4jStorage());
 
         CodeModel original = CodeExtractor.readInCodeModel(codeConfiguration.code(), Metamodel.CODE_WITH_COMPILATION_UNITS);
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS, original);
 
         CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         assertCodeModelsEqual(original, loaded);
-        Assertions.assertEquals(0, countModelItemsMissingTraceableLabel(),
-                "CodeItem nodes persisted with the code model must also be labeled Traceable");
+        Assertions.assertEquals(0, countModelItemsMissingTraceableLabel(), "CodeItem nodes persisted with the code model must also be labeled Traceable");
 
         pauseForNeo4jInspection();
     }

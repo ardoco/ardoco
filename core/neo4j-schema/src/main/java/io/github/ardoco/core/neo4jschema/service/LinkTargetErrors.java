@@ -40,8 +40,8 @@ final class LinkTargetErrors {
 
     void recordEdges(String relation, List<Map<String, Object>> unresolvedRows) {
         for (Map<String, Object> row : unresolvedRows) {
-            recordEdge(relation, row.get("sourceId"), row.get("targetId"), ((Number) row.get("sourceMatches")).longValue(), ((Number) row.get(
-                    "targetMatches")).longValue());
+            recordEdge(relation, row.get("sourceId"), row.get("targetId"), ((Number) row.get("sourceMatches")).longValue(), ((Number) row.get("targetMatches"))
+                    .longValue());
         }
     }
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -20,10 +21,9 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
-import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
-import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
 
@@ -124,11 +124,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
                 MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
                 WHERE r.traceLinkType = 'NER_ARCHITECTURE'
                 RETURN r.confidence AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).doubleValue())
-                .orElse(-1.0);
+                """).fetch().one().map(row -> ((Number) row.get("c")).doubleValue()).orElse(-1.0);
         assertThat(storedConfidence).isEqualTo(confidence);
 
         SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById = new TreeMap<>();
@@ -182,10 +178,6 @@ class NerPersistenceTest extends AbstractPersistenceTest {
                 MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
                 WHERE r.traceLinkType = 'NER_ARCHITECTURE'
                 RETURN count(r) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
+                """).fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 }

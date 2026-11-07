@@ -91,9 +91,9 @@ public class NerPersistenceService {
 
     @Transactional(readOnly = true)
     public Collection<NamedArchitectureEntity> loadNamedArchitectureEntities(Metamodel metamodel, boolean unlinkedOnly) {
-        List<NamedArchitectureEntityNode> nodes = unlinkedOnly
-                ? entityRepository.findByMetamodelAndUnlinked(metamodel.name(), true)
-                : entityRepository.findByMetamodelAndUnlinked(metamodel.name(), false);
+        List<NamedArchitectureEntityNode> nodes = unlinkedOnly ?
+                entityRepository.findByMetamodelAndUnlinked(metamodel.name(), true) :
+                entityRepository.findByMetamodelAndUnlinked(metamodel.name(), false);
         List<NamedArchitectureEntity> result = new ArrayList<>();
         for (NamedArchitectureEntityNode node : nodes) {
             result.add(toDomain(node));
@@ -118,13 +118,7 @@ public class NerPersistenceService {
                     WHERE e.metamodel = $metamodel
                   }
                 RETURN o.ardocoId AS occId, t.ardocoId AS targetId, coalesce(r.confidence, -1.0) AS confidence
-                """)
-                .bind(TraceLinkType.NER_ARCHITECTURE.name())
-                .to("type")
-                .bind(metamodel.name())
-                .to("metamodel")
-                .fetch()
-                .all();
+                """).bind(TraceLinkType.NER_ARCHITECTURE.name()).to("type").bind(metamodel.name()).to("metamodel").fetch().all();
         for (var row : rows) {
             String occId = (String) row.get("occId");
             String targetId = (String) row.get("targetId");

@@ -195,8 +195,8 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         traceLinkServiceLogger.addAppender(appender);
         MissingTraceLinkEndpointException thrown;
         try {
-            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class,
-                    () -> persistenceHandler.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(archEntity, codeItem))));
+            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(List.of(
+                    new ArchitectureCodeTraceLink(archEntity, codeItem))));
         } finally {
             traceLinkServiceLogger.detachAppender(appender);
         }

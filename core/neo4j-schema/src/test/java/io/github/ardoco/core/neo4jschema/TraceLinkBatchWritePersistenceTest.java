@@ -84,8 +84,8 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
 
         List<ILoggingEvent> events = captureTraceLinkServiceLog(() -> PersistenceBridge.withDeferredWrites("stage-dedup", () -> {
             PersistenceBridge.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem)));
-            PersistenceBridge.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem),
-                    new ArchitectureCodeTraceLink(architectureItem, secondCodeItem)));
+            PersistenceBridge.saveTraceLinks(List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem), new ArchitectureCodeTraceLink(architectureItem,
+                    secondCodeItem)));
             return null;
         }));
 
@@ -128,7 +128,12 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
         Assertions.assertEquals(1L, countTraceLinks("ARCHITECTURE_CODE"));
         Double storedConfidence = neo4jClient.query("""
                 MATCH (:RecommendedInstance {ardocoId: $id})-[r:TRACES_TO]->() RETURN r.confidence AS confidence
-                """).bind(recommendedInstanceId).to("id").fetchAs(Double.class).mappedBy((typeSystem, record) -> record.get("confidence").asDouble()).one()
+                """)
+                .bind(recommendedInstanceId)
+                .to("id")
+                .fetchAs(Double.class)
+                .mappedBy((typeSystem, record) -> record.get("confidence").asDouble())
+                .one()
                 .orElseThrow();
         Assertions.assertEquals(recommendationLink.getConfidence(), storedConfidence, 1e-9);
     }
@@ -138,9 +143,9 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
     void reportsMissingEndpointsInAMixedBatch() {
         Text text = TextFactory.createComplexText("batch_missing_doc");
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
-        List<TraceLink<?, ?>> links = List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem),
-                new ArchitectureCodeTraceLink(new ArchitectureMethod("ghostSource", "ghost-source-id"), codeItem),
-                new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghostTarget", "ghost-target-id")));
+        List<TraceLink<?, ?>> links = List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem), new ArchitectureCodeTraceLink(new ArchitectureMethod(
+                "ghostSource", "ghost-source-id"), codeItem), new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghostTarget",
+                        "ghost-target-id")));
 
         List<MissingTraceLinkEndpointException> thrown = new ArrayList<>();
         List<ILoggingEvent> events = captureTraceLinkServiceLog(() -> thrown.add(Assertions.assertThrows(MissingTraceLinkEndpointException.class,
@@ -182,8 +187,8 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
     }
 
     private static TransitiveTraceLink<?, ?> transitive(Sentence sentence, ArchitectureCodeTraceLink architectureCodeLink) {
-        return TransitiveTraceLink.createTransitiveTraceLink(new SentenceModelTraceLink(sentence, architectureCodeLink.getFirstEndpoint()), architectureCodeLink)
-                .orElseThrow();
+        return TransitiveTraceLink.createTransitiveTraceLink(new SentenceModelTraceLink(sentence, architectureCodeLink.getFirstEndpoint()),
+                architectureCodeLink).orElseThrow();
     }
 
     private long countTraceLinks(String type) {

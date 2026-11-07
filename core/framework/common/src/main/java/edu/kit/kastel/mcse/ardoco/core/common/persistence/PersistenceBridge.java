@@ -84,7 +84,10 @@ public class PersistenceBridge extends AbstractConfigurable {
     @Configurable
     private PersistenceStorage storage = PersistenceStorage.MEMORY;
 
-    /** Neo4j Bolt URI; resolved from the configuration, then environment, then {@link #DEFAULT_NEO4J_URI}. Not reflectively configurable (no String support in {@link AbstractConfigurable}), read directly from the raw map in {@link #delegateApplyConfigurationToInternalObjects}. */
+    /**
+     * Neo4j Bolt URI; resolved from the configuration, then environment, then {@link #DEFAULT_NEO4J_URI}. Not reflectively configurable (no String support in
+     * {@link AbstractConfigurable}), read directly from the raw map in {@link #delegateApplyConfigurationToInternalObjects}.
+     */
     private String neo4jUri;
 
     private String neo4jUsername;
@@ -404,9 +407,8 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
 
         private void logFlush() {
-            if (this.pendingNounMappingSaves.isEmpty() && this.pendingRecommendedInstanceSaves.isEmpty()
-                    && this.pendingNamedArchitectureEntitySaves.isEmpty() && this.pendingTraceLinks.isEmpty() && this.pendingInconsistencies.isEmpty()
-                    && this.pendingNounMappingDeletions.isEmpty()) {
+            if (this.pendingNounMappingSaves.isEmpty() && this.pendingRecommendedInstanceSaves.isEmpty() && this.pendingNamedArchitectureEntitySaves
+                    .isEmpty() && this.pendingTraceLinks.isEmpty() && this.pendingInconsistencies.isEmpty() && this.pendingNounMappingDeletions.isEmpty()) {
                 return;
             }
             StringBuilder counts = new StringBuilder();
@@ -508,8 +510,7 @@ public class PersistenceBridge extends AbstractConfigurable {
         PersistenceHandlerProvider provider = ServiceLoader.load(PersistenceHandlerProvider.class)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
-                        "PersistenceBridge::storage=neo4j but no PersistenceHandlerProvider is registered via ServiceLoader. Add a module "
-                                + "providing one (e.g. 'neo4j-schema') to the runtime classpath. Attempted connection: " + uri + " as " + username));
+                        "PersistenceBridge::storage=neo4j but no PersistenceHandlerProvider is registered via ServiceLoader. Add a module " + "providing one (e.g. 'neo4j-schema') to the runtime classpath. Attempted connection: " + uri + " as " + username));
 
         var connectionProperties = SortedMaps.mutable.<String, String>empty();
         connectionProperties.put(PersistenceHandlerProvider.PROPERTY_URI, uri);
@@ -520,14 +521,13 @@ public class PersistenceBridge extends AbstractConfigurable {
         try {
             created = provider.createHandler(connectionProperties.toImmutable());
         } catch (RuntimeException ex) {
-            throw new IllegalStateException(
-                    "PersistenceBridge::storage=neo4j: could not connect to Neo4j at " + uri + " as " + username + ": " + ex.getMessage(), ex);
+            throw new IllegalStateException("PersistenceBridge::storage=neo4j: could not connect to Neo4j at " + uri + " as " + username + ": " + ex
+                    .getMessage(), ex);
         }
         if (created == null) {
             throw new IllegalStateException("PersistenceHandlerProvider " + provider.getClass().getName() + " returned no handler for " + uri);
         }
         setHandler(created);
-        LOGGER.info("Neo4j persistence bootstrapped via ServiceLoader provider {} (uri={}, username={})", provider.getClass().getName(), uri,
-                username);
+        LOGGER.info("Neo4j persistence bootstrapped via ServiceLoader provider {} (uri={}, username={})", provider.getClass().getName(), uri, username);
     }
 }

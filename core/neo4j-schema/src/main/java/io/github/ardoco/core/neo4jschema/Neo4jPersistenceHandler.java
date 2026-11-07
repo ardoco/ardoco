@@ -75,9 +75,9 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     public Neo4jPersistenceHandler(DocumentationPersistenceService documentationService, ArchitecturePersistenceService architectureService,
             CodePersistenceService codeService, TraceLinkPersistenceService traceLinkService, InconsistencyPersistenceService inconsistencyService,
-            TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService, SimpleTextPersistenceService simpleTextService,
-            ProjectPersistenceService projectService, NerPersistenceService nerService, RunMetadataPersistenceService runMetadataService,
-            GraphExportService graphExportService, Neo4jClient neo4jClient) {
+            TextStatePersistenceService textStateService, RecommendationPersistenceService recommendationService,
+            SimpleTextPersistenceService simpleTextService, ProjectPersistenceService projectService, NerPersistenceService nerService,
+            RunMetadataPersistenceService runMetadataService, GraphExportService graphExportService, Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
         this.documentationService = documentationService;
         this.architectureService = architectureService;
@@ -289,8 +289,8 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     public boolean hasRecommendationModelTraceLinks() {
-        return countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_ARCHITECTURE) > 0
-                || countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_CODE) > 0;
+        return countRecommendationModelLinks(TraceLinkType.RECOMMENDATION_ARCHITECTURE) > 0 || countRecommendationModelLinks(
+                TraceLinkType.RECOMMENDATION_CODE) > 0;
     }
 
     private long countRecommendationModelLinks(TraceLinkType type) {
@@ -298,13 +298,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
                 MATCH (:RecommendedInstance)-[r:TRACES_TO]->(:Traceable)
                 WHERE r.traceLinkType = $type
                 RETURN count(r) AS c
-                """)
-                .bind(type.name())
-                .to("type")
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
+                """).bind(type.name()).to("type").fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 
     @Transactional(readOnly = true)

@@ -19,11 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
@@ -114,11 +114,10 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
             DataRepository dataRepository = runner.runWithoutSaving();
             Assertions.assertNotNull(dataRepository);
 
-            Assertions.assertEquals(0, countAllNodesDirect(), "runWithoutSaving must also clean/wipe (the lifecycle lives in Ardoco.run(), not only "
-                    + "runAndSave)");
+            Assertions.assertEquals(0, countAllNodesDirect(),
+                    "runWithoutSaving must also clean/wipe (the lifecycle lives in Ardoco.run(), not only " + "runAndSave)");
             Assertions.assertTrue(defaultExportFile.exists(),
-                    "with no output directory and no configured export path, the graph must still be exported to the default directory, "
-                            + "never silently discarded");
+                    "with no output directory and no configured export path, the graph must still be exported to the default directory, " + "never silently discarded");
             String json = readFile(defaultExportFile);
             Assertions.assertTrue(json.contains("\"nodeCount\""));
         } finally {
@@ -259,16 +258,16 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
      * hand-writing a full {@link PersistenceHandler} stub for every interface method.
      */
     private static PersistenceHandler failingOn(PersistenceHandler real, String failingMethodName) {
-        return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class },
-                (proxy, method, args) -> {
-                    if (method.getName().equals(failingMethodName)) {
-                        throw new RuntimeException("injected failure in " + failingMethodName + " for Neo4jRunLifecycleTest");
-                    }
-                    try {
-                        return method.invoke(real, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                });
+        return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class }, (proxy,
+                method, args) -> {
+            if (method.getName().equals(failingMethodName)) {
+                throw new RuntimeException("injected failure in " + failingMethodName + " for Neo4jRunLifecycleTest");
+            }
+            try {
+                return method.invoke(real, args);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+        });
     }
 }

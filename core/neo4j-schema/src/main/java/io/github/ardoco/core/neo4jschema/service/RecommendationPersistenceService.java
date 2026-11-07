@@ -34,8 +34,7 @@ public class RecommendationPersistenceService {
     private final RecommendedInstanceRepository recommendedInstanceRepository;
     private final RecommendedInstanceMapper recommendedInstanceMapper;
 
-    public RecommendationPersistenceService(RecommendedInstanceRepository recommendedInstanceRepository,
-            RecommendedInstanceMapper recommendedInstanceMapper) {
+    public RecommendationPersistenceService(RecommendedInstanceRepository recommendedInstanceRepository, RecommendedInstanceMapper recommendedInstanceMapper) {
         this.recommendedInstanceRepository = recommendedInstanceRepository;
         this.recommendedInstanceMapper = recommendedInstanceMapper;
     }

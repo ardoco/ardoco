@@ -29,20 +29,20 @@ import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
  * <h2>Which Neo4j the tests use</h2>
  * Selected with {@code -Dardoco.neo4j.testDatabase=container|local}:
  * <ul>
- *   <li>{@code container} (default): an isolated, throw-away Neo4j started via Testcontainers (Docker must be running). The tests never touch
- *       a local database, so a graph kept in Neo4j Desktop is safe.</li>
- *   <li>{@code local}: Neo4j Desktop at {@code bolt://127.0.0.1:7687} (user {@value #NEO4J_USER}, password {@value #NEO4J_PASSWORD}), for
- *       inspecting the graph in Neo4j Browser during a pause. To protect a kept graph, a test refuses to start if this database is not empty,
- *       unless {@code -Dardoco.neo4j.allowWipe=true} is set; a test that refused to start never clears the database.</li>
+ * <li>{@code container} (default): an isolated, throw-away Neo4j started via Testcontainers (Docker must be running). The tests never touch
+ * a local database, so a graph kept in Neo4j Desktop is safe.</li>
+ * <li>{@code local}: Neo4j Desktop at {@code bolt://127.0.0.1:7687} (user {@value #NEO4J_USER}, password {@value #NEO4J_PASSWORD}), for
+ * inspecting the graph in Neo4j Browser during a pause. To protect a kept graph, a test refuses to start if this database is not empty,
+ * unless {@code -Dardoco.neo4j.allowWipe=true} is set; a test that refused to start never clears the database.</li>
  * </ul>
  *
  * <h2>Data lifetime: pause then clear</h2>
  * Pipeline data is <em>not</em> left in Neo4j permanently.
  * <ol>
- *   <li>During the test, {@link #pauseForNeo4jInspection()} may sleep so you can open
- *       Neo4j Browser ({@value #NEO4J_BROWSER}) and inspect the graph.</li>
- *   <li>After the test method returns, {@link #clearNeo4jAfterTest()} runs
- *       ({@code @AfterEach}) and deletes all nodes/relationships.</li>
+ * <li>During the test, {@link #pauseForNeo4jInspection()} may sleep so you can open
+ * Neo4j Browser ({@value #NEO4J_BROWSER}) and inspect the graph.</li>
+ * <li>After the test method returns, {@link #clearNeo4jAfterTest()} runs
+ * ({@code @AfterEach}) and deletes all nodes/relationships.</li>
  * </ol>
  *
  * <h2>Pausing under Maven Surefire</h2>
@@ -143,9 +143,8 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
         if (USE_LOCAL_NEO4J && !Boolean.getBoolean(ALLOW_WIPE_PROPERTY)) {
             long existingNodes = countAllNodes();
             if (existingNodes > 0) {
-                throw new IllegalStateException("Local Neo4j at bolt://127.0.0.1:7687 already contains " + existingNodes
-                        + " nodes. The tests would delete them. Use the default -D" + TEST_DATABASE_PROPERTY + "=container, empty the database, or set -D"
-                        + ALLOW_WIPE_PROPERTY + "=true.");
+                throw new IllegalStateException(
+                        "Local Neo4j at bolt://127.0.0.1:7687 already contains " + existingNodes + " nodes. The tests would delete them. Use the default -D" + TEST_DATABASE_PROPERTY + "=container, empty the database, or set -D" + ALLOW_WIPE_PROPERTY + "=true.");
             }
         }
         graphOwnedByTest = true;
@@ -192,11 +191,7 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
     }
 
     private long countAllNodes() {
-        return neo4jClient.query("MATCH (n) RETURN count(n) AS c")
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
+        return neo4jClient.query("MATCH (n) RETURN count(n) AS c").fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 
     /**
@@ -296,19 +291,11 @@ public abstract class AbstractPersistenceTest extends CodeRunnerBaseTest {
                 MATCH (n)
                 WHERE (n:ArchitectureItem OR n:CodeItem) AND NOT n:Traceable
                 RETURN count(n) AS c
-                """)
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
+                """).fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 
     protected long countNodesWithLabel(String label) {
-        return neo4jClient.query("MATCH (n:" + label + ") RETURN count(n) AS c")
-                .fetch()
-                .one()
-                .map(row -> ((Number) row.get("c")).longValue())
-                .orElse(0L);
+        return neo4jClient.query("MATCH (n:" + label + ") RETURN count(n) AS c").fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
     }
 
     protected long countRelationshipsWithType(String relationshipType) {

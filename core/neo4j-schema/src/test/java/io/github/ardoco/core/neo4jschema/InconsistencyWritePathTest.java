@@ -75,19 +75,16 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
         ArchitectureModel architectureModel = ArchitectureModelFactory.createArchitectureModel();
         persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, architectureModel);
         List<Inconsistency> inconsistencies = List.of(new TextEntityAbsentFromModelInconsistency("login", 1, 0.9, null),
-                new TextEntityAbsentFromModelInconsistency("component", 1, 0.8, null), new TextEntityAbsentFromModelInconsistency("database", 2, 0.7,
-                        null), new ModelEntityAbsentFromTextInconsistency(architectureModel.getEndpoints().get(0)), new ModelEntityAbsentFromTextInconsistency(
-                                architectureModel.getEndpoints().get(1)));
+                new TextEntityAbsentFromModelInconsistency("component", 1, 0.8, null), new TextEntityAbsentFromModelInconsistency("database", 2, 0.7, null),
+                new ModelEntityAbsentFromTextInconsistency(architectureModel.getEndpoints().get(0)), new ModelEntityAbsentFromTextInconsistency(
+                        architectureModel.getEndpoints().get(1)));
 
         List<String> statements = captureCypherStatements(() -> persistenceHandler.addInconsistencies(inconsistencies));
 
         Assertions.assertFalse(statements.isEmpty(), "the Cypher statement log must be captured");
         Assertions.assertTrue(statements.stream().noneMatch(statement -> statement.contains("RETURN n{")), statements.toString());
         Assertions.assertTrue(statements.size() <= 2, statements.size() + " statements: " + statements);
-        Assertions.assertEquals(5L, neo4jClient.query("MATCH ()-[r:HAS_INCONSISTENCY]->() RETURN count(r) AS c")
-                .fetchAs(Long.class)
-                .one()
-                .orElse(0L));
+        Assertions.assertEquals(5L, neo4jClient.query("MATCH ()-[r:HAS_INCONSISTENCY]->() RETURN count(r) AS c").fetchAs(Long.class).one().orElse(0L));
     }
 
     @Test
@@ -116,7 +113,9 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
         persistenceHandler.addInconsistencies(List.of(inconsistency));
 
         Assertions.assertEquals(1L, neo4jClient.query("MATCH (i:TextInconsistency) RETURN count(i) AS c").fetchAs(Long.class).one().orElse(0L));
-        Assertions.assertEquals(1L, neo4jClient.query("MATCH ()-[r:HAS_INCONSISTENCY]->(:TextInconsistency) RETURN count(r) AS c").fetchAs(Long.class).one()
+        Assertions.assertEquals(1L, neo4jClient.query("MATCH ()-[r:HAS_INCONSISTENCY]->(:TextInconsistency) RETURN count(r) AS c")
+                .fetchAs(Long.class)
+                .one()
                 .orElse(0L));
     }
 

@@ -122,10 +122,8 @@ public final class Neo4jPersistenceHandlerProvider implements PersistenceHandler
         // Neo4jInitializer swallows its own index-creation failures; without this explicit check, a dead database
         // would otherwise look like a successfully bootstrapped handler.
         closeContext();
-        throw new IllegalStateException(
-                "Could not connect to Neo4j at " + properties.get(PROPERTY_URI) + " as " + properties.get(PROPERTY_USERNAME) + ": "
-                        + lastFailure.getMessage(),
-                lastFailure);
+        throw new IllegalStateException("Could not connect to Neo4j at " + properties.get(PROPERTY_URI) + " as " + properties.get(
+                PROPERTY_USERNAME) + ": " + lastFailure.getMessage(), lastFailure);
     }
 
     private static void sleepBriefly() {

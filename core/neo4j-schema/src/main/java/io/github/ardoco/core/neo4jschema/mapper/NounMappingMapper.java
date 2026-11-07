@@ -167,8 +167,11 @@ public class NounMappingMapper {
             }
         }
 
-        ImmutableList<Word> referenceWords = Lists.immutable.withAll(node.getReferenceWords().stream().map(wn -> wordsByPosition.get(wn.getPosition())).filter(
-                w -> w != null).toList());
+        ImmutableList<Word> referenceWords = Lists.immutable.withAll(node.getReferenceWords()
+                .stream()
+                .map(wn -> wordsByPosition.get(wn.getPosition()))
+                .filter(w -> w != null)
+                .toList());
 
         MutableSortedMap<MappingKind, Confidence> distribution = SortedMaps.mutable.empty();
         Confidence nameConfidence = new Confidence(AggregationFunctions.AVERAGE);

@@ -83,8 +83,8 @@ class PersistenceBridgeServiceLoaderTest {
 
         ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
 
-        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class,
-                () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance()
+                .applyConfiguration(configWithBadUri));
         Assertions.assertTrue(exception.getMessage().contains("bolt://127.0.0.1:1"), "message should name the attempted URI");
         Assertions.assertFalse(exception.getMessage().contains("wrong-password"), "the password must never appear in an error message");
     }
@@ -102,8 +102,8 @@ class PersistenceBridgeServiceLoaderTest {
             PersistenceBridge.getHandler().saveProjectMetadata(marker, "x");
 
             Assertions.assertEquals(1, countProjects(second.getBoltUrl(), second.getAdminPassword(), marker), "the marker must be in the second database");
-            Assertions.assertEquals(0, countProjects(container.getBoltUrl(), container.getAdminPassword(), marker), "the marker must not be in the first "
-                    + "database");
+            Assertions.assertEquals(0, countProjects(container.getBoltUrl(), container.getAdminPassword(), marker),
+                    "the marker must not be in the first " + "database");
         }
     }
 

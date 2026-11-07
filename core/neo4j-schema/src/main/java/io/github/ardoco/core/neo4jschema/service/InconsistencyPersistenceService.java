@@ -129,8 +129,8 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
                     .to("rows")
                     .fetch()
                     .all()) {
-                errors.recordEdge("HAS_INCONSISTENCY (Sentence)", "sentence " + unresolved.get("sentenceNumber"), unresolved.get("reason"),
-                        ((Number) unresolved.get("matches")).longValue(), 1);
+                errors.recordEdge("HAS_INCONSISTENCY (Sentence)", "sentence " + unresolved.get("sentenceNumber"), unresolved.get("reason"), ((Number) unresolved
+                        .get("matches")).longValue(), 1);
             }
         }
         for (List<Map<String, Object>> chunk : chunk(new ArrayList<>(modelRows.values()))) {

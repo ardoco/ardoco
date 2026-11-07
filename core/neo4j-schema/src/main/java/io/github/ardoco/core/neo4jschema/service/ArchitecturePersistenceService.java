@@ -214,10 +214,7 @@ public class ArchitecturePersistenceService {
                     UNWIND $items AS item
                     CREATE (n:%s)
                     SET n += item
-                    """.formatted(labels))
-                    .bind(chunk)
-                    .to("items")
-                    .run();
+                    """.formatted(labels)).bind(chunk).to("items").run();
         }
     }
 

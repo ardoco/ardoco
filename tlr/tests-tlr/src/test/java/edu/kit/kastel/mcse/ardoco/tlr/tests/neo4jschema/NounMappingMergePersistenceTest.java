@@ -40,10 +40,7 @@ class NounMappingMergePersistenceTest extends AbstractPersistenceTest {
     }
 
     private void createBareNounMappingNode(String ardocoId) {
-        neo4jClient.query("CREATE (n:NounMapping {ardocoId: $id})")
-                .bind(ardocoId)
-                .to("id")
-                .run();
+        neo4jClient.query("CREATE (n:NounMapping {ardocoId: $id})").bind(ardocoId).to("id").run();
     }
 
     private long countNounMappingByArdocoId(String ardocoId) {

@@ -104,7 +104,8 @@ class ArtemisTransitiveLinkPersistenceTest extends AbstractNeo4jTest {
                 .one()
                 .orElse(0L);
 
-        Assertions.assertEquals(1L, sentenceArchitectureEdges, "The transitive link's sentence->architecture half should be persisted as SENTENCE_ARCHITECTURE");
+        Assertions.assertEquals(1L, sentenceArchitectureEdges,
+                "The transitive link's sentence->architecture half should be persisted as SENTENCE_ARCHITECTURE");
         Assertions.assertEquals(1L, architectureCodeEdges);
         Assertions.assertEquals(3L, sentenceNodeCount);
     }

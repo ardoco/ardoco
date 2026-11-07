@@ -12,7 +12,8 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 public abstract class DatatypeNode extends CodeItemNode {
 
     /**
-     * The id of the compilation unit that owns this datatype, if any. Stored explicitly (see the rationale on {@link CodeItemNode#getParentModuleId()}) so it is
+     * The id of the compilation unit that owns this datatype, if any. Stored explicitly (see the rationale on {@link CodeItemNode#getParentModuleId()}) so it
+     * is
      * preserved verbatim on a save/load round trip rather than being re-derived from the containment hierarchy.
      */
     private String compilationUnitId;
@@ -25,9 +26,11 @@ public abstract class DatatypeNode extends CodeItemNode {
     /**
      * The raw extended/implemented/referenced datatype id lists, stored verbatim as node properties.
      *
-     * <p>These duplicate the information in the {@code EXTENDS}/{@code IMPLEMENTS}/{@code REFERENCES_DATATYPE} relationships below on purpose: the relationships
+     * <p>These duplicate the information in the {@code EXTENDS}/{@code IMPLEMENTS}/{@code REFERENCES_DATATYPE} relationships below on purpose: the
+     * relationships
      * are kept for graph queries/visualization, but they can only ever point to datatypes that actually exist as nodes and they carry no ordering or
-     * {@code null}-vs-empty information. The domain model, however, treats these id lists verbatim (order-sensitive, and a {@code null} list is distinct from an
+     * {@code null}-vs-empty information. The domain model, however, treats these id lists verbatim (order-sensitive, and a {@code null} list is distinct from
+     * an
      * empty one), so the raw lists are persisted here to allow a lossless round trip.
      */
     private List<String> extendedDataTypesIds;

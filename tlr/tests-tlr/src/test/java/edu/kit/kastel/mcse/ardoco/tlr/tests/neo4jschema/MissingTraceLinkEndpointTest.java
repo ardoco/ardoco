@@ -52,29 +52,30 @@ class MissingTraceLinkEndpointTest extends AbstractPersistenceTest {
         Assertions.assertFalse(new File(runOutputDirectory, "knowledgeGraph_" + projectName + ".json").exists(),
                 "a failed run must not export a knowledge graph");
         String[] writtenFiles = runOutputDirectory.list();
-        Assertions.assertTrue(writtenFiles == null || writtenFiles.length == 0, "a failed run must not write output files: " + List.of(
-                writtenFiles == null ? new String[0] : writtenFiles));
+        Assertions.assertTrue(writtenFiles == null || writtenFiles.length == 0, "a failed run must not write output files: " + List.of(writtenFiles == null ?
+                new String[0] :
+                writtenFiles));
     }
 
     private PersistenceHandler deletingFirstRecommendedInstance(PersistenceHandler real, List<String> deletedIds) {
-        return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class },
-                (proxy, method, args) -> {
-                    if (method.getName().equals("saveTraceLinks") && deletedIds.isEmpty()) {
-                        for (Object link : (Collection<?>) args[0]) {
-                            if (link instanceof RecommendationModelTraceLink recommendationLink) {
-                                String id = recommendationLink.getFirstEndpoint().getId();
-                                neo4jClient.query("MATCH (ri:RecommendedInstance {ardocoId: $id}) DETACH DELETE ri").bindAll(Map.of("id", id)).run();
-                                deletedIds.add(id);
-                                break;
-                            }
-                        }
+        return (PersistenceHandler) Proxy.newProxyInstance(PersistenceHandler.class.getClassLoader(), new Class<?>[] { PersistenceHandler.class }, (proxy,
+                method, args) -> {
+            if (method.getName().equals("saveTraceLinks") && deletedIds.isEmpty()) {
+                for (Object link : (Collection<?>) args[0]) {
+                    if (link instanceof RecommendationModelTraceLink recommendationLink) {
+                        String id = recommendationLink.getFirstEndpoint().getId();
+                        neo4jClient.query("MATCH (ri:RecommendedInstance {ardocoId: $id}) DETACH DELETE ri").bindAll(Map.of("id", id)).run();
+                        deletedIds.add(id);
+                        break;
                     }
-                    try {
-                        return method.invoke(real, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                });
+                }
+            }
+            try {
+                return method.invoke(real, args);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+        });
     }
 
     private long countAllNodes() {
