@@ -51,9 +51,18 @@ class ModelIdCollisionPersistenceTest extends AbstractNeo4jTest {
     }
 
     @Test
+    @DisplayName("The id-aware ArchitectureMethod constructor takes the name first and the id second")
+    void architectureMethodConstructorTakesNameThenId() {
+        ArchitectureMethod method = new ArchitectureMethod("doWork", "method_id");
+
+        Assertions.assertEquals("doWork", method.getName());
+        Assertions.assertEquals("method_id", method.getId());
+    }
+
+    @Test
     @DisplayName("An ArchitectureMethod and a ClassUnit with the same id stay apart: model edges and the trace link reach only the labelled node")
     void sharedIdDoesNotFanOut() {
-        ArchitectureMethod method = new ArchitectureMethod(SHARED_ID, "doWork");
+        ArchitectureMethod method = new ArchitectureMethod("doWork", SHARED_ID);
         ArchitectureInterface architectureInterface = new ArchitectureInterface("IWork", "collision_iface", new TreeSet<>(List.of(method)));
         ArchitectureComponent component = new ArchitectureComponent("Worker", "collision_comp", new TreeSet<>(), new TreeSet<>(List.of(
                 architectureInterface)), new TreeSet<>(), "Component");

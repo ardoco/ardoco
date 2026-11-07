@@ -39,7 +39,7 @@ public class ArchitectureModelMapper {
         } else if (node instanceof ArchitectureInterfaceNode interfaceNode) {
             return mapInterfaceToDomain(interfaceNode, new HashMap<>());
         } else if (node instanceof ArchitectureMethodNode methodNode) {
-            return new ArchitectureMethod(methodNode.getArdocoId(), methodNode.getName()); // constructor order is (id, name)
+            return new ArchitectureMethod(methodNode.getName(), methodNode.getArdocoId());
         }
         throw new IllegalArgumentException("Unknown ArchitectureItemNode type: " + node.getClass().getSimpleName());
     }
@@ -104,7 +104,7 @@ public class ArchitectureModelMapper {
 
         SortedSet<ArchitectureMethod> methods = new TreeSet<>();
         for (ArchitectureMethodNode methodNode : node.getMethodSignatures()) {
-            methods.add(new ArchitectureMethod(methodNode.getArdocoId(), methodNode.getName()));
+            methods.add(new ArchitectureMethod(methodNode.getName(), methodNode.getArdocoId()));
         }
 
         ArchitectureInterface domainInterface = new ArchitectureInterface(node.getName(), node.getArdocoId(), methods);

@@ -139,8 +139,8 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
         Text text = TextFactory.createComplexText("batch_missing_doc");
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
         List<TraceLink<?, ?>> links = List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem),
-                new ArchitectureCodeTraceLink(new ArchitectureMethod("ghost-source-id", "ghostSource"), codeItem),
-                new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghost-target-id", "ghostTarget")));
+                new ArchitectureCodeTraceLink(new ArchitectureMethod("ghostSource", "ghost-source-id"), codeItem),
+                new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghostTarget", "ghost-target-id")));
 
         List<MissingTraceLinkEndpointException> thrown = new ArrayList<>();
         List<ILoggingEvent> events = captureTraceLinkServiceLog(() -> thrown.add(Assertions.assertThrows(MissingTraceLinkEndpointException.class,
@@ -170,7 +170,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
         for (int i = 0; i < linkCount; i++) {
             String id = "batch-chunk-method-" + i;
             ids.add(id);
-            links.add(new ArchitectureCodeTraceLink(new ArchitectureMethod(id, "method" + i), codeItem));
+            links.add(new ArchitectureCodeTraceLink(new ArchitectureMethod("method" + i, id), codeItem));
         }
         neo4jClient.query("UNWIND $ids AS id CREATE (:ArchitectureItem:ArchitectureMethod:Traceable {ardocoId: id})").bind(ids).to("ids").run();
 

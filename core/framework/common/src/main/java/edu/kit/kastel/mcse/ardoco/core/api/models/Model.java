@@ -14,13 +14,20 @@ public abstract sealed class Model permits ArchitectureModel, CodeModel {
 
     private final String id;
 
-    public Model() {
+    /**
+     * Creates a new model with a generated id.
+     */
+    protected Model() {
         this.id = IdentifierProvider.createId();
     }
 
-    // Allow restoring ID for neo4j reconstruction
-    public Model(String id) {
-        this.id = id;
+    /**
+     * Creates a new model with the specified id.
+     *
+     * @param id the model id
+     */
+    protected Model(String id) {
+        this.id = id != null ? id : IdentifierProvider.createId();
     }
 
     public String getId() {

@@ -25,11 +25,12 @@ public final class ArchitectureMethod extends ArchitectureItem {
     }
 
     /**
-     * Creates a new ArchitectureMethod with a given id.
+     * Creates a new ArchitectureMethod with a specific identifier.
      *
      * @param name the name of the method
+     * @param id   the unique identifier
      */
-    public ArchitectureMethod(String id, String name) {
+    public ArchitectureMethod(String name, String id) {
         super(name, id);
     }
 
