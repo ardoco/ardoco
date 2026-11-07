@@ -73,7 +73,7 @@ public class RecommendedInstanceMapper {
         ImmutableList<NounMapping> typeMappings = resolveDomainMappings(node.getTypeMappings(), nounMappingsById);
 
         RecommendedInstanceImpl instance = new RecommendedInstanceImpl(node.getName(), node.getType() != null ? node.getType() : "", node.getArdocoId(),
-                NounMappingMapper.RESUME_CLAIMANT, node.getProbability(), nameMappings, typeMappings);
+                NounMappingMapper.RESTORE_CLAIMANT, node.getProbability(), nameMappings, typeMappings);
         if (node.getMetamodel() != null) {
             try {
                 instance.setMetamodel(Metamodel.valueOf(node.getMetamodel()));

@@ -42,7 +42,7 @@ public class NounMappingMapper {
     private static final Logger logger = LoggerFactory.getLogger(NounMappingMapper.class);
 
     /** Claimant used only when restoring confidences from stored probability doubles. */
-    public static final Claimant RESUME_CLAIMANT = new Claimant() {
+    public static final Claimant RESTORE_CLAIMANT = new Claimant() {
     };
 
     private static final int LOOKUP_CHUNK_SIZE = 2000;
@@ -172,9 +172,9 @@ public class NounMappingMapper {
 
         MutableSortedMap<MappingKind, Confidence> distribution = SortedMaps.mutable.empty();
         Confidence nameConfidence = new Confidence(AggregationFunctions.AVERAGE);
-        nameConfidence.addAgentConfidence(RESUME_CLAIMANT, node.getNameProbability());
+        nameConfidence.addAgentConfidence(RESTORE_CLAIMANT, node.getNameProbability());
         Confidence typeConfidence = new Confidence(AggregationFunctions.AVERAGE);
-        typeConfidence.addAgentConfidence(RESUME_CLAIMANT, node.getTypeProbability());
+        typeConfidence.addAgentConfidence(RESTORE_CLAIMANT, node.getTypeProbability());
         distribution.put(MappingKind.NAME, nameConfidence);
         distribution.put(MappingKind.TYPE, typeConfidence);
 

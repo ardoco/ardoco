@@ -94,9 +94,6 @@ public class NerPersistenceService {
         List<NamedArchitectureEntityNode> nodes = unlinkedOnly
                 ? entityRepository.findByMetamodelAndUnlinked(metamodel.name(), true)
                 : entityRepository.findByMetamodelAndUnlinked(metamodel.name(), false);
-        if (!unlinkedOnly) {
-            // When unlinkedOnly is false, load linked entities only (unlinked=false).
-        }
         List<NamedArchitectureEntity> result = new ArrayList<>();
         for (NamedArchitectureEntityNode node : nodes) {
             result.add(toDomain(node));
@@ -136,7 +133,7 @@ public class NerPersistenceService {
             if (occurrence != null && modelEntity != null) {
                 double confidence = row.get("confidence") instanceof Number number ? number.doubleValue() : -1.0;
                 links.add(confidence >= 0 ?
-                        new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity, NounMappingMapper.RESUME_CLAIMANT, confidence) :
+                        new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity, NounMappingMapper.RESTORE_CLAIMANT, confidence) :
                         new NamedArchitectureEntityToModelTraceLink(occurrence, modelEntity));
             }
         }

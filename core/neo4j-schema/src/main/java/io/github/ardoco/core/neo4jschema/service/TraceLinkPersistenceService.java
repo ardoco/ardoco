@@ -503,13 +503,13 @@ public class TraceLinkPersistenceService {
                 target = codeItemsById.get(targetId);
             }
             if (ri == null || target == null) {
-                logger.warn("Skipping RI→Model link resume ({}): missing endpoint ri={} target={}", type, riId, targetId);
+                logger.warn("Skipping RI→Model link ({}): missing endpoint ri={} target={}", type, riId, targetId);
                 continue;
             }
             Object confObj = row.get("confidence");
             double confidence = confObj instanceof Number number ? number.doubleValue() : -1.0;
             if (confidence >= 0) {
-                result.add(new RecommendationModelTraceLink(ri, target, NounMappingMapper.RESUME_CLAIMANT, confidence));
+                result.add(new RecommendationModelTraceLink(ri, target, NounMappingMapper.RESTORE_CLAIMANT, confidence));
             } else {
                 result.add(new RecommendationModelTraceLink(ri, target));
             }

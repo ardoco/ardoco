@@ -275,7 +275,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     public Collection<NounMapping> loadNounMappings(Text annotatedText) {
-        logger.info("Loading NounMappings from Neo4j (resume)");
+        logger.info("Loading NounMappings from Neo4j");
         return this.textStateService.loadAllNounMappings(annotatedText);
     }
 
@@ -284,7 +284,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
-        logger.info("Loading RecommendedInstances for {} from Neo4j (resume)", metamodel);
+        logger.info("Loading RecommendedInstances for {} from Neo4j", metamodel);
         return this.recommendationService.loadRecommendedInstances(metamodel, nounMappingsById);
     }
 
@@ -310,13 +310,13 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     @Transactional(readOnly = true)
     public Collection<RecommendationModelTraceLink> loadRecommendationModelTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, ArchitectureItem> architectureItemsById) {
-        logger.info("Loading RecommendationModelTraceLinks (architecture) from Neo4j (resume)");
+        logger.info("Loading RecommendationModelTraceLinks (architecture) from Neo4j");
         return this.traceLinkService.loadAllRecommendationArchitectureTraceLinks(recommendedInstancesById, architectureItemsById);
     }
 
     public Collection<RecommendationModelTraceLink> loadRecommendationCodeTraceLinks(SortedMap<String, RecommendedInstance> recommendedInstancesById,
             SortedMap<String, CodeItem> codeItemsById) {
-        logger.info("Loading RecommendationModelTraceLinks (code) from Neo4j (resume)");
+        logger.info("Loading RecommendationModelTraceLinks (code) from Neo4j");
         return this.traceLinkService.loadAllRecommendationCodeTraceLinks(recommendedInstancesById, codeItemsById);
     }
 
@@ -392,7 +392,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     public Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
             SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById) {
-        logger.info("Loading NER trace links for {} from Neo4j (resume)", metamodel);
+        logger.info("Loading NER trace links for {} from Neo4j", metamodel);
         return this.nerService.loadNerTraceLinks(metamodel, occurrencesById, modelEntitiesById);
     }
 

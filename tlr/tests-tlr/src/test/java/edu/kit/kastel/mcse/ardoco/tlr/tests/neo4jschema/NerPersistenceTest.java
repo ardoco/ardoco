@@ -117,7 +117,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         persistenceHandler.saveNamedArchitectureEntities(List.of(entity), mm, false);
 
         double confidence = 0.73;
-        var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component, NounMappingMapper.RESUME_CLAIMANT, confidence);
+        var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component, NounMappingMapper.RESTORE_CLAIMANT, confidence);
         assertThat(persistenceHandler.saveTraceLinks(List.of(link))).isTrue();
 
         double storedConfidence = neo4jClient.query("""
