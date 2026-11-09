@@ -16,11 +16,11 @@
       "completedRunId": "65f5a4ea-8f3a-4ecf-bdec-bba6d29ea94d"
     },
     "/openwiki/operations.md": {
-      "pageVersion": "sha256:e97a0067252d256dc6f2d6d53d8ad565263395d015f1bc804e78a011fb052236",
-      "completedBy": "openwiki/0.7.3",
-      "completedRunId": "cdd0719c-d01a-45e1-90db-343e66313ad6",
-      "gitHead": "ca5eb0d8dc21904403bced8cfdccd2305c68f607",
-      "sourceFingerprint": "sha256:3e033daa8730195b0f2f532a94580198749ac5551bf7b1c907ea0aadcaf3e364"
+      "pageVersion": "sha256:7d17181562789ff85c8c3d96a5b6a17db05617a8f5e01586a2b6b555da2ed516",
+      "completedBy": "openwiki/0.9.0",
+      "completedRunId": "dd20ab53-1a00-4848-a942-47e233d443e1",
+      "gitHead": "e28f83a733347194bf5931ed3bcd115c7fadaf0e",
+      "sourceFingerprint": "sha256:7461b1d3ab4e10f718109165653b2cb0694d0f9bc2704c17c4e9dc7368731ea6"
     },
     "/openwiki/quickstart.md": {
       "gitHead": "ffd610f21b3ea0b228f94c4194fa59f32e4df880",

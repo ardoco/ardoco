@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e97a0067252d256dc6f2d6d53d8ad565263395d015f1bc804e78a011fb052236",
+  "pageVersion": "sha256:7d17181562789ff85c8c3d96a5b6a17db05617a8f5e01586a2b6b555da2ed516",
   "claims": [
     {
       "id": "claim_1123c509f09b44349db6e6ea625403c6",
@@ -397,10 +397,68 @@
           "version": "repo-lines-v1:sha256:9007a5b7de269087abf32c646a1283e143f417590e3002d758996322e463ecbe:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZDJiZDBkMTJmYTFjNTgyZjJkZjBkZjliN2VmMjY2NzFmNGQ3MGJhNjkwYjE4MjBjMjA0OGJmMjRiNGNhNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNGJiOTRiN2MyYTIyMTI2NDA2ZWYyMmNhMjc3ZWQyMzZiN2E0NTlhODBlN2Q3ZTRiN2Q0YzhiZjRjMjViYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_da1f2e9559ae493f9a246e9c3baa1939",
+      "statement": "The repository root AGENTS.md carries an OPENWIKI:START/OPENWIKI:END block defining the OpenWiki maintenance contract, and CLAUDE.md delegates to it via an @AGENTS.md reference so the same contract governs Claude sessions.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L1-L16",
+          "version": "repo-lines-v1:sha256:3f65427f27766385406120665601b3866f854937467101977cfcd5ab695bd575:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMTgwZjljMTI2OTAzYmNjMzMxYWE5NTQ1NmU0OTQ0NGE3ZDRkMDExZThhMmE4M2Y1ZGM4NzAyMzkxODEyZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5Zjc4NzE0ODkzYWE3Nzk0MmNlYTFjNGEyZTAyMzFkYmI3ZmEyYTQxYTcwYzgxNDYwYTNjNjc1NjJkYTNhYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://CLAUDE.md#L1-L7",
+          "version": "repo-lines-v1:sha256:cd617c809957b5aeb601ce9856109475f6da8ed78835148d17c3097dd4daa848:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWYxODBmOWMxMjY5MDNiY2MzMzFhYTk1NDU2ZTQ5NDQ0YTdkNGQwMTFlOGEyYTgzZjVkYzg3MDIzOTE4MTJkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDlmNzg3MTQ4OTNhYTc3OTQyY2VhMWM0YTJlMDIzMWRiYjdmYTJhNDFhNzBjODE0NjBhM2M2NzU2MmRhM2FhYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b79ed7d850a4f4c9a89a3d0904390a5",
+      "statement": "The AGENTS.md OpenWiki contract treats openwiki/ as optional just-in-time context, not required startup reading: agents must not enumerate, preload, or search wikis at task start, and should use retrieval only when the user asks for it, when unfamiliar architecture or dependency behavior materially affects the task, or when source inspection leaves an important uncertainty — stopping once the question is grounded.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L4-L12",
+          "version": "repo-lines-v1:sha256:f875b438821b986ed410f65471f0286350e9a2ba8d86b778df9ce08a9fe7d0d4:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmNiMzA1ZGNiMTRkY2I0MTUzZTFhM2YyNTk0NjVjZWFkYWRjOWIwNDRhNzkzZGE0MjdkMmM0M2QzYTA5ZDQ5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTliNDhjMWM5M2FmNjMyZDBkNTRmMzc1ZjM0YmU2M2JmZTA4NGRhMjFkYmY5OGQ4OWYyYzUxNzRmNGY1NjZlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGIxYmVkMmMxZTE3NjVkNzgzZTEyY2EyMjBkM2JkZDU5Y2Q4N2U5NWNhZjg5ZDg5ZDljMjM5NWYwNWFjMGE1YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ba28fdc864e4bf09d44b5c3d4677281",
+      "statement": "The contract prescribes the retrieval tooling: openwiki_search for just-in-time context and openwiki_read for complete sections; if search returns workspace_required, ask which listed workspace to use and retry with its ID; openwiki_list_workspaces/openwiki_list_wikis discover workspace membership; when retrieval tools are unavailable, fall back to reading openwiki/quickstart.md and following its links.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L6-L9",
+          "version": "repo-lines-v1:sha256:63c41dc4fb558c50d10edb68d58500f0760ffb47c50d8ad33c802c0342f03070:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGUxNGJmZGNmMzdhOWE0MGQ0ZWNjMWIwNWQwNzhmN2M1ZjFmMDNmZWZkYjllMjVlNTAzOTlkZWE2ZTUwYjQxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTNjYzRhNzEwYmYzMWEyN2Q3MTk2MDRmYTdkYTEyZWJhNGY5MTY4ZTZjYzRkOWY4NmQ4YjJjOTE5NTYzYzRjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGM1MGE4NzVkYzkwNzM3NGE3NzBmNjI0ZDgwOWM2NDlhZTU2NWNlZjI1NDA3OTMzMmEwMjRkNGVmNTFjM2Q1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d522333dcdac428eb96666ae0929b5b1",
+      "statement": "The contract makes source code and tests authoritative — a brief's unknowns and review items are verification gaps, not automatic requirements — and prefers the narrowest quiet validation that proves the changed behavior while preserving complete failure output.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L10-L13",
+          "version": "repo-lines-v1:sha256:8bd81edec7cedfdae3def024d3571c43b3d82af05c74294c47dc53a19db239d9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc1NTNiMGQ1MmViODI0ZWY0MWU3NmJmNDViNTYyZjFjZTQ4M2ExMjYzZjRmZmI0M2IxMWIwOWEwNzI4NThiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAyZDFlNjcyNTU4MTg3NTZjYjYyYmUxNGViZDVjMWI1M2FlYmQxOGZhZTVkNWMyMGVkYWNiYWZiYjdjZTMzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODY1MjVmNTE0ODk5NTZiNWI5MjRmN2FmNGYyYWU2YWNkODQxYjc3ZGYxNmRkOGVkMWViZWUxMDVhOGNmY2QxOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d82f3a4fc2b74ed69a285a36b02772a8",
+      "statement": "The contract forbids hand-editing generated OpenWiki pages unless explicitly asked; the documented maintenance process refreshes generated pages after source changes, and agents must check the process's configuration and completed runs (weekly openwiki.yml schedule, Monday 06:00 UTC plus workflow_dispatch, delegating to the ardoco/actions reusable workflow with the OPENROUTER_API_KEY secret) before relying on automatic updates.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki.yml#L1-L17",
+          "version": "repo-lines-v1:sha256:bf077ccef0e2cd34134360b05d6efa4f00b44ee578eb40b00f56b6ed10ae9927:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2MDI3ODdhZjZkY2MwODM0ZGUxMjFjYmIxY2I5NWY5NDU5YjcyMWVhYjAzNDlmMTA1MDFiOTk2YzFjNzdmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MWYyNDA1MTEwMzEwZGVhMTE4Yzk2Y2QxMGY2MDdlNjE4N2U5ZDFiYzc0MDUyZjI1YjcxMDE2ODBkMWU0ZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://AGENTS.md#L14-L15",
+          "version": "repo-lines-v1:sha256:a9efc7336708ab1e0bbe4c218a70230df3d4a54133e67e30568c5ac48d97bce9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWFmZjgwOGViZDlhMGFkZjE3ZjczYjEzMzU4OTgzNmI5MTVjYWUzYjllYzg5MjAxM2FjMjczNzQ0OWYzMDcwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjZjYjMwYThmOTQ4MTMxNDkwODJmM2RjYjkxOWRiMTJmMjIwYjMxYTI5NWZiZWU5NTM1MWNmOGYxNGJhZGEyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlmNzg3MTQ4OTNhYTc3OTQyY2VhMWM0YTJlMDIzMWRiYjdmYTJhNDFhNzBjODE0NjBhM2M2NzU2MmRhM2FhYSJ9"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.3",
-    "at": "2026-11-02T13:59:02.713Z"
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-09T14:31:36.685Z"
   }
 }
