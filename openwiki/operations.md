@@ -1,12 +1,12 @@
 ---
 type: "Reference"
 title: "Operations"
-description: "Build system, code quality, CI/CD workflows, monorepo sync scripts, environment configuration, and external services for ARDoCo."
-tags: [build-system, maven, ci-cd, code-quality, environment, publishing, external-services]
+description: "Build system, code quality, CI/CD workflows, monorepo sync scripts, environment configuration, external services, and the AGENTS.md/CLAUDE.md OpenWiki maintenance contract for ARDoCo."
+tags: [build-system, maven, ci-cd, code-quality, environment, publishing, external-services, openwiki]
 openwiki:
   roles: [operations, delivery]
   change_kinds: [build, ci, dependencies]
-  source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml, core/.github/workflows/format.yml, tlr/.github/workflows/format.yml, inconsistency-detection/.github/workflows/format.yml]
+  source_paths: [pom.xml, AGENTS.md, CLAUDE.md, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml, core/.github/workflows/format.yml, tlr/.github/workflows/format.yml, inconsistency-detection/.github/workflows/format.yml]
   invariants: ["flatten-maven-plugin pinned to 1.7.3 due to upstream NPE in 1.8.0", "JDK 21+ and Maven 3.9+ required", "Docs/openwiki paths do not trigger Maven verify"]
   validation_commands: ["mvn clean verify", "mvn spotless:check"]
 sources:
@@ -20,6 +20,10 @@ sources:
     resource: repo://.github/workflows/verify.yml
   - id: openwiki-source-ea70eb6c045047448e446296
     resource: repo://.gitignore
+  - id: openwiki-source-8037e2358a2c4f9b2c722a11
+    resource: repo://AGENTS.md
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
   - id: openwiki-source-95e70d5fed9ac06e781a7ac8
     resource: repo://core/.github/workflows/format.yml
   - id: openwiki-source-64c4c51956e735b4f8b4f2ad
@@ -100,10 +104,10 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
   - id: openwiki-source-14f886f1a214908e7068814d
     resource: repo://tlr/update_integration_tests.sh
-generated: { by: "openwiki/0.7.3", at: "2026-11-02T13:59:02.713Z" }
+generated: { by: "openwiki/0.9.0", at: "2026-11-09T14:31:36.685Z" }
 verified:
-  - by: openwiki/0.7.3
-    at: 2026-11-02T13:59:02.713Z
+  - by: openwiki/0.9.0
+    at: 2026-11-09T14:31:36.685Z
 ---
 
 # Operations
@@ -272,6 +276,16 @@ Located in `/.github/workflows/`:
 5. Commits via `git-auto-commit`.
 
 **OpenWiki page constraint**: because step 4 only globs `./openwiki/*.md`, wiki pages must stay **flat** in `/openwiki/*.md` — nested directories are never rendered as wiki pages. Do **not** delete [`quickstart.md`](quickstart.md): the rendered `OpenWiki-quickstart` page is the entry point linked from `docs/Home.md` and the wiki sidebar.
+
+### OpenWiki Maintenance Contract (AGENTS.md / CLAUDE.md)
+
+The repository root [`AGENTS.md`](../AGENTS.md) carries an `OPENWIKI:START` / `OPENWIKI:END` block defining how agents working in this repository may consume the generated `openwiki/` evidence index, and [`CLAUDE.md`](../CLAUDE.md) simply delegates to it via an `@AGENTS.md` reference, so the same contract governs Claude sessions:
+
+- **Just-in-time, not startup reading.** `openwiki/` is an optional generated evidence index, not required startup reading. Do not enumerate, preload, or search the wiki at task start; reach for it only when the user asks for it, when unfamiliar architecture or dependency behavior materially affects the task, or when source inspection leaves an important uncertainty — and stop once the question is grounded.
+- **Retrieval tooling.** When those conditions apply and OpenWiki retrieval tools are available, use `openwiki_search` for just-in-time context and `openwiki_read` for the relevant complete sections. If search returns `workspace_required`, ask which listed workspace to use and retry with its ID; use `openwiki_list_workspaces` / `openwiki_list_wikis` when workspace membership itself needs to be discovered. If the retrieval tools are unavailable, read [`openwiki/quickstart.md`](quickstart.md) and follow its links to the relevant pages.
+- **Source is authoritative.** Treat source code and tests as authoritative; a brief's unknowns and review items are verification gaps, not automatic requirements. Prefer the narrowest quiet validation that proves the changed behavior, and preserve complete failure output.
+- **Don't hand-edit generated pages.** Do not hand-edit generated OpenWiki pages unless explicitly asked. Prefer updating source code and `/docs` content and letting OpenWiki regenerate the pages via the repository's documented maintenance process — this page's own build/CI/dependency sections above are produced and refreshed by that process, so a hand edit would be overwritten by the next regeneration.
+- **Check runs before relying on automatic updates.** The weekly [`openwiki.yml`](../.github/workflows/openwiki.yml) schedule (Monday 06:00 UTC, plus `workflow_dispatch`) drives the OpenWiki update PRs; check its configuration and its completed runs before relying on automatic page updates.
 
 ### Module-Level Workflows and Sync Scripts
 
