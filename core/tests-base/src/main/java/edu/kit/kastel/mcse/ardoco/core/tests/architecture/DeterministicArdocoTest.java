@@ -50,7 +50,7 @@ public class DeterministicArdocoTest {
 
     @ArchTest
     public static final ArchRule forbidUnorderedSetsAndMaps = noClasses().that()
-            .resideOutsideOfPackages("..tests..", "..metrics..", "..magika..")
+            .resideOutsideOfPackages("..tests..", "..metrics..", "..magika..", "..antlr4.python3")
             .and(areNotDirectlyAnnotatedWith(Deterministic.class))
             .should()
             .accessClassesThat(areForbiddenClasses())
@@ -86,7 +86,7 @@ public class DeterministicArdocoTest {
 
     @ArchTest
     public static final ArchRule forbidHashMapAndHashSetInFavorOfLinkedVersions = noClasses().that()
-            .resideOutsideOfPackages("..tests..", "..magika..")
+            .resideOutsideOfPackages("..tests..", "..magika..", "..antlr4.python3")
             .and()
             .doNotHaveFullyQualifiedName(DeterministicArdocoTest.class.getName())
             .should()
