@@ -13,6 +13,5 @@ sentence,style/pattern,valid
 121,adapter,false
 125,unit of work,false
 127,adapter,false
-131,facade pattern,false
 122,pipe-and-filter,false
 128,strategy pattern,false
