@@ -13,6 +13,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -133,71 +134,15 @@ public class CodeDirectoryReadOnlyTools {
             return "Path is not a directory: " + path;
         }
 
-        StringBuilder result = new StringBuilder();
-        int[] entryCount = { 0 };
+        TreeVisitor visitor = new TreeVisitor(root, maxDepth);
 
         try {
-            int finalMaxDepth = maxDepth;
-            Files.walkFileTree(root, new SimpleFileVisitor<>() {
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) {
-
-                    if (entryCount[0] >= MAX_TREE_ENTRIES) {
-                        return FileVisitResult.TERMINATE;
-                    }
-
-                    if (!directory.equals(root) && shouldIgnoreDirectory(directory)) {
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-
-                    int depth = root.relativize(directory).getNameCount();
-
-                    if (depth > finalMaxDepth) {
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-
-                    if (!directory.equals(root)) {
-                        appendTreeEntry(result, root.relativize(directory), true);
-
-                        entryCount[0]++;
-                    }
-
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-
-                    if (entryCount[0] >= MAX_TREE_ENTRIES) {
-                        return FileVisitResult.TERMINATE;
-                    }
-
-                    int depth = root.relativize(file).getNameCount();
-
-                    if (depth <= finalMaxDepth) {
-                        appendTreeEntry(result, root.relativize(file), false);
-
-                        entryCount[0]++;
-                    }
-
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-
+            Files.walkFileTree(root, visitor);
         } catch (IOException e) {
             throw new UncheckedIOException("Could not create tree for: " + path, e);
         }
 
-        if (entryCount[0] >= MAX_TREE_ENTRIES) {
-            result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
-        }
-
-        if (result.isEmpty()) {
-            return "(empty)";
-        }
-
-        return result.toString();
+        return visitor.render();
     }
 
     // -------------------------------------------------------------------------
@@ -285,18 +230,12 @@ public class CodeDirectoryReadOnlyTools {
             String line;
             int currentLine = 0;
 
-            while ((line = reader.readLine()) != null) {
+            while (currentLine < endLine && (line = reader.readLine()) != null) {
                 currentLine++;
 
-                if (currentLine < startLine) {
-                    continue;
+                if (currentLine >= startLine) {
+                    result.append(currentLine).append(": ").append(line).append(System.lineSeparator());
                 }
-
-                if (currentLine > endLine) {
-                    break;
-                }
-
-                result.append(currentLine).append(": ").append(line).append(System.lineSeparator());
             }
 
             if (result.isEmpty()) {
@@ -367,55 +306,15 @@ public class CodeDirectoryReadOnlyTools {
 
         String normalizedQuery = query.toLowerCase(Locale.ROOT);
 
-        List<String> results = new java.util.ArrayList<>();
+        SearchVisitor visitor = new SearchVisitor(normalizedQuery);
 
         try {
-            Files.walkFileTree(projectRoot, new SimpleFileVisitor<>() {
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) {
-
-                    if (!directory.equals(projectRoot) && shouldIgnoreDirectory(directory)) {
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-
-                    if (results.size() >= MAX_SEARCH_RESULTS) {
-                        return FileVisitResult.TERMINATE;
-                    }
-
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-
-                    if (results.size() >= MAX_SEARCH_RESULTS) {
-                        return FileVisitResult.TERMINATE;
-                    }
-
-                    if (!Files.isRegularFile(file)) {
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    if (matchesPath(file, normalizedQuery)) {
-                        results.add(toRelativeString(file) + ": [path match]");
-
-                        return results.size() >= MAX_SEARCH_RESULTS ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
-                    }
-
-                    if (isProbablyBinaryOrTooLarge(file)) {
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    searchFileContent(file, normalizedQuery, results);
-
-                    return results.size() >= MAX_SEARCH_RESULTS ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
-                }
-            });
-
+            Files.walkFileTree(projectRoot, visitor);
         } catch (IOException e) {
             throw new UncheckedIOException("Could not search project.", e);
         }
+
+        List<String> results = visitor.results;
 
         if (results.isEmpty()) {
             return "No matches found for: " + query;
@@ -643,5 +542,128 @@ public class CodeDirectoryReadOnlyTools {
 
     private String toRelativeString(Path path) {
         return projectRoot.relativize(path.toAbsolutePath().normalize()).toString().replace('\\', '/');
+    }
+
+    /**
+     * Collects a bounded tree listing while walking the file tree.
+     */
+    private final class TreeVisitor extends SimpleFileVisitor<Path> {
+        private final Path root;
+        private final int maxDepth;
+        private final StringBuilder result = new StringBuilder();
+        private int entryCount = 0;
+
+        private TreeVisitor(Path root, int maxDepth) {
+            this.root = root;
+            this.maxDepth = maxDepth;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) {
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
+            }
+
+            boolean isRoot = directory.equals(root);
+            if (!isRoot && shouldIgnoreDirectory(directory)) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+
+            if (root.relativize(directory).getNameCount() > maxDepth) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+
+            if (!isRoot) {
+                addEntry(directory, true);
+            }
+
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
+            }
+
+            if (root.relativize(file).getNameCount() <= maxDepth) {
+                addEntry(file, false);
+            }
+
+            return FileVisitResult.CONTINUE;
+        }
+
+        private boolean isLimitReached() {
+            return entryCount >= MAX_TREE_ENTRIES;
+        }
+
+        private void addEntry(Path path, boolean directory) {
+            appendTreeEntry(result, root.relativize(path), directory);
+            entryCount++;
+        }
+
+        private String render() {
+            if (isLimitReached()) {
+                result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
+            }
+
+            if (result.isEmpty()) {
+                return "(empty)";
+            }
+
+            return result.toString();
+        }
+    }
+
+    /**
+     * Collects search results while walking the project tree.
+     */
+    private final class SearchVisitor extends SimpleFileVisitor<Path> {
+        private final String normalizedQuery;
+        private final List<String> results = new ArrayList<>();
+
+        private SearchVisitor(String normalizedQuery) {
+            this.normalizedQuery = normalizedQuery;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) {
+            if (!directory.equals(projectRoot) && shouldIgnoreDirectory(directory)) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+
+            return continueOrTerminate();
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
+            }
+
+            if (!Files.isRegularFile(file)) {
+                return FileVisitResult.CONTINUE;
+            }
+
+            if (matchesPath(file, normalizedQuery)) {
+                results.add(toRelativeString(file) + ": [path match]");
+                return continueOrTerminate();
+            }
+
+            if (isProbablyBinaryOrTooLarge(file)) {
+                return FileVisitResult.CONTINUE;
+            }
+
+            searchFileContent(file, normalizedQuery, results);
+            return continueOrTerminate();
+        }
+
+        private boolean isLimitReached() {
+            return results.size() >= MAX_SEARCH_RESULTS;
+        }
+
+        private FileVisitResult continueOrTerminate() {
+            return isLimitReached() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+        }
     }
 }

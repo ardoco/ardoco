@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,52 +106,37 @@ public class CodeModelReadOnlyTools {
             return PATH_DOES_NOT_EXIST + path;
         }
 
-        Set<TreeEntry> entries = new TreeSet<>();
-
-        for (CodeFile codeFile : codeModel.getCodeFiles()) {
-            String filePath = normalizeFilePath(codeFile.getPath());
-
-            if (!isBelowOrEqual(normalizedPath, filePath)) {
-                continue;
-            }
-
-            String relativePath = relativize(normalizedPath, filePath);
-
-            if (relativePath.isEmpty()) {
-                continue;
-            }
-
-            String[] parts = relativePath.split("/");
-
-            for (int i = 0; i < parts.length; i++) {
-                int depth = i + 1;
-
-                if (depth > boundedMaxDepth) {
-                    break;
-                }
-
-                boolean directory = i < parts.length - 1;
-                String entryRelativePath = joinParts(parts, i + 1);
-
-                entries.add(new TreeEntry(entryRelativePath, directory));
-            }
-        }
+        Set<TreeEntry> entries = collectTreeEntries(normalizedPath, boundedMaxDepth);
 
         if (entries.isEmpty()) {
             return "(empty)";
         }
 
+        return formatTree(entries);
+    }
+
+    private Set<TreeEntry> collectTreeEntries(String normalizedPath, int boundedMaxDepth) {
+        return codeModel.getCodeFiles()
+                .stream()
+                .map(codeFile -> normalizeFilePath(codeFile.getPath()))
+                .filter(filePath -> isBelowOrEqual(normalizedPath, filePath))
+                .map(filePath -> relativize(normalizedPath, filePath))
+                .filter(relativePath -> !relativePath.isEmpty())
+                .map(relativePath -> relativePath.split("/"))
+                .flatMap(parts -> IntStream.range(0, Math.min(parts.length, boundedMaxDepth))
+                        .mapToObj(i -> new TreeEntry(joinParts(parts, i + 1), i < parts.length - 1)))
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    private String formatTree(Set<TreeEntry> entries) {
         StringBuilder result = new StringBuilder();
-        int entryCount = 0;
 
-        for (TreeEntry entry : entries) {
-            if (entryCount >= MAX_TREE_ENTRIES) {
-                result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
-                break;
-            }
-
+        for (TreeEntry entry : entries.stream().limit(MAX_TREE_ENTRIES).toList()) {
             appendTreeEntry(result, entry.relativePath(), entry.directory());
-            entryCount++;
+        }
+
+        if (entries.size() > MAX_TREE_ENTRIES) {
+            result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
         }
 
         return result.toString();
@@ -171,7 +157,7 @@ public class CodeModelReadOnlyTools {
     public String findFiles(String glob) {
         LOGGER.debug("Finding code model files with glob: {}", glob);
 
-        CodeModelWithCompilationUnits codeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository)
+        CodeModelWithCompilationUnits currentCodeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository)
                 .getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
         if (glob == null || glob.isBlank()) {
             return "Glob must not be empty.";
@@ -185,7 +171,7 @@ public class CodeModelReadOnlyTools {
             return "Invalid glob pattern: " + glob;
         }
 
-        String result = codeModel.getCodeFiles()
+        String result = currentCodeModel.getCodeFiles()
                 .stream()
                 .map(CodeFile::getPath)
                 .map(this::normalizeFilePath)
