@@ -2,7 +2,7 @@ line,pattern/style,valid
 7,rest,true
 20,dto,true
 22,mvc,true
-36,template method,true
+76,template method,true
 44,factory,true
 66,factory,false
 88,facade class,true
