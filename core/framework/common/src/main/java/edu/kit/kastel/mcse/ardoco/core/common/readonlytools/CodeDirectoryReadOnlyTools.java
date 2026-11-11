@@ -383,77 +383,6 @@ public class CodeDirectoryReadOnlyTools {
         return toRelativeString(path) + suffix;
     }
 
-    private void appendTreeEntry(StringBuilder result, Path relativePath, boolean directory) {
-
-        int depth = Math.max(0, relativePath.getNameCount() - 1);
-
-        result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath).append(System.lineSeparator());
-    }
-
-    private boolean matchesPath(Path path, String normalizedQuery) {
-
-        return toRelativeString(path).toLowerCase(Locale.ROOT).contains(normalizedQuery);
-    }
-
-    private void searchFileContent(Path file, String normalizedQuery, List<String> results) {
-
-        Path relativePath = projectRoot.relativize(file);
-
-        try {
-            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-
-            for (int i = 0; i < lines.size(); i++) {
-
-                if (results.size() >= MAX_SEARCH_RESULTS) {
-                    return;
-                }
-
-                String line = lines.get(i);
-
-                if (!line.toLowerCase(Locale.ROOT).contains(normalizedQuery)) {
-                    continue;
-                }
-
-                int start = Math.max(0, i - MAX_SEARCH_CONTEXT_LINES);
-
-                int end = Math.min(lines.size() - 1, i + MAX_SEARCH_CONTEXT_LINES);
-
-                StringBuilder snippet = new StringBuilder();
-
-                for (int lineIndex = start; lineIndex <= end; lineIndex++) {
-
-                    String contextLine = lines.get(lineIndex);
-
-                    if (contextLine.length() > MAX_SEARCH_SNIPPET_CHARS) {
-
-                        contextLine = contextLine.substring(0, MAX_SEARCH_SNIPPET_CHARS) + "…";
-                    }
-
-                    if (lineIndex == i) {
-                        snippet.append(">> ");
-                    } else {
-                        snippet.append("   ");
-                    }
-
-                    snippet.append(lineIndex + 1).append(": ").append(contextLine).append(System.lineSeparator());
-                }
-
-                results.add(relativePath + System.lineSeparator() + snippet);
-            }
-
-        } catch (IOException | RuntimeException e) {
-            LOGGER.debug("Could not search file {}", file, e);
-        }
-    }
-
-    private boolean isProbablyBinaryOrTooLarge(Path path) {
-        try {
-            return Files.size(path) > MAX_SEARCH_FILE_SIZE || isProbablyBinary(path);
-        } catch (IOException e) {
-            return true;
-        }
-    }
-
     private boolean isProbablyBinary(Path path) {
         try {
             if (Files.size(path) > MAX_SEARCH_FILE_SIZE) {
@@ -598,7 +527,7 @@ public class CodeDirectoryReadOnlyTools {
         }
 
         private void addEntry(Path path, boolean directory) {
-            appendTreeEntry(result, root.relativize(path), directory);
+            appendTreeEntry(root.relativize(path), directory);
             entryCount++;
         }
 
@@ -612,6 +541,13 @@ public class CodeDirectoryReadOnlyTools {
             }
 
             return result.toString();
+        }
+
+        private void appendTreeEntry(Path relativePath, boolean directory) {
+
+            int depth = Math.max(0, relativePath.getNameCount() - 1);
+
+            result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath).append(System.lineSeparator());
         }
     }
 
@@ -645,7 +581,7 @@ public class CodeDirectoryReadOnlyTools {
                 return FileVisitResult.CONTINUE;
             }
 
-            if (matchesPath(file, normalizedQuery)) {
+            if (matchesPath(file)) {
                 results.add(toRelativeString(file) + ": [path match]");
                 return continueOrTerminate();
             }
@@ -654,7 +590,7 @@ public class CodeDirectoryReadOnlyTools {
                 return FileVisitResult.CONTINUE;
             }
 
-            searchFileContent(file, normalizedQuery, results);
+            searchFileContent(file);
             return continueOrTerminate();
         }
 
@@ -664,6 +600,70 @@ public class CodeDirectoryReadOnlyTools {
 
         private FileVisitResult continueOrTerminate() {
             return isLimitReached() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+        }
+
+        private boolean matchesPath(Path path) {
+
+            return toRelativeString(path).toLowerCase(Locale.ROOT).contains(normalizedQuery);
+        }
+
+        private void searchFileContent(Path file) {
+
+            Path relativePath = projectRoot.relativize(file);
+
+            try {
+                List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+
+                for (int i = 0; i < lines.size(); i++) {
+
+                    if (results.size() >= MAX_SEARCH_RESULTS) {
+                        return;
+                    }
+
+                    String line = lines.get(i);
+
+                    if (!line.toLowerCase(Locale.ROOT).contains(normalizedQuery)) {
+                        continue;
+                    }
+
+                    int start = Math.max(0, i - MAX_SEARCH_CONTEXT_LINES);
+
+                    int end = Math.min(lines.size() - 1, i + MAX_SEARCH_CONTEXT_LINES);
+
+                    StringBuilder snippet = new StringBuilder();
+
+                    for (int lineIndex = start; lineIndex <= end; lineIndex++) {
+
+                        String contextLine = lines.get(lineIndex);
+
+                        if (contextLine.length() > MAX_SEARCH_SNIPPET_CHARS) {
+
+                            contextLine = contextLine.substring(0, MAX_SEARCH_SNIPPET_CHARS) + "…";
+                        }
+
+                        if (lineIndex == i) {
+                            snippet.append(">> ");
+                        } else {
+                            snippet.append("   ");
+                        }
+
+                        snippet.append(lineIndex + 1).append(": ").append(contextLine).append(System.lineSeparator());
+                    }
+
+                    results.add(relativePath + System.lineSeparator() + snippet);
+                }
+
+            } catch (IOException | RuntimeException e) {
+                LOGGER.debug("Could not search file {}", file, e);
+            }
+        }
+
+        private boolean isProbablyBinaryOrTooLarge(Path path) {
+            try {
+                return Files.size(path) > MAX_SEARCH_FILE_SIZE || isProbablyBinary(path);
+            } catch (IOException e) {
+                return true;
+            }
         }
     }
 }
