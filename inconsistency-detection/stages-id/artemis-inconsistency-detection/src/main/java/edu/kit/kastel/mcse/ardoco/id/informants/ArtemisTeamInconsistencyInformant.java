@@ -1,7 +1,6 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
-import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
@@ -23,7 +22,6 @@ public class ArtemisTeamInconsistencyInformant extends ArtemisInconsistencyInfor
 
     @Override
     public void process() {
-        var result = new ArdocoResult(getDataRepository());
         var traceabilityState = DataRepositoryHelper.getArtemisConnectionStates(getDataRepository()).getState(getTarget());
         var inconsistencyState = DataRepositoryHelper.getArtemisInconsistencyStates(getDataRepository()).getState(getTarget());
 

@@ -56,12 +56,6 @@ public final class ClassHoldBackArtemisInconsistencyRunProducer implements Artem
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
-    private static List<String> selectRandomClasses(Map<String, Long> candidateClasses, int numberOfHeldBackClassesPerRun, long seed) {
-        var shuffledClasses = new ArrayList<>(candidateClasses.keySet());
-        Collections.shuffle(shuffledClasses, new Random(seed));
-        return shuffledClasses.stream().limit(numberOfHeldBackClassesPerRun).collect(Collectors.toCollection(ArrayList::new));
-    }
-
     private static List<String> selectRandomClassesWeighted(Map<String, Long> candidateClasses, int numberOfHeldBackClassesPerRun, long seed) {
         var random = new Random(seed);
         var remaining = new HashMap<>(candidateClasses);

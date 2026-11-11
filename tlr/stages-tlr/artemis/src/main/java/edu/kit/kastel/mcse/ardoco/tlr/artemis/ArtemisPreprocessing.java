@@ -15,15 +15,15 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgen
 
 public class ArtemisPreprocessing extends AbstractExecutionStage {
 
-    public ArtemisPreprocessing(DataRepository dataRepository, ImmutableSortedMap<String, String> additionalConfigs,
-            @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
+    public ArtemisPreprocessing(DataRepository dataRepository, @Nullable ArchitectureConfiguration architectureConfiguration,
+            @Nullable CodeConfiguration codeConfiguration) {
         super(List.of(new SimpleTextPreprocessingAgent(dataRepository), new ModelProviderAgent(dataRepository, architectureConfiguration, codeConfiguration)),
                 ArtemisPreprocessing.class.getSimpleName(), dataRepository);
     }
 
     public static ArtemisPreprocessing get(ImmutableSortedMap<String, String> additionalConfigs, DataRepository dataRepository,
             @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration) {
-        var stage = new ArtemisPreprocessing(dataRepository, additionalConfigs, architectureConfiguration, codeConfiguration);
+        var stage = new ArtemisPreprocessing(dataRepository, architectureConfiguration, codeConfiguration);
         stage.applyConfiguration(additionalConfigs);
         return stage;
     }
