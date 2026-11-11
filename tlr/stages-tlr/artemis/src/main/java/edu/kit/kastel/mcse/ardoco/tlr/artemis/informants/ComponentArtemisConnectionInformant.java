@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -39,47 +41,54 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
 
         var namedEntities = state.getNamedEntities();
         var unlinkedNamedEntities = Lists.mutable.withAll(namedEntities);
-        MutableList<NamedArchitectureEntity> matchedNamedEntities = Lists.mutable.empty();
         List<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks = new ArrayList<>();
 
-        for (var namedEntity : namedEntities) {
-            for (var modelEndpoint : modelEndpoints) {
-                if (areStronglySimilar(similarityUtils, namedEntity, modelEndpoint)) {
-                    traceLinks.addAll(createTraceLinks(namedEntity, modelEndpoint));
-                    matchedNamedEntities.add(namedEntity);
-                }
-            }
-        }
-        unlinkedNamedEntities.removeAll(matchedNamedEntities);
-        matchedNamedEntities = Lists.mutable.empty();
+        var stronglyMatched = linkMatching(namedEntities, modelEndpoints, namedEntity -> modelEndpoint -> areStronglySimilar(similarityUtils, namedEntity,
+                modelEndpoint), traceLinks);
+        unlinkedNamedEntities.removeAll(stronglyMatched);
 
-        for (var namedEntity : unlinkedNamedEntities) {
-            for (var modelEndpoint : modelEndpoints) {
-                if (areWeaklySimilar(similarityUtils, namedEntity, modelEndpoint)) {
-                    traceLinks.addAll(createTraceLinks(namedEntity, modelEndpoint));
-                    matchedNamedEntities.add(namedEntity);
-                }
-            }
-        }
-        unlinkedNamedEntities.removeAll(matchedNamedEntities);
-        matchedNamedEntities = Lists.mutable.empty();
+        var weaklyMatched = linkMatching(unlinkedNamedEntities, modelEndpoints, namedEntity -> modelEndpoint -> areWeaklySimilar(similarityUtils, namedEntity,
+                modelEndpoint), traceLinks);
+        unlinkedNamedEntities.removeAll(weaklyMatched);
 
-        for (var namedEntity : unlinkedNamedEntities) {
-            logger.debug("Trying to match using embeddings for the NAE: {}", namedEntity.getName());
-            var namedEntityEmbeddings = getNamedArchitectureEntityEmbeddings(namedEntity);
-
-            for (var modelEndpoint : modelEndpoints) {
-                var modelEndpointEmbeddings = getModelEndpointEmbeddings(modelEndpoint);
-                if (embeddingsAreSimilar(namedEntityEmbeddings, modelEndpointEmbeddings)) {
-                    logger.debug("^ similarity for {} <-> {}", namedEntity.getName(), modelEndpoint.getName());
-                    traceLinks.addAll(createTraceLinks(namedEntity, modelEndpoint));
-                    matchedNamedEntities.add(namedEntity);
-                }
-            }
-        }
-        unlinkedNamedEntities.removeAll(matchedNamedEntities);
+        var embeddingMatched = linkMatching(unlinkedNamedEntities, modelEndpoints, this::embeddingMatcher, traceLinks);
+        unlinkedNamedEntities.removeAll(embeddingMatched);
 
         state.addTraceLinks(Lists.mutable.ofAll(traceLinks));
         state.addUnlinkedNamedEntities(unlinkedNamedEntities);
+    }
+
+    private Predicate<ModelEntity> embeddingMatcher(NamedArchitectureEntity namedEntity) {
+        logger.debug("Trying to match using embeddings for the NAE: {}", namedEntity.getName());
+        var namedEntityEmbeddings = getNamedArchitectureEntityEmbeddings(namedEntity);
+
+        return modelEndpoint -> {
+            boolean similar = embeddingsAreSimilar(namedEntityEmbeddings, getModelEndpointEmbeddings(modelEndpoint));
+            if (similar) {
+                logger.debug("^ similarity for {} <-> {}", namedEntity.getName(), modelEndpoint.getName());
+            }
+            return similar;
+        };
+    }
+
+    /**
+     * Creates a trace link for every (entity, endpoint) pair accepted by the matcher and returns the entities that matched at least once (once per match).
+     */
+    private MutableList<NamedArchitectureEntity> linkMatching(Iterable<NamedArchitectureEntity> entities, List<? extends ModelEntity> modelEndpoints,
+            Function<NamedArchitectureEntity, Predicate<ModelEntity>> matcherFactory,
+            List<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>> traceLinks) {
+        MutableList<NamedArchitectureEntity> matched = Lists.mutable.empty();
+
+        for (var namedEntity : entities) {
+            Predicate<ModelEntity> matcher = matcherFactory.apply(namedEntity);
+            for (var modelEndpoint : modelEndpoints) {
+                if (matcher.test(modelEndpoint)) {
+                    traceLinks.addAll(createTraceLinks(namedEntity, modelEndpoint));
+                    matched.add(namedEntity);
+                }
+            }
+        }
+
+        return matched;
     }
 }
