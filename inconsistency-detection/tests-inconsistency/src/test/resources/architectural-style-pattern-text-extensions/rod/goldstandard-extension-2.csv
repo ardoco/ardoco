@@ -1,7 +1,5 @@
 sentence,style/pattern,valid
 122,unit of work,false
-128,observer,false
-134,chain of responsibility,false
 120,hexagonal architecture,false
 121,repository pattern,false
 120,adapter,false
