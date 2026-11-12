@@ -39,3 +39,44 @@ For more information about the setup, the project structure, or the architecture
 	</dependency>
 </dependencies>
 ```
+
+### Snapshots
+
+Releases are on Maven Central. Development versions (`-SNAPSHOT`) are published to the public package registry of the [ARDoCo mirror group on gitlab.kit.edu](https://gitlab.kit.edu/kit/kastel/sdq/research-projects/ardoco). Projects that use `io.github.ardoco:parent` as their parent resolve them automatically; otherwise add the repository:
+
+```xml
+<repositories>
+	<repository>
+		<id>ardocoSnapshots</id>
+		<url>https://gitlab.kit.edu/api/v4/groups/253644/-/packages/maven</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
+</repositories>
+```
+
+To deploy a snapshot, configure a GitLab token with `write_package_registry` (or `api`) access in `~/.m2/settings.xml`:
+
+```xml
+<server>
+	<id>ardocoSnapshots</id>
+	<configuration>
+		<httpHeaders>
+			<property>
+				<name>Private-Token</name>
+				<value>${env.GITLAB_TOKEN}</value>
+			</property>
+		</httpHeaders>
+	</configuration>
+</server>
+```
+
+and run
+
+```shell
+mvn -Pdeployment -DskipTests -Dgpg.skip package deploy:deploy -DaltDeploymentRepository=ardocoSnapshots::https://gitlab.kit.edu/api/v4/projects/203206/packages/maven
+```
