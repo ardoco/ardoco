@@ -1,17 +1,16 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.converter;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
+import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.SpecificationVersion;
@@ -19,6 +18,7 @@ import com.networknt.schema.SpecificationVersion;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.dto.TextDto;
 import edu.kit.kastel.mcse.ardoco.core.textproviderjson.error.InvalidJsonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * utility class to convert a text DTO into json and back
@@ -40,14 +40,13 @@ public final class JsonConverter {
      * @param json the json string
      * @return whether the json string matches the text schema
      */
-    public static boolean validateJson(String json) throws IOException {
-        ObjectMapper mapper = createObjectMapper();
+    public static boolean validateJson(String json) {
         SchemaRegistry schemaRegistry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12);
 
         InputStream inputSchema = JsonConverter.class.getClassLoader().getResourceAsStream(SCHEMA_PATH);
         Schema schema = schemaRegistry.getSchema(inputSchema);
 
-        List<Error> message = schema.validate(mapper.readTree(json));
+        List<Error> message = schema.validate(json, InputFormat.JSON);
         if (!message.isEmpty()) {
             // get only the first fifteen messages
             List<String> loggerMessages = message.stream().map(Error::getMessage).toList();
@@ -66,7 +65,7 @@ public final class JsonConverter {
      * @param json the json string
      * @return the corresponding text DTO
      */
-    public static TextDto fromJsonString(String json) throws IOException, InvalidJsonException {
+    public static TextDto fromJsonString(String json) throws InvalidJsonException {
         if (!validateJson(json)) {
             throw new InvalidJsonException("The json string is no valid text DTO.");
         }
@@ -80,7 +79,7 @@ public final class JsonConverter {
      * @param obj the text DTO
      * @return the JSON string or null
      */
-    public static String toJsonString(TextDto obj) throws IOException, InvalidJsonException {
+    public static String toJsonString(TextDto obj) throws InvalidJsonException {
         ObjectMapper objectMapper = createObjectMapper();
         String jsonString = objectMapper.writeValueAsString(obj);
         if (!validateJson(jsonString)) {
