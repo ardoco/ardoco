@@ -10,5 +10,4 @@ jobs:
     with:
       # Maven package registry of the read-only mirror on gitlab.kit.edu (kit/kastel/sdq/research-projects/ardoco/ardoco)
       gitlab-project-id: "203206"
-      with-submodules: true
     secrets: inherit
