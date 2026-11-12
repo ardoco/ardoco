@@ -23,7 +23,6 @@ jobs:
     uses: ardoco/actions/.github/workflows/maven.yml@main
     with:
       deploy: false
-      with-submodules: true
       runs-on: ubuntu-latest
     secrets:
       CENTRAL_USER: ""
