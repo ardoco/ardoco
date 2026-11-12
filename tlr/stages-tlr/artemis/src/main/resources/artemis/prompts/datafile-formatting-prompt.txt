@@ -1,0 +1,32 @@
+Given the last answer (see below), for each file, return a JSON object containing:
+- "name": the primary name of the file.
+- "type": "DATAFILE"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the file appears or is referenced.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "DATAFILE",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+[
+    {
+        "name": "db.config",
+        "type": "DATAFILE",
+        "alternativeNames": [],
+        "occurrences": ["The database properties are configured using the db.config file."]
+    },
+    {
+        "name": "main_conf.yaml",
+        "type": "DATAFILE",
+        "alternativeNames": ["main configuration file"],
+        "occurrences": ["One can configure the system using the main_conf.yaml file.", "This can also be configured using the main configuration file."]
+    }
+]

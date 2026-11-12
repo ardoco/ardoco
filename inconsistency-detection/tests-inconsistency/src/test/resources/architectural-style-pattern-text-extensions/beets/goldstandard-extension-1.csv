@@ -1,0 +1,11 @@
+sentence,style/pattern,valid
+128,hexagonal architecture pattern,false
+129,adapter,false
+132,blackboard architectural pattern,false
+134,mediator pattern,false
+138,chain of responsibility pattern,false
+
+126,layered architecture,false
+130,event-driven architectural style,false
+136,strategy pattern,false
+140,observer pattern,false

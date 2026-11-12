@@ -1,0 +1,10 @@
+sentence,style/pattern,valid
+370,hexagonal architecture,false
+372,event sourcing,false
+373,command query responsibility segregation,false
+375,chain of responsibility,false
+377,saga,false
+378,pipe-and-filter,false
+380,strategy,false
+381,state,false
+382,circuit breaker,false

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
@@ -23,7 +24,7 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
      * @param codeModelDto the code model Dto
      */
     public CodeModelWithCompilationUnitsAndPackages(CodeModelDto codeModelDto) {
-        super(codeModelDto.id(), codeModelDto.codeItemRepository(), codeModelDto.content());
+        super(codeModelDto.id(), codeModelDto.codeItemRepository(), codeModelDto.content(), codeModelDto.codeFiles());
         this.codeModel = new CodeModelWithCompilationUnits(codeModelDto);
     }
 
@@ -36,6 +37,18 @@ public final class CodeModelWithCompilationUnitsAndPackages extends CodeModel {
     public CodeModelWithCompilationUnitsAndPackages(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content) {
         super(codeItemRepository, content);
         this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content);
+    }
+
+    /**
+     * Creates a new code model from a repository, content, and code files.
+     *
+     * @param codeItemRepository the code item repository
+     * @param content            the code items
+     * @param codeFiles          the code files
+     */
+    public CodeModelWithCompilationUnitsAndPackages(CodeItemRepository codeItemRepository, SortedSet<? extends CodeItem> content, List<CodeFile> codeFiles) {
+        super(codeItemRepository, content, codeFiles);
+        this.codeModel = new CodeModelWithCompilationUnits(codeItemRepository, content, codeFiles);
     }
 
     /**

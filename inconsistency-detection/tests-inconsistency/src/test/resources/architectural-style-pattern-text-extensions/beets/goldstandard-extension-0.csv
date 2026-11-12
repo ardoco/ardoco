@@ -1,0 +1,15 @@
+sentence,style/pattern,valid
+137,abstract factory pattern,false
+138,chain of responsibility,false
+139,state pattern,false
+140,blackboard architectural pattern,false
+141,decorator pattern,false
+
+127,microkernel architecture,false
+129,event-driven architectural style,false
+130,observer pattern,false
+131,mediator pattern,false
+133,layered architecture,false
+134,hexagonal architecture,false
+135,adapter pattern,false
+136,strategy pattern,false

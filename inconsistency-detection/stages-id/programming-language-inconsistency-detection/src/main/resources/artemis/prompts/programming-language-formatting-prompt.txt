@@ -1,0 +1,34 @@
+Given the last answer (see below), for each programming language, return a JSON object containing:
+
+- "name": the primary name of the programming language.
+- "type": "PROGRAMMING_LANGUAGE"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the file appears or is referenced.
+
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "PROGRAMMING_LANGUAGE",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+[
+    {
+        "name": "java",
+        "type": "PROGRAMMING_LANGUAGE",
+        "alternativeNames": [],
+        "occurrences": ["The framework logic is written in java."]
+    },
+    {
+        "name": "python",
+        "type": "PROGRAMMING_LANGUAGE",
+        "alternativeNames": [...],
+        "occurrences": ["The python helper scripts were used to do this.", "They can be found in the 'src/helpers/' folder."]
+    }
+]
