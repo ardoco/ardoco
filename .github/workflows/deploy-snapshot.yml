@@ -1,0 +1,79 @@
+name: Deploy Snapshot
+
+on:
+  # Manual trigger only: deploys the selected branch to the GitLab package registry
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-snapshot
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Maven package registry of the read-only mirror on gitlab.kit.edu (kit/kastel/sdq/research-projects/ardoco/ardoco)
+  SNAPSHOT_REPOSITORY_URL: https://gitlab.kit.edu/api/v4/projects/203206/packages/maven
+
+jobs:
+  deploy:
+    name: Deploy snapshot to GitLab
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      # Same Maven version as ardoco/actions (Maven 3.10 breaks deployments)
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.16
+
+      - name: Ensure snapshot version
+        shell: bash
+        run: |
+          for expr in project.version revision; do
+            version=$(mvn -B -q -N help:evaluate -DforceStdout -Dexpression="$expr")
+            echo "$expr: $version"
+            if [[ "$version" != *-SNAPSHOT ]]; then
+              echo "::error::Only -SNAPSHOT versions may be deployed to the snapshot registry ($expr is '$version')"
+              exit 1
+            fi
+          done
+
+      - name: Deploy to GitLab
+        shell: bash
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_SNAPSHOT_TOKEN }}
+        run: |
+          if [ -z "$GITLAB_TOKEN" ]; then
+            echo "::error::Secret GITLAB_SNAPSHOT_TOKEN is not available"
+            exit 1
+          fi
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'EOF'
+          <settings>
+            <servers>
+              <server>
+                <id>ardocoSnapshots</id>
+                <configuration>
+                  <httpHeaders>
+                    <property>
+                      <name>Private-Token</name>
+                      <value>${env.GITLAB_TOKEN}</value>
+                    </property>
+                  </httpHeaders>
+                </configuration>
+              </server>
+            </servers>
+          </settings>
+          EOF
+          mvn -B -Pdeployment -DskipTests -Dgpg.skip package deploy:deploy \
+            -DaltDeploymentRepository=ardocoSnapshots::${SNAPSHOT_REPOSITORY_URL}
