@@ -80,3 +80,5 @@ and run
 ```shell
 mvn -Pdeployment -DskipTests -Dgpg.skip package deploy:deploy -DaltDeploymentRepository=ardocoSnapshots::https://gitlab.kit.edu/api/v4/projects/203206/packages/maven
 ```
+
+Alternatively, run the [Deploy Snapshot](https://github.com/ardoco/ardoco/actions/workflows/deploy-snapshot.yml) workflow for a branch. It only deploys `-SNAPSHOT` versions and needs the secret `GITLAB_SNAPSHOT_TOKEN`.
