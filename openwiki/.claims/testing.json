@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:35e68d0c9e80cb9a131e45ac78acc7f74a4c9b449b06250188191d1f324798d7",
+  "pageVersion": "sha256:f358669e5bac5a6bb6f647f3481eda98829ce7320d182b07c0c8484daea8cf08",
   "claims": [
     {
       "id": "claim_c368d58ed7ae432f81183442a7cad495",
@@ -230,7 +230,7 @@
     },
     {
       "id": "claim_7f0fc418041942a18451b3bc1404ab65",
-      "statement": "AbstractArdocoIT.averageAndLog averages repeated runs per metric and logs mean ± stddev to cope with LLM nondeterminism; the ArTEMiS ITs run NUMBER_OF_RUNS = 5 repetitions when the environment variable mutipleRuns is set, parameterize over all non-generic LargeLanguageModel values × projects via @MethodSource, and their project enums currently carry uniform 0.420 minimums for all metrics; because checkLlmProvision only accepts an OpenAI key, an Ollama-only setup passes the class-level assumption but each test logs a skip.",
+      "statement": "AbstractArdocoIT.averageAndLog averages repeated runs per metric and logs mean ± stddev to cope with LLM nondeterminism; ArtemisIT parameterizes over all non-generic LargeLanguageModel values × ArtemisEvaluationProject via @MethodSource and asserts against that enum's uniform 0.420 minimums, while ArtemisInTransarcIT runs per TransarcEvaluationProject with the NER LLM fixed to GPT_5 and only logs results; both run NUMBER_OF_RUNS = 5 repetitions when the environment variable mutipleRuns is set, require OPENAI_API_KEY or OLLAMA_HOST in a @BeforeAll assumption, and skip on CI; because checkLlmProvision only accepts an OpenAI key, an Ollama-only setup passes the class-level assumption but each test logs a skip.",
       "evidence": [
         {
           "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/approach/ArtemisEvaluationProject.java#L7-L12",
@@ -241,8 +241,12 @@
           "version": "repo-lines-v1:sha256:f66cc9d792ec7eb884e77af94b1d996b25ada919c5b9ae3e40eeb947a9317b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2ZTc4ODRjNzVhNTE1ODY1Y2M3ZDA3NWQ2MTJkMTRlZDc5ZWQwYmExMjNjZmM0NTJhOGFlY2EwM2NlNTQ4ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxYWVhMDYwMTE5YWRlYzA5NmY5YjliYzdlNDY3NjA0MTliNjdkYTUxMGQ3NjZhNjY1MWJhOTdkYTdhZjUwOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZGJmMWQwM2VhNjgzNzQyMjZmZjUyODdjZjVjYThjODY5ZjE2NzVhY2M0ZTc0NTg2MDRlNDVmZGU3NmVmYjYifQ"
         },
         {
-          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L28-L97",
-          "version": "repo-lines-v1:sha256:45b69e1638c3cdc2dc423d7191b52fd88f0d313bb5396c32b1cb590fbbd01264:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MDNiMWYxOWI0YWEzYzIxOWEwM2I1YWFhZTFjOWU1NDIzNDA5NWM2ODcyZTMzN2VkMzc1YTVmNzAyY2JhYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyM2IwMWNlYjM2OTEzZjE2YWY3YTcyZTAzZDRmNTczNzM4ZGE0MTlmNDg1NzYzMDJjNTI2ZjQzMzQzMzU5NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L27-L97",
+          "version": "repo-lines-v1:sha256:fdc1d25f45aa35314d8a624544996af4d1b430174196751fd2068659048ddc21:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZGI4MDJmNmIyYzU1ZmQ3Nzg0YWRjMWI5M2U0YWVhZTVjMzE1YzA5NDZlNTNkNjI3NTA4Y2QxZDFiY2ZkMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMTE0ZjRmMjJhMzY4MGJmYWYwNTAzMDUyNWFiMTc2YzY0OTYxOWZmY2NjYThkZDM2YjY0MTg4MWRkZGRlOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisInTransarcIT.java#L25-L64",
+          "version": "repo-lines-v1:sha256:67a0ddf200ab3339d075c2ba5941ac5750ed50533442d6cadfeb3c8ebba2f115:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiNDMwMWIwNzNkODBmZWFmYjhjNjNjMTYwYjA3MGE2NzYyM2U5N2FmYzZjYTgzZDFlYjZkYTE2M2MwZjk1ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjYzJkY2FjMmJmYzg5MzM0ZDQ1MWY2NWZiNTI2NWQ1NmEwMjljMmRkMzU3ODY5ZGM4NTg5YzE1ZDA4ZWM5NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
@@ -347,10 +351,122 @@
           "version": "repo-lines-v1:sha256:d2c5c1f2e9c154c45d1a407771a15518ebb29a7528c1e8503e8ce2371031b5f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2E5MWE5NTdhNWIyNmJhNDk4OGNiYWNiYmY2ZGVkNTIwYzdmNTVjMGFkZjk1YzVhMzIyM2Y4N2U5NGQxMmM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFmYjBhMDI5ZjFiZWY1YmU2M2VjNTFjZDI0MGY4MWUxODAyOTcyMTYxYjE5ZTUwODFlOWY1NTdmOTBhZTQ1MyJ9"
         }
       ]
+    },
+    {
+      "id": "claim_b1bb52d27412482e910bf6940402a0fd",
+      "statement": "The documentation-to-code TLR evaluations share AbstractDocumentationToCodeTlrEvaluation, whose confusion-matrix denominator is the number of input text lines × the code-model endpoints; this differs from ArcotlEvaluation's SAM-Code denominator (code-model endpoints × architecture-model endpoints), and the LLM variants built on this base (ExArchEvaluation, ArtemisInTransarcEvaluation, ArtemisInExArchEvaluation) log their results without asserting metrics.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/AbstractDocumentationToCodeTlrEvaluation.java#L20-L53",
+          "version": "repo-lines-v1:sha256:c9f727531565f690930050e5656b879eb211d54101818a5ca15bf5e48f94be06:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNTMxZjg4ZTY1MjY4YTEwNGU5YzEzYTljOTI0YzdkMDExY2UyMDU4MzM2MWYxNWJhNWZiZDUzZTQzOWY3N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxNWE3ZjM5NTc5YjU2MDJhNjIzZGU3NDk3NGNhYTM3MTAyMDY1ZDY2MDRmZDIwODJhMTY5MGNhYjczYzliYTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ArcotlEvaluation.java#L73-L91",
+          "version": "repo-lines-v1:sha256:cc5562d75bc05f302925ca00015f0e5861330905f0fd0f5caa106f78949ee32c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhMDRhOWMzNzRiOThlMWNlZjdiNzdiYWU5YjQxZWY2ZGRhMjJiOTkyMWE1YTUyNDRmMWFiZDUyNzViYjI0ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlNzVmYmMwOWI2NWEyNmNkOWM2N2NmMDc4NWZjMjJhMzdkNjRiZjZjN2E0YmI1MTYyM2QzZGM2YjBlMzNmMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ArtemisInTransarcEvaluation.java#L30-L42",
+          "version": "repo-lines-v1:sha256:e4ddfbd8af953448989bde0e72118528c05107a0623172f119ddca8ac814fde9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MTUyMWEwOGE5NWQ4YzkwMjUxNmMwMzNmNWE3NTIzYTRmZDRlYjQxNWE5YTNlMWIzNTY0ZjFkOTg4NGUzNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhOTdlNTA3YWYyYTlhOWQ4OTM0ZWI0MzM4NDA2ZWNiMzY5MmI2NTMwODRmN2EzNjE1YzM4ZmYzYmJmN2M2MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhMzk1N2M4NzZlYmJhOGRkNjMwY2Q1ODZiYzYxYTg2ZTdjMDM1ZGU0ZDE1MTRkYWYwMTVjNjdhZjFlZjVjNjgifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/evaluation/ExArchEvaluation.java#L39-L51",
+          "version": "repo-lines-v1:sha256:ea932f46f1f56df1c777aa8e7bec1479887d61374b3995cc17feb667b624b730:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MTUyMWEwOGE5NWQ4YzkwMjUxNmMwMzNmNWE3NTIzYTRmZDRlYjQxNWE5YTNlMWIzNTY0ZjFkOTg4NGUzNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlYzI1Y2NiYTgwN2E1ZjkwYmNkYzZhZjQ5YzRkOGVmMmQ4ZjYxZjE2NWY4NmY4ZjE2NWIxZjUzNDkwZTBiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1MjRhZTA5MTdlMjdjZDE0MDEwMmYzZjg2MmI4NTU3MWM0OWY1YTM2MjU1ZDY1NDJkNjI5YTRiMWJkNjQ2MzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_65d296428f2d4b798709cd2318e001a1",
+      "statement": "The pipeline modules carry Surefire runner smoke tests built on RunnerBaseTest, which pipeline-core ships in a test-jar (maven-jar-plugin test-jar goal, installed with classifier tests via maven-install-plugin): the base class copies the TeaStore fixtures (text, PCM repository, UML model, additionalConfig.txt) into a fresh temp directory per test class, cleans target/testout-<TestClass> in @AfterEach, and exposes testRunnerAssertions; pipeline-tlr consumes the test-jar test-scoped and pipeline-id obtains it through its default test-dependencies profile.",
+      "evidence": [
+        {
+          "resource": "repo://core/pipeline-core/pom.xml#L55-L88",
+          "version": "repo-lines-v1:sha256:cc39aa2b3830e0844446d2558361536bb2df38dcd25e953a2a5496fd706199ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3MzVlOGNjMzQ5ZjMyNGM0MDMxODJiOTIxMTM0OTk4MzM1NmM1ZDA2OGQ1OWViOTFjNmNhMzM0MjZhMjBiNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiNWJlODQxOTNmZjQ4MjM5ZDA4ZjhiN2RjODYyMDQwODk4OTk5ZjZmNjI5YmQwZDQ5NTBhZDQ0NDA4Mzc0MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlM2I3MzkwZWJmODI2OTY2ZWU0MTAzZjljZTdkM2NmMGRmZmRiMDQ1MWVlM2E1ZWM0YWMxOThlOGUzYjQ3M2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4OGViZTAwNzZlZmU4ZGQyNzRmNDdhMjE1ZmRmZTgzM2MwN2I3NDFkYzBkOTg3MjUzMDYzNTFhYzU0NWQxZDAifQ"
+        },
+        {
+          "resource": "repo://core/pipeline-core/src/test/java/edu/kit/kastel/mcse/ardoco/core/execution/RunnerBaseTest.java#L20-L112",
+          "version": "repo-lines-v1:sha256:d4af7ff3e337b825b6101444cd5e8102ccc23137da702efb017154e79d52512f:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNGMyNmMxNzAzODViNGE0NDhjM2NhZGRkYjdmNjY0ZTkxOGIzNDhkYmY2YzY3Y2UxZGJjYTA2NzQwOWUxYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzMGFkZTMyOWVmYmZkMWRlYjY2ZTU3YTg4NTFjOWJjMmE4MmIxZDIwMjdiNGQ4MGVjYmE0ZWQ4YWMzNTFmODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/pom.xml#L48-L69",
+          "version": "repo-lines-v1:sha256:9d8c909a674dbfffe5ecbe8c1ddb815a4f4c1ecc5187a3fdb843f306c479a613:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyNTc0N2FhNzM0MjM2Y2YyNTk4YTY2ZmZkNzhiYjRmMzQ1MDE2MTg5MGU5OGJlZDhiZWY4ODljMWFkZjk0NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZjQ0ZjdmZTBkY2I0YzUyOWEwNzJhNjZmZTVmZjk4YjJlMGJlNWUwOTk2ZGNhODAzMGZlMWJmMGMyNjRlYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNjUyMzAyMWU5NzlkYzM3MDIxNjljZmI4ZjUwODM5YjFmN2Q4YmRmMmMwMTEyNzAzOTE4NTgxMTIyMDJlYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2ZTMyYTMwZjNmMjBiYmM4MmY1YzUzZDQ4MDg4M2RhODk0OWQwYWJhYTllZGQwNWFkMzJjZDdhYzRlMjc5ZTcifQ"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/pom.xml#L21-L32",
+          "version": "repo-lines-v1:sha256:40a5cd41fe850f4063ce13aac06f9d5c46d9b5a782bbe2d6de15fc0d5ff9e870:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NjRjMGZjMWFkZWMzMzFiNTEyYTM5ZmQyODYyOTllMzQ4Mjc2ZGQwYWNlMjkwNWVmMDg0MjNmMDRiMjVlNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1MDBlZjAyOGZkYzhlNjE3ZWMxNThlMzZlOTc3N2JkOWY2ZTI5YmEzZWZhZGRiZDRkYzQwNTY4NjNlNTNkMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMmMzZTE3ODNmZjRiYjVkMDI1NDRjYmM3N2RlMmVmYzA4OGE1NGNhOWE3YmFiMDY3YjMwM2QxODZjNDYxNzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_df511cea89894f78a40592e4ff7e1283",
+      "statement": "CodeRunnerBaseTest extends RunnerBaseTest with a TeaStore codeModel.acm CodeConfiguration and, when the environment variable testCodeFull is set, switches to a full shallow clone of the TeaStore repository at a pinned commit (failing the test if the clone fails) — the second consumer of the testCodeFull gate; the concrete smoke tests are SwattrTest, ArcotlTest, ArdocodeTest, and TransarcTest in pipeline-tlr (SwattrTest and all UML variants @Disabled) and InconsistencyDetectionTest — declared in the file ArDoCoForInconsistencyDetectionTest.java — in pipeline-id, which checks the InconsistencyDetection runner with PCM and UML architecture models.",
+      "evidence": [
+        {
+          "resource": "repo://core/pipeline-core/src/test/java/edu/kit/kastel/mcse/ardoco/core/execution/CodeRunnerBaseTest.java#L15-L46",
+          "version": "repo-lines-v1:sha256:0c30f9ecbaf6348a20eaf467a3565b65b2469b4c5c523642a70d1b0c73ea43f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZGRiMjgzZjNiZjY0NzJiOTYzNWJhZjQ1OWUwODE0NGE0MTdkMTYzOWE5ZmYzOTViYzE2NTc1YWM4YzAzNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxYTJhMTFiNDg4Y2RiMGY4NmI4NzU2MDVjZjlmNTljNTViMmQ1ODdjMWJhMGVkODE1ZTNjMGNhYjVjNGVkNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/test/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ArDoCoForInconsistencyDetectionTest.java#L14-L37",
+          "version": "repo-lines-v1:sha256:5c7c0dc7f6026258b35d903278d446364657a30aaac1cf7af8536d8f1b4cbfde:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYjZjYjYwYmRkMGRiM2ZmODcwYWVlMjcyNzk4NGRkYWE5NzIxNDJhYjI1OWUzMWFjYzNjMzIxODM3ZGZkZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmZDBiMzdjNTkzNDQ2MmVhNDlhYjQyMjdmMjZjM2VmNDUyZTJiOGRjZDEzNTE0OTc4YTUyMDIzODJjODU2N2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/execution/runner/SwattrTest.java#L17-L18",
+          "version": "repo-lines-v1:sha256:4f6321a5320bea277e94a6b861be74199e3af6d9c97a23ac8582088ff7be9fb1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJmZjlmNzU0NjcxZjc0OTg2ZTJkNjRiOWEwZDg5ZTYzZTQ1ZTgyMjhhMWJlZGJhY2ZlODA5MGFmNThlMWQ3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjNmOTA0NjI4NTg3MWE5ZGRkYjJjZWU1YTMwZTAyN2E2MTE4ODU5YTNjNzIwZmQ0YmI0YzNiNTMyZmNlOWJmZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTg0ZDA4ODk0NmEwZTZkNTFmZTk2ZjFhOWRjYjQ1ZDg4ZDBiN2ZlYjVlODE0M2E4ZjBiN2VhMjZkNTEyM2JkNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRjN2ZlYmI4OGRiZGQ5MTk2YjQ3NGM1ZDVjNGRmZDZiZTllYmQ5NDhiM2E2MmUwM2IwYjY2ZWYwMmMxOGRhNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6096e98fc1e54f3d808f107d3f718cdd",
+      "statement": "The inconsistency-detection tree carries the same update_integration_tests.sh as the tlr tree: it adds the integrationTests remote, fetches main, and runs git subtree pull --prefix tests/integration-tests integrationTests main --squash to refresh its test tree from ardoco/IntegrationTests.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/update_integration_tests.sh#L1-L4",
+          "version": "repo-lines-v1:sha256:d2c5c1f2e9c154c45d1a407771a15518ebb29a7528c1e8503e8ce2371031b5f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2E5MWE5NTdhNWIyNmJhNDk4OGNiYWNiYmY2ZGVkNTIwYzdmNTVjMGFkZjk1YzVhMzIyM2Y4N2U5NGQxMmM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFmYjBhMDI5ZjFiZWY1YmU2M2VjNTFjZDI0MGY4MWUxODAyOTcyMTYxYjE5ZTUwODFlOWY1NTdmOTBhZTQ1MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ab5e746665a44cd4a4abbab9b9e2953a",
+      "statement": "CI runs mvn verify through the shared ardoco/actions Maven workflow (verify.yml declares with-submodules: true, deploy: false, and empty publish secrets), so the unconditional benchmark ITs are the effective CI coverage while every env-gated variant skips gracefully: ArtemisIT/ArtemisInTransarcIT assume OPENAI_API_KEY or OLLAMA_HOST and skip when CI is set, the full-clone variants need testCodeFull, the ID baseline needs testBaseline, and the multi-run variants need mutipleRuns.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L105-L112",
+          "version": "repo-lines-v1:sha256:450c043bae5aecf62a9c86bff7194e1fafa743f79bd14fd9046658ea44472b6d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWY5ZDQyZjA2MThjYzU1NGM2ODNkNGNlOWM4NDhmYzU4ZWUyMjVmNTgyOWE5OGQwYzc0ZTA1OGYwZTExMWI3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjk3MGM4YzVhMTAwNzJlMzM3MDhhM2Q2MmY0YzcwZDhlNzA0ZTdlOTE0YzA1M2EyNTg4YjU4MGUzYjcyMzQwNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmFiZGZjNzNjYmRhZmUwMjU2OGVkNTViZTQ1ZGQ1ZjgwZWMxZTY3YTU4YjI0MTViY2YzNGFhZjg2MjMyNmEwMCJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArcotlIT.java#L25-L28",
+          "version": "repo-lines-v1:sha256:d9caf43cd2293fdbc618e798c7e813160020418df8c945c60c8a0ef072063517:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWIxMDhiZDQwZjcxMTVhM2Y3MGUzMjY3MjAwYjg0MzI1Mjc4NTZmMjM5MWJkYmI4MWRhY2Q2ZDE4MTU2ZmVmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWFhYjRlODE2NjUwYmQ4MTI5NmU4ODk1ODZmYzFiNTQ3ZGNjNzVlNjFhZjUzMGMzOGMyZTI0MTkwOWY5Y2JhZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjU1MzYxNjAzYWI3ZjczODY2NGFlODk3ZmMzYTFiOTZiZmRlMGEzYTA0NmJmYzlkZmNhYzgzM2EyNDY4OTRkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzVmNWU2ODdiYTRhNmUyZTE1MGEwZTk0M2RiMzJlMmQ3YjA1ODBmMjExMGFjYjhjMGUyZWE5ZGJkOTMzNGZlMSJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L30-L44",
+          "version": "repo-lines-v1:sha256:8ddd28379d1ca4356b56f0e0d38ddebde026097af1cf8d91150bf1d2b3adaf6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYWQ3MzNhMGZlODRjMjk0ZGRmMzZjODZjMjkwNjg5ZmNhYTcwODBmZDNmNzA3MzgzMTg0ZDliMzJkZTJkMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyNmE5MjBkMWIyOTNmNmY5M2RmYjc4NTU5MDkwMjI2MzU1NGIwNzZkNzUwODBlMjU3ZjI1OGI0ODY2MmZlZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmNWEyZmU3Y2UzOTQ1ZGU2Y2RhNDRkM2MzZjJmZGQ2YWI5YTI3ODg4NjQ2NzU0ZWEzYWZlNWU3YzlmMGQ5N2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_807e6e528c5d4bc688456932bf751a62",
+      "statement": "The per-approach task enums resolve the gold standards and model inputs: DocumentationToArchitectureModelTlrTask (SAD→SAM CSV, sentence number ↔ model element id) feeds SwattrEvaluationProject and ArtemisEvaluationProject; ModelToCodeTlrTask (three-column SAM→Code CSV, architecture element id ↔ code path where a trailing '/' marks a package) feeds ArcotlEvaluationProject; DocumentationToCodeTlrTask and DocumentationToModelToCodeTlrTask (sentence number ↔ code path; the latter also exposes the architecture model for TransArC) feed ArdocodeEvaluationProject, TransarcEvaluationProject, and the ExArch/ArTEMiS variant project enums; every parser strips the header line and blank lines.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToArchitectureModelTlrTask.java#L16-L70",
+          "version": "repo-lines-v1:sha256:af3e40abcfb4182ec0cbda53db80ebf1494eeb35a5aa5f7103eb5623b5fb1bd9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZDY3YjBlZmU1YTY1NTNlNTU0MWM4NTdmNjhhYWVhNDUzYmMzMTIxZjRjYjNkNDcyOTJmMjJhMDc0NzBkNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1Y2FkZDk5MWU4ZThiNmQxOTMxNDgxN2RlODdjY2EyNzM1NWI2MmVhMmY0YjkyOTZiNTJkMzA0NDYyM2FlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToCodeTlrTask.java#L15-L80",
+          "version": "repo-lines-v1:sha256:1c74bd30f91a20827f53be2fb6a64dfb54a5c06279d3d562c93a0e14555b23ff:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OTA5NTJiMDg4ZDFiYmNmYzlkZTA1ZjMwYjA3ZWFiYzIzOTUzMjQyOWRlZWI2ZjRiNDQ5NjMwYjgzNThhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1Y2FkZDk5MWU4ZThiNmQxOTMxNDgxN2RlODdjY2EyNzM1NWI2MmVhMmY0YjkyOTZiNTJkMzA0NDYyM2FlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/DocumentationToModelToCodeTlrTask.java#L16-L86",
+          "version": "repo-lines-v1:sha256:87ad51d343aff22b1c6134242139fc509bf70e9b030ac829c270a37628b1877c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4NzIzNjU5Mzc0NDg2ODY2MDJhMGQ3ODVkZWM4YzAyYzM0YTg4Y2Q1NTYyZDVkODIwM2E3MWY5NzNiZTZjNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1Y2FkZDk5MWU4ZThiNmQxOTMxNDgxN2RlODdjY2EyNzM1NWI2MmVhMmY0YjkyOTZiNTJkMzA0NDYyM2FlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/task/ModelToCodeTlrTask.java#L16-L81",
+          "version": "repo-lines-v1:sha256:d94c0dc7aff51b041d31863fcb0ef8101390ab1c42a441147f8efed4bff11ccb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZjE2YThlOGE4MTRkZTBlNmFjOWEwZGNlNzZiOThhNTcwOTRjNmJmNjVhNjk5MDk3YzNiZWFmYThmZGQyNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1Y2FkZDk5MWU4ZThiNmQxOTMxNDgxN2RlODdjY2EyNzM1NWI2MmVhMmY0YjkyOTZiNTJkMzA0NDYyM2FlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-05T12:50:45.506Z"
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-19T11:24:11.899Z"
   }
 }

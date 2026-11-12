@@ -1,17 +1,14 @@
 ---
 type: "Reference"
 title: "Operations"
-description: "Build system, code quality, CI/CD workflows, monorepo sync scripts, environment configuration, and external services for ARDoCo."
-tags: [build-system, maven, ci-cd, code-quality, environment, publishing, external-services]
+description: "Build system, code quality, CI/CD workflows, monorepo sync scripts, environment configuration, external services, and the AGENTS.md/CLAUDE.md OpenWiki maintenance contract for ARDoCo."
+tags: [build-system, maven, ci-cd, code-quality, environment, publishing, external-services, openwiki]
 openwiki:
   roles: [operations, delivery]
   change_kinds: [build, ci, dependencies]
-  source_paths: [pom.xml, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml]
+  source_paths: [pom.xml, AGENTS.md, CLAUDE.md, .github/workflows/verify.yml, .github/workflows/format.yml, .github/workflows/docs.yml, .github/workflows/openwiki.yml, core/.github/workflows/format.yml, tlr/.github/workflows/format.yml, inconsistency-detection/.github/workflows/format.yml]
   invariants: ["flatten-maven-plugin pinned to 1.7.3 due to upstream NPE in 1.8.0", "JDK 21+ and Maven 3.9+ required", "Docs/openwiki paths do not trigger Maven verify"]
   validation_commands: ["mvn clean verify", "mvn spotless:check"]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T12:50:45.506Z
 sources:
   - id: openwiki-source-d558e38ccd1b08e055e4f3f5
     resource: repo://.github/workflows/docs.yml
@@ -23,6 +20,12 @@ sources:
     resource: repo://.github/workflows/verify.yml
   - id: openwiki-source-ea70eb6c045047448e446296
     resource: repo://.gitignore
+  - id: openwiki-source-8037e2358a2c4f9b2c722a11
+    resource: repo://AGENTS.md
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
+  - id: openwiki-source-95e70d5fed9ac06e781a7ac8
+    resource: repo://core/.github/workflows/format.yml
   - id: openwiki-source-64c4c51956e735b4f8b4f2ad
     resource: repo://core/.mvn/jvm.config
   - id: openwiki-source-85d7e1bba1ef1c69d3421831
@@ -57,6 +60,8 @@ sources:
     resource: repo://docs/LiSSA.md
   - id: openwiki-source-e0619056900a3044357585a9
     resource: repo://docs/Text-Preprocessing-Microservice.md
+  - id: openwiki-source-e7930f246892d4e52fe8124a
+    resource: repo://inconsistency-detection/.github/workflows/format.yml
   - id: openwiki-source-b40e29eb69418d1b82bc9a2b
     resource: repo://inconsistency-detection/pom.xml
   - id: openwiki-source-17e801a0d4e1b83de6d7102e
@@ -65,6 +70,8 @@ sources:
     resource: repo://pom.xml
   - id: openwiki-source-05268939a714aa11095abad9
     resource: repo://sample.env
+  - id: openwiki-source-90c4930e80176d0f2e97e712
+    resource: repo://tlr/.github/workflows/format.yml
   - id: openwiki-source-ca56ac93c4121e1f63ec2ebf
     resource: repo://tlr/pom.xml
   - id: openwiki-source-a00658cbd869dbe3ba0ef3e8
@@ -97,7 +104,10 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
   - id: openwiki-source-14f886f1a214908e7068814d
     resource: repo://tlr/update_integration_tests.sh
-generated: { by: "openwiki/0.7.0", at: "2026-10-05T12:50:45.506Z" }
+generated: { by: "openwiki/0.9.0", at: "2026-11-09T14:31:36.685Z" }
+verified:
+  - by: openwiki/0.9.0
+    at: 2026-11-09T14:31:36.685Z
 ---
 
 # Operations
@@ -128,7 +138,7 @@ The default `complete` profile is active in the root POM and in each module POM,
 
 ### Build Gotcha: Pinned `flatten-maven-plugin`
 
-All POMs use CI-friendly version placeholders: the root POM sets `<revision>2.1.0-SNAPSHOT</revision>` and every module inherits it via `<version>${revision}</version>`. The root POM resolves these placeholders with `org.codehaus.mojo:flatten-maven-plugin`, which is **pinned to `1.7.3`**. Do **not** remove this pin or let it upgrade to the unversioned "latest" resolution (1.8.0): the 1.8.0 release has an upstream bug (`mojohaus/flatten-maven-plugin#523`) whose CI-friendly interpolator throws an NPE against this POM. The plugin runs with `flattenMode=resolveCiFriendliesOnly` and `updatePomFile=true`, expands `dependencyManagement` and `dependencies`, and executes at the `clean` and `process-resources` phases. This also means the deployed POMs carry fully resolved versions rather than `${revision}` placeholders.
+All POMs use CI-friendly version placeholders: the root POM sets `<revision>2.2.0-SNAPSHOT</revision>` and every module inherits it via `<version>${revision}</version>`. The root POM resolves these placeholders with `org.codehaus.mojo:flatten-maven-plugin`, which is **pinned to `1.7.3`**. Do **not** remove this pin or let it upgrade to the unversioned "latest" resolution (1.8.0): the 1.8.0 release has an upstream bug (`mojohaus/flatten-maven-plugin#523`) whose CI-friendly interpolator throws an NPE against this POM. The plugin runs with `flattenMode=resolveCiFriendliesOnly` and `updatePomFile=true`, expands `dependencyManagement` and `dependencies`, and executes at the `clean` and `process-resources` phases. This also means the deployed POMs carry fully resolved versions rather than `${revision}` placeholders.
 
 ## Module Matrix
 
@@ -182,7 +192,7 @@ The root POM's `dependencyManagement` pins the versions shared by all modules:
 | JavaParser | 3.28.2 | Java code parsing |
 | JUnit (Jupiter) | 6.1.3 | testing |
 | Mockito | 5.23.0 | mocking |
-| SLF4J | 2.0.18 | logging |
+| SLF4J | 2.0.20 | logging |
 | ArchUnit (`archunit-junit5`) | 1.5.0 | architecture tests |
 | ANTLR runtime | 4.13.2 | code-model parsers |
 | `io.github.ardoco:metrics` | 0.3.0 | evaluation metrics (used by `tests-base`) |
@@ -192,13 +202,13 @@ The `versions-maven-plugin` (2.21.0) is configured to ignore `alpha`/`beta`/`RC`
 Two notable dependencies are **not** versioned in the root POM:
 
 - **OpenNLP `opennlp-tools` 2.5.11** is pinned in `core/framework/common/pom.xml` (with its transitive `slf4j-api` excluded). OpenNLP's `PorterStemmer` is used by ArCoTL's `NameComparisonUtils` for stemming, and that utility also builds a local Stanford CoreNLP `tokenize,pos,lemma` pipeline for lemmatization-based name comparison.
-- **`dev.langchain4j:langchain4j-bom` 1.18.1** is imported by `tlr/stages-tlr/model-provider/pom.xml` for the OpenAI and Ollama chat-model integrations (see [LLM Integration](#llm-integration-and-reproducibility)).
+- **`dev.langchain4j:langchain4j-bom` 1.19.0** is imported by `tlr/stages-tlr/model-provider/pom.xml` for the OpenAI and Ollama chat-model integrations (see [LLM Integration](#llm-integration-and-reproducibility)).
 
 ## Code Formatting
 
 ### Spotless
 
-ARDoCo uses [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) (3.9.0, configured once in the root `pluginManagement` and inherited by every module) for consistent code formatting:
+ARDoCo uses [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) (3.10.4, configured once in the root `pluginManagement` and inherited by every module) for consistent code formatting:
 
 ```bash
 mvn spotless:apply   # Apply formatting before committing
@@ -224,7 +234,7 @@ ARDoCo uses [JSpecify](https://jspecify.dev/) for null-safety annotations:
 - **No other annotations**: Do not use `javax.annotation.Nullable` or similar variants.
 - **Auto-generated**: `package-info.java` files are generated by `org.fuchss:jspecify-maven-plugin` (0.1.0) during the `process-sources` phase directly into the module source directory and are **git-ignored** — do not commit them manually.
 
-The plugin is inherited from the root POM and `org.jspecify:jspecify:1.0.0` is a root-POM dependency, so every module is null-marked by default without any per-module setup.
+The plugin is inherited from the root POM and `org.jspecify:jspecify:1.0.1` is a root-POM dependency, so every module is null-marked by default without any per-module setup.
 
 ## Code Quality and Architecture Tests
 
@@ -251,7 +261,7 @@ Located in `/.github/workflows/`:
 | Workflow | File | Purpose |
 |----------|------|---------|
 | Maven Verify | [`verify.yml`](../.github/workflows/verify.yml) | Runs Maven verify on push to `main` (ignoring `v*` tags and `docs/**`, `openwiki/**` paths) and on pull requests, via the reusable `ardoco/actions` workflow with `with-submodules: true` and `deploy: false`. The call site passes empty `CENTRAL_USER`, `CENTRAL_TOKEN`, and `GPG_KEY` secrets, so CI verifies without publishing. |
-| Format | [`format.yml`](../.github/workflows/format.yml) | On pull requests to `main` and manual dispatch: checks out with submodules and full history, runs `mvn -B spotless:apply`, and auto-commits the reformat as "Apply formatting changes" using the JDK version exported from the POM. |
+| Format | [`format.yml`](../.github/workflows/format.yml) | On pull requests to `main` and manual dispatch: checks out with submodules and full history (`actions/checkout@v7`), determines the Java major version by probing `maven.compiler.target`, `maven.compiler.release`, and `java.version` in the POM with `mvn help:evaluate` (the job fails with an error if none resolves), sets up Temurin with Maven caching via `actions/setup-java@v6`, runs `mvn -B spotless:apply`, and auto-commits the reformat as "Apply formatting changes" via `stefanzweifel/git-auto-commit-action@v7` — Spotless violations on a PR are fixed by a bot commit rather than failing the build. |
 | Docs | [`docs.yml`](../.github/workflows/docs.yml) | On pushes to `main` (and version tags) touching `docs/**`, `openwiki/**`, or the workflow itself: republishes the GitHub Wiki from `/docs` plus `/openwiki` (see [Wiki Publishing](#wiki-publishing)). |
 | OpenWiki Update | [`openwiki.yml`](../.github/workflows/openwiki.yml) | Weekly (Monday 06:00 UTC) plus `workflow_dispatch` run that delegates to the shared `ardoco/actions` OpenWiki reusable workflow, passing the `OPENROUTER_API_KEY` secret; the call site declares `contents: write` and `pull-requests: write`. The reusable workflow performs the commit-relevance check, installs OpenWiki, runs `openwiki --update`, and opens the update PR. |
 
@@ -267,9 +277,19 @@ Located in `/.github/workflows/`:
 
 **OpenWiki page constraint**: because step 4 only globs `./openwiki/*.md`, wiki pages must stay **flat** in `/openwiki/*.md` — nested directories are never rendered as wiki pages. Do **not** delete [`quickstart.md`](quickstart.md): the rendered `OpenWiki-quickstart` page is the entry point linked from `docs/Home.md` and the wiki sidebar.
 
+### OpenWiki Maintenance Contract (AGENTS.md / CLAUDE.md)
+
+The repository root [`AGENTS.md`](../AGENTS.md) carries an `OPENWIKI:START` / `OPENWIKI:END` block defining how agents working in this repository may consume the generated `openwiki/` evidence index, and [`CLAUDE.md`](../CLAUDE.md) simply delegates to it via an `@AGENTS.md` reference, so the same contract governs Claude sessions:
+
+- **Just-in-time, not startup reading.** `openwiki/` is an optional generated evidence index, not required startup reading. Do not enumerate, preload, or search the wiki at task start; reach for it only when the user asks for it, when unfamiliar architecture or dependency behavior materially affects the task, or when source inspection leaves an important uncertainty — and stop once the question is grounded.
+- **Retrieval tooling.** When those conditions apply and OpenWiki retrieval tools are available, use `openwiki_search` for just-in-time context and `openwiki_read` for the relevant complete sections. If search returns `workspace_required`, ask which listed workspace to use and retry with its ID; use `openwiki_list_workspaces` / `openwiki_list_wikis` when workspace membership itself needs to be discovered. If the retrieval tools are unavailable, read [`openwiki/quickstart.md`](quickstart.md) and follow its links to the relevant pages.
+- **Source is authoritative.** Treat source code and tests as authoritative; a brief's unknowns and review items are verification gaps, not automatic requirements. Prefer the narrowest quiet validation that proves the changed behavior, and preserve complete failure output.
+- **Don't hand-edit generated pages.** Do not hand-edit generated OpenWiki pages unless explicitly asked. Prefer updating source code and `/docs` content and letting OpenWiki regenerate the pages via the repository's documented maintenance process — this page's own build/CI/dependency sections above are produced and refreshed by that process, so a hand edit would be overwritten by the next regeneration.
+- **Check runs before relying on automatic updates.** The weekly [`openwiki.yml`](../.github/workflows/openwiki.yml) schedule (Monday 06:00 UTC, plus `workflow_dispatch`) drives the OpenWiki update PRs; check its configuration and its completed runs before relying on automatic page updates.
+
 ### Module-Level Workflows and Sync Scripts
 
-Each module tree (`core`, `tlr`, `inconsistency-detection`) carries its own `.github/workflows/` (`verify.yml`, `format.yml`) replicating the root workflows for the standalone repositories, including `with-submodules: true` / `submodules: true`. The `tlr` and `inconsistency-detection` trees also contain `update_integration_tests.sh`, which syncs the `tests/integration-tests` prefix from the `ardoco/IntegrationTests` repository via `git subtree pull`:
+Each module tree (`core`, `tlr`, `inconsistency-detection`) carries its own `.github/workflows/` (`verify.yml`, `format.yml`) replicating the root workflows for the standalone repositories, including `with-submodules: true` / `submodules: true`. The module `format.yml` copies are identical to each other and step-for-step the same as the root Format workflow (same triggers, same inline POM-based Java-version probe, `mvn -B spotless:apply`, `git-auto-commit-action@v7` "Apply formatting changes" commit), but they still pin `actions/checkout@v6` and `actions/setup-java@v5` where the root has already moved to `actions/checkout@v7` and `actions/setup-java@v6`. The `tlr` and `inconsistency-detection` trees also contain `update_integration_tests.sh`, which syncs the `tests/integration-tests` prefix from the `ardoco/IntegrationTests` repository via `git subtree pull`:
 
 ```bash
 git remote add -f integrationTests git@github.com:ardoco/IntegrationTests.git

@@ -11,8 +11,8 @@ openwiki:
   invariants: ["Pipeline components communicate only through the DataRepository", "All configurable fields are overridable via @Configurable"]
   validation_commands: ["mvn -pl core clean verify"]
 verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-28T12:10:26.118Z
+  - by: openwiki/0.7.2
+    at: 2026-10-19T11:24:11.899Z
 sources:
   - id: openwiki-source-e8bd8600c70da3abe8947ae8
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/entity/ArchitectureEntity.java
@@ -62,6 +62,8 @@ sources:
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/Metamodel.java
   - id: openwiki-source-a94b233a5ebb9d9485a74372
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/Model.java
+  - id: openwiki-source-6ae2482ae965076e7a597f3c
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/ModelFormat.java
   - id: openwiki-source-77b85686519257a20945b10b
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/ModelStates.java
   - id: openwiki-source-4a09efc9630728a86f8c5cd1
@@ -90,6 +92,8 @@ sources:
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/configuration/NoConfiguration.java
   - id: openwiki-source-192cbe072df79ab380633b2f
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/data/DataRepository.java
+  - id: openwiki-source-462d95a2e86800da19b899be
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/data/DataRepositorySyncer.java
   - id: openwiki-source-57a264f0d7bd8531d8740007
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/data/PipelineStepData.java
   - id: openwiki-source-4f866f0163d911503e680d02
@@ -118,8 +122,12 @@ sources:
     resource: repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/runner/ArdocoRunner.java
   - id: openwiki-source-4e30a7af17c8d1123efcd759
     resource: repo://core/pipeline-core/src/test/java/edu/kit/kastel/mcse/ardoco/core/execution/ConfigurationHelperTest.java
+  - id: openwiki-source-5516bc70f5d673966ceb52b5
+    resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/ArchitectureTest.java
   - id: openwiki-source-e6a9915b73df8322a4b13396
     resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/BasicArchitectureTest.java
+  - id: openwiki-source-bc6b4bc2b2d16ed6722d539f
+    resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/DeterministicArdocoTest.java
   - id: openwiki-source-fd8ac5724feb762c433689e1
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java
   - id: openwiki-source-655de2c71ac36c571ac56508
@@ -142,7 +150,15 @@ sources:
     resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/ModelProviderInformant.java
   - id: openwiki-source-c4bb75d9f0cd7e5291370669
     resource: repo://tlr/stages-tlr/text-extraction/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/textextraction/TextExtraction.java
-generated: { by: "openwiki/0.6.0", at: "2026-09-28T12:10:26.118Z" }
+  - id: openwiki-source-5e389d3989eaef1939dbaded
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/config/ConfigManager.java
+  - id: openwiki-source-7e8e557d3ae79c61cab3bd0c
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/MicroserviceChecker.java
+  - id: openwiki-source-7a80fb586953e8751e8c79c7
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/TextProcessor.java
+  - id: openwiki-source-bd03bc50b635afa1836fd09a
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/TextProcessorService.java
+generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
 ---
 
 # Architecture
@@ -267,6 +283,72 @@ Configuration is applied top-down through the same composite that executes steps
 ### Enforcement
 
 The ArchUnit test `configurableFieldsOnlyInConfigurableClasses` in `core/tests-base/.../tests/architecture/BasicArchitectureTest.java` enforces that `@Configurable` fields are declared only in classes assignable to `AbstractConfigurable` — configuration by reflection cannot silently escape the framework.
+
+## Enforced Architectural Invariants (ArchUnit)
+
+The framework's structure is enforced by ArchUnit tests in `core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/` (`ArchitectureTest`, `BasicArchitectureTest`, `DeterministicArdocoTest`), all analyzing `edu.kit.kastel.mcse.ardoco`. Violations fail the build.
+
+### Layered architecture (ArchitectureTest)
+
+`layerRule` defines nine layers — **Common** (`common`, `data`, `api`, `tests` packages), **TextExtractor** (`textextraction`), **ModelExtractor** (`models`), **RecommendationGenerator** (`recommendationgenerator`), **ConnectionGenerator** (`connectiongenerator`), **InconsistencyDetection** (`inconsistency`, `id`), **CodeTraceability** (`codetraceability`), **Pipeline** (`pipeline`), **Execution** (`execution`) — with explicit "may only be accessed by" rules that mirror the pipeline's data flow (e.g., TextExtractor may be accessed only by RecommendationGenerator, ConnectionGenerator, InconsistencyDetection, Pipeline, Common, and Execution). Additional rules pin down ordering and naming constraints:
+
+- `noDependencyOnExecution`: only `execution` and `tests` packages may depend on `..execution..`.
+- `modelInstancesOnlyAfterModelExtraction`: classes named `Model` are only usable from model-related, recommendation, connection, inconsistency, pipeline, common, output, and tests packages.
+- `linksOnlyAfterConnectionGenerator` / `usingLinkAsNamingOnlyInConnectionGenerator`: `*Link` classes live only in connectiongenerator, codetraceability, and tracelink packages and are consumed only after connection generation.
+- `inconsistencyOnlyAfterInconsistencyDetection`: classes whose name contains `Inconsistency` are usable only after the inconsistency stage.
+
+### General structure rules (BasicArchitectureTest)
+
+- `@Configurable` fields only in `AbstractConfigurable` subclasses (see above).
+- `traceLinksShouldBeFinal`: every `TraceLink` subclass (except `TraceLink` itself) must be `final`.
+- `jacksonIsConfiguredGlobally`: only `JsonHandling` may construct `ObjectMapper` — all Jackson configuration flows through one shared factory.
+- `noGetEnv`: only the `Environment` utility may call `System.getenv` (this is why `ConfigManager` reads env vars via `Environment.getEnv`).
+- `noForEachInCollectionsOrStream`: `forEach`/`forEachOrdered` on streams and lists are banned (side-effect lambdas).
+- `preferEclipseCollections`: interface methods must not use raw `java.util` `List`/`Set`/`SortedSet`/`Map`/`SortedMap` types (outside `..metrics..`); the Eclipse Collections equivalents are preferred.
+
+### Determinism rules (DeterministicArdocoTest)
+
+- `forbidUnorderedSetsAndMaps`: classes not annotated with `@Deterministic` (and outside `..tests..`, `..metrics..`, `..magika..`) may not access or depend on `Set`/`Map` types and factories (`HashSet`, `HashMap`, Eclipse `Mutable/ImmutableSet/Map`, `Sets`, `Maps`) — deterministic code must use ordered/sorted collections.
+- `forbidHashMapAndHashSetInFavorOfLinkedVersions`: outside tests, `HashMap`/`HashSet` are banned outright; use the linked variants for predictable iteration order.
+- `forbidEqualsAndHashCodeInCertainClasses`: classes annotated `@NoHashCodeEquals` must not implement `equals`/`hashCode`.
+- `ensureContractBetweenEqualsHashCodeAndCompareTo`: classes directly implementing `Comparable` (that are not enums/interfaces/anonymous) must implement both `equals` and `hashCode`.
+- `ensureSortedCollectionsOnlyForComparableTypes*`: sorted collection fields and sorted-collection return types must be parameterized with `Comparable` types.
+
+## Text Preprocessing Decision Flow
+
+Text preprocessing (`tlr/stages-tlr/text-preprocessing/.../corenlp/textprocessor/`) chooses between a remote CoreNLP microservice and an embedded Stanford CoreNLP at run time:
+
+1. `ConfigManager` (`.../corenlp/config/ConfigManager.java`) is a singleton that loads `config.properties` from the classpath; if the file cannot be loaded it falls back to the defaults `microserviceUrl=http://localhost:8080`, `nlpProviderSource=local`, `corenlpService=/stanfordnlp`, `healthService=/stanfordnlp/health`. The `MICROSERVICE_URL` and `NLP_PROVIDER_SOURCE` environment variables (read through the sanctioned `Environment` utility) override the properties when set.
+2. `TextProcessor.processText(String)` first asks `MicroserviceChecker.isMicroserviceAvailable()`, which sends an authenticated GET to `<microserviceUrl><healthService>` and returns true only when the response is exactly `"Microservice is healthy"`.
+3. The microservice path is taken only when **both** `nlpProviderSource` equals `"microservice"` and the health check succeeded. Failures are retried up to `MAX_FAILED_SERVICE_REQUESTS = 2` times on `IOException`; a conversion failure (`NotConvertableException`/`InvalidJsonException`) falls back immediately. After exhausting retries — or when the microservice is unavailable/not selected — processing falls back to `TextProcessorLocal` (embedded Stanford CoreNLP).
+4. `TextProcessorService` URL-encodes the input text (`URLEncoder.encode`, UTF-8), wraps it in a `{"text": "..."}` JSON body, and sends an authenticated POST to `<microserviceUrl><corenlpService>`; the JSON response is parsed with `JsonConverter.fromJsonString` and converted via `DtoToObjectConverter.convertText` (`textprovider-json`).
+
+So the effective decision tree is: not configured for microservice → local; microservice unreachable or unhealthy → local; microservice transiently failing → up to 2 retries, then local; unconvertible response → local.
+
+```mermaid
+flowchart TD
+    P["TextProcessor.processText"] --> C{"nlpProviderSource = microservice and health check OK"}
+    C -- no --> L["TextProcessorLocal - embedded CoreNLP"]
+    C -- yes --> S["TextProcessorService - authenticated POST"]
+    S --> E{"IOException?"}
+    E -- "yes, retries < 2" --> S
+    E -- "yes, retries exhausted" --> L
+    E -- "no" --> J{"JSON convertible?"}
+    J -- "no" --> L
+    J -- yes --> T["Text built from DtoToObjectConverter"]
+    L --> T2["Text from local CoreNLP"]
+```
+
+*Preprocessing decision flow: microservice selection, bounded retries, and local fallback.*
+
+## Metamodels and Model API
+
+`Metamodel` (`core/framework/common/.../api/models/Metamodel.java`) distinguishes `ARCHITECTURE_WITH_COMPONENTS` from `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES`, plus `CODE_WITH_COMPILATION_UNITS` and `CODE_WITH_COMPILATION_UNITS_AND_PACKAGES`. `ModelStates` (`ID = "ModelStatesData"`) stores one `Model` per metamodel in a sorted map. The `ModelFormat` enum enumerates the supported input formats: `PCM`, `UML`, `COMPONENT_LISTING`, and `ACM` (code model for ArCoTL).
+
+- Architecture API (`.../api/models/architecture/`): `ArchitectureComponent`, `ArchitectureInterface`, `ArchitectureMethod` (with DTOs under `.../architecture/dto/`, see [Architecture Model Serialization](#architecture-model-serialization)).
+- Code API (`.../api/models/code/`): `CodeCompilationUnit`, `CodePackage`, `ClassUnit`, `InterfaceUnit`, etc.
+- Text API (`.../api/text/`): `Text`/`Sentence`/`Word`/`Phrase`; `SimpleText` for lightweight preprocessing.
+- Stage state APIs under `.../api/stage/` for textextraction, recommendationgenerator, connectiongenerator (+ ner), inconsistency, and codetraceability (table below).
 
 ## Intermediate Artifacts
 

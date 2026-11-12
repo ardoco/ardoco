@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6ad9dd3472a46675c6c6e06e0a2c7e9fdd143be906b7312e5ab33891dfd93b5c",
+  "pageVersion": "sha256:a79221f40182f09e2d5e4859420fd42f6424a9a912e724da59b5293730a433fc",
   "claims": [
     {
       "id": "claim_ded84656d4984e249eee1dca8da97d8e",
@@ -338,11 +338,11 @@
     },
     {
       "id": "claim_2f57d70f10e14fd8b264643140a0689d",
-      "statement": "ArTEMiS's NerConnectionGenerator depends on io.github.ardoco:named-architecture-entity-recognition:2.0.0 (NAER); NerInformant feeds the simple text as a SoftwareArchitectureDocumentation to NAER's NamedEntityRecognizer with a TwoPartPrompt (component-identification rules plus JSON formatting), scopes candidates to the architecture model's endpoint names (component vs. interface by type string), and sorts results by name for determinism (the class is annotated as not fully deterministic due to NAER); recognized NamedArchitectureEntities (name, alternative names, 1-based occurrence lines) land in the per-metamodel NerConnectionState.",
+      "statement": "ArTEMiS's NerConnectionGenerator depends on io.github.ardoco:named-architecture-entity-recognition:2.1.0 (NAER); NerInformant feeds the simple text as a SoftwareArchitectureDocumentation to NAER's NamedEntityRecognizer with a TwoPartPrompt (component-identification rules plus JSON formatting), scopes candidates to the architecture model's endpoint names (component vs. interface by type string), and sorts results by name for determinism (the class is annotated as not fully deterministic due to NAER); recognized NamedArchitectureEntities (name, alternative names, 1-based occurrence lines) land in the per-metamodel NerConnectionState.",
       "evidence": [
         {
           "resource": "repo://tlr/stages-tlr/connection-generator-ner/pom.xml#L14-L19",
-          "version": "repo-lines-v1:sha256:543a9c4a1484781d2694855770b32cae030f2b439e2d3058d87a38744d365188:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IxN2EwYzJkMjE2MDUxZDA4MGVhNjAzYTJmZWM2MzMwM2JiMjU1MWEwYWU1NWUzODNhOTM3NDYxMzkyMGQ4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTgwNmI4NjU3ZWMyMTZkZmU5YmFjMDI3NjgxYTlkNTMzYjRlZWJjZTZiM2RiZTI3ZjRjMmIzMDNiMDJiY2Y3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRiZGViNmMyMTEyMjljZWYzY2QwMTAyZTU0NzAzYjE1N2FmM2U2Yzk3NGE4ZDdjN2Y2OGQzOGZhMzlmYmFmZiJ9"
+          "version": "repo-lines-v1:sha256:4b5764d58c30e784493c147c8be80638de33cd41d452217cb8b9e9972cdd76a6:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IxN2EwYzJkMjE2MDUxZDA4MGVhNjAzYTJmZWM2MzMwM2JiMjU1MWEwYWU1NWUzODNhOTM3NDYxMzkyMGQ4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTgwNmI4NjU3ZWMyMTZkZmU5YmFjMDI3NjgxYTlkNTMzYjRlZWJjZTZiM2RiZTI3ZjRjMmIzMDNiMDJiY2Y3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRiZGViNmMyMTEyMjljZWYzY2QwMTAyZTU0NzAzYjE1N2FmM2U2Yzk3NGE4ZDdjN2Y2OGQzOGZhMzlmYmFmZiJ9"
         },
         {
           "resource": "repo://tlr/stages-tlr/connection-generator-ner/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/connectiongenerator/ner/informants/NerInformant.java#L127-L221",
@@ -422,7 +422,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.6.0",
-    "at": "2026-09-28T12:10:26.118Z"
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-19T11:24:11.899Z"
   }
 }

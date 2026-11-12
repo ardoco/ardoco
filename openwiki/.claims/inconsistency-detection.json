@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c1004c5a62896b37444ada3920292c1da35776a032b8f02579e8fd779dc62fc0",
+  "pageVersion": "sha256:dcf8702eb896a4d47d9d21e9ccb8923adab020b6cba4a64cea4b2eb62805ecd3",
   "claims": [
     {
       "id": "claim_6b4e5f7887b84ecba335d1cc85c5ab97",
-      "statement": "The InconsistencyDetection runner extends ArdocoRunner and wires the pipeline TextPreprocessingAgent → ModelProviderAgent → TextExtraction → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker, pinning the architecture Metamodel to ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, rejecting blank input text, and reusing the SWATTR TLR stages whose results the checker consumes.",
+      "statement": "The InconsistencyDetection runner extends ArdocoRunner and wires the pipeline TextPreprocessingAgent → ModelProviderAgent → TextExtraction → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker, pinning the architecture Metamodel to ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, rejecting blank input text, and storing the raw input text in the DataRepository itself via DataRepositoryHelper.putInputText before running the reused SWATTR TLR stages whose results the checker consumes.",
       "evidence": [
         {
           "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java#L47-L66",
@@ -211,10 +211,34 @@
           "version": "repo-lines-v1:sha256:378e13fd7736263cab0c133da5b9fce5c9e60e59fb71e5fccfbe9a31a20eef81:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjA5ZWIwYzU3NDRmYjk3MzMxYjk4ZmYzZmJmMDVhNjAyYmEzZjdmNjdlNWRhNWJlOTA5NTAzM2Y2MjU4MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNTQ3MzU1OTRkYjUzNjI2NmIwZTI2MGU1YmJkODI3YWZhNjc0MTAxYmU5Yjc4YmEyYzJkZmM2NjMyYTBhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiODNiY2Q0YWFlMzE4NTIxZTQwZTNjOWRjOGU5NTkxZGM4MTQ1ODUwNTEzNDNjMzVmN2JmYTZmMDlkMzRjMDkifQ"
         }
       ]
+    },
+    {
+      "id": "claim_50946943eac14ea8bbb6a21e776f2248",
+      "statement": "RecommendedInstanceProbabilityFilter.checkProbabilitiesForNounMappingTypes computes the 'name' probability with getHighestNameProbability(getTypeMappings()) instead of from the name mappings, so with the default thresholds all three acceptance gates reduce to a single test of the highest type-mapping probability against thresholdNameAndTypeProbability (0.3); real name mappings are never consulted and a recommended instance without any type mapping is always filtered out.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/RecommendedInstanceProbabilityFilter.java#L106-L126",
+          "version": "repo-lines-v1:sha256:999f9de8964256b8ce5641cc33b59cd43848bae3a6b547a0550006517ddfd6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYjQ1ZjAwYjBiYjAzNmNmMDI4NGE2ZTY5OTNiMDRlMTIyMTA1MDA2Yzc2Nzc5YzE5NGEzOTM5ZWM2YmQwYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwODIzZDVhODU3MDRjNTEzODdiNDJmZDE4NGU2NmUyMTkyMDEwZjY1NWEyOTdkODgzMzk5NTk3MjUxMGQ3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2YjkwZDQzNjQ2YTY0YTgzOWUzMjY1YTIwM2ZmMGIyMmQ0NzM5YzZmMmM2MTYxY2JjYjE3ZTM0NmQ4ZjllOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f78c07d7655463ab207fae8273a6984",
+      "statement": "Within the InconsistencyChecker, the TEAM and MEAT informants each iterate the metamodels of ModelStates and write into the per-metamodel InconsistencyState; MEAT works directly from Model.getEndpoints() and ConnectionState instance links and consumes no output of InitialInconsistencyAgent, whereas TEAM consumes the recommended instances that InitialInconsistencyAgent copied and pre-filtered.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ModelEntityAbsentFromTextInconsistencyInformant.java#L76-L102",
+          "version": "repo-lines-v1:sha256:b1c5c787563928514d05673a0460a040d465787f619526867f996115ef18e10f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1YjAyNzA3ODhjY2FiNDE4ODRmMGUwMzg2YmJiMzNmNDk4MzJkNDc5ODg3MjExM2M3ZjQ4MDZmNWU1MjIxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwYzhlYzI4YTcxNjFiNTU5YWViNzJlZTM0MjhkNzZkMWVhNGZlYjhiOGY1MzM5N2YwYTI2MDFhMDg3NmY4MjcifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/TextEntityAbsentFromModelInconsistencyInformant.java#L36-L46",
+          "version": "repo-lines-v1:sha256:429fb37607eeade937a01a4e5ebe7b1f9a2127e0095f57cdde5f261d9de0f5ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1YjAyNzA3ODhjY2FiNDE4ODRmMGUwMzg2YmJiMzNmNDk4MzJkNDc5ODg3MjExM2M3ZjQ4MDZmNWU1MjIxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1NmIwMzcyY2JmYThiZGM0MGZkMDkyNzI1NDUyNmFmODUxMTlkOTAxM2FkNjVhYmQxYTNmOTM3ZDIzZDQ5MDAifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-05T12:50:45.506Z"
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-19T11:24:11.899Z"
   }
 }

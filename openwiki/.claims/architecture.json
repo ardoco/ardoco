@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ca5ced84bcb0ffebb7d9b2033b142bcb15fe1ae95309401f46a7a3cd05d86aea",
+  "pageVersion": "sha256:8adb897b7e63dbac3026dcf94e393e6681b829fad685c1050c1d5704883e6a3c",
   "claims": [
     {
       "id": "claim_4acf1ea7f6214c899f9fb312d764f0e8",
@@ -553,10 +553,182 @@
           "version": "repo-lines-v1:sha256:6fa4ac60c44183dca4167792f09c2bb4f5acc852c1d729204ebe6e0635d0ae6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZhNGFjNjBjNDQxODNkY2E0MTY3NzkyZjA5YzJiYjRmNWFjYzg1MmMxZDcyOTIwNGViZTZlMDYzNWQwYWU2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZhNGFjNjBjNDQxODNkY2E0MTY3NzkyZjA5YzJiYjRmNWFjYzg1MmMxZDcyOTIwNGViZTZlMDYzNWQwYWU2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzQ3YzcyNTYyZWRhMzFlZGM2NTY0YzU5ODJhMjJiN2MzZWE2ZTkzNzdlMWViYTg2NjM1OTdkYWQ1MzkxOTg1MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmMzMjYzNTcyZGMzOGIzMjY0NjMzYzZhMzNjYjMxYjQ0MGQ1MTFjZTlmMTliNjUzNTc4MGFjNDBiZmM3YTg3MSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_22c3f17ad2d2452faacbf1d8d5b5a87d",
+      "statement": "The ArchUnit layeredArchitecture rule in ArchitectureTest enforces nine layers (Common, TextExtractor, ModelExtractor, RecommendationGenerator, ConnectionGenerator, InconsistencyDetection, CodeTraceability, Pipeline, Execution) with explicit may-only-be-accessed-by rules, plus ordering rules: no dependency on ..execution.. outside execution/tests, Model only after model extraction, *Link classes only in connectiongenerator/codetraceability/tracelink packages, and Inconsistency classes only after inconsistency detection.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/ArchitectureTest.java#L43-L76",
+          "version": "repo-lines-v1:sha256:8159a8d29d6e4cec0a8874cd4f01610a7813c00b2e55122b7d9149a6cbeb0eaa:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTcyNWNhZmJiYzIwZmUyMmI3MTlmYmFkMDE2YmU0ZGRlMWRkZDY0MTM0NjNjYWE1ZmE0MTQ0OGU5NGZkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNzBjNjJjZmY5ZmMxMDA1NjEwYjdlZTc4NDVhODc5YzNkYjU3ZDQzOWIwNjdjMWZlZjFkNzM1ODhiMDZjNzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2NjkyYzEwMDlmYzNjNjNmYjY4OTI0MTM3MDUwNTdhMjM1MmJhZDk5ZDE3YjBmZGE1ZDA1MzFkMmVhOGFkMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjZDE3YjE5MGE4OTk3MmRkNDc0NGRiNDdmZTI5OWZiZDQzNmE5ZDRmZGM5ZjEwZmZhMDkwNmUwOGVjZjhlOWMifQ"
+        },
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/ArchitectureTest.java#L79-L113",
+          "version": "repo-lines-v1:sha256:65d5057105916ecaaadaee86d35d8c3269ee6d005f56df4d3f31773577a65ec2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkMzUwYjNjNGUwNDE0MDQ3NmY1OThlOWI2MzMyNDA4ZDU4ZDk5MmVlNzVmOWNmNDQ5MWE1NDRkZTA5OTY1ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3MjRjNDc2Y2FjMWE5YzEyNTAxMGM0MmRkYjA2ZTg0MTk5OGQwNGRjMTBhZmZjY2E1ODdmYjQ4NzQwNGJlYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllNmY3MTQzNjg1Y2RjYzdlYTQ1NGQ5NTQ5ODE2ZGVhMDBhMWM0NWNlZjEwYTkyNzdjODU0YzZhNGM1MDg1NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c7e948d96db4b188112de4b47fc2fc7",
+      "statement": "BasicArchitectureTest enforces cross-cutting structure rules: @Configurable fields only in AbstractConfigurable subclasses, TraceLink subclasses must be final, only JsonHandling may construct ObjectMapper, only Environment may call System.getenv, no forEach/forEachOrdered on streams/lists, and interface methods must not use raw java.util collection types outside ..metrics.. (Eclipse Collections preferred).",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/BasicArchitectureTest.java#L28-L106",
+          "version": "repo-lines-v1:sha256:507233613bb00f46cc0c2f112217089bda96cf434b21d459e9597417e760c50c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTcyNWNhZmJiYzIwZmUyMmI3MTlmYmFkMDE2YmU0ZGRlMWRkZDY0MTM0NjNjYWE1ZmE0MTQ0OGU5NGZkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkZmIwNzM5NTMzZWJmNmY2MTc3MzQxNjk5YTUyOTZmOGE0Y2VjMWYzYzQ2YmYyYTgzMWI0NWJkZDRkODM4NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1ZjFjYjZlZjJkMzY5MTc2OTQwZTQ5MWUzZjRmM2JjMWMyZjhiNjFmZWRjZTYzZTA0YWRhMTJjMjI0YzcyZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8bdb42bcefd3483abe866b816f32666b",
+      "statement": "DeterministicArdocoTest enforces determinism: classes not annotated @Deterministic (and outside ..tests../..metrics../..magika..) must not access Set/Map types or factories (HashSet, HashMap, Eclipse Sets/Maps etc.), HashMap/HashSet are banned in favor of linked versions outside tests, @NoHashCodeEquals classes must not implement equals/hashCode, Comparable implementors need both equals and hashCode, and sorted collection fields/returns must be parameterized with Comparable types.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/DeterministicArdocoTest.java#L51-L208",
+          "version": "repo-lines-v1:sha256:5eca238910101280d87a2b17513e47f01d36a127a7fe232994a23f6346948d58:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiYjU3MjVjYWZiYmMyMGZlMjJiNzE5ZmJhZDAxNmJlNGRkZTFkZGQ2NDEzNDYzY2FhNWZhNDE0NDhlOTRmZDczIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5YzgyOWJkYjkyNWU3ODA3OTBlYzYyZmFmYTZmN2M4NGFjYjU1ZjhmZjQzOGMyZGY4NjJlYmUwYWY2NDNmZjY4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiOGMyNGQxMzQ5NTM0NzkxZjExN2EzM2Y2MTY4YmI3NGUwMzUyMGNkYWZhYTQzMmMyODZhMTYxNDVhZGIwNzYzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MjNkNjJlOWY1NWU4NGJmMTgyOWJhNTU3YmYyM2M0YmQ3NjZkYjhhMTg5YjQ1MGEyZGRmNjU0NDE4ZTc1MzM3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ce302629fa2426eaaf099748e7571f0",
+      "statement": "The CoreNLP ConfigManager singleton loads config.properties and defaults to microserviceUrl=http://localhost:8080, nlpProviderSource=local, corenlpService=/stanfordnlp, healthService=/stanfordnlp/health when loading fails; the MICROSERVICE_URL and NLP_PROVIDER_SOURCE environment variables (read via the Environment utility) override the properties when set.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/config/ConfigManager.java#L29-L46",
+          "version": "repo-lines-v1:sha256:b5e06d650e9249da584c49330c8c8635bfadbff0c03d730619380166f8c56f8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjZmJmOTdjOGNmOWNjZTllY2IyMjU2YmYzOWY4ZWJkNWMzZjg1N2JjYzlmNmZiODAzOGVlM2VhZTMyNGViZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2ZjBjNmYyNDU3ZTBkZTk5NzVhMjgxODM4Y2Y3YWMwMjk0ODlkYTE4ZDMzYzQ2ZGVjNGI4ZGVmMjc4NWNjNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyNTZkMWJiNzVkYmExMTZiMWZmYzhiMmUzZGQ4ZTE5MmUwZGUwNGQ3N2E2ZWRjMDQyYjMwNjcxOGUyOTExZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8d4f0aa4534247e098b80b305d22bdc5",
+      "statement": "TextProcessor.processText uses the CoreNLP microservice only when nlpProviderSource is 'microservice' AND MicroserviceChecker.isMicroserviceAvailable() (authenticated GET on the health endpoint must answer exactly 'Microservice is healthy'); IOExceptions are retried up to MAX_FAILED_SERVICE_REQUESTS = 2, conversion failures fall back immediately, and all fallback paths use TextProcessorLocal (embedded Stanford CoreNLP).",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/MicroserviceChecker.java#L21-L29",
+          "version": "repo-lines-v1:sha256:3c68bf54fc946681ac8793a0eddf9a56129197a6da56de6fecacef2249c23077:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2Y5ZTA1MDVlODQ1OWM0NWExMTM4NGJiZTMxNjM5YzY1YzE0OTEyMmIwZjM5NTBiMjhiNjM5YTE2YTFhZTI4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjdkOTBmZTljMWQxYTA1NGNlYzg2YmU2Yjk2OTA1M2Y0ZjBjMDhiMTc1MGQ5MGUzODc3MWM0ODdkNjJiYjNmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODA0Zjg5ZmMwZWM5OGM5ODI0MTgzZTc5NWQzZWRkMTllOTMwZjdiYzQ3MWY5MDEyYWEzZDUwM2JlMmY4OTc0YiJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/TextProcessor.java#L19-L56",
+          "version": "repo-lines-v1:sha256:c531351373a579f0d11fb2b97e0269770e5420dcd405b29f9e9e0c68ad944dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZTBjNWNiMTZkOGRhNzcwZDFmMDU2MDQ0NzU5MDFmNjhkMWZmMjY4NjRmNmU5YWQ4MWQ3MGE5MGQwNjBjNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhNmNiOTBlNjgwZmM0ODdmNzk3N2ExNzIwNjYzNDU4YjMzYjNmNDBmZjdkZWNmMWJiNDQzMGQ3YTU3ZWUyZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20d69767899249debc7d67ddaf738314",
+      "statement": "TextProcessorService URL-encodes the input text (UTF-8), wraps it in a {json body of the form {text: <encoded>}, sends an authenticated POST to microserviceUrl+corenlpService, and converts the JSON response via textprovider-json's JsonConverter.fromJsonString and DtoToObjectConverter.convertText.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/TextProcessorService.java#L27-L53",
+          "version": "repo-lines-v1:sha256:745c5b502ac2216153e9944fe7367bf2087bf6f52ce1462762b91d9b5ea2d260:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmY2M0NDAzOTViMjYzMjY4MzkyODQwMTEyZjk4MTcxZmI2MTg3MGU3M2MwNmU3OWRlMzk0NmQ4YTM5NDlhMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2NjgxOWZlZjdkNTRmYzc2MjUwODAwMmFiZTU1NzcyZDY5MTI2MTcyNmExMTQzZTc2ZGQ2OTg4M2JiMzVhMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bb2a6752541d4e308e066476b18e55ce",
+      "statement": "The Metamodel enum distinguishes ARCHITECTURE_WITH_COMPONENTS, ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, CODE_WITH_COMPILATION_UNITS, and CODE_WITH_COMPILATION_UNITS_AND_PACKAGES; ModelStates (ID 'ModelStatesData') stores one Model per Metamodel in a sorted map; ModelFormat enumerates supported input formats PCM, UML, COMPONENT_LISTING, and ACM.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/Metamodel.java#L7-L19",
+          "version": "repo-lines-v1:sha256:d54d9d7b7dc6c6af03eb21e1e67a93003bbbda16637c54eaa51f7bc01759e293:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MmRhYWU4N2Y1ZGQzODY2M2UxYjdiZmY3NmJhNzBkMGQ0Y2FmOTU0MWM1NTkxMjY2ZWViMTlkNzA0NGJlNGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljYWFkNThkZDZmZWI5NDU1YTVjMTIzZDJhMGRkOTg5NDk0MDVjNDc3ZGI2MDY3ZmUyNjMxOTE3YzY0OWE2NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/ModelFormat.java#L7-L16",
+          "version": "repo-lines-v1:sha256:59ad7d91e4b255b772ab812cdb766560c9692465ae1d5c38cde5fd104b8a8466:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkYTNhY2Y2NjhhNGNhNTU1ZTIyNzUwZjQ0YzQ0MjhlNTMwZTFhZDBkMzM5MDYzMDIxZmVlNTU0NWU1MDQ4YzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0ZWE1MzA4ZWViYzJhZTYyOWI1ZDFiN2YzNjI2MjkwNmI3ZTAzYzUwNWZlMDAwODJkNDRjYzQ5YTJjZTU1ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/models/ModelStates.java#L15-L53",
+          "version": "repo-lines-v1:sha256:500c506c8317a0ac869556f3b99b917ddfdfc9b470000f109b047de06066b72c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNjQ4ODI3NzAwNTc0NjQwMWY4NzBiMWExODA3OTYxMTQ2MDhhYjk3YjE3OGFlZTVlNzI2ODFiMzg2OTk2MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMjJlMzUzYjI1MDczYThkNjRiMzFhODEwYmJiNGVlYTg2YjU0NDdmODBmMWI1YTYxMWVmYTUwNzRhYjQwMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c32f60c9edce4be193dc631ee0d41cb5",
+      "statement": "DataRepositorySyncer is the sanctioned cross-state synchronization hook: onNounMappingDeletion propagates noun-mapping deletions into every per-metamodel RecommendationState found in the DataRepository.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/data/DataRepositorySyncer.java#L23-L35",
+          "version": "repo-lines-v1:sha256:71df05b77f65752a22c799c21a353ddf039aeba2bdd7666430eb13231124f574:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMzBhMzgyYWFjMWJjNjhlZjY1MGM0NzRhMDkyZTg2ODAzNzhiY2VhZGVjODY2N2NjYTZmMDM3YzE4ZGU3Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NTJhZjc1MDhlMWY1NDgyZGRjZmQ3NGI3ZGZjODkyZDlhOTIzNmYzYTVjYjk0MTc3NWU2MDA2NGFhZmJlZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9d3635ccce8c4ee583e697aa22f7de5a",
+      "statement": "applyConfiguration(ImmutableSortedMap<String,String>) reflects over the class hierarchy (stopping at Object/AbstractConfigurable, skipping classes annotated @NoConfiguration), applies values for matching keys, then delegates the same map to child components via delegateApplyConfigurationToInternalObjects; the default key is <SimpleClassName>::<fieldName> (custom via @Configurable(key=...)), and @ChildClassConfigurable keys use the concrete subclass name — combining both annotations on one field throws.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/configuration/AbstractConfigurable.java#L41-L99",
+          "version": "repo-lines-v1:sha256:2cb6337e3081f00f1cd149fb1e308259e94e651ad12d376312ef2d38479ccabf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4M2E1ZDI0ZGJmZTIwODQzMTQ5MjEyN2I3YTNiNGM0MmNhZThjZjUxODljNzEyYjYyZTA0YzZjOGFhYzNjM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4YTMyZjNkYzNhOWE5OTAyNThkYzg3MDY2OGE2YzBmZTkwMDA1M2M0NjU2MDViMjY1MDE4MjhmNDM5NzYwMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2ZmY5NTBhZGYzMzMyMmI5NTkwMTUxYWU5NDdmZDA0MGE5YmE5ZWI3MDUxMjg4N2M2ZmU2YWY5OTY3N2MwN2EifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/pipeline/AbstractExecutionStage.java#L79-L85",
+          "version": "repo-lines-v1:sha256:2ae5dba4c9c6933c340f0acb8bf888989b0c3a3e011f22c2f05260f09f08b99c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRjMmIzMTFhYmU4NzU3MmU4YTdjYzBkOTk2YTY1ODQ0MDc2ZTUyMzJkMjFiN2E4NTQ3NWY5YjQwNTViNzQ5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzRmZTIzMzQ4NTQ2ODBhMDkxZmViYjEyYjhlZTk1ZmUxNjlkMWEzZmQ2MzlmOWYyYTY4MDE0Y2EwZTM3Yjc2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae9e2d45397846eaa2f345fbc450ca47",
+      "statement": "AbstractConfigurable supports only Integer, Double, Boolean, enums (by constant name), and List<String> (comma-separated via LIST_SEPARATOR); any other field type throws IllegalArgumentException.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/configuration/AbstractConfigurable.java#L116-L140",
+          "version": "repo-lines-v1:sha256:4acb3e71c26da8193b5795920159c2e61eed8e2de577f1cd0c2e0cb8b9fbf629:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlOTcyOTY3MGVjZTM5NDI4NjFhOTFkMjI4YjQ5NzMzNWM4NGVjZTlkNWU4NzVhYzZjMzZhOTE4MTA3MGE2YzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MDM5YTY5ZGY1MGFlMjU2NjQwMDRhNDA0N2RhNDQ5NzE5OWVmZTkyYmRlMjAxMDZjNmFhOTk1ODgzN2JlODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f5de853b3ee49f989013d3410ebabb7",
+      "statement": "ConfigurationHelper (pipeline-core) loads file-based additional configs: loadAdditionalConfigs parses UTF-8 files with one KEY=VALUE line each (KEY containing the :: class connector, malformed lines logged), and getDefaultConfigurationOptions reflects over all concrete AbstractConfigurable subclasses under edu.kit.kastel.mcse.ardoco (excluding tests) to record every @Configurable field's default value.",
+      "evidence": [
+        {
+          "resource": "repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/ConfigurationHelper.java#L42-L94",
+          "version": "repo-lines-v1:sha256:5b40e365873e5d4bae2012186735da262d5f7aba881680b71d200bec9f9862ff:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkOGE2OTJlYWJkNGVmNTBiNmU1Zjk2NjA3OWNlMjYwOTUzMTQ3NmE1M2M3OWZlN2I5OTJmOGM0YzAzYTY0NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhZDNlMDVkMzk4ZGE3OTAzYThkYjJiNmFjYTE2ZDY2YThjYjgyYjY4MDVlZjVhMDQ2ODA0MWJjNDMzOTBjY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0YWU5NWI1ZDIyOTJiNzA5MWI5MTk2ZDNkYTI2NmI1ZmRlMGMyMDUzZDA3NWYyM2I0NjBmZDJhYzYzM2JhZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c58847aa469b4c0d84e892c18a83fdbe",
+      "statement": "DataRepository is a Serializable TreeMap<String, PipelineStepData>; getData(identifier, clazz) returns an Optional<T> that is empty on a miss (debug-logged) or on a failed cast via PipelineStepData.asPipelineStepData, and addData overwrites existing entries while logging a warning when an identifier is reused.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/data/DataRepository.java#L17-L61",
+          "version": "repo-lines-v1:sha256:887b7331eed52f358d3c839b4c2a6e2bc95a078eef8c8f5fe3595f13c3d2c1b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NzQyOTVlOWFlOTFlMzViNDFiMTYxY2UwZDI5ZTI1OWQ3NWZiMmI3ZTdmZjk2ODg0MzcxYzBkMjRhNzNmMWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmYTUzZDEyMDIwZDNkZjQwNzg3OWI2MjVjNDMyMjc0OWE3OTY5YjkxNGJkMTcwYWQwMTgwZDM5YTQ2ZDZjZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_15218cb52a994f78b189d176adc98dac",
+      "statement": "Pipeline.process() first calls preparePipelineSteps() (which re-applies the last configuration to child steps) and then runs each added AbstractPipelineStep sequentially, logging per-step durations; AbstractExecutionStage.preparePipelineSteps() is final and calls initializeState() before adding only the agents whose id is in the configurable enabledAgents list.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/pipeline/AbstractExecutionStage.java#L39-L49",
+          "version": "repo-lines-v1:sha256:0f6d12481e90d21e65042f1f510d3e515a22492ff65ddec86c9793941f6b4fa1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYzJiMzExYWJlODc1NzJlOGE3Y2MwZDk5NmE2NTg0NDA3NmU1MjMyZDIxYjdhODU0NzVmOWI0MDU1Yjc0OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkN2Q0YTFkMjAzYTg5ZWEwYjU3ZWQ1NjEyNjU3YzhkYjhiMGVhY2Y1YTI0MTZmZDQwOTBlZjlkZDFjZjRmZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MzE5NzhiMmM1NmFkMGU3NTM0MjAxMDZiMGJmMjI0YWRjY2NiYjkxMjE5ZmY2MjJkM2Y2ZmI2ZDc3YzRhZjAifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/pipeline/Pipeline.java#L70-L123",
+          "version": "repo-lines-v1:sha256:99b4c0de50ab529c1844ac7926d3fb5a5d041a8d64c2619c4cae1e01a5266609:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYzJiMzExYWJlODc1NzJlOGE3Y2MwZDk5NmE2NTg0NDA3NmU1MjMyZDIxYjdhODU0NzVmOWI0MDU1Yjc0OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3YzJiNGY2YmQyZDAzZTI5MWQxOWYzMjg5NWU1ZTA1NGEyMjJkYWQyM2RlN2U1OTBkYjM3NGFlM2QxYzdiNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f4c218c8e444e0fb9aed123997ebd87",
+      "statement": "Ardoco extends Pipeline with id 'ARDoCo', seeds ProjectPipelineData into a fresh DataRepository, and runAndSave(outputDir) aborts with an error log and returns null when no steps were added; on success it builds ArdocoResult and writes traceLinks_<project>.txt, inconsistencyDetection_<project>.txt, and per-link-type CSVs via FilePrinter. ArdocoRunner is an abstract wrapper whose final run() requires isSetUp() and a set output directory and whose runWithoutSaving() requires only isSetUp() and returns the raw DataRepository; AnonymousRunner performs setup eagerly in its constructor and reports isSetUp=false on IOException.",
+      "evidence": [
+        {
+          "resource": "repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/Ardoco.java#L41-L105",
+          "version": "repo-lines-v1:sha256:190199acb8cf69888bbe271737f25e5a8547e9c2f738efaa8510df03c8d12836:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5YmFjNzk3MmM3YjE2MDRiMzg1OTg2OWM4ODAwN2E4MWQxNjU1YzU1YjUyZGRmZDA4NmEzNTMzODg0ZjdmZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Zjk2ZDFjZWUyMTdkOTc3Y2QyYmMyZTYyNjM2ZjI4NjQwZGI2MzU4ZTllZTQ3MzdiYjc4NjQ2YzNhNzU2M2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNGY4OWZjMGVjOThjOTgyNDE4M2U3OTVkM2VkZDE5ZTkzMGY3YmM0NzFmOTAxMmFhM2Q1MDNiZTJmODk3NGIifQ"
+        },
+        {
+          "resource": "repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/runner/AnonymousRunner.java#L19-L48",
+          "version": "repo-lines-v1:sha256:56d861e6ea950ffc31090b77cdb9d6bf08f68eabc5a3002d015c2ce317a72b63:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlN2I1NjIxOTViNDE3MDQ4YjlmYzU2Y2Y4ZTE2OWY1NzQyZmMyNWQ2YTA4ZTFhYjgzNTZlNmUzYTU5MmViYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZDExYjVjZDJhY2I3MWY5NjQ2OTg4MmIyMWE3MGNhNDJhZThkOTQxY2ViYTBmOWIyZWRlYTkzYjM3MWRkNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZDVlOTIxZDkyMGFmMWVjMDNhMWEzMDQxM2M0ZGM5MDJmYTdlNjg1NTlhMTFmODY2NTY0ZGJhMzFlMTM0MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/runner/ArdocoRunner.java#L44-L84",
+          "version": "repo-lines-v1:sha256:5e13e52dd4cf9fd745e66f9b7970cc7042a7fc815bc8c91041ef0bcde4ff50a0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5NzU3OTcwNDM1OWNiODcyM2Y4ZTUzYzFiOGNjZjk4ODA4MGVhNzllMmZjYjYzNDljMzUxZDA4M2QzZmJlZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5MmI3ZWM0YTdhODgwNTI3MmIwNzVjN2VmMWJlN2M2MDc2YTczNjMxNmM0NDcxOGJkNDYyY2EzMjFkMDY2MmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.6.0",
-    "at": "2026-09-28T12:10:26.118Z"
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-19T11:24:11.899Z"
   }
 }

@@ -1,0 +1,14 @@
+sentence,style/pattern,valid
+373,pipes and filters architectural style,false
+375,broker architectural style,false
+376,broker architectural style,false
+377,blackboard architectural pattern,false
+379,command query responsibility segregation,false
+382,unit of work,false
+383,transactional outbox pattern,false
+384,state pattern,false
+385,strategy pattern,false
+386,circuit breaker pattern,false
+387,bulkhead isolation,false
+371,hexagonal architecture,false
+381,repository pattern,true

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
@@ -54,6 +55,7 @@ public class CachedChatLanguageModel implements ChatModel {
     @Override
     public synchronized ChatResponse chat(List<ChatMessage> messages) {
         if (cache.containsKey(cleanEndings(messages.toString()))) {
+            logger.info("cache hit for current prompt - using cached response for the request");
             return ChatResponse.builder().aiMessage(new AiMessage(cache.get(cleanEndings(messages.toString())))).build();
         }
         ChatResponse response = chatLanguageModel.chat(messages);
@@ -64,6 +66,11 @@ public class CachedChatLanguageModel implements ChatModel {
             logger.error("Could not write cache file", e);
         }
         return response;
+    }
+
+    @Override
+    public synchronized ChatResponse chat(ChatRequest chatRequest) {
+        return chat(chatRequest.messages());
     }
 
     private String cleanEndings(String text) {
