@@ -18,6 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 
 /**
  * ArTEMiS (Architecture Traceability with Entity Matching via Semantic inference) uses Named Entity Recognition to detect architecturally relevant entities in
@@ -61,6 +62,7 @@ public class Artemis extends ArdocoRunner {
                 .metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.configure();
         DataRepositoryHelper.putInputText(getArdoco().getDataRepository(), CommonUtilities.readInputText(inputText));
         definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs, llm, strategies);
         isSetUp = true;
