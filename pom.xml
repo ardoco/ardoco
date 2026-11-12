@@ -82,7 +82,7 @@
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
     <mockito.version>5.23.0</mockito.version>
-    <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
+    <stanford.corenlp.version>4.6.0</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>3.3.0</jackson.version>
     <!-- Jackson 2 is only used transitively (e.g., by langchain4j); the BOM keeps its modules aligned -->
