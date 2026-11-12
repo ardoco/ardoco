@@ -54,7 +54,7 @@ jobs:
           GITLAB_TOKEN: ${{ secrets.GITLAB_SNAPSHOT_TOKEN }}
         run: |
           if [ -z "$GITLAB_TOKEN" ]; then
-            echo "::error::Secret GITLAB_SNAPSHOT_TOKEN is not available"
+            echo "::error::Secret GITLAB_SNAPSHOT_TOKEN (GitLab deploy token with write_package_registry) is not available"
             exit 1
           fi
           mkdir -p ~/.m2
@@ -66,7 +66,7 @@ jobs:
                 <configuration>
                   <httpHeaders>
                     <property>
-                      <name>Private-Token</name>
+                      <name>Deploy-Token</name>
                       <value>${env.GITLAB_TOKEN}</value>
                     </property>
                   </httpHeaders>

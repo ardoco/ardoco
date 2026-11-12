@@ -59,7 +59,7 @@ Releases are on Maven Central. Development versions (`-SNAPSHOT`) are published 
 </repositories>
 ```
 
-To deploy a snapshot, configure a GitLab token with `write_package_registry` (or `api`) access in `~/.m2/settings.xml`:
+To deploy a snapshot, configure a GitLab personal or group access token with `api` access in `~/.m2/settings.xml` (for a deploy token with `write_package_registry`, use the header `Deploy-Token` instead of `Private-Token`):
 
 ```xml
 <server>
@@ -81,4 +81,4 @@ and run
 mvn -Pdeployment -DskipTests -Dgpg.skip package deploy:deploy -DaltDeploymentRepository=ardocoSnapshots::https://gitlab.kit.edu/api/v4/projects/203206/packages/maven
 ```
 
-Alternatively, run the [Deploy Snapshot](https://github.com/ardoco/ardoco/actions/workflows/deploy-snapshot.yml) workflow for a branch. It only deploys `-SNAPSHOT` versions and needs the secret `GITLAB_SNAPSHOT_TOKEN`.
+Alternatively, run the [Deploy Snapshot](https://github.com/ardoco/ardoco/actions/workflows/deploy-snapshot.yml) workflow for a branch. It only deploys `-SNAPSHOT` versions and needs the secret `GITLAB_SNAPSHOT_TOKEN`, a group deploy token with `write_package_registry`.
