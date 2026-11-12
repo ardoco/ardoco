@@ -18,6 +18,8 @@ permissions:
 env:
   # Maven package registry of the read-only mirror on gitlab.kit.edu (kit/kastel/sdq/research-projects/ardoco/ardoco)
   SNAPSHOT_REPOSITORY_URL: https://gitlab.kit.edu/api/v4/projects/203206/packages/maven
+  # Username of the group deploy token stored in the secret GITLAB_SNAPSHOT_TOKEN
+  SNAPSHOT_REPOSITORY_USER: gitlab+deploy-token-3695
 
 jobs:
   deploy:
@@ -67,14 +69,8 @@ jobs:
             <servers>
               <server>
                 <id>ardocoSnapshots</id>
-                <configuration>
-                  <httpHeaders>
-                    <property>
-                      <name>Deploy-Token</name>
-                      <value>${env.GITLAB_TOKEN}</value>
-                    </property>
-                  </httpHeaders>
-                </configuration>
+                <username>${env.SNAPSHOT_REPOSITORY_USER}</username>
+                <password>${env.GITLAB_TOKEN}</password>
               </server>
             </servers>
           </settings>
