@@ -14,17 +14,19 @@ import tools.jackson.databind.json.JsonMapper;
  * Utility class for creating and configuring Jackson ObjectMappers for JSON serialization and deserialization.
  */
 public final class JsonHandling {
+    private static final ObjectMapper DEFAULT_OBJECT_MAPPER = createObjectMapper(JsonFactory.builderWithJackson2Defaults().build());
+
     private JsonHandling() {
         throw new IllegalAccessError("Utility class");
     }
 
     /**
-     * Creates and configures a Jackson ObjectMapper for use with ARDoCo models.
+     * Returns the shared, immutable and thread-safe Jackson ObjectMapper for use with ARDoCo models.
      *
-     * @return a configured ObjectMapper
+     * @return the shared configured ObjectMapper
      */
     public static ObjectMapper createObjectMapper() {
-        return createObjectMapper(JsonFactory.builderWithJackson2Defaults().build());
+        return DEFAULT_OBJECT_MAPPER;
     }
 
     /**

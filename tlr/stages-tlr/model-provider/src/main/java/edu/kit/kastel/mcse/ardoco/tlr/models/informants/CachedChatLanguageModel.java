@@ -29,6 +29,7 @@ public class CachedChatLanguageModel implements ChatModel {
     private static final Logger logger = LoggerFactory.getLogger(CachedChatLanguageModel.class);
 
     private static final String CACHE_DIR = loadCacheDir();
+    private static final ObjectMapper OBJECT_MAPPER = JsonHandling.createObjectMapper(StreamReadConstraints.builder().maxNameLength(100000).build());
 
     private final ChatModel chatLanguageModel;
     private final String cacheKey;
@@ -39,7 +40,7 @@ public class CachedChatLanguageModel implements ChatModel {
         this.chatLanguageModel = chatLanguageModel;
         this.cacheKey = cacheKey;
         try {
-            this.cache = createObjectMapper().readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
+            this.cache = OBJECT_MAPPER.readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
             });
             var keys = new TreeSet<>(cache.keySet());
             for (String key : keys) {
@@ -61,7 +62,7 @@ public class CachedChatLanguageModel implements ChatModel {
         ChatResponse response = chatLanguageModel.chat(messages);
         cache.put(cleanEndings(messages.toString()), cleanEndings(response.aiMessage().text()));
         try {
-            createObjectMapper().writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
+            OBJECT_MAPPER.writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
         } catch (JacksonException e) {
             logger.error("Could not write cache file", e);
         }
@@ -75,10 +76,6 @@ public class CachedChatLanguageModel implements ChatModel {
 
     private String cleanEndings(String text) {
         return text.replace("\r\n", "\n").replace("\r", "\n");
-    }
-
-    private static ObjectMapper createObjectMapper() {
-        return JsonHandling.createObjectMapper(StreamReadConstraints.builder().maxNameLength(100000).build());
     }
 
     private static synchronized String loadCacheDir() {
