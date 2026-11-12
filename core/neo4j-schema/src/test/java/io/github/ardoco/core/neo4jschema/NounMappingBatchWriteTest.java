@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -109,6 +110,60 @@ class NounMappingBatchWriteTest extends AbstractNeo4jTest {
         for (NounMapping mapping : four) {
             Assertions.assertEquals(expectedPhrases(mapping), storedPhrases(mapping.getArdocoId()), mapping.getArdocoId());
         }
+    }
+
+    @Test
+    @DisplayName("A saved noun mapping keeps every stored property and its word edges equal to the domain object")
+    void savedNounMappingKeepsEveryProperty() {
+        Text text = TextFactory.createComplexText("property_text");
+        persistenceHandler.savePreprocessedText(text, PreprocessingData.ID);
+        List<Word> words = text.getSentences().get(0).getWords().toList();
+        NounMappingImpl mapping = new NounMappingImpl(SortedSets.immutable.with(words.get(1), words.get(2)), MappingKind.NAME, TEST_CLAIMANT, 0.7,
+                Lists.immutable.with(words.get(1), words.get(2)), Lists.immutable.with("login component", "Login Component"));
+        mapping.addKindWithProbability(MappingKind.TYPE, TEST_CLAIMANT, 0.3);
+
+        persistenceHandler.saveNounMappings(List.of(mapping));
+
+        Map<String, Object> expected = new TreeMap<>(Map.of("ardocoId", mapping.getArdocoId(), "reference", mapping.getReference(), "kind", mapping.getKind()
+                .name(), "probability", mapping.getProbability(), "isCompound", mapping.isCompound(), "surfaceForms", new ArrayList<>(mapping.getSurfaceForms()
+                        .castToList()), "nameProbability", mapping.getProbabilityForKind(MappingKind.NAME), "typeProbability", mapping.getProbabilityForKind(
+                                MappingKind.TYPE)));
+        Assertions.assertEquals(expected, storedProperties(mapping.getArdocoId()));
+        Assertions.assertEquals(positions(mapping.getWords()), storedWordPositions(mapping.getArdocoId(), "MAPS_WORD"));
+        Assertions.assertEquals(positions(mapping.getReferenceWords()), storedWordPositions(mapping.getArdocoId(), "HAS_REFERENCE_WORD"));
+    }
+
+    private Map<String, Object> storedProperties(String ardocoId) {
+        Map<String, Object> row = neo4jClient.query("MATCH (nm:NounMapping {ardocoId: $id}) RETURN properties(nm) AS p")
+                .bind(ardocoId)
+                .to("id")
+                .fetch()
+                .one()
+                .orElseThrow();
+        Map<String, Object> properties = new TreeMap<>();
+        ((Map<?, ?>) row.get("p")).forEach((key, value) -> properties.put((String) key, value));
+        return properties;
+    }
+
+    private static Set<Integer> positions(Iterable<Word> words) {
+        Set<Integer> positions = new TreeSet<>();
+        for (Word word : words) {
+            positions.add(word.getPosition());
+        }
+        return positions;
+    }
+
+    private Set<Integer> storedWordPositions(String ardocoId, String relationshipType) {
+        Set<Integer> positions = new TreeSet<>();
+        for (Map<String, Object> row : neo4jClient.query(
+                "MATCH (:NounMapping {ardocoId: $id})-[:" + relationshipType + "]->(w:Word) RETURN w.position AS position")
+                .bind(ardocoId)
+                .to("id")
+                .fetch()
+                .all()) {
+            positions.add(((Number) row.get("position")).intValue());
+        }
+        return positions;
     }
 
     private void createFixture() {

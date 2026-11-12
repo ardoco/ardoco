@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +42,11 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
     @Autowired
     private Neo4jClient neo4jClient;
 
+    @BeforeEach
+    void wipeDatabase() {
+        neo4jClient.query("MATCH (n) DETACH DELETE n").run();
+    }
+
     @Test
     void shouldPersistRelationshipAndAvoidNPE() {
         var fakeEntity = new FakeArchitectureEntity("OrderService", "COMP_123", "Component");
@@ -54,9 +60,10 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
         var results = persistenceService.getInconsistencies();
 
         assertFalse(results.isEmpty(), "Should have retrieved an inconsistency");
-        Inconsistency retrieved = results.iterator().next();
-
-        assertTrue(retrieved instanceof ModelEntityAbsentFromTextInconsistency, "Retrieved inconsistency should be a ModelInconsistency");
+        Inconsistency retrieved = results.stream()
+                .filter(ModelEntityAbsentFromTextInconsistency.class::isInstance)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Retrieved inconsistency should be a ModelInconsistency"));
         ModelEntityAbsentFromTextInconsistency entity = (ModelEntityAbsentFromTextInconsistency) retrieved;
 
         assertEquals("COMP_123", entity.getModelInstanceUid());

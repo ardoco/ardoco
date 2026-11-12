@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,6 +68,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         File caseDir = new File(CASE_ROOT + testCase.name());
         File memoryDir = new File(caseDir, "memory");
         File neo4jDir = new File(caseDir, "neo4j");
+        deleteRecursively(caseDir.toPath());
         Files.createDirectories(memoryDir.toPath());
         Files.createDirectories(neo4jDir.toPath());
 
@@ -313,6 +316,17 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
     private static Map<String, String> arcotlFileChecks() {
         return Map.of("samCodeTlr_%s.csv", "ARCHITECTURE_CODE");
+    }
+
+    private static void deleteRecursively(Path root) throws IOException {
+        if (!Files.exists(root)) {
+            return;
+        }
+        try (Stream<Path> paths = Files.walk(root)) {
+            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                Files.delete(path);
+            }
+        }
     }
 
     private static Map<String, String> readOutputFiles(File directory) throws IOException {

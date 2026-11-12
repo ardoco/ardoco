@@ -117,9 +117,32 @@ class PersistenceBridgeServiceLoaderTest {
         Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
     }
 
+    @Test
+    @DisplayName("A failed bootstrap after a good one leaves no handler, so configuring the good database again bootstraps a working handler")
+    void failedBootstrapAfterGoodOneClearsTheHandler() {
+        PersistenceBridge.setHandler(null);
+        ImmutableSortedMap<String, String> goodConfig = configFor(container.getBoltUrl(), "neo4j", container.getAdminPassword());
+        ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
+
+        PersistenceBridge.getInstance().applyConfiguration(goodConfig);
+        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
+        PersistenceBridge.getInstance().applyConfiguration(goodConfig);
+
+        String marker = "rebootstrap-after-failure-marker-" + System.nanoTime();
+        PersistenceBridge.getHandler().saveProjectMetadata(marker, "x");
+        Assertions.assertEquals(1, countProjects(container.getBoltUrl(), container.getAdminPassword(), marker), "the marker must be written to the database");
+        deleteProjects(container.getBoltUrl(), container.getAdminPassword(), marker);
+    }
+
     private static long countProjects(String boltUrl, String password, String projectName) {
         try (Driver directDriver = GraphDatabase.driver(boltUrl, AuthTokens.basic("neo4j", password)); Session session = directDriver.session()) {
             return session.run("MATCH (p:Project {projectName: $name}) RETURN count(p) AS c", Map.of("name", projectName)).single().get("c").asLong();
+        }
+    }
+
+    private static void deleteProjects(String boltUrl, String password, String projectName) {
+        try (Driver directDriver = GraphDatabase.driver(boltUrl, AuthTokens.basic("neo4j", password)); Session session = directDriver.session()) {
+            session.run("MATCH (p:Project {projectName: $name}) DETACH DELETE p", Map.of("name", projectName)).consume();
         }
     }
 

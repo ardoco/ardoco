@@ -86,6 +86,36 @@ class ModelStatesTest {
         Assertions.assertEquals(2, saveCount.get(), "Two distinct model objects sharing an id must both be persisted");
     }
 
+    @Test
+    @DisplayName("addModel persists one model object registered under two different metamodel keys only once")
+    void addModelPersistsSameModelObjectUnderTwoKeysOnlyOnce() {
+        AtomicInteger saveCount = new AtomicInteger();
+        PersistenceBridge.setHandler(new CountingPersistenceHandler(saveCount));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+        ArchitectureModelWithComponentsAndInterfaces model = new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>());
+
+        ModelStates modelStates = new ModelStates();
+        modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, model);
+        modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, model);
+
+        Assertions.assertEquals(1, saveCount.get(), "One model object under two metamodel keys must be persisted only once");
+    }
+
+    @Test
+    @DisplayName("addModel persists two distinct model objects registered under the same metamodel key twice")
+    void addModelPersistsDistinctModelObjectsUnderOneKeyTwice() {
+        AtomicInteger saveCount = new AtomicInteger();
+        PersistenceBridge.setHandler(new CountingPersistenceHandler(saveCount));
+        PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+        ModelStates modelStates = new ModelStates();
+        modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>()));
+        modelStates.addModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS, new ArchitectureModelWithComponentsAndInterfaces(new ArrayList<>()));
+
+        Assertions.assertEquals(2, saveCount.get(), "Two distinct model objects under one metamodel key must each be persisted");
+    }
+
     private static final class CountingPersistenceHandler implements PersistenceHandler {
         private final AtomicInteger saveCount;
 

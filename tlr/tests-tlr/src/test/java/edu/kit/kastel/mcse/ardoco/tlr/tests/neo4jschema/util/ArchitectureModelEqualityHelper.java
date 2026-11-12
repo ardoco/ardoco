@@ -35,7 +35,7 @@ public class ArchitectureModelEqualityHelper {
         assertEquals(itemsExpected.size(), itemsActual.size(), () -> "Content size mismatch. Expected keys: " + itemsExpected
                 .keySet() + ", Actual keys: " + itemsActual.keySet());
 
-        for (String id : itemsActual.keySet()) {
+        for (String id : itemsExpected.keySet()) {
             assertTrue(itemsActual.containsKey(id), () -> "Restored model missing item with ID: " + id);
 
             ArchitectureItem itemExpected = itemsExpected.get(id);

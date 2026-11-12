@@ -89,8 +89,7 @@ public class CodeModelEqualityHelper {
         logger.info("Missing items with children: {}", hasChildrenCount);
         logger.info("Missing items that are children of other items: {}", isContainedByOtherCount);
 
-        //        assertEquals(itemsExpected.size(), itemsActual.size(),
-        //                "Repository size mismatch (Total items count)");
+        assertEquals(itemsExpected.size(), itemsActual.size(), "Repository size mismatch (Total items count)");
 
         for (String id : itemsExpected.keySet()) {
             assertTrue(itemsActual.containsKey(id), () -> "Item " + id + " missing in restored model.");

@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema;
 import java.io.File;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -30,9 +31,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupp
  * per metamodel (previously the architecture state also returned the sentence links of the code metamodel, TeaStore: 120 instead of 20).
  * <p>
  * (2) Graph check: nothing reads Neo4j during a run (memory is authoritative, {@code ConnectionState#getTraceLinks()} has no database fallback), so
- * metamodel correctness of the persisted graph is checked directly via {@code TRACES_TO} counts per type in the exported knowledge graph instead of a
- * read-back API: the number of {@code SENTENCE_ARCHITECTURE}/{@code SENTENCE_CODE} trace links written for each metamodel must equal the in-memory
- * count of the same run.
+ * metamodel correctness of the persisted graph is checked directly in the exported knowledge graph instead of a read-back API: the
+ * {@code SENTENCE_ARCHITECTURE}/{@code SENTENCE_CODE} trace links written for each metamodel, as (source ardocoId, target ardocoId, type), must equal
+ * the in-memory sentence trace links of the same run.
  */
 class SentenceTraceLinkReadBackTest extends AbstractPersistenceTest {
 
@@ -52,12 +53,22 @@ class SentenceTraceLinkReadBackTest extends AbstractPersistenceTest {
                     "Sentence trace links of " + metamodel + " must equal the DataRepository-only run");
         }
 
-        // (2) Graph check: the persisted TRACES_TO counts per type must match the in-memory counts of the same run.
         PersistenceTestSupport.ExportedGraph graph = readExportedGraph();
+        Set<String> graphKeys = graph.traceLinkKeys();
         for (Metamodel metamodel : baseline.keySet()) {
             String traceLinkType = metamodel.isArchitectureModel() ? "SENTENCE_ARCHITECTURE" : "SENTENCE_CODE";
-            Assertions.assertEquals(baseline.get(metamodel).size(), graph.countTraceLinksOfType(traceLinkType),
-                    "Persisted " + traceLinkType + " count must equal the in-memory sentence trace links of " + metamodel);
+            SortedSet<String> expected = new TreeSet<>();
+            for (String key : withPersistence.get(metamodel)) {
+                expected.add(key + "|" + traceLinkType);
+            }
+            SortedSet<String> persisted = new TreeSet<>();
+            for (String key : graphKeys) {
+                if (key.endsWith("|" + traceLinkType)) {
+                    persisted.add(key);
+                }
+            }
+            Assertions.assertEquals(expected, persisted,
+                    "Persisted " + traceLinkType + " links (source ardocoId, target ardocoId, type) must equal the in-memory sentence trace links of " + metamodel);
         }
     }
 
@@ -97,7 +108,8 @@ class SentenceTraceLinkReadBackTest extends AbstractPersistenceTest {
     private static SortedSet<String> keys(Iterable<TraceLink<SentenceEntity, ModelEntity>> links) {
         SortedSet<String> keys = new TreeSet<>();
         for (TraceLink<SentenceEntity, ModelEntity> link : links) {
-            keys.add(link.getFirstEndpoint().getSentence().getSentenceNumber() + "|" + link.getSecondEndpoint().getId());
+            var sentence = link.getFirstEndpoint().getSentence();
+            keys.add(sentence.getSentenceNumber() + String.valueOf(sentence.getText().hashCode()) + "|" + link.getSecondEndpoint().getId());
         }
         return keys;
     }
