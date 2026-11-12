@@ -18,6 +18,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
@@ -34,6 +35,7 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
             LargeLanguageModel validationAgentLlm) {
+        LlmCache.configure();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");
