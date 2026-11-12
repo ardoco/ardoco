@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,11 +18,11 @@ class JavaExtractorTest {
         JavaElementStorageRegistry manager = (JavaElementStorageRegistry) javaExtractor.getElementExtractor().getElements();
 
         // Assertions
-        Assertions.assertEquals(3, manager.getVariables().size());
-        Assertions.assertEquals(1, manager.getFunctions().size());
-        Assertions.assertEquals(6, manager.getClasses().size());
+        Assertions.assertEquals(4, manager.getVariables().size());
+        Assertions.assertEquals(4, manager.getFunctions().size());
+        Assertions.assertEquals(8, manager.getClasses().size());
         Assertions.assertEquals(4, manager.getInterfaces().size());
-        Assertions.assertEquals(7, manager.getCompilationUnits().size());
+        Assertions.assertEquals(8, manager.getCompilationUnits().size());
         Assertions.assertEquals(3, manager.getPackages().size());
     }
 

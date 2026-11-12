@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.java.mappers;
 
 import java.util.SortedSet;
@@ -37,7 +37,8 @@ public class InterfaceMapper extends AbstractJavaCodeItemMapper {
         Element interfaceElement = elementRegistry.getInterface(identifier);
         SortedSet<CodeItem> content = buildContent(identifier);
 
-        InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, interfaceElement.getName(), content);
+        InterfaceUnit interfaceUnit = new InterfaceUnit(codeItemRepository, interfaceElement.getName(), content, interfaceElement.getStartLine(),
+                interfaceElement.getEndLine());
         interfaceUnit.setComment(interfaceElement.getComment());
         return interfaceUnit;
     }

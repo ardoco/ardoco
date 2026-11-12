@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.python3;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,10 +18,10 @@ class Python3ExtractorTest {
         Python3ElementStorageRegistry manager = (Python3ElementStorageRegistry) python3Extractor.getElementExtractor().getElements();
 
         // Assertions
-        Assertions.assertEquals(13, manager.getVariables().size());
-        Assertions.assertEquals(17, manager.getFunctions().size());
-        Assertions.assertEquals(10, manager.getClasses().size());
-        Assertions.assertEquals(8, manager.getModules().size());
+        Assertions.assertEquals(14, manager.getVariables().size());
+        Assertions.assertEquals(20, manager.getFunctions().size());
+        Assertions.assertEquals(11, manager.getClasses().size());
+        Assertions.assertEquals(9, manager.getModules().size());
     }
 
     private Python3Extractor buildPython3Extractor(String sourcePath) {

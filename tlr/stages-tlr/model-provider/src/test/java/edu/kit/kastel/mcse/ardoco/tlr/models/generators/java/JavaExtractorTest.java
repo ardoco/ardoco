@@ -1,5 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.java;
+
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ControlElement;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java.JavaExtractor;
 
 class JavaExtractorTest {
@@ -25,6 +31,24 @@ class JavaExtractorTest {
             logger.info("Package: {}", codePackage);
         }
 
-        Assertions.assertEquals(7, model.getEndpoints().size());
+        Assertions.assertEquals(8, model.getEndpoints().size());
+
+        List<CodeCompilationUnit> allCompilationUnits = model.getAllPackages().stream().flatMap(p -> p.getCompilationUnits().stream()).toList();
+        CodeCompilationUnit aClass = allCompilationUnits.stream().filter(u -> "AClass".equals(u.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(aClass.getImportedModuleNames().contains("edu.zwei.OtherInterface"));
+
+        CodeCompilationUnit callsUnit = allCompilationUnits.stream().filter(u -> "AClassWithCalls".equals(u.getName())).findFirst().orElseThrow();
+        SortedSet<ControlElement> allMethods = new TreeSet<>();
+        for (var dt : callsUnit.getAllDataTypes()) {
+            allMethods.addAll(dt.getDeclaredMethods());
+        }
+
+        ControlElement caller = allMethods.stream().filter(m -> "caller".equals(m.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(caller.getCalleeNames().contains("helper"));
+        Assertions.assertTrue(caller.getCalleeNames().contains("TestClass"));
+        Assertions.assertTrue(caller.getCalleeNames().contains("method"));
+
+        ControlElement helper = allMethods.stream().filter(m -> "helper".equals(m.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(helper.getCalleeNames().isEmpty());
     }
 }

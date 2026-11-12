@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ class JavaCompilationUnitExtractorTest {
         Element element = compilationUnitExtractorTest(sourcePath + "zwei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/zwei/OtherInterface.java", element.getPath());
-        Assertions.assertEquals("edu.zwei", element.getParentIdentifier().name());
+        Assertions.assertEquals("zwei", element.getParentIdentifier().name());
     }
 
     @Test
@@ -70,7 +70,7 @@ class JavaCompilationUnitExtractorTest {
         Element element = compilationUnitExtractorTest(sourcePath + "drei/OtherInterface.java");
         Assertions.assertEquals("OtherInterface", element.getName());
         Assertions.assertEquals("src/test/resources/interface/edu/drei/OtherInterface.java", element.getPath());
-        Assertions.assertEquals("edu.drei", element.getParentIdentifier().name());
+        Assertions.assertEquals("drei", element.getParentIdentifier().name());
     }
 
     private Element compilationUnitExtractorTest(String filePath) throws IOException {

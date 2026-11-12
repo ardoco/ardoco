@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.generators.antlr.extraction.java;
 
 import java.io.IOException;
@@ -66,6 +66,21 @@ class JavaControlExtractorTest {
         String filePath = sourcePath + "drei/OtherInterface.java";
         List<Element> controls = extractBasicElementsFromFile(filePath);
         Assertions.assertTrue(controls.isEmpty());
+    }
+
+    @Test
+    void controlExtractorCalleeNamesTest() throws IOException {
+        String filePath = sourcePath + "AClassWithCalls.java";
+        List<Element> controls = extractBasicElementsFromFile(filePath);
+        Assertions.assertEquals(3, controls.size());
+
+        Element caller = controls.stream().filter(e -> "caller".equals(e.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(caller.getCalleeNames().contains("helper"));
+        Assertions.assertTrue(caller.getCalleeNames().contains("TestClass"));
+        Assertions.assertTrue(caller.getCalleeNames().contains("method"));
+
+        Element helper = controls.stream().filter(e -> "helper".equals(e.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(helper.getCalleeNames().isEmpty());
     }
 
     private List<Element> extractBasicElementsFromFile(String filePath) throws IOException {

@@ -25,8 +25,12 @@ import edu.kit.kastel.mcse.ardoco.llm.chat.LlmConfiguration;
 @Deterministic
 public enum LargeLanguageModel {
     // OPENAI
+    GPT_5_5("GPT-5.5", ChatModelPlatform.OPENAI, "gpt-5.5-2026-04-23", 1.0), //
     GPT_4_O("GPT-4o", ChatModelPlatform.OPENAI, "gpt-4o-2024-08-06", 0.0), //
     GPT_4_1("GPT-4.1", ChatModelPlatform.OPENAI, "gpt-4.1-2025-04-14", 0.0), //
+    GPT_5_4_NANO("GPT-5.4 nano", ChatModelPlatform.OPENAI, "gpt-5.4-nano-2026-03-17", 0.0), //
+    GPT_5_4_MINI("GPT-5.4 mini", ChatModelPlatform.OPENAI, "gpt-5.4-mini-2026-03-17", 0.0), //
+    GPT_5_4("GPT-5.4", ChatModelPlatform.OPENAI, "gpt-5.4-2026-03-05", 0.0), //
     GPT_5("GPT-5", ChatModelPlatform.OPENAI, "gpt-5-2025-08-07", 1.0), //
     OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), ChatModelPlatform.OPENAI, Environment.getEnv("OPENAI_MODEL_NAME"), 0.0), //
     // OLLAMA
