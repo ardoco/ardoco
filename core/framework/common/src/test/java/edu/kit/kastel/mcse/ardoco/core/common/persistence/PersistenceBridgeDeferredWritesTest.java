@@ -248,7 +248,7 @@ class PersistenceBridgeDeferredWritesTest {
                     calls.add("deleteNounMapping:" + args[0]);
                     return null;
                 case "deleteNounMappings":
-                    calls.add("deleteNounMappings:" + idsOf((Collection<?>) args[0], item -> (String) item));
+                    calls.add("deleteNounMappings:" + idsOf((Collection<?>) args[0], String.class::cast));
                     return null;
                 case "saveRecommendedInstance":
                     calls.add("saveRecommendedInstance:" + ((RecommendedInstance) args[0]).getId());

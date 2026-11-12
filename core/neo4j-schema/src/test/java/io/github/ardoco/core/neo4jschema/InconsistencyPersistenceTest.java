@@ -88,7 +88,7 @@ class InconsistencyPersistenceTest extends AbstractNeo4jTest {
 
         assertFalse(results.isEmpty(), "Should have retrieved an inconsistency");
 
-        TextInconsistency retrieved = results.stream().filter(i -> i instanceof TextInconsistency).map(i -> (TextInconsistency) i).findFirst().orElseThrow();
+        TextInconsistency retrieved = results.stream().filter(TextInconsistency.class::isInstance).map(TextInconsistency.class::cast).findFirst().orElseThrow();
 
         assertEquals(sentenceNum, retrieved.getSentenceNumber());
         assertTrue(retrieved.getReason().contains(name));

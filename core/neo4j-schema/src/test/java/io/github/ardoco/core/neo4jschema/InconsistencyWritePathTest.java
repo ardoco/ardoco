@@ -123,9 +123,10 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
     @DisplayName("A model inconsistency without its model element fails with one ERROR naming the kind and the id")
     void modelInconsistencyWithoutParentFails() {
         var ghost = new ModelEntityAbsentFromTextInconsistency(new FakeArchitectureEntity("Ghost", "ghost-model-id", "Component"));
+        var ghosts = List.of(ghost);
 
         List<ILoggingEvent> events = captureErrors(() -> Assertions.assertThrows(MissingLinkTargetException.class, () -> persistenceHandler.addInconsistencies(
-                List.of(ghost))));
+                ghosts)));
 
         List<String> errors = errorMessages(events);
         Assertions.assertEquals(1, errors.size(), errors.toString());
@@ -137,9 +138,10 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
     @DisplayName("A text inconsistency whose sentence does not exist fails with one ERROR naming the kind and the sentence")
     void textInconsistencyWithoutSentenceFails() {
         var ghost = new TextEntityAbsentFromModelInconsistency("ghost", 99, 0.5, null);
+        var ghosts = List.of(ghost);
 
         List<ILoggingEvent> events = captureErrors(() -> Assertions.assertThrows(MissingLinkTargetException.class, () -> persistenceHandler.addInconsistencies(
-                List.of(ghost))));
+                ghosts)));
 
         List<String> errors = errorMessages(events);
         Assertions.assertEquals(1, errors.size(), errors.toString());

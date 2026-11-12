@@ -215,10 +215,12 @@ class ModelStatesTest {
 
         @Override
         public void saveRunMetadataStart(String projectName, String startTimestamp, String configurationJson) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void saveRunMetadataFinish(String projectName, String finishTimestamp) {
+            throw new UnsupportedOperationException();
         }
 
         @Override

@@ -51,8 +51,8 @@ class RunMetadataFilterTest {
         List<String> droppedKeys = new ArrayList<>();
         var filtered = RunMetadataFilter.filterSecrets(configuration, droppedKeys);
 
-        assertThat(filtered.get("PersistenceBridge::storage")).isEqualTo("neo4j");
-        assertThat(filtered.get("PersistenceBridge::neo4jUri")).isEqualTo("bolt://***@127.0.0.1:7687");
+        assertThat(filtered).containsEntry("PersistenceBridge::storage", "neo4j");
+        assertThat(filtered).containsEntry("PersistenceBridge::neo4jUri", "bolt://***@127.0.0.1:7687");
         assertThat(filtered.containsKey("PersistenceBridge::neo4jPassword")).isFalse();
         assertThat(filtered.toString()).doesNotContain("s3cr3t-run-metadata-test");
         assertThat(droppedKeys).containsExactly("PersistenceBridge::neo4jPassword");

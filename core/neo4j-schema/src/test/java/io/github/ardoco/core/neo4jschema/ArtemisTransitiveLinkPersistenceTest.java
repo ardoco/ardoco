@@ -94,13 +94,13 @@ class ArtemisTransitiveLinkPersistenceTest extends AbstractNeo4jTest {
 
         Long sentenceArchitectureEdges = neo4jClient.query("""
                 MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = 'SENTENCE_ARCHITECTURE' RETURN count(r) AS c
-                """).fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(0L);
+                """).fetchAs(Long.class).mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong()).one().orElse(0L);
         Long architectureCodeEdges = neo4jClient.query("""
                 MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = 'ARCHITECTURE_CODE' RETURN count(r) AS c
-                """).fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(0L);
+                """).fetchAs(Long.class).mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong()).one().orElse(0L);
         Long sentenceNodeCount = neo4jClient.query("MATCH (s:Sentence) RETURN count(s) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
 
@@ -119,12 +119,12 @@ class ArtemisTransitiveLinkPersistenceTest extends AbstractNeo4jTest {
 
         Long sentenceNodeCount = neo4jClient.query("MATCH (s:Sentence) RETURN count(s) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
         Long hasSentenceEdges = neo4jClient.query("MATCH (:SimpleText)-[r:HAS_SENTENCE]->() RETURN count(r) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
 

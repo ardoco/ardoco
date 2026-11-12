@@ -82,9 +82,9 @@ class PersistenceBridgeServiceLoaderTest {
         PersistenceBridge.setHandler(null);
 
         ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
+        PersistenceBridge bridge = PersistenceBridge.getInstance();
 
-        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance()
-                .applyConfiguration(configWithBadUri));
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> bridge.applyConfiguration(configWithBadUri));
         Assertions.assertTrue(exception.getMessage().contains("bolt://127.0.0.1:1"), "message should name the attempted URI");
         Assertions.assertFalse(exception.getMessage().contains("wrong-password"), "the password must never appear in an error message");
     }
@@ -112,9 +112,10 @@ class PersistenceBridgeServiceLoaderTest {
     void unreachableDatabaseFailsEveryTime() {
         PersistenceBridge.setHandler(null);
         ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
+        PersistenceBridge bridge = PersistenceBridge.getInstance();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
-        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
+        Assertions.assertThrows(IllegalStateException.class, () -> bridge.applyConfiguration(configWithBadUri));
+        Assertions.assertThrows(IllegalStateException.class, () -> bridge.applyConfiguration(configWithBadUri));
     }
 
     @Test

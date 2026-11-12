@@ -90,7 +90,6 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
 
         // Assert - Domain Mapping
         DocumentationMapper mapper = new DocumentationMapper();
-        //        Text restoredText = mapper.toDomain(retrievedNode);
         Text restoredText = mapper.toDomain(retrievedNode);
 
         assertThat(restoredText.getSentences()).hasSize(2);
@@ -98,7 +97,7 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
         var neo4jFirstSentence = restoredText.getSentences().get(0);
 
         assertThat(neo4jFirstSentence.getPhrases()).isNotEmpty();
-        assertThat(neo4jFirstSentence.getPhrases().get(0).getPhraseType().toString()).isEqualTo("ROOT");
+        assertThat(neo4jFirstSentence.getPhrases().get(0).getPhraseType()).hasToString("ROOT");
     }
 
     @Test

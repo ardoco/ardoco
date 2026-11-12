@@ -132,7 +132,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
                 .bind(recommendedInstanceId)
                 .to("id")
                 .fetchAs(Double.class)
-                .mappedBy((typeSystem, record) -> record.get("confidence").asDouble())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("confidence").asDouble())
                 .one()
                 .orElseThrow();
         Assertions.assertEquals(recommendationLink.getConfidence(), storedConfidence, 1e-9);
@@ -196,7 +196,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
                 .bind(type)
                 .to("type")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
     }

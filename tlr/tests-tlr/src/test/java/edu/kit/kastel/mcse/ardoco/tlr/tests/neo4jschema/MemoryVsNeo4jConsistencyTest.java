@@ -172,7 +172,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
         Long remainingNodes = neo4jClient.query("MATCH (n) RETURN count(n) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(-1L);
         Assertions.assertEquals(0L, remainingNodes, testCase.name() + ": the database must be empty after the neo4j run");

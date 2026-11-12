@@ -60,7 +60,7 @@ class ArchitecturePersistenceTest extends AbstractPersistenceTest {
         Assertions.assertThat(loadedModel.getId()).isEqualTo(originalModel.getId());
         ArchitectureComponent loadedComp = (ArchitectureComponent) loadedModel.getContent()
                 .stream()
-                .filter(i -> i instanceof ArchitectureComponent)
+                .filter(ArchitectureComponent.class::isInstance)
                 .findFirst()
                 .orElseThrow();
 

@@ -173,8 +173,9 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         var codeEntity = codeModel.getEndpoints().getFirst();
 
         ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
+        List<ArchitectureCodeTraceLink> links = List.of(link);
 
-        Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(List.of(link)));
+        Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(links));
 
         var loaded = persistenceHandler.loadArchitectureCodeTraceLinks();
         Assertions.assertTrue(loaded.stream().noneMatch(l -> l.getFirstEndpoint().getId().equals("ghost_id")));
@@ -194,16 +195,16 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         appender.start();
         traceLinkServiceLogger.addAppender(appender);
         MissingTraceLinkEndpointException thrown;
+        List<ArchitectureCodeTraceLink> links = List.of(new ArchitectureCodeTraceLink(archEntity, codeItem));
         try {
-            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(List.of(
-                    new ArchitectureCodeTraceLink(archEntity, codeItem))));
+            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(links));
         } finally {
             traceLinkServiceLogger.detachAppender(appender);
         }
 
         Long edgeCount = neo4jClient.query("""
                 MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = 'ARCHITECTURE_CODE' RETURN count(r) AS c
-                """).fetchAs(Long.class).mappedBy((typeSystem, record) -> record.get("c").asLong()).one().orElse(0L);
+                """).fetchAs(Long.class).mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong()).one().orElse(0L);
         Assertions.assertEquals(0L, edgeCount, "No edge must be created when an endpoint is unresolved");
 
         List<String> errors = appender.list.stream().filter(event -> event.getLevel() == Level.ERROR).map(ILoggingEvent::getFormattedMessage).toList();
@@ -264,7 +265,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         var loaded = persistenceHandler.loadTransitiveTraceLinks();
 
         Assertions.assertFalse(loaded.isEmpty(), "Transitive link should be persisted");
-        Assertions.assertTrue(loaded.stream().anyMatch(l -> l instanceof TransitiveTraceLink));
+        Assertions.assertTrue(loaded.stream().anyMatch(TransitiveTraceLink.class::isInstance));
     }
 
     @Test
@@ -308,12 +309,12 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         Assertions.assertEquals(2, loaded.size(), "Should have loaded both inconsistencies");
 
         boolean foundModelInc = loaded.stream()
-                .filter(i -> i instanceof ModelEntityAbsentFromTextInconsistency)
+                .filter(ModelEntityAbsentFromTextInconsistency.class::isInstance)
                 .map(i -> (ModelEntityAbsentFromTextInconsistency) i)
                 .anyMatch(i -> i.getModelInstanceUid().equals(archEntity.getId()));
 
         boolean foundTextInc = loaded.stream()
-                .filter(i -> i instanceof Neo4jTextInconsistency)
+                .filter(Neo4jTextInconsistency.class::isInstance)
                 .map(i -> (Neo4jTextInconsistency) i)
                 .anyMatch(i -> i.getSentenceNumber() == sentenceNumber);
 

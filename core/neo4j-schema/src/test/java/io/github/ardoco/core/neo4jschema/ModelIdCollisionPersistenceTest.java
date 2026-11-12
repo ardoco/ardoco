@@ -101,7 +101,7 @@ class ModelIdCollisionPersistenceTest extends AbstractNeo4jTest {
                 .bind(SHARED_ID)
                 .to("id")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
     }

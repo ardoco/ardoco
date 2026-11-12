@@ -161,7 +161,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         assertThat(storedUnlinked).isTrue();
 
         long nerEdges = countNerArchitectureLinks();
-        assertThat(nerEdges).isEqualTo(0L);
+        assertThat(nerEdges).isZero();
 
         var loadedUnlinked = persistenceHandler.loadNamedArchitectureEntities(mm, true);
         assertThat(loadedUnlinked).hasSize(1);

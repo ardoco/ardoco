@@ -110,11 +110,11 @@ public class TextEqualityHelper {
         assertEquals(expected.getText(), actual.getText(), context + " - Text");
         assertEquals(expected.getContainedWords().size(), actual.getContainedWords().size(), context + " - Contained words count");
 
-        List<Word> expected_words = expected.getContainedWords().toSortedList();
-        List<Word> actual_words = actual.getContainedWords().toSortedList();
+        List<Word> expectedWords = expected.getContainedWords().toSortedList();
+        List<Word> actualWords = actual.getContainedWords().toSortedList();
 
-        for (int i = 0; i < expected_words.size(); i++) {
-            assertEquals(expected_words.get(i).getPosition(), actual_words.get(i).getPosition(), context + " - Contained word position mismatch at index " + i);
+        for (int i = 0; i < expectedWords.size(); i++) {
+            assertEquals(expectedWords.get(i).getPosition(), actualWords.get(i).getPosition(), context + " - Contained word position mismatch at index " + i);
         }
 
         assertEquals(expected.getSubphrases().size(), actual.getSubphrases().size(), context + " - Subphrase count");

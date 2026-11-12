@@ -185,16 +185,16 @@ class NounMappingBatchWriteTest extends AbstractNeo4jTest {
     private Snapshot snapshot() {
         Set<String> nounMappings = new TreeSet<>(neo4jClient.query("MATCH (nm:NounMapping) RETURN nm.ardocoId AS id")
                 .fetchAs(String.class)
-                .mappedBy((typeSystem, record) -> record.get("id").asString())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("id").asString())
                 .all());
         long relationships = neo4jClient.query("MATCH ()-[r]->() RETURN count(r) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
         long nodes = neo4jClient.query("MATCH (n) RETURN count(n) AS c")
                 .fetchAs(Long.class)
-                .mappedBy((typeSystem, record) -> record.get("c").asLong())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong())
                 .one()
                 .orElse(0L);
         return new Snapshot(nounMappings, relationships, nodes);

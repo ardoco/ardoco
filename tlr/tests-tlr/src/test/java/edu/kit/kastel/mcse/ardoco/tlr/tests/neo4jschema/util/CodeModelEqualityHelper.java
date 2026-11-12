@@ -51,10 +51,6 @@ public class CodeModelEqualityHelper {
         missingIds.removeAll(actualIds);
 
         System.out.println("Total missing items: " + missingIds.size());
-        //        for (String id : missingIds) {
-        //            CodeItem missingItem = repoExpected.getCodeItem(id);
-        ////            System.out.println("Missing: " + id + " | Type: " + missingItem.getClass().getSimpleName() + " | Name: " + missingItem.getName());
-        //        }
 
         int hasChildrenCount = 0;
         int isContainedByOtherCount = 0;

@@ -46,6 +46,7 @@ class IndexBootstrapTest extends AbstractNeo4jTest {
         Neo4jClient failingClient = mock(Neo4jClient.class);
         when(failingClient.query(anyString())).thenThrow(new IllegalStateException("index creation refused"));
 
-        Assertions.assertThrows(RuntimeException.class, () -> new Neo4jInitializer(failingClient).initializeNeo4j());
+        Neo4jInitializer initializer = new Neo4jInitializer(failingClient);
+        Assertions.assertThrows(RuntimeException.class, initializer::initializeNeo4j);
     }
 }
