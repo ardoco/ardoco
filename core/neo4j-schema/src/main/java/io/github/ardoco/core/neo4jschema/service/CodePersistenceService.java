@@ -169,6 +169,7 @@ public class CodePersistenceService {
         }
 
         // Restore the explicitly persisted parent id and verbatim content order (see CodeItemNode#getParentModuleId() / #getContentIds()).
+        node.setComment((String) props.get("comment"));
         node.setParentModuleId((String) props.get("parentModuleId"));
         // Preserve null (property absent) vs empty list: toStringList() would collapse a missing property into [], which then overwrites a null domain content list.
         node.setContentIds(toStringListOrNull(props.get("contentIds")));
@@ -315,6 +316,7 @@ public class CodePersistenceService {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("ardocoId", node.getArdocoId());
         putIfNotNull(props, "name", node.getName());
+        putIfNotNull(props, "comment", node.getComment());
         putIfNotNull(props, "parentModuleId", node.getParentModuleId());
         putIfNotNull(props, "contentIds", node.getContentIds());
         return props;

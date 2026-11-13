@@ -77,6 +77,31 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     }
 
     @Test
+    @DisplayName("Facade: Code item comment is stored as a node property and loaded back")
+    void testCodeItemCommentPersistence() {
+        CodeModelWithCompilationUnitsAndPackages codeModel = CodeModelFactory.createCodeModel();
+        String comment = "Authenticates users against an LDAP directory.";
+        codeModel.createCodeModelDto().codeItemRepository().getCodeItem("id_cls_ldap").setComment(comment);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        String stored = neo4jClient.query("MATCH (c:ClassUnit {ardocoId: 'id_cls_ldap'}) RETURN coalesce(c.comment, '') AS comment")
+                .fetchAs(String.class)
+                .one()
+                .orElseThrow();
+        Assertions.assertEquals(comment, stored);
+        Boolean interfaceHasComment = neo4jClient.query("MATCH (i:InterfaceUnit {ardocoId: 'id_iface_auth'}) RETURN i.comment IS NOT NULL AS hasComment")
+                .fetchAs(Boolean.class)
+                .one()
+                .orElseThrow();
+        Assertions.assertFalse(interfaceHasComment);
+
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        var loadedRepository = loaded.createCodeModelDto().codeItemRepository();
+        Assertions.assertEquals(comment, loadedRepository.getCodeItem("id_cls_ldap").getComment());
+        Assertions.assertNull(loadedRepository.getCodeItem("id_iface_auth").getComment());
+    }
+
+    @Test
     @DisplayName("Facade: Architecture Model Persistence and Metamodel Lookup")
     void testArchitectureModelPersistence() {
         ArchitectureModelWithComponentsAndInterfaces archModel = ArchitectureModelFactory.createArchitectureModel();

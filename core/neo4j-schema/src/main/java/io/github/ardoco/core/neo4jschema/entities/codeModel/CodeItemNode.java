@@ -15,6 +15,8 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
 
     private String name;
 
+    private String comment;
+
     /**
      * The id of the parent {@code CodeModule}, if any. Stored explicitly (rather than derived from the containment hierarchy) because the domain model
      * represents
@@ -55,6 +57,14 @@ public class CodeItemNode extends TraceableNode implements Comparable<CodeItemNo
 
     public String getName() {
         return name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getParentModuleId() {

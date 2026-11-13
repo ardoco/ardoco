@@ -58,6 +58,7 @@ public class CodeModelMapper {
                 default -> null;
             };
             itemNode.setContentIds(rawContentIds == null ? null : new ArrayList<>(rawContentIds));
+            itemNode.setComment(item.getComment());
             if (item instanceof CodeModule module) {
                 CodeModule parentModule = module.getParent();
                 if (parentModule != null) {
@@ -193,7 +194,7 @@ public class CodeModelMapper {
 
     private CodeItem instantiateDomainObject(CodeItemNode node, CodeItemRepository repo) {
         String id = node.getArdocoId();
-        return switch (node) {
+        CodeItem item = switch (node) {
             case CodePackageNode p -> new CodePackage(id, repo, p.getName());
             case CodeCompilationUnitNode c -> new CodeCompilationUnit(id, repo, c.getName(), new TreeSet<>(), c.getPathElements(), c.getExtension(),
                     ProgrammingLanguage.valueOf(c.getLanguage()));
@@ -203,6 +204,8 @@ public class CodeModelMapper {
             case ControlElementNode c -> new ControlElement(id, repo, c.getName());
             default -> throw new IllegalArgumentException("Unknown node type: " + node.getClass().getSimpleName());
         };
+        item.setComment(node.getComment());
+        return item;
     }
 
     private void collectAllNodesIteratively(List<CodeItemNode> startNodes, Set<CodeItemNode> visited) {
