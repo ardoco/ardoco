@@ -265,10 +265,8 @@ public class NounMappingImpl implements NounMapping {
     public static String ardocoIdOfEarliest(NounMapping... nounMappings) {
         NounMappingImpl earliest = null;
         for (var mapping : nounMappings) {
-            if (mapping instanceof NounMappingImpl impl) {
-                if (earliest == null || impl.earliestCreationTime() < earliest.earliestCreationTime()) {
-                    earliest = impl;
-                }
+            if (mapping instanceof NounMappingImpl impl && (earliest == null || impl.earliestCreationTime() < earliest.earliestCreationTime())) {
+                earliest = impl;
             }
         }
         if (earliest == null) {

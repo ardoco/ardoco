@@ -15,12 +15,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
  */
 public class Neo4jText implements Text {
 
-    private final String id;
     private final ImmutableList<Sentence> sentences;
     private final ImmutableList<Word> words;
 
-    public Neo4jText(String id, List<Neo4jSentence> sentences) {
-        this.id = id;
+    public Neo4jText(List<Neo4jSentence> sentences) {
         this.sentences = Lists.immutable.withAll(sentences);
         this.words = this.sentences.flatCollect(Sentence::getWords).toImmutable();
     }

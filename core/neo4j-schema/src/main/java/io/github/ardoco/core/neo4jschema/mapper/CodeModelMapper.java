@@ -17,13 +17,12 @@ import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
 public class CodeModelMapper {
 
     private static final Map<Class<? extends CodeItem>, BiFunction<CodeItem, String, CodeItemNode>> NODE_FACTORIES = Map.of(CodePackage.class, (item,
-            id) -> new CodePackageNode(((CodePackage) item).getName(), id), CodeCompilationUnit.class, (item, id) -> {
+            id) -> new CodePackageNode(item.getName(), id), CodeCompilationUnit.class, (item, id) -> {
                 var c = (CodeCompilationUnit) item;
                 return new CodeCompilationUnitNode(c.getName(), id, c.getExtension(), c.getLanguage().name(), c.getPathElements());
-            }, ClassUnit.class, (item, id) -> new ClassUnitNode(((ClassUnit) item).getName(), id), InterfaceUnit.class, (item, id) -> new InterfaceUnitNode(
-                    ((InterfaceUnit) item).getName(), id), CodeAssembly.class, (item, id) -> new CodeAssemblyNode(((CodeAssembly) item).getName(), id,
-                            ((CodeAssembly) item).getLanguage()), ControlElement.class, (item, id) -> new ControlElementNode(((ControlElement) item).getName(),
-                                    id));
+            }, ClassUnit.class, (item, id) -> new ClassUnitNode(item.getName(), id), InterfaceUnit.class, (item, id) -> new InterfaceUnitNode(item.getName(),
+                    id), CodeAssembly.class, (item, id) -> new CodeAssemblyNode(item.getName(), id, ((CodeAssembly) item).getLanguage()), ControlElement.class,
+            (item, id) -> new ControlElementNode(item.getName(), id));
 
     public CodeModelNode toNode(CodeModel model) {
         CodeModelNode modelNode = new CodeModelNode(model.getId(), model.getMetamodel().name());

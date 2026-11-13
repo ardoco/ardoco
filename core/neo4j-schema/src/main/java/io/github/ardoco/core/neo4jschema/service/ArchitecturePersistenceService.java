@@ -32,6 +32,7 @@ import io.github.ardoco.core.neo4jschema.repository.architectureModel.Architectu
 public class ArchitecturePersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(ArchitecturePersistenceService.class);
+    private static final String ARDOCO_ID = "ardocoId";
 
     private final ArchitectureModelRepository repository;
     private final ArchitectureModelMapper mapper;
@@ -162,7 +163,7 @@ public class ArchitecturePersistenceService {
         List<Map<String, Object>> props = new ArrayList<>(components.size());
         for (ArchitectureComponentNode c : components) {
             Map<String, Object> item = new java.util.LinkedHashMap<>();
-            item.put("ardocoId", c.getArdocoId());
+            item.put(ARDOCO_ID, c.getArdocoId());
             putIfNotNull(item, "name", c.getName());
             putIfNotNull(item, "type", c.getType());
             props.add(item);
@@ -174,7 +175,7 @@ public class ArchitecturePersistenceService {
         List<Map<String, Object>> props = new ArrayList<>(interfaces.size());
         for (ArchitectureInterfaceNode i : interfaces) {
             Map<String, Object> item = new java.util.LinkedHashMap<>();
-            item.put("ardocoId", i.getArdocoId());
+            item.put(ARDOCO_ID, i.getArdocoId());
             putIfNotNull(item, "name", i.getName());
             putIfNotNull(item, "type", i.getType());
             props.add(item);
@@ -186,7 +187,7 @@ public class ArchitecturePersistenceService {
         List<Map<String, Object>> props = new ArrayList<>(methods.size());
         for (ArchitectureMethodNode m : methods) {
             Map<String, Object> item = new java.util.LinkedHashMap<>();
-            item.put("ardocoId", m.getArdocoId());
+            item.put(ARDOCO_ID, m.getArdocoId());
             putIfNotNull(item, "name", m.getName());
             props.add(item);
         }

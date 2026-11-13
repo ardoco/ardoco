@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,8 @@ public class DocumentationMapper {
     public TextNode toNode(Text domainText, String documentId) {
         TextNode textNode = new TextNode(documentId);
         int estimatedWordCount = domainText.getSentences().size() * 25;
-        Map<Integer, WordNode> wordIndexMap = new HashMap<>(estimatedWordCount); // Global Map: Position -> Node
-        Map<Phrase, PhraseNode> phraseCache = new HashMap<>(estimatedWordCount / 2);
+        Map<Integer, WordNode> wordIndexMap = HashMap.newHashMap(estimatedWordCount);
+        Map<Phrase, PhraseNode> phraseCache = HashMap.newHashMap(estimatedWordCount / 2);
 
         SentenceNode prevSentenceNode = null;
 
@@ -88,7 +87,7 @@ public class DocumentationMapper {
 
         createDomainDependencies(textNode, globalWordMap);
 
-        return new Neo4jText(textNode.getArdocoId(), sentences);
+        return new Neo4jText(sentences);
     }
 
     public SentenceNode convertMapToSentenceNode(Map<String, Object> data) {
@@ -125,9 +124,9 @@ public class DocumentationMapper {
             hierarchyMap.put(id, (List<String>) pMap.get("childIds"));
         }
 
-        for (String parentId : phraseLookup.keySet()) {
-            PhraseNode parentNode = phraseLookup.get(parentId);
-            List<String> childrenIds = hierarchyMap.get(parentId);
+        for (Map.Entry<String, PhraseNode> entry : phraseLookup.entrySet()) {
+            PhraseNode parentNode = entry.getValue();
+            List<String> childrenIds = hierarchyMap.get(entry.getKey());
 
             if (childrenIds != null) {
                 for (String childId : childrenIds) {
@@ -189,7 +188,7 @@ public class DocumentationMapper {
 
         List<WordNode> sortedWords = new ArrayList<>(pNode.getContainedWords());
         sortedWords.sort(Comparator.comparingInt(WordNode::getPosition));
-        List<Neo4jWord> containedWords = sortedWords.stream().map(wn -> wordMap.get(wn.getPosition())).collect(Collectors.toList());
+        List<Neo4jWord> containedWords = sortedWords.stream().map(wn -> wordMap.get(wn.getPosition())).toList();
 
         return new Neo4jPhrase(pNode.getText(), pNode.getPhraseType(), parentSentence, containedWords, childPhrases);
     }

@@ -82,6 +82,7 @@ public class TraceLinkPersistenceService {
     private static final String RECOMMENDED_INSTANCE_LABELS = "RecommendedInstance";
     private static final String NER_OCCURRENCE_LABELS = "NamedArchitectureEntityOccurrence:Traceable";
     private static final String TRACEABLE_LABELS = "Traceable";
+    private static final String TARGET_ID = "targetId";
 
     private final TraceLinkRepository traceLinkRepo;
 
@@ -142,16 +143,16 @@ public class TraceLinkPersistenceService {
                 putRow(rows, transitive.getFirstTraceLink(), TraceLinkType.SENTENCE_ARCHITECTURE, errors);
                 putRow(rows, transitive.getSecondTraceLink(), TraceLinkType.ARCHITECTURE_CODE, errors);
                 rowsBeforeDedup += 2;
-                continue;
+            } else {
+                TraceLinkType type = determineType(link);
+                if (type == null) {
+                    errors.recordUnknownType(link.getClass().getName());
+                    skippedLinks++;
+                } else {
+                    putRow(rows, link, type, errors);
+                    rowsBeforeDedup++;
+                }
             }
-            TraceLinkType type = determineType(link);
-            if (type == null) {
-                errors.recordUnknownType(link.getClass().getName());
-                skippedLinks++;
-                continue;
-            }
-            putRow(rows, link, type, errors);
-            rowsBeforeDedup++;
         }
 
         Map<String, List<TraceLinkRow>> rowsByLabels = new LinkedHashMap<>();
@@ -221,13 +222,13 @@ public class TraceLinkPersistenceService {
         for (int start = 0; start < rows.size(); start += WRITE_CHUNK_SIZE) {
             List<Map<String, Object>> parameters = new ArrayList<>();
             for (TraceLinkRow row : rows.subList(start, Math.min(start + WRITE_CHUNK_SIZE, rows.size()))) {
-                parameters.add(Map.of("sourceId", row.sourceId(), "targetId", row.targetId(), "type", row.type().name(), "confidence", row.confidence()));
+                parameters.add(Map.of("sourceId", row.sourceId(), TARGET_ID, row.targetId(), "type", row.type().name(), "confidence", row.confidence()));
             }
             Collection<Map<String, Object>> unresolved = neo4jClient.query(query).bind(parameters).to("rows").fetch().all();
             queries++;
             for (Map<String, Object> result : unresolved) {
                 errors.recordUnresolvedEndpoint(String.valueOf(result.get("type")), String.valueOf(result.get("sourceId")), String.valueOf(result.get(
-                        "targetId")), ((Number) result.get("sourceMatches")).longValue(), ((Number) result.get("targetMatches")).longValue());
+                        TARGET_ID)), ((Number) result.get("sourceMatches")).longValue(), ((Number) result.get("targetMatches")).longValue());
             }
         }
         return queries;
@@ -332,7 +333,14 @@ public class TraceLinkPersistenceService {
             if (targetMissing) {
                 counts.targetMissing++;
             }
-            String side = sourceMissing && targetMissing ? "source and target missing" : sourceMissing ? "source missing" : "target missing";
+            String side;
+            if (sourceMissing && targetMissing) {
+                side = "source and target missing";
+            } else if (sourceMissing) {
+                side = "source missing";
+            } else {
+                side = "target missing";
+            }
             addExample(counts.examples, type + ": " + sourceId + " -> " + targetId + " (" + side + ")");
         }
 
@@ -496,7 +504,7 @@ public class TraceLinkPersistenceService {
         List<RecommendationModelTraceLink> result = new ArrayList<>();
         for (Map<String, Object> row : findRecommendationModelLinkRows(type.name())) {
             String riId = String.valueOf(row.get("riId"));
-            String targetId = String.valueOf(row.get("targetId"));
+            String targetId = String.valueOf(row.get(TARGET_ID));
             RecommendedInstance ri = recommendedInstancesById.get(riId);
             ModelEntity target = null;
             if (architectureItemsById != null) {

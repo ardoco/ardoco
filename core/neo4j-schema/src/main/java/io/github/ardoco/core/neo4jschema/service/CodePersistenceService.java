@@ -36,6 +36,8 @@ import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepositor
 public class CodePersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(CodePersistenceService.class);
+    private static final String MODEL_ID = "modelId";
+    private static final String LANGUAGE = "language";
 
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
@@ -92,7 +94,7 @@ public class CodePersistenceService {
                 .bind(metamodel.name())
                 .to("mt")
                 .fetchAs(String.class)
-                .mappedBy((typeSystem, record) -> record.get("modelId").asString(null))
+                .mappedBy((typeSystem, record) -> record.get(MODEL_ID).asString(null))
                 .all());
         modelIds.removeIf(java.util.Objects::isNull);
         if (modelIds.isEmpty()) {
@@ -107,7 +109,7 @@ public class CodePersistenceService {
         Collection<Map<String, Object>> itemRows = neo4jClient.query("""
                 MATCH (m:CodeModel {modelId: $modelId})-[:HAS_REPOSITORY_ITEM]->(n:CodeItem)
                 RETURN n.ardocoId AS id, labels(n) AS labels, properties(n) AS props
-                """).bind(modelId).to("modelId").fetch().all();
+                """).bind(modelId).to(MODEL_ID).fetch().all();
 
         Map<String, CodeItemNode> nodeMap = new HashMap<>();
         for (Map<String, Object> row : itemRows) {
@@ -121,13 +123,13 @@ public class CodePersistenceService {
         Collection<Map<String, Object>> rootRows = neo4jClient.query(
                 "MATCH (m:CodeModel {modelId: $modelId})-[:CONTAINS_CODE_ROOT]->(root:CodeItem) RETURN root.ardocoId AS rootId")
                 .bind(modelId)
-                .to("modelId")
+                .to(MODEL_ID)
                 .fetch()
                 .all();
 
         CodeModelNode modelNode = new CodeModelNode(modelId, metamodel.name());
         for (Map<String, Object> row : rootRows) {
-            CodeItemNode root = nodeMap.get((String) row.get("rootId"));
+            CodeItemNode root = nodeMap.get(row.get("rootId"));
             if (root != null) {
                 modelNode.addContent(root);
             }
@@ -150,10 +152,10 @@ public class CodePersistenceService {
         if (labels.contains("CodePackage")) {
             node = new CodePackageNode(name, id);
         } else if (labels.contains("CodeCompilationUnit")) {
-            node = new CodeCompilationUnitNode(name, id, (String) props.get("extension"), (String) props.get("language"), toStringList(props.get(
+            node = new CodeCompilationUnitNode(name, id, (String) props.get("extension"), (String) props.get(LANGUAGE), toStringList(props.get(
                     "pathElements")));
         } else if (labels.contains("CodeAssembly")) {
-            node = new CodeAssemblyNode(name, id, (String) props.get("language"));
+            node = new CodeAssemblyNode(name, id, (String) props.get(LANGUAGE));
         } else if (labels.contains("ClassUnit")) {
             node = new ClassUnitNode(name, id);
         } else if (labels.contains("InterfaceUnit")) {
@@ -244,7 +246,7 @@ public class CodePersistenceService {
                 .bind(UUID.randomUUID().toString())
                 .to("id")
                 .bind(modelNode.getModelId())
-                .to("modelId")
+                .to(MODEL_ID)
                 .bind(modelNode.getMetamodel())
                 .to("metamodel")
                 .run();
@@ -277,11 +279,11 @@ public class CodePersistenceService {
             Map<String, Object> props = baseItemProps(node);
             if (node instanceof CodeCompilationUnitNode c) {
                 putIfNotNull(props, "extension", c.getExtension());
-                putIfNotNull(props, "language", c.getLanguage());
+                putIfNotNull(props, LANGUAGE, c.getLanguage());
                 putIfNotNull(props, "pathElements", c.getPathElements());
                 compilationUnits.put(node.getArdocoId(), props);
             } else if (node instanceof CodeAssemblyNode c) {
-                putIfNotNull(props, "language", c.getLanguage());
+                putIfNotNull(props, LANGUAGE, c.getLanguage());
                 codeAssemblies.put(node.getArdocoId(), props);
             } else if (node instanceof ClassUnitNode c) {
                 addDatatypeProps(props, c);
@@ -371,7 +373,7 @@ public class CodePersistenceService {
                     WITH itemId, size(targets) AS targetMatches
                     WHERE targetMatches <> 1
                     RETURN $modelId AS sourceId, itemId AS targetId, 1 AS sourceMatches, targetMatches
-                    """.formatted(relationshipType)).bind(modelId).to("modelId").bind(idChunk).to("itemIds").fetch().all());
+                    """.formatted(relationshipType)).bind(modelId).to(MODEL_ID).bind(idChunk).to("itemIds").fetch().all());
             errors.recordEdges(relationshipType, unresolved);
         }
     }

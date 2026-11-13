@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
@@ -125,6 +124,6 @@ public class RecommendationPersistenceService {
     public Collection<RecommendedInstance> loadAllRecommendedInstances(SortedMap<String, NounMapping> nounMappingsById) {
         return StreamSupport.stream(recommendedInstanceRepository.findAll().spliterator(), false)
                 .map(node -> recommendedInstanceMapper.toDomain(node, nounMappingsById))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

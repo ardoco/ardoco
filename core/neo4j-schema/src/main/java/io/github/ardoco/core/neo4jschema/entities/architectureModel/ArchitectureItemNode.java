@@ -23,6 +23,7 @@ public abstract class ArchitectureItemNode extends TraceableNode {
         return name;
     }
 
+    @Override
     public String getArdocoId() {
         return ardocoId;
     }

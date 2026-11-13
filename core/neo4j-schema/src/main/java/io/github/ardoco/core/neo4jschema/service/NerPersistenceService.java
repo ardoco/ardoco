@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +102,7 @@ public class NerPersistenceService {
 
     @Transactional(readOnly = true)
     public Collection<NamedArchitectureEntity> loadAllNamedArchitectureEntities(Metamodel metamodel) {
-        return entityRepository.findByMetamodel(metamodel.name()).stream().map(this::toDomain).collect(Collectors.toList());
+        return entityRepository.findByMetamodel(metamodel.name()).stream().map(this::toDomain).toList();
     }
 
     @Transactional(readOnly = true)

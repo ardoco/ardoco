@@ -33,6 +33,12 @@ public class DocumentationPersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentationPersistenceService.class);
 
+    private static final String ARDOCO_ID = "ardocoId";
+    private static final String POSITION = "position";
+    private static final String FROM_ID = "fromId";
+    private static final String SENTENCE_LABEL = "Sentence";
+    private static final String PHRASE_LABEL = "Phrase";
+
     private static final String PAGED_SENTENCE_QUERY = """
             MATCH (t:Text {ardocoId: $id})-[:HAS_SENTENCE]->(s:Sentence)
             WHERE s.sentenceNumber >= $skip AND s.sentenceNumber < ($skip + $limit)
@@ -100,7 +106,7 @@ public class DocumentationPersistenceService {
         // Only an existence check is needed here; the sentences/words/phrases are streamed via the paged Cypher queries below.
         // findByArdocoId now fully hydrates the graph, so avoid calling it just to null-check.
         if (!textRepository.existsByArdocoId(identifier)) {
-            logger.info("No preprocessed text found for id: " + identifier);
+            logger.info("No preprocessed text found for id: {}", identifier);
             return Optional.empty();
         }
 
@@ -147,7 +153,7 @@ public class DocumentationPersistenceService {
             }
         });
 
-        return Optional.of(new Neo4jText(identifier, allDomainSentences));
+        return Optional.of(new Neo4jText(allDomainSentences));
     }
 
     /**
@@ -181,7 +187,7 @@ public class DocumentationPersistenceService {
                 .bind(UUID.randomUUID().toString())
                 .to("id")
                 .bind(textNode.getArdocoId())
-                .to("ardocoId")
+                .to(ARDOCO_ID)
                 .run();
 
         List<SentenceNode> sentences = textNode.getSentences();
@@ -206,7 +212,7 @@ public class DocumentationPersistenceService {
     private void createSentenceNodes(List<SentenceNode> sentences) {
         List<Map<String, Object>> items = new ArrayList<>(sentences.size());
         for (SentenceNode s : sentences) {
-            items.add(Map.of("ardocoId", s.getArdocoId(), "sentenceNumber", s.getSentenceNumber(), "text", s.getText()));
+            items.add(Map.of(ARDOCO_ID, s.getArdocoId(), "sentenceNumber", s.getSentenceNumber(), "text", s.getText()));
         }
         runBatchedCreate("CREATE (n:Sentence:Traceable) SET n += item", items);
     }
@@ -217,7 +223,7 @@ public class DocumentationPersistenceService {
             for (var w : s.getWords()) {
                 Map<String, Object> props = new HashMap<>();
                 props.put("id", UUID.randomUUID().toString());
-                props.put("position", w.getPosition());
+                props.put(POSITION, w.getPosition());
                 putIfNotNull(props, "text", w.getText());
                 putIfNotNull(props, "lemma", w.getLemma());
                 putIfNotNull(props, "posTag", w.getPosTag());
@@ -291,19 +297,19 @@ public class DocumentationPersistenceService {
     private void createNextSentenceEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (int i = 0; i < sentences.size() - 1; i++) {
-            edges.add(Map.of("fromId", sentences.get(i).getArdocoId(), "toId", sentences.get(i + 1).getArdocoId()));
+            edges.add(Map.of(FROM_ID, sentences.get(i).getArdocoId(), "toId", sentences.get(i + 1).getArdocoId()));
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Sentence", "ardocoId", "NEXT_SENTENCE", edges, errors);
+        createMatchedPairEdges(SENTENCE_LABEL, ARDOCO_ID, SENTENCE_LABEL, ARDOCO_ID, "NEXT_SENTENCE", edges, errors);
     }
 
     private void createContainsWordEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             for (var w : s.getWords()) {
-                edges.add(Map.of("fromId", s.getArdocoId(), "toId", w.getPosition()));
+                edges.add(Map.of(FROM_ID, s.getArdocoId(), "toId", w.getPosition()));
             }
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Word", "position", "CONTAINS_WORD", edges, errors);
+        createMatchedPairEdges(SENTENCE_LABEL, ARDOCO_ID, "Word", POSITION, "CONTAINS_WORD", edges, errors);
     }
 
     private void createNextWordEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
@@ -311,10 +317,10 @@ public class DocumentationPersistenceService {
         for (SentenceNode s : sentences) {
             var words = s.getWords();
             for (int i = 0; i < words.size() - 1; i++) {
-                edges.add(Map.of("fromId", words.get(i).getPosition(), "toId", words.get(i + 1).getPosition()));
+                edges.add(Map.of(FROM_ID, words.get(i).getPosition(), "toId", words.get(i + 1).getPosition()));
             }
         }
-        createMatchedPairEdges("Word", "position", "Word", "position", "NEXT_WORD", edges, errors);
+        createMatchedPairEdges("Word", POSITION, "Word", POSITION, "NEXT_WORD", edges, errors);
     }
 
     private void createDependencyEdges(List<SentenceNode> sentences, LinkTargetErrors errors) {
@@ -322,7 +328,7 @@ public class DocumentationPersistenceService {
         for (SentenceNode s : sentences) {
             for (var w : s.getWords()) {
                 for (var dependency : w.getDependencies()) {
-                    edges.add(Map.of("fromId", w.getPosition(), "toId", dependency.getTargetWord().getPosition(), "type", dependency.getDependencyType()));
+                    edges.add(Map.of(FROM_ID, w.getPosition(), "toId", dependency.getTargetWord().getPosition(), "type", dependency.getDependencyType()));
                 }
             }
         }
@@ -350,30 +356,30 @@ public class DocumentationPersistenceService {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (SentenceNode s : sentences) {
             for (PhraseNode root : s.getRootPhrases()) {
-                edges.add(Map.of("fromId", s.getArdocoId(), "toId", phraseIds.get(root)));
+                edges.add(Map.of(FROM_ID, s.getArdocoId(), "toId", phraseIds.get(root)));
             }
         }
-        createMatchedPairEdges("Sentence", "ardocoId", "Phrase", "id", "HAS_ROOT_PHRASE", edges, errors);
+        createMatchedPairEdges(SENTENCE_LABEL, ARDOCO_ID, PHRASE_LABEL, "id", "HAS_ROOT_PHRASE", edges, errors);
     }
 
     private void createPhraseContainsWordEdges(Map<PhraseNode, String> phraseIds, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
             for (var w : entry.getKey().getContainedWords()) {
-                edges.add(Map.of("fromId", entry.getValue(), "toId", w.getPosition()));
+                edges.add(Map.of(FROM_ID, entry.getValue(), "toId", w.getPosition()));
             }
         }
-        createMatchedPairEdges("Phrase", "id", "Word", "position", "CONTAINS_WORD", edges, errors);
+        createMatchedPairEdges(PHRASE_LABEL, "id", "Word", POSITION, "CONTAINS_WORD", edges, errors);
     }
 
     private void createHasChildPhraseEdges(Map<PhraseNode, String> phraseIds, LinkTargetErrors errors) {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (Map.Entry<PhraseNode, String> entry : phraseIds.entrySet()) {
             for (PhraseNode child : entry.getKey().getChildPhrases()) {
-                edges.add(Map.of("fromId", entry.getValue(), "toId", phraseIds.get(child)));
+                edges.add(Map.of(FROM_ID, entry.getValue(), "toId", phraseIds.get(child)));
             }
         }
-        createMatchedPairEdges("Phrase", "id", "Phrase", "id", "HAS_CHILD_PHRASE", edges, errors);
+        createMatchedPairEdges(PHRASE_LABEL, "id", PHRASE_LABEL, "id", "HAS_CHILD_PHRASE", edges, errors);
     }
 
     private void createMatchedPairEdges(String fromLabel, String fromKey, String toLabel, String toKey, String relationshipType,

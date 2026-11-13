@@ -37,6 +37,7 @@ import io.github.ardoco.core.neo4jschema.repository.inconsistencies.Inconsistenc
 public class InconsistencyPersistenceService implements InconsistencyNodeVisitor<Inconsistency> {
 
     private static final Logger logger = LoggerFactory.getLogger(InconsistencyPersistenceService.class);
+    private static final String REASON = "reason";
 
     private static final int WRITE_CHUNK_SIZE = 2000;
 
@@ -103,7 +104,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
             String reason = inconsistency.getReason();
             if (inconsistency instanceof ModelInconsistency mi) {
                 String uid = mi.getModelInstanceUid();
-                modelRows.put(uid + "\n" + reason, Map.of("uid", uid, "reason", reason));
+                modelRows.put(uid + "\n" + reason, Map.of("uid", uid, REASON, reason));
             } else if (inconsistency instanceof TextInconsistency ti) {
                 int sentenceNumber = ti.getSentenceNumber();
                 String type = ti.getType();
@@ -113,7 +114,7 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
                 row.put("sentenceIndex", sentenceNumber - 1);
                 row.put("name", ti instanceof TextEntityAbsentFromModelInconsistency team ? team.name() : "unknown");
                 row.put("confidence", confidence);
-                row.put("reason", reason);
+                row.put(REASON, reason);
                 row.put("type", type);
                 textRows.put(sentenceNumber + "\n" + reason + "\n" + type + "\n" + confidence, row);
             } else {
@@ -129,13 +130,13 @@ public class InconsistencyPersistenceService implements InconsistencyNodeVisitor
                     .to("rows")
                     .fetch()
                     .all()) {
-                errors.recordEdge("HAS_INCONSISTENCY (Sentence)", "sentence " + unresolved.get("sentenceNumber"), unresolved.get("reason"), ((Number) unresolved
+                errors.recordEdge("HAS_INCONSISTENCY (Sentence)", "sentence " + unresolved.get("sentenceNumber"), unresolved.get(REASON), ((Number) unresolved
                         .get("matches")).longValue(), 1);
             }
         }
         for (List<Map<String, Object>> chunk : chunk(new ArrayList<>(modelRows.values()))) {
             for (Map<String, Object> unresolved : neo4jClient.query(MODEL_INCONSISTENCY_QUERY).bind(chunk).to("rows").fetch().all()) {
-                errors.recordEdge("HAS_INCONSISTENCY (model item)", unresolved.get("uid"), unresolved.get("reason"), ((Number) unresolved.get("matches"))
+                errors.recordEdge("HAS_INCONSISTENCY (model item)", unresolved.get("uid"), unresolved.get(REASON), ((Number) unresolved.get("matches"))
                         .longValue(), 1);
             }
         }

@@ -61,10 +61,10 @@ public class TextFactory {
         s1.setWords(List.of(w5, w6, w7, w8));
         s1.setPhrases(List.of());
 
-        return new Neo4jText(id, List.of(s0, s1));
+        return new Neo4jText(List.of(s0, s1));
     }
 
     public static Text createEmptyText(String id) {
-        return new Neo4jText(id, new ArrayList<>());
+        return new Neo4jText(new ArrayList<>());
     }
 }

@@ -95,7 +95,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public void saveModel(Metamodel metamodel, Model model) {
-        logger.info("Saving model of type: " + metamodel);
+        logger.info("Saving model of type: {}", metamodel);
         if (metamodel.isArchitectureModel() && model instanceof ArchitectureModel architectureModel) {
             architectureService.saveArchitectureModel(architectureModel);
         } else if (metamodel.isCodeModel() && model instanceof CodeModel codeModel) {
@@ -106,7 +106,7 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     public Model loadModel(Metamodel metamodel) {
-        logger.info("Loading model of type: " + metamodel);
+        logger.info("Loading model of type: {}", metamodel);
         if (metamodel.isCodeModel()) {
             return codeService.loadCodeModel(metamodel).orElse(null);
         } else if (metamodel.isArchitectureModel()) {
@@ -124,22 +124,22 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
 
     @Override
     public void savePreprocessedText(Text text, String identifier) {
-        logger.info("Saving preprocessed text for " + identifier);
+        logger.info("Saving preprocessed text for {}", identifier);
         this.documentationService.savePreprocessedText(text, identifier);
     }
 
     public Text loadPreprocessedText(String identifier) {
-        logger.info("Loading preprocessed text for " + identifier);
+        logger.info("Loading preprocessed text for {}", identifier);
 
         Text text = this.documentationService.loadPreprocessedText(identifier).orElse(null);
         if (text == null) {
-            logger.warn("No preprocessed text found for identifier: " + identifier);
+            logger.warn("No preprocessed text found for identifier: {}", identifier);
         }
         return text;
     }
 
     public boolean hasPreprocessedText(String identifier) {
-        logger.info("Checking if preprocessed text is available for " + identifier);
+        logger.info("Checking if preprocessed text is available for {}", identifier);
         return this.documentationService.hasPreprocessedText(identifier);
     }
 
