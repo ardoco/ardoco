@@ -11,6 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -20,6 +23,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 
 class PersistenceBridgeTest {
 
@@ -54,6 +58,38 @@ class PersistenceBridgeTest {
         Assertions.assertEquals(PersistenceStorage.MEMORY, PersistenceBridge.getStorage());
         Assertions.assertFalse(PersistenceBridge.isNeo4jStorage());
         Assertions.assertNull(PersistenceBridge.getHandler());
+    }
+
+    @Test
+    @DisplayName("storage=memory reads no Neo4j environment variable and gives the same state with and without NEO4J_URI set")
+    void memoryStorageReadsNoEnvironmentVariable() {
+        try (MockedStatic<Environment> environment = Mockito.mockStatic(Environment.class)) {
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
+            PersistenceStorage withoutUri = PersistenceBridge.getStorage();
+
+            environment.when(() -> Environment.getEnv("NEO4J_URI")).thenReturn("bolt://example.invalid:7687");
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "memory"));
+
+            Assertions.assertEquals(PersistenceStorage.MEMORY, withoutUri);
+            Assertions.assertEquals(withoutUri, PersistenceBridge.getStorage());
+            Assertions.assertFalse(PersistenceBridge.isNeo4jStorage());
+            Assertions.assertNull(PersistenceBridge.getHandler());
+            environment.verify(() -> Environment.getEnv(ArgumentMatchers.anyString()), Mockito.never());
+        }
+    }
+
+    @Test
+    @DisplayName("storage=neo4j still resolves the connection from the environment when the configuration does not set it")
+    void neo4jStorageResolvesConnectionFromEnvironment() {
+        PersistenceBridge.setHandler(new ThrowingPersistenceHandler());
+        try (MockedStatic<Environment> environment = Mockito.mockStatic(Environment.class)) {
+            PersistenceBridge.getInstance().applyConfiguration(SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
+
+            Assertions.assertTrue(PersistenceBridge.isNeo4jStorage());
+            environment.verify(() -> Environment.getEnv("NEO4J_URI"));
+            environment.verify(() -> Environment.getEnv("NEO4J_USERNAME"));
+            environment.verify(() -> Environment.getEnv("NEO4J_PASSWORD"));
+        }
     }
 
     @Test

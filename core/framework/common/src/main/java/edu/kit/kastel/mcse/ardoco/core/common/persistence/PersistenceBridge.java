@@ -62,20 +62,13 @@ public class PersistenceBridge extends AbstractConfigurable {
     static final List<String> LEGACY_KEYS = List.of("PersistenceBridge::usePersistence", "PersistenceBridge::persistTextState",
             "PersistenceBridge::persistRecommendations", "PersistenceBridge::persistNerConnection");
 
-    /** Max items per batched Cypher round trip (see {@link #chunk(List)}); one commit per chunk is fine, a later failure wipes everything anyway. */
+    /**
+     * Max items per batched Cypher round trip (see {@link DeferredWrites#chunk(List)}); one commit per chunk is fine, a later failure wipes everything
+     * anyway.
+     */
     private static final int WRITE_CHUNK_SIZE = 2000;
 
     private static PersistenceHandler handler;
-
-    private static String bootstrappedConnection;
-
-    private static PersistenceStorage storageStatic = PersistenceStorage.MEMORY;
-
-    /** Resolved Neo4j URI of the last {@link #applyConfiguration}, for diagnostics; never the password. */
-    public static String neo4jUriStatic = DEFAULT_NEO4J_URI;
-
-    /** Resolved Neo4j username of the last {@link #applyConfiguration}, for diagnostics; never the password. */
-    public static String neo4jUsernameStatic = DEFAULT_NEO4J_USERNAME;
 
     /** Write scope of the current thread, see {@link #withDeferredWrites(Supplier)}. */
     private static final ThreadLocal<DeferredWrites> DEFERRED_WRITES = new ThreadLocal<>();
@@ -84,15 +77,11 @@ public class PersistenceBridge extends AbstractConfigurable {
     @Configurable
     private PersistenceStorage storage = PersistenceStorage.MEMORY;
 
-    /**
-     * Neo4j Bolt URI; resolved from the configuration, then environment, then {@link #DEFAULT_NEO4J_URI}. Not reflectively configurable (no String support in
-     * {@link AbstractConfigurable}), read directly from the raw map in {@link #delegateApplyConfigurationToInternalObjects}.
-     */
-    private String neo4jUri;
+    /** Storage mode in effect, set only after a configuration has been applied completely (a failed bootstrap leaves memory). */
+    private PersistenceStorage appliedStorage = PersistenceStorage.MEMORY;
 
-    private String neo4jUsername;
-
-    private String neo4jPassword;
+    /** Connection key of the handler bootstrapped here, or {@code null} if the handler was set from outside (tests, Spring activator). */
+    private String bootstrappedConnection;
 
     private PersistenceBridge() {
         // Private constructor for Singleton
@@ -104,7 +93,7 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static void setHandler(PersistenceHandler newHandler) {
         handler = newHandler;
-        bootstrappedConnection = null;
+        INSTANCE.bootstrappedConnection = null;
     }
 
     public static void clearHandlerIfRegistered(PersistenceHandler registered) {
@@ -114,11 +103,11 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     public static PersistenceStorage getStorage() {
-        return storageStatic;
+        return INSTANCE.appliedStorage;
     }
 
     public static boolean isNeo4jStorage() {
-        return storageStatic == PersistenceStorage.NEO4J;
+        return INSTANCE.appliedStorage == PersistenceStorage.NEO4J;
     }
 
     public static PersistenceHandler getHandler() {
@@ -291,17 +280,6 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
-     * Splits {@code items} into chunks of at most {@link #WRITE_CHUNK_SIZE} rows, for batched Cypher round trips.
-     */
-    private static <T> List<List<T>> chunk(List<T> items) {
-        List<List<T>> chunks = new ArrayList<>();
-        for (int i = 0; i < items.size(); i += WRITE_CHUNK_SIZE) {
-            chunks.add(items.subList(i, Math.min(i + WRITE_CHUNK_SIZE, items.size())));
-        }
-        return chunks;
-    }
-
-    /**
      * Writes collected by {@link #withDeferredWrites}. Thread-confined via {@link #DEFERRED_WRITES}.
      */
     private static final class DeferredWrites {
@@ -315,6 +293,17 @@ public class PersistenceBridge extends AbstractConfigurable {
 
         DeferredWrites(String stageName) {
             this.stageName = stageName;
+        }
+
+        /**
+         * Splits {@code items} into chunks of at most {@link #WRITE_CHUNK_SIZE} rows, for batched Cypher round trips.
+         */
+        private static <T> List<List<T>> chunk(List<T> items) {
+            List<List<T>> chunks = new ArrayList<>();
+            for (int i = 0; i < items.size(); i += WRITE_CHUNK_SIZE) {
+                chunks.add(items.subList(i, Math.min(i + WRITE_CHUNK_SIZE, items.size())));
+            }
+            return chunks;
         }
 
         void deferNounMappingSave(NounMapping nounMapping) {
@@ -440,7 +429,7 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
-        storageStatic = PersistenceStorage.MEMORY;
+        this.appliedStorage = PersistenceStorage.MEMORY;
         for (String legacyKey : LEGACY_KEYS) {
             if (additionalConfiguration.containsKey(legacyKey)) {
                 throw new IllegalArgumentException(legacyKey + " is no longer supported; use " + KEY_STORAGE + "=memory|neo4j instead");
@@ -449,20 +438,17 @@ public class PersistenceBridge extends AbstractConfigurable {
         if (!additionalConfiguration.containsKey(KEY_STORAGE)) {
             this.storage = PersistenceStorage.MEMORY;
         }
-        this.neo4jUri = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_URI, "NEO4J_URI", DEFAULT_NEO4J_URI);
-        this.neo4jUsername = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_USERNAME, "NEO4J_USERNAME", DEFAULT_NEO4J_USERNAME);
-        this.neo4jPassword = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_PASSWORD, "NEO4J_PASSWORD", DEFAULT_NEO4J_PASSWORD);
-        neo4jUriStatic = this.neo4jUri;
-        neo4jUsernameStatic = this.neo4jUsername;
-
         if (this.storage == PersistenceStorage.NEO4J) {
-            String connection = connectionKey(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
-            if (handler == null || (bootstrappedConnection != null && !bootstrappedConnection.equals(connection))) {
-                bootstrapHandler(this.neo4jUri, this.neo4jUsername, this.neo4jPassword);
-                bootstrappedConnection = connection;
+            String uri = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_URI, "NEO4J_URI", DEFAULT_NEO4J_URI);
+            String username = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_USERNAME, "NEO4J_USERNAME", DEFAULT_NEO4J_USERNAME);
+            String password = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_PASSWORD, "NEO4J_PASSWORD", DEFAULT_NEO4J_PASSWORD);
+            String connection = connectionKey(uri, username, password);
+            if (handler == null || (this.bootstrappedConnection != null && !this.bootstrappedConnection.equals(connection))) {
+                bootstrapHandler(uri, username, password);
+                this.bootstrappedConnection = connection;
             }
         }
-        storageStatic = this.storage;
+        this.appliedStorage = this.storage;
     }
 
     private static String connectionKey(String uri, String username, String password) {
@@ -476,9 +462,9 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     /**
      * Resolves a connection property: the configuration map, then the environment variable, then the default.
-     * {@code neo4jUri}/{@code neo4jUsername}/{@code neo4jPassword} are not {@link Configurable} fields because
+     * The Neo4j uri, username and password are not {@link Configurable} fields because
      * {@link AbstractConfigurable}'s reflective parsing has no {@link String} branch; they are read directly from the
-     * raw map instead.
+     * raw map instead, and only in neo4j mode, so a memory-mode configuration reads no environment variable.
      */
     private static String resolveConnectionProperty(ImmutableSortedMap<String, String> additionalConfiguration, String key, String envVariable,
             String defaultValue) {

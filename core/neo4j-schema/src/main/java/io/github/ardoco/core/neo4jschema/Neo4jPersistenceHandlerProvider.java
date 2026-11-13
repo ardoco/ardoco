@@ -58,7 +58,7 @@ public final class Neo4jPersistenceHandlerProvider implements PersistenceHandler
         }
     }
 
-    private ConfigurableApplicationContext getOrStartContext(ImmutableSortedMap<String, String> properties) {
+    private static ConfigurableApplicationContext getOrStartContext(ImmutableSortedMap<String, String> properties) {
         if (context != null && context.isActive() && properties.equals(activeProperties)) {
             return context;
         }
