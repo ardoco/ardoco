@@ -81,5 +81,6 @@ public abstract class ArdocoRunner {
      */
     protected void setOutputDirectory(File outputDirectory) {
         this.outputDirectory = outputDirectory;
+        this.ardoco.rememberPersistenceSettings();
     }
 }

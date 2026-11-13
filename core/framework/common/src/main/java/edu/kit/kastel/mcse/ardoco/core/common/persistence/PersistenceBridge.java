@@ -83,6 +83,23 @@ public class PersistenceBridge extends AbstractConfigurable {
     /** Connection key of the handler bootstrapped here, or {@code null} if the handler was set from outside (tests, Spring activator). */
     private String bootstrappedConnection;
 
+    /** Connection key of the applied configuration in neo4j mode, {@code null} in memory mode. */
+    private String appliedConnection;
+
+    /**
+     * Storage mode and connection in effect. The connection is a key of uri, username and a SHA-256 digest of the password; {@link #toString()}
+     * shows only the storage mode, so the value can be compared but never leaks connection details into a message.
+     *
+     * @param storage    the storage mode
+     * @param connection the connection key in neo4j mode, {@code null} in memory mode
+     */
+    public record Settings(PersistenceStorage storage, String connection) {
+        @Override
+        public String toString() {
+            return String.valueOf(this.storage);
+        }
+    }
+
     private PersistenceBridge() {
         // Private constructor for Singleton
     }
@@ -108,6 +125,13 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     public static boolean isNeo4jStorage() {
         return INSTANCE.appliedStorage == PersistenceStorage.NEO4J;
+    }
+
+    /**
+     * @return the storage mode and connection of the last completely applied configuration
+     */
+    public static Settings currentSettings() {
+        return new Settings(INSTANCE.appliedStorage, INSTANCE.appliedConnection);
     }
 
     public static PersistenceHandler getHandler() {
@@ -430,6 +454,7 @@ public class PersistenceBridge extends AbstractConfigurable {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         this.appliedStorage = PersistenceStorage.MEMORY;
+        this.appliedConnection = null;
         for (String legacyKey : LEGACY_KEYS) {
             if (additionalConfiguration.containsKey(legacyKey)) {
                 throw new IllegalArgumentException(legacyKey + " is no longer supported; use " + KEY_STORAGE + "=memory|neo4j instead");
@@ -438,16 +463,18 @@ public class PersistenceBridge extends AbstractConfigurable {
         if (!additionalConfiguration.containsKey(KEY_STORAGE)) {
             this.storage = PersistenceStorage.MEMORY;
         }
+        String connection = null;
         if (this.storage == PersistenceStorage.NEO4J) {
             String uri = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_URI, "NEO4J_URI", DEFAULT_NEO4J_URI);
             String username = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_USERNAME, "NEO4J_USERNAME", DEFAULT_NEO4J_USERNAME);
             String password = resolveConnectionProperty(additionalConfiguration, KEY_NEO4J_PASSWORD, "NEO4J_PASSWORD", DEFAULT_NEO4J_PASSWORD);
-            String connection = connectionKey(uri, username, password);
+            connection = connectionKey(uri, username, password);
             if (handler == null || (this.bootstrappedConnection != null && !this.bootstrappedConnection.equals(connection))) {
                 bootstrapHandler(uri, username, password);
                 this.bootstrappedConnection = connection;
             }
         }
+        this.appliedConnection = connection;
         this.appliedStorage = this.storage;
     }
 

@@ -49,6 +49,9 @@ public final class Ardoco extends Pipeline {
     /** Set by {@link #runAndSave} right before {@link #run()}; read and cleared by {@link #exportAndWipeKnowledgeGraph}. */
     private @Nullable File pendingKnowledgeGraphExportDirectory;
 
+    /** Persistence settings in effect when the runner of this instance was set up; {@code null} if no runner recorded them. */
+    private PersistenceBridge.@Nullable Settings settingsAtSetUp;
+
     /**
      * Default constructor to simplify tests that do not require the project's name. Also needed for testing configurations.
      */
@@ -80,6 +83,14 @@ public final class Ardoco extends Pipeline {
     }
 
     /**
+     * Records the persistence settings in effect now, i.e. right after the runner applied its configuration. {@link #run()} fails if they have
+     * changed by then.
+     */
+    public void rememberPersistenceSettings() {
+        this.settingsAtSetUp = PersistenceBridge.currentSettings();
+    }
+
+    /**
      * Runs the pipeline. In Neo4j mode ({@code PersistenceBridge::storage=neo4j}), this is the single lifecycle point
      * for both {@link #runAndSave} and a bare {@code run()} (e.g. via {@code ArdocoRunner#runWithoutSaving}, which
      * has no output directory): clean the database first (a crashed earlier run cannot clean up after itself), run
@@ -88,9 +99,20 @@ public final class Ardoco extends Pipeline {
      * export destination is {@link #runAndSave}'s output directory if this call came from there, otherwise
      * {@link #resolveConfiguredExportDirectory}, which always resolves to a usable directory (falling back to a
      * default one) so a run never silently loses its one deliverable.
+     * <p>
+     * The persistence settings are global per JVM. If another runner was set up after this one with a different storage mode or connection, the
+     * run fails before any write instead of running with the other runner's settings.
+     *
+     * @throws IllegalStateException if the persistence settings changed since this instance's runner was set up
      */
     @Override
     public void run() {
+        PersistenceBridge.Settings currentSettings = PersistenceBridge.currentSettings();
+        if (this.settingsAtSetUp != null && !this.settingsAtSetUp.equals(currentSettings)) {
+            throw new IllegalStateException("The persistence settings changed after this runner was set up: it was set up with storage " + this.settingsAtSetUp
+                    .storage() + ", the current storage is " + currentSettings
+                            .storage() + " (or the Neo4j connection differs). Another runner was set up " + "in between; set up and run one runner at a time.");
+        }
         boolean neo4jMode = PersistenceBridge.isNeo4jStorage();
         if (neo4jMode) {
             classLogger.info("Neo4j mode: cleaning the database before the run (a crashed earlier run may have left data behind)");
