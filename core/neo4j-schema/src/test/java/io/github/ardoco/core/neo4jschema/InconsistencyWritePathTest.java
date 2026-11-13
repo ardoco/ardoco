@@ -44,7 +44,7 @@ class InconsistencyWritePathTest extends AbstractNeo4jTest {
     @BeforeEach
     void setUp() {
         neo4jClient.query("MATCH (n) DETACH DELETE n").run();
-        text = TextFactory.createComplexText("inconsistency_write_path");
+        text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, PreprocessingData.ID);
     }
 

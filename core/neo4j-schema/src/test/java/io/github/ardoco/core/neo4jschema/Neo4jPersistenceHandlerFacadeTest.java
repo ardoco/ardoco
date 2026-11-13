@@ -167,7 +167,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Facade: Documentation Persistence")
     void testDocumentationModelPersistence() {
-        Text documentation = TextFactory.createComplexText("text_id_01");
+        Text documentation = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(documentation, "identifier_01");
 
         Assertions.assertTrue(persistenceHandler.hasPreprocessedText("identifier_01"));
@@ -180,7 +180,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @DisplayName("Facade: Documentation with empty text")
     void testEmptyTextPersistence() {
         // Some NLP providers might return a text object with 0 sentences
-        Text emptyText = TextFactory.createEmptyText("empty_id");
+        Text emptyText = TextFactory.createEmptyText();
         persistenceHandler.savePreprocessedText(emptyText, "empty_id");
 
         Assertions.assertTrue(persistenceHandler.hasPreprocessedText("empty_id"));
@@ -268,7 +268,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Facade: Test Roundtrip for Transitive Trace Links")
     void testTransitiveTraceLinkPersistence() {
-        Text text = TextFactory.createComplexText("transitive_doc");
+        Text text = TextFactory.createComplexText();
         var archModel = ArchitectureModelFactory.createArchitectureModel();
         var codeModel = CodeModelFactory.createCodeModel();
 
@@ -296,7 +296,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Facade: Test Roundtrip for SentenceModelTraceLinks")
     void testSentenceModelTraceLinkPersistence() {
-        Text text = TextFactory.createComplexText("PreprocessingData");
+        Text text = TextFactory.createComplexText();
         var codeModel = CodeModelFactory.createCodeModel();
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
         persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
@@ -321,7 +321,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
         persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
         var archEntity = archModel.getEndpoints().get(0);
 
-        Text text = TextFactory.createComplexText("inconsistency_doc");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
         var sentenceNumber = text.getSentences().get(0).getSentenceNumber() + 1;
 
@@ -391,7 +391,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Facade: Delete documentation and associated inconsistencies")
     void testDeleteDocumentationCascades() {
-        Text text = TextFactory.createComplexText("doc_to_delete");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
 
         var textInc = new TextEntityAbsentFromModelInconsistency("Missing", text.getSentences().get(0).getSentenceNumber() + 1, 1.0, null);
@@ -411,7 +411,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @DisplayName("Facade: Global deleteAllData should leave DB empty")
     void testDeleteAllData() {
         persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, ArchitectureModelFactory.createArchitectureModel());
-        persistenceHandler.savePreprocessedText(TextFactory.createComplexText("test"), "test_id");
+        persistenceHandler.savePreprocessedText(TextFactory.createComplexText(), "test_id");
 
         persistenceHandler.deleteAllData();
 
@@ -422,7 +422,7 @@ public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Edge Case: Breaking a transitive chain by deleting the middle element")
     void testBreakTransitiveChain() {
-        Text text = TextFactory.createComplexText("chain_doc");
+        Text text = TextFactory.createComplexText();
         var archModel = ArchitectureModelFactory.createArchitectureModel();
         var codeModel = CodeModelFactory.createCodeModel();
         persistenceHandler.savePreprocessedText(text, "doc_id");

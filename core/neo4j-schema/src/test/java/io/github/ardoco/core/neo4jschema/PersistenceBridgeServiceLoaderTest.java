@@ -124,10 +124,11 @@ class PersistenceBridgeServiceLoaderTest {
         PersistenceBridge.setHandler(null);
         ImmutableSortedMap<String, String> goodConfig = configFor(container.getBoltUrl(), "neo4j", container.getAdminPassword());
         ImmutableSortedMap<String, String> configWithBadUri = configFor("bolt://127.0.0.1:1", "neo4j", "wrong-password");
+        PersistenceBridge bridge = PersistenceBridge.getInstance();
 
-        PersistenceBridge.getInstance().applyConfiguration(goodConfig);
-        Assertions.assertThrows(IllegalStateException.class, () -> PersistenceBridge.getInstance().applyConfiguration(configWithBadUri));
-        PersistenceBridge.getInstance().applyConfiguration(goodConfig);
+        bridge.applyConfiguration(goodConfig);
+        Assertions.assertThrows(IllegalStateException.class, () -> bridge.applyConfiguration(configWithBadUri));
+        bridge.applyConfiguration(goodConfig);
 
         String marker = "rebootstrap-after-failure-marker-" + System.nanoTime();
         PersistenceBridge.getHandler().saveProjectMetadata(marker, "x");

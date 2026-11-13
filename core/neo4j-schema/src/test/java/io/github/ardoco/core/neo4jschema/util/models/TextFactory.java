@@ -13,7 +13,7 @@ import io.github.ardoco.core.neo4jschema.adapter.Neo4jWord;
 
 public class TextFactory {
 
-    public static Text createComplexText(String id) {
+    public static Text createComplexText() {
         // Sentence 0: "The login component handles authentication."
         Neo4jSentence s0 = new Neo4jSentence(0, "The login component handles authentication.");
 
@@ -64,7 +64,7 @@ public class TextFactory {
         return new Neo4jText(List.of(s0, s1));
     }
 
-    public static Text createEmptyText(String id) {
+    public static Text createEmptyText() {
         return new Neo4jText(new ArrayList<>());
     }
 }

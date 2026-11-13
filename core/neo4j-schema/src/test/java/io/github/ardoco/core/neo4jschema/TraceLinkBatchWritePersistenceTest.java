@@ -97,7 +97,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Both legs of every transitive link are kept; shared legs are deduplicated, never dropped")
     void keepsTransitiveLegs() {
-        Text text = TextFactory.createComplexText("batch_transitive_doc");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
         Assertions.assertTrue(text.getSentences().size() >= 2, "the test text needs at least two sentences");
         Sentence first = text.getSentences().get(0);
@@ -141,7 +141,7 @@ class TraceLinkBatchWritePersistenceTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("In a mixed batch, rows with both endpoints are written and rows with a missing endpoint fail the call with one ERROR")
     void reportsMissingEndpointsInAMixedBatch() {
-        Text text = TextFactory.createComplexText("batch_missing_doc");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, "PreprocessingData");
         List<TraceLink<?, ?>> links = List.of(new ArchitectureCodeTraceLink(architectureItem, codeItem), new ArchitectureCodeTraceLink(new ArchitectureMethod(
                 "ghostSource", "ghost-source-id"), codeItem), new SentenceModelTraceLink(text.getSentences().get(0), new ArchitectureMethod("ghostTarget",

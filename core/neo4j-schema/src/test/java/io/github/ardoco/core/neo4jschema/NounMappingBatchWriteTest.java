@@ -95,7 +95,7 @@ class NounMappingBatchWriteTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("Saving N noun mappings with phrases needs the same number of phrase lookups for N=1 and N=4, with the expected IN_PHRASE edges")
     void phraseLookupsDoNotGrowWithTheNumberOfMappings() {
-        Text text = TextFactory.createComplexText("batch_phrase_text");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, PreprocessingData.ID);
         List<Word> words = text.getSentences().get(0).getWords().toList();
         List<NounMapping> one = List.of(nounMapping(words.get(1)));
@@ -115,7 +115,7 @@ class NounMappingBatchWriteTest extends AbstractNeo4jTest {
     @Test
     @DisplayName("A saved noun mapping keeps every stored property and its word edges equal to the domain object")
     void savedNounMappingKeepsEveryProperty() {
-        Text text = TextFactory.createComplexText("property_text");
+        Text text = TextFactory.createComplexText();
         persistenceHandler.savePreprocessedText(text, PreprocessingData.ID);
         List<Word> words = text.getSentences().get(0).getWords().toList();
         NounMappingImpl mapping = new NounMappingImpl(SortedSets.immutable.with(words.get(1), words.get(2)), MappingKind.NAME, TEST_CLAIMANT, 0.7,
