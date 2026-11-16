@@ -1,21 +1,83 @@
 ---
 type: "Reference"
 title: "Inconsistency Detection"
-description: "TEAM and MEAT inconsistency detection between SAD and SAM, the InconsistencyChecker stage and its three agents, pre-filter configuration, state/candidate model, and the hold-back evaluation harness."
-tags: [inconsistency-detection, team, meat, pipeline, evaluation]
+description: "Inconsistency detection module for ARDoCo: classic TEAM/MEAT detection between SAD and SAM via InconsistencyChecker, Artemis-based per-strategy detection, the LLM-validated programming-language and architectural-style-pattern checkers, their state models, the four pipeline-id runners, and pre-filter configuration."
+tags: [inconsistency-detection, team, meat, llm, pipeline, evaluation]
 openwiki:
   roles: [domain, architecture, workflow, testing]
   change_kinds: [lifecycle]
-  source_paths: [inconsistency-detection/pipeline-id/src/main/java, inconsistency-detection/stages-id/inconsistency-detection/src/main/java]
-  symbols: [InconsistencyChecker, TextEntityAbsentFromModelInconsistencyAgent, ModelEntityAbsentFromTextInconsistencyAgent, InconsistencyStatesImpl, InconsistencyStateImpl]
-  invariants: ["InconsistencyChecker runs after the SWATTR connection pipeline", "TEAM flags text entities with no trace link; MEAT flags model entities with insufficient trace links"]
+  source_paths: [inconsistency-detection/pipeline-id/src/main/java, inconsistency-detection/stages-id/inconsistency-detection/src/main/java, inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java, inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java, inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java]
+  symbols: [InconsistencyChecker, TextEntityAbsentFromModelInconsistencyAgent, ModelEntityAbsentFromTextInconsistencyAgent, InconsistencyStatesImpl, InconsistencyStateImpl, ArtemisInconsistencyChecker, ArtemisInconsistencyAgent, ProgrammingLanguageInconsistencyChecker, ArchitecturalStylePatternInconsistencyChecker]
+  invariants: ["InconsistencyChecker runs after the SWATTR connection pipeline", "TEAM flags text entities with no trace link; MEAT flags model entities with insufficient trace links", "InconsistencyStates is keyed by Metamodel, ArtemisInconsistencyStates by ArtemisTarget, and the LLM-validated stages hold a single state per run", "LLM validation agents run uncached with read-only tools and bounded retries"]
   test_paths: [inconsistency-detection/stages-id/inconsistency-detection/src/test/java, inconsistency-detection/tests-inconsistency/src/test/java]
   validation_commands: ["mvn -pl inconsistency-detection clean verify"]
 sources:
+  - id: openwiki-source-058fa35a53fcea51698d015a
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/stage/connectiongenerator/artemis/ArtemisTarget.java
+  - id: openwiki-source-acf713794fda9144cc3a7948
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/stage/inconsistency/AbstractInconsistencyState.java
+  - id: openwiki-source-a8e9bdea6df0265b48d802e2
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/stage/inconsistency/ArtemisInconsistencyStates.java
+  - id: openwiki-source-e0774eaab1b506ff2becb24c
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/stage/inconsistency/BaseInconsistencyState.java
+  - id: openwiki-source-72aad5dc7092822341541825
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java
+  - id: openwiki-source-5594c4f4a4aa3285141f28cc
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeModelReadOnlyTools.java
+  - id: openwiki-source-47920583ad38b6d3aa8a630c
+    resource: repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/output/ArdocoResult.java
+  - id: openwiki-source-e47e2e073032a4943d447b9a
+    resource: repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/util/FilePrinter.java
+  - id: openwiki-source-8461f9d3c6ce6ece9e1ae7ae
+    resource: repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/Ardoco.java
   - id: openwiki-source-b0f594a7d3e6330bcef64b54
     resource: repo://core/tests-base/pom.xml
+  - id: openwiki-source-2716f8b0e6cb2c55d3124163
+    resource: repo://inconsistency-detection/pipeline-id/pom.xml
+  - id: openwiki-source-175735bbae2438702256767b
+    resource: repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ArchitecturalStylePatternInconsistencyDetection.java
+  - id: openwiki-source-febe4429135101c0f952e2c2
+    resource: repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ArtemisInconsistencyDetection.java
   - id: openwiki-source-032eecef581f79839de83eb9
     resource: repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java
+  - id: openwiki-source-f4cfb62c5a18a88ca09b883c
+    resource: repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ProgrammingLanguageInconsistencyDetection.java
+  - id: openwiki-source-b40e29eb69418d1b82bc9a2b
+    resource: repo://inconsistency-detection/pom.xml
+  - id: openwiki-source-c6a18db4c8399f6baa034a4c
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/pom.xml
+  - id: openwiki-source-0e816b3d7c20b1ab4976bb3f
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArchitecturalStylePatternInconsistencyChecker.java
+  - id: openwiki-source-7000d585453bc20767937df4
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArchitecturalStylePatternNerStrategy.java
+  - id: openwiki-source-2a6c56985f74e984d0bc5434
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/AbstractArchitecturalStylePatternInconsistencyInformant.java
+  - id: openwiki-source-c763af94ec814b59d1d49ac5
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeDirectoryArchitecturalStylePatternInconsistencyInformant.java
+  - id: openwiki-source-ca1a2e7f9bea12767db44edd
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelArchitecturalStylePatternInconsistencyInformant.java
+  - id: openwiki-source-4d2aa02ef37e07a4e825f7ee
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ArchitecturalStylePatternValidationLlmAgent.java
+  - id: openwiki-source-6fbe76fa05aa501e1ca87741
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/validators/ArchitecturalStylePatternStatementValidatorRegistry.java
+  - id: openwiki-source-7fd70ef6e6c389e93e42bc02
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/validators/ArchitecturalStylePatternValidationContext.java
+  - id: openwiki-source-856e9fde49db88fe39c9e2e4
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ArchitecturalStylePatternInconsistencyStateImpl.java
+  - id: openwiki-source-4055eec9684b0ba52c85c7a5
+    resource: repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ArchitecturalStylePatternStatement.java
+  - id: openwiki-source-4120dd77c012bad785ece592
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/pom.xml
+  - id: openwiki-source-95f102bbbec3b57083f1caaf
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/agents/ArtemisInconsistencyAgent.java
+  - id: openwiki-source-b1931eb454663e6ef979f5a5
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArtemisInconsistencyChecker.java
+  - id: openwiki-source-71717fa89f65caa5782aea20
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ArtemisMeatInconsistencyInformant.java
+  - id: openwiki-source-0546793c8db53db262e44388
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ArtemisTeamInconsistencyInformant.java
+  - id: openwiki-source-39fc9dbac53912585f8d5e7a
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ArtemisInconsistencyStatesImpl.java
   - id: openwiki-source-f3058c048dde164d331e0907
     resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/agents/InitialInconsistencyAgent.java
   - id: openwiki-source-6923b72dec5419ea030b5b50
@@ -48,8 +110,34 @@ sources:
     resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/agents/ModelEntityAbsentFromTextInconsistencyTest.java
   - id: openwiki-source-dda6a8955474a7938892d976
     resource: repo://inconsistency-detection/stages-id/inconsistency-detection/src/test/java/edu/kit/kastel/mcse/ardoco/id/types/AbstractInconsistencyTypeTest.java
+  - id: openwiki-source-17e801a0d4e1b83de6d7102e
+    resource: repo://inconsistency-detection/stages-id/pom.xml
+  - id: openwiki-source-8da0a5e2293145624dd67247
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/pom.xml
+  - id: openwiki-source-af23797106a860b4f63601d3
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/AbstractProgrammingLanguageInconsistencyInformant.java
+  - id: openwiki-source-63f4272969e8405bf685d763
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeDirectoryProgrammingLanguageInconsistencyInformant.java
+  - id: openwiki-source-945aa30ab4cfbe289305fd43
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelProgrammingLanguageInconsistencyInformant.java
+  - id: openwiki-source-057086d55b53dfe114866060
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ProgrammingLanguageValidationLlmAgent.java
+  - id: openwiki-source-548e74f249ba7cbde391737c
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ProgrammingLanguageInconsistencyChecker.java
+  - id: openwiki-source-e1153af376afd79d9781ec38
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ProgrammingLanguageNerStrategy.java
+  - id: openwiki-source-39cc2271c9cdbfcb68915d06
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ProgrammingLanguageInconsistencyState.java
+  - id: openwiki-source-5a7abd2ed5f765245be47ab4
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ProgrammingLanguageInconsistencyStateImpl.java
+  - id: openwiki-source-34f0b55d15259152c89b0864
+    resource: repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/states/ProgrammingLanguageStatement.java
   - id: openwiki-source-b1947d838c05c65e6ca3f79d
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/eval/baseline/InconsistencyBaselineInformant.java
+  - id: openwiki-source-c7af0c692f4fed88d777cca5
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/ArchitecturalStylePatternInconsistencyDetectionEvaluationIT.java
+  - id: openwiki-source-90195298ac80c7ce64285239
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationArtemisIT.java
   - id: openwiki-source-edf5c30c4e5b71b28c079cd1
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java
   - id: openwiki-source-9bcce459849159fe4496bbfd
@@ -58,25 +146,93 @@ sources:
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java
   - id: openwiki-source-af363b099a3f39a1a9f8fceb
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java
+  - id: openwiki-source-9c6ae28db6be1ea5b6623315
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/ProgrammingLanguageInconsistencyDetectionEvaluationIT.java
   - id: openwiki-source-c3324edd02fb573e63e5301b
     resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java
+  - id: openwiki-source-3db4b953fa4c9dbe8b88791b
+    resource: repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ArtemisNerStrategy.java
   - id: openwiki-source-02915942e497a9802282dcbf
     resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java
-generated: { by: "openwiki/0.7.2", at: "2026-10-19T11:24:11.899Z" }
+generated: { by: "openwiki/0.9.0", at: "2026-11-16T14:07:46.178Z" }
 verified:
-  - by: openwiki/0.7.2
-    at: 2026-10-19T11:24:11.899Z
+  - by: openwiki/0.9.0
+    at: 2026-11-16T14:07:46.178Z
 ---
 
 # Inconsistency Detection
 
-ARDoCo's Inconsistency Detection (ID) identifies discrepancies between software architecture documentation (SAD) and the software architecture model (SAM). It reuses trace link recovery results as a bridge: once trace links connect documentation sentences to model elements, ID flags the "orphan" elements on both sides of that bridge. The implementation lives in the `inconsistency-detection` module (`io.github.ardoco.id`), whose stage is appended to the SWATTR pipeline.
+ARDoCo's Inconsistency Detection (ID) identifies missing or deviating elements (**inconsistencies**) between artifacts such as software architecture documentation (SAD), the software architecture model (SAM), and code. The classic stage reuses trace link recovery results as a bridge: once trace links connect documentation sentences to model elements, ID flags the "orphan" elements on both sides of that bridge. The implementation lives in the `inconsistency-detection` module tree (`io.github.ardoco.id`); the classic stage is appended to the SWATTR pipeline, and three newer LLM-validated stages build on the ArTEMiS named-entity-recognition pipeline.
 
-> **Terminology note**: In ARDoCo V1 the two inconsistency kinds were called "Missing Model Elements" (MME) and "Unmentioned/Undocumented Model Elements" (UME). V2 renamed them to Text Entity Absent from Model (TEAM) and Model Entity Absent from Text (MEAT). The V1 names survive in file names, e.g., the `*_UME.csv` gold standards used by the evaluation.
+> **Terminology note**: In ARDoCo V1 the two SAD/SAM inconsistency kinds were called "Missing Model Elements" (MME) and "Unmentioned/Undocumented Model Elements" (UME). V2 renamed them to Text Entity Absent from Model (TEAM) and Model Entity Absent from Text (MEAT). The V1 names survive in file names, e.g., the `*_UME.csv` gold standards used by the evaluation.
 
-## Inconsistency Types
+## Module Layout
 
-### TEAM — Text Entity Absent from Model
+The `inconsistency-detection` tree (parent POM `io.github.ardoco.id:parent-id`) contains three Maven aggregators:
+
+| Aggregator | Contents |
+|------------|----------|
+| `pipeline-id` | The four executable runners (`InconsistencyDetection`, `ArtemisInconsistencyDetection`, `ProgrammingLanguageInconsistencyDetection`, `ArchitecturalStylePatternInconsistencyDetection`); depends on all four stage modules plus the TLR `artemis`, `connection-generator`, `model-provider`, `recommendation-generator`, and `text-preprocessing` stages |
+| `stages-id` | The stage modules `artemis-inconsistency-detection`, `inconsistency-detection`, and `programming-language-inconsistency-detection` |
+| `tests-inconsistency` | Evaluation ITs, the hold-back harness, and the baseline stage (only built under the default `complete` profile) |
+
+The fourth stage, `stages-id/architectural-style-pattern-inconsistency-detection`, is mounted **directly** in the parent POM's module list rather than in `stages-id`, so it is built alongside the other three stage modules.
+
+The `artemis-inconsistency-detection` stage depends on the TLR `artemis` stage (NER strategies and connection states) and on the classic `inconsistency-detection` stage, whose inconsistency type records it reuses. The two LLM-validated stages depend on the TLR `artemis` stage and core `common`.
+
+## The Four Pipeline-Id Runners
+
+Each runner extends `ArdocoRunner`, defines its pipeline in `definePipeline`, rejects blank input text with an `IllegalArgumentException`, and puts the raw text into the `DataRepository` itself via `DataRepositoryHelper.putInputText` (no separate preprocessing pipeline step). The runner contract (`isSetUp` flag, `run()` vs. `runWithoutSaving()`) is documented on [Architecture](architecture.md).
+
+| Runner | Composed stages |
+|--------|-----------------|
+| `InconsistencyDetection` | `TextPreprocessingAgent` → `ModelProviderAgent` → `TextExtraction` → `RecommendationGenerator` → `ConnectionGenerator` → `InconsistencyChecker` |
+| `ArtemisInconsistencyDetection` | `ArtemisPreprocessing` → `ArtemisNer` → `ArtemisConnectionGenerator` → `ArtemisInconsistencyChecker` |
+| `ProgrammingLanguageInconsistencyDetection` | `SimpleTextPreprocessingAgent` → `ArtemisNer` (single `ProgrammingLanguageNerStrategy`) → `ModelProviderAgent` + `ProgrammingLanguageInconsistencyChecker.getForCodeModel` (ACM_FILE) or `ProgrammingLanguageInconsistencyChecker.getForCodeDirectory` (DIRECTORY) |
+| `ArchitecturalStylePatternInconsistencyDetection` | `SimpleTextPreprocessingAgent` → `ArtemisNer` (single `ArchitecturalStylePatternNerStrategy`) → `ModelProviderAgent` + `ArchitecturalStylePatternInconsistencyChecker.getForCodeModel` (ACM_FILE) or `ArchitecturalStylePatternInconsistencyChecker.getForCodeDirectory` (DIRECTORY) |
+
+### Runner: InconsistencyDetection (classic SAD/SAM)
+
+The end-to-end runner is `InconsistencyDetection` (`inconsistency-detection/pipeline-id/.../execution/runner/InconsistencyDetection.java`), an `ArdocoRunner` whose `setUp` calls `definePipeline`. This is the SWATTR trace link recovery pipeline (see [TLR Approaches](tlr-approaches.md)) with the `InconsistencyChecker` stage appended. Three details matter:
+
+- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` by constructing the `ArchitectureConfiguration` directly with that metamodel and passing it to `ModelProviderAgent.getModelProviderAgent(...)` (unlike the TLR runners, whose `setUp` forbids a pre-set metamodel with an `IllegalArgumentException` and then calls `withMetamodel(...)` itself; see [TLR Approaches](tlr-approaches.md)). Note the contrast with the SWATTR runner, which pins `ARCHITECTURE_WITH_COMPONENTS`.
+- Blank input text is rejected up front with an `IllegalArgumentException`.
+- `definePipeline` puts the input text into the `DataRepository` itself rather than adding a separate preprocessing pipeline step.
+
+Because the informants read `ConnectionStates`, `ModelStates`, and `InconsistencyStates` from the shared `DataRepository`, the `InconsistencyChecker` only produces results when the upstream stages have already run.
+
+### Runner: ArtemisInconsistencyDetection
+
+`ArtemisInconsistencyDetection.setUp` takes an input text, an optional `ArchitectureConfiguration`, an optional `CodeConfiguration`, additional configs, an output directory, a `LargeLanguageModel` for NER, and a list of `ArtemisNerStrategy` objects. It:
+
+- **rejects pre-set metamodels**: if either configuration already carries a metamodel, `setUp` throws `IllegalArgumentException` — "Metamodel shall not be set in configurations. The runner defines the metamodels." It then pins the architecture configuration to `Metamodel.ARCHITECTURE_WITH_COMPONENTS` and the code configuration to `Metamodel.CODE_WITH_COMPILATION_UNITS` via `withMetamodel(...)`.
+- composes `ArtemisPreprocessing.get(...)` (a `SimpleTextPreprocessingAgent` plus a `ModelProviderAgent` for the optional models), `ArtemisNer.get(...)` (one LLM NER agent per strategy), `ArtemisConnectionGenerator.get(...)`, and `ArtemisInconsistencyChecker.get(...)`.
+
+The NER and connection-generation stages themselves are part of the ArTEMiS approach and are documented on [TLR Approaches](tlr-approaches.md); the model-selection and prompt mechanics they rely on are documented on [LLM Integration](llm-integration.md).
+
+### Runners: ProgrammingLanguageInconsistencyDetection / ArchitecturalStylePatternInconsistencyDetection
+
+Both runners share the same shape: `setUp` takes an input text, a mandatory `CodeConfiguration`, additional configs, an optional output directory, a `LargeLanguageModel` for NER (`llmForNer`), and a second `LargeLanguageModel` used by the validation agent (`validationAgentLlm`). `definePipeline` adds `SimpleTextPreprocessingAgent`, then `ArtemisNer` with exactly one NER strategy (the stage's own), and then dispatches on `CodeConfiguration.type()`:
+
+- `ACM_FILE`: a `ModelProviderAgent` for `Metamodel.CODE_WITH_COMPILATION_UNITS` plus the checker's `getForCodeModel` variant;
+- `DIRECTORY`: the checker's `getForCodeDirectory` variant with the code directory path;
+- anything else: `IllegalArgumentException`.
+
+## Classic TEAM/MEAT: The InconsistencyChecker Stage
+
+**Source**: `inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/InconsistencyChecker.java`
+
+`InconsistencyChecker` extends `AbstractExecutionStage` and constructs exactly three agents in this order:
+
+1. `InitialInconsistencyAgent`
+2. `TextEntityAbsentFromModelInconsistencyAgent` (TEAM)
+3. `ModelEntityAbsentFromTextInconsistencyAgent` (MEAT)
+
+Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in the `DataRepository` under `InconsistencyStates.ID` (`"InconsistencyStates"`); this happens in `preparePipelineSteps` before any agent runs. The static factory `InconsistencyChecker.get(additionalConfigs, dataRepository)` applies configuration before execution. As with every stage, agents can be switched off via the stage's `enabledAgents` configuration (see [Architecture](architecture.md)).
+
+### Inconsistency Types
+
+#### TEAM — Text Entity Absent from Model
 
 Elements described in the documentation that cannot be traced to any model element.
 
@@ -93,7 +249,7 @@ Elements described in the documentation that cannot be traced to any model eleme
 4. Remaining candidates become `MissingElementInconsistencyCandidate`s with `ELEMENT_WITH_NO_TRACE_LINK` support; candidates that overlap each other accumulate `MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES` support.
 5. Candidates whose accumulated support is at least `minSupport` produce one `TextEntityAbsentFromModelInconsistency` **per distinct word** of the recommended instance, recording the word's 1-based sentence number (`getSentenceNumber() + 1`) and the recommended instance's probability as confidence.
 
-### MEAT — Model Entity Absent from Text
+#### MEAT — Model Entity Absent from Text
 
 Model elements that have no (or insufficient) corresponding documentation.
 
@@ -117,7 +273,7 @@ Model elements that have no (or insufficient) corresponding documentation.
 | `whitelist` | `[]` | Regex patterns (full match on name or name parts) for entities to exclude |
 | `types` | `["Component", "BasicComponent", "CompositeComponent"]` | Model entity types (or type parts) to check |
 
-## Detection Flow
+### Detection Flow
 
 ```mermaid
 flowchart TD
@@ -138,33 +294,7 @@ flowchart TD
 
 *Agent order and data flow in the `InconsistencyChecker`: recommended instances are pre-filtered by three informants before the TEAM agent derives text inconsistencies from them; MEAT reads model endpoints and instance links directly. Both agents write into the per-metamodel inconsistency state.*
 
-## Pipeline Entry Point
-
-The end-to-end runner is `InconsistencyDetection` (`inconsistency-detection/pipeline-id/.../execution/runner/InconsistencyDetection.java`), an `ArdocoRunner` whose `setUp` calls `definePipeline`, which:
-
-```
-TextPreprocessingAgent → ModelProviderAgent → TextExtraction → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker
-```
-
-This is the SWATTR trace link recovery pipeline (see [TLR Approaches](tlr-approaches.md)) with the `InconsistencyChecker` stage appended. Three details matter:
-
-- The runner pins the architecture `Metamodel` to `ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES` by constructing the `ArchitectureConfiguration` directly with that metamodel and passing it to `ModelProviderAgent.getModelProviderAgent(...)` (unlike the TLR runners, whose `setUp` forbids a pre-set metamodel with an `IllegalArgumentException` and then calls `withMetamodel(...)` itself; see [TLR Approaches](tlr-approaches.md)). Note the contrast with the SWATTR runner, which pins `ARCHITECTURE_WITH_COMPONENTS`.
-- Blank input text is rejected up front with an `IllegalArgumentException`.
-- `definePipeline` puts the input text into the `DataRepository` itself (`DataRepositoryHelper.putInputText`) rather than adding a separate preprocessing pipeline step.
-
-The runner contract (`isSetUp` flag, `run()` vs. `runWithoutSaving()`) is documented on [Architecture](architecture.md). Because both informants read `ConnectionStates`, `ModelStates`, and `InconsistencyStates` from the shared `DataRepository`, the `InconsistencyChecker` only produces results when the upstream stages have already run.
-
-## InconsistencyChecker Stage
-
-**Source**: `inconsistency-detection/stages-id/inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/InconsistencyChecker.java`
-
-`InconsistencyChecker` extends `AbstractExecutionStage` and constructs exactly three agents in this order:
-
-1. `InitialInconsistencyAgent`
-2. `TextEntityAbsentFromModelInconsistencyAgent` (TEAM)
-3. `ModelEntityAbsentFromTextInconsistencyAgent` (MEAT)
-
-Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in the `DataRepository` under `InconsistencyStates.ID` (`"InconsistencyStates"`); this happens in `preparePipelineSteps` before any agent runs. The static factory `InconsistencyChecker.get(additionalConfigs, dataRepository)` applies configuration before execution. As with every stage, agents can be switched off via the stage's `enabledAgents` configuration (see [Architecture](architecture.md)).
+Within the stage, the TEAM and MEAT informants each iterate the metamodels of `ModelStates` and write into the per-metamodel `InconsistencyState`; MEAT works directly from `Model.getEndpoints()` and `ConnectionState` instance links and consumes no output of `InitialInconsistencyAgent`, whereas TEAM consumes the recommended instances that `InitialInconsistencyAgent` copied and pre-filtered.
 
 ### Agent 1: InitialInconsistencyAgent (Pre-filtering)
 
@@ -180,15 +310,19 @@ Its `initializeState()` builds an `InconsistencyStatesImpl` and registers it in 
 
 **OccasionFilter**: counts how many *distinct text positions* the RI's name-mapping words occupy (consecutive word positions count as one position); the RI survives only if the count is at least `expectedAppearances`.
 
-**UnwantedWordsFilter**: removes an RI when any name mapping's reference contains a blacklisted lemma, contains a plural-tagged word, consists only of numbers, or ends with a common file ending. It combines a configurable `customBlacklist` (default `meta`, `log`, `browser`, `task`, `operation`, `case`, `instance`, `script`) with a common blacklist loaded from the classpath resource `unwanted_words_filter_common.json` (e.g., `cpu`, `file`, `event`, `browser`, `instance`, `code`, `java`, `request`, `test`), plus a configurable list of `commonFileEndings` (e.g., `pdf`, `png`, `md`, `xml`, `java`, `gradle`). The source notes this filter is a prototype with documented improvement ideas.
+**UnwantedWordsFilter**: removes an RI when any name mapping's reference trips one of four heuristics:
 
-### Agent 2: TextEntityAbsentFromModelInconsistencyAgent (TEAM)
+- the **lemma** of any reference word is on the blacklist — the configurable `customBlacklist` (default `meta`, `log`, `browser`, `task`, `operation`, `case`, `instance`, `script`) or, when `enableCommonBlacklist=true`, the common blacklist loaded once from the classpath resource `unwanted_words_filter_common.json` (`cpu`, `gpu`, `file`, `directory`, `event`, `bus`, `browser`, `chrome`, `firefox`, `safari`, `edge`, `instance`, `object`, `module`, `code`, `java`, `javascript`, `nodejs`, `npm`, `kotlin`, `request`, `response`, `servlet`, `unit`, `test`);
+- any reference word's POS tag name contains `plural`;
+- the lowercased reference **consists only of numbers** (full match of the pattern `-?\d+(\.\d+)?`);
+- any reference word's text **ends with a common file ending** — a word like `model.pdf` matches the configurable `commonFileEndings` list (default `pdf`, `png`, `md`, `xml`, `yml`, `json`, `html`, `sh`, `bat`, `java`, `gradle`, `cpp`, `c`, `h`, `groovy`, `js`, `ts`, `css`, `sc`, `scala`).
 
-A thin `PipelineAgent` wrapper around `TextEntityAbsentFromModelInconsistencyInformant`, which implements the five-step TEAM logic described above. Its only `@Configurable` is `minSupport` (default `1`).
+Surviving RIs are written back with `setRecommendedInstances`. The source notes this filter is a prototype; the comment lists improvement ideas such as using computer-science words, lowering probabilities instead of removing high-probability RIs, considering phrases, and checking whether the word looks like a named entity.
 
-### Agent 3: ModelEntityAbsentFromTextInconsistencyAgent (MEAT)
+### Agents 2 and 3
 
-A thin `PipelineAgent` wrapper around `ModelEntityAbsentFromTextInconsistencyInformant`, which implements the MEAT logic and owns the three `@Configurable` options listed in the table above. Type targeting checks the entity's `type` and `typeParts` against the configured `types` list, so `"Component"` also matches a `BasicComponent`.
+- `TextEntityAbsentFromModelInconsistencyAgent` is a thin `PipelineAgent` wrapper around `TextEntityAbsentFromModelInconsistencyInformant`, which implements the five-step TEAM logic described above. Its only `@Configurable` is `minSupport` (default `1`).
+- `ModelEntityAbsentFromTextInconsistencyAgent` is a thin `PipelineAgent` wrapper around `ModelEntityAbsentFromTextInconsistencyInformant`, which implements the MEAT logic and owns the three `@Configurable` options listed in the table above. Type targeting checks the entity's `type` and `typeParts` against the configured `types` list, so `"Component"` also matches a `BasicComponent`.
 
 ## State and Candidate Model
 
@@ -201,56 +335,143 @@ A thin `PipelineAgent` wrapper around `ModelEntityAbsentFromTextInconsistencyInf
 
 Behavioral notes:
 
-- `InconsistencyStateImpl.addInconsistency` skips duplicates (equality per inconsistency type), so repeated word-level TEAM records with identical name/sentence/confidence collapse; `setRecommendedInstances` replaces the stored list in place.
+- `InconsistencyStateImpl.addInconsistency` (inherited from `AbstractInconsistencyState`) skips duplicates (equality per inconsistency type), so repeated word-level TEAM records with identical name/sentence/confidence collapse; `setRecommendedInstances` replaces the stored list in place.
 - The pre-filters do not just remove entries; they **replace** the state's recommended instances via `setRecommendedInstances`, which is why filter order (probability → occasion → unwanted words) defines a narrowing funnel.
 - `MissingElementInconsistencyCandidate.getAmountOfSupport()` is the number of *distinct* support kinds; `equals`/`hashCode` are keyed only by the wrapped `RecommendedInstance`.
 - Of the four support kinds, only `ELEMENT_WITH_NO_TRACE_LINK` and `MULTIPLE_OVERLAPPING_RECOMMENDED_INSTANCES` are currently produced; `TRACED_ELEMENT_IN_SAME_SENTENCE` and `DEPENDENCY_TO_TRACED_ELEMENT` are declared for future heuristics.
+
+### Shared State API vs. Per-Stage States
+
+The shared interfaces and the common base implementation live in `core/framework/common` under `edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency`:
+
+- `BaseInconsistencyState` — `addInconsistency(Inconsistency)`, `getInconsistencies()`, and a default `getInconsistenciesOfType(Class<T>)`; extends `IConfigurable`.
+- `AbstractInconsistencyState` — adds the duplicate-skipping `addInconsistency` and the backing inconsistency list.
+- `InconsistencyState` / `InconsistencyStates` — add the recommended-instance API and the per-`Metamodel` keying.
+- `ArtemisInconsistencyState` (marker extension of `BaseInconsistencyState`) and `ArtemisInconsistencyStates` — per-`ArtemisTarget` keying, where `ArtemisTarget` is the record `(Metamodel, NamedEntityType)`.
+
+The state accessors `getInconsistencyState(Metamodel)` and `getArtemisInconsistencyState(ArtemisTarget)` return `null` (with a warning) when the corresponding state is absent, while the collection accessors built on them (`getAllInconsistenciesForModel`, `getInconsistenciesOfTypeForModel`, `getAllInconsistencies`, `getAllTextInconsistencies`, `getAllModelInconsistencies`) return an empty list in that case; `getInconsistentSentences()` groups text inconsistencies by sentence number.
+
+The two LLM-validated stages deliberately do **not** use this API: `ProgrammingLanguageInconsistencyState` and `ArchitecturalStylePatternInconsistencyState` are plain `PipelineStepData` interfaces registered under their own IDs, with exactly one state instance per run (no metamodel or target keying).
+
+## Artemis-Based Inconsistency Detection
+
+**Source**: `inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArtemisInconsistencyChecker.java`
+
+`ArtemisInconsistencyChecker` detects TEAM/MEAT inconsistencies between the SAD and a **code or architecture model produced by the ArTEMiS NER pipeline** rather than between SAD and SAM. Its constructor receives the `DataRepository` and the strategy list, builds the agents up front via the `ArtemisInconsistencyAgent` factory, and applies configuration through the static `get(additionalConfigs, dataRepository, strategies)` factory.
+
+- `ArtemisInconsistencyAgent.createAgents` creates one `ArtemisTeamInconsistencyAgent` per strategy, plus an `ArtemisMeatInconsistencyAgent` **only** when the strategy's `NamedEntityType` is `COMPONENT` — `CLASS` and `DATAFILE` strategies are TEAM-only. Agent ids are derived from the strategy id (`<ENTITY_TYPE>Artemis`), e.g., `COMPONENTArtemisTeamInconsistencyAgent`.
+- `initializeState()` builds an `ArtemisInconsistencyStatesImpl` over the strategies' `ArtemisTarget`s (a `LinkedHashMap` keyed by target) and registers it under `ArtemisInconsistencyStates.ID`. `getState(target)` lazily creates a state for unknown targets via `computeIfAbsent`, so states are keyed per `(Metamodel, NamedEntityType)` pair rather than by metamodel alone.
+- `ArtemisTeamInconsistencyInformant` reads the per-target `ArtemisConnectionState` and reports **every occurrence of every unlinked named entity** as a `TextEntityAbsentFromModelInconsistency` with a fixed confidence of `DEFAULT_PROBABILITY = 0.92` and no origin candidate.
+- `ArtemisMeatInconsistencyInformant` (only for `COMPONENT`) collects the model-entity ids referenced by the target's trace links and flags every endpoint of the strategy's model (`modelStates.getModel(strategy.getMetamodel()).getEndpoints()`) that is not referenced, as a `ModelEntityAbsentFromTextInconsistency`. The informant is `@Deterministic`.
+
+Both informants reuse the type records of the classic `inconsistency-detection` stage and write into the per-target `ArtemisInconsistencyState`, which extends the core `AbstractInconsistencyState` (duplicate-skipping adds).
+
+## LLM-Validated Checkers
+
+Two newer stages validate documentation claims against code instead of trace links: `ProgrammingLanguageInconsistencyChecker` (are the documented programming-language statements true of the code?) and `ArchitecturalStylePatternInconsistencyChecker` (are the documented architectural styles/patterns implemented?). Both share the same skeleton:
+
+### Stage Shape and Factories
+
+Each checker is an `AbstractExecutionStage` that wraps **exactly one agent**, created by one of two static factories:
+
+- `getForCodeModel(additionalConfigs, dataRepository, nerStrategy, validationAgentLlm)` → `CodeModel…InconsistencyAgent` (validates against the code model in the `DataRepository`);
+- `getForCodeDirectory(additionalConfigs, dataRepository, nerStrategy, codeProjectPath, validationAgentLlm)` → `CodeDirectory…InconsistencyAgent` (validates against the source-code directory on disk).
+
+Both factories call `applyConfiguration(additionalConfigs)`. `initializeState()` registers a **single** state instance under the stage's own ID — `ProgrammingLanguageInconsistencyState.ID` / `ArchitecturalStylePatternInconsistencyState.ID` — with no metamodel or target keying.
+
+### NER Strategies and Prompts
+
+Each stage ships an `ArtemisNerStrategy` implementation that tells the shared `ArtemisNer` stage what to recognize:
+
+- `ProgrammingLanguageNerStrategy`: `NamedEntityType.PROGRAMMING_LANGUAGE`, metamodel `CODE_WITH_COMPILATION_UNITS`, prompt assembled from `programming-language-task-prompt.txt` + `programming-language-formatting-prompt.txt`.
+- `ArchitecturalStylePatternNerStrategy`: `NamedEntityType.ARCHITECTURAL_PATTERN`, metamodel `CODE_WITH_COMPILATION_UNITS`, prompt assembled from `architectural-style-pattern-task-prompt.txt` + `architectural-style-pattern-formatting-prompt.txt`.
+
+The strategy interface derives `ArtemisTarget(metamodel, entityType)` and the id `<ENTITY_TYPE>Artemis`; prompts are read from `/artemis/prompts/` below the stage's resources via `readPromptResource`. The task prompts define what counts as an occurrence (full documentation lines; explicit mentions only; specific rules for file extensions, web/query languages, or recognized patterns), and the formatting prompts fix the JSON shape (`name`, `type`, `alternativeNames`, `occurrences`). Prompt conventions and LLM selection are covered on [LLM Integration](llm-integration.md).
+
+### Informant Loop and Statement/State Records
+
+Both abstract informants (`AbstractProgrammingLanguageInconsistencyInformant`, `AbstractArchitecturalStylePatternInconsistencyInformant`) implement the same `process()`:
+
+1. Resolve the per-target `ArtemisConnectionState` via `DataRepositoryHelper.getArtemisConnectionStates(dataRepository).getState(nerStrategy.getTarget())` and the stage's own inconsistency state.
+2. Read the `SimpleText` produced by `SimpleTextPreprocessingAgent` and join its lines into the full documentation text. Occurrence sentence numbers are 1-based documentation line numbers, mapped to line index `sentenceNumber - 1`; out-of-bounds occurrences are skipped with a warning.
+3. For each named entity and each occurrence, build a statement record and validate it (via the abstract hook, or — for the architectural-style stage — via the specialized-validator registry first).
+4. Valid results are collected into `validatedStatements`; invalid results into `inconsistencies` together with the validator's `explanation`; both lists are added to the state in bulk.
+
+The state records are deterministic and `TreeSet`-backed, so duplicates collapse by `compareTo`:
+
+- `ProgrammingLanguageStatement(sentenceNumber, programmingLanguage, originalProgrammingLanguageName, sentenceText)` — `sentenceNumber` must be `>= 1`; the constructor resolves the `ProgrammingLanguage` enum by normalized name or file extension (fallback `OTHER`) and `getProgrammingLanguageDisplayName()` lowercases the resolved name. Ordering: sentence number, language, original name.
+- `ProgrammingLanguageInconsistency(statement, explanation)` — comparable by statement then explanation; the state keeps `SortedSet`s of both statements and inconsistencies.
+- `ArchitecturalStylePatternStatement(sentenceNumber, architecturalStylePatternName, normalizedArchitecturalStylePatternName, sentenceText)` — `normalize` lowercases, replaces underscores with dashes, collapses whitespace, and canonicalizes common aliases (e.g., MVC variants → `mvc`; layered/n-tier variants → `layered architecture`; microservice variants → `microservices`; client-server variants → `client-server`; pipes-and-filters → `pipe-and-filter`; event-driven variants → `event-driven architecture`; ports-and-adapters/hexagonal → `hexagonal architecture`).
+- `ArchitecturalStylePatternInconsistencyStateImpl` mirrors the programming-language state with `TreeSet`s.
+
+### Validation Agents, Tools, and Retries
+
+Validation is delegated to a langchain4j **AiServices** agent interface per stage — `ProgrammingLanguageValidationLlmAgent` and `ArchitecturalStylePatternValidationLlmAgent` — each with two `@SystemMessage`/`@UserMessage`-annotated methods, one per evidence source (code directory vs. code model). Both return a `(valid, explanation)` record (`ProgrammingLanguageValidationResult` / `ArchitecturalStylePatternValidationResult`). The system messages impose the same core contract: use only the provided read-only tools, never guess, treat only *repository-specific* claims as falsifiable (non-specific statements return `true`), base the final determination on source-code evidence, and do not use repository documentation as final evidence. The programming-language agent must explicitly verify "strictly/only/purely/exclusively/entirely in language X" claims; the architectural-style agent must not accept a mere naming coincidence (a `controller` package alone does not prove MVC).
+
+The agents are built with:
+
+- `validationAgentLlm.createUncached()` as the chat model — deliberately uncached because the ARDoCo `CachedChatLanguageModel` does not support tool calling;
+- `CodeDirectoryReadOnlyTools(codeProjectPath)` for the directory variant, or `CodeModelReadOnlyTools(dataRepository)` for the code-model variant, plus a `.beforeToolExecution(...)` hook that lazily initializes the code model from `ModelStates` (`CODE_WITH_COMPILATION_UNITS`) on first tool use.
+
+`CodeDirectoryReadOnlyTools` exposes `listDirectory`, `tree`, `readFile`, `readFileLines`, `findFiles`, `search`, and `getFileInfo` over a project root it resolves to a real path for symlink-aware containment; outputs are bounded (max 50 search results, 20 000 chars per file, 200 directory entries, 500 tree entries, depth 8) and generated/IDE directories (`.git`, `.idea`, `.gradle`, `.mvn`, `target`, `build`, `node_modules`, `out`, `bin`) are skipped. `CodeModelReadOnlyTools` provides the navigation/metadata surface (`listDirectory`, `tree`, `findFiles`, `getFileInfo`) over the `CodeModelWithCompilationUnits`.
+
+Every validation call is retried up to `MAX_VALIDATION_RETRIES` with a warning per attempt; the retry limits and failure semantics differ per informant:
+
+| Informant | `MAX_VALIDATION_RETRIES` | Catch / rethrow |
+|-----------|--------------------------|-----------------|
+| `CodeDirectoryProgrammingLanguageInconsistencyInformant` | `3` | `IllegalArgumentException` → rethrow last |
+| `CodeModelProgrammingLanguageInconsistencyInformant` | `3` | `IllegalArgumentException` → rethrow last |
+| `CodeModelArchitecturalStylePatternInconsistencyInformant` | `3` | `Exception` → rethrow wrapped in `RuntimeException` |
+| `CodeDirectoryArchitecturalStylePatternInconsistencyInformant` | `5` | `Exception` → rethrow wrapped in `RuntimeException` |
+
+So a persistently failing validation aborts the informant (and thus the agent/stage) rather than being silently swallowed.
+
+### Specialized Validator Registry (Architectural Style/Pattern Only)
+
+The architectural-style-pattern stage adds a pluggable pre-LLM validation layer:
+
+- `ArchitecturalStylePatternStatementValidator` — interface with `supports(name)` and `validate(context)`.
+- `ArchitecturalStylePatternStatementValidatorRegistry` — holds an immutable validator list; `withDefaultValidators()` currently returns an **empty** list with a hook comment where concrete validators can be added. `normalize` mirrors the statement record's normalization, and `findValidator` returns the **first** validator whose `supports(normalizedName)` matches.
+- `ArchitecturalStylePatternValidationContext` — record `(dataRepository, namedEntityOccurrence, architecturalStylePatternName, fullDocumentationText, sentenceText, codeProjectPath)` with non-null checks on all but the path and a `hasCodeProjectPath()` helper.
+
+The abstract informant's `validateWithSpecializedValidatorIfAvailable` builds the context (with `codeProjectPath` supplied by `getCodeProjectPathOrNull()`, which only the `CodeDirectory` informant overrides) and dispatches to the registry validator when one matches; only if none matches does it fall back to the generic LLM validation hook `validateArchitecturalStylePatternStatement(...)`. A registered validator therefore takes precedence over the LLM for the pattern names it supports.
+
+### LLM-Validated Checker Flow
+
+```mermaid
+flowchart TD
+    DOC["Documentation text"] --> STP["SimpleTextPreprocessingAgent"]
+    STP --> TXT[("SimpleText in DataRepository")]
+    TXT --> NER["ArtemisNer agent for the stage strategy"]
+    NER --> CONN[("ArtemisConnectionState per ArtemisTarget")]
+    CONN --> LOOP["Abstract informant iterates named entities and occurrences"]
+    LOOP --> REC["Build statement record for the line"]
+    REC --> REG{"Specialized validator registered for this name?"}
+    REG -->|"yes"| SPEC["Validator validate context"]
+    REG -->|"no"| LLM["LLM validation agent AiServices call"]
+    LLM --> TOOLS["Read-only tools CodeModel or CodeDirectory"]
+    TOOLS --> LLM
+    SPEC --> RES{"Result"}
+    LLM --> RES
+    RES -->|"valid"| OK["state.addValidatedStatements"]
+    RES -->|"invalid"| BAD["state.addInconsistencies with explanation"]
+```
+
+*Shared flow of the programming-language and architectural-style/pattern checkers: NER produces the named entities and occurrences; each occurrence line becomes a statement; a specialized validator (if registered) or the LLM validation agent with read-only tools decides validity, and the per-stage state collects both validated statements and explained inconsistencies.*
 
 ## Inconsistency Types and Output
 
 `TextEntityAbsentFromModelInconsistency` is a record with `name`, `sentence` (1-based), `confidence`, and the originating `MissingElementInconsistencyCandidate`; equality compares name, sentence, and confidence. `ModelEntityAbsentFromTextInconsistency` wraps the `ModelEntity` and exposes its id via `getModelInstanceUid()`, which is what `ArdocoResult.getAllModelInconsistencies()` consumers (and the MEAT evaluation) compare against. Both provide `getType()`, a human-readable `getReason()`, and `toFileOutput()` entries; `FilePrinter.writeInconsistencyOutput` renders inconsistent sentences plus model inconsistency reasons into `inconsistencyDetection_<project>.txt` when the pipeline is run with output saving.
 
-## Evaluation Harness
+Note that the Artemis TEAM informant and the classic baseline reuse `TextEntityAbsentFromModelInconsistency` with `null` origin, so only the classic TEAM path populates the origin candidate.
 
-`InconsistencyDetectionEvaluationIT` (module `tests-inconsistency`) evaluates TEAM and MEAT on the benchmark projects of the `InconsistencyDetectionTask` enum: `MEDIASTORE`, `TEASTORE`, `TEAMMATES`, `BIGBLUEBUTTON`, and `JABREF` (see [Testing & Evaluation](testing.md) for run recipes and the EnumSource trick to run a single project).
-
-### Hold-Back Runs
-
-`HoldBackRunResultsProducer.produceHoldBackRunResults` simulates TEAM inconsistencies:
-
-1. It extracts the PCM architecture once and creates a `HoldBackArCoTLModelProvider`.
-2. The **base run** executes the full model and is stored in the result map under the `null` key.
-3. For each architecture component (one per index), a further run removes exactly that component from the model, so every element is held back once; the gold-standard trace links to the held-back element mark the spots where a TEAM inconsistency *should* be found.
-
-Each run is an `AnonymousRunner` with the pipeline `TextPreprocessingAgent → TextExtraction → hold-back model provider → RecommendationGenerator → ConnectionGenerator → InconsistencyChecker` (or `InconsistencyBaseline` for the baseline variant). `HoldBackArCoTLModelProvider.get()` supplies a `PipelineAgent` whose extractor returns the initial model minus the currently held-back component; a negative hold-back index means nothing is removed. Additional configs come from the project's filter list file (e.g., `/configurations/ms/filterlists_all.txt`).
-
-### TEAM Evaluation (Order 1)
-
-For every hold-back run, the test collects the TEAM inconsistency sentence numbers and compares them with the gold-standard sentences that mention the removed element (`getGoldstandardForArchitectureModel` reads the sentence-to-architecture CSV). `compareInconsistencies` computes a `SingleClassificationResult` via `ClassificationMetricsCalculator` (from the `io.github.ardoco:metrics` dependency pulled in by `core/tests-base`), using the number of sentences as the confusion matrix sum. Per-run results are aggregated with the **micro-average** and asserted against the project's `ExpectedResults` minimums (precision, recall, F1, accuracy, phi coefficient) — dropping below a minimum fails the build.
-
-### Baseline (Order 5, environment-gated)
-
-The baseline variant is only executed when the environment variable `testBaseline` is set to any value (`@EnabledIfEnvironmentVariable(named = "testBaseline", matches = ".*")`). It swaps `InconsistencyChecker` for the `InconsistencyBaseline` stage/agent/informant, which reports a TEAM inconsistency (empty name, fixed confidence `0.69`) for *every sentence that has no trace link* — a trivial upper-bound comparison point. Its weighted-average metrics are logged, not asserted.
-
-### MEAT Evaluation (Order 10)
-
-The MEAT test reuses the base run's `ArdocoResult` (cached from the TEAM run) and compares the UIDs of all reported `ModelInconsistency` instances against the project's unmentioned-model-element gold standard (`*_UME.csv`); explicit TP/FP/FN counts are logged.
-
-### Output
-
-All evaluation artifacts are written under `target/testout`:
-
-- `ardoco_eval_id/inconsistencies_<PROJECT>.txt` and `detailed_inconsistencies_<PROJECT>.txt` (TEAM, per hold-back run with removed instance, metrics, and TP/FP/FN lists)
-- `ardoco_eval_id/inconsistentModelElements_<PROJECT>.txt` (MEAT)
-- `traceLinks_<PROJECT>.txt` and `inconsistencyDetection_<PROJECT>.txt` for the base run
-
-## Testing Infrastructure
+## Testing and Evaluation
 
 - **Unit tests** (`stages-id/inconsistency-detection/src/test/java/.../id/`): `types/AbstractInconsistencyTypeTest.java` plus `types/TextEntityAbsentFromModelInconsistencyTest.java` and `types/ModelEntityAbsentFromTextInconsistencyTest.java` verify type strings, equality, and (currently `@Disabled` because expected values change regularly) reason and file output; `agents/ModelEntityAbsentFromTextInconsistencyTest.java` covers the MEAT whitelist regex and type-targeting helpers.
 - **Shared ArchUnit tests** (`tests-inconsistency`): `ArchitectureTest`, `ConfigurationTest`, and `DeterministicArdocoTest` extend the rule base classes from `core/tests-base`, enforcing the architecture rules, `@Configurable` validity, and determinism over `core`, `tlr`, and `id` packages.
-- **Integration/evaluation**: `InconsistencyDetectionEvaluationIT` with the `integration/inconsistencyhelper/` support classes (`HoldBackArCoTLModelProvider`, `HoldBackRunResultsProducer`, `InconsistencyDetectionEvaluationUtil`) and the `eval/baseline/InconsistencyBaseline*` classes.
+- **Evaluation ITs**: `InconsistencyDetectionEvaluationIT` evaluates TEAM (micro-averaged metrics asserted against the project's `ExpectedResults` minimums), MEAT (UID comparison against the `*_UME.csv` unmentioned-elements gold standard on the cached base run), and a baseline variant gated by the `testBaseline` environment variable that swaps `InconsistencyChecker` for `InconsistencyBaseline` (a TEAM record with empty name and fixed confidence `0.69` for every sentence lacking a trace link) and logs weighted-average metrics without asserting them. The newer LLM-based ITs (`InconsistencyDetectionEvaluationArtemisIT`, `ProgrammingLanguageInconsistencyDetectionEvaluationIT`, `ArchitecturalStylePatternInconsistencyDetectionEvaluationIT`) are disabled for CI runs and are meant for manual execution with an LLM-backed configuration.
 
-Run commands, environment variables, and the invariant that metric-affecting heuristic changes require deliberate expectation updates are covered on [Testing & Evaluation](testing.md); module build commands live on [Quickstart](quickstart.md) and [Operations](operations.md).
+The hold-back run producers/evaluators, gold standards, metric gating, and run recipes for all of these are documented on [Testing & Evaluation](testing.md); run commands live on [Quickstart](quickstart.md) and [Operations](operations.md).
 
 ## Use Cases
 
@@ -259,3 +480,4 @@ Run commands, environment variables, and the invariant that metric-affecting heu
 - **Onboarding**: helping new team members understand documentation gaps
 - **Consistency Checking**: verifying alignment between informal documents and formal models
 - **Reverse Engineering**: finding unmentioned components when analyzing existing systems
+- **Documentation Validation**: checking that documented technologies and architectural patterns match the actual code (LLM-validated checkers)
