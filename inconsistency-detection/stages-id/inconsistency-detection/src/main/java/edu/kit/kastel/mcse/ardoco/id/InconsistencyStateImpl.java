@@ -8,23 +8,22 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.AbstractInconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
-import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
-public class InconsistencyStateImpl extends AbstractState implements InconsistencyState {
+public class InconsistencyStateImpl extends AbstractInconsistencyState implements InconsistencyState {
 
     @Serial
     private static final long serialVersionUID = 4970092712795607439L;
+
     private MutableList<RecommendedInstance> recommendedInstances;
-    private final MutableList<Inconsistency> inconsistencies;
 
     public InconsistencyStateImpl() {
         super();
-        inconsistencies = Lists.mutable.empty();
-        recommendedInstances = Lists.mutable.empty();
+        this.recommendedInstances = Lists.mutable.empty();
     }
 
     /**
@@ -35,22 +34,11 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public boolean addInconsistency(Inconsistency inconsistency) {
-        if (inconsistencies.contains(inconsistency)) {
+        if (!super.addInconsistency(inconsistency)) {
             return false;
         }
-        inconsistencies.add(inconsistency);
         PersistenceBridge.addInconsistencies(List.of(inconsistency));
         return true;
-    }
-
-    /**
-     * Returns a list of inconsistencies held by this state.
-     *
-     * @return list of inconsistencies
-     */
-    @Override
-    public ImmutableList<Inconsistency> getInconsistencies() {
-        return inconsistencies.toImmutable();
     }
 
     @Override
@@ -63,7 +51,7 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
      */
     @Override
     public MutableList<RecommendedInstance> getRecommendedInstances() {
-        return recommendedInstances;
+        return this.recommendedInstances;
     }
 
     /**
@@ -74,5 +62,4 @@ public class InconsistencyStateImpl extends AbstractState implements Inconsisten
         this.recommendedInstances = Lists.mutable.empty();
         this.recommendedInstances.addAll(recommendedInstances.castToList());
     }
-
 }

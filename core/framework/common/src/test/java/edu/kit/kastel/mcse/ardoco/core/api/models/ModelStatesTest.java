@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -204,12 +205,12 @@ class ModelStatesTest {
         }
 
         @Override
-        public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+        public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
             // no-op
         }
 
         @Override
-        public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked) {
+        public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, ArtemisTarget target, boolean unlinked) {
             // no-op
         }
 

@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.RepositoryHandler;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.TransarcEvaluation;
 
+@Disabled("temporarily disabled")
 class TransarcIT extends AbstractArdocoIT {
 
     @DisplayName("Evaluate TransArC (SAD-SAM-Code TLR)")

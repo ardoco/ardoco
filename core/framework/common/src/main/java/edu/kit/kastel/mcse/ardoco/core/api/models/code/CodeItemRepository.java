@@ -49,6 +49,15 @@ public class CodeItemRepository implements Serializable {
     }
 
     /**
+     * Returns a list of all {@link ClassUnit} instances contained within the repository.
+     *
+     * @return list of all class units present in the repository
+     */
+    public List<ClassUnit> getAllClassUnits() {
+        return this.repository.values().stream().filter(ClassUnit.class::isInstance).map(ClassUnit.class::cast).toList();
+    }
+
+    /**
      * Returns a list of {@link CodeItem} instances for the given list of IDs.
      *
      * @param codeItemIds list of code item IDs

@@ -1,0 +1,3 @@
+sentenceID,file
+254,services/distribution/src/main/resources/main-config/exposure-config.yaml,
+267,services/distribution/src/main/resources/main-config/risk-score-classification.yaml

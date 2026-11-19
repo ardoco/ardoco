@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -24,18 +26,21 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NerConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.states.ArtemisConnectionStatesImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.CodeTraceabilityStateImpl;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.TraceLinkCombiner;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionStatesImpl;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 
 class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest implements Claimant {
@@ -76,15 +81,17 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
             codeTraceabilityState.addSamCodeTraceLinks(List.of(new ArchitectureCodeTraceLink(archComponent, codeUnit)));
             dataRepository.addData(CodeTraceabilityState.ID, codeTraceabilityState);
 
-            NerConnectionStatesImpl nerConnectionStates = NerConnectionStatesImpl.build(new Metamodel[] { Metamodel.ARCHITECTURE_WITH_COMPONENTS });
-            var nerConnectionState = nerConnectionStates.getNerConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            ArtemisTarget target = new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT);
+            ArtemisConnectionStatesImpl artemisConnectionStates = ArtemisConnectionStatesImpl.build(List.of(target));
+            var artemisConnectionState = artemisConnectionStates.getState(target);
             var firstOccurrence = new NamedArchitectureEntityOccurrence("AuthService", 1);
             var secondOccurrence = new NamedArchitectureEntityOccurrence("AuthService", 2);
-            nerConnectionState.addNamedEntities(List.of(new NamedArchitectureEntity("AuthService", new TreeSet<>(), List.of(firstOccurrence,
+            artemisConnectionState.addNamedEntities(Lists.mutable.with(new NamedArchitectureEntity("AuthService", new TreeSet<>(), List.of(firstOccurrence,
                     secondOccurrence))));
-            nerConnectionState.addToLinks(firstOccurrence, archComponent, this, 0.9);
-            nerConnectionState.addToLinks(secondOccurrence, archComponent, this, 0.8);
-            dataRepository.addData(NerConnectionStates.ID, nerConnectionStates);
+            artemisConnectionState.addTraceLinks(Lists.mutable.<TraceLink<NamedArchitectureEntityOccurrence, ModelEntity>>with(
+                    new NamedArchitectureEntityToModelTraceLink(firstOccurrence, archComponent, this, 0.9), new NamedArchitectureEntityToModelTraceLink(
+                            secondOccurrence, archComponent, this, 0.8)));
+            dataRepository.addData(ArtemisConnectionStates.ID, artemisConnectionStates);
 
             new TraceLinkCombiner(dataRepository).process();
 
@@ -102,7 +109,6 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
 
         long sentenceArchitectureEdges = countTraceLinksOfType("SENTENCE_ARCHITECTURE");
         long architectureCodeEdges = countTraceLinksOfType("ARCHITECTURE_CODE");
-        Assertions.assertEquals(2L, countTraceLinksOfType("NER_ARCHITECTURE"), "Both saved NER occurrences get their NER_ARCHITECTURE edge");
 
         Assertions.assertEquals(2L, sentenceArchitectureEdges, "Two distinct sentences each get their own SENTENCE_ARCHITECTURE edge");
         Assertions.assertEquals(1L, architectureCodeEdges,

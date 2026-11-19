@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.integration;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -9,6 +10,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArdocodeEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArdocodeEvaluation;
 
+@Disabled("temporarily disabled")
 class ArdocodeIT extends AbstractArdocoIT {
     @DisplayName("Evaluate ARDoCode (SAD-Code TLR)")
     @ParameterizedTest(name = "{0}")

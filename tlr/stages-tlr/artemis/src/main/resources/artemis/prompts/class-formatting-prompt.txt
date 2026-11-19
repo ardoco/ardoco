@@ -1,0 +1,32 @@
+Given the last answer (see below), for each class, return a JSON object containing:
+- "name": the primary name of the class.
+- "type": "CLASS"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the class appears or is referenced.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "CLASS",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+[
+    {
+        "name": "Recognizer",
+        "type": "CLASS",
+        "alternativeNames": [],
+        "occurrences": ["The Recognizer class contains the recognition logic."]
+    },
+    {
+        "name": "PropertyExtractor",
+        "type": "CLASS",
+        "alternativeNames": ["PE"],
+        "occurrences": ["The PropertyExtractor extracts important properties and returns them.", "This data is then passed on to the PE."]
+    }
+]

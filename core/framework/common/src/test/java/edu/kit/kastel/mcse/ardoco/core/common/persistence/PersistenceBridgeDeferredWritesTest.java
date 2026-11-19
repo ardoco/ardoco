@@ -20,12 +20,14 @@ import org.junit.jupiter.api.Test;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
 /**
  * Unit tests for the write-behind scope of {@link PersistenceBridge#withDeferredWrites}: originally noun-mapping merges (Fix 2a), now the
@@ -171,7 +173,7 @@ class PersistenceBridgeDeferredWritesTest {
             PersistenceBridge.deleteNounMapping("obsolete");
             PersistenceBridge.saveNounMapping(nounMapping("order"));
             PersistenceBridge.saveRecommendedInstance(ri, Metamodel.ARCHITECTURE_WITH_COMPONENTS);
-            PersistenceBridge.saveNamedArchitectureEntity(entity, Metamodel.ARCHITECTURE_WITH_COMPONENTS, false);
+            PersistenceBridge.saveNamedArchitectureEntity(entity, new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT), false);
             PersistenceBridge.saveTraceLinks(List.of(traceLink));
             PersistenceBridge.addInconsistencies(List.of(inconsistency));
             Assertions.assertTrue(this.calls.isEmpty(), "Every kind must be deferred inside the scope");

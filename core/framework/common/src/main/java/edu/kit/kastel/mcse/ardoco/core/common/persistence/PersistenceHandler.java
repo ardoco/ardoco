@@ -5,7 +5,8 @@ import java.util.Collection;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -145,24 +146,24 @@ public interface PersistenceHandler {
     void saveRunMetadataFinish(String projectName, String finishTimestamp);
 
     /**
-     * Dual-writes a named architecture entity (and its occurrences) for a metamodel.
+     * Dual-writes a named architecture entity (and its occurrences) for an ArTEMiS target.
      *
-     * @param entity    the entity
-     * @param metamodel metamodel bucket
-     * @param unlinked  true if stored in the unlinked set
+     * @param entity   the entity
+     * @param target   the ArTEMiS target (metamodel and entity type) the entity belongs to
+     * @param unlinked true if stored in the unlinked set
      */
-    void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked);
+    void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked);
 
     /**
-     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same metamodel and
+     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same target and
      * linked/unlinked bucket) in one transaction instead of one per entity. Used by the stage-level write-behind
      * ({@code PersistenceBridge::withDeferredWrites}).
      *
-     * @param entities  the entities to save; a no-op if empty
-     * @param metamodel metamodel bucket
-     * @param unlinked  true if stored in the unlinked set
+     * @param entities the entities to save; a no-op if empty
+     * @param target   the ArTEMiS target (metamodel and entity type) of the bucket
+     * @param unlinked true if stored in the unlinked set
      */
-    void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked);
+    void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, ArtemisTarget target, boolean unlinked);
 
     /**
      * Exports the entire graph as a lossless JSON dump: every node (id, labels, properties) and every relationship

@@ -1,0 +1,61 @@
+/* Licensed under MIT 2026. */
+package edu.kit.kastel.mcse.ardoco.tlr.artemis.states;
+
+import java.io.Serial;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.ImmutableMap;
+
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisConnectionStates;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
+
+/**
+ * Container state for all ArTEMiS connection states of one pipeline run.
+ */
+@Deterministic
+public class ArtemisConnectionStatesImpl extends AbstractState implements ArtemisConnectionStates {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private final Map<ArtemisTarget, ArtemisConnectionState> states = new LinkedHashMap<>();
+
+    public ArtemisConnectionStatesImpl() {
+        super();
+    }
+
+    private ArtemisConnectionStatesImpl(Collection<ArtemisTarget> targets) {
+        this();
+        for (ArtemisTarget target : targets) {
+            addState(target, new ArtemisConnectionStateImpl());
+        }
+    }
+
+    public static ArtemisConnectionStatesImpl build(Collection<ArtemisTarget> targets) {
+        return new ArtemisConnectionStatesImpl(targets);
+    }
+
+    @Override
+    public ArtemisConnectionState getState(ArtemisTarget target) {
+        Objects.requireNonNull(target);
+        return this.states.computeIfAbsent(target, ignored -> new ArtemisConnectionStateImpl());
+    }
+
+    public void addState(ArtemisTarget target, ArtemisConnectionState state) {
+        Objects.requireNonNull(target);
+        Objects.requireNonNull(state);
+        this.states.put(target, state);
+    }
+
+    @Override
+    public ImmutableMap<ArtemisTarget, ArtemisConnectionState> getStates() {
+        return Maps.immutable.ofAll(this.states);
+    }
+}

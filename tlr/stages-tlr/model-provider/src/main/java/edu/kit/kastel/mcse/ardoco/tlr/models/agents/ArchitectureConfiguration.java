@@ -1,7 +1,9 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.io.File;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
@@ -10,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 
-public record ArchitectureConfiguration(File architectureFile, ModelFormat type, Metamodel metamodel) {
+public record ArchitectureConfiguration(File architectureFile, ModelFormat type, @Nullable Metamodel metamodel) {
     public ArchitectureConfiguration(File architectureFile, ModelFormat type) {
         this(architectureFile, type, null);
     }

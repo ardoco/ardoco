@@ -2,9 +2,8 @@
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.io.Serial;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -33,7 +32,7 @@ public final class ModelStates implements PipelineStepData {
     // already (by object identity, not Model.getId() - IdentifierProvider.reset() before every extraction means two
     // distinct models in one run can share an id) so a given model object is written to Neo4j only once, regardless
     // of how many keys it is registered under.
-    private final Set<Model> persistedModels = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final List<Model> persistedModels = new ArrayList<>();
 
     /**
      * Return the set of IDs of all {@link Model Models} that are contained within this object.
@@ -52,9 +51,25 @@ public final class ModelStates implements PipelineStepData {
      */
     public void addModel(Metamodel id, Model model) {
         this.models.put(id, model);
-        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isNeo4jStorage() && persistedModels.add(model)) {
+        if ((id.isArchitectureModel() || id.isCodeModel()) && PersistenceBridge.isNeo4jStorage() && markPersisted(model)) {
             PersistenceBridge.getHandler().saveModel(id, model);
         }
+    }
+
+    /**
+     * Records the given model instance as persisted, compared by object identity.
+     *
+     * @param model the model
+     * @return true if this model instance was not recorded before
+     */
+    private boolean markPersisted(Model model) {
+        for (Model persisted : this.persistedModels) {
+            if (persisted == model) {
+                return false;
+            }
+        }
+        this.persistedModels.add(model);
+        return true;
     }
 
     /**

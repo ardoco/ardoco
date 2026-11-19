@@ -9,10 +9,9 @@ import java.util.Map;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Exports the entire Neo4j graph as a lossless JSON dump (every node and relationship, with labels/type and
@@ -59,7 +58,7 @@ public class GraphExportService {
 
         try {
             return this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dump);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Failed to serialize the Neo4j graph export to JSON", e);
         }
     }

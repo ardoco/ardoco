@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
-import edu.kit.kastel.mcse.ardoco.metrics.result.AggregationType;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
@@ -109,8 +108,8 @@ class ExArchIT {
             ClassificationMetricsCalculator classificationMetricsCalculator = ClassificationMetricsCalculator.getInstance();
             var averages = classificationMetricsCalculator.calculateAverages(classificationResults, null);
 
-            var macro = averages.stream().filter(it -> it.getType() == AggregationType.MACRO_AVERAGE).findFirst().orElseThrow();
-            var weighted = averages.stream().filter(it -> it.getType() == AggregationType.WEIGHTED_AVERAGE).findFirst().orElseThrow();
+            var macro = averages.getMacroAverage();
+            var weighted = averages.getWeightedAverage();
 
             llmResult.append(String.format(Locale.ENGLISH, "&%.2f&%.2f&%.2f&%.2f&%.2f&%.2f\\\\", macro.getPrecision(), macro.getRecall(), macro.getF1(),
                     weighted.getPrecision(), weighted.getRecall(), weighted.getF1())); // end of line

@@ -24,9 +24,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -364,15 +365,15 @@ public class Neo4jPersistenceHandler implements PersistenceHandler {
     }
 
     @Override
-    public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
-        logger.debug("Saving NamedArchitectureEntity {} ({})", entity.getId(), entity.getName());
-        this.nerService.saveNamedArchitectureEntity(entity, metamodel, unlinked);
+    public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
+        logger.debug("Saving NamedArchitectureEntity {} ({})", entity.getName(), target.getId());
+        this.nerService.saveNamedArchitectureEntity(entity, target, unlinked);
     }
 
     @Override
-    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked) {
-        logger.debug("Saving {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), metamodel, unlinked);
-        this.nerService.saveNamedArchitectureEntities(entities, metamodel, unlinked);
+    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, ArtemisTarget target, boolean unlinked) {
+        logger.debug("Saving {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), target.getId(), unlinked);
+        this.nerService.saveNamedArchitectureEntities(entities, target, unlinked);
     }
 
     public boolean hasNerNamedArchitectureEntities() {

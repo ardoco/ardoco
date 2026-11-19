@@ -21,11 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -201,22 +203,34 @@ public class PersistenceBridge extends AbstractConfigurable {
 
     /**
      * Saves a named architecture entity in Neo4j storage mode. Inside {@link #withDeferredWrites} the save is deferred and batched (per
-     * metamodel and linked/unlinked bucket) with the other NER saves of the scope.
+     * ArTEMiS target and linked/unlinked bucket) with the other NER saves of the scope.
      *
-     * @param entity    the entity to save
-     * @param metamodel the metamodel bucket this entity belongs to
-     * @param unlinked  true if stored in the unlinked set
+     * @param entity   the entity to save
+     * @param target   the ArTEMiS target (metamodel and entity type) this entity belongs to
+     * @param unlinked true if stored in the unlinked set
      */
-    public static void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+    public static void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
         if (!isNeo4jStorage()) {
             return;
         }
         DeferredWrites scope = DEFERRED_WRITES.get();
         if (scope != null) {
-            scope.deferNamedArchitectureEntity(entity, metamodel, unlinked);
+            scope.deferNamedArchitectureEntity(entity, target, unlinked);
             return;
         }
-        getHandler().saveNamedArchitectureEntity(entity, metamodel, unlinked);
+        getHandler().saveNamedArchitectureEntity(entity, target, unlinked);
+    }
+
+    /**
+     * Returns the key under which a named architecture entity is stored: the target id, a colon and the entity name. The entity has no id of
+     * its own; names are unique per target within one NER pass.
+     *
+     * @param target the ArTEMiS target the entity belongs to
+     * @param entity the entity
+     * @return the storage key
+     */
+    public static String namedArchitectureEntityKey(ArtemisTarget target, NamedArchitectureEntity entity) {
+        return target.getId() + ":" + entity.getName();
     }
 
     /**
@@ -306,6 +320,7 @@ public class PersistenceBridge extends AbstractConfigurable {
     /**
      * Writes collected by {@link #withDeferredWrites}. Thread-confined via {@link #DEFERRED_WRITES}.
      */
+    @Deterministic
     private static final class DeferredWrites {
         private final String stageName;
         private final Map<String, NounMapping> pendingNounMappingSaves = new LinkedHashMap<>();
@@ -341,9 +356,9 @@ public class PersistenceBridge extends AbstractConfigurable {
             this.pendingRecommendedInstanceSaves.put(key, new RecommendedInstanceSave(recommendedInstance, metamodel));
         }
 
-        void deferNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
-            String key = entity.getId() + "|" + metamodel.name() + "|" + unlinked;
-            this.pendingNamedArchitectureEntitySaves.put(key, new NamedArchitectureEntitySave(entity, metamodel, unlinked));
+        void deferNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
+            String key = namedArchitectureEntityKey(target, entity) + "|" + unlinked;
+            this.pendingNamedArchitectureEntitySaves.put(key, new NamedArchitectureEntitySave(entity, target, unlinked));
         }
 
         void deferTraceLinks(Collection<? extends TraceLink<?, ?>> traceLinks) {
@@ -389,20 +404,20 @@ public class PersistenceBridge extends AbstractConfigurable {
         }
 
         private void flushNamedArchitectureEntitySaves() {
-            Map<String, List<NamedArchitectureEntity>> byMetamodelAndLinkage = new LinkedHashMap<>();
-            Map<String, Metamodel> metamodelByKey = new LinkedHashMap<>();
+            Map<String, List<NamedArchitectureEntity>> byTargetAndLinkage = new LinkedHashMap<>();
+            Map<String, ArtemisTarget> targetByKey = new LinkedHashMap<>();
             Map<String, Boolean> unlinkedByKey = new LinkedHashMap<>();
             for (NamedArchitectureEntitySave save : this.pendingNamedArchitectureEntitySaves.values()) {
-                String bucketKey = save.metamodel().name() + "|" + save.unlinked();
-                byMetamodelAndLinkage.computeIfAbsent(bucketKey, ignored -> new ArrayList<>()).add(save.entity());
-                metamodelByKey.put(bucketKey, save.metamodel());
+                String bucketKey = save.target().getId() + "|" + save.unlinked();
+                byTargetAndLinkage.computeIfAbsent(bucketKey, ignored -> new ArrayList<>()).add(save.entity());
+                targetByKey.put(bucketKey, save.target());
                 unlinkedByKey.put(bucketKey, save.unlinked());
             }
-            for (Map.Entry<String, List<NamedArchitectureEntity>> entry : byMetamodelAndLinkage.entrySet()) {
-                Metamodel metamodel = metamodelByKey.get(entry.getKey());
+            for (Map.Entry<String, List<NamedArchitectureEntity>> entry : byTargetAndLinkage.entrySet()) {
+                ArtemisTarget target = targetByKey.get(entry.getKey());
                 boolean unlinked = unlinkedByKey.get(entry.getKey());
                 for (List<NamedArchitectureEntity> batch : chunk(entry.getValue())) {
-                    getHandler().saveNamedArchitectureEntities(batch, metamodel, unlinked);
+                    getHandler().saveNamedArchitectureEntities(batch, target, unlinked);
                 }
             }
         }
@@ -448,7 +463,7 @@ public class PersistenceBridge extends AbstractConfigurable {
     private record RecommendedInstanceSave(RecommendedInstance recommendedInstance, Metamodel metamodel) {
     }
 
-    private record NamedArchitectureEntitySave(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
+    private record NamedArchitectureEntitySave(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
     }
 
     @Override

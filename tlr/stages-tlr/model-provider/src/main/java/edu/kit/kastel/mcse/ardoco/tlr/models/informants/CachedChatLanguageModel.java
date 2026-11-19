@@ -1,8 +1,7 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -11,17 +10,18 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.StreamReadConstraints;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadConstraints;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Deterministic
 public class CachedChatLanguageModel implements ChatModel {
@@ -29,6 +29,7 @@ public class CachedChatLanguageModel implements ChatModel {
     private static final Logger logger = LoggerFactory.getLogger(CachedChatLanguageModel.class);
 
     private static final String CACHE_DIR = loadCacheDir();
+    private static final ObjectMapper OBJECT_MAPPER = JsonHandling.createObjectMapper(StreamReadConstraints.builder().maxNameLength(100000).build());
 
     private final ChatModel chatLanguageModel;
     private final String cacheKey;
@@ -39,7 +40,7 @@ public class CachedChatLanguageModel implements ChatModel {
         this.chatLanguageModel = chatLanguageModel;
         this.cacheKey = cacheKey;
         try {
-            this.cache = createObjectMapper().readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
+            this.cache = OBJECT_MAPPER.readValue(new File(CACHE_DIR + cacheKey + "-cache.json"), new TypeReference<>() {
             });
             var keys = new TreeSet<>(cache.keySet());
             for (String key : keys) {
@@ -47,7 +48,7 @@ public class CachedChatLanguageModel implements ChatModel {
                 String cleanedValue = cleanEndings(cache.get(key));
                 cache.put(cleanedKey, cleanedValue);
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             logger.debug("Could not read cache file", e);
         }
     }
@@ -55,26 +56,26 @@ public class CachedChatLanguageModel implements ChatModel {
     @Override
     public synchronized ChatResponse chat(List<ChatMessage> messages) {
         if (cache.containsKey(cleanEndings(messages.toString()))) {
+            logger.info("cache hit for current prompt - using cached response for the request");
             return ChatResponse.builder().aiMessage(new AiMessage(cache.get(cleanEndings(messages.toString())))).build();
         }
         ChatResponse response = chatLanguageModel.chat(messages);
         cache.put(cleanEndings(messages.toString()), cleanEndings(response.aiMessage().text()));
         try {
-            createObjectMapper().writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
-        } catch (IOException e) {
+            OBJECT_MAPPER.writeValue(new File(CACHE_DIR + cacheKey + "-cache.json"), cache);
+        } catch (JacksonException e) {
             logger.error("Could not write cache file", e);
         }
         return response;
     }
 
-    private String cleanEndings(String text) {
-        return text.replace("\r\n", "\n").replace("\r", "\n");
+    @Override
+    public synchronized ChatResponse chat(ChatRequest chatRequest) {
+        return chat(chatRequest.messages());
     }
 
-    private static ObjectMapper createObjectMapper() {
-        ObjectMapper oom = JsonHandling.createObjectMapper();
-        oom.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxNameLength(100000).build());
-        return oom;
+    private String cleanEndings(String text) {
+        return text.replace("\r\n", "\n").replace("\r", "\n");
     }
 
     private static synchronized String loadCacheDir() {

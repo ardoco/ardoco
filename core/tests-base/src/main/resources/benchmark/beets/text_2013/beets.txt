@@ -1,0 +1,125 @@
+Architecture.
+============.
+This document serves as a high-level overview of beets' software architecture.
+It describes everything that's currently in place, warts and all.
+(Future [[refactoring]] will help improve some of these decisions, almost all of which were made in the early days of beets.).
+This should serve as an introduction to the beets codebase for new developers.
+It's very much in progress, so please get in touch (via the [mailing list][], by [emailing the author directly][email], or on the `#beets` IRC channel on Freenode) if there's a particular subject you're interested in.
+I'll do my best to expand relevant sections.
+Feel free to edit and expand yourself if you're familiar with a particular part of beets.
+[email]: mailto:adrian@radbox.org.
+[mailing list]: http://groups.google.com/group/beets-users.
+The Library.
+-----------.
+The library component is the core data store for beets.
+It abstracts an [SQLite][] database containing metadata about a music collection and, in doing so, works something like a poor man's [ORM][].
+The component is also responsible for *querying* the database.
+Everything related to this core data store is located in `library.py`.
+[ORM]: http://en.wikipedia.org/wiki/Object-relational_mapping.
+[SQLite]: http://sqlite.org/.
+There are three central data classes: `Library`, `Item`, and `Album`.
+The `Library` class represents a user's collection and "contains" sets of the latter two types of objects.
+### Library Objects.
+The `Library` class is typically instantiated as a singleton.
+A single invocation of beets usually only has one Library.
+(This may change in the future we explore features that transfer music between different locations or databases.).
+It has the following CRUD-like methods:.
+* `add(item)`: Add an `Item` to the database, just like it says on the tin.
+This can also move or copy the item's associate file.
+* `load(item)`: Restore all of an `Item`'s fields based on information from the database.
+Discards any temporary modifications to the item.
+* `store(item)`: The opposite of `load()`.
+Call this after you modify an item's fields to persist them in the database.
+* `remove(item)`: Delete an `Item` from the database.
+This can also delete the item's underlying file.
+* `move(item)`: Move (or copy) and item's associated file (i.e., an `.mp3` on disk) to its *destination*, which is a path generated based on the item's metadata.
+Libraries also have a couple of methods that resolve *queries*.
+Query objects are described below.
+The methods are named `albums(query)` and `items(query)` and return sequences of matching `Album` or `Item` objects.
+### Item Objects.
+Each `Item` object represents a *song* or *track*.
+(We use the more generic term *item* because, one day, beets might support non-music media.).
+An item can either be purely abstract, in which case it's just a bag of metadata fields, or it can have an associated file (indicated by `item.path`).
+The methods on `Item` are responsible for interacting with the filesystem.
+To make changes to either the database or the tags on a file, you update an item's fields (e.g., `item.title = "Let It Be"`) and then call `item.write()` or `library.store(item)`.
+The methods `read()` and `write()` are complementary: one reads a file's tags and updates the item's metadata fields accordingly while the other takes the item's fields and writes them to the file's tags.
+The class method `Item.from_path(path)` conveniently constructs a new item with the metadata read from a file.
+The item's path is also set to the passed-in path.
+To read and write a file's tags, we use the separate [[MediaFile]] component.
+Item objects use dirty-flags to track when the object's metadata goes out of sync with the database.
+The `dirty` dictionary maps field names to booleans indicating whether the field has been written since the object was last synchronized (via `load` or `store`) with the database.
+Items also track their modification times (mtimes) to help detect when they become out of sync with on-disk metadata.
+This is described in more detail below.
+In terms of the underlying SQLite database, items are backed by a single table called `items` with one column per metadata fields.
+The metadata fields currently in use are listed at the top of `library.py` in `ITEM_FIELDS`.
+### Album Objects.
+An `Album` is a collection of `Item`s in the database.
+Every item in the database has either zero or one associated albums (accessible via `item.album_id`).
+An item that has no associated album is called a *singleton*.
+An Album object keeps track of *album-level metadata*, which is (mostly) a subset of the *track-level metadata*.
+The album-level metadata fields are listed in `ALBUM_FIELDS` in `library.py`.
+For those fields that are both item-level and album-level (e.g., ``year`` or ``albumartist``), every item in an album should share the same value.
+Albums use an SQLite table called `albums`, in which each column is an album metadata field.
+To get or change an album's metadata, use its fields (e.g., ``print(album.year)`` or ``album.year = 2012``).
+Changing fields in this way updates the album itself and *also* changes the same field in all associated items.
+Changes are *immediately* reflected in the database.
+Note that this is a difference with the way `Item` works: there, you need to change fields and then call `store` to persist those changes.
+(This incongruity is regrettable; the two types of objects should really work the same.
+This will be rectified in a future refactoring.).
+Call `Album.items()` to get a list of an album's associated `Item` objects.
+Albums also manage *album art*, image files that are associated with each album.
+Calling `album.set_art(path)` associates an image with the album.
+If the album previously had art, the old art is replaced with the new art.
+### Queries.
+To access albums and items in a library, we use *queries*.
+In beets, the `Query` abstract base class represents a criterion that matches items or albums in the database.
+Every subclass of `Query` must implement two methods, which implement two different ways of identifying matching items/albums.
+The `clause()` method should return an SQLite "WHERE" clause that matches appropriate albums/items.
+This allows for efficient batch queries.
+Correspondingly, the `match(item)` method should take an `Item` object and return a boolean, indicating whether or not a specific item matches the criterion.
+This alternate implementation allows clients to determine whether items that have *already* been fetched from the database match the query.
+There are many different types of queries.
+Just as an example, `FieldQuery` determines whether a certain field matches a certain value (an equality query).
+`AndQuery` (like its abstract superclass, `CollectionQuery`) takes a set of *other* query objects and bundles them together, matching only albums/items that match *all* constituent queries.
+Beets has a human-writable plain-text query syntax that can be parsed into `Query` objects.
+Calling `AndQuery.from_strings` parses a list of query parts into a query object that can then be used with `Library` objects.
+### Transactions and Concurrency.
+To support efficient multi-threaded and inter-process access to the underlying SQLite database, the `Library` object uses *transactions*.
+Transactions allow multiple accesses to the database to appear atomic.
+Each method of `Library` uses transactions internally to read and update the database, so clients typically shouldn't need to worry about transactions.
+But, if a client needs to make multiple library method calls atomic, it can use an explicit transaction by wrapping code in a `with library.transaction():` block.
+This is a fairly complex topic, so contact me if you need more information and I'll expand this section.
+For now, I wrote a [blog post][tx blog] about the need and design of beets' transaction system.
+[tx blog]: http://beets.radbox.org/blog/sqlite-nightmare.html.
+### Modification Times (mtime).
+In beets 1.0b11, we added filesystem mtime tracking to help speed up the `update` command (which needs to check whether the database is in sync with the filesystem).
+Here's the original [ticket on Google Code][ticket].
+This feature turns out to be sort of complicated.
+For any Item, there are two mtimes: the *on-disk* mtime (maintained by the OS) and the *database* mtime (maintained by beets).
+Correspondingly, there is on-disk metadata (ID3 tags, for example) and DB metadata.
+The goal with the mtime is to ensure that the on-disk and DB mtimes match when the on-disk and DB metadata are in sync; this lets beets do a quick mtime check and avoid rereading files in some circumstances.
+Specifically, beets attempts to maintain the following invariant: *If the on-disk metadata differs from the DB metadata, then the on-disk mtime must be greater than the DB mtime.*.
+As a result, it is always valid for the DB mtime to be zero (assuming that real disk mtimes are always positive).
+However, whenever possible, beets *tries* to set `db_mtime = disk_mtime` at points where it knows the metadata is synchronized.
+When it is possible that the metadata is out of sync, beets can then just set `db_mtime = 0` to return to a consistent state.
+This leads to the following implementation policy:.
+* On every write of disk metadata (`Item.write()`), the DB mtime is updated to match the post-write disk mtime.
+* Same for metadata reads (`Item.read()`).
+* On every modification to DB metadata (`item.field = ...`), the DB mtime is reset to zero.
+[ticket]: http://code.google.com/p/beets/issues/detail?id=227.
+The Importer.
+------------.
+The importer component is responsible for the user-centric workflow that adds music to a library.
+This is one of the first aspects that a user experiences when using beets: it finds music in the filesystem, groups it into albums, finds corresponding metadata in MusicBrainz, asks the user for intervention, applies changes, and moves/copies files.
+The workflow is implemented in the `beets.importer` module and is distinct from the core logic for matching MusicBrainz metadata (in the `beets.autotag` module).
+The workflow is also decoupled from the command-line interface with the hope that, eventually, other (graphical) interfaces can be bolted onto the same importer implementation.
+The importer is multithreaded and follows [the pipeline pattern][pipeline].
+Each pipeline stage is a Python coroutine.
+The `beets.util.pipeline` module houses a generic, reusable implementation of a multithreaded pipeline.
+[pipeline]: http://en.wikipedia.org/wiki/Pipeline_(software).
+Command-Line Interface.
+----------------------.
+The `beets.ui` module houses interactions with the user via a terminal.
+The `main` function is called when the user types `beet` on the command line.
+The CLI functionality is organized into *commands*, some of which are built-in and some of which are provided by plugins.
+The built-in commands are all implemented in the `beets.ui.commands` submodule.

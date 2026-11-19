@@ -1,11 +1,24 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture;
+
+import static edu.kit.kastel.mcse.ardoco.core.common.JsonHandling.createObjectMapper;
+
+import java.io.File;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.Extractor;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public abstract class ArchitectureExtractor extends Extractor {
+
+    private static final Logger logger = LoggerFactory.getLogger(ArchitectureExtractor.class);
+
+    private static final String ARCHITECTURE_MODEL_FILE_NAME = "architectureModel.aam";
 
     protected ArchitectureExtractor(String path, Metamodel metamodelToExtract) {
         super(path, metamodelToExtract);
@@ -14,4 +27,12 @@ public abstract class ArchitectureExtractor extends Extractor {
     @Override
     public abstract ArchitectureModel extractModel();
 
+    public void writeOutArchitectureModel(ArchitectureModel architectureModel, File outputFile) {
+        ObjectMapper objectMapper = createObjectMapper();
+        try {
+            objectMapper.writeValue(outputFile, architectureModel.createArchitectureModelDto());
+        } catch (JacksonException e) {
+            logger.warn("An exception occurred when writing the architecture model.", e);
+        }
+    }
 }

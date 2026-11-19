@@ -16,8 +16,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
@@ -28,6 +26,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.Pipeline;
+import tools.jackson.core.JacksonException;
 
 /**
  * The Pipeline defines and manages the execution of agents.
@@ -146,7 +145,7 @@ public final class Ardoco extends Pipeline {
         String configurationJson;
         try {
             configurationJson = JsonHandling.createObjectMapper().writeValueAsString(filteredConfiguration);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Failed to serialize the run configuration for run metadata", e);
         }
         PersistenceBridge.getHandler().saveRunMetadataStart(this.projectName, Instant.now().toString(), configurationJson);

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell;
 
 import java.io.FileReader;
@@ -91,7 +91,8 @@ public class ShellVisitor implements FileVisitor<Path> {
         for (int i = 0; i < relativePath.getNameCount() - 1; i++) {
             pathElements.add(relativePath.getName(i).toString());
         }
-        return new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements, extension, ProgrammingLanguage.SHELL);
+        return new CodeCompilationUnit(codeItemRepository, fileNameWithoutExtension, new TreeSet<>(), pathElements, extension, ProgrammingLanguage.SHELL, List
+                .of());
     }
 
     private boolean isShellFile(String code) {

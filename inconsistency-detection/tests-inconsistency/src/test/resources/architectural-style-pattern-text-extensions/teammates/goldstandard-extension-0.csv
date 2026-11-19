@@ -1,0 +1,10 @@
+sentence,style/pattern,valid
+199,hexagonal architecture,false
+200,adapter,false
+201,command query responsibility segregation,false
+203,event-driven architecture,false
+204,publish-subscribe,false
+206,microkernel architecture,false
+208,blackboard,false
+210,circuit breaker,false
+212,memento,false

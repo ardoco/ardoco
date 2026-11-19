@@ -1,0 +1,15 @@
+sentence,style/pattern,valid
+371,anti-corruption layer,false
+373,event sourcing,false
+382,adapter pattern,false
+383,state pattern,false
+384,command pattern,false
+370,hexagonal architecture,false
+372,command query responsibility segregation,false
+375,pipe-and-filter architectural style,false
+377,broker architectural style,false
+380,repository pattern,true
+381,strategy pattern,false
+378,microkernel,false
+379,saga pattern,false
+385,observer,false

@@ -1,7 +1,11 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.elements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a structural element in the code. Contains information about the
@@ -14,6 +18,8 @@ public class Element {
     private int startLine;
     private int endLine;
     private String comment;
+    private List<String> calleeNames = new ArrayList<>();
+    private List<String> imports = new ArrayList<>();
 
     public Element(String name, String path, Type type) {
         this(new ElementIdentifier(name, path, type));
@@ -50,6 +56,7 @@ public class Element {
     }
 
     public Element(Element elementToCopy) {
+        Objects.requireNonNull(elementToCopy);
         this.identifier = new ElementIdentifier(elementToCopy.getIdentifier().name(), elementToCopy.getIdentifier().path(), elementToCopy.getIdentifier()
                 .type());
         if (elementToCopy.getParentIdentifier() != null) {
@@ -59,10 +66,11 @@ public class Element {
         this.startLine = elementToCopy.getStartLine();
         this.endLine = elementToCopy.getEndLine();
         this.comment = elementToCopy.getComment();
-
+        this.calleeNames = new ArrayList<>(elementToCopy.getCalleeNames());
+        this.imports = new ArrayList<>(elementToCopy.getImports());
     }
 
-    public ElementIdentifier getParentIdentifier() {
+    public @Nullable ElementIdentifier getParentIdentifier() {
         return this.identifierOfParent;
     }
 
@@ -104,6 +112,26 @@ public class Element {
         }
 
         this.comment += comment;
+    }
+
+    public void addImport(String importedName) {
+        if (!imports.contains(importedName)) {
+            imports.add(importedName);
+        }
+    }
+
+    public List<String> getImports() {
+        return List.copyOf(imports);
+    }
+
+    public void addCalleeName(String calleeName) {
+        if (!calleeNames.contains(calleeName)) {
+            calleeNames.add(calleeName);
+        }
+    }
+
+    public List<String> getCalleeNames() {
+        return List.copyOf(calleeNames);
     }
 
     @Override

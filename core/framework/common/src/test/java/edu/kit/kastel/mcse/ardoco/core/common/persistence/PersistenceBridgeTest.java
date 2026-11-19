@@ -18,12 +18,14 @@ import org.mockito.Mockito;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 
 class PersistenceBridgeTest {
 
@@ -101,7 +103,8 @@ class PersistenceBridgeTest {
         Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveNounMapping(null));
         Assertions.assertDoesNotThrow(() -> PersistenceBridge.deleteNounMapping("id"));
         Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveRecommendedInstance(null, Metamodel.ARCHITECTURE_WITH_COMPONENTS));
-        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveNamedArchitectureEntity(null, Metamodel.ARCHITECTURE_WITH_COMPONENTS, false));
+        Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveNamedArchitectureEntity(null, new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS,
+                NamedEntityType.COMPONENT), false));
         Assertions.assertDoesNotThrow(() -> PersistenceBridge.saveTraceLinks(List.of(new FakeTraceLink())));
     }
 
@@ -258,14 +261,14 @@ class PersistenceBridgeTest {
         }
 
         @Override
-        public void saveNamedArchitectureEntity(edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity entity,
-                Metamodel metamodel, boolean unlinked) {
+        public void saveNamedArchitectureEntity(edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity entity,
+                ArtemisTarget target, boolean unlinked) {
             throw fail();
         }
 
         @Override
         public void saveNamedArchitectureEntities(
-                Collection<edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity> entities, Metamodel metamodel,
+                Collection<edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity> entities, ArtemisTarget target,
                 boolean unlinked) {
             throw fail();
         }

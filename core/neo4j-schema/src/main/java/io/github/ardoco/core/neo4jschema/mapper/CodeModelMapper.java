@@ -158,7 +158,7 @@ public class CodeModelMapper {
                 // ClassUnit never uses a null content list in the domain (Jackson + constructors always initialize it to []).
                 classUnit.setRawContentIds(contentIds == null ? new ArrayList<>() : new ArrayList<>(contentIds));
             } else if (currentItem instanceof InterfaceUnit interfaceUnit) {
-                interfaceUnit.setRawContentIds(copyOrNull(contentIds));
+                interfaceUnit.setRawContentIds(contentIds == null ? new ArrayList<>() : new ArrayList<>(contentIds));
             }
 
             // Explicit parent link (only if it was set in the original model).

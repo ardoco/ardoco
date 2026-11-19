@@ -1,6 +1,10 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.core.tests.architecture;
 
+import static com.tngtech.archunit.core.domain.JavaAccess.Predicates.target;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo;
+import static com.tngtech.archunit.core.domain.properties.HasName.Predicates.nameMatching;
+import static com.tngtech.archunit.core.domain.properties.HasOwner.Predicates.With.owner;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noMethods;
@@ -13,7 +17,6 @@ import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -23,6 +26,7 @@ import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
+import tools.jackson.databind.ObjectMapper;
 
 public class BasicArchitectureTest {
     @ArchTest
@@ -40,11 +44,34 @@ public class BasicArchitectureTest {
             .should()
             .haveModifier(JavaModifier.FINAL);
 
+    /**
+     * Rule that enforces a global Jackson configuration.
+     * <p>
+     * Only {@link JsonHandling} may create or configure a Jackson mapper. This covers constructors of {@link ObjectMapper} and its subclasses (e.g.,
+     * {@code JsonMapper}) as well as the methods {@code builder}, {@code shared} and {@code rebuild} on them.
+     */
     @ArchTest
     public static final ArchRule jacksonIsConfiguredGlobally = noClasses().that()
             .doNotHaveFullyQualifiedName(JsonHandling.class.getName())
             .should()
-            .callConstructor(ObjectMapper.class);
+            .callConstructorWhere(target(owner(assignableTo(ObjectMapper.class))))
+            .orShould()
+            .callMethodWhere(target(nameMatching("builder|shared|rebuild")).and(target(owner(assignableTo(ObjectMapper.class)))))
+            .because("Jackson mappers must only be created and configured in JsonHandling.");
+
+    /**
+     * Rule that prevents the use of Jackson 2.
+     * <p>
+     * ARDoCo uses Jackson 3 ({@code tools.jackson}). Jackson 2 core and databind are only transitively available and must not be used.
+     * The Jackson annotations ({@code com.fasterxml.jackson.annotation}) are shared with Jackson 3 and remain allowed.
+     */
+    @ArchTest
+    public static final ArchRule noJackson2 = noClasses().that()
+            .resideInAPackage("edu.kit.kastel.mcse.ardoco..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("com.fasterxml.jackson.core..", "com.fasterxml.jackson.databind..")
+            .because("ARDoCo uses Jackson 3 (tools.jackson); only the shared Jackson annotations may be used from com.fasterxml.jackson.");
 
     /**
      * Rule that enforces environment variable access restrictions.

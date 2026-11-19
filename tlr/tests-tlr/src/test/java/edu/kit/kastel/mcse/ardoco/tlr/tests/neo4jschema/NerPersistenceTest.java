@@ -18,11 +18,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityToModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PlainSimpleText;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 import io.github.ardoco.core.neo4jschema.Neo4jPersistenceHandler;
 import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
@@ -46,14 +48,15 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
         var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
         Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+        ArtemisTarget target = new ArtemisTarget(mm, NamedEntityType.COMPONENT);
 
-        persistenceHandler.saveNamedArchitectureEntity(entity, mm, false);
+        persistenceHandler.saveNamedArchitectureEntity(entity, target, false);
         assertThat(persistenceHandler.hasNerNamedArchitectureEntities()).isTrue();
 
         var loaded = persistenceHandler.loadNamedArchitectureEntities(mm, false);
         assertThat(loaded).hasSize(1);
         NamedArchitectureEntity restored = loaded.iterator().next();
-        assertThat(restored.getId()).isEqualTo(entity.getId());
+        assertThat(restored).isEqualTo(entity);
         assertThat(restored.getName()).isEqualTo("WebUI");
         assertThat(restored.getOccurrences()).hasSize(1);
         assertThat(restored.getOccurrences().get(0).getSentenceNumber()).isEqualTo(2);
@@ -79,7 +82,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
 
         var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
         var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
-        persistenceHandler.saveNamedArchitectureEntity(entity, mm, false);
+        persistenceHandler.saveNamedArchitectureEntity(entity, new ArtemisTarget(mm, NamedEntityType.COMPONENT), false);
 
         var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component);
         assertThat(persistenceHandler.saveTraceLinks(List.of(link))).isTrue();
@@ -114,7 +117,7 @@ class NerPersistenceTest extends AbstractPersistenceTest {
 
         var occurrence = new NamedArchitectureEntityOccurrence("WebUI", 2);
         var entity = new NamedArchitectureEntity("WebUI", new TreeSet<>(List.of("UI")), List.of(occurrence));
-        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), mm, false);
+        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), new ArtemisTarget(mm, NamedEntityType.COMPONENT), false);
 
         double confidence = 0.73;
         var link = new NamedArchitectureEntityToModelTraceLink(occurrence, component, NounMappingMapper.RESTORE_CLAIMANT, confidence);
@@ -147,18 +150,27 @@ class NerPersistenceTest extends AbstractPersistenceTest {
                 .applyConfiguration(org.eclipse.collections.api.factory.SortedMaps.immutable.with("PersistenceBridge::storage", "neo4j"));
 
         Metamodel mm = Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+        ArtemisTarget target = new ArtemisTarget(mm, NamedEntityType.COMPONENT);
         var occurrence = new NamedArchitectureEntityOccurrence("Logger", 5);
         var entity = new NamedArchitectureEntity("Logger", new TreeSet<>(List.of("Log")), List.of(occurrence));
 
-        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), mm, true);
+        persistenceHandler.saveNamedArchitectureEntities(List.of(entity), target, true);
 
         Boolean storedUnlinked = neo4jClient.query("MATCH (n:NamedArchitectureEntity {ardocoId: $id}) RETURN n.unlinked AS unlinked")
-                .bindAll(Map.of("id", entity.getId()))
+                .bindAll(Map.of("id", PersistenceBridge.namedArchitectureEntityKey(target, entity)))
                 .fetch()
                 .one()
                 .map(row -> (Boolean) row.get("unlinked"))
                 .orElse(null);
         assertThat(storedUnlinked).isTrue();
+
+        String storedEntityType = neo4jClient.query("MATCH (n:NamedArchitectureEntity {ardocoId: $id}) RETURN n.entityType AS entityType")
+                .bindAll(Map.of("id", "ARCHITECTURE_WITH_COMPONENTS:COMPONENT:Logger"))
+                .fetch()
+                .one()
+                .map(row -> (String) row.get("entityType"))
+                .orElse(null);
+        assertThat(storedEntityType).isEqualTo("COMPONENT");
 
         long nerEdges = countNerArchitectureLinks();
         assertThat(nerEdges).isZero();

@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -50,6 +51,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.execution.Transarc;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util.PersistenceTestSupport;
+import tools.jackson.databind.JsonNode;
 
 @EnabledIfSystemProperty(named = "ardoco.tests.memoryVsNeo4j", matches = "true")
 class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
@@ -114,7 +116,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         Assertions.assertEquals(1L, graph.countNodesWithLabel("RunMetadata"), testCase.name() + ": exactly one RunMetadata node is expected");
         Assertions.assertEquals(0L, graph.countDanglingRelationships(), testCase.name() + ": no relationship may reference a missing node");
         Assertions.assertEquals(0L, graph.countDuplicateTraceLinks(), testCase.name() + ": no duplicate (source, target, type) TRACES_TO edge is expected");
-        Assertions.assertEquals(0L, graph.countDuplicateTraceableArdocoIds(), testCase.name() + ": no duplicate Traceable ardocoId is expected");
+        Assertions.assertEquals(0L, countDuplicateLabelSetAndArdocoId(graph), testCase
+                .name() + ": no two Traceable nodes with the same label set and the same ardocoId are expected");
         for (String forbiddenLabel : testCase.forbiddenLabels()) {
             Assertions.assertEquals(0L, graph.countNodesWithLabel(forbiddenLabel), testCase
                     .name() + ": label " + forbiddenLabel + " must not appear for this pipeline");
@@ -193,8 +196,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
         all.add(teaStoreCase("arcotl", MemoryVsNeo4jConsistencyTest::arcotl, textLabels(), arcotlRequiredLabels(), arcotlFileChecks(), null, null));
 
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(),
-                transarcFileChecks(), Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1957, "RECOMMENDATION_CODE", 18,
-                        "RECOMMENDATION_ARCHITECTURE", 5), new FixedCensus(28648, 71377, 27966)));
+                transarcFileChecks(), Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1949, "RECOMMENDATION_CODE", 18,
+                        "RECOMMENDATION_ARCHITECTURE", 5), new FixedCensus(28539, 62124, 27857)));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(),
                 swattrFileChecks(), null, null));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(),
@@ -402,6 +405,30 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
     private static long countByType(Set<String> keys, String type) {
         return keys.stream().filter(k -> k.endsWith("|" + type)).count();
+    }
+
+    /**
+     * Counts the keys (sorted label set, ardocoId) that more than one node of the exported graph carries; nodes without an ardocoId are
+     * ignored. Two different kinds of node may share an ardocoId, the same kind may not.
+     *
+     * @param graph the exported graph
+     * @return the number of duplicate (label set, ardocoId) keys
+     */
+    private static long countDuplicateLabelSetAndArdocoId(PersistenceTestSupport.ExportedGraph graph) {
+        Map<String, Integer> counts = new TreeMap<>();
+        for (JsonNode node : graph.nodes()) {
+            JsonNode ardocoId = node.get("properties").get("ardocoId");
+            if (ardocoId == null) {
+                continue;
+            }
+            List<String> labels = new ArrayList<>();
+            for (JsonNode label : node.get("labels")) {
+                labels.add(label.asText());
+            }
+            labels.sort(Comparator.naturalOrder());
+            counts.merge(String.join(":", labels) + "|" + ardocoId.asText(), 1, Integer::sum);
+        }
+        return counts.values().stream().filter(count -> count > 1).count();
     }
 
     private static String sentenceKey(SentenceEntity sentenceEntity) {

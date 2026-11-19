@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public final class PersistenceTestSupport {
 
@@ -43,7 +43,7 @@ public final class PersistenceTestSupport {
     public record ExportedGraph(long nodeCount, long relationshipCount, List<JsonNode> nodes, List<JsonNode> relationships) {
 
         public static ExportedGraph read(File file) throws IOException {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonHandling.createObjectMapper();
             JsonNode root = mapper.readTree(file);
             List<JsonNode> nodes = new ArrayList<>();
             root.get("nodes").forEach(nodes::add);

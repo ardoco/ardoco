@@ -19,6 +19,7 @@ public class NamedArchitectureEntityNode {
 
     private String name;
     private String metamodel;
+    private String entityType;
     private boolean unlinked;
     private List<String> alternativeNames = new ArrayList<>();
 
@@ -54,6 +55,14 @@ public class NamedArchitectureEntityNode {
 
     public void setMetamodel(String metamodel) {
         this.metamodel = metamodel;
+    }
+
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
     }
 
     public boolean isUnlinked() {

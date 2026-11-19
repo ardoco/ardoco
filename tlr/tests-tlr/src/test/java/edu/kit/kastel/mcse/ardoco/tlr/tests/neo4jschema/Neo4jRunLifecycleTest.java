@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -33,6 +31,8 @@ import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.tlr.execution.Swattr;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Verifies revised Phase 1 step 1.2: the Neo4j-mode run lifecycle ({@code PersistenceBridge::storage=neo4j}) - clean
@@ -230,8 +230,8 @@ class Neo4jRunLifecycleTest extends AbstractPersistenceTest {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (JacksonException e) {
+            throw new IllegalStateException(e);
         }
         return matches;
     }

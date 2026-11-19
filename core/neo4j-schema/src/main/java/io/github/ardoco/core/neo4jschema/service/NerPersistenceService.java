@@ -15,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntity;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityOccurrence;
-import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ner.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityToModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityNode;
 import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityOccurrenceNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
@@ -41,11 +43,21 @@ public class NerPersistenceService {
         this.neo4jClient = neo4jClient;
     }
 
+    /**
+     * Upserts the node of a named architecture entity, keyed by {@link PersistenceBridge#namedArchitectureEntityKey}, with its occurrences. The
+     * node keeps the metamodel and the linked/unlinked flag of the last save and gets the target's entity type as {@code entityType}.
+     *
+     * @param entity   the entity to save
+     * @param target   the ArTEMiS target the entity belongs to
+     * @param unlinked true if stored in the unlinked set
+     */
     @Transactional
-    public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, Metamodel metamodel, boolean unlinked) {
-        NamedArchitectureEntityNode node = entityRepository.findById(entity.getId()).orElseGet(() -> new NamedArchitectureEntityNode(entity.getId()));
+    public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
+        String key = PersistenceBridge.namedArchitectureEntityKey(target, entity);
+        NamedArchitectureEntityNode node = entityRepository.findById(key).orElseGet(() -> new NamedArchitectureEntityNode(key));
         node.setName(entity.getName());
-        node.setMetamodel(metamodel.name());
+        node.setMetamodel(target.metamodel().name());
+        node.setEntityType(target.entityType().name());
         node.setUnlinked(unlinked);
         node.setAlternativeNames(new ArrayList<>(entity.getAlternativeNames()));
 
@@ -59,28 +71,28 @@ public class NerPersistenceService {
         }
         node.setOccurrences(occurrenceNodes);
         entityRepository.save(node);
-        logger.debug("Saved NamedArchitectureEntity {} ({})", entity.getId(), entity.getName());
+        logger.debug("Saved NamedArchitectureEntity {} ({})", key, entity.getName());
     }
 
     /**
-     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same metamodel and linked/unlinked bucket) in one
+     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same target and linked/unlinked bucket) in one
      * transaction instead of one per entity. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}). NER entities
      * carry a nested occurrence subgraph, so this still upserts per entity internally; the batching is at the transaction/round-trip level, not a
      * single {@code UNWIND} query like the NounMapping/RecommendedInstance batches.
      *
-     * @param entities  the entities to save; a no-op if empty
-     * @param metamodel metamodel bucket
-     * @param unlinked  true if stored in the unlinked set
+     * @param entities the entities to save; a no-op if empty
+     * @param target   the ArTEMiS target (metamodel and entity type) of the bucket
+     * @param unlinked true if stored in the unlinked set
      */
     @Transactional
-    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, Metamodel metamodel, boolean unlinked) {
+    public void saveNamedArchitectureEntities(Collection<NamedArchitectureEntity> entities, ArtemisTarget target, boolean unlinked) {
         if (entities.isEmpty()) {
             return;
         }
         for (NamedArchitectureEntity entity : entities) {
-            saveNamedArchitectureEntity(entity, metamodel, unlinked);
+            saveNamedArchitectureEntity(entity, target, unlinked);
         }
-        logger.debug("Saved {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), metamodel, unlinked);
+        logger.debug("Saved {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), target.getId(), unlinked);
     }
 
     @Transactional(readOnly = true)
@@ -138,9 +150,9 @@ public class NerPersistenceService {
         List<NamedArchitectureEntityOccurrence> occurrences = new ArrayList<>();
         if (node.getOccurrences() != null) {
             for (NamedArchitectureEntityOccurrenceNode occ : node.getOccurrences()) {
-                occurrences.add(new NamedArchitectureEntityOccurrence(occ.getArdocoId(), occ.getName(), occ.getSentenceNumber()));
+                occurrences.add(new NamedArchitectureEntityOccurrence(occ.getName(), occ.getSentenceNumber()));
             }
         }
-        return new NamedArchitectureEntity(node.getArdocoId(), node.getName(), new TreeSet<>(node.getAlternativeNames()), occurrences);
+        return new NamedArchitectureEntity(node.getName(), new TreeSet<>(node.getAlternativeNames()), occurrences);
     }
 }
