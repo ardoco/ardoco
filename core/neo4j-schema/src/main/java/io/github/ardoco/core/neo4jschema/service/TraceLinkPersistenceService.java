@@ -47,6 +47,40 @@ import io.github.ardoco.core.neo4jschema.mapper.DocumentationMapper;
 import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
 import io.github.ardoco.core.neo4jschema.repository.tracelink.TraceLinkRepository;
 
+/**
+ * Writes the trace links of a run to the knowledge graph and reads them back.
+ *
+ * <p>Every stored trace link is one {@code TRACES_TO} relationship between two nodes. The relationship has two properties: {@code traceLinkType}, the
+ * name of a {@link TraceLinkType}, and {@code confidence}, the confidence of a recommendation or NER link and -1.0 for every other link. Links with the
+ * same source, target and {@code traceLinkType} become one relationship. No property names the state or stage that produced a relationship, so two
+ * relationships of the same {@code traceLinkType} written by different states cannot be told apart.
+ *
+ * <p><b>ArDoCo's final SAD-to-code result.</b> The SAD-to-code links of the code traceability state are ArDoCo's final result; they are the rows of the
+ * {@code sadCodeTlr} output file. In the {@code Transarc} pipeline each of these links goes from a sentence over an architecture item to a code item, and
+ * {@link #saveTracelinks(Collection)} stores it as two {@code TRACES_TO} relationships, not as one direct sentence-to-code relationship:
+ * <ul>
+ * <li>a {@code SENTENCE_ARCHITECTURE} relationship from the {@code Sentence} node to the {@code ArchitectureItem} node, and</li>
+ * <li>an {@code ARCHITECTURE_CODE} relationship from that {@code ArchitectureItem} node to the {@code CodeItem} node.</li>
+ * </ul>
+ * The result is read by following both relationships, a two-hop join over the shared architecture item, as {@link #loadTransitiveTraceLinks()} does. The
+ * same join on a knowledge-graph export, one row per link of the result:
+ *
+ * <pre>{@code
+ * MATCH (s:Sentence)-[:TRACES_TO {traceLinkType: 'SENTENCE_ARCHITECTURE'}]->(a:ArchitectureItem)
+ *       -[:TRACES_TO {traceLinkType: 'ARCHITECTURE_CODE'}]->(c:CodeItem)
+ * RETURN DISTINCT s, a, c
+ * }</pre>
+ *
+ * The two relationship types are not reserved for the result: the sentence-to-architecture links of the connection state and the architecture-to-code
+ * links of the code traceability state are stored with them as well. The result is built by combining exactly these two kinds of links over a shared
+ * architecture item, which is why the two-hop join reads it back.
+ *
+ * <p>{@code SENTENCE_CODE} relationships are different links: direct links from a sentence to a code item, written by the connection state of a code model
+ * for the sentences of a recommended instance that is linked to a code item. In the {@code Transarc} pipeline they are not part of the final result. The
+ * {@code Ardocode} pipeline has no architecture model; there the final result consists of direct links from a sentence to a {@code CodeCompilationUnit}
+ * and is stored as {@code SENTENCE_CODE} relationships as well, next to the connection state's {@code SENTENCE_CODE} relationships and with no property
+ * that tells the two apart.
+ */
 @Service
 public class TraceLinkPersistenceService {
 

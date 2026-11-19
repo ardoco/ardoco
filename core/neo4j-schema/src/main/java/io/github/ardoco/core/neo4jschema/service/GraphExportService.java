@@ -21,6 +21,10 @@ import tools.jackson.databind.ObjectMapper;
  * <p>No APOC dependency: built from plain Cypher via {@link Neo4jClient}, so it works against Neo4j Desktop, Docker
  * and Testcontainers alike. Node/relationship identity in the dump uses {@code elementId()} (Neo4j 5.x), which is
  * stable only within one export, never across a wipe - exactly the one-run lifetime this export is for.
+ *
+ * <p>Trace links appear in the dump as {@code TRACES_TO} relationships with the properties {@code traceLinkType} and {@code confidence}. ArDoCo's final
+ * SAD-to-code result has no relationship type of its own; how to read it from the dump (in the {@code Transarc} pipeline a two-hop join of
+ * {@code SENTENCE_ARCHITECTURE} and {@code ARCHITECTURE_CODE} relationships) is described in {@link TraceLinkPersistenceService}.
  */
 @Service
 public class GraphExportService {
