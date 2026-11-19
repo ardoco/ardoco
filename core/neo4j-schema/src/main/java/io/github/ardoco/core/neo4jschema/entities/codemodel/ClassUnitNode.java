@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.entities.codeModel;
+package io.github.ardoco.core.neo4jschema.entities.codemodel;
 
 import org.springframework.data.neo4j.core.schema.Node;
 

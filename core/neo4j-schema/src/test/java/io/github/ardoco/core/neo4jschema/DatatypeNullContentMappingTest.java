@@ -13,10 +13,10 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.Datatype;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.InterfaceUnit;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.ClassUnitNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.InterfaceUnitNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.ClassUnitNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeItemNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeModelNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.InterfaceUnitNode;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 
 /**

@@ -22,8 +22,8 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
 import io.github.ardoco.core.neo4jschema.adapter.Neo4jTextInconsistency;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureItemNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeItemNode;
 import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ArchitectureType;
 import io.github.ardoco.core.neo4jschema.entities.inconsistencies.InconsistencyNodeVisitor;
 import io.github.ardoco.core.neo4jschema.entities.inconsistencies.ModelInconsistencyNode;

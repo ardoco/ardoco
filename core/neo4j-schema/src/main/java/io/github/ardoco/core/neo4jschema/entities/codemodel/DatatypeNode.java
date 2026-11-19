@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.entities.codeModel;
+package io.github.ardoco.core.neo4jschema.entities.codemodel;
 
 import java.util.HashSet;
 import java.util.List;

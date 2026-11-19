@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.entities.architectureModel;
+package io.github.ardoco.core.neo4jschema.entities.architecturemodel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,5 @@
 /* Licensed under MIT 2026. */
-package io.github.ardoco.core.neo4jschema.repository.architectureModel;
+package io.github.ardoco.core.neo4jschema.repository.architecturemodel;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureModelNode;
 
 @Repository
 public interface ArchitectureModelRepository extends Neo4jRepository<ArchitectureModelNode, String> {

@@ -18,11 +18,11 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureComponentNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureInterfaceNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureMethodNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureComponentNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureInterfaceNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureItemNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureMethodNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureModelNode;
 
 @Component
 public class ArchitectureModelMapper {

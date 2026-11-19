@@ -19,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.ModelInconsistenc
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureComponentNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureComponentNode;
 import io.github.ardoco.core.neo4jschema.repository.TraceableNodeRepository;
 import io.github.ardoco.core.neo4jschema.service.ArchitecturePersistenceService;
 import io.github.ardoco.core.neo4jschema.service.InconsistencyPersistenceService;

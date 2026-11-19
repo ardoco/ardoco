@@ -19,18 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.ClassUnitNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeAssemblyNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeCompilationUnitNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeItemNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModelNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodeModuleNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.CodePackageNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.ControlElementNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.DatatypeNode;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.InterfaceUnitNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.ClassUnitNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeAssemblyNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeCompilationUnitNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeItemNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeModelNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeModuleNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.CodePackageNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.ControlElementNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.DatatypeNode;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.InterfaceUnitNode;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
-import io.github.ardoco.core.neo4jschema.repository.codeModel.CodeModelRepository;
+import io.github.ardoco.core.neo4jschema.repository.codemodel.CodeModelRepository;
 
 @Service
 public class CodePersistenceService {

@@ -11,7 +11,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.*;
-import io.github.ardoco.core.neo4jschema.entities.codeModel.*;
+import io.github.ardoco.core.neo4jschema.entities.codemodel.*;
 
 @Component
 public class CodeModelMapper {

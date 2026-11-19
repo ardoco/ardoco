@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureComponentNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureInterfaceNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureItemNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureMethodNode;
-import io.github.ardoco.core.neo4jschema.entities.architectureModel.ArchitectureModelNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureComponentNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureInterfaceNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureItemNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureMethodNode;
+import io.github.ardoco.core.neo4jschema.entities.architecturemodel.ArchitectureModelNode;
 import io.github.ardoco.core.neo4jschema.mapper.ArchitectureModelMapper;
-import io.github.ardoco.core.neo4jschema.repository.architectureModel.ArchitectureModelRepository;
+import io.github.ardoco.core.neo4jschema.repository.architecturemodel.ArchitectureModelRepository;
 
 @Service
 public class ArchitecturePersistenceService {
