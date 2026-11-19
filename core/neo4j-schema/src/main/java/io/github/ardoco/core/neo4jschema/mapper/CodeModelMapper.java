@@ -128,9 +128,20 @@ public class CodeModelMapper {
     }
 
     /**
-     * Maps an entire CodeModel tree.
+     * Maps an entire CodeModel tree without code files.
      */
     public CodeModel toDomain(CodeModelNode node) {
+        return toDomain(node, List.of());
+    }
+
+    /**
+     * Maps an entire CodeModel tree and gives the model the given code files in the given order.
+     *
+     * @param node      the code model node with its roots and repository items
+     * @param codeFiles the code files of the model, in the model's order
+     * @return the code model
+     */
+    public CodeModel toDomain(CodeModelNode node, List<CodeFile> codeFiles) {
         CodeItemRepository repository = new CodeItemRepository();
         Set<CodeItemNode> allNodes = new HashSet<>();
 
@@ -189,7 +200,7 @@ public class CodeModelMapper {
         }
 
         repository.init();
-        return finalizeCodeModel(node, repository);
+        return finalizeCodeModel(node, repository, codeFiles);
     }
 
     private CodeItem instantiateDomainObject(CodeItemNode node, CodeItemRepository repo) {
@@ -244,14 +255,19 @@ public class CodeModelMapper {
         return true;
     }
 
-    private CodeModel finalizeCodeModel(CodeModelNode node, CodeItemRepository repository) {
+    private CodeModel finalizeCodeModel(CodeModelNode node, CodeItemRepository repository, List<CodeFile> codeFiles) {
         SortedSet<CodeItem> roots = new TreeSet<>();
         for (CodeItemNode rootNode : node.getContent()) {
             roots.add(repository.getCodeItem(rootNode.getArdocoId()));
         }
+        List<String> rootIds = new ArrayList<>();
+        for (CodeItem root : roots) {
+            rootIds.add(root.getId());
+        }
+        CodeModel.CodeModelDto dto = new CodeModel.CodeModelDto(node.getModelId(), repository, rootIds, new ArrayList<>(codeFiles));
         Metamodel mm = Metamodel.valueOf(node.getMetamodel());
         return (mm == Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES) ?
-                new CodeModelWithCompilationUnitsAndPackages(node.getModelId(), repository, roots) :
-                new CodeModelWithCompilationUnits(node.getModelId(), repository, roots);
+                new CodeModelWithCompilationUnitsAndPackages(dto) :
+                new CodeModelWithCompilationUnits(dto);
     }
 }

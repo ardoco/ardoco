@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import io.github.ardoco.core.neo4jschema.entities.codemodel.ClassUnitNode;
 import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeAssemblyNode;
 import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeCompilationUnitNode;
@@ -31,6 +33,7 @@ import io.github.ardoco.core.neo4jschema.entities.codemodel.DatatypeNode;
 import io.github.ardoco.core.neo4jschema.entities.codemodel.InterfaceUnitNode;
 import io.github.ardoco.core.neo4jschema.mapper.CodeModelMapper;
 import io.github.ardoco.core.neo4jschema.repository.codemodel.CodeModelRepository;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class CodePersistenceService {
@@ -38,6 +41,9 @@ public class CodePersistenceService {
     private static final Logger logger = LoggerFactory.getLogger(CodePersistenceService.class);
     private static final String MODEL_ID = "modelId";
     private static final String LANGUAGE = "language";
+    private static final String ARDOCO_ID = "ardocoId";
+    private static final String COMPILATION_UNIT_ID = "compilationUnitId";
+    private static final ObjectMapper OBJECT_MAPPER = JsonHandling.createObjectMapper();
 
     private final CodeModelRepository repository;
     private final CodeModelMapper mapper;
@@ -139,7 +145,32 @@ public class CodePersistenceService {
             modelNode.addRepositoryItem(itemNode);
         }
 
-        return Optional.of(mapper.toDomain(modelNode));
+        return Optional.of(mapper.toDomain(modelNode, loadCodeFiles(modelId)));
+    }
+
+    /**
+     * Loads the code files of a code model in the order of their {@code HAS_CODE_FILE} index. Each file is rebuilt from its node properties through
+     * the project's Jackson mapping, the same way a code model file is read, so it keeps its original id; {@code CodeFile} has no constructor that
+     * takes an id.
+     */
+    private List<CodeFile> loadCodeFiles(String modelId) {
+        Collection<Map<String, Object>> rows = neo4jClient.query("""
+                MATCH (m:CodeModel {modelId: $modelId})-[r:HAS_CODE_FILE]->(f:CodeFile)
+                RETURN properties(f) AS props
+                ORDER BY r.index
+                """).bind(modelId).to(MODEL_ID).fetch().all();
+        List<CodeFile> codeFiles = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get("props");
+            Map<String, Object> json = new LinkedHashMap<>();
+            json.put("id", props.get(ARDOCO_ID));
+            json.put("name", props.get("name"));
+            json.put("pathElements", props.get("pathElements"));
+            json.put("extension", props.get("extension"));
+            json.put(COMPILATION_UNIT_ID, props.get(COMPILATION_UNIT_ID));
+            codeFiles.add(OBJECT_MAPPER.convertValue(json, CodeFile.class));
+        }
+        return codeFiles;
     }
 
     /**
@@ -237,12 +268,12 @@ public class CodePersistenceService {
     public void saveCodeModel(CodeModel model) {
         repository.deleteByModelId(model.getId());
         CodeModelNode modelNode = mapper.toNode(model);
-        persistCodeModelBatched(modelNode);
+        persistCodeModelBatched(modelNode, model.getCodeFiles());
     }
 
     private static final int BATCH_CHUNK_SIZE = 2000;
 
-    private void persistCodeModelBatched(CodeModelNode modelNode) {
+    private void persistCodeModelBatched(CodeModelNode modelNode, List<CodeFile> codeFiles) {
         neo4jClient.query("CREATE (m:CodeModel {id: $id, modelId: $modelId, metamodel: $metamodel})")
                 .bind(UUID.randomUUID().toString())
                 .to("id")
@@ -259,7 +290,62 @@ public class CodePersistenceService {
         createModelToItemEdges("HAS_REPOSITORY_ITEM", modelNode.getModelId(), items.stream().map(CodeItemNode::getArdocoId).toList(), errors);
         createModelToItemEdges("CONTAINS_CODE_ROOT", modelNode.getModelId(), modelNode.getContent().stream().map(CodeItemNode::getArdocoId).toList(), errors);
         createDatatypeReferenceEdges(items, errors);
+        createCodeFiles(modelNode.getModelId(), codeFiles, errors);
         errors.throwIfAny(logger);
+    }
+
+    /**
+     * Stores the code files of a code model as {@code CodeFile:Traceable} nodes, merged by {@code ardocoId}, with the properties {@code ardocoId},
+     * {@code name}, {@code pathElements}, {@code extension} and, only when the file has one, {@code compilationUnitId}. Each file gets a
+     * {@code HAS_CODE_FILE} relationship from the {@code CodeModel} node whose {@code index} property is the file's position in the model's list, and a
+     * {@code FILE_OF} relationship to its {@code CodeCompilationUnit} when the file has a compilation unit id. A compilation unit id that does not match
+     * exactly one code item is collected in {@code errors}, like the other code-model relationships. Code files are not code items: they do not carry
+     * the {@code CodeItem} label and are not in {@code HAS_REPOSITORY_ITEM}.
+     */
+    private void createCodeFiles(String modelId, List<CodeFile> codeFiles, LinkTargetErrors errors) {
+        if (codeFiles.isEmpty()) {
+            return;
+        }
+        List<Map<String, Object>> rows = new ArrayList<>();
+        List<Map<String, Object>> fileOfEdges = new ArrayList<>();
+        for (int index = 0; index < codeFiles.size(); index++) {
+            CodeFile codeFile = codeFiles.get(index);
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put(ARDOCO_ID, codeFile.getId());
+            putIfNotNull(props, "name", codeFile.getName());
+            props.put("pathElements", codeFile.getPathElements());
+            props.put("extension", codeFile.getExtension());
+            codeFile.getCompilationUnitId().ifPresent(compilationUnitId -> {
+                props.put(COMPILATION_UNIT_ID, compilationUnitId);
+                fileOfEdges.add(Map.of("sourceId", codeFile.getId(), "targetId", compilationUnitId));
+            });
+            rows.add(Map.of("index", (long) index, "props", props));
+        }
+        for (List<Map<String, Object>> chunk : chunk(rows, BATCH_CHUNK_SIZE)) {
+            neo4jClient.query("""
+                    MATCH (m:CodeModel {modelId: $modelId})
+                    UNWIND $rows AS row
+                    MERGE (f:CodeFile:Traceable {ardocoId: row.props.ardocoId})
+                    SET f = row.props
+                    CREATE (m)-[:HAS_CODE_FILE {index: row.index}]->(f)
+                    """).bind(modelId).to(MODEL_ID).bind(chunk).to("rows").run();
+        }
+        for (List<Map<String, Object>> chunk : chunk(fileOfEdges, BATCH_CHUNK_SIZE)) {
+            List<Map<String, Object>> unresolved = new ArrayList<>(neo4jClient.query("""
+                    UNWIND range(0, size($edges) - 1) AS index
+                    WITH index, $edges[index] AS edge
+                    OPTIONAL MATCH (s:CodeFile:Traceable {ardocoId: edge.sourceId}) USING INDEX SEEK s:Traceable(ardocoId)
+                    WITH index, edge, collect(s) AS sources
+                    OPTIONAL MATCH (t:CodeCompilationUnit:CodeItem:Traceable {ardocoId: edge.targetId}) USING INDEX SEEK t:Traceable(ardocoId)
+                    WITH index, edge, sources, collect(t) AS targets
+                    FOREACH (s IN CASE WHEN size(sources) = 1 AND size(targets) = 1 THEN sources ELSE [] END |
+                        FOREACH (t IN targets | CREATE (s)-[:FILE_OF]->(t)))
+                    WITH edge, size(sources) AS sourceMatches, size(targets) AS targetMatches
+                    WHERE sourceMatches <> 1 OR targetMatches <> 1
+                    RETURN edge.sourceId AS sourceId, edge.targetId AS targetId, sourceMatches, targetMatches
+                    """).bind(chunk).to("edges").fetch().all());
+            errors.recordEdges("FILE_OF", unresolved);
+        }
     }
 
     /**

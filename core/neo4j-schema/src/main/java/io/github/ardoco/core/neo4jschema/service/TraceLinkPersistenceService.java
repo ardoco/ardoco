@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
@@ -113,6 +114,7 @@ public class TraceLinkPersistenceService {
     private static final String SENTENCE_LABELS = "Sentence:Traceable";
     private static final String ARCHITECTURE_LABELS = "ArchitectureItem:Traceable";
     private static final String CODE_LABELS = "CodeItem:Traceable";
+    private static final String CODE_FILE_LABELS = "CodeFile:Traceable";
     private static final String RECOMMENDED_INSTANCE_LABELS = "RecommendedInstance";
     private static final String NER_OCCURRENCE_LABELS = "NamedArchitectureEntityOccurrence:Traceable";
     private static final String TRACEABLE_LABELS = "Traceable";
@@ -243,6 +245,9 @@ public class TraceLinkPersistenceService {
         }
         if (endpoint instanceof CodeItem) {
             return CODE_LABELS;
+        }
+        if (endpoint instanceof CodeFile) {
+            return CODE_FILE_LABELS;
         }
         return TRACEABLE_LABELS;
     }

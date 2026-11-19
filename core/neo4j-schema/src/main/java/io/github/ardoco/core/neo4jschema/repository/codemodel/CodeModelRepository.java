@@ -12,27 +12,27 @@ import io.github.ardoco.core.neo4jschema.entities.codemodel.CodeModelNode;
 public interface CodeModelRepository extends Neo4jRepository<CodeModelNode, String> {
 
     /**
-     * Deletes the code model with the given id, all of its items, and the inconsistencies attached to those items. Without the last part, a re-saved
-     * model would leave orphaned inconsistency nodes behind.
+     * Deletes the code model with the given id, all of its items and code files, and the inconsistencies attached to those items. Without the last
+     * part, a re-saved model would leave orphaned inconsistency nodes behind.
      *
      * @param modelId the id of the code model
      */
     @Query("""
             MATCH (m:CodeModel {modelId: $modelId})
-            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(n)
+            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ROOT|CONTAINS_CODE_ITEM|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE|HAS_CODE_FILE|FILE_OF*0..]->(n)
             OPTIONAL MATCH (n)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
             DETACH DELETE m, n, i
             """)
     void deleteByModelId(@Param("modelId") String modelId);
 
     /**
-     * Deletes all code models of the given metamodel, their items, and the inconsistencies attached to those items.
+     * Deletes all code models of the given metamodel, their items and code files, and the inconsistencies attached to those items.
      *
      * @param metamodel the metamodel name
      */
     @Query("""
             MATCH (m:CodeModel {metamodel: $mt})
-            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE*0..]->(child)
+            OPTIONAL MATCH (m)-[:CONTAINS_CODE_ITEM|CONTAINS_CODE_ROOT|HAS_REPOSITORY_ITEM|EXTENDS|IMPLEMENTS|REFERENCES_DATATYPE|HAS_CODE_FILE|FILE_OF*0..]->(child)
             OPTIONAL MATCH (child)-[:HAS_INCONSISTENCY]->(i:Inconsistency)
             DETACH DELETE m, child, i
             """)

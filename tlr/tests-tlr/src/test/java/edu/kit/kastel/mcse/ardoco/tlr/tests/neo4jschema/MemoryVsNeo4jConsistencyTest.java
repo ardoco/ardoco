@@ -32,8 +32,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabilityState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionStates;
@@ -126,6 +129,8 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
             Assertions.assertTrue(graph.countNodesWithLabel(requiredLabel) > 0, testCase
                     .name() + ": label " + requiredLabel + " must appear for this pipeline");
         }
+        Assertions.assertEquals(countCodeFiles(dataRepository), graph.countNodesWithLabel("CodeFile"), testCase
+                .name() + ": one CodeFile node per code file of the run's code models is expected");
 
         Set<String> expectedKeys = collectExpectedTraceLinks(dataRepository);
         Set<String> actualKeys = graph.traceLinkKeys();
@@ -197,7 +202,7 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
 
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "transarc", MemoryVsNeo4jConsistencyTest::transarc, Set.of(), transarcRequiredLabels(),
                 transarcFileChecks(), Map.of("SENTENCE_ARCHITECTURE", 20, "SENTENCE_CODE", 31, "ARCHITECTURE_CODE", 1949, "RECOMMENDATION_CODE", 18,
-                        "RECOMMENDATION_ARCHITECTURE", 5), new FixedCensus(28539, 62124, 27857)));
+                        "RECOMMENDATION_ARCHITECTURE", 5), new FixedCensus(31266, 66830, 27857)));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "swattr", MemoryVsNeo4jConsistencyTest::swattr, codeLabels(), swattrRequiredLabels(),
                 swattrFileChecks(), null, null));
         all.add(evaluationProjectCase(EvaluationProject.JABREF, "ardocode", MemoryVsNeo4jConsistencyTest::ardocode, architectureLabels(),
@@ -443,6 +448,24 @@ class MemoryVsNeo4jConsistencyTest extends AbstractPersistenceTest {
     @FunctionalInterface
     private interface PipelineFactory {
         ArdocoRunner build(String projectName, File text, File architecture, File code, ImmutableSortedMap<String, String> configs, File outputDir);
+    }
+
+    /**
+     * Counts the distinct code files (by id) of all code models of a run.
+     */
+    private static long countCodeFiles(DataRepository dataRepository) {
+        Set<String> codeFileIds = new HashSet<>();
+        var modelStates = dataRepository.getData(ModelStates.ID, ModelStates.class);
+        if (modelStates.isPresent()) {
+            for (Metamodel metamodel : modelStates.get().getMetamodels()) {
+                if (metamodel.isCodeModel() && modelStates.get().getModel(metamodel) instanceof CodeModel codeModel) {
+                    for (CodeFile codeFile : codeModel.getCodeFiles()) {
+                        codeFileIds.add(codeFile.getId());
+                    }
+                }
+            }
+        }
+        return codeFileIds.size();
     }
 
     private record FixedCensus(long nodeCount, long relationshipCount, long codeItemCount) {
