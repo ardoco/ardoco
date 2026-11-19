@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -72,12 +74,16 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
         assertThat(retrievedNode.getSentences()).hasSize(2);
 
         // Check the first sentence
-        var firstSentence = retrievedNode.getSentences().get(0);
+        var sentences = new ArrayList<>(retrievedNode.getSentences());
+        sentences.sort(Comparator.comparingInt(SentenceNode::getSentenceNumber));
+        assertThat(sentences.stream().map(SentenceNode::getSentenceNumber).toList()).containsExactly(0, 1);
+        var firstSentence = sentences.get(0);
         assertThat(firstSentence.getSentenceNumber()).isZero();
         assertThat(firstSentence.getText()).contains("The quick brown fox");
 
         // Check the word chain
-        var words = firstSentence.getWords();
+        var words = new ArrayList<>(firstSentence.getWords());
+        words.sort(Comparator.comparingInt(WordNode::getPosition));
         assertThat(words).isNotEmpty();
 
         var firstWord = words.get(0);
