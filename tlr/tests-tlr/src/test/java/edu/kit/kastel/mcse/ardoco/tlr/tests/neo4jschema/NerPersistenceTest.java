@@ -16,8 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.kit.kastel.mcse.ardoco.core.api.SimplePreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.ProgrammingLanguage;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.ArtemisTarget;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntityOccurrence;
@@ -183,6 +190,53 @@ class NerPersistenceTest extends AbstractPersistenceTest {
         assertThat(loadedLinked).isEmpty();
 
         pauseForNeo4jInspection();
+    }
+
+    @Test
+    @DisplayName("NER_CODE trace links to a class and to a code file are stored with their confidence and load back")
+    void testNerCodeTraceLinkRoundTrip() {
+        Metamodel mm = Metamodel.CODE_WITH_COMPILATION_UNITS;
+        CodeItemRepository repository = new CodeItemRepository();
+        CodeCompilationUnit compilationUnit = new CodeCompilationUnit("id_ner_cu", repository, "AuthController", new TreeSet<>(), List.of("src"), "java",
+                ProgrammingLanguage.JAVA);
+        ClassUnit classUnit = new ClassUnit("id_ner_cls", repository, "AuthController", new TreeSet<>());
+        compilationUnit.addContent(classUnit);
+        classUnit.setCompilationUnit(compilationUnit);
+        CodeFile codeFile = new CodeFile("README", List.of("docs"), "md", null);
+        persistenceHandler.saveModel(mm, new CodeModelWithCompilationUnits(new CodeModel.CodeModelDto("ner_code_model", repository, List.of("id_ner_cu"), List
+                .of(codeFile))));
+
+        var classOccurrence = new NamedArchitectureEntityOccurrence("AuthController", 1);
+        var fileOccurrence = new NamedArchitectureEntityOccurrence("README.md", 2);
+        persistenceHandler.saveNamedArchitectureEntity(new NamedArchitectureEntity("AuthController", new TreeSet<>(), List.of(classOccurrence)),
+                new ArtemisTarget(mm, NamedEntityType.CLASS), false);
+        persistenceHandler.saveNamedArchitectureEntity(new NamedArchitectureEntity("README.md", new TreeSet<>(), List.of(fileOccurrence)), new ArtemisTarget(mm,
+                NamedEntityType.DATAFILE), false);
+        assertThat(persistenceHandler.saveTraceLinks(List.of(new NamedArchitectureEntityToModelTraceLink(classOccurrence, classUnit,
+                NounMappingMapper.RESTORE_CLAIMANT, 0.6), new NamedArchitectureEntityToModelTraceLink(fileOccurrence, codeFile,
+                        NounMappingMapper.RESTORE_CLAIMANT, 0.7)))).isTrue();
+
+        long nerCodeEdges = neo4jClient.query("""
+                MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:Traceable)
+                WHERE r.traceLinkType = 'NER_CODE'
+                RETURN count(r) AS c
+                """).fetch().one().map(row -> ((Number) row.get("c")).longValue()).orElse(0L);
+        assertThat(nerCodeEdges).isEqualTo(2L);
+
+        SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById = new TreeMap<>();
+        occurrencesById.put(classOccurrence.getId(), classOccurrence);
+        occurrencesById.put(fileOccurrence.getId(), fileOccurrence);
+        SortedMap<String, ModelEntity> modelEntitiesById = new TreeMap<>();
+        modelEntitiesById.put(classUnit.getId(), classUnit);
+        modelEntitiesById.put(codeFile.getId(), codeFile);
+
+        var loaded = persistenceHandler.loadNerTraceLinks(mm, occurrencesById, modelEntitiesById);
+        assertThat(loaded).hasSize(2);
+        Map<String, Double> confidenceByTarget = new TreeMap<>();
+        for (var link : loaded) {
+            confidenceByTarget.put(link.getSecondEndpoint().getId(), link.getConfidence());
+        }
+        assertThat(confidenceByTarget).isEqualTo(Map.of(classUnit.getId(), 0.6, codeFile.getId(), 0.7));
     }
 
     private long countNerArchitectureLinks() {

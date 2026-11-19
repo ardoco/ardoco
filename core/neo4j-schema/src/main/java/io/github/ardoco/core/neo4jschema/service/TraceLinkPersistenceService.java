@@ -219,7 +219,7 @@ public class TraceLinkPersistenceService {
         double confidence = -1.0;
         if (isRecommendationType(type) && link instanceof RecommendationModelTraceLink rmtl) {
             confidence = rmtl.getConfidence();
-        } else if (type == TraceLinkType.NER_ARCHITECTURE && link instanceof NamedArchitectureEntityToModelTraceLink nerLink) {
+        } else if (isNerType(type) && link instanceof NamedArchitectureEntityToModelTraceLink nerLink) {
             confidence = nerLink.getConfidence();
         }
         rows.put(new RowKey(sourceId, targetId, type), new TraceLinkRow(sourceId, getEndpointLabels(link.getFirstEndpoint()), targetId, getEndpointLabels(link
@@ -296,10 +296,28 @@ public class TraceLinkPersistenceService {
                 return TraceLinkType.RECOMMENDATION_CODE;
             }
         }
-        if (link instanceof NamedArchitectureEntityToModelTraceLink) {
-            return TraceLinkType.NER_ARCHITECTURE;
+        if (link instanceof NamedArchitectureEntityToModelTraceLink nerLink) {
+            return determineNerType(nerLink);
         }
         return null;
+    }
+
+    private static TraceLinkType determineNerType(NamedArchitectureEntityToModelTraceLink link) {
+        Object target = link.getSecondEndpoint();
+        if (target instanceof ArchitectureItem) {
+            return TraceLinkType.NER_ARCHITECTURE;
+        }
+        if (target instanceof CodeItem || target instanceof CodeFile) {
+            return TraceLinkType.NER_CODE;
+        }
+        throw new IllegalStateException(
+                "A named-entity trace link must target an architecture item, a code item or a code file, but targets " + (target == null ?
+                        "null" :
+                        target.getClass().getName()));
+    }
+
+    private static boolean isNerType(TraceLinkType type) {
+        return type == TraceLinkType.NER_ARCHITECTURE || type == TraceLinkType.NER_CODE;
     }
 
     private String getEndpointId(Object endpoint, TraceLinkWriteErrors errors) {

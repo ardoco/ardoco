@@ -35,5 +35,11 @@ public enum TraceLinkType {
     /**
      * Represents a link from a NamedArchitectureEntityOccurrence to an Architecture Model Item (NER).
      */
-    NER_ARCHITECTURE
+    NER_ARCHITECTURE,
+
+    /**
+     * Represents a link from a NamedArchitectureEntityOccurrence to a Code Model Item or to a CodeFile (NER). The label of the target node tells the two
+     * apart.
+     */
+    NER_CODE
 }

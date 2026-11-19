@@ -117,19 +117,34 @@ public class NerPersistenceService {
         return entityRepository.findByMetamodel(metamodel.name()).stream().map(this::toDomain).toList();
     }
 
+    /**
+     * Loads the named-entity trace links ({@code NER_ARCHITECTURE} and {@code NER_CODE}) whose occurrence belongs to a named entity of the given
+     * metamodel. Links whose occurrence or target is not in the given maps are skipped.
+     *
+     * @param metamodel         the metamodel of the named entities
+     * @param occurrencesById   the occurrences, by id
+     * @param modelEntitiesById the possible targets (architecture items, code items, code files), by id
+     * @return the loaded trace links
+     */
     @Transactional(readOnly = true)
     public Collection<NamedArchitectureEntityToModelTraceLink> loadNerTraceLinks(Metamodel metamodel,
             SortedMap<String, NamedArchitectureEntityOccurrence> occurrencesById, SortedMap<String, ModelEntity> modelEntitiesById) {
         List<NamedArchitectureEntityToModelTraceLink> links = new ArrayList<>();
         var rows = neo4jClient.query("""
                 MATCH (o:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(t:Traceable)
-                WHERE r.traceLinkType = $type
+                WHERE r.traceLinkType IN $types
                   AND EXISTS {
                     MATCH (e:NamedArchitectureEntity)-[:HAS_OCCURRENCE]->(o)
                     WHERE e.metamodel = $metamodel
                   }
                 RETURN o.ardocoId AS occId, t.ardocoId AS targetId, coalesce(r.confidence, -1.0) AS confidence
-                """).bind(TraceLinkType.NER_ARCHITECTURE.name()).to("type").bind(metamodel.name()).to("metamodel").fetch().all();
+                """)
+                .bind(List.of(TraceLinkType.NER_ARCHITECTURE.name(), TraceLinkType.NER_CODE.name()))
+                .to("types")
+                .bind(metamodel.name())
+                .to("metamodel")
+                .fetch()
+                .all();
         for (var row : rows) {
             String occId = (String) row.get("occId");
             String targetId = (String) row.get("targetId");

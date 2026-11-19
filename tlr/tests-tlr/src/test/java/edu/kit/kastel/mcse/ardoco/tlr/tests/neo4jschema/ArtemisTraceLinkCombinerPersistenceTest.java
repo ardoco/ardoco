@@ -109,6 +109,7 @@ class ArtemisTraceLinkCombinerPersistenceTest extends AbstractPersistenceTest im
 
         long sentenceArchitectureEdges = countTraceLinksOfType("SENTENCE_ARCHITECTURE");
         long architectureCodeEdges = countTraceLinksOfType("ARCHITECTURE_CODE");
+        Assertions.assertEquals(2L, countTraceLinksOfType("NER_ARCHITECTURE"), "Both saved NER occurrences get their NER_ARCHITECTURE edge");
 
         Assertions.assertEquals(2L, sentenceArchitectureEdges, "Two distinct sentences each get their own SENTENCE_ARCHITECTURE edge");
         Assertions.assertEquals(1L, architectureCodeEdges,
