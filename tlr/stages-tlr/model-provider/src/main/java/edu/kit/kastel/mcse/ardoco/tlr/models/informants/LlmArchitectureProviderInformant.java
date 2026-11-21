@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt.Features.PACKAGES;
@@ -52,9 +52,9 @@ public class LlmArchitectureProviderInformant extends Informant {
             LlmArchitecturePrompt code, LlmArchitecturePrompt.Features codeFeature, LlmArchitecturePrompt aggregation) {
         super(LlmArchitectureProviderInformant.class.getSimpleName(), dataRepository);
         String apiKey = Environment.getEnv("OPENAI_API_KEY");
-        String orgId = Environment.getEnv("OPENAI_ORGANIZATION_ID");
-        if ((apiKey == null || orgId == null) && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
-            throw new IllegalArgumentException("OpenAI API Key and Organization ID must be set");
+        // The organization id is optional (sent only when set); only the API key is required for OpenAI.
+        if (apiKey == null && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
+            throw new IllegalArgumentException("OpenAI API Key must be set");
         }
         this.chatLanguageModel = largeLanguageModel == null ? null : largeLanguageModel.create();
         this.documentationPrompt = documentation;
