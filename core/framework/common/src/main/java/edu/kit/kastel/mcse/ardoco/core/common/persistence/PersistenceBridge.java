@@ -88,14 +88,20 @@ public class PersistenceBridge extends AbstractConfigurable {
     /** Connection key of the applied configuration in neo4j mode, {@code null} in memory mode. */
     private String appliedConnection;
 
+    /** The applied configuration in neo4j mode, {@code null} in memory mode. */
+    private ImmutableSortedMap<String, String> appliedConfiguration;
+
     /**
-     * Storage mode and connection in effect. The connection is a key of uri, username and a SHA-256 digest of the password; {@link #toString()}
-     * shows only the storage mode, so the value can be compared but never leaks connection details into a message.
+     * Storage mode, connection and configuration in effect. The connection is a key of uri, username and a SHA-256 digest of the password. The
+     * configuration is the whole configuration map a neo4j run reads from {@link #getLastAppliedConfiguration()} (for its run metadata and its
+     * configured export path), so two runners with the same connection but another configuration have different settings. {@link #toString()}
+     * shows only the storage mode, so the value can be compared but never leaks connection details or configuration values into a message.
      *
-     * @param storage    the storage mode
-     * @param connection the connection key in neo4j mode, {@code null} in memory mode
+     * @param storage       the storage mode
+     * @param connection    the connection key in neo4j mode, {@code null} in memory mode
+     * @param configuration the applied configuration in neo4j mode, {@code null} in memory mode
      */
-    public record Settings(PersistenceStorage storage, String connection) {
+    public record Settings(PersistenceStorage storage, String connection, ImmutableSortedMap<String, String> configuration) {
         @Override
         public String toString() {
             return String.valueOf(this.storage);
@@ -130,10 +136,10 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
-     * @return the storage mode and connection of the last completely applied configuration
+     * @return the storage mode, connection and, in neo4j mode, the configuration of the last completely applied configuration
      */
     public static Settings currentSettings() {
-        return new Settings(INSTANCE.appliedStorage, INSTANCE.appliedConnection);
+        return new Settings(INSTANCE.appliedStorage, INSTANCE.appliedConnection, INSTANCE.appliedConfiguration);
     }
 
     public static PersistenceHandler getHandler() {
@@ -470,6 +476,7 @@ public class PersistenceBridge extends AbstractConfigurable {
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> additionalConfiguration) {
         this.appliedStorage = PersistenceStorage.MEMORY;
         this.appliedConnection = null;
+        this.appliedConfiguration = null;
         for (String legacyKey : LEGACY_KEYS) {
             if (additionalConfiguration.containsKey(legacyKey)) {
                 throw new IllegalArgumentException(legacyKey + " is no longer supported; use " + KEY_STORAGE + "=memory|neo4j instead");
@@ -490,6 +497,7 @@ public class PersistenceBridge extends AbstractConfigurable {
             }
         }
         this.appliedConnection = connection;
+        this.appliedConfiguration = this.storage == PersistenceStorage.NEO4J ? additionalConfiguration : null;
         this.appliedStorage = this.storage;
     }
 

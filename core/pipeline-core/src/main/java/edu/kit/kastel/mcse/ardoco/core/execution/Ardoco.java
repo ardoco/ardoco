@@ -99,8 +99,8 @@ public final class Ardoco extends Pipeline {
      * {@link #resolveConfiguredExportDirectory}, which always resolves to a usable directory (falling back to a
      * default one) so a run never silently loses its one deliverable.
      * <p>
-     * The persistence settings are global per JVM. If another runner was set up after this one with a different storage mode or connection, the
-     * run fails before any write instead of running with the other runner's settings.
+     * The persistence settings are global per JVM. If another runner was set up after this one with a different storage mode, connection or, in
+     * neo4j mode, configuration, the run fails before any write instead of running with the other runner's settings.
      *
      * @throws IllegalStateException if the persistence settings changed since this instance's runner was set up
      */
@@ -110,7 +110,7 @@ public final class Ardoco extends Pipeline {
         if (this.settingsAtSetUp != null && !this.settingsAtSetUp.equals(currentSettings)) {
             throw new IllegalStateException("The persistence settings changed after this runner was set up: it was set up with storage " + this.settingsAtSetUp
                     .storage() + ", the current storage is " + currentSettings
-                            .storage() + " (or the Neo4j connection differs). Another runner was set up " + "in between; set up and run one runner at a time.");
+                            .storage() + " (or the Neo4j connection or configuration differs). Another runner was set up " + "in between; set up and run one runner at a time.");
         }
         boolean neo4jMode = PersistenceBridge.isNeo4jStorage();
         if (neo4jMode) {
