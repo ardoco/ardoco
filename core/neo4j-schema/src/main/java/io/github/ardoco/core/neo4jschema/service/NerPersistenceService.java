@@ -3,7 +3,9 @@ package io.github.ardoco.core.neo4jschema.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeSet;
 
@@ -24,7 +26,6 @@ import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityNod
 import io.github.ardoco.core.neo4jschema.entities.ner.NamedArchitectureEntityOccurrenceNode;
 import io.github.ardoco.core.neo4jschema.entities.tracelink.TraceLinkType;
 import io.github.ardoco.core.neo4jschema.mapper.NounMappingMapper;
-import io.github.ardoco.core.neo4jschema.repository.ner.NamedArchitectureEntityOccurrenceRepository;
 import io.github.ardoco.core.neo4jschema.repository.ner.NamedArchitectureEntityRepository;
 
 @Service
@@ -32,20 +33,40 @@ public class NerPersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(NerPersistenceService.class);
 
+    private static final int WRITE_CHUNK_SIZE = 2000;
+
+    private static final String SAVE_ENTITIES_QUERY = """
+            UNWIND $rows AS row
+            MERGE (n:NamedArchitectureEntity {ardocoId: row.key})
+            SET n.name = row.name,
+                n.metamodel = row.metamodel,
+                n.entityType = row.entityType,
+                n.unlinked = row.unlinked,
+                n.alternativeNames = row.alternativeNames
+            WITH n, row
+            OPTIONAL MATCH (n)-[old:HAS_OCCURRENCE]->(o:NamedArchitectureEntityOccurrence)
+            WHERE NOT o.ardocoId IN [occurrence IN row.occurrences | occurrence.ardocoId]
+            WITH n, row, collect(old) AS stale
+            FOREACH (r IN stale | DELETE r)
+            FOREACH (occurrence IN row.occurrences |
+                MERGE (o:NamedArchitectureEntityOccurrence:Traceable {ardocoId: occurrence.ardocoId})
+                SET o.name = occurrence.name,
+                    o.sentenceNumber = occurrence.sentenceNumber
+                MERGE (n)-[:HAS_OCCURRENCE]->(o))
+            """;
+
     private final NamedArchitectureEntityRepository entityRepository;
-    private final NamedArchitectureEntityOccurrenceRepository occurrenceRepository;
     private final Neo4jClient neo4jClient;
 
-    public NerPersistenceService(NamedArchitectureEntityRepository entityRepository, NamedArchitectureEntityOccurrenceRepository occurrenceRepository,
-            Neo4jClient neo4jClient) {
+    public NerPersistenceService(NamedArchitectureEntityRepository entityRepository, Neo4jClient neo4jClient) {
         this.entityRepository = entityRepository;
-        this.occurrenceRepository = occurrenceRepository;
         this.neo4jClient = neo4jClient;
     }
 
     /**
      * Upserts the node of a named architecture entity, keyed by {@link PersistenceBridge#namedArchitectureEntityKey}, with its occurrences. The
-     * node keeps the metamodel and the linked/unlinked flag of the last save and gets the target's entity type as {@code entityType}.
+     * node keeps the metamodel and the linked/unlinked flag of the last save and gets the target's entity type as {@code entityType}. Same write as
+     * {@link #saveNamedArchitectureEntities} for a single entity.
      *
      * @param entity   the entity to save
      * @param target   the ArTEMiS target the entity belongs to
@@ -53,32 +74,18 @@ public class NerPersistenceService {
      */
     @Transactional
     public void saveNamedArchitectureEntity(NamedArchitectureEntity entity, ArtemisTarget target, boolean unlinked) {
-        String key = PersistenceBridge.namedArchitectureEntityKey(target, entity);
-        NamedArchitectureEntityNode node = entityRepository.findById(key).orElseGet(() -> new NamedArchitectureEntityNode(key));
-        node.setName(entity.getName());
-        node.setMetamodel(target.metamodel().name());
-        node.setEntityType(target.entityType().name());
-        node.setUnlinked(unlinked);
-        node.setAlternativeNames(new ArrayList<>(entity.getAlternativeNames()));
-
-        List<NamedArchitectureEntityOccurrenceNode> occurrenceNodes = new ArrayList<>();
-        for (NamedArchitectureEntityOccurrence occurrence : entity.getOccurrences()) {
-            NamedArchitectureEntityOccurrenceNode occNode = occurrenceRepository.findById(occurrence.getId())
-                    .orElseGet(() -> new NamedArchitectureEntityOccurrenceNode(occurrence.getId()));
-            occNode.setName(occurrence.getName());
-            occNode.setSentenceNumber(occurrence.getSentenceNumber());
-            occurrenceNodes.add(occurrenceRepository.save(occNode));
-        }
-        node.setOccurrences(occurrenceNodes);
-        entityRepository.save(node);
-        logger.debug("Saved NamedArchitectureEntity {} ({})", key, entity.getName());
+        saveNamedArchitectureEntities(List.of(entity), target, unlinked);
     }
 
     /**
-     * Batched form of {@link #saveNamedArchitectureEntity}: dual-writes every entity (all for the same target and linked/unlinked bucket) in one
-     * transaction instead of one per entity. Used by the stage-level write-behind ({@code PersistenceBridge::withDeferredWrites}). NER entities
-     * carry a nested occurrence subgraph, so this still upserts per entity internally; the batching is at the transaction/round-trip level, not a
-     * single {@code UNWIND} query like the NounMapping/RecommendedInstance batches.
+     * Upserts the nodes of named architecture entities (all for the same target and linked/unlinked bucket) with Cypher in {@code UNWIND} chunks
+     * of at most {@value #WRITE_CHUNK_SIZE} entities. Each entity node is merged by its key ({@link PersistenceBridge#namedArchitectureEntityKey})
+     * and gets {@code name}, {@code metamodel}, {@code entityType}, {@code unlinked} and {@code alternativeNames} of this save, so the later save
+     * wins. Each occurrence is merged as a {@code NamedArchitectureEntityOccurrence:Traceable} node by its id with {@code name} and
+     * {@code sentenceNumber}, linked by one {@code HAS_OCCURRENCE}; {@code HAS_OCCURRENCE} relationships to occurrences the entity no longer has are
+     * removed. Nothing else is read or written: in particular the occurrences' {@code TRACES_TO} relationships and their targets stay as they are.
+     * Spring Data's {@code save} is not used because it loads an occurrence together with its trace-link targets and writes them back; a target
+     * without its own node class (a code file) was then written as a second occurrence node with the target's id.
      *
      * @param entities the entities to save; a no-op if empty
      * @param target   the ArTEMiS target (metamodel and entity type) of the bucket
@@ -89,10 +96,30 @@ public class NerPersistenceService {
         if (entities.isEmpty()) {
             return;
         }
+        List<Map<String, Object>> rows = new ArrayList<>();
         for (NamedArchitectureEntity entity : entities) {
-            saveNamedArchitectureEntity(entity, target, unlinked);
+            List<Map<String, Object>> occurrences = new ArrayList<>();
+            for (NamedArchitectureEntityOccurrence occurrence : entity.getOccurrences()) {
+                Map<String, Object> occurrenceRow = new LinkedHashMap<>();
+                occurrenceRow.put("ardocoId", occurrence.getId());
+                occurrenceRow.put("name", occurrence.getName());
+                occurrenceRow.put("sentenceNumber", occurrence.getSentenceNumber());
+                occurrences.add(occurrenceRow);
+            }
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("key", PersistenceBridge.namedArchitectureEntityKey(target, entity));
+            row.put("name", entity.getName());
+            row.put("metamodel", target.metamodel().name());
+            row.put("entityType", target.entityType().name());
+            row.put("unlinked", unlinked);
+            row.put("alternativeNames", new ArrayList<>(entity.getAlternativeNames()));
+            row.put("occurrences", occurrences);
+            rows.add(row);
         }
-        logger.debug("Saved {} NamedArchitectureEntities in one batch ({}, unlinked={})", entities.size(), target.getId(), unlinked);
+        for (int start = 0; start < rows.size(); start += WRITE_CHUNK_SIZE) {
+            neo4jClient.query(SAVE_ENTITIES_QUERY).bind(rows.subList(start, Math.min(start + WRITE_CHUNK_SIZE, rows.size()))).to("rows").run();
+        }
+        logger.debug("Saved {} NamedArchitectureEntities ({}, unlinked={})", entities.size(), target.getId(), unlinked);
     }
 
     @Transactional(readOnly = true)

@@ -185,6 +185,38 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
         Assertions.assertEquals(1L, count("MATCH ()-[r:TRACES_TO]->() RETURN count(r) AS c"));
     }
 
+    @Test
+    @DisplayName("Saving a named entity again keeps its NER_CODE link to a code file, its occurrence and the code file unchanged")
+    void resavingANamedEntityKeepsItsCodeFileLink() {
+        CodeModelWithCompilationUnits model = createModel(true);
+        persistenceHandler.saveModel(METAMODEL, model);
+        CodeFile codeFile = model.getCodeFiles().get(1);
+        ArtemisTarget target = new ArtemisTarget(METAMODEL, NamedEntityType.DATAFILE);
+
+        var occurrence = new NamedArchitectureEntityOccurrence("README.md", 3);
+        var entity = new NamedArchitectureEntity("README.md", new TreeSet<>(), List.of(occurrence));
+        persistenceHandler.saveNamedArchitectureEntity(entity, target, false);
+        Assertions.assertTrue(persistenceHandler.saveTraceLinks(List.of(new NamedArchitectureEntityToModelTraceLink(occurrence, codeFile))));
+        Map<String, Object> codeFileBefore = properties(codeFile.getId());
+        Map<String, Object> occurrenceBefore = occurrenceProperties(occurrence.getId());
+        long nodesBefore = count("MATCH (n) RETURN count(n) AS c");
+
+        Assertions.assertDoesNotThrow(() -> persistenceHandler.saveNamedArchitectureEntity(entity, target, false));
+
+        Assertions.assertEquals(nodesBefore, count("MATCH (n) RETURN count(n) AS c"));
+        Assertions.assertEquals(1L, count("MATCH (n {ardocoId: '" + codeFile.getId() + "'}) RETURN count(n) AS c"));
+
+        Assertions.assertEquals(1L, count("MATCH (:NamedArchitectureEntityOccurrence {ardocoId: '" + occurrence
+                .getId() + "'})-[r:TRACES_TO {traceLinkType: 'NER_CODE'}]->(:CodeFile {ardocoId: '" + codeFile.getId() + "'}) RETURN count(r) AS c"));
+        Assertions.assertEquals(1L, count("MATCH ()-[r:TRACES_TO]->() RETURN count(r) AS c"));
+        Assertions.assertEquals(1L, count("MATCH (o:NamedArchitectureEntityOccurrence) RETURN count(o) AS c"));
+        Assertions.assertEquals(1L, count("MATCH (:NamedArchitectureEntity)-[r:HAS_OCCURRENCE]->(:NamedArchitectureEntityOccurrence) RETURN count(r) AS c"));
+        Assertions.assertEquals(2L, count("MATCH (f:CodeFile) RETURN count(f) AS c"));
+        Assertions.assertEquals(codeFileBefore, properties(codeFile.getId()));
+        Assertions.assertEquals(occurrenceBefore, occurrenceProperties(occurrence.getId()));
+        Assertions.assertEquals(List.of("CodeFile", "Traceable"), labels(codeFile.getId()));
+    }
+
     private static CodeModelWithCompilationUnits createModel(List<CodeFile> codeFiles) {
         CodeItemRepository repository = new CodeItemRepository();
         CodeCompilationUnit compilationUnit = new CodeCompilationUnit(COMPILATION_UNIT_ID, repository, "AuthService", new TreeSet<>(), List.of("src", "auth"),
@@ -202,6 +234,26 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
                 .bind(index)
                 .to("index")
                 .run();
+    }
+
+    private List<String> labels(String codeFileId) {
+        return neo4jClient.query("MATCH (f:CodeFile {ardocoId: $id}) UNWIND labels(f) AS label WITH label ORDER BY label RETURN collect(label) AS l")
+                .bind(codeFileId)
+                .to("id")
+                .fetchAs(List.class)
+                .mappedBy((typeSystem, record) -> record.get("l").asList(value -> value.asString()))
+                .one()
+                .orElseThrow();
+    }
+
+    private Map<String, Object> occurrenceProperties(String occurrenceId) {
+        return neo4jClient.query("MATCH (o:NamedArchitectureEntityOccurrence {ardocoId: $id}) RETURN properties(o) AS p")
+                .bind(occurrenceId)
+                .to("id")
+                .fetchAs(Map.class)
+                .mappedBy((typeSystem, record) -> record.get("p").asMap())
+                .one()
+                .orElseThrow();
     }
 
     private static CodeModelWithCompilationUnits createModel(boolean withCodeFiles) {
