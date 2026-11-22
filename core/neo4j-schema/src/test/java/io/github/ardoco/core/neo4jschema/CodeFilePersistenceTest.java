@@ -141,6 +141,69 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
         Assertions.assertEquals(1L, count("MATCH ()-[r:TRACES_TO]->() RETURN count(r) AS c"));
     }
 
+    @Test
+    @DisplayName("The loaded code files follow the HAS_CODE_FILE index, not the order in which the nodes and relationships were created")
+    void restoreFollowsTheStoredIndex() {
+        CodeFile alpha = new CodeFile("Alpha", List.of("src"), "java", null);
+        CodeFile beta = new CodeFile("Beta", List.of("src"), "java", null);
+        CodeFile gamma = new CodeFile("Gamma", List.of("src"), "java", null);
+        persistenceHandler.saveModel(METAMODEL, createModel(List.of(beta, gamma, alpha)));
+        setIndex(alpha.getId(), 0);
+        setIndex(beta.getId(), 1);
+        setIndex(gamma.getId(), 2);
+
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(METAMODEL);
+
+        Assertions.assertNotNull(loaded);
+        List<String> loadedIds = new ArrayList<>();
+        for (CodeFile codeFile : loaded.getCodeFiles()) {
+            loadedIds.add(codeFile.getId());
+        }
+        Assertions.assertEquals(List.of(alpha.getId(), beta.getId(), gamma.getId()), loadedIds);
+    }
+
+    @Test
+    @DisplayName("A trace link to a code file ends at the CodeFile node even if a node of another Traceable kind has the same ardocoId")
+    void traceLinkToCodeFileWithSharedId() {
+        CodeModelWithCompilationUnits model = createModel(true);
+        persistenceHandler.saveModel(METAMODEL, model);
+        CodeFile codeFile = model.getCodeFiles().get(1);
+        neo4jClient.query("CREATE (:ArchitectureComponent:ArchitectureItem:Traceable {ardocoId: $id, name: 'Collision'})")
+                .bind(codeFile.getId())
+                .to("id")
+                .run();
+
+        var occurrence = new NamedArchitectureEntityOccurrence("README.md", 3);
+        var entity = new NamedArchitectureEntity("README.md", new TreeSet<>(), List.of(occurrence));
+        persistenceHandler.saveNamedArchitectureEntity(entity, new ArtemisTarget(METAMODEL, NamedEntityType.DATAFILE), false);
+
+        Assertions.assertTrue(persistenceHandler.saveTraceLinks(List.of(new NamedArchitectureEntityToModelTraceLink(occurrence, codeFile))));
+
+        Assertions.assertEquals(1L, count("MATCH (:NamedArchitectureEntityOccurrence)-[r:TRACES_TO]->(:CodeFile {ardocoId: '" + codeFile
+                .getId() + "'}) RETURN count(r) AS c"));
+        Assertions.assertEquals(0L, count("MATCH ()-[r:TRACES_TO]->(:ArchitectureComponent) RETURN count(r) AS c"));
+        Assertions.assertEquals(1L, count("MATCH ()-[r:TRACES_TO]->() RETURN count(r) AS c"));
+    }
+
+    private static CodeModelWithCompilationUnits createModel(List<CodeFile> codeFiles) {
+        CodeItemRepository repository = new CodeItemRepository();
+        CodeCompilationUnit compilationUnit = new CodeCompilationUnit(COMPILATION_UNIT_ID, repository, "AuthService", new TreeSet<>(), List.of("src", "auth"),
+                "java", ProgrammingLanguage.JAVA);
+        ClassUnit classUnit = new ClassUnit("id_cf_cls", repository, "AuthService", new TreeSet<>());
+        compilationUnit.addContent(classUnit);
+        classUnit.setCompilationUnit(compilationUnit);
+        return new CodeModelWithCompilationUnits(new CodeModel.CodeModelDto(MODEL_ID, repository, List.of(COMPILATION_UNIT_ID), codeFiles));
+    }
+
+    private void setIndex(String codeFileId, long index) {
+        neo4jClient.query("MATCH (:CodeModel)-[r:HAS_CODE_FILE]->(:CodeFile {ardocoId: $id}) SET r.index = $index")
+                .bind(codeFileId)
+                .to("id")
+                .bind(index)
+                .to("index")
+                .run();
+    }
+
     private static CodeModelWithCompilationUnits createModel(boolean withCodeFiles) {
         CodeItemRepository repository = new CodeItemRepository();
         CodeCompilationUnit compilationUnit = new CodeCompilationUnit(COMPILATION_UNIT_ID, repository, "AuthService", new TreeSet<>(), List.of("src", "auth"),

@@ -22,10 +22,13 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.ClassUnit;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeFile;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodePackage;
@@ -113,6 +116,31 @@ class MissingLinkTargetTest extends AbstractNeo4jTest {
     }
 
     @Test
+    @DisplayName("Code model with a code file whose compilation unit does not exist: one ERROR naming FILE_OF, MissingLinkTargetException, nothing stored")
+    void codeModelWithMissingFileOfTarget() {
+        CodeItemRepository repository = new CodeItemRepository();
+        CodeCompilationUnit compilationUnit = new CodeCompilationUnit("file_of_cu", repository, "Present", new TreeSet<>(), List.of("src"), "java",
+                ProgrammingLanguage.JAVA);
+        ClassUnit classUnit = new ClassUnit("file_of_cls", repository, "Present", new TreeSet<>());
+        compilationUnit.addContent(classUnit);
+        classUnit.setCompilationUnit(compilationUnit);
+        CodeFile presentFile = new CodeFile("Present", List.of("src"), "java", "file_of_cu");
+        CodeFile orphanFile = new CodeFile("Orphan", List.of("src"), "java", "ghost-compilation-unit");
+        var codeModel = new CodeModelWithCompilationUnits(new CodeModel.CodeModelDto("file_of_code_model", repository, List.of("file_of_cu"), List.of(
+                presentFile, orphanFile)));
+
+        String error = assertOneErrorAndException(() -> persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS, codeModel));
+
+        Assertions.assertTrue(error.contains("CodeModel"), error);
+        Assertions.assertTrue(error.contains("FILE_OF"), error);
+        Assertions.assertTrue(error.contains(orphanFile.getId()), error);
+        Assertions.assertTrue(error.contains("ghost-compilation-unit"), error);
+        Assertions.assertEquals(0L, count("MATCH (n:CodeModel) RETURN count(n) AS c"));
+        Assertions.assertEquals(0L, count("MATCH (n:CodeFile) RETURN count(n) AS c"));
+        Assertions.assertEquals(0L, count("MATCH (n:CodeItem) RETURN count(n) AS c"));
+    }
+
+    @Test
     @DisplayName("Architecture model whose item id also belongs to a foreign architecture node: one ERROR (ambiguous), MissingLinkTargetException")
     void architectureModelWithAmbiguousItem() {
         neo4jClient.query("CREATE (:ArchitectureComponent:ArchitectureItem:Traceable {ardocoId: 'id_comp_auth', name: 'Foreign'})").run();
@@ -130,6 +158,10 @@ class MissingLinkTargetTest extends AbstractNeo4jTest {
         Word word = text.getSentences().get(0).getWords().get(1);
         return new NounMappingImpl(SortedSets.immutable.with(word), MappingKind.NAME, TEST_CLAIMANT, 1.0, Lists.immutable.with(word), Lists.immutable.with(word
                 .getText()));
+    }
+
+    private long count(String query) {
+        return neo4jClient.query(query).fetchAs(Long.class).one().orElseThrow();
     }
 
     private static String assertOneErrorAndException(Executable action) {
