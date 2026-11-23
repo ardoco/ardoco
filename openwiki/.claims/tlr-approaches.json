@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:42815b1baf1bab1887abac97e42614e5826361ca439e62a4ebb15fc53f2686ac",
+  "pageVersion": "sha256:7d69c59295c09a3660e209a21c2673cf08124d928b6366e09d638d9951f183e7",
   "claims": [
     {
       "id": "claim_ded84656d4984e249eee1dca8da97d8e",
@@ -484,7 +484,7 @@
     },
     {
       "id": "claim_c050682a557443b19cbb845e00c1108c",
-      "statement": "An ArtemisNerStrategy pairs a NAER NamedEntityType with a Metamodel and builds a NAER TwoPartPrompt from two classpath resources under PROMPT_RESOURCE_ROOT = \"/artemis/prompts/\" (readPromptResource throws IllegalStateException for a missing resource); it derives an ArtemisTarget record (Metamodel, NamedEntityType) whose getId() is \"METAMODEL:ENTITYTYPE\" and keys the per-target states, while the strategy's own getId() (<ENTITY>Artemis, e.g. COMPONENTArtemis) prefixes the agent/informant names. Three strategies ship: ComponentArtemisNerStrategy (COMPONENT × ARCHITECTURE_WITH_COMPONENTS, appends the architecture model's endpoint names to its task prompt as candidate entities), ClassArtemisNerStrategy (CLASS × CODE_WITH_COMPILATION_UNITS), and DatafileArtemisNerStrategy (DATAFILE × CODE_WITH_COMPILATION_UNITS).",
+      "statement": "An ArtemisNerStrategy pairs a NAER NamedEntityType with a Metamodel and builds a NAER TwoPartPrompt from two classpath resources under PROMPT_RESOURCE_ROOT = \"/artemis/prompts/\" (the default readPromptResource wraps the classpath lookup in Objects.requireNonNull, so a missing resource surfaces as a NullPointerException, while read/write I/O failures raise IllegalStateException); it derives an ArtemisTarget record (Metamodel, NamedEntityType) whose getId() is \"METAMODEL:ENTITYTYPE\" and keys the per-target states, while the strategy's own getId() (<ENTITY>Artemis, e.g. COMPONENTArtemis) prefixes the agent/informant names. Three strategies ship: ComponentArtemisNerStrategy (COMPONENT × ARCHITECTURE_WITH_COMPONENTS, appends the architecture model's endpoint names to its task prompt as candidate entities), ClassArtemisNerStrategy (CLASS × CODE_WITH_COMPILATION_UNITS), and DatafileArtemisNerStrategy (DATAFILE × CODE_WITH_COMPILATION_UNITS).",
       "evidence": [
         {
           "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/api/stage/connectiongenerator/artemis/ArtemisTarget.java#L8-L18",
@@ -547,6 +547,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-16T14:07:46.178Z"
+    "at": "2026-11-23T16:40:38.555Z"
   }
 }

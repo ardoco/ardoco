@@ -15,6 +15,8 @@ sources:
     resource: repo://.github/workflows/docs.yml
   - id: openwiki-source-6d3ac2bdfb0e76882a670989
     resource: repo://.github/workflows/openwiki.yml
+  - id: openwiki-source-ca8f496ee5e50bf320eaf78a
+    resource: repo://core/.github/dependabot.yml
   - id: openwiki-source-64c4c51956e735b4f8b4f2ad
     resource: repo://core/.mvn/jvm.config
   - id: openwiki-source-85d7e1bba1ef1c69d3421831
@@ -47,6 +49,8 @@ sources:
     resource: repo://pom.xml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-cc2828785988d51226a4241e
+    resource: repo://renovate.json
   - id: openwiki-source-05268939a714aa11095abad9
     resource: repo://sample.env
   - id: openwiki-source-c3324edd02fb573e63e5301b
@@ -67,10 +71,10 @@ sources:
     resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/HttpCommunicator.java
   - id: openwiki-source-6fc674d44f4df015eca8837e
     resource: repo://tlr/stages-tlr/text-preprocessing/src/main/resources/config.properties
-generated: { by: "openwiki/0.9.0", at: "2026-11-16T14:07:46.178Z" }
+generated: { by: "openwiki/0.9.0", at: "2026-11-23T16:40:38.555Z" }
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-16T14:07:46.178Z
+    at: 2026-11-23T16:40:38.555Z
 ---
 
 # ARDoCo — OpenWiki Quickstart
@@ -117,7 +121,7 @@ mvn spotless:apply    # Apply code formatting before committing
 mvn clean verify      # Full build with tests, no install
 ```
 
-`mvn clean verify` runs both the Surefire unit/architecture tests and the Failsafe integration tests (the root POM binds `maven-failsafe-plugin` to the `integration-test` phase). The LLM-gated and full-clone integration tests skip automatically when their environment variables are absent — see [Testing & Evaluation](testing.md) for the gating matrix.
+`mvn clean verify` runs both the Surefire unit/architecture tests and the Failsafe integration tests (the root POM pins `maven-failsafe-plugin` 3.6.1 in `pluginManagement` with goals `integration-test` + `verify` bound to the `integration-test` phase). The LLM-gated and full-clone integration tests skip automatically when their environment variables are absent — see [Testing & Evaluation](testing.md) for the gating matrix.
 
 Per-module validation (from the repository root):
 
@@ -132,6 +136,7 @@ Build gotchas worth knowing before your first change:
 - **Pinned `flatten-maven-plugin`**: all POMs resolve `${revision}` through `flatten-maven-plugin`, pinned to `1.9.0` because the unversioned "latest" resolution (1.8.0) has an upstream NPE in the CI-friendly interpolator. Do not remove the pin.
 - **Spotless** enforces formatting with the per-tree `formatter.xml`, `spotless.importorder`, and `license-header` files and only touches files changed relative to `origin/main` (`ratchetFrom`); `mvn spotless:check` verifies without rewriting.
 - **JSpecify**: `package-info.java` files with `@NullMarked` are generated into your source directories during the build and are git-ignored — do not commit them.
+- **Dependency updates run through Renovate**: [`renovate.json`](../renovate.json) extends the shared `local>ArDoCo/actions:renovate-preset` preset; there is no root `.github/dependabot.yml`, so dependency updates arrive as Renovate PRs — do not add Dependabot config back (the per-tree `*/.github/dependabot.yml` copies are not read by GitHub, which only honors the root-level file).
 
 Details, publishing, and CI workflows: [Operations](operations.md).
 
@@ -149,7 +154,7 @@ ARDoCo releases are published to Maven Central; embed any subproject by adding i
 </dependencies>
 ```
 
-See the root [pom.xml](../pom.xml) for all available module coordinates. Development (`-SNAPSHOT`) versions are published to the ARDoCo mirror group's package registry on gitlab.kit.edu via the manual [`deploy-snapshot.yml`](../.github/workflows/deploy-snapshot.yml) workflow; consumers resolve them through the `ardocoSnapshots` repository entry (the `mavenSnapshot` entry adds Sonatype Central Snapshots) — see [Operations](operations.md) for the publish recipe.
+See the root [pom.xml](../pom.xml) for all available module coordinates. Development (`-SNAPSHOT`) versions have two publish targets: the root and aggregator POMs' `distributionManagement` points `mvn deploy` at Sonatype Central Snapshots (`https://central.sonatype.com/repository/maven-snapshots/`), while the manual [`deploy-snapshot.yml`](../.github/workflows/deploy-snapshot.yml) workflow (manual trigger only) delegates to the reusable `ardoco/actions` maven-snapshot workflow to deploy a selected branch to the ARDoCo mirror group's package registry on gitlab.kit.edu (project 203206); it only deploys `-SNAPSHOT` versions and needs the `GITLAB_SNAPSHOT_TOKEN` secret. Consumers resolve snapshots through the `ardocoSnapshots` repository entry (gitlab.kit.edu mirror group) — the `mavenSnapshot` entry adds Sonatype Central Snapshots — see [Operations](operations.md) for the publish recipe.
 
 ## Running a Pipeline
 
@@ -188,6 +193,8 @@ Test-selection variables (`CI`, `testCodeFull`, `testBaseline`, `mutipleRuns`) a
 | Page | Covers |
 |------|--------|
 | [Architecture](architecture.md) | Pipeline composite pattern (stage → agent → informant), `DataRepository` blackboard, intermediate artifacts (Text, SAM, Code Model), configuration system, execution runners |
+| [Code Model](code-model.md) | The sealed `CodeModel`/`CodeItem` class family in `core/framework/common`, the `.acm` persistence format with the shared Jackson mapper, and the model-provider extraction backends (Eclipse JDT Java, ANTLR Python3/C++, Shell, `AllLanguagesExtractor`) that feed TLR and LLM stages |
+| [Constraints](constraints.md) | Every machine-enforced invariant a change can violate: ArchUnit rule suites (layering, naming, `noGetEnv`, `@Deterministic`, Jackson rules), JSpecify `NullMarked` generation, Spotless ratchet formatting, the `Configurable` configuration contract, and Renovate tooling, with the commands that enforce each |
 | [TLR Approaches](tlr-approaches.md) | All eight TLR approaches and runners, the seven stage modules, model/code extraction backends, ArCoTL heuristic computation tree, ArTEMiS NER strategies |
 | [LLM Integration](llm-integration.md) | The shared LLM machinery: the `LargeLanguageModel` enum and model selection, `CachedChatLanguageModel` disk caching and deterministic seeding, per-stage prompt resources, and the langchain4j AiServices validation agents with read-only code tools |
 | [Inconsistency Detection](inconsistency-detection.md) | TEAM and MEAT inconsistency types, the `InconsistencyChecker` stage and its three agents, the LLM-validated programming-language and architectural-style/pattern checkers, pre-filter funnel, configuration options, hold-back evaluation harness |
@@ -206,9 +213,10 @@ When changing a specific area, start at the listed page and validate with the fo
 | Change LLM usage (models, caching, prompts, validation agents) | [LLM Integration](llm-integration.md) | `tlr/stages-tlr/model-provider/`, `tlr/stages-tlr/artemis/`, `inconsistency-detection/stages-id/{programming-language,architectural-style-pattern}-inconsistency-detection/` | `LargeLanguageModel`, `CachedChatLanguageModel`, `ArtemisNerInformant`, `ArtemisConnectionInformant`, `LlmArchitectureProviderInformant`, `CodeModelReadOnlyTools` | `ArtemisIT`, `ArtemisInTransarcIT` (env-gated) | `mvn -pl tlr clean verify` |
 | Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/{inconsistency-detection,artemis-inconsistency-detection,programming-language-inconsistency-detection,architectural-style-pattern-inconsistency-detection}/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `ArtemisInconsistencyChecker`, `ProgrammingLanguageInconsistencyChecker`, `ArchitecturalStylePatternInconsistencyChecker`, `InconsistencyDetection` | `tests-inconsistency` (`InconsistencyDetectionEvaluationIT`) | `mvn -pl inconsistency-detection clean verify` |
 | Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` workflows | `mvn spotless:check && mvn clean verify` |
+| Machine-enforced invariants (ArchUnit rules, formatting gate, nullness, determinism, Renovate) | [Constraints](constraints.md) | `core/tests-base/.../tests/architecture/`, root `pom.xml` (Spotless, jspecify-maven-plugin, flatten pin), `renovate.json` | `BasicArchitectureTest`, `ArchitectureTest`, `DeterministicArdocoTest`, `AbstractConfigurable`, `Environment` | `tests-tlr`/`tests-inconsistency` Surefire suites | `mvn clean verify` |
 | Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureModel`, `CodeModel`, `ModelStates`, `ArdocoResult` | `core/tests-base` ArchUnit suites | `mvn -pl core/framework/common clean verify` |
-| Code model data model (line ranges, content, imports, callees) | [Architecture](architecture.md) | `core/framework/common/.../api/models/code/`, `.../api/models/CodeModel.java` | `Datatype`, `ClassUnit`, `InterfaceUnit`, `ControlElement` (`calleeNames`), `CodeCompilationUnit` / `CodeAssembly` (`importedModuleNames`), `CodeModel.CodeModelDto` | `tlr/stages-tlr/model-provider` mapper/extractor tests | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
-| Code model extraction / ANTLR mappers / legacy JavaModel | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/.../antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `JavaControlExtractorTest`, `JavaModelMapperTest`, `Python3ModelMapperTest`, `JavaExtractorTest` | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Code model data model (`.acm` format, `CodeItemRepository` identity, line ranges, imports, callees) | [Code Model](code-model.md) | `core/framework/common/.../api/models/` (+ `api/models/code/`), `tlr/stages-tlr/model-provider/.../generators/code/CodeExtractor.java` | `CodeModel`/`CodeModelDto`, `CodeItem`, `CodeItemRepository`, `CodeCompilationUnit`, `ControlElement`, `CodeFile` | `core/framework/common` mapper tests, model-provider extractor tests | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Code model extraction / ANTLR mappers / legacy JavaModel | [Code Model](code-model.md) | `tlr/stages-tlr/model-provider/.../generators/antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `JavaControlExtractorTest`, `JavaModelMapperTest`, `Python3ModelMapperTest`, `JavaExtractorTest` | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
 | Test or evaluation behavior (gold standards, metric gating, test selection) | [Testing & Evaluation](testing.md) | `core/tests-base/`, `tlr/tests-tlr/`, `inconsistency-detection/tests-inconsistency/` | `ExpectedResults`, `EvaluationProject`, `AbstractArdocoIT`, `InconsistencyDetectionEvaluationIT` | the suites themselves | `mvn clean verify` (env-gated tests skip without credentials) |
 
 ## Where the Docs Live

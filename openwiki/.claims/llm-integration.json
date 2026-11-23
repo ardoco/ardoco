@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bd61d0c40bca7dbe10144798fcc32c4981e35d20adca652b5f852e774a78a963",
+  "pageVersion": "sha256:e7a582da435aa9a40c87518d299462f6afcf357e6885306b9741dccb1514177a",
   "claims": [
     {
       "id": "claim_2a647e48d54e4ff88ba8f98f288f8bc5",
@@ -92,7 +92,7 @@
     },
     {
       "id": "claim_3e765a1d857944eab98d918972e6357f",
-      "statement": "NER prompts follow a strict resource convention: every ArtemisNerStrategy implementation declares an <entity>-task-prompt.txt and an <entity>-formatting-prompt.txt pair and loads them via the shared default method readPromptResource from the classpath root PROMPT_RESOURCE_ROOT = /artemis/prompts/ (IllegalStateException if a resource is missing), composing a TwoPartPrompt. The five pairs live under tlr/stages-tlr/artemis/src/main/resources/artemis/prompts/ (class, component, datafile) and in the two ID stage modules' own src/main/resources/artemis/prompts/ folders (programming-language, architectural-style-pattern). The task prompt defines what counts as an explicit mention; the formatting prompt pins the returned JSON shape (name, type, alternativeNames, occurrences).",
+      "statement": "NER prompts follow a strict resource convention: every ArtemisNerStrategy implementation declares an <entity>-task-prompt.txt and an <entity>-formatting-prompt.txt pair, loads their text via the shared default method readPromptResource from the classpath root PROMPT_RESOURCE_ROOT = /artemis/prompts/, and composes a TwoPartPrompt(taskPrompt, formattingPrompt); a resource missing from the classpath fails fast via Objects.requireNonNull (NullPointerException) while a read error surfaces as IllegalStateException. The five pairs live under tlr/stages-tlr/artemis/src/main/resources/artemis/prompts/ (class, component, datafile) and in the two ID stage modules' own src/main/resources/artemis/prompts/ folders (programming-language, architectural-style-pattern). The task prompt defines what counts as an explicit mention; the formatting prompt pins the returned JSON shape (name, type, alternativeNames, occurrences).",
       "evidence": [
         {
           "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArchitecturalStylePatternNerStrategy.java#L10-L18",
@@ -107,8 +107,8 @@
           "version": "repo-lines-v1:sha256:f6f1c29e9c13ebc29b148895ffe9c6e926166497f29393f8f94279c3d453a9bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNGFiZmNmNThmZDllMDAxYmUxY2Q0YzY5NjQyMDcxMmU5ODE1NTg0ZTU2OWVmMDNkNWU0ZDliOGFiMGNjODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkZDdlZWYyN2ExM2MyMzViYmU2MTA2MTBjZjE2N2M4YjQzNjE3OTU0M2FkNzA1YjYzN2ZlZWQzNzRmZmUyNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
         },
         {
-          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ClassArtemisNerStrategy.java#L11-L19",
-          "version": "repo-lines-v1:sha256:387fd99829f88a92ba27b72fc6b96ca48aac3ffc283275c2850fe62759829e76:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2IwZTJiMmQ3OTNkMDE2NzQxNmQ2M2RhZGQ0NDk3MDU4Y2RiZjFkMzRjNTI2NWNjMDI4NDcxYmRiYjM0YzA2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWM2OGMxYjg4MmRhOGQ5MmEwY2RmNTZhOWJkZDFhMzMwMzczYzZhOWJmMjVjZmEzOGY1MjBiMDU1ZDkyNzUzZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmY0ZGM2NTcwNjJjZWViNGE0OGI5ZjNmM2Q4YmRiYjBjNGFlYWQ2YzE5OTM3OGI5MDgxNWVmYWVkYWQ4Nzc1YiJ9"
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ClassArtemisNerStrategy.java#L11-L20",
+          "version": "repo-lines-v1:sha256:d2eb01b3787bfaa41013c465003f25056f3ab20e03cdaea9907b96db7324e505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMGUyYjJkNzkzZDAxNjc0MTZkNjNkYWRkNDQ5NzA1OGNkYmYxZDM0YzUyNjVjYzAyODQ3MWJkYmIzNGMwNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNjhjMWI4ODJkYThkOTJhMGNkZjU2YTliZGQxYTMzMDM3M2M2YTliZjI1Y2ZhMzhmNTIwYjA1NWQ5Mjc1M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0ZWRjZmI4MzM3MWFkOGUxNTMzYTY4ZGU5NTk3NDFiNmU5MjAyNzc3ODBkMzZhNGI3OWE2ZDg3MWE2OTkxZmEifQ"
         }
       ]
     },
@@ -339,6 +339,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-16T14:07:46.178Z"
+    "at": "2026-11-23T16:40:38.555Z"
   }
 }
