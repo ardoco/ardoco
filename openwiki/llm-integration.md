@@ -12,7 +12,7 @@ openwiki:
   validation_commands: ["mvn -pl tlr clean verify", "mvn -pl inconsistency-detection clean verify"]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-16T14:07:46.178Z
+    at: 2026-11-23T16:40:38.555Z
 sources:
   - id: openwiki-source-72aad5dc7092822341541825
     resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java
@@ -78,7 +78,7 @@ sources:
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java
   - id: openwiki-source-f4aa43830655fb133573851b
     resource: repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ExArchIT.java
-generated: { by: "openwiki/0.9.0", at: "2026-11-16T14:07:46.178Z" }
+generated: { by: "openwiki/0.9.0", at: "2026-11-23T16:40:38.555Z" }
 ---
 
 # LLM Integration
@@ -212,7 +212,7 @@ The TLR files live in [`tlr/stages-tlr/artemis/src/main/resources/artemis/prompt
 
 ### How Informant Code Loads Them
 
-Every `ArtemisNerStrategy` implementation declares its two resource file names as constants and composes a two-part prompt via the shared default method `readPromptResource`, which loads text from the classpath root `PROMPT_RESOURCE_ROOT = "/artemis/prompts/"` and throws `IllegalStateException` if a resource is missing. The result is a `TwoPartPrompt(taskPrompt, formattingPrompt)` from the external `named-architecture-entity-recognition` artifact (`io.github.ardoco:named-architecture-entity-recognition`), which also provides `NamedEntityRecognizer`, `NamedEntityType`, and the SAD model.
+Every `ArtemisNerStrategy` implementation declares its two resource file names as constants, loads their text with the shared default method `readPromptResource`, and composes the result into a `TwoPartPrompt(taskPrompt, formattingPrompt)`. `readPromptResource` reads from the classpath root `PROMPT_RESOURCE_ROOT = "/artemis/prompts/"`; a resource that is not on the classpath fails fast via `Objects.requireNonNull` (a `NullPointerException` from the eager stream check), while a read error surfaces as `IllegalStateException`. `Prompt`, `TwoPartPrompt`, `NamedEntityRecognizer`, `NamedEntityType`, and the SAD model come from the external `named-architecture-entity-recognition` artifact (`io.github.ardoco:named-architecture-entity-recognition`, version 2.1.0 in [`tlr/stages-tlr/artemis/pom.xml`](../tlr/stages-tlr/artemis/pom.xml)).
 
 `ArtemisNerInformant.process()` builds a `NamedEntityRecognizer` with `llm.create()` (cached) and `strategy.createPrompt(dataRepository)`, recognizes entities in the SAD text, and stores the results — names, alternative names, and occurrence lines — into the per-target Artemis connection state. One strategy deviates from plain resource loading: `ComponentArtemisNerStrategy` appends a candidate list of the code model's endpoint names to the task prompt, grounding recognition in the extracted model.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c58c1f91b23fcd7540638b522e1343f6e52333fd97dc19ea2391a2a417aff92e",
+  "pageVersion": "sha256:5cd402aa94a09847d6676a84fd4db4c483e2dbd2f92ec0a13cfde65cd42794e5",
   "claims": [
     {
       "id": "claim_1123c509f09b44349db6e6ea625403c6",
@@ -74,31 +74,35 @@
     },
     {
       "id": "claim_5efcf1c854b54bd4a7469e556011111a",
-      "statement": "The root POM dependencyManagement pins Jackson 3 via tools.jackson:jackson-bom 3.3.0 (the com.fasterxml.jackson:jackson-bom 2.23.0 import only aligns transitive Jackson 2 users such as langchain4j), JUnit 6.1.3, Mockito 5.23.0, SLF4J 2.0.20, Eclipse Collections 13.0.0, JavaParser 3.28.2, Stanford CoreNLP 4.6.0, ArchUnit 1.5.1, ANTLR 4.13.2, Eclipse JGit 7.8.0.202609011348-r, commons-lang3 3.22.0, and io.github.ardoco:metrics 0.3.0; opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.19.0 and pins io.github.ardoco:magika 0.7.0, and core/framework/text-provider-json pins com.networknt:json-schema-validator 3.0.9.",
+      "statement": "The root POM pins shared versions as properties (SLF4J 2.0.20, JUnit Jupiter 6.1.3, Eclipse Collections 13.0.0, JavaParser 3.28.2, Mockito 5.24.0, Stanford CoreNLP 4.6.0, ANTLR 4.13.2, Jackson 3 3.3.0, Jackson 2 2.23.0, metrics 0.3.0) and in dependencyManagement (the Jackson 2 and Jackson 3 BOM imports — the com.fasterxml.jackson:jackson-bom 2.23.0 import only aligns transitive Jackson 2 users such as langchain4j — archunit-junit5 1.5.1, commons-io 2.22.0, commons-lang3 3.22.0, commons-text 1.15.0, httpclient5 5.6.5, assertj-core 3.27.7, Eclipse Collections, Eclipse JGit 7.8.0.202609011348-r, JUnit Jupiter, Mockito, reflections 0.10.2, SLF4J); opennlp-tools 2.5.11 is pinned separately in core/framework/common/pom.xml (PorterStemmer used by ArCoTL NameComparisonUtils, which also lemmatizes via a local Stanford CoreNLP tokenize,pos,lemma pipeline), tlr/stages-tlr/model-provider imports dev.langchain4j:langchain4j-bom 1.19.0 and pins io.github.ardoco:magika 0.7.0, and core/framework/text-provider-json pins com.networknt:json-schema-validator 3.0.9.",
       "evidence": [
         {
-          "resource": "repo://core/framework/common/pom.xml#L36-L43",
-          "version": "repo-lines-v1:sha256:138231ca4c4aefcd86b15f42d64b49667f2379b5189f1f1c1cb4423fb523868d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTAzMzcyY2RlNTFhMDc1YzZkYjUxNmE4NWM0MDExY2ExOGNlNTlkYjQ4NThjMWE4OGFlMTk4ZDFhZTJkYWQ0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDM1ZDg1MTk4NGFjZmUwNzRjNGJjNjc1MDJhZDVkZjdiNGY0MDI3MDkxZTcxYWExY2VlYjMyMjVkZTYwZmRjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODdiNmZhMWI1ZmYyNmU0MDUzMDE1ODc0ODY1ZGIyZGMxNzAyODc3ZTVkYjY0Y2RkNDg3NjY5NTdmMGM3MjljMCJ9"
+          "resource": "repo://core/framework/common/pom.xml#L40-L49",
+          "version": "repo-lines-v1:sha256:0749f82d451eb59aedcaef32fcc040ce6ee9da63d0f9a697182b631c9d07b223:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZjcyNmM4MzRjYzE0OGM2YjM3Y2JkM2NlMjk3NjQ0MjAxZjEwM2M2Y2MzMzY5YzgyMDY2N2QxZDM5YWM5OTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5ZjFkMmM1ODBhNjU5MGI3NWMwNzRlZWIwMGIzZjkyZDI5OGE0ZjVhZGMyZDdhZWE3NDAzNzM5NTVhN2M4OWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MjU3OTNlN2ViYjQzYTc1ZjdhMDY2ODMzY2Y5ZTUwOWJiMjU5OWJkYWM4NWYzODc3MmFlZjM5NmE1NjM3MmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmZTQyNTA4MzYxMGFmNmQ4ZDhkNmVjMDg1OGUwYmM4NGMyYjQ3OWJmZDVkZWU1MGUwMGQ3YmZmODFhYTY5ZGYifQ"
         },
         {
           "resource": "repo://core/framework/text-provider-json/pom.xml#L22-L25",
           "version": "repo-lines-v1:sha256:268e4b30c3d6018ffc2989db53660315cde8a8308dd9ea945d9ba8113947e2d9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmVmMWE3M2JmMmU4YjczMGZhZGY3ZDlhNjk1NDRiNDUwOTNlNzk4OGZiYTk4MGJmNjJmZmNmYmFmNTk1M2VlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmY3MjJlOGRiYTY3YTc1MjQwMzgwZjYzY2E4OWZjZjY3ZDJjZjFjMTQ2YTJjYzdhNzUyYWY2NjY2YTExYTc5NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGQwNGFhY2Q4ZmFmYjE0YzQxMzRiNjlmZjQwYzI3MDg5M2YzZTQyMTRmNGY2MDdlNWFlMzE2MTcxNjE3NDE1NiJ9"
         },
         {
-          "resource": "repo://pom.xml#L77-L91",
-          "version": "repo-lines-v1:sha256:a0d1176d49fe70b7980836a772521f3d8eca213622e1820f32c24a8af5da0b52:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwOGUyODkxOTRjNmZlMTI4YzZmYWRhMzM5ZWFmZjU4YzIyYjk3NmU5MmYxMTgyYTk4NzA4MzZlZWE1NjEyZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzMDJmMDRkNmI2MDY3OTEzNjBmMzFhNGVjZWYyM2QzMmNkODBhZGE4ZDY3ZDBkOWNlZGE3OGI2MjA3ODU0OTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2RkZWRkMTViMTNjMjI1OTlhN2JjOWI3OTZkMTFlMjg0MWNkY2RiYTAzYThmZWNhOWUzMGYyNzgzZDcxNTQifQ"
+          "resource": "repo://pom.xml#L77-L90",
+          "version": "repo-lines-v1:sha256:5cd72b58e7b3da967c5869c1f4fb4c4b13c12e1e503edb1bd4ad64f8470cbcd8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYjdhOTlmY2NkMzA3NTZmZGVmMTdjNjY4MzJjYWJkMGM0Mzc3MTQyZWE3ZmI3MDUxYWFiYjI0YjllMDQ2ZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzMDJmMDRkNmI2MDY3OTEzNjBmMzFhNGVjZWYyM2QzMmNkODBhZGE4ZDY3ZDBkOWNlZGE3OGI2MjA3ODU0OTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5MTI2NTg0MTE2Y2MyMzc4NTlkMmE2YTU2ZGMyOTY1ZTIxOTBhNzFmODE0ODgzYjg1ZTY1NTQ5MzNiNWEzNmYifQ"
         },
         {
-          "resource": "repo://pom.xml#L92-L122",
-          "version": "repo-lines-v1:sha256:2948624ba3e9d4d330df32e3dafb657dc03da183995e475af05ad0503608ec4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjg3ZjAyYjEwZWFjNzU2YjBkM2ZjYjE5M2VlYTQxZjdjMmQxZTQ0MmZjMzQ0YTQ0ODVjOWJiNjFiZGUyODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkODg0NjEwMzVlMmRkZGY3YTkyOTQ0Zjg0ZjUyNGUwZTUwY2IzNmJhZTliYjg1YTljNTE4MzRkN2NlNzBhMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2ZWUzNTkzMGRhYmE0ZWVjMzQ2ZDY2MmVlMGVlNTJkZTI5NGNjMThhMTVkNTU1ODFlYTZlNjg4Zjk5YWIwOWIifQ"
+          "resource": "repo://pom.xml#L93-L210",
+          "version": "repo-lines-v1:sha256:9b9f3c25b7a02d1988126f463a58eee0950b9a0730dbcd7326d41dba3f2322d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MjJkN2EyYzA4ZWM1Y2Y3N2E3NGEwODRiOWM0ZTkwODdiNmMzZGQ5ZjQyMzQxNGUzYzZkN2QyMzBiNGJiZWFjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3MDJkMDIwYTI0NzYxMzA5ZDFkZTRkMThhZGQ1Njk3NTc5YTI5YjU0Yjk5NWVhN2Y3NTQxODcxNDNmZTg0NTU2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjNzAzMWYyOWYyMTFjYzdlMzY2ZGQzYmQ0MjFjMDZkNDQwNWRiZjkyZTZjNzdlNjNlNTYwYjkyODExODZhOTgwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2YTgwYTVhYjFmODg1YzkyOWNiMTA4YTBjNzhiYWY4YjAyNTNkMzI2MDQ1YTBiM2ZmZjE2YjNjM2UxOTQ5MmYzIn0"
         },
         {
           "resource": "repo://tlr/stages-tlr/code-traceability/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/codetraceability/informants/arcotl/NameComparisonUtils.java#L203-L234",
           "version": "repo-lines-v1:sha256:7fdaf95855127df781ecba17fb6dc7a3bd74484d31aca8805cf7468283028148:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNTkxZWU4NjMwZGZlNWNiMzgwMzhkMmY1ZjQ4ZWI1MDAyNDQwMzRlMWZjN2RlNmM2NzViNGM3ZTg1NmIxZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyZDRiMmEwMWRjN2IyZmMyZDNlYTRmYWZkZmUzODdjMGYwMDFjOTk5ZDNjN2U4YWQ0ZDE5YzA4YWQzOTQ4ZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3MDU5MjYxYWUxOGMzZmQzODgzODk3NzFmOWJlNjZhYjRlYjQxZjE0ODA3ZWFmN2FlYzUwNjRmNzFmM2YyNzMifQ"
         },
         {
-          "resource": "repo://tlr/stages-tlr/model-provider/pom.xml#L14-L47",
-          "version": "repo-lines-v1:sha256:2b401b0e79335daf297df1dfc9a4382436535ba09241b7a182b2523c3ade13a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMmQ3YTJjMDhlYzVjZjc3YTc0YTA4NGI5YzRlOTA4N2I2YzNkZDlmNDIzNDE0ZTNjNmQ3ZDIzMGI0YmJlYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxOTc4MjRkNjU1MDQwMjQ5OTU0ODdiYWFmOTE5MTQ5NTRjNjQ3NGIyYTkwNzgwMzUyNDZlOTlmY2Y2MmQ2MTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZmZmMjgyNTQ4ZDczN2UzMTc0NzU4ZTkwN2IwZDNhMTMzOTMzYTFmZDFkZjI5ZjhjY2YzMzZhZDFiNTFmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhM2E4YzFkZjBhNWM5M2Y0MDk3ZGVhZGM4ZDIyN2EyZjBjZWExZGVjYjViMTI1MDdmMGQ1NzI3NGJmNDFhN2IifQ"
+          "resource": "repo://tlr/stages-tlr/model-provider/pom.xml#L14-L23",
+          "version": "repo-lines-v1:sha256:69e2df171e0904d0a19ef7dd10c72616bbd6486a5aaa04d9baafd643cb2a9027:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMmQ3YTJjMDhlYzVjZjc3YTc0YTA4NGI5YzRlOTA4N2I2YzNkZDlmNDIzNDE0ZTNjNmQ3ZDIzMGI0YmJlYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZmE4OTc2NGI1N2JhYzdkMDg4MDk1ZmFiNTdmNmY2MGFiMGQwM2QwZDY3NzVhY2UzMWYxNWRiNjE0ZmZjY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZmZmMjgyNTQ4ZDczN2UzMTc0NzU4ZTkwN2IwZDNhMTMzOTMzYTFmZDFkZjI5ZjhjY2YzMzZhZDFiNTFmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1NzNkZTA3ZGVlNjlhMjM0YzhmYWNiZTAyZmExNzA0NGUxNjAzZjEzMDhjZTBhYmUwNzFmNzliYTFlOWY1ZDYifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/pom.xml#L54-L58",
+          "version": "repo-lines-v1:sha256:4e7940e73225f65af73df734e586c0cb28f7bb595a1e11de9b0eeac4673676f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY2NGMwZmMxYWRlYzMzMWI1MTJhMzlmZDI4NjI5OWUzNDgyNzZkZDBhY2UyOTA1ZWYwODQyM2YwNGIyNWU2MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWRlOGY3NjliMjhlYjdlZGQ1MmZkZGU3NjBmZDA3YWJjZjM3OWFiZjhhNTFlYWQ0MjQxMmFjZGRlNzU4ZjM1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRiZGViNmMyMTEyMjljZWYzY2QwMTAyZTU0NzAzYjE1N2FmM2U2Yzk3NGE4ZDdjN2Y2OGQzOGZhMzlmYmFmZiJ9"
         }
       ]
     },
@@ -296,7 +300,7 @@
     },
     {
       "id": "claim_54625f85c02143e99949ba0ebc10e932",
-      "statement": "LLM integration in tlr/stages-tlr/model-provider is configured via environment variables and made reproducible: LargeLanguageModel pins built-in OpenAI models to dated snapshots (gpt-4o-2024-08-06, gpt-4.1-2025-04-14, gpt-5-2025-08-07, plus the 2026-dated GPT-5.x family such as gpt-5.5-2026-04-23 and gpt-5.4-nano-2026-03-17) with temperature 0.0 (1.0 for the GPT-5 family members) and requires OPENAI_ORGANIZATION_ID and OPENAI_API_KEY; Ollama models target OLLAMA_HOST with basic-auth headers from OLLAMA_USER/OLLAMA_PASSWORD or an OpenAI-compatible client when OLLAMA_TOKEN is set, and OPENAI_MODEL_NAME/OLLAMA_MODEL_NAME expose generic variants; all models apply SEED (default 422413373, invalid values abort), and create() wraps each model in CachedChatLanguageModel, which persists a per-model prompt-response map to <name>-cache.json under LLM_CACHE_DIR (default .cache-llm/) serving repeated line-ending-normalized prompts without provider calls and logging cache I/O failures instead of failing the run; the ArTEMiS connection stage (tlr/stages-tlr/artemis) additionally requires OPENAI_API_KEY for the fixed text-embedding-3-large embedding model.",
+      "statement": "LLM integration in tlr/stages-tlr/model-provider is configured via environment variables and made reproducible: LargeLanguageModel pins built-in OpenAI models to dated snapshots (gpt-4o-2024-08-06, gpt-4.1-2025-04-14, gpt-5-2025-08-07, plus the 2026-dated GPT-5.x family such as gpt-5.5-2026-04-23 and gpt-5.4-nano-2026-03-17) with temperature 0.0 (temperature 1.0 only for the GPT_5 and GPT_5_5 variants) and requires OPENAI_ORGANIZATION_ID and OPENAI_API_KEY; Ollama models target OLLAMA_HOST with basic-auth headers from OLLAMA_USER/OLLAMA_PASSWORD or an OpenAI-compatible client when OLLAMA_TOKEN is set, and OPENAI_MODEL_NAME/OLLAMA_MODEL_NAME expose generic variants; all models apply SEED (default 422413373, invalid values abort), and create() wraps each model in CachedChatLanguageModel, which persists a per-model prompt-response map to <name>-cache.json under LLM_CACHE_DIR (default .cache-llm/) serving repeated line-ending-normalized prompts without provider calls and logging cache I/O failures instead of failing the run; the ArTEMiS connection stage (tlr/stages-tlr/artemis) additionally requires OPENAI_API_KEY for the fixed text-embedding-3-large embedding model.",
       "evidence": [
         {
           "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/informants/ArtemisConnectionInformant.java#L129-L138",
@@ -307,8 +311,8 @@
           "version": "repo-lines-v1:sha256:860c31d649249ab00794d34674098b53df36ecfc28225984ec5cbdadc7b5d420:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjNTcwNGZhZWJmNDNiMTQ3ODM0OTA5YjQ0ZWFhNTdkZDk2MGVkNDdhMWNjMWJiMmZlNjMyMjZkMTE3MWEzNzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyZmZiM2FjMDcxNGI3YmJmNjNmOWZhM2RkMzlhOGM4MGUyNDdlZDA0ZjlkZmIyZjgzNmE4NzUwMTZhNDM1ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L10-L126",
-          "version": "repo-lines-v1:sha256:5efd30f4e039af39f99027bcdba39dfd6b2a25f4b39d100a9d992fb9317dbadc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjZDVmY2Q5Y2FlNWU1ZjcxY2FiNzY3YmMxZWY1YmIzNjRlMTBiNjE2YWMxZWQxYmFkODdlNTg2MTA2NjE3ZDI1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyNDRlMTgwNDMxMjZjNDg0YzEzYzFmMmQ1OTA0ODg0YWMyNTY4OGJlZDc5M2JmNTc4YTkwNTI4MzI0MTU3NDMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxN2U4MjIxOTQ1MjhkZDIzNjlkZWQ1ZTQ4MTEwZjE2ZDhhYTE4ZDEzYzQ4YmVjZGVlM2JmM2Q1MjlmZjUxOTUxIn0"
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L15-L126",
+          "version": "repo-lines-v1:sha256:e1edbfbf8cef70a2b7ca5c093feeadc9685aceb0d22ef1233c2d13be4815f0a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0NjVkM2RmYWI3NjdmYjBjZDNlZmM3MWRhMTFmNzlkOGY0Yjk3YmFlMTA4YTdkZmU1YjRlNmQ3ODlhNjMzNDhjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MDZiMWUwNWFiMmI3YjRkZjc1YTA1OWZhNDgxNjQ5MGVkNzRhMDdkNTliMGNjZWQwOGE0OTg1ZGVhMTFkODhhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxN2U4MjIxOTQ1MjhkZDIzNjlkZWQ1ZTQ4MTEwZjE2ZDhhYTE4ZDEzYzQ4YmVjZGVlM2JmM2Q1MjlmZjUxOTUxIn0"
         }
       ]
     },
@@ -354,19 +358,27 @@
     },
     {
       "id": "claim_95a6637b396643b8a1a455cbd590aeac",
-      "statement": "The LLM-based integration tests in tests-tlr and tests-inconsistency run under Maven Failsafe but are disabled by default (@Disabled 'Only for manual execution'); the TLR ArTEMiS/ExArch ITs additionally assume in @BeforeAll that OPENAI_API_KEY or OLLAMA_HOST is set and that the CI environment variable is absent, and offer mutipleRuns-gated multi-run evaluation variants, while the ID evaluation ITs rely on the @Disabled flag without environment gating; the test trees are refreshed from ardoco/IntegrationTests via the update_integration_tests.sh git-subtree sync (git subtree pull --prefix tests/integration-tests) present in the tlr and inconsistency-detection trees.",
+      "statement": "The integration tests in tests-tlr and tests-inconsistency run under Maven Failsafe: the LLM-based ones are @Disabled('Only for manual execution') (e.g. ArtemisIT, ArtemisInExArchIT, ArtemisInTransarcIT, ExArchIT, and the ID ArTEMiS/architectural-style-pattern/programming-language evaluation ITs), and the TLR ArTEMiS/ExArch ITs additionally assume via Assumptions that OPENAI_API_KEY or OLLAMA_HOST is set and that the CI environment variable is absent (in @BeforeAll or per test method), offering mutipleRuns-gated multi-run variants (@DisabledIfEnvironmentVariable on the single-run, @EnabledIfEnvironmentVariable on the multi-run methods); the non-LLM InconsistencyDetectionEvaluationIT carries no @Disabled and therefore executes under Failsafe on every mvn verify, with only its baseline method gated by the testBaseline environment variable; the test trees are refreshed from ardoco/IntegrationTests via the update_integration_tests.sh git-subtree sync (git subtree pull --prefix tests/integration-tests) present in the tlr and inconsistency-detection trees.",
       "evidence": [
         {
-          "resource": "repo://pom.xml#L346-L357",
-          "version": "repo-lines-v1:sha256:2524f87d8d9786a09c605d545219a61d5502636f96827ce8d8d9b1a21d63df3c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlMTJmYjc2YjQyZjUyNjdhNTQ3ZmIwYTBhYTIyOTA4NTc3OTViNzMwMTk4MDMyZmNmNGViMGNlOTBjOTgxNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwZTQ0YjYyM2JjMDA1OTJkODBjZGE4ZWI5NjFjODJmZWQ4MzRjYjk1MzZhM2U5YzYwNmVkMmM4Nzg2MjdkZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxZDM1MjNjZTRmNGVjMDFmNzY1MjUwMGIyYWI2ZWIwOTIxNjg3YzYzNzQ4NGM0NDU4YjMyMjYyMTI2NTQ3MGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4NTY3ZmRlMmViMTlhOGVhMDg4YTdmZjJlMWNhMTA3OWYxZmRmZWMyZGZhMDc1ZDc2MTcwYWIzZTRhYjc5NTMifQ"
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L105-L115",
+          "version": "repo-lines-v1:sha256:e1ab50dd0a8adafc124c077e31c388b244ba72bd9ea1670ee3b44f1fe598caa1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MzFiNjkxOTg5NGQ1YmVjODA5ZGQ5M2Y5NzZlODc1YzM2ZjNhYTZlYjk5OTZmYjZmN2FlYTQ2MjMxMmFmMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMDk0YjJlNmNmZGE2MWRhYzBhYTliYWU3OTAxMzdkYjEyMzg2YTYxN2ZhZjA4Y2ZlZWI3YTE0ZWNjNTkzMTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMmI5ZTIxZmRjODZmYzJjMmVlNDQ3MjE4NWQ2NzY0NjdiZGQxY2JmMmUyNGI0ZGM2NDRhYjFhYmIzMzI1NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwZTVjYmQwMTQ4MDZjYjk3Y2I4NTkwOWJmNGFlYWI5ZTJjMjUxMDUzNjQyNzM4MzY3MGY4ZTYxYjNjMDdhY2QifQ"
         },
         {
-          "resource": "repo://tlr/tests-tlr/pom.xml#L63-L82",
-          "version": "repo-lines-v1:sha256:db437b7f778853aeda7c2d45f14edea7ef67c34e6d59adecdbd3ffea9c864c9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiZjlkNmFmMmVmOTY1Y2ZiNGI0ZmMwZmU2Mzg3NmMwOTVjYzgzYzljYmZmZTlhMTk5ODgzNDM2OTViMzQ4N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2ZTMyYTMwZjNmMjBiYmM4MmY1YzUzZDQ4MDg4M2RhODk0OWQwYWJhYTllZGQwNWFkMzJjZDdhYzRlMjc5ZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNjUyMzAyMWU5NzlkYzM3MDIxNjljZmI4ZjUwODM5YjFmN2Q4YmRmMmMwMTEyNzAzOTE4NTgxMTIyMDJlYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java#L60-L66",
+          "version": "repo-lines-v1:sha256:cd0b5acceec104f4e156427d8b9ceece1c69942145ffabc9762422fb1242a1f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWU2ZDA4ZTg0MjYwZmU4OTMwMjkzMjgzYTQxODc3MDVlYzMzZDE1MWE1NjY3NGIzNzRiZWE2MWM4N2ZlMzE4MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2E5ZjA5NWQ4MTMwMWQ0NzIxNGU5ZmNlMzUwMzdiYzYxZTg3NjNmYzcwZDVhYTljMjlmNDZmZTdiYWEyZWYyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGUyODRkNzU1OWMxZDVhOGRmMjIwZTkxNDBlZWUzN2Q4ZWE4ZWUyM2ZiMzJjZjU2NDM3YTVjMmIxY2ZkNWM4OSJ9"
         },
         {
-          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L27-L44",
-          "version": "repo-lines-v1:sha256:d165e0fba1882c90d409624786392f6214d66e68913be0ec8d309f31255f5e54:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3OThkODgxYmI3NDA2NmEyMGE5NGYzMTM4ZDQyZTdiYThjZTQ4OWQ3MDA3ZDY3NTM4YjUzOWFlZjg1MGM4MWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMzFlOTQxY2JjNWYzMDk3YjQxZGRiZTYxMTc0ZjVmOWIzYzk3YTgwYjZhZDhkMmExZjFhNGU2Zjc1YmYwOGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmMGIyOTQ4MGNmZWVjZThjNjkxNzY4ZDRjMjJmNjE5ZjZjNzYyNmNhMzk0ODM4ZjQ1ZDZkOWI1ZGY5ODEzZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiMzBkZTdhZGY2ODM0OWQwMWVkNzEwZDQ0MDcyZDNiNjBiYmMwNGIwZDA1MjljMGE5M2MyOGYxMzYxNGYyZTgifQ"
+          "resource": "repo://pom.xml#L365-L381",
+          "version": "repo-lines-v1:sha256:43bfbbbb18c6725587270537711faac51345706e4230352d878662884e2a25e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZTgwNWIyN2NmODc0NWE0ZDA3MzIxYzAyODdlZTdjYTY2NDM1Y2RjMTQxOTkxY2I4MjQxY2Q1ODRlMjAyN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NWViNzdhYzg2M2JkNDJkYmJjNzcxZDhkMjhhNGNhNjc3NzE0MGVmNzc1OGZlZGQwOGE4MGNlOWM1MDIxMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1MGI2YzViNGViY2E0MjI0OWY1YWQ1YTFhNjMxNDVjY2FiNWEyZDgzNjQwYTI0NWY3NzQzM2EzNDhmMDk3M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4MTlkNmRkNGJiZWZjMzE3MGM1N2NhYzQxZWE1ZjM3Mzc2NGE0MjUyNWM1YWY1YmE2N2JlZWM4YmY3ZTcxMzkifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L32-L40",
+          "version": "repo-lines-v1:sha256:089d283277bb14735dfe7e863a2bd9ef0896891991f9bd4e0e2541cca6e6e4e5:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTYwOTJmZDQ1MmRjNTJiNzg3MzM3ZDU0NWMwZTg5ZTcyY2YyNTBlZGQ5OGZmYWNkYTIxNDViNWM1NDJjMTQ0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmFkNmQyZmExYTUxNDcyM2U0NmE3NzM5NGZkMjVjNTdkMTJjMjM2NjQ4ZWRlMTNjN2NhMGY4M2I0NTk2MDE0YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWExODY2NTlhOTRmYTUwZDhiZmUwNjM5OWJlZmM3NmExNzQ4NmIyOTlmNjFlODNhY2FhMWJhMTdmZjUyYWIwZCJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ExArchIT.java#L36-L60",
+          "version": "repo-lines-v1:sha256:77fd3d31e88c1ee0e3d1341f145b9452bd7fb7820e1c144c445ba3be85922aa1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0YTQwODRmNzc4NDRiZjRmNzA1ZWM4MjhlNTljYzY0MTU5ZDMwYzk3ZWI2YTBmZDllNjYwNmEwZGIzMTkxYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwYmI1NzU2NDYzNWU1NzRkNDgxNzc3NDc0YWMwNGM4ZjNjNmI4YzM0ZGE3OWM0MWMyM2MzMTc1YTI3Y2YzMTAifQ"
         },
         {
           "resource": "repo://tlr/update_integration_tests.sh#L1-L4",
@@ -481,10 +493,62 @@
           "version": "repo-lines-v1:sha256:052289fb463a87bd342948538fdeeb8f6b342ec823c60a4c6dd4505e0cf73f3f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzYzI0ODMyZDdlY2I2YzgwYzk2YTMxMTY0ZWRkYjUwOWI2ZTJhZTY3ZjdmYjUwMjAyZTZjZGY5NDU2YWM4NDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0MWY0OWY2Y2Q4ZDg5ODBlNzY2MzgxNWYyOWIzODY0ZDJmYjJhZDg3YzQwZjljMjM0OWNjMTdlOTI5MTA2ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NDhiMjlkOGM5MTU2NTEyNzg1NDEzY2QzYWQ0ZWU0NWZkMjdjNzBiNTAwMGNlOTQwZGY5NTQ2ODNlYTg2YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyNTJlMzQ0NTQ5MmE1YWI1NTNiMzZlM2IxNjg5NWIyNWJiYjllOTc0YWIxYTA0MmY0ZDY4MjIyMWQyMGQ3NGQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_274c0b8dccf2465bae6763ac732f0d41",
+      "statement": "The root POM pluginManagement pins maven-surefire-plugin 3.6.1 and maven-failsafe-plugin 3.6.1, and the failsafe execution binds the integration-test and verify goals to the integration-test phase, so `mvn clean verify` runs both the Surefire unit/architecture tests and the Failsafe integration tests.",
+      "evidence": [
+        {
+          "resource": "repo://pom.xml#L365-L381",
+          "version": "repo-lines-v1:sha256:43bfbbbb18c6725587270537711faac51345706e4230352d878662884e2a25e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZTgwNWIyN2NmODc0NWE0ZDA3MzIxYzAyODdlZTdjYTY2NDM1Y2RjMTQxOTkxY2I4MjQxY2Q1ODRlMjAyN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NWViNzdhYzg2M2JkNDJkYmJjNzcxZDhkMjhhNGNhNjc3NzE0MGVmNzc1OGZlZGQwOGE4MGNlOWM1MDIxMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1MGI2YzViNGViY2E0MjI0OWY1YWQ1YTFhNjMxNDVjY2FiNWEyZDgzNjQwYTI0NWY3NzQzM2EzNDhmMDk3M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4MTlkNmRkNGJiZWZjMzE3MGM1N2NhYzQxZWE1ZjM3Mzc2NGE0MjUyNWM1YWY1YmE2N2JlZWM4YmY3ZTcxMzkifQ"
+        },
+        {
+          "resource": "repo://pom.xml#L419-L423",
+          "version": "repo-lines-v1:sha256:e2c351660b39dd1999a287c16edf682202de23e623aaf577ff7fdb6d8df93109:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGRkNzA1MGExYTVlOTk5N2QxZGI5MDMzMGI1ZDU1ODMwMTg5YWNjNDA3M2Y0OGZiYjI5NTlhOWUzODViMTQwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGUxMmZiNzZiNDJmNTI2N2E1NDdmYjBhMGFhMjI5MDg1Nzc5NWI3MzAxOTgwMzJmY2Y0ZWIwY2U5MGM5ODE3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDI5NTIyMTkxNTQ5MGUxODZjYmU5YmEzNjFjZmUzYjNhMDg2OGU4ZjJkNWNlNmJmMDdkOTc4Zjg2M2NkNmU1NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTM2NjI3ODg3NWE1OWNjNmUyMDRhNGQ3ZDZkZGNlY2E0ZmYzNjhkNzZiODg0M2QxZDE1YmYyMjE0Yzg0ZWUxNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ccf1246879c84f5bad846660e3aeea57",
+      "statement": "Maven dependency updates are managed by Renovate, not Dependabot: the root renovate.json only extends local>ArDoCo/actions:renovate-preset (inheriting the shared preset from the ardoco/actions repository), and there is no root .github/dependabot.yml — only the three module trees carry inert dependabot.yml files for their standalone-repository use.",
+      "evidence": [
+        {
+          "resource": "repo://renovate.json#L1-L4",
+          "version": "repo-lines-v1:sha256:44b93d1dfd3c9890be5b8e5985f97433835824b2e6dcf2c8ace114a46c6b786b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmYjA4ZmRhMWFjYjk1N2I2MTE2YmQzNzgxMWExZmU0MWEwMTYxMWMwNjMxZWRiZjc4NmQ2ODg5YTI3YTU1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_24f719774fde49ac83f9c851bc5090de",
+      "statement": "The inconsistency-detection tree declares the JaCoCo Maven plugin in its build plugins without a version pin or any executions, so it does not instrument anything by default; the pipeline-id module defines an extra default-active test-dependencies profile that pulls the pipeline-core test-jar, while pipeline-tlr wires the same test-jar directly in its dependencies.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/pom.xml#L68-L85",
+          "version": "repo-lines-v1:sha256:070f07597bced8db674a2cc344e37b5cc1f9478867ecb7a85b56bf88b75fcd01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhZTBkMzVlYWI3OGM0ZWZhNDBkZmI1MWEyYzlhMDVjMjMyYTFjMWNiYzYzMmZiY2ZkODYzMjM4Y2Q3MmIwNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4MTVjN2Q4NDU4ZmNkNmQ5Y2U1YWVmZTcwMDZiZjUxMzhjYjhkZDBiYWEyMzg3YjhlOWY5MjQzN2M3MTg5ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhM2M2NGQ0MDI3M2EwN2Y5YzI3ZDQyMzU1MzNmNjcwMDAzNGYxNDY0YWE4MDI1ZDY4MmE3ZjgzZDg4YzJhYTIifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/pom.xml#L135-L138",
+          "version": "repo-lines-v1:sha256:823d1f59e26366b28284c7e5fd34227d0da675b8c01ff63b018bb8ab10fea48f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODczNWU4Y2MzNDlmMzI0YzQwMzE4MmI5MjExMzQ5OTgzMzU2YzVkMDY4ZDU5ZWI5MWM2Y2EzMzQyNmEyMGI0MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I1YmU4NDE5M2ZmNDgyMzlkMDhmOGI3ZGM4NjIwNDA4OTg5OTlmNmY2MjliZDBkNDk1MGFkNDQ0MDgzNzQxNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ5NjliNzcwMjI1YjhmNWEzNTNhNzVkNjIzZjU4MmFlZmNjMGU0NDZlZDRjZjdjNzA5ZThjMTkxNTdhYmQxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTIzZDIwZmJjOGJhMzE2NDk2Mjk5NDFkYTM1MTFhNmE4OTMzZTcwNzM0OTgzZDZjZWQ0YTRiZGIzN2NmZGU2YiJ9"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/pom.xml#L29-L35",
+          "version": "repo-lines-v1:sha256:50ef2ec1d8e858022a9242de7c64d190442b77c51e32f2abc8481fc339a94b78:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdiOGU3ZDVkZjMyZThlYzQ4OTM3YTRmODI3MmM4NGRkYjY4MjE0OThkNzVhMWY3MDcwMjcyNTk3ODI3ZTJiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzhjZjUyNDE3ZmRmZWEwYmVlN2Q4NWNiYTU3ZmU2Y2UzOGRlOWMxOTY4NTEwMTRlNWRkNDI1NzE5MDZmNTg0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzI5MWVlZDJmOWZiZjJlNGVlY2VkNjU1OWRiM2UxNTVmN2RmZjViYjVlNWNiZmYwODc5ZDZjMjRhOTBhZTA1MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ZlMGJmYjYwNGY5YTRhOThiYTc4MGVkNGQzZmNjYTRjMDE1MTM3YzYzODZhMTRkY2ZjM2FlZmY5NTczNTkyMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_006d2e45cc804e73a1a7b720cf0ced14",
+      "statement": "LargeLanguageModel sets a 10-minute timeout on OpenAI chat models and 15 minutes on Ollama chat models, while the OpenAI-compatible client path used when OLLAMA_TOKEN is set (with OLLAMA_HOST reused as the base URL) uses a 30-minute timeout; all three paths apply temperature 0.0 and the SEED.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L99-L126",
+          "version": "repo-lines-v1:sha256:09231809c29c785600a6d6476fb3d26666596e3a7669e6cb7ebc4e4f4e927d9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyMjE1ODQzNDI3YzQyM2Y5MGM4YWVhNzg0NDZhYjU1ZGQ1OTVlMzliZWE0YjBlZmRkNDJkMGJmZmQ2NjZkNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4NGI3ZmU3MTQ2ODMxNjFhNjBjMWNlNmE2YTJiNGJhMThlMzM4ZmQyYTBkMzY4YTE4NThkYWQ4YjY2YjIwM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3ZTgyMjE5NDUyOGRkMjM2OWRlZDVlNDgxMTBmMTZkOGFhMThkMTNjNDhiZWNkZWUzYmYzZDUyOWZmNTE5NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-16T14:07:46.178Z"
+    "at": "2026-11-23T16:40:38.555Z"
   }
 }

@@ -72,6 +72,8 @@ sources:
     resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/agents/ArtemisInconsistencyAgent.java
   - id: openwiki-source-b1931eb454663e6ef979f5a5
     resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArtemisInconsistencyChecker.java
+  - id: openwiki-source-7f6d2b7f3ceba15a50dce298
+    resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ArtemisInconsistencyInformant.java
   - id: openwiki-source-71717fa89f65caa5782aea20
     resource: repo://inconsistency-detection/stages-id/artemis-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/ArtemisMeatInconsistencyInformant.java
   - id: openwiki-source-0546793c8db53db262e44388
@@ -140,24 +142,76 @@ sources:
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationArtemisIT.java
   - id: openwiki-source-edf5c30c4e5b71b28c079cd1
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/InconsistencyDetectionEvaluationIT.java
+  - id: openwiki-source-58130a68841df028da063129
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/ArchitecturalStylePatternInconsistencyDetectionEvaluation.java
+  - id: openwiki-source-583c83f4725d40df783cdad0
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/ArtemisInconsistencyEvaluationWriter.java
+  - id: openwiki-source-8c04f77db28d033d3ccefa28
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/evaluators/ArtemisInconsistencyEvaluator.java
+  - id: openwiki-source-d7821439799d95eae67e3c3f
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/evaluators/ComponentArtemisInconsistencyEvaluator.java
+  - id: openwiki-source-0d4edadeea54c0317699ad03
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/HoldbackClassArtemisConnectionInformant.java
+  - id: openwiki-source-da67a2c4e771b9f183f2f547
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/HoldBackComponentArtemisNerStrategy.java
+  - id: openwiki-source-828b66799673fc11bba23bb8
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/ArtemisInconsistencyRunProducer.java
+  - id: openwiki-source-37c52c86ac883ae23eab08b2
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/ArtemisInconsistencyRunSupport.java
+  - id: openwiki-source-e94ed452e30a2c4b7a07e54d
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/ClassHoldBackArtemisInconsistencyRunProducer.java
+  - id: openwiki-source-eba775d639d92ca504e556b2
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/ComponentHoldBackArtemisInconsistencyRunProducer.java
+  - id: openwiki-source-09524e676dc56b59d49796a2
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/DatafileExtendedArtemisInconsistencyRunProducer.java
+  - id: openwiki-source-cf52a54a58ac65b3376cf427
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/artemis/runproducer/SingleArtemisInconsistencyRunProducer.java
   - id: openwiki-source-9bcce459849159fe4496bbfd
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackArCoTLModelProvider.java
   - id: openwiki-source-fd8ac5724feb762c433689e1
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/HoldBackRunResultsProducer.java
   - id: openwiki-source-af363b099a3f39a1a9f8fceb
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/InconsistencyDetectionEvaluationUtil.java
+  - id: openwiki-source-c19a94607b86bb35bc32ad97
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/inconsistencyhelper/ProgrammingLanguageInconsistencyDetectionEvaluation.java
   - id: openwiki-source-9c6ae28db6be1ea5b6623315
     resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/ProgrammingLanguageInconsistencyDetectionEvaluationIT.java
+  - id: openwiki-source-678e3d567fe88b6ac0ebebd5
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/ArchitecturalStylePatternInconsistencyDetectionTask.java
+  - id: openwiki-source-f45db2c21812815ccc201cde
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/ClassArtemisInconsistencyTask.java
+  - id: openwiki-source-326646621e88912b5aa7cd3d
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/ComponentArtemisInconsistencyTask.java
+  - id: openwiki-source-5e63262211c4cb2876f30cd2
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/DatafileArtemisInconsistencyTask.java
+  - id: openwiki-source-c9530f5e893d970e1910ab0c
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/InconsistencyDetectionTask.java
+  - id: openwiki-source-7cf39731aa5b88c863aaf959
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/tasks/ProgrammingLanguageInconsistencyDetectionTask.java
+  - id: openwiki-source-071e631b9ac4019ab44c2254
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/architectural-style-pattern-text-extensions/README.md
+  - id: openwiki-source-31a552bfef467ce39212f914
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/datafile-artemis-text-extensions/README.md
+  - id: openwiki-source-e73a2b2601ba11f8dc80c66e
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/datafile-artemis-text-extensions/rod/extension-0.txt
+  - id: openwiki-source-1deeceb078aa5673b4f247c9
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/datafile-artemis-text-extensions/rod/goldstandard-extension-0.csv
+  - id: openwiki-source-282eaa26c0df2cde9569bb7f
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/programming-language-text-extensions/README.md
+  - id: openwiki-source-e3fd1b01ca4360aeba2c46e0
+    resource: repo://inconsistency-detection/tests-inconsistency/src/test/resources/programming-language-text-extensions/rod/goldstandard-extension-0.csv
   - id: openwiki-source-c3324edd02fb573e63e5301b
     resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java
   - id: openwiki-source-3db4b953fa4c9dbe8b88791b
     resource: repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ArtemisNerStrategy.java
   - id: openwiki-source-02915942e497a9802282dcbf
     resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/agents/ArchitectureConfiguration.java
-generated: { by: "openwiki/0.9.0", at: "2026-11-16T14:07:46.178Z" }
+  - id: openwiki-source-635f754fd3f1d8825c4386b9
+    resource: repo://tlr/tests-tlr/src/test/resources/datafile-artemis-text-extensions/rod/extension-0.txt
+generated: { by: "openwiki/0.9.0", at: "2026-11-23T16:40:38.555Z" }
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-16T14:07:46.178Z
+    at: 2026-11-23T16:40:38.555Z
 ---
 
 # Inconsistency Detection
@@ -362,7 +416,8 @@ The two LLM-validated stages deliberately do **not** use this API: `ProgrammingL
 - `ArtemisInconsistencyAgent.createAgents` creates one `ArtemisTeamInconsistencyAgent` per strategy, plus an `ArtemisMeatInconsistencyAgent` **only** when the strategy's `NamedEntityType` is `COMPONENT` — `CLASS` and `DATAFILE` strategies are TEAM-only. Agent ids are derived from the strategy id (`<ENTITY_TYPE>Artemis`), e.g., `COMPONENTArtemisTeamInconsistencyAgent`.
 - `initializeState()` builds an `ArtemisInconsistencyStatesImpl` over the strategies' `ArtemisTarget`s (a `LinkedHashMap` keyed by target) and registers it under `ArtemisInconsistencyStates.ID`. `getState(target)` lazily creates a state for unknown targets via `computeIfAbsent`, so states are keyed per `(Metamodel, NamedEntityType)` pair rather than by metamodel alone.
 - `ArtemisTeamInconsistencyInformant` reads the per-target `ArtemisConnectionState` and reports **every occurrence of every unlinked named entity** as a `TextEntityAbsentFromModelInconsistency` with a fixed confidence of `DEFAULT_PROBABILITY = 0.92` and no origin candidate.
-- `ArtemisMeatInconsistencyInformant` (only for `COMPONENT`) collects the model-entity ids referenced by the target's trace links and flags every endpoint of the strategy's model (`modelStates.getModel(strategy.getMetamodel()).getEndpoints()`) that is not referenced, as a `ModelEntityAbsentFromTextInconsistency`. The informant is `@Deterministic`.
+- `ArtemisMeatInconsistencyInformant` (only for `COMPONENT`) collects the model-entity ids referenced by the target's trace links into a set and flags every endpoint of the strategy's model (`modelStates.getModel(strategy.getMetamodel()).getEndpoints()`) whose id is not in that set, as a `ModelEntityAbsentFromTextInconsistency`. The informant is `@Deterministic`.
+- Both informants extend the shared base class `ArtemisInconsistencyInformant`, which stores the `ArtemisNerStrategy` handed to the constructor and exposes `getStrategy()`/`getTarget()` so subclasses read traceability data for exactly their target; informant ids are derived from the strategy id as well (`<ENTITY_TYPE>ArtemisTeamInconsistencyInformant` / `…MeatInconsistencyInformant`).
 
 Both informants reuse the type records of the classic `inconsistency-detection` stage and write into the per-target `ArtemisInconsistencyState`, which extends the core `AbstractInconsistencyState` (duplicate-skipping adds).
 
@@ -386,7 +441,7 @@ Each stage ships an `ArtemisNerStrategy` implementation that tells the shared `A
 - `ProgrammingLanguageNerStrategy`: `NamedEntityType.PROGRAMMING_LANGUAGE`, metamodel `CODE_WITH_COMPILATION_UNITS`, prompt assembled from `programming-language-task-prompt.txt` + `programming-language-formatting-prompt.txt`.
 - `ArchitecturalStylePatternNerStrategy`: `NamedEntityType.ARCHITECTURAL_PATTERN`, metamodel `CODE_WITH_COMPILATION_UNITS`, prompt assembled from `architectural-style-pattern-task-prompt.txt` + `architectural-style-pattern-formatting-prompt.txt`.
 
-The strategy interface derives `ArtemisTarget(metamodel, entityType)` and the id `<ENTITY_TYPE>Artemis`; prompts are read from `/artemis/prompts/` below the stage's resources via `readPromptResource`. The task prompts define what counts as an occurrence (full documentation lines; explicit mentions only; specific rules for file extensions, web/query languages, or recognized patterns), and the formatting prompts fix the JSON shape (`name`, `type`, `alternativeNames`, `occurrences`). Prompt conventions and LLM selection are covered on [LLM Integration](llm-integration.md).
+The strategy interface derives `ArtemisTarget(metamodel, entityType)` and the id `<ENTITY_TYPE>Artemis`; prompts are read from `/artemis/prompts/` below the stage's resources via `readPromptResource`. Neither ID strategy is `@Configurable` — it has no knobs beyond the runner-supplied LLMs. The task prompts define what counts as an occurrence (full documentation lines; explicit mentions only; specific rules for file extensions, web/query languages, or recognized patterns), and the formatting prompts fix the JSON shape (`name`, `type`, `alternativeNames`, `occurrences`). Prompt conventions and LLM selection are covered on [LLM Integration](llm-integration.md).
 
 ### Informant Loop and Statement/State Records
 
@@ -406,7 +461,7 @@ The state records are deterministic and `TreeSet`-backed, so duplicates collapse
 
 ### Validation Agents, Tools, and Retries
 
-Validation is delegated to a langchain4j **AiServices** agent interface per stage — `ProgrammingLanguageValidationLlmAgent` and `ArchitecturalStylePatternValidationLlmAgent` — each with two `@SystemMessage`/`@UserMessage`-annotated methods, one per evidence source (code directory vs. code model). Both return a `(valid, explanation)` record (`ProgrammingLanguageValidationResult` / `ArchitecturalStylePatternValidationResult`). The system messages impose the same core contract: use only the provided read-only tools, never guess, treat only *repository-specific* claims as falsifiable (non-specific statements return `true`), base the final determination on source-code evidence, and do not use repository documentation as final evidence. The programming-language agent must explicitly verify "strictly/only/purely/exclusively/entirely in language X" claims; the architectural-style agent must not accept a mere naming coincidence (a `controller` package alone does not prove MVC).
+Validation is delegated to a langchain4j **AiServices** agent interface per stage — `ProgrammingLanguageValidationLlmAgent` and `ArchitecturalStylePatternValidationLlmAgent` — each with two `@SystemMessage`/`@UserMessage`-annotated methods, one per evidence source (code directory vs. code model). The programming-language agent implements `validateProgrammingLanguageStatementAgainstCodeDirectory` and `validateProgrammingLanguageStatementAgainstCodeModel`; the architectural-style agent implements the corresponding `validateArchitecturalStylePatternStatementAgainstCodeDirectory`/`…AgainstCodeModel` methods. Both return a `(valid, explanation)` record (`ProgrammingLanguageValidationResult` / `ArchitecturalStylePatternValidationResult`). The system messages impose the same core contract: use only the provided read-only tools, never guess, treat only *repository-specific* claims as falsifiable (non-specific statements return `true`), base the final determination on source-code evidence, and do not use repository documentation as final evidence. The programming-language agent must explicitly verify "strictly/only/purely/exclusively/entirely in language X" claims; the architectural-style agent must not accept a mere naming coincidence (a `controller` package alone does not prove MVC).
 
 The agents are built with:
 
@@ -471,7 +526,17 @@ Note that the Artemis TEAM informant and the classic baseline reuse `TextEntityA
 - **Shared ArchUnit tests** (`tests-inconsistency`): `ArchitectureTest`, `ConfigurationTest`, and `DeterministicArdocoTest` extend the rule base classes from `core/tests-base`, enforcing the architecture rules, `@Configurable` validity, and determinism over `core`, `tlr`, and `id` packages.
 - **Evaluation ITs**: `InconsistencyDetectionEvaluationIT` evaluates TEAM (micro-averaged metrics asserted against the project's `ExpectedResults` minimums), MEAT (UID comparison against the `*_UME.csv` unmentioned-elements gold standard on the cached base run), and a baseline variant gated by the `testBaseline` environment variable that swaps `InconsistencyChecker` for `InconsistencyBaseline` (a TEAM record with empty name and fixed confidence `0.69` for every sentence lacking a trace link) and logs weighted-average metrics without asserting them. The newer LLM-based ITs (`InconsistencyDetectionEvaluationArtemisIT`, `ProgrammingLanguageInconsistencyDetectionEvaluationIT`, `ArchitecturalStylePatternInconsistencyDetectionEvaluationIT`) are disabled for CI runs and are meant for manual execution with an LLM-backed configuration.
 
-The hold-back run producers/evaluators, gold standards, metric gating, and run recipes for all of these are documented on [Testing & Evaluation](testing.md); run commands live on [Quickstart](quickstart.md) and [Operations](operations.md).
+The hold-back run producers/evaluators, gold standards, metric gating, and run recipes for all of these are documented on [Testing & Evaluation](testing.md).
+
+Within this module tree, the harness has three layers worth naming:
+
+- **Run producers** (`integration/inconsistencyhelper/`): `HoldBackRunResultsProducer` (classic TEAM hold-back over an `AnonymousRunner` pipeline) and, for the ArTEMiS ITs, the `inconsistencyhelper/artemis/runproducer/` family producing `ImmutableMap<ArtemisEvaluationRun, ArdocoResult>` (base run plus held-back/extended runs): `SingleArtemisInconsistencyRunProducer` produces only the base run, `ComponentHoldBackArtemisInconsistencyRunProducer` produces one run per architecture component with a `HoldBackComponentArtemisNerStrategy` whose NER candidate list omits the held-back component id, `ClassHoldBackArtemisInconsistencyRunProducer` produces `numberOfRuns` hold-back runs selecting `numberOfHeldBackClassesPerRun` classes each (weighted toward rare classes with `1 / occurrences^0.5`, seeded per run via `seed + runIndex`) and runs an `AnonymousRunner` pipeline whose `HoldbackClassArtemisConnectionInformant` filters those class names out of the connection candidates, and `DatafileExtendedArtemisInconsistencyRunProducer` runs the extended SAD documents. Base runs and component hold-back runs go through the `ArtemisInconsistencyRunSupport.run(...)` helper, which sets up and runs the `ArtemisInconsistencyDetection` runner; the class hold-back runs instead use a bespoke `AnonymousRunner` pipeline, and the datafile extended runs construct that runner directly with a per-run output directory — with strategies in all three cases coming from the `ArtemisInconsistencyEvaluationConfiguration` bundles (`component()`/`clazz()`/`datafile()`). The class hold-back candidate set is derived from the `ClassArtemisInconsistencyTask` trace-link gold standard, whose parser strips package prefixes (`Environment.Base` → `Base`).
+- **Evaluators**: per-entity `ArtemisInconsistencyEvaluator` implementations (`ComponentArtemisInconsistencyEvaluator` supports both MEAT and TEAM; `ClassArtemisInconsistencyEvaluator` and `DatafileArtemisInconsistencyEvaluator` are TEAM-only with hold-back/extended variants, since the interface's default `evaluateMeat` throws `UnsupportedOperationException`) compute `SingleClassificationResult<String>` via `ClassificationMetricsCalculator`, and `ArtemisInconsistencyEvaluationWriter` writes per-run and weighted-average results (`MEAT_…`/`TEAM_…` files plus confusion sets) into `target/testout/artemis_eval_id`; the LLM-stage helpers `ProgrammingLanguageInconsistencyDetectionEvaluation` and `ArchitecturalStylePatternInconsistencyDetectionEvaluation` evaluate from the stage state — inconsistency strings `"<sentence>,<name>,false"` (validated statements additionally feed a NER-occurrence evaluation as `"<sentence>,<name>"`) — via `ClassificationMetricsCalculator` with `confusionMatrixSum = null`.
+- **Text-extension gold standards** (`src/test/resources/`): `programming-language-text-extensions/` (`rod`, `scons`, `teammates`, `zengarden`; six template sentence types — IMPLEMENTATION, LANGUAGE_USE, LANGUAGE_FILES, LANGUAGE_ARTIFACT, LANGUAGE_COMPONENT, LANGUAGE_STACK — filled with a fixed seed, documented in the folder `README.md`) and `architectural-style-pattern-text-extensions/` (`beets`, `coronawarnapp`, `rod`, `teammates`; LLM-written continuations that present fictional styles/patterns as established facts, prompt documented in `README.md`) both hold `extension-N.txt` documents plus `goldstandard-extension-N.csv` files with `line,pattern/language,valid` rows (the evaluators keep only the `valid=false` rows), and the extended runs load `extension-<runIndex>.txt` and merge the extension gold rows into the expected set. `datafile-artemis-text-extensions/` instead carries `sentenceID,file` gold rows mapping extended sentences to LLM-generated datafile names absent from the code model — every row is an expected TEAM inconsistency for `DatafileArtemisInconsistencyEvaluator`. A parallel tree under `tlr/tests-tlr` follows the same README-documented generation process but weaves a different, tree-specific set of generated files (e.g., `.feature` files) into its extension texts, with matching trace-link gold standards for the TLR datafile evaluation.
+
+The classic TEAM/MEAT gold standards still come from the task enums: `InconsistencyDetectionTask` and `ComponentArtemisInconsistencyTask` reference the `*_UME.csv` unmentioned-elements files plus per-project `ExpectedResults` (real minimums) and `filterlists_all.txt` filter configuration, while the LLM-stage enums reference placeholder results: `ArchitecturalStylePatternInconsistencyDetectionTask`/`ProgrammingLanguageInconsistencyDetectionTask` the per-pattern/per-language CSVs and `ClassArtemisInconsistencyTask`/`DatafileArtemisInconsistencyTask` the class/datafile TEAM gold standards, all with `ExpectedResults(.420, …)`.
+
+Run commands live on [Quickstart](quickstart.md) and [Operations](operations.md).
 
 ## Use Cases
 

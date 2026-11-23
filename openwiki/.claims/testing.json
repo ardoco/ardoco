@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ee2215961f607a28b62bb2c952ed5c9fd15781788e667b901a346003038b5ad1",
+  "pageVersion": "sha256:2cde6879fd90cc80bd4f038c9237d7c0ef3cbcb1311b8ab75cd3fc85ba7ce62f",
   "claims": [
     {
       "id": "claim_c368d58ed7ae432f81183442a7cad495",
@@ -170,7 +170,7 @@
     },
     {
       "id": "claim_1e9c6872328c4e1293ff2f2b409c19db",
-      "statement": "tests-tlr and tests-inconsistency declare tests-base as a test-scoped dependency and bind maven-failsafe-plugin (root POM version 3.5.6, integration-test and verify goals at the integration-test phase), so mvn verify runs both Surefire unit/ArchUnit tests and Failsafe *IT.java integration tests; the module-scoped recipes are mvn -pl tlr clean verify and mvn -pl inconsistency-detection clean verify.",
+      "statement": "tests-tlr and tests-inconsistency declare tests-base as a test-scoped dependency and bind maven-failsafe-plugin (root POM pluginManagement version 3.6.1, integration-test and verify goals bound to the integration-test phase; maven-surefire-plugin pinned to 3.6.1 in the same pluginManagement), so mvn verify runs both Surefire unit/ArchUnit tests and Failsafe *IT.java integration tests; the module-scoped recipes are mvn -pl tlr clean verify and mvn -pl inconsistency-detection clean verify.",
       "evidence": [
         {
           "resource": "repo://inconsistency-detection/tests-inconsistency/pom.xml#L14-L20",
@@ -182,7 +182,11 @@
         },
         {
           "resource": "repo://pom.xml#L364-L377",
-          "version": "repo-lines-v1:sha256:b49e810dc66fce756c3ef720c9e92a02bd8a6ea4ed4ce2f4da2be6bfae6e0c41:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZDcwNTBhMWE1ZTk5OTdkMWRiOTAzMzBiNWQ1NTgzMDE4OWFjYzQwNzNmNDhmYmIyOTU5YTllMzg1YjE0MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlMTJmYjc2YjQyZjUyNjdhNTQ3ZmIwYTBhYTIyOTA4NTc3OTViNzMwMTk4MDMyZmNmNGViMGNlOTBjOTgxNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczY2ZmYTVmODA1NjU2OGYxMDA0YThhZDE4YjJhYjNmODg3ZDlhODE2ZGExOGE3MWE4ZWZkMjNlMzI1NjU5YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwNTkzMmI5NmVjYTFlNTljYTA1NTg3YTQzZTgzNzlhNDUyMTkxYzk5ZjMxNzA1MDI4ZjIxZTRmNDQ0ZDQ1MzkifQ"
+          "version": "repo-lines-v1:sha256:dd0035632b761e775f91d72173d31aaddd1d108846dfdcafb6a73e7646ee94b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZDcwNTBhMWE1ZTk5OTdkMWRiOTAzMzBiNWQ1NTgzMDE4OWFjYzQwNzNmNDhmYmIyOTU5YTllMzg1YjE0MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlMTJmYjc2YjQyZjUyNjdhNTQ3ZmIwYTBhYTIyOTA4NTc3OTViNzMwMTk4MDMyZmNmNGViMGNlOTBjOTgxNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczY2ZmYTVmODA1NjU2OGYxMDA0YThhZDE4YjJhYjNmODg3ZDlhODE2ZGExOGE3MWE4ZWZkMjNlMzI1NjU5YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwNTkzMmI5NmVjYTFlNTljYTA1NTg3YTQzZTgzNzlhNDUyMTkxYzk5ZjMxNzA1MDI4ZjIxZTRmNDQ0ZDQ1MzkifQ"
+        },
+        {
+          "resource": "repo://pom.xml#L421-L424",
+          "version": "repo-lines-v1:sha256:f85f260921e1497b8b2732c5bd4f3dabe0105db06d341ecf37e26cf272cdf2bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjc1OGM2MWYxOWQ0MzBlZjc0MDk0OWY5NmM5ZmEwNWJkNzE4YzllNTUwOTAxOWEyZTc2MWU2ZTdmODQ1ZGQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGRkNzA1MGExYTVlOTk5N2QxZGI5MDMzMGI1ZDU1ODMwMTg5YWNjNDA3M2Y0OGZiYjI5NTlhOWUzODViMTQwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjgxOWQ2ZGQ0YmJlZmMzMTcwYzU3Y2FjNDFlYTVmMzczNzY0YTQyNTI1YzVhZjViYTY3YmVlYzhiZjdlNzEzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGQ5MDlkNmQwOWEwMzBhYThiZTY2ZWJkODEyODNhY2U3NWM0NjZjZTdkNjc5YmFmMGFiNzJiMDMwNjJlMmM4ZSJ9"
         },
         {
           "resource": "repo://tlr/tests-tlr/pom.xml#L14-L26",
@@ -605,10 +609,24 @@
           "version": "repo-lines-v1:sha256:4881a5a1d94b4f979ab7bf7b69def8ac98c0dc0a6794fe665641ab0f71a8aab4:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzA5ZTRjZGEwMjBjMGFjOTA3OGExMzYyODgyMTVmYzllZmIyNjg2NzIyYjE0OGQwNmQ4NGVjYzU3ZjQ5MTU1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzYyOWVmY2ZjMDg3ZjA1N2NjMDM2MjAxMDFlNDlmZWYxYjUwZTgyODA2YjdmM2ZmYzEzNzM2NWE4Y2I1YmUwYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmNkMDZhNzgyNjkxODRlMWYyOTM5ZDFlMDQ4NDZkMWI3YjEzNTQ2ZmRkMjVkMjcwNjY3ODlkNjBlMjhlMTYzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmRiZGQ5MGQ3NWRmYmE0NGEwMTU3ZjFlYWJlYWZkNzZhOTgzYjEyNGFhZTU5OTI1Y2YwYjRiNTI2Zjc4NzA3NiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_f0b69dab33984df08a2892d31b90191a",
+      "statement": "The root POM pins archunit-junit5 to version 1.5.1 in its dependencyManagement; tests-base consumes it with compile scope, which is what lets the shared ArchUnit suites compile into the regular tests-base jar and be re-used by the test modules.",
+      "evidence": [
+        {
+          "resource": "repo://core/tests-base/pom.xml#L18-L22",
+          "version": "repo-lines-v1:sha256:965af09ffa7f69a13e211589062837eb507f40b23f9bc7ff1541f79df54fc3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY2NGMwZmMxYWRlYzMzMWI1MTJhMzlmZDI4NjI5OWUzNDgyNzZkZDBhY2UyOTA1ZWYwODQyM2YwNGIyNWU2MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmNzI2YzgzNGNjMTQ4YzZiMzdjYmQzY2UyOTc2NDQyMDFmMTAzYzZjYzMzNjljODIwNjY3ZDFkMzlhYzk5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjY3ZTZmZjMxYWEzMDIzYTZlZDk5NGE2ZmRlYzY4MmQ2ZmE5ZGQ4YjBkZTU3MmVhODVhZDQ0MDA4OWI0MTFkMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNmMjI1ZDA5YzgxMGUwN2U5NjBhNjNmYWE4NTEwN2U3NDlmOWY1MDJmMzA5NjMzYzZlMmQ1NDMxYjVmYzQxOCJ9"
+        },
+        {
+          "resource": "repo://pom.xml#L102-L107",
+          "version": "repo-lines-v1:sha256:323c77518959ca78178a7999dc3bdbe8e81b3becea14d660d83c5e79b8144590:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTViN2FhMjUyMDQ5MTA4ZWVjMDA5NWNjMmY2M2UzMjExOWJlNGYyMDZiOWUxY2RhYjFkNjc5NDFkNzlkNGE4NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWU4NzdlZWQwYzI5YTliZTYzNmMwMGE5OGJjYWQ4ZmU2OTJhNDI2ZGVkNzA0MmI1ODdjOGIyYzFkNzJhM2UzMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMThjZTQ1YjJkZWQxNzVlNTJhY2QxMzY5MjExOWU4ZmM5OWRhZjdmOWUwOTUwNzlhNDg0ZjNlNmUyZGY5MTM0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTYzZTg4YzA3MDA4ZDRhNGUzZDZlYTdjODgzY2IxMjliODQyZWVlOGVjYzI2MTU1ZDIyYjM0NDdkMTdmMGQ4NSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-16T14:07:46.178Z"
+    "at": "2026-11-23T16:40:38.555Z"
   }
 }
