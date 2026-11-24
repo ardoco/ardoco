@@ -16,9 +16,9 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmEnvironment;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.TransarcEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInExArchEvaluation;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ArtemisInTransarcEvaluation;
@@ -29,7 +29,7 @@ class ArtemisInTransarcIT extends AbstractArdocoIT {
 
     @BeforeAll
     static void beforeAll() {
-        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
+        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("OPENAI_API_KEY") != null || LlmEnvironment.INSTANCE.getenv("OLLAMA_HOST") != null);
     }
 
     @DisabledIfEnvironmentVariable(named = "mutipleRuns", matches = ".*")
