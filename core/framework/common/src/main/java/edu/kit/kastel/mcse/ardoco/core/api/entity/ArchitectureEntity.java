@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.io.Serial;
 
+import edu.kit.kastel.mcse.ardoco.core.common.IdentifierProvider;
+
 /**
  * Abstract base class for entities that are part of the architecture model.
  */
@@ -17,7 +19,7 @@ public abstract non-sealed class ArchitectureEntity extends ModelEntity {
      * @param name the name of the architecture entity
      */
     protected ArchitectureEntity(String name) {
-        super(name);
+        super(name, IdentifierProvider.createId("arc"));
     }
 
     /**
