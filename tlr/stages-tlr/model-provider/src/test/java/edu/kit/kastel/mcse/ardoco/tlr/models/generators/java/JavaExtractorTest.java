@@ -37,6 +37,11 @@ class JavaExtractorTest {
         CodeCompilationUnit aClass = allCompilationUnits.stream().filter(u -> "AClass".equals(u.getName())).findFirst().orElseThrow();
         Assertions.assertTrue(aClass.getImportedModuleNames().contains("edu.zwei.OtherInterface"));
 
+        var aClassType = aClass.getAllDataTypes().stream().filter(d -> "AClass".equals(d.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(aClassType.getExtendedTypes().stream().anyMatch(d -> "Superclass".equals(d.getName())));
+        Assertions.assertTrue(aClassType.getImplementedTypes().stream().anyMatch(d -> "AnInterface".equals(d.getName())));
+        Assertions.assertTrue(aClassType.getDatatypeReferences().stream().anyMatch(d -> "AnEnum".equals(d.getName())));
+
         CodeCompilationUnit callsUnit = allCompilationUnits.stream().filter(u -> "AClassWithCalls".equals(u.getName())).findFirst().orElseThrow();
         SortedSet<ControlElement> allMethods = new TreeSet<>();
         for (var dt : callsUnit.getAllDataTypes()) {
