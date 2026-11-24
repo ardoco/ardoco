@@ -32,7 +32,8 @@ public class CodeModelProgrammingLanguageInconsistencyInformant extends Abstract
 
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(validationAgentLlm.create())
+                // TODO: check whether this agent should stay uncached; llm-access caches tool calls since 0.3.0 (see #192)
+                .chatModel(validationAgentLlm.createUncached())
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();

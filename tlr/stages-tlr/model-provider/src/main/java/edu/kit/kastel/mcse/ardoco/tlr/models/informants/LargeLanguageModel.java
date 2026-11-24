@@ -61,6 +61,15 @@ public enum LargeLanguageModel {
     }
 
     /**
+     * Creates a chat model that bypasses the LLM cache: every request is sent to the LLM.
+     *
+     * @return The uncached chat model
+     */
+    public ChatModel createUncached() {
+        return createProvider().createChatModel();
+    }
+
+    /**
      * Returns the parameters that identify the cache (file) of this model.
      *
      * @return The cache parameters of this model
