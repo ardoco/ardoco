@@ -101,7 +101,7 @@ public class CodeDirectoryReadOnlyTools {
             return stream.sorted(Comparator.comparing(Path::toString))
                     .limit(MAX_DIRECTORY_ENTRIES)
                     .map(this::formatDirectoryEntry)
-                    .collect(Collectors.joining(System.lineSeparator()));
+                    .collect(Collectors.joining("\n"));
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not list directory: " + path, e);
@@ -177,7 +177,7 @@ public class CodeDirectoryReadOnlyTools {
                 return content;
             }
 
-            return content.substring(0, MAX_FILE_CHARS) + System.lineSeparator() + "[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
+            return content.substring(0, MAX_FILE_CHARS) + "\n" + "[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not read file: " + path, e);
@@ -234,7 +234,7 @@ public class CodeDirectoryReadOnlyTools {
                 currentLine++;
 
                 if (currentLine >= startLine) {
-                    result.append(currentLine).append(": ").append(line).append(System.lineSeparator());
+                    result.append(currentLine).append(": ").append(line).append("\n");
                 }
             }
 
@@ -280,7 +280,7 @@ public class CodeDirectoryReadOnlyTools {
             var result = stream.filter(Files::isRegularFile).filter(path -> !isInsideIgnoredDirectory(path)).filter(path -> {
                 Path relative = projectRoot.relativize(path);
                 return matcher.matches(relative);
-            }).map(this::toRelativeString).sorted().limit(MAX_SEARCH_RESULTS).collect(Collectors.joining(System.lineSeparator()));
+            }).map(this::toRelativeString).sorted().limit(MAX_SEARCH_RESULTS).collect(Collectors.joining("\n"));
             return result.isEmpty() ? "No files found matching glob pattern: " + glob : result;
 
         } catch (IOException e) {
@@ -320,10 +320,10 @@ public class CodeDirectoryReadOnlyTools {
             return "No matches found for: " + query;
         }
 
-        String result = String.join(System.lineSeparator() + System.lineSeparator(), results);
+        String result = String.join("\n" + "\n", results);
 
         if (results.size() >= MAX_SEARCH_RESULTS) {
-            result += System.lineSeparator() + System.lineSeparator() + "[SEARCH RESULTS TRUNCATED]";
+            result += "\n" + "\n" + "[SEARCH RESULTS TRUNCATED]";
         }
 
         return result;
@@ -528,7 +528,7 @@ public class CodeDirectoryReadOnlyTools {
 
         private String render() {
             if (isLimitReached()) {
-                result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
+                result.append("\n").append("[TREE TRUNCATED]");
             }
 
             if (result.isEmpty()) {
@@ -542,10 +542,7 @@ public class CodeDirectoryReadOnlyTools {
 
             int depth = Math.max(0, relativePath.getNameCount() - 1);
 
-            result.append("  ".repeat(depth))
-                    .append(directory ? "dir: " : "file: ")
-                    .append(relativePath.toString().replace('\\', '/'))
-                    .append(System.lineSeparator());
+            result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath.toString().replace('\\', '/')).append("\n");
         }
     }
 
@@ -649,10 +646,10 @@ public class CodeDirectoryReadOnlyTools {
                             snippet.append("   ");
                         }
 
-                        snippet.append(lineIndex + 1).append(": ").append(contextLine).append(System.lineSeparator());
+                        snippet.append(lineIndex + 1).append(": ").append(contextLine).append("\n");
                     }
 
-                    results.add(relativePath + System.lineSeparator() + snippet);
+                    results.add(relativePath + "\n" + snippet);
                 }
 
             } catch (IOException | RuntimeException e) {

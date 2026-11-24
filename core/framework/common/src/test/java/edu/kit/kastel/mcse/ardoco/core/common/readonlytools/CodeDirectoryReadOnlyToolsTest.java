@@ -20,7 +20,7 @@ import org.junit.jupiter.api.io.TempDir;
  */
 class CodeDirectoryReadOnlyToolsTest {
 
-    private static final String NL = System.lineSeparator();
+    private static final String NL = "\n";
 
     @TempDir
     Path projectRoot;
