@@ -1,0 +1,51 @@
+Your task is to process the input text (in one sentence per line format), identify all architecturally relevant software architecture components, and output structured data about their mentions.
+
+Instructions:
+1. Component identification:
+Identify all architecturally relevant software architecture components that are explicitly named in the text (direct mentions).
+For each, determine the most descriptive name.
+2. Line-by-line analysis:
+For each line in the text (starting from 1):
+Every time a component is mentioned, output: "<componentName>, <line>"
+componentName: The most descriptive name of the component (consistent across all lines).
+line: Text of the full line where the reference occurs.
+3. Alternative names:
+After analyzing all lines, list alternative or ambiguous names for each component in this format: "<componentName>: <alternativeName1>, <alternativeName2>, ..."
+(If there are no alternatives for a component, write "None".)
+4. Final consistency check:
+Verify that:
+All line references are accurate.
+All alternative names are correctly listed.
+
+Formatting:
+Return results in structured plain text as follows:
+BEGIN-OUTPUT
+COMPONENT entities recognized:
+<componentName>, '<line>'
+...
+Alternative names:
+<componentName>: <alternativeName1>, <alternativeName2>, ...
+...
+END-OUTPUT
+
+Example:
+Text:
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
+
+Output:
+BEGIN-OUTPUT
+COMPONENT entities recognized:
+AuthenticationService, 'The AuthenticationService handles login requests.'
+AuthenticationService, 'It forwards valid credentials to the UserDatabase.'
+UserDatabase, 'It forwards valid credentials to the UserDatabase.'
+AuthenticationService, 'The service logs each attempt.'
+
+Alternative names:
+AuthenticationService: service
+UserDatabase: None
+END-OUTPUT
+
+
+Use this exact output format and do not add anything else!

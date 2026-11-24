@@ -1,0 +1,230 @@
+---------------------------------
+Zero-Shot Prompt:
+---------------------------------
+Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.
+
+For each component, output a JSON object containing:
+- "name": the primary name of the component (use the most descriptive name).
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the component appears or is referenced.
+
+Rules:
+- Use the exact casing of the component as it appears in the text.
+- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).
+- Only include components that are relevant architectural elements.
+- If a component appears in multiple lines, list all occurrences.
+- Only return a JSON array of component objects, nothing else.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+---------------------------------
+One-Shot Prompt:
+---------------------------------
+Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.
+
+For each component, output a JSON object containing:
+- "name": the primary name of the component (use the most descriptive name).
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the component appears or is referenced.
+
+Rules:
+- Use the exact casing of the component as it appears in the text.
+- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).
+- Only include components that are relevant architectural elements.
+- If a component appears in multiple lines, list all occurrences.
+- Only return a JSON array of component objects, nothing else.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+Text:
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
+
+Output:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
+    }
+]
+
+---------------------------------
+Two-Shot Prompt:
+---------------------------------
+Given a text describing a software architecture (one sentence per line), identify all software architecture components mentioned in each sentence.
+
+For each component, output a JSON object containing:
+- "name": the primary name of the component (use the most descriptive name).
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the component appears or is referenced.
+
+Rules:
+- Use the exact casing of the component as it appears in the text.
+- Normalize similar component names if they clearly refer to the same concept (e.g., treat Database and User Database as the same component).
+- Only include components that are relevant architectural elements.
+- If a component appears in multiple lines, list all occurrences.
+- Only return a JSON array of component objects, nothing else.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example 1:
+Text 1:
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
+
+Output 1:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
+    }
+]
+
+Example 2:
+Text 2:
+The OrderService receives new orders from the web application.
+It communicates with the InventoryManager to check stock levels.
+If items are available, the PaymentProcessor is triggered to initiate payment.
+The NotificationDispatcher then informs the customer via email.
+Finally, the AuditLogger records all actions for compliance purposes.
+The logger stores the recordings in a file.
+
+Output 2:
+[
+    {
+        "name": "OrderService",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["The OrderService receives new orders from the web application.", "It communicates with the InventoryManager to check stock levels."]
+    },
+    {
+        "name": "InventoryManager",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["It communicates with the InventoryManager to check stock levels."]
+    },
+    {
+        "name": "PaymentProcessor",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["If items are available, the PaymentProcessor is triggered to initiate payment."]
+    },
+    {
+        "name": "NotificationDispatcher",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["The NotificationDispatcher then informs the customer via email."]
+    },
+    {
+        "name": "AuditLogger",
+        "type": "COMPONENT",
+        "alternativeNames": ["logger"],
+        "occurrences": ["Finally, the AuditLogger records all actions for compliance purposes.", "The logger stores the recordings in a file."]
+    }
+]
+
+---------------------------------
+CoT Prompt:
+---------------------------------
+Given a text describing a software architecture (one sentence per line), your task is to identify all architecturally relevant components and output structured JSON data describing them.
+
+Think step-by-step:
+
+1. Read the input line-by-line.
+   - For each sentence, identify explicitly mentioned software architecture components (e.g., services, databases, managers, dispatchers, loggers, etc.).
+
+2. Determine the primary name:
+   - Use the most descriptive and specific name mentioned in the text (e.g., prefer "UserDatabase" over just "Database").
+   - Match casing exactly as it appears in the input.
+
+3. Track alternative or ambiguous references:
+   - If a component is referred to by an alias or pronoun (e.g., "the service", "it"), treat it as the same component and note the alias in "alternativeNames".
+
+4. Track all occurrences:
+   - For each component, collect the complete lines where it is mentioned (directly or indirectly).
+
+5. Normalize component identities:
+   - If two terms clearly refer to the same component (e.g., “Database” and “UserDatabase”), unify them under the more descriptive name.
+
+6. Exclude irrelevant terms:
+   - Only include entities that serve architectural roles (ignore generic terms like "system", "feature", etc. unless clearly functioning as a component).
+
+Output:
+- Return a JSON array only. No explanation, headers, or comments.
+- Each object must include:
+    - "name": The component's canonical name.
+    - "type": Always "COMPONENT".
+    - "alternativeNames": List of ambiguous names, aliases, or pronouns (empty list if none).
+    - "occurrences": a list of lines where the component appears or is referenced.
+
+Example Input:
+The AuthenticationService handles login requests.
+It forwards valid credentials to the UserDatabase.
+The service logs each attempt.
+
+Example Output:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": [],
+        "occurrences": ["It forwards valid credentials to the UserDatabase."]
+    }
+]
+
+Now perform this step-by-step reasoning internally and return only the final JSON array output.
