@@ -22,16 +22,16 @@ public class AntlrExtractor extends CodeExtractor {
     protected ElementExtractor elementExtractor; // Needs to be initialized in the constructor of implementing subclasses
     private boolean contentExtracted;
 
+    @Override
+    public String getIdPrefix() {
+        return "ae" + this.language.name().toLowerCase();
+    }
+
     protected AntlrExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
         // TODO Allow different meta models
         super(codeItemRepository, path, Metamodel.CODE_WITH_COMPILATION_UNITS);
         this.language = language;
         this.contentExtracted = false;
-    }
-
-    @Override
-    public String getIdPrefix() {
-        return "ae" + this.language.name().toLowerCase();
     }
 
     @Override
