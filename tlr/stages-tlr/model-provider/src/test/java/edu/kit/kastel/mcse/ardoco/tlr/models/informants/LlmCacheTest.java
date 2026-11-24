@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -55,17 +57,27 @@ class LlmCacheTest {
     }
 
     @Test
-    void cacheManagerConfiguresItselfOnFirstUse() {
-        assertNotNull(LlmCache.cacheManager());
-        String configuredDir = LlmEnvironment.INSTANCE.getenv("LLM_CACHE_DIR");
-        if (configuredDir != null) {
-            assertTrue(Files.isDirectory(Path.of(configuredDir)));
+    void cacheManagerConfiguresItselfOnFirstUse() throws IOException {
+        Path expectedDir = Path.of(LlmCache.cacheDirectory(LlmEnvironment.INSTANCE.getenv("LLM_CACHE_DIR")));
+        Path cacheFile = expectedDir.resolve("Chat_first-use-test_1.json");
+        Files.deleteIfExists(cacheFile);
+
+        try {
+            var cache = LlmCache.cacheManager().getCache(new ChatCacheParameter("first-use-test", 1, 0.0));
+            cache.put("prompt", "answer");
+            cache.flush();
+
+            assertTrue(Files.isRegularFile(cacheFile), () -> "Missing " + cacheFile.toAbsolutePath());
+        } finally {
+            Files.deleteIfExists(cacheFile);
         }
     }
 
     @Test
     void createWorksWithoutExplicitConfiguration() {
-        // OPENAI_API_KEY is a dummy (see the surefire configuration); creating the model sends no request.
+        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("OPENAI_API_KEY") != null,
+                "OPENAI_API_KEY is only set (to a dummy) by the surefire configuration");
+        // Creating the model sends no request.
         assertNotNull(LargeLanguageModel.GPT_4_O.create());
     }
 
