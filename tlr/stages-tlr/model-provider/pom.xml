@@ -31,13 +31,7 @@
     <dependency>
       <groupId>io.github.ardoco</groupId>
       <artifactId>magika</artifactId>
-      <version>0.6.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.errorprone</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>0.7.0</version>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.core</groupId>
@@ -52,7 +46,7 @@
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.core</artifactId>
-      <version>3.46.0</version>
+      <version>3.47.0</version>
     </dependency>
     <dependency>
       <groupId>org.fuchss</groupId>

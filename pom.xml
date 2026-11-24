@@ -4,7 +4,7 @@
 
   <groupId>io.github.ardoco</groupId>
   <artifactId>parent</artifactId>
-  <version>2.2.0-SNAPSHOT</version>
+  <version>2.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>ARDoCo</name>
@@ -64,7 +64,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>2.2.0-SNAPSHOT</revision>
+    <revision>2.3.0-SNAPSHOT</revision>
     <ardoco.version>${revision}</ardoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -81,10 +81,10 @@
     <spotless.version>3.10.4</spotless.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
-    <mockito.version>5.23.0</mockito.version>
-    <stanford.corenlp.version>4.5.10</stanford.corenlp.version>
+    <mockito.version>5.24.0</mockito.version>
+    <stanford.corenlp.version>4.6.0</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
-    <jackson.version>3.2.1</jackson.version>
+    <jackson.version>3.3.0</jackson.version>
     <!-- Jackson 2 is only used transitively (e.g., by langchain4j); the BOM keeps its modules aligned -->
     <jackson2.version>2.23.0</jackson2.version>
     <metrics.version>0.3.0</metrics.version>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>com.tngtech.archunit</groupId>
         <artifactId>archunit-junit5</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
         <scope>test</scope>
       </dependency>
 
@@ -116,7 +116,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.20.0</version>
+        <version>3.22.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -147,7 +147,7 @@
       <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>7.7.1.202607240634-r</version>
+        <version>7.8.0.202609011348-r</version>
       </dependency>
 
       <!-- JUnit -->
@@ -364,7 +364,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.1</version>
           <executions>
             <execution>
               <goals>
@@ -419,14 +419,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
-          <!-- Pin the version: unversioned, Maven resolves the latest (1.8.0), whose CI-friendly
-               interpolator throws an NPE (mojohaus/flatten-maven-plugin#523). -->
-          <version>1.7.3</version>
+          <!-- Pin the version: 1.8.0's CI-friendly interpolator throws an NPE (mojohaus/flatten-maven-plugin#523); fixed in 1.9.0. -->
+          <version>1.9.0</version>
           <configuration>
             <updatePomFile>true</updatePomFile>
             <flattenMode>resolveCiFriendliesOnly</flattenMode>

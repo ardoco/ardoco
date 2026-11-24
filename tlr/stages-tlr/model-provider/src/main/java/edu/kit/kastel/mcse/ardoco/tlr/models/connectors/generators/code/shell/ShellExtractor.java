@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell;
 
 import java.io.File;
@@ -15,6 +15,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
 public final class ShellExtractor extends CodeExtractor {
 
     private CodeModel codeModel;
+
+    @Override
+    public String getIdPrefix() {
+        return "she";
+    }
 
     public ShellExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);

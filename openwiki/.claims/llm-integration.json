@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e7a582da435aa9a40c87518d299462f6afcf357e6885306b9741dccb1514177a",
+  "claims": [
+    {
+      "id": "claim_2a647e48d54e4ff88ba8f98f288f8bc5",
+      "statement": "LargeLanguageModel (tlr/stages-tlr/model-provider) is the single provider entry point for all LLM stages: its enum constants pin dated OpenAI model snapshots (GPT_4_O gpt-4o-2024-08-06, GPT_4_1 gpt-4.1-2025-04-14, GPT_5 gpt-5-2025-08-07, GPT_5_4 nano/mini/full dated 2026-03 variants, GPT_5_5 gpt-5.5-2026-04-23) plus env-driven OPENAI_GENERIC/OLLAMA_GENERIC variants; OpenAI creation requires OPENAI_ORGANIZATION_ID and OPENAI_API_KEY (else IllegalStateException) and pins temperature (0.0, or 1.0 for GPT_5/GPT_5_5), a 10-minute timeout, and the shared seed; Ollama creation targets OLLAMA_HOST with basic-auth headers (OLLAMA_USER/OLLAMA_PASSWORD) or an OpenAI-compatible client (OLLAMA_TOKEN) with temperature 0.0 and the seed. isGeneric()/isOpenAi() drive selection logic: ExArchIT skips _GENERIC constants and LlmArchitectureProviderInformant fails fast when an OpenAI model is selected without credentials.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L14-L30",
+          "version": "repo-lines-v1:sha256:13e30afa6cd9df68d885c6a80ca1ff3ea41f00dc67460a3b6654b44e9830d826:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NWViZTJjZTQ5YjM0ZmVmOTk0OTY1OWQ2OGI0NGM2ZTgwODllNmMzYmMwNGM5MzE3ZjUwNGUyYmYzZWY1YjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MTk4NmUzYjVlZTNhODU5MDY1Y2Q4NTJjYjI2Yzc0MGZhZTljYWZjOTM4NDA1ZjAxYTMyYzFhYTYwNzE1NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MTNiZWZmNzE0MmZmNDlkMDM2NTljOTViYTcyNDA4NTkzMDFjNTU5YjcwMWE3YzRkNDNjZTEwYWE5MWFmZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyZmZmNjAyZWIzYzNkNzA4ZTI3YzhkZDQ4MjMzMzBkN2RmNTZmOGM2NTFjMzJlMGJiZmM4ZTAyMGM1ZTZlMzgifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L96-L128",
+          "version": "repo-lines-v1:sha256:19ce6330d3e7f648333642711ead1a5ddfa8f3a72ebc78f5233feb5405289096:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmZmYzOTU5YzZhOWE2Y2IyYmYwMWM4MWFkYjRmM2FkYjFmZDY1YzZjNzgzMjdmZWQwNWFhMWQzMDA0ZmIxYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiMWMxYmExNDQyNzVlYTQ0NWI3MTdlNTk3MTFmNGUxY2ExMWM1ZmEyMDQ1ZThkNjMzNThkOGEyYWU3MzA1OGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LlmArchitectureProviderInformant.java#L53-L67",
+          "version": "repo-lines-v1:sha256:a07d6f37a6b1de4f9f6fb72b2c1d1c99822f7a68d900bdd0a12d2204c7c33001:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YjEzMmJiNjFlMmFmNGMwYWU2YjI2NTY4ZWE0YmI5MWM4ODYyNWIxZmI3OGJmNWZkZTQxYzFmMjg5ZTFmN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjMDFiYTljMjZiMDM1OWVmNmU2NDk4MGI5Y2VmYTI4MmYwOTVkNTZiZDA3ZGJmM2NhZmJlN2MwMjM0ZWU0MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5NmM1NGViNDcxOTJlMmUzMWNiNzNiM2MyOTAwMTQ1NTIxY2ZlMjliN2YyNzYyMmFlN2IzMzI3Mjk0NGE4MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmZjBkMDE2ZTJmODNmNzRlY2VkZGNjOGI3MGQ0OGIyODgxZDU4NjkwMzgyNjlmOTEzNTg4YjM1ZWEwODdjOTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_84bdbd9d4a604cbcbb3b3d083558f8dc",
+      "statement": "LLM determinism is seeded: LargeLanguageModel resolves the SEED environment variable once at class load and defaults to 422413373 when SEED is unset; an unparsable SEED value aborts with IllegalArgumentException, and the same seed is passed to both the OpenAI and Ollama model builders, so all chat calls in a run share one reproducible seed.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L60-L73",
+          "version": "repo-lines-v1:sha256:a3e56673d2cefaeb04991352e3fa04415d2fd8b5e42f651c760915a304f5fe96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZjkzMTU1NTYzOTkwZmU4MWFkZjg3ODRmODUyNjNjZGFjZjliN2E1MTdkMDAxMTVlZWE5NzJjMTVmMTAzYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyZjY1ZDRkNjg4ZGNlM2M5NGYzZmQxMTZiODkwMDRmY2UyYzljMTc3NTljZjRmYzBmNTJiOWRkNGE5ZjZmZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_30b3f4296397461dbc27a772f29e29ff",
+      "statement": "LargeLanguageModel.create() wraps the provider ChatModel in a CachedChatLanguageModel whose cache key is the enum constant name, giving one cache file per model variant; createUncached() returns the provider model directly. The ArTEMiS NER informant and the ExArch/ArTEMiS LlmArchitectureProviderInformant use the cached create(), while all four LLM validation informants must build their AiServices agent with createUncached() because the cache wrapper does not support langchain4j tool calling (stated in a source comment in the programming-language informants).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeDirectoryProgrammingLanguageInconsistencyInformant.java#L34-L41",
+          "version": "repo-lines-v1:sha256:a81144317fa0f9d46a4a127b215275c285d4ff958a0530d6fb96480fcaad8a3a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjdjODM3MTc4ODQzNmU4ZTdmYjNkODUwZTA5NzFlMzZhOTdmNDgzZDQxMmJhMWVhOTA2ODUyY2FiODM5OGZlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQyNDYzZmM4NWEwMzljNDJkMWNmNTA5MTQ0YWNlYjJmMTUwNWM1ODJlNWUyYmY3MDlhMjJlMDBhNjg1OTQ1OCJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/informants/ArtemisNerInformant.java#L71-L87",
+          "version": "repo-lines-v1:sha256:2296310fc1223b52fd6efeebcb04d3e8d4739b41a51d20773ffb385e31b1cc05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ODlkMzgyMWMwNWIxZWFlZTlkY2QwNTk0M2YyMDZiNThlNjU2NjQxNjFhZTQ1Mzk3MjZhNWUyMWQ5MGM0MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjMjI5NTEyYzVhNDA0Zjk3MDJjNTMzZTI4NDRjNGQ3OTYxN2JlM2IyYjA1YTYzNGVkMzNiZDJlN2U3Y2UxYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java#L45-L51",
+          "version": "repo-lines-v1:sha256:325cca62c40c879aaec2aaf08f3beec9fca0982609d3e2f916a3f301f29558c5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTMyZmVmNTkxYjI0MzMyZWM4MzgxMmNmY2EyMjA0MDVhMGMwMzFkYzUyZTg3NTM5Mzg3Y2YyZTM2Y2E1YjVmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjE4M2JiZDk1NmVmYzMwNWQxMGI4NTgxM2JlYTUzYjhhOTdkNjJlNTEwN2IyOGY1OGNhOTdkMGJjOWFlMmY0NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDQxMGJjMTFiMmUyYTgyZWRkMzFjMDhhMjYyMTViYmQ3ZTVjNzhmZGQ4N2VmMWU1YzE2N2ZjNzM3ZjQ1ZmViYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f61f0164b851462fbd95fc3d2af11f3c",
+      "statement": "CachedChatLanguageModel resolves its cache directory once, statically at class initialization: the LLM_CACHE_DIR environment variable if set, otherwise the default .cache-llm/ relative to the working directory; the directory is created eagerly with mkdirs and the run aborts with IllegalStateException if creation fails and the path is not already a directory. Both LLM_CACHE_DIR and the generic model-name variables are declared in sample.env.",
+      "evidence": [
+        {
+          "resource": "repo://sample.env#L12-L18",
+          "version": "repo-lines-v1:sha256:54d65ae2a746441907b60d0069b70435c564c1f37900b3c809b7c0cd149d9b19:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk0NjFhZThmNzE3MGFhNzQ2NTQyYmI3MmQ1NDExOTRiNGM1ZWEyOTExNGVmMDc4Njc4NWUxN2M0ODVhZDA4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTU5MDRhYTAzOTc1YTk5N2IxZThiMzE3ZTY5NmZhNTgyNmNkMzNlZWNlMTAyMDEyYzU2ODY2ZDY4MzZhNDQzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmQxZjBjZGU2NDQwNTczZTI0NzUyNzBmNzlhM2ZmNGFhOWQyYWFmZDFhNzA2OWYzNWZiY2QxODI4ZmI3NDk5MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzg1MGQwOTQ4MjEyZGQ5N2JlNjAwNGE1NTZiOTJlYWRmNjFjOTU5ZDhkOWI0MmRhOWQ3MTg0ZDRiOGQ2NTgwMSJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/CachedChatLanguageModel.java#L82-L96",
+          "version": "repo-lines-v1:sha256:c7c1369918be5d45cc0218cfb68eb904c29d93c319feb3e2285b2ab7be261745:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4Nzk4YTI1Y2EwMzBiNjRjMGQxNDliZTkyZDUzMGFkYjcwODQwMjY5ZWVlMjAzMjA2YjEwMDUyZjM2NWMwZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViNDk3NGY3ODg5NTg0OTEwMDM2ZGZmYTQyZjFlY2Y3MWEyZWE2OTZkYmRjNjVmNjk3MTYwZDliMzY5OGFlNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98c22138c8d84d13b77825010c4fbf0e",
+      "statement": "CachedChatLanguageModel persists one JSON prompt-to-response map per model variant at <ENUM_NAME>-cache.json under the cache directory. The per-request key is the full ChatMessage list's toString() with line endings normalized (CR/CRLF to LF), and response texts are normalized the same way on store and load, so multi-turn conversations key on the entire message history. On a cache hit the model returns a cached AiMessage without contacting the provider; on a miss it delegates, inserts the normalized response, and rewrites the whole map with Jackson. Both chat overloads are synchronized and chat(ChatRequest) forwards to the message-list overload, serializing cache access within a JVM.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/CachedChatLanguageModel.java#L39-L75",
+          "version": "repo-lines-v1:sha256:2e45d0402612b93b6db3a6f44225bddb0a2dca532bb5cee0fd2a85b5a00ed1f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5MzFhYWE2MmYwYmI2MmYwZDk4MmMyMjU2NDUxOTQ3N2U0NjhlNTFjZmEzZDFiZGVmYjIxNTY0MmRhYWFiN2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkNjY1ZjUwMzNlY2I3N2FiODM5Y2RkZGM4MmYzYzdiNzc2OGFhNjhiNzA1NjIzNzE4OTc5NzZlOTMwYjM3ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZTNiNzExN2QxYTc3NTljM2MxMGZjZWRkNjAwZTA0ZmUzNGU5MmZmMDllYTZjYjhlYmRhNTRlZGI5ZTM4YzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c55ca8e7fd6c4c6d9137d0a70ebcca49",
+      "statement": "CachedChatLanguageModel failures never break a run: an unreadable or missing cache file is logged at debug level and treated as an empty cache, and a failed cache write is logged at error level while the provider response is still returned. Because a warm cache short-circuits the provider, the ArTEMiS evaluation harness warns that repeated-runs evaluation is not meaningful if the LLM is cached; deleting the cache file or changing LLM_CACHE_DIR forces fresh provider calls.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/CachedChatLanguageModel.java#L42-L51",
+          "version": "repo-lines-v1:sha256:2404b240a8efea9388a83c848b4d65cc03ac93dccac6021234dba7755cbcf4b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4NzhhMDdmNWU3MGFhMjU1NTZlYTAwYWVkZmVhNGRmOWVmOTllZTg2ZDI3NDI3NWUwM2I3ZTk3YjRmY2FkNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZmQ2NGM0MzY4OGFiYWRlZjY0MGUwMWJjNWMxYzkxYWMyNzE3MDAxNTgxNDNmYzVmM2Y3MThmNTgxNDg2YTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNDhkMjhjYTZiYzcxM2Y0YjU5MzVmODFmY2U4MTE4ZTAwZDk0YmQyMTBiZGY5NzcxZTkzMjg0MGEyMGYzN2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyNmM2NzI5YmZhYWExZWVkMDA5MmNlNjZlYzk1YzJiMzI0ZWVkZjVkZGQ3ZmU2NjBmYTIxMDI0NWQ5ZmIwMTUifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/CachedChatLanguageModel.java#L57-L71",
+          "version": "repo-lines-v1:sha256:928b812d480ee2905bcc7ef73cafda54f51712b04af82f1ce3ad8d5643e30672:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhOTRlZjdlNmEwMzVkM2I1MmE3M2M0ODgyNzc0ZWM3ZGZhZGQ3M2U0OTIzZjdmNWQzZGVmM2Q2NDYzZTQxMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiZjFmYTFmOTlmMDlhYTIyYzhjMTRiZTNiOTBmMGFhYmU1ZjgwNGNhNGFlYjQwMTM5Y2NkZjY1NzUxODA1MzUifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L108-L120",
+          "version": "repo-lines-v1:sha256:707c0b4fae4a4f2caa1ee9ad4df2529c144ca7d59131337d6dec51fb5dc5b91b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkMTg3ZWM2ZGMyMTU2MjViMzQyNjAxMWE1M2NiODM2M2EzNWJiNTg5MGI2NDNhY2YwMTRiNGQ3OTExYzA3ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkNDc4MzhiOTQwNGY5NzA0NDE1ODRlNDk5NWM4MDk2MGEwMGNmZjNjMTBkYzJhNzYxZjcyNWY1ZGJkODJlMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2ZDIxMmQ3MmViMDIzZmJjZDMxZjA3NzIxZDBkNjM3ODFmNTE4YzUzMjFkNGQ5MzQxYmI0NzhlMDVlOGMxMTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3e765a1d857944eab98d918972e6357f",
+      "statement": "NER prompts follow a strict resource convention: every ArtemisNerStrategy implementation declares an <entity>-task-prompt.txt and an <entity>-formatting-prompt.txt pair, loads their text via the shared default method readPromptResource from the classpath root PROMPT_RESOURCE_ROOT = /artemis/prompts/, and composes a TwoPartPrompt(taskPrompt, formattingPrompt); a resource missing from the classpath fails fast via Objects.requireNonNull (NullPointerException) while a read error surfaces as IllegalStateException. The five pairs live under tlr/stages-tlr/artemis/src/main/resources/artemis/prompts/ (class, component, datafile) and in the two ID stage modules' own src/main/resources/artemis/prompts/ folders (programming-language, architectural-style-pattern). The task prompt defines what counts as an explicit mention; the formatting prompt pins the returned JSON shape (name, type, alternativeNames, occurrences).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ArchitecturalStylePatternNerStrategy.java#L10-L18",
+          "version": "repo-lines-v1:sha256:b11818f02424a9a2db89d97b627f24b79b6e705af07aeff342aa22f548955a25:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODI0YWRhZDBjNjM4ODZjNGM2Yjc0NWQzNjIxZTZhY2YzMGNlNDc0OTU3ZDYwNDQyOTBkZDZhMzNhNGMzZjQ2MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjkwNTEzOGU1ZTRkMmMyY2U2YjlmY2FkZWY4MWY0ODU1YzA4NDdjYTJkNTQ0ODczYzhiN2JlOTE2YTA2YzE5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmVlZjAzYTNkYjYzMzExMWRhMmFmZThjN2M1N2UxNWMyNzIyMjhlZWIxMTg0ZTU3NmI0NDkyZjc2YjM3MTQxNyJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/ProgrammingLanguageNerStrategy.java#L10-L19",
+          "version": "repo-lines-v1:sha256:f7ced1499fc8efd4268cdbeca35f5a17125073b1d9af6aceb60a9bfa4b547df8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5MDUxMzhlNWU0ZDJjMmNlNmI5ZmNhZGVmODFmNDg1NWMwODQ3Y2EyZDU0NDg3M2M4YjdiZTkxNmEwNmMxOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0MDE2OTk1M2UxNTAzNDk1MzU1OGFiYTI4YjA1YzBhZTUzMTMyOWJlMGI4OWM5NTk5YjRhNGE0MjIwOWRlY2QifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ArtemisNerStrategy.java#L22-L80",
+          "version": "repo-lines-v1:sha256:f6f1c29e9c13ebc29b148895ffe9c6e926166497f29393f8f94279c3d453a9bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNGFiZmNmNThmZDllMDAxYmUxY2Q0YzY5NjQyMDcxMmU5ODE1NTg0ZTU2OWVmMDNkNWU0ZDliOGFiMGNjODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkZDdlZWYyN2ExM2MyMzViYmU2MTA2MTBjZjE2N2M4YjQzNjE3OTU0M2FkNzA1YjYzN2ZlZWQzNzRmZmUyNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ClassArtemisNerStrategy.java#L11-L20",
+          "version": "repo-lines-v1:sha256:d2eb01b3787bfaa41013c465003f25056f3ab20e03cdaea9907b96db7324e505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMGUyYjJkNzkzZDAxNjc0MTZkNjNkYWRkNDQ5NzA1OGNkYmYxZDM0YzUyNjVjYzAyODQ3MWJkYmIzNGMwNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNjhjMWI4ODJkYThkOTJhMGNkZjU2YTliZGQxYTMzMDM3M2M2YTliZjI1Y2ZhMzhmNTIwYjA1NWQ5Mjc1M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0ZWRjZmI4MzM3MWFkOGUxNTMzYTY4ZGU5NTk3NDFiNmU5MjAyNzc3ODBkMzZhNGI3OWE2ZDg3MWE2OTkxZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_62143d2b4e054d72a9133dec6a0d01fd",
+      "statement": "ComponentArtemisNerStrategy deviates from plain prompt-resource loading by appending a candidate list of the code model's endpoint names (from the ARCHITECTURE_WITH_COMPONENTS model in the data repository) to the component task prompt, grounding NER recognition in the extracted model; the class/datafile strategies and the two ID-stage strategies compose their prompts purely from resources.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ComponentArtemisNerStrategy.java#L19-L28",
+          "version": "repo-lines-v1:sha256:39ab9decac2d38e72945b15caa8c551c13f35d00c67092e6e5780fbbb8643bce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0MmYwMWE2ZDZiZjZhN2Y0N2YwMWMxYmZhZmEzZGE2OGMwNGRhNTAzZDIwMDA2OTZhYjZlOWQ3MGYyMzFiYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NjIyNGFhNTI3NTE0ZDM4NTdhMmFmOGJjMjBjY2U2YWM3NGIyYzA4YjRjZGY2MDk3NzcwY2M4MDcyM2FmNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkMjkzMzBhOGU3YzIwZjA0NDEyYzJhMmViNzY4ODc4MmFlMTk2ZjkzYjMxZGQ3OGJhZTlhZGIzZGU5MTFkZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0MDE2OTk1M2UxNTAzNDk1MzU1OGFiYTI4YjA1YzBhZTUzMTMyOWJlMGI4OWM5NTk5YjRhNGE0MjIwOWRlY2QifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/strategies/ComponentArtemisNerStrategy.java#L31-L57",
+          "version": "repo-lines-v1:sha256:5f75b8784cf4a05198c8f0655434ddc209c18032102469ce032d0713904e6db7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1M2Y5Mjc1NDgzOGI3ZjU3ZmUyNDdiOTU4YWI3MDNiZTE4ZjFiN2I5ZWQ4NjM4MTVlYWFhZjYyZDBjZTM4OGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhNDI4OTY1OTg0MTIzMzI2MzIzN2FhYTBjYTMzMjdkYmMzYTNjNmUxY2Y5NzA2Mzc2MDNhMGE5NjM3YWVkODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2OTQ2ZTEwMWU1ZTc4ZDkwYTUxMGM2OWYyNjZlZjc2NTQwZDMwOWIxYjgyMjY5NWI1MzE3MmVkMmNhYTAyNTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e4ea6de7b9e4d4187a1202685673348",
+      "statement": "The LLM-validated ID stages validate through langchain4j AiServices agent interfaces (ProgrammingLanguageValidationLlmAgent and ArchitecturalStylePatternValidationLlmAgent), each declaring two @SystemMessage/@UserMessage-annotated methods — ...AgainstCodeDirectory (taking codeProjectPath) and ...AgainstCodeModel — with @V-bound variables (namedEntityOccurrence, entity name, fullText, line, and codeProjectPath for the directory variant) and returning a (valid, explanation) record (ProgrammingLanguageValidationResult / ArchitecturalStylePatternValidationResult) whose explanation must not be null.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ArchitecturalStylePatternValidationLlmAgent.java#L24-L76",
+          "version": "repo-lines-v1:sha256:2a2b677d349462a9fde7db434e972a469f69bac6fb82a258fe3b39592ae45520:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1MzY4Y2JjM2UwNmExZDZlYWRkZTAxMzk0NjBhMDljMjZkNDlkZmNhZmYxNmMyYTdmMTNjOWI3NWVjODlkNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmMmVmYzE0NTNiNzZiM2NkMmRhZDMxM2JiZmE5N2E0OTI1ZGM4YTExZGE3Mzk1YTNlNzE5ZjM2NDJiNTMwYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YzlkYTNiMjdjZjQ0MjJkNDMyZGY3ZDg4ZDVmOTcyNTVhYjMzNmViMDIwMjQyNjlkMTVkYTE1NDU3NWI4Y2YifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ProgrammingLanguageValidationLlmAgent.java#L24-L90",
+          "version": "repo-lines-v1:sha256:8e85835da542190255c49031c637b4ba73d35e2115be6978f6afaa72c96fe102:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkY2Q1YTQzOWUyMWU3Y2YyYzA2ZWEyMTE0YWMxMThiYTRkODU1MDBhODlhOTY2NDMxM2M4MzdjMzExNWZlYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MmFkYjZhMGIzNjkzZTU3ODU0YTIxZWVjZmMxMTkzZTY0NDVhZmE4NDE0OTUxNjUxNzY0NmM3MjdiMjk5YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwNjdiMmM4ZjJhZmE1MzQzMWUzZjcyOTdjNmEyNjc0YjdjOGE3OTFiYjQ3YmYwOTAzYWY5M2Y1M2RkM2JiNDQifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ProgrammingLanguageValidationResult.java#L7-L11",
+          "version": "repo-lines-v1:sha256:d483d493a3aa3487ec3185793f377b1b980d3328e6bdfb124aba5e5a595eb5df:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWY0ZDZjMmMyZjUzMjJmNTRkNTljNzNlMDM4Nzg1ZTYxOGIxZjQ2YTVkNDU5OTJjMGU4NzJjM2NkZjYwMDU2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_82fecd33aa394f2f98cc040187584df1",
+      "statement": "The validation agents' system messages impose a shared contract: use only the enumerated read-only tools, never guess, treat only repository-specific claims as falsifiable (non-specific statements return true; contradicted claims return false; unsupported-but-not-contradicted specific claims also return true), and base the final determination on actual source-code evidence while using repository documentation only for orientation. Stage-specific additions: the programming-language agent must explicitly verify strictly/only/purely/exclusively/entirely-in-language-X claims, and the architectural-style agent must not accept a mere naming coincidence (a controller package alone does not prove MVC).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ArchitecturalStylePatternValidationLlmAgent.java#L40-L48",
+          "version": "repo-lines-v1:sha256:b765b0a9d17a60a491a745b1d7e4a20db9eaccbe726881c6677e99c4fddab313:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWE5NDMzMmY5ODE0MjQxMDQ3MTVjN2FiZjhmMWZlNTBlMmI2ZDhiZGE0YjMyMGZlZTc0Y2RkYzIxNzhiMzBlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODA3MzQ3ZTQ3NWQ5ZTk5N2QzNzhiMWE1MjA4ZDA4MDVjMjlhMTk3ZWRhYjJlNGUzYTIyM2FjMjVmZGZiNmUwNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTYxNDhjZDVlZTc3NTg3ZTIxNDYyNmVkZDhlZGQxMTBmZDdlMjMzNzE2NjUxNGU3NTIyOWYzMjczYjYyOTM5MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDU5NmIwODdjNGRlYzFhMmNlMTljZWVkMWI2MjcyZGE2OThlYTE0NTFhMzkyOTIxYjkwZDY0MjEyZjhmZDNkNiJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ProgrammingLanguageValidationLlmAgent.java#L24-L90",
+          "version": "repo-lines-v1:sha256:8e85835da542190255c49031c637b4ba73d35e2115be6978f6afaa72c96fe102:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkY2Q1YTQzOWUyMWU3Y2YyYzA2ZWEyMTE0YWMxMThiYTRkODU1MDBhODlhOTY2NDMxM2M4MzdjMzExNWZlYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MmFkYjZhMGIzNjkzZTU3ODU0YTIxZWVjZmMxMTkzZTY0NDVhZmE4NDE0OTUxNjUxNzY0NmM3MjdiMjk5YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwNjdiMmM4ZjJhZmE1MzQzMWUzZjcyOTdjNmEyNjc0YjdjOGE3OTFiYjQ3YmYwOTAzYWY5M2Y1M2RkM2JiNDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f80bf0044e814c86ae291c764776e47d",
+      "statement": "All four validation informants build their agent identically with AiServices.builder(...).chatModel(validationAgentLlm.createUncached()).tools(...).build(); code-directory informants install new CodeDirectoryReadOnlyTools(codeProjectPath), while code-model informants install CodeModelReadOnlyTools plus a beforeToolExecution hook calling initializeCodeModel(), which lazily loads the CODE_WITH_COMPILATION_UNITS model from the data repository on the first tool execution because the tool object is constructed before the model exists.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeModelReadOnlyTools.java#L421-L434",
+          "version": "repo-lines-v1:sha256:1f2e1cfe127c2a70da91d840aaa94ceec7d9c678ca1a3fd6c947d4c20797404f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5MzNkMjNjMzVlYmZjNzc1NzUxZjk5ZjhiZDdjM2I1NDJjMWJkYjVjMDI1MzU0YzVjMTgzNDgzYjE4ZWFlZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0NjlhMjZjNmNkZjQ5ODMwMmI0OTQwMDk0OTEzYmJmYjUwNTBiODkyNTI4MmY2NmQ0NDJmNzczYWNjMDM3ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2NjZkYmY3NjFkMGZmYmQyMzU0OGQxOGFhMDUxMDNhNDU2OTJlZWQzZmUzMmMyYWM5YmFjZWRmOTQzNjQzNzMifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelArchitecturalStylePatternInconsistencyInformant.java#L35-L41",
+          "version": "repo-lines-v1:sha256:62c12fa4233aaeba91501326e1675c4b46dadb5772aec1f54a663eb75e8a521a:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGNmMzU2MjExOWEyMDRmNmViYzgyNTlhNzRmODI2MzM4MDkwNjEyZDQ1YmE3N2Y2NzE0NjIyZTUzZTU4OWExZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDdlMjNkNWNlNjYwYzNkN2JlNGUyZDg0NzdlYTEzMTIxNDJiNDAwZWRhYWMzZjRhZGI3MzVkYWZkZjFkYjc0YiJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelProgrammingLanguageInconsistencyInformant.java#L33-L41",
+          "version": "repo-lines-v1:sha256:4b98d142e23fc3a6c4b15e309dff3f08ee573fb931be54a4e9d711f18a72f636:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGI5ZGQ2ZTg4NTk2ZTE2YmQ0Mzg3ZDdhMGZmZDNjOTE2ZTg5OTBhZGVlMzU5YWIxYzNiNjEwMDEwYzIyZjNmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ0ODg3MGFjOGMyZGExNGRhNDkyYmZjODhmYjI4NTM1Y2NhNTE4OTQ0NThlNTg0YTQyMzA0NGM4MWVhZGZlNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQyNDYzZmM4NWEwMzljNDJkMWNmNTA5MTQ0YWNlYjJmMTUwNWM1ODJlNWUyYmY3MDlhMjJlMDBhNjg1OTQ1OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1f31441f2d3c48e18dc9a4d36aa58acc",
+      "statement": "Validation agent calls are bounded by per-informant MAX_VALIDATION_RETRIES retry loops: 5 attempts for CodeDirectoryArchitecturalStylePatternInconsistencyInformant and 3 for the other three informants. Each failed attempt logs a warning (Validation failed. Retrying (i/n).); the architectural-style informants catch Exception and rethrow RuntimeException(lastException), while the programming-language informants catch and rethrow IllegalArgumentException specifically.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeDirectoryArchitecturalStylePatternInconsistencyInformant.java#L25-L66",
+          "version": "repo-lines-v1:sha256:1a94aea716e64b03a42ceeac630fade39371b6f0ce2238038a3f7d118a29ede3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMTZhNzU1YmI3NTY2MzE3YWE0ZTNlMjlhYTAzMzc5MTBhYThmMDJmZGE0Nzc2NDMzN2UxZDY1YWMyNmZlZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNmYxYTU5NDZmYzA3N2I4YTJhNGYzN2JjNDJjMThkMmZjZjdiY2ViN2Y5ZWVlMzMxNjBjMmNlODEzM2Y3MzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkNGMzMTZhYjA5Y2RiOWRjNGY3M2ZmZTMwYWQyMTRhYWI5MzJlOTgyODE2MDZlOWNiYTAyOTNjODE3ODMwZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelArchitecturalStylePatternInconsistencyInformant.java#L25-L61",
+          "version": "repo-lines-v1:sha256:eed6f29b08a18d5842540094aa8ee1a17b6bcfa4c2bcabf911d707a618d13f22:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZTIyNjRhNGZlZTczZTY4YjgxODY3NWVlMTA3Njg5MDhjMzhjYmJjMGY1NTg4ZjI5Y2RhN2U4NjI1NjAxNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiNTdkM2ViYWRhNWFiOGExMGUyZWU0Y2I2OWEzZmUwODViZGM3MWI0NGU0ZmJlOTM4NGM1MjIzZTk5ZmMwZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeDirectoryProgrammingLanguageInconsistencyInformant.java#L25-L59",
+          "version": "repo-lines-v1:sha256:fa45772c7b394fb5cfd49c471becb2c7514958bc7791033561af14f61b5692df:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZTIyNjRhNGZlZTczZTY4YjgxODY3NWVlMTA3Njg5MDhjMzhjYmJjMGY1NTg4ZjI5Y2RhN2U4NjI1NjAxNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkMzdmMjNkNjcxMzQ3ODY4ZDdjNzJkOGMyMmJkNzM3OGJlY2Y3NzVkNTQ4NDVmYmFhZTdkODYxMDUxMzM0NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/CodeModelProgrammingLanguageInconsistencyInformant.java#L25-L59",
+          "version": "repo-lines-v1:sha256:7584f2bfc0594c81b44a7fac10f55f5a4f8ebcad739934b277d4ea37579b4c78:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZTIyNjRhNGZlZTczZTY4YjgxODY3NWVlMTA3Njg5MDhjMzhjYmJjMGY1NTg4ZjI5Y2RhN2U4NjI1NjAxNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhMzA5NWZmYjdjOGE2ZDIyNmI3YzMxOTVjMmEyOWZjZDdlNDhmZGQxZWZlNTBhOTk4M2ViNmNjM2E1N2RlZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_65db02ef832c493aae0de8a1bdc60dbb",
+      "statement": "Validation agents are restricted to two read-only tool classes in core/framework/common: CodeDirectoryReadOnlyTools exposes seven @Tool operations (listDirectory, tree, readFile, readFileLines, findFiles, search, getFileInfo) over a filesystem project root, while CodeModelReadOnlyTools exposes four (listDirectory, tree, findFiles, getFileInfo) over the in-memory code model — the code-model agent is unable by construction to request file contents or search text, and each agent's @SystemMessage enumerates exactly the surface its evidence source allows.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L36-L47",
+          "version": "repo-lines-v1:sha256:ed0d8af9b1c0f6e21100ff89b0099577976182b2ccfc39da76838bebec9a8949:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNjYzNGQ1NzgyZGUwMjdiZTU4OGJiYjllNjI3YzRhNDRlZTA5YjkwNjc4Yjc1NzhiMjI2NjYwZTc3ZmE0YjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwOGJmNzA3ZGQ0YjBjNjJjZGYxZmM3OWU5MjYwNDg2MGM2OWU0YzI5ZTRmNGZiYzEyM2M3MjkyNjE4YzI0MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwNmJkMmJlZjZiOWRjMDA2OWUyOGEyNTY0MTJhMjRhMDczNjczYWI0NzE3OGExMGIyZmExZjY1NTU0NzhjNzIifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L84-L357",
+          "version": "repo-lines-v1:sha256:748dfa7734cf983c457e55371566d77c4e4ad0f34fda51a5fb8598e091e0d8a1:eyJzZWxlY3RlZExpbmVDb3VudCI6Mjc0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjZThhMDZlZTA5ZjA4OWEyN2NlMDc5Y2FlYzFhYzBiZmM0OWE0MzdlYWU1Mjk5MjUxOGM0YTlkYTNlZDMyZDU4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0YThmNDhhMzJlN2E5YWQ1YWE2NmEwYTA1Y2FmMTI2ZWZmMzc3ZTU0YjRkYjJiZjVlYjViMDUzMTBjZThhZjUyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1Y2Y1NzViOTZlODI2ZjI0NTNiNGYzNWRmMTYzNDliNGI4ODM3ZTAzYzc5MTQ4M2RhMzNkY2M2NzY3YTkwMjc0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NmUyMzY0OWZkNWYzMTE0ODg5MmNmNmRkYWY4NTM0NDQyOTViZDk0NTFkYzQzNjNkNjU2ZmViYjdiNWFjODIwIn0"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeModelReadOnlyTools.java#L39-L215",
+          "version": "repo-lines-v1:sha256:ea404f715532ff5a60133039b9712ddc87eb72f576033972b0bc2d4e5c8c5d98:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1YjAxZWEzOTZkNjVlMGQxNDQxYTEzMGU2YjVkOWQzYzA0YjJmZWFkNjM4MWQ1ODA1ZDVhZGNmZjg1ZjhkZjY4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2NTAxZWFkMzI0YjE5NzA0YmFhMzY5Y2QzYzZkNzFiN2U0Y2Q0NmNhYzA0Y2NjZjE3NjNmZjNlNGZhYTlkZGUzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwNTFlNWQwZDQyMjhkZWQyZTljY2RlN2UzMjA4OTQ0NjE3N2MyMTNhN2U2Y2UyODA1Y2Y1YzY3NDZhYWI2ZGQ5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhMmNjMGQ0NGRkZTM5MTAxOGE0NTljMDZiMDkwZWVlYzhkZjUwNDE4ODI5NzMyMDJkMGE3NjVmYzkzNTY0Y2E2In0"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/programming-language-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/llmagents/ProgrammingLanguageValidationLlmAgent.java#L27-L38",
+          "version": "repo-lines-v1:sha256:21750dac22e50e3c469c445a3b0004208cdcbc70072aaebc4fef005451af0e01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYTZjNDUyMDYxYjgzYjM0OTc5NzIyMDAyOWMxMTA2YWRiYjU1ZWRiYTAxNWRhMDM3MTAyOGMwNWE2NjU2OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhOGQwNmU0ZjY2NTNlOGM1NjZhZDFjYTdkM2ZkZTU0NzBhZDA1Y2VkMmMxZTAyNWExNWYxMDQwNmJiODlhNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzNjEzOTQ1ZTY1N2E4Njk2ZjdkZTc0NjA0ZjAxN2E4ZDgxNGNkNWM5M2E1YmJlNjI5NGQ2ZGQ2ZWMxN2U1MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmMDUzMTMwMjVlNzNlNjFiYmUzMWIyZjcxM2YyMWUyN2Y3YTM3ZTZjZWZjMjE4MTY2MmU0ZDY0NzdiMGI0NTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9585523ad1724b78af3a5d57c5acaa10",
+      "statement": "Both tool classes are annotated @Deterministic and bound their responses: at most 50 search results, 200 directory entries, 500 tree entries at depth 8, 20,000 characters per file read, 1,000 lines per range read, and 500-character search snippets, with in-band truncation markers; CodeDirectoryReadOnlyTools additionally detects binary/too-large files, skips generated/IDE directories (.git, .idea, .gradle, .mvn, target, build, node_modules, out, bin), and enforces path safety by rejecting both lexical traversal and symlink escapes out of the project root with IllegalArgumentException (CodeModelReadOnlyTools rejects absolute and ../ model paths the same way). Being strictly read-only and side-effect-free, tool execution cannot alter repository state, keeping validation runs deterministic.",
+      "evidence": [
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L152-L216",
+          "version": "repo-lines-v1:sha256:470e2e7eadba5773ba6000ecba9c2fcf0b8025612a6f3319a172a7e54c68d6dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNmJjYzA2ODYwNDNiZDU2YTRlMDk4ZjlkMTk4MDExZTRmZjE1YzRhY2YyMzBkZTA3ODM3YjYwZTJkY2E5NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NDA1ZGIyMDk2MDYwZWZhNWFlNWQyYzA1ZmY4YWZiZGQ5NTAxOTQxNDJjMGZiNTM0N2RhNzZkODQxMjgzY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkNWQzYWRkYTc5MGNjYjlhMDkyODllOTBlZDgyZjEyY2U2ZGFlOTQ0ZTVlNGY1MzNjMDQwODkzZjhlNTA0Y2UifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L251-L357",
+          "version": "repo-lines-v1:sha256:5b144c579dfede835e4144d694557765e8f162f5c028b3ada472ceef00bb46ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0YThmNDhhMzJlN2E5YWQ1YWE2NmEwYTA1Y2FmMTI2ZWZmMzc3ZTU0YjRkYjJiZjVlYjViMDUzMTBjZThhZjUyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2MTQxOGZmNDdjNzI2MzczODI0N2EzNjQ2OGY1NWUzZWNiNzk4MjllNzY2NTJiYjA1ODU3YmFjZDNhYTRkZmMwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NmUyMzY0OWZkNWYzMTE0ODg5MmNmNmRkYWY4NTM0NDQyOTViZDk0NTFkYzQzNjNkNjU2ZmViYjdiNWFjODIwIn0"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L36-L47",
+          "version": "repo-lines-v1:sha256:ed0d8af9b1c0f6e21100ff89b0099577976182b2ccfc39da76838bebec9a8949:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNjYzNGQ1NzgyZGUwMjdiZTU4OGJiYjllNjI3YzRhNDRlZTA5YjkwNjc4Yjc1NzhiMjI2NjYwZTc3ZmE0YjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwOGJmNzA3ZGQ0YjBjNjJjZGYxZmM3OWU5MjYwNDg2MGM2OWU0YzI5ZTRmNGZiYzEyM2M3MjkyNjE4YzI0MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwNmJkMmJlZjZiOWRjMDA2OWUyOGEyNTY0MTJhMjRhMDczNjczYWI0NzE3OGExMGIyZmExZjY1NTU0NzhjNzIifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeDirectoryReadOnlyTools.java#L439-L464",
+          "version": "repo-lines-v1:sha256:3315bf9b888bd74f1d3bf09397c5bf67c21705eef074d072fe07052768f7ec29:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxNzQzMjc5NTQ0NGRmYzU2NjEwMjJhOWE5OTA0M2U4ZGQzYzUyYmIwZjcyN2FiZTA5MzgwNDM5ZTgzY2M4NzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlMjA2ODkxNDViYzc2NmQ3MGZkZjdmYzU5MGI3ZDE2NmEyZTZmNWFjOGZiYTdkYzhhMjgxYzE0OGVmM2UzN2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViNThlMGJiMGQ1MTBlNDU3NTlhNTYyMTcxYTA0M2M3YzI5YzkzZTBmN2NhOTA2NTNlZWIxYWI0YWQ3ZmU2ZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkY2RmNDM1NTIxYmVlNGVjYzhiZDczZjY3OTEwYmZhYjIwZGIwYmM2NzVjNmFiMWJiMTBhZmYyNTlhNmFhYTgifQ"
+        },
+        {
+          "resource": "repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/readonlytools/CodeModelReadOnlyTools.java#L375-L384",
+          "version": "repo-lines-v1:sha256:b80231683a2b171daf6742212e8f931af43260f656c3ab46e7574470a87b2687:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzOTQzNWFkNDZhZmM2ZDkxNGNkZGM5ZmMyNWFiODZmMDk3MGMxNzI2MDA4Y2MwMzdmYjQzODRmYjlhNzJjZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlZjE3ZmMwZmUwMTRmMjZiYWE4YzY3MjljMTM5NzkwZTg0YWM2ZDg2YjUwMjA0ZGFjODIwOGJhZGQxMWE4ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOTRhNzExYmE4ZDJkMGIwNWU2YTE4ZjY1NTQ3OTUzNDg4YmQxYmY0MmRiMWFiMzM3MTMyYWYwNTBlZTU4MDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f6da740c51e64d2ab37a519ce60b1105",
+      "statement": "The architectural-style-pattern stage adds a pre-LLM dispatch layer: the abstract informant builds an ArchitecturalStylePatternValidationContext (data repository, occurrence, pattern name, full documentation text, sentence text, and codeProjectPath supplied only by the code-directory informant via getCodeProjectPathOrNull()) and consults ArchitecturalStylePatternStatementValidatorRegistry first; names are normalized (trim, lowercase, underscores to dashes, whitespace collapsed) and the first validator whose supports(name) matches takes precedence over the LLM. withDefaultValidators() registers none, making the registry an extension point with the LLM agent as the default validator; the programming-language stage has no registry and always validates through its LLM agent hook.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/AbstractArchitecturalStylePatternInconsistencyInformant.java#L49-L107",
+          "version": "repo-lines-v1:sha256:c1c426b7e3162833718414f7197c6fed79f99fed20085e88ed038a09c6cd2c76:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5N2RhMTdkNmU0MzczZTE4Zjc2MmY1M2FhNzVkODczZTkzM2Q5ZTcyZTYxZjZkMzU5ZmRjYjg3ZjQyM2Y3OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/validators/ArchitecturalStylePatternStatementValidatorRegistry.java#L21-L36",
+          "version": "repo-lines-v1:sha256:f570b9b9f1d36f7edb24c9859bd7c95e957b642010615c8cb0f5f18eff156bc5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0N2VhZDkwNTM4MGM2OGFhM2ZiMjQyMTk5NzJmMTA4ZTA5NzQ1M2QxY2FhMjcwZWYzNDM0ZjZiOTE5MjEwM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkMTZkZWRlNGFmYWYzOGRmNzVlZTI5ZjM4MGQ1YTI1NTdiYjBiMzI5MmVkMjkxMTg0ZGM3MDU3ZTE3ODI2MTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1Mjc4NGJiNDlkM2I1ZjM0YmMwNDBiZDVkZWRjYjYwN2M2MGE4YmY4MGNmMTMzN2E1YjJjNjAyMjBkYjA5MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/stages-id/architectural-style-pattern-inconsistency-detection/src/main/java/edu/kit/kastel/mcse/ardoco/id/informants/validators/ArchitecturalStylePatternValidationContext.java#L10-L21",
+          "version": "repo-lines-v1:sha256:21cdcb09a1726a9b2dcd266a778c33c73ee21f4baea6bfa63d84e9665973815a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNzIyZTZhYzMxYmJhMGNjODMyNmNkNjZmNWQ4ZmVjZmI1ODg3ZTc0ODQ4MDBhZTFkMTIzZTEzZWVkNTMxMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ced04dd12eb3490ab3de5a8b1f141ec7",
+      "statement": "The ID runners use two distinct model roles: ProgrammingLanguageInconsistencyDetection and ArchitecturalStylePatternInconsistencyDetection accept separate llmForNer (passed to the ArtemisNer stage) and validationAgentLlm (passed to the per-stage checker factory getForCodeDirectory/getForCodeModel), so recognition and validation can use different models (typically a large one for NER and a cheaper one per statement); ArtemisInExArch similarly separates llmForExArch (LlmArchitectureProviderAgent) from llmForNer (ArtemisNer).",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ArchitecturalStylePatternInconsistencyDetection.java#L29-L67",
+          "version": "repo-lines-v1:sha256:b7ec98e8618ff01b55a74d5aedb76516cf94acc20d3955611248d2550dd810ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjhiN2UxN2I2M2ZkYmY3MTdjYmVkOTA5MjU3MTdkYTdlMWM4N2E2NmIzZjEzZDA2OWJhNWY5NjhlOWYwMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZTJjNThlODUwNDA4N2ZkN2I1NjY4YjBhZDNmODEwNmUxYjA3MWE1NmRjY2ZjYmUwMWY5ODRhM2JkZTAwN2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhYjE3ZTZkZjhjOTJkMWVmYjViMWQ2NDA0NmRhNmZhNjU3MTYwOGE1MWRhNjg0OTMwYWM1YzE1ZWJjYWY4ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4ZGZjMGYyYjE3NWRiNWJmMGFmMmZhYzc2NDM4YWQ3ODM5ZmNlNzdhMjdjMzRmM2YzMGRkNmU2MzVmZWFlY2IifQ"
+        },
+        {
+          "resource": "repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/ProgrammingLanguageInconsistencyDetection.java#L28-L66",
+          "version": "repo-lines-v1:sha256:87603903dabaf75332cedef8b60eb20aeb5f8d0eb01f365aa401c1570e9c2b32:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZTJjNThlODUwNDA4N2ZkN2I1NjY4YjBhZDNmODEwNmUxYjA3MWE1NmRjY2ZjYmUwMWY5ODRhM2JkZTAwN2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyOTgwNjliYjdkMGFlZWZiNTMyZTkzNjk1ZjIxNWU1YjFkOGY1YjJlMzU5MDk3MWU1YzJkYzBlNjI3MTkyMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzY2VkMzU2NGMxMjE1ZTQzMjBlYWZjMmY1NWRjYWY2ZDE1ZjFiZWQ4MzQzNTVjMzkwMjhjZDY2YzVmMmUwYjQifQ"
+        },
+        {
+          "resource": "repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/ArtemisInExArch.java#L38-L67",
+          "version": "repo-lines-v1:sha256:ab3c7bfc97a031e5fde3b8454f3de6587509610f404247c073fe41464715fdd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjhiN2UxN2I2M2ZkYmY3MTdjYmVkOTA5MjU3MTdkYTdlMWM4N2E2NmIzZjEzZDA2OWJhNWY5NjhlOWYwMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlYjZlYzNjNDNlOTY0MDllMzk1ZjM5OGM2OGM1MjJlMzJiMzViYmYwNDQ3NWUzMzExMTRkMzAxYTk0NWI5OTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhYjE3ZTZkZjhjOTJkMWVmYjViMWQ2NDA0NmRhNmZhNjU3MTYwOGE1MWRhNjg0OTMwYWM1YzE1ZWJjYWY4ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmMjI2NzMzMzRmZDcyYTllMjQ0ODkwYjUxNGJhOGNkZjE4OTA1MzA1NzcwMTg5ZDAwMjMwZTI1NGM4ODY3OWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6804ce555b554dbc98729a9a85f8ca8c",
+      "statement": "LLM test coverage is split between parameterized and pinned configurations: the TLR integration tests (ArtemisIT, ExArchIT) are environment-gated on OPENAI_API_KEY or OLLAMA_HOST plus absence of CI, with ArtemisIT parameterizing over all LargeLanguageModel.values() and ExArchIT skipping the _GENERIC constants; the ID evaluation ITs are @Disabled for manual execution only and pin LLM = GPT_5_5 for NER and VALIDATION_AGENT_LLM = GPT_5_4_MINI for the validation agents.",
+      "evidence": [
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/ArchitecturalStylePatternInconsistencyDetectionEvaluationIT.java#L32-L34",
+          "version": "repo-lines-v1:sha256:ce77c7b696ee1259383fa86bdb4442cf0424e3462da88777b64c9853e3454b3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDRiMWI5ZDYzMDBhNjNhNDVmMmYwYmQwZmI0MTIwYWJlYjlhZmUxNWViZDljOGYyZmEwMjk2Mzk3NGY5MTFkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGM4YmIwNjJjZGY3NGFlYmY1MTRmYWZiYWUyOWJiNmNiNmM1YjBlZmQ3MjlmOTM2MDdmNGY0ZjZmOGViYjQzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjIxZjg0ZDc2MWZmYjJhZmIxMTBjYTcyM2U2YjM1N2RkNDdjZGRlOGIxMTMxMGI3MmI1ZGQ2MWVmMmYwYWM4MSJ9"
+        },
+        {
+          "resource": "repo://inconsistency-detection/tests-inconsistency/src/test/java/edu/kit/kastel/mcse/ardoco/id/tests/integration/ProgrammingLanguageInconsistencyDetectionEvaluationIT.java#L32-L34",
+          "version": "repo-lines-v1:sha256:ce77c7b696ee1259383fa86bdb4442cf0424e3462da88777b64c9853e3454b3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDRiMWI5ZDYzMDBhNjNhNDVmMmYwYmQwZmI0MTIwYWJlYjlhZmUxNWViZDljOGYyZmEwMjk2Mzk3NGY5MTFkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODA1NzE5NGMzNjdiZjgzMGVjZTcyMTdkYTViM2U4NmExMWViNjg1ZTg0MGIwZDM0MDZlZjM4MWQ1OWI2Mjg5YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjBjMTNjNjUxMjY1M2NmMDIxYzM5OGExMGY1ZDk3YzA4ZDkzNGZmZGIwYWQ1ZWRlZWQ4ODY2ZTI0MjQyOGYxYiJ9"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ArtemisIT.java#L31-L48",
+          "version": "repo-lines-v1:sha256:4e342131d95a6f357b25badc9fb0604ba8765ce878ed6c21d1849b0650e29030:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4ZjY3MTNkNGZiY2M2MjRiNGNlMDIwMzMxYmNhYWE1OTRiYTZlNzZlMjlmMWU5NjcwMzQwM2JlZDI2NDVkMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzNmZjNzNjZmY0ZDVmYzkwOGRkNDk3MzIzNDc1NTJlYzQ5YWQ2ZjBkMTc4MjNjMWU2N2U0MTc1MGEzNDJmZTIifQ"
+        },
+        {
+          "resource": "repo://tlr/tests-tlr/src/test/java/edu/kit/kastel/mcse/ardoco/tlr/tests/integration/ExArchIT.java#L120-L126",
+          "version": "repo-lines-v1:sha256:feddb38ceac03a09155b5a540c5f87bfab7629f64827f665470f9ebe65b15741:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZjM2M4NTZmMGRhYTVmYjMzYTc5MDkzZWRiYmM2NTRhMGU5MjcwNjFiODE3NTljYzJkZDY5YjUxODkwNzdjMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzM1MzJmOTA0YTk5ODgzY2EyOTNiNTZjYzIzY2RhMGZmNjRlZmUzMDE5ZjhhMTY2ODNkN2U0NDk4ODI4YmM5NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTdiZjllMDFiNWYxZDU1MzQ3NDJmYWJkMTg3YmQwYmQ0MTU0ZjdjYzZjZGEyNTE5OTNhYjVmOTNjOWY4ODllYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_99bba195f06d45cda77e16b6c89ed439",
+      "statement": "ExArch architecture synthesis uses a second prompting mechanism that is code-defined rather than classpath-loaded: LlmArchitecturePrompt is an enum of template strings (EXTRACT_FROM_ARCHITECTURE, EXTRACT_FROM_CODE parameterized by Features PACKAGES / PACKAGES_AND_THEIR_CLASSES, AGGREGATION) whose templates LlmArchitectureProviderInformant sends as sequential chat messages (first template formatted with the extracted input, subsequent templates appended to the growing conversation); the informant validates at construction that an OpenAI model has credentials, at least one prompt is given, and a code prompt always carries a code feature.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LlmArchitecturePrompt.java#L8-L68",
+          "version": "repo-lines-v1:sha256:47bec504cb8c55457b9bf2f66a2942808cce31389dd4914daf0842ba2c4311cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYTRlOWFhMGI4YzNkY2EzMWU0MDY2NmZlYzViYzc3NzlkMjNkZTBkMjU5ODkwYjAyOGJmODM2ZTc2MGVkY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiM2MwM2Q2ZThkY2IxODM1ZTA0ODkzYTIwZGFkNjRmZDI0NjAwMmRlZDQxZGU2YzMxZGMzZWQ0ZDRjMDI4NDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LlmArchitectureProviderInformant.java#L117-L138",
+          "version": "repo-lines-v1:sha256:3169b39921c82678620d2f99acfcdc85ec9623b0ee4597361f0ba93dcb33057f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4Zjc3NmNhMzFhYjZkN2NhY2JlMzJjMzJmOGZmZjViZDI4ZmU4NWJmNWQzNzc2NWZlYWY0NGQ0ZDBiNWQzNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZmI2ZGY2OTJiNmY2Y2QxMGU4YmU2NDljYjI5ZjNlZWQwZTNmZmI3NDU5MTA0M2VlNGNjYzgxZjJiZjc3YjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2NDE1NDkxZmJjMDllZTA4ODg2OWVmN2Y4MmQ4Nzk4Njc3ZjY4ZTZlMmNmODJlOTI5OGZkYmY3ZWQxYTZiNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4NzE0ZjcxYmE4YzA2Nzg4ODdhMTNhZGFlYWFhN2YxNTk0ZjMxMjM5MmFiMzE1MjIzZjNlMDhmODVjZTU0OTkifQ"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LlmArchitectureProviderInformant.java#L53-L77",
+          "version": "repo-lines-v1:sha256:cf69bdd2137782df23962b5329f408dc96708b2216cac36c1936695e70fbb9b9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YjEzMmJiNjFlMmFmNGMwYWU2YjI2NTY4ZWE0YmI5MWM4ODYyNWIxZmI3OGJmNWZkZTQxYzFmMjg5ZTFmN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkZGUxNWQxMTcyNDI4MWQ3NzgzYjI5NTg1MjJlYmFiNGI3YzY0NDlmYjkyZGYwZGQzYmIwZTNmYWQ3MzM4NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5NmM1NGViNDcxOTJlMmUzMWNiNzNiM2MyOTAwMTQ1NTIxY2ZlMjliN2YyNzYyMmFlN2IzMzI3Mjk0NGE4MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0MmI5Y2UzMjRiNDZjYTFjOGYwZDgwYTJkMzU5NzAzMDMxZTkwYjBiMGU3MTMyYzY1MTZhN2Y3M2IyZjVmODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_25ce735f933c4ace9fda0ac1cb8f683b",
+      "statement": "One LLM usage bypasses LargeLanguageModel entirely: the ArTEMiS connection informant (ArtemisConnectionInformant) constructs an OpenAI embedding model directly (text-embedding-3-large, via langchain4j's OpenAiEmbeddingModel with OPENAI_API_KEY, throwing IllegalStateException when the key is missing) to embed architecture entity names for embedding-based matching; the NAER recognizer it feeds comes from the external io.github.ardoco:named-architecture-entity-recognition artifact that the tlr artemis stage depends on.",
+      "evidence": [
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/pom.xml#L18-L19",
+          "version": "repo-lines-v1:sha256:b58bbbeae1b851e1ad231a058584663a855351b5d3f55698cba10c807b8f0196:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDA4ZTI4OTE5NGM2ZmUxMjhjNmZhZGEzMzllYWZmNThjMjJiOTc2ZTkyZjExODJhOTg3MDgzNmVlYTU2MTJlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjdhNjhjMjA1MWJkODIxZjBjYTA5NzAyYTU2MWQ1NDhjOTI4YTI5Mzk1NGNjNjg0ZjQ4M2UyZWJjOGE0ZjU3MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDUzYmM2MGY4MzRkNTBlNWU5OTAzMmY0ZDgyNzVlN2YyOTNiODQ1ZGU4NGQ5N2YzM2JkODE0ZmI4MDA5NzI0MSJ9"
+        },
+        {
+          "resource": "repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/informants/ArtemisConnectionInformant.java#L127-L136",
+          "version": "repo-lines-v1:sha256:d23656eb754c31e10c2aa693fded2e7720e6eb51b6e5e748ed27f16d47d151ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MThhMTJmM2Q5OTMxOTE3MjJlZGQ5NTkxYmEwYjY4YzJiNjUyODAzYzgyMGU2NGIzM2Q3YmM3Y2I5OWFmZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkYzgyOWU5ZmYxMTcxODc0MWI1OWI2MmQwMDU5MGQ1NWM3YmY0MzI5NzFjMWVlMGE2MDdkYzQzYTJjN2FmNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-23T16:40:38.555Z"
+  }
+}

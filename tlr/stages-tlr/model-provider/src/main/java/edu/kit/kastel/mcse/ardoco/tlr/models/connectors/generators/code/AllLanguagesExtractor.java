@@ -27,6 +27,11 @@ public final class AllLanguagesExtractor extends CodeExtractor {
     private final Map<ProgrammingLanguage, CodeExtractor> codeExtractors;
     private CodeModel codeModel;
 
+    @Override
+    public String getIdPrefix() {
+        return "ale";
+    }
+
     public AllLanguagesExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
         this.codeExtractors = Map.of(ProgrammingLanguage.JAVA, new JavaExtractor(codeItemRepository, path, metamodelToExtract), //
