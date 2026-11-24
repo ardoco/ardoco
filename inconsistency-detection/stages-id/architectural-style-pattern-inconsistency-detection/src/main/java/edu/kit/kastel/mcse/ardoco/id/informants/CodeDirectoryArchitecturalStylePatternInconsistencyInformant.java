@@ -57,7 +57,7 @@ public class CodeDirectoryArchitecturalStylePatternInconsistencyInformant extend
         for (int attempt = 1; attempt <= MAX_VALIDATION_RETRIES; attempt++) {
             try {
                 return validationAgent.validateArchitecturalStylePatternStatementAgainstCodeDirectory(namedEntityOccurrence, architecturalStylePatternName,
-                        fullDocumentationText, sentenceText);
+                        fullDocumentationText, sentenceText, codeProjectPath);
             } catch (Exception e) {
                 lastException = e;
                 logger.warn("Validation failed. Retrying ({}/{}).", attempt, MAX_VALIDATION_RETRIES, e);

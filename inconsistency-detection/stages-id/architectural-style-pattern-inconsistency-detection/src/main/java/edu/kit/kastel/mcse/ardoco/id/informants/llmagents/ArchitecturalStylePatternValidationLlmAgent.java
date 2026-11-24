@@ -15,6 +15,7 @@ public interface ArchitecturalStylePatternValidationLlmAgent {
      * @param architecturalStylePattern the architectural style or architectural design pattern mentioned in the statement
      * @param fullText                  the full documentation text containing the statement
      * @param line                      the specific line of documentation containing the statement
+     * @param codeProjectPath           the path to the root of the code project directory
      * @return an {@link ArchitecturalStylePatternValidationResult} object that indicates whether the statement is true or false, along with a concise
      *         explanation of the validation findings
      */
@@ -65,7 +66,8 @@ public interface ArchitecturalStylePatternValidationLlmAgent {
             Current documentation line:
             {{line}}
 
-            The tools operate on the code project directory. All paths are relative to the project root; use "." for the project root.
+            Current code project root path:
+            {{codeProjectPath}}
 
             Decide whether the statement in the current line about the architectural style or pattern ({{architecturalStylePattern}}) is true.
             If the line also talks about other architectural styles or patterns, ignore them and only consider {{architecturalStylePattern}}.
@@ -73,7 +75,7 @@ public interface ArchitecturalStylePatternValidationLlmAgent {
             """)
     ArchitecturalStylePatternValidationResult validateArchitecturalStylePatternStatementAgainstCodeDirectory(
             @V("namedEntityOccurrence") String namedEntityOccurrence, @V("architecturalStylePattern") String architecturalStylePattern,
-            @V("fullText") String fullText, @V("line") String line);
+            @V("fullText") String fullText, @V("line") String line, @V("codeProjectPath") String codeProjectPath);
 
     /**
      * Validates whether a natural-language statement about an architectural style or architectural design pattern in a software repository is true based on the

@@ -15,6 +15,7 @@ public interface ProgrammingLanguageValidationLlmAgent {
      * @param programmingLanguage   the programming language mentioned in the statement
      * @param fullText              the full documentation text containing the statement
      * @param line                  the specific line of documentation containing the statement
+     * @param codeProjectPath       the path to the root of the code project directory
      * @return a ProgrammingLanguageValidationResult object that indicates whether the statement is true or false, along with a concise explanation of the
      *         validation findings
      */
@@ -79,14 +80,16 @@ public interface ProgrammingLanguageValidationLlmAgent {
             Current documentation line:
             {{line}}
 
-            The tools operate on the code project directory. All paths are relative to the project root; use "." for the project root.
+            Current code project root path:
+            {{codeProjectPath}}
 
             Decide whether the statement in the current line about the programming language ({{programmingLanguage}}) is true.
             If the line also talks about other programming languages, ignore them and only consider the statement about {{programmingLanguage}}.
             Use the provided read-only tools to make an informed decision based on repository evidence.
             """)
     ProgrammingLanguageValidationResult validateProgrammingLanguageStatementAgainstCodeDirectory(@V("namedEntityOccurrence") String namedEntityOccurrence,
-            @V("programmingLanguage") String programmingLanguage, @V("fullText") String fullText, @V("line") String line);
+            @V("programmingLanguage") String programmingLanguage, @V("fullText") String fullText, @V("line") String line,
+            @V("codeProjectPath") String codeProjectPath);
 
     /**
      * Validates whether a natural-language statement about programming languages in a software repository is true based on the repository's source-code
