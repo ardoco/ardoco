@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -336,7 +335,7 @@ public class CodeDirectoryReadOnlyTools {
 
     @Tool("""
             Returns metadata about a project-relative file or directory,
-            including type, size, and last modification time.
+            including type and size.
             """)
     public String getFileInfo(String path) {
         LOGGER.debug("Getting file info: {}", path);
@@ -360,14 +359,12 @@ public class CodeDirectoryReadOnlyTools {
 
             long size = Files.isRegularFile(file) ? Files.size(file) : 0;
 
-            Instant modified = Files.getLastModifiedTime(file).toInstant();
-
+            // No modification time: it differs between checkouts and would make the (cached) tool replies differ as well.
             return """
                     Path: %s
                     Type: %s
                     Size: %d bytes
-                    Last modified: %s
-                    """.formatted(toRelativeString(file), type, size, modified);
+                    """.formatted(toRelativeString(file), type, size);
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not get file information: " + path, e);

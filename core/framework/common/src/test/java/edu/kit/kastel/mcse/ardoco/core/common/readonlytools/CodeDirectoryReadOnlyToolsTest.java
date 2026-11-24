@@ -82,6 +82,11 @@ class CodeDirectoryReadOnlyToolsTest {
         assertTrue(result.endsWith("[SEARCH RESULTS TRUNCATED]"), result);
     }
 
+    @Test
+    void fileInfoHasNoModificationTime() {
+        assertEquals(String.join(NL, "Path: src/beta/B.java", "Type: file", "Size: 10 bytes", ""), tools.getFileInfo("src/beta/B.java").replace("\n", NL));
+    }
+
     private void write(String relativePath, String content) throws IOException {
         Path file = projectRoot.resolve(relativePath);
         Files.createDirectories(file.getParent());
