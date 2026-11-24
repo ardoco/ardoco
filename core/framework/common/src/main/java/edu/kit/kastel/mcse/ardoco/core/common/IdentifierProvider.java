@@ -20,8 +20,19 @@ public class IdentifierProvider {
      * @return a unique identifier string
      */
     public static String createId() {
+        return createId("acm");
+    }
+
+    /**
+     * Creates a new identifier string with the given prefix. Different prefixes keep ids of different model kinds disjoint, even though the counter is reset
+     * before each extraction.
+     *
+     * @param prefix the prefix of the identifier
+     * @return a unique identifier string
+     */
+    public static String createId(String prefix) {
         int currentCounter = COUNTER.getAndIncrement();
-        return "acm%09djsd".formatted(currentCounter);
+        return "%s%09djsd".formatted(prefix, currentCounter);
     }
 
     /**
