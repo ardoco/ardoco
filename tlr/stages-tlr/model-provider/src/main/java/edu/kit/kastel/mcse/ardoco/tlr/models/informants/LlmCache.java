@@ -37,7 +37,7 @@ public final class LlmCache {
      */
     public static void configure(String cacheDir) {
         try {
-            CacheManager.setCacheDir(cacheDir);
+            CacheManager.setCacheDir(cacheDir, Environment::getEnv);
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize the LLM cache directory: " + cacheDir, e);
         }

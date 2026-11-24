@@ -19,7 +19,8 @@ import edu.kit.kastel.mcse.ardoco.llm.chat.LlmConfiguration;
  * The chat models available to ARDoCo. Model creation, authentication, and response caching are provided by
  * the {@code llm-access} library; this enum only selects the platform, model name, and temperature. Ollama
  * token authentication (via {@code OLLAMA_TOKEN}) and an optional {@code OPENAI_ORGANIZATION_ID} are handled
- * by the library.
+ * by the library. Credentials and hosts are read via ARDoCo's {@link Environment} ({@code .env} first, then the
+ * system environment).
  */
 @Deterministic
 public enum LargeLanguageModel {
@@ -74,7 +75,12 @@ public enum LargeLanguageModel {
     }
 
     private ChatModelProvider createProvider() {
-        return new ChatModelProvider(LlmConfiguration.builder(platform).modelName(modelName).seed(SEED).temperature(temperature).build());
+        return new ChatModelProvider(LlmConfiguration.builder(platform)
+                .modelName(modelName)
+                .seed(SEED)
+                .temperature(temperature)
+                .environment(Environment::getEnv)
+                .build());
     }
 
     private static int loadSeed() {

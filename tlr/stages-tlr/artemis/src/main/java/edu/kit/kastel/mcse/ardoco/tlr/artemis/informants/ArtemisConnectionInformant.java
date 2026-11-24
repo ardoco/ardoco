@@ -21,6 +21,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Nam
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingConfiguration;
@@ -136,7 +137,10 @@ public abstract class ArtemisConnectionInformant extends Informant {
     private EmbeddingCreator getEmbeddingCreator() {
         if (embeddingCreator == null) {
             // The cache directory is configured by the runner (see LlmCache); this uses the default cache manager.
-            embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI).modelName("text-embedding-3-large").build());
+            embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI)
+                    .modelName("text-embedding-3-large")
+                    .environment(Environment::getEnv)
+                    .build());
         }
         return embeddingCreator;
     }
