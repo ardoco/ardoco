@@ -33,7 +33,6 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.WordSimUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.wordsim.measures.levenshtein.LevenshteinMeasure;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonTextToolsConfig;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
-import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 
@@ -51,11 +50,6 @@ public class LlmArchitectureProviderInformant extends Informant {
     public LlmArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentation,
             LlmArchitecturePrompt code, LlmArchitecturePrompt.Features codeFeature, LlmArchitecturePrompt aggregation) {
         super(LlmArchitectureProviderInformant.class.getSimpleName(), dataRepository);
-        String apiKey = Environment.getEnv("OPENAI_API_KEY");
-        // The organization id is optional (sent only when set); only the API key is required for OpenAI.
-        if (apiKey == null && largeLanguageModel != null && largeLanguageModel.isOpenAi()) {
-            throw new IllegalArgumentException("OpenAI API Key must be set");
-        }
         this.chatLanguageModel = largeLanguageModel == null ? null : largeLanguageModel.create();
         this.documentationPrompt = documentation;
         this.codePrompt = code;
