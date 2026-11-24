@@ -1,72 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>io.github.ardoco</groupId>
-    <artifactId>parent</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <groupId>io.github.ardoco.core</groupId>
+    <artifactId>parent-core</artifactId>
+    <version>${revision}</version>
   </parent>
 
-  <artifactId>named-architecture-entity-recognition</artifactId>
-  <version>2.2.0-SNAPSHOT</version>
-
+  <artifactId>naer</artifactId>
   <name>ARDoCo NamedArchitectureEntityRecognition</name>
   <description>A Java library that uses Large Language Models to automatically identify and extract architectural entities (like components and interfaces) from Software Architecture
         Documentation. It supports multiple LLM providers (OpenAI, Ollama) with configurable prompts and provides a flexible builder pattern for easy integration.</description>
-  <url>https://github.com/ardoco/named-architecture-entity-recognition</url>
-
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://www.opensource.org/licenses/mit-license.php</url>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <id>Gram21</id>
-      <name>Jan Keim</name>
-      <email>jan.keim@kit.edu</email>
-      <url>https://mcse.kastel.kit.edu/staff_Keim_Jan.php</url>
-      <organization>KASTEL</organization>
-      <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
-      <timezone>GMT+1</timezone>
-    </developer>
-  </developers>
-  <scm>
-    <connection>scm:git:git://github.com/ardoco/named-architecture-entity-recognition.git</connection>
-    <developerConnection>scm:git:ssh://github.com:ardoco/named-architecture-entity-recognition.git</developerConnection>
-    <tag>HEAD</tag>
-    <url>https://github.com/ardoco/named-architecture-entity-recognition/tree/main</url>
-  </scm>
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/ardoco/named-architecture-entity-recognition/issues</url>
-  </issueManagement>
-  <distributionManagement>
-    <snapshotRepository>
-      <id>central</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.source.encoding>UTF-8</project.source.encoding>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>dev.langchain4j</groupId>
-        <artifactId>langchain4j-bom</artifactId>
-        <version>1.23.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -88,11 +32,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.github.ardoco.core</groupId>
-      <artifactId>common</artifactId>
-      <version>${ardoco.version}</version>
-    </dependency>
-    <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>dotenv-java</artifactId>
       <version>3.2.0</version>
@@ -100,91 +39,11 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
-      <version>1.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections-api</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>mavenCentral</id>
-      <url>https://repo1.maven.org/maven2/</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>mavenSnapshot</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <!-- ARDoCo snapshot builds (public, read-only mirror group on gitlab.kit.edu) -->
-      <id>ardocoSnapshots</id>
-      <url>https://gitlab.kit.edu/api/v4/groups/253644/-/packages/maven</url>
-    </repository>
-  </repositories>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <publishingServerId>central</publishingServerId>
-          <autoPublish>true</autoPublish>
-          <waitUntil>published</waitUntil>
-          <deploymentName>ardoco-naer</deploymentName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>deployment</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <phase>verify</phase>
-                <configuration>
-                  <keyname>2673EE7DF64D33426A93D642E88F0DA2FB06A126</keyname>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.naer.util;
 
 import java.nio.charset.StandardCharsets;
@@ -99,18 +99,18 @@ public class ChatModelFactory {
      */
     public ChatModel build() {
         return switch (provider) {
-        case OPEN_AI -> {
-            //most cost efficient models: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
-            if (modelName == null)
-                modelName = "gpt-4.1-nano"; //default
-            yield buildOpenAiModel();
-        }
-        case LOCAL -> buildLocalModel();
-        case OLLAMA -> {
-            if (modelName == null)
-                modelName = "phi4:latest"; //default
-            yield buildOllamaModel();
-        }
+            case OPEN_AI -> {
+                //most cost efficient models: gpt-4.1-nano https://platform.openai.com/docs/models/gpt-4.1-nano; still pretty cost efficient: gpt-4o-mini https://platform.openai.com/docs/models/gpt-4o-mini
+                if (modelName == null)
+                    modelName = "gpt-4.1-nano"; //default
+                yield buildOpenAiModel();
+            }
+            case LOCAL -> buildLocalModel();
+            case OLLAMA -> {
+                if (modelName == null)
+                    modelName = "phi4:latest"; //default
+                yield buildOllamaModel();
+            }
         };
     }
 

@@ -1,3 +1,4 @@
+/* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.naer.util;
 
 import java.nio.file.Files;
@@ -104,4 +105,3 @@ public final class Environment {
         }
     }
 }
-

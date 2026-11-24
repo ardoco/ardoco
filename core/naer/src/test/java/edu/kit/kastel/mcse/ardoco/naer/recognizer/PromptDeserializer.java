@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
@@ -37,16 +37,16 @@ public class PromptDeserializer extends StdDeserializer<Prompt> {
 
         try {
             return switch (typeStr) {
-            case "STRUCTURED_TEXT_OUTPUT_PROMPT" -> new StructuredTextOutputPrompt(first);
-            case "JSON_OUTPUT_PROMPT" -> new JsonOutputPrompt(first);
-            case "TWO_PART_PROMPT" -> {
-                if (second == null || second.isBlank()) {
-                    logger.error("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
-                    throw new IllegalArgumentException("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
+                case "STRUCTURED_TEXT_OUTPUT_PROMPT" -> new StructuredTextOutputPrompt(first);
+                case "JSON_OUTPUT_PROMPT" -> new JsonOutputPrompt(first);
+                case "TWO_PART_PROMPT" -> {
+                    if (second == null || second.isBlank()) {
+                        logger.error("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
+                        throw new IllegalArgumentException("Second part of prompt cannot be null or blank for TWO_PART_PROMPT");
+                    }
+                    yield new TwoPartPrompt(first, second);
                 }
-                yield new TwoPartPrompt(first, second);
-            }
-            default -> throw new IllegalStateException("Unexpected prompt type value: " + typeStr);
+                default -> throw new IllegalStateException("Unexpected prompt type value: " + typeStr);
             };
         } catch (IllegalArgumentException e) {
             logger.error("Could not create prompt of type {}", typeStr, e);

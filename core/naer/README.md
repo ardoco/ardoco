@@ -20,8 +20,8 @@ The library is also designed for easy extension, enabling integration with custo
 
 ## Requirements
 
-- Java 17 or higher
-- Maven 3.6 or higher
+- Java 21 or higher
+- Maven 3.9 or higher
 - Access to LLM APIs (OpenAI API key, Ollama server, etc.)
 
 ## Installation
@@ -31,16 +31,16 @@ Add the following dependency to your Maven project:
 ```xml
 
 <dependency>
-	<groupId>io.github.ardoco</groupId>
-	<artifactId>named-architecture-entity-recognition</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>io.github.ardoco.core</groupId>
+	<artifactId>naer</artifactId>
+	<version>VERSION</version>
 </dependency>
 ```
 
-Or clone the repository and build it locally:
+Or clone the [ARDoCo repository](https://github.com/ardoco/ardoco) and build the module locally:
 
 ```bash
-mvn clean install
+mvn clean install -pl core/naer -am
 ```
 
 ## Usage
