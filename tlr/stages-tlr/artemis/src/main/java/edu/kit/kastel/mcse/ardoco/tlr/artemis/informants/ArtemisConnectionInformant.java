@@ -130,6 +130,16 @@ public abstract class ArtemisConnectionInformant extends Informant {
         return traceLinks;
     }
 
+    /**
+     * Writes new embeddings to the cache, which otherwise keeps them in memory until the JVM shuts down.
+     */
+    @Override
+    protected void after() {
+        if (embeddingCreator != null) {
+            LlmCache.cacheManager().flush();
+        }
+    }
+
     private List<Embedding> embed(List<String> names) {
         var vectors = getEmbeddingCreator().calculateEmbeddings(names);
         return vectors.stream().map(Embedding::from).toList();
