@@ -28,6 +28,7 @@ import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingConfiguration;
 import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingCreator;
 import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingPlatform;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 
 /**
  * Base class for Artemis informants that create trace links between named architecture entities and model entities.
@@ -136,11 +137,10 @@ public abstract class ArtemisConnectionInformant extends Informant {
 
     private EmbeddingCreator getEmbeddingCreator() {
         if (embeddingCreator == null) {
-            // The cache directory is configured by the runner (see LlmCache); this uses the default cache manager.
             embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI)
                     .modelName("text-embedding-3-large")
                     .environment(Environment::getEnv)
-                    .build());
+                    .build(), LlmCache.cacheManager());
         }
         return embeddingCreator;
     }
