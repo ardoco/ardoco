@@ -18,9 +18,11 @@ public abstract class Extractor {
     /**
      * Returns the prefix of the ids that are generated while this extractor runs.
      *
-     * @return the id prefix
+     * @return the id prefix, or null to use the default prefix of the created entity kind
      */
-    public abstract String getIdPrefix();
+    public String getIdPrefix() {
+        return null;
+    }
 
     public final Metamodel getMetamodel() {
         return this.metamodelToExtract;
