@@ -28,6 +28,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 @Deterministic
 public final class PcmExtractor extends ArchitectureExtractor {
 
+    @Override
+    public String getIdPrefix() {
+        return "pcme";
+    }
+
     public PcmExtractor(String path, Metamodel metamodelToExtract) {
         super(path, metamodelToExtract);
     }

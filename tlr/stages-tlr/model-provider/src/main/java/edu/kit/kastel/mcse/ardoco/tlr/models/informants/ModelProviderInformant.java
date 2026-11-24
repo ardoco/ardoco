@@ -70,7 +70,7 @@ public final class ModelProviderInformant extends Informant {
             return;
         }
 
-        IdentifierProvider.reset();
+        IdentifierProvider.reset(this.extractor.getIdPrefix());
         this.getLogger().info("Extracting code model.");
         extractedModel = this.extractor.extractModel();
         this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);

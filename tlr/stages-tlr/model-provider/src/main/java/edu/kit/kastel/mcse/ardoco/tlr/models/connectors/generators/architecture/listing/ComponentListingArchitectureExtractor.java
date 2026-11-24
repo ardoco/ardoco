@@ -31,6 +31,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 public class ComponentListingArchitectureExtractor extends ArchitectureExtractor {
     private static final Logger logger = LoggerFactory.getLogger(ComponentListingArchitectureExtractor.class);
 
+    @Override
+    public String getIdPrefix() {
+        return "cle";
+    }
+
     public ComponentListingArchitectureExtractor(String modelPath, Metamodel metamodelToExtract) {
         super(modelPath, metamodelToExtract);
     }
