@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.serialization.NamedEntityParser;
 
@@ -95,8 +97,8 @@ public class StructuredTextOutputPrompt extends Prompt {
     }
 
     @Override
-    public String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad) {
-        UserMessage userMessage = new UserMessage(this.text + "\nText:\n" + sad.getText());
+    public String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities) {
+        UserMessage userMessage = new UserMessage(getText(possibleEntities) + "\nText:\n" + sad.getText());
         ChatRequest chatRequest = ChatRequest.builder().messages(systemMessage, userMessage).build();
         ChatResponse chatResponse = chatModel.chat(chatRequest);
         return chatResponse.aiMessage().text();

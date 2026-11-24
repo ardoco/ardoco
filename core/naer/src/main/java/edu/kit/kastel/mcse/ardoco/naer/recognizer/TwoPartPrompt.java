@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntity;
+import edu.kit.kastel.mcse.ardoco.naer.model.NamedEntityType;
 import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 import edu.kit.kastel.mcse.ardoco.naer.serialization.NamedEntityParser;
 
@@ -116,9 +118,9 @@ public class TwoPartPrompt extends Prompt {
     }
 
     @Override
-    public String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad) {
+    public String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities) {
         logger.info("send prompt one to get components unstructured...");
-        UserMessage userMessage1 = new UserMessage(this.text + "\nText:\n" + sad.getText());
+        UserMessage userMessage1 = new UserMessage(getText(possibleEntities) + "\nText:\n" + sad.getText());
         ChatRequest chatRequest1 = ChatRequest.builder().messages(systemMessage, userMessage1).build();
         ChatResponse chatResponse1 = chatModel.chat(chatRequest1);
         String part1Answer = chatResponse1.aiMessage().text();

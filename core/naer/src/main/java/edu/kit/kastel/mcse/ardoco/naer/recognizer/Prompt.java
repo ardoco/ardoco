@@ -20,8 +20,7 @@ import edu.kit.kastel.mcse.ardoco.naer.model.SoftwareArchitectureDocumentation;
 public abstract class Prompt {
     private static final Logger logger = LoggerFactory.getLogger(Prompt.class);
     protected final SystemMessage systemMessage = new SystemMessage("You are a software engineer and software architect.");
-    protected String text;
-    private boolean modified = false;
+    protected final String text;
 
     /**
      * Constructs a new {@link Prompt} instance.
@@ -47,23 +46,18 @@ public abstract class Prompt {
     }
 
     /**
-     * Appends a list of possible named entities that could be mentioned in the SAD, grouped by their types, to the existing prompt.
+     * Gets the text of the prompt, extended by a list of possible named entities that could be mentioned in the SAD, grouped by their types.
+     * The prompt itself is not modified.
      *
      * @param possibleEntities a map containing named entity types as keys and sets of entity names as values. Each type represents a category (e.g., COMPONENT,
      *                         INTERFACE, ...), and each set contains the names of entities belonging to that type. Must not be null or contain null
      *                         keys/values.
-     * @throws IllegalStateException if the prompt has already been modified (addPossibleEntities can only be called once)
+     * @return the text of the prompt, or the text with the list of possible entities appended if the map is not empty
      */
-    public void addPossibleEntities(Map<NamedEntityType, Set<String>> possibleEntities) {
-        if (modified) {
-            // TODO we need to refactor the modification of the prompt!
-            throw new IllegalStateException("Cannot modify prompt after already modified.");
-        }
+    protected String getText(Map<NamedEntityType, Set<String>> possibleEntities) {
         if (possibleEntities.isEmpty()) {
-            return;
+            return text;
         }
-
-        modified = true;
 
         StringBuilder sb = new StringBuilder();
 
@@ -81,8 +75,7 @@ public abstract class Prompt {
 
         String possibleEntitiesString = sb.toString();
 
-        String componentSupportList = "\n\nAs support, here is a list of entities that could be mentioned in the text:\n" + possibleEntitiesString + "\n";
-        this.text += componentSupportList;
+        return text + "\n\nAs support, here is a list of entities that could be mentioned in the text:\n" + possibleEntitiesString + "\n";
     }
 
     /**
@@ -92,7 +85,19 @@ public abstract class Prompt {
      * @param sad       the software architecture documentation to be analyzed
      * @return the response from the chat model
      */
-    public abstract String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad);
+    public String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad) {
+        return process(chatModel, sad, Map.of());
+    }
+
+    /**
+     * Processes the prompt using the given chat model and SAD, with a list of possible named entities as support (see {@link #getText(Map)}).
+     *
+     * @param chatModel        the chat model to use
+     * @param sad              the software architecture documentation to be analyzed
+     * @param possibleEntities possible named entities grouped by their types; may be empty
+     * @return the response from the chat model
+     */
+    public abstract String process(ChatModel chatModel, SoftwareArchitectureDocumentation sad, Map<NamedEntityType, Set<String>> possibleEntities);
 
     /**
      * Parses the answer from the chat model into a set of named entities.

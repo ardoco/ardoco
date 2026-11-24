@@ -55,8 +55,24 @@ public class NamedEntityRecognizer {
      * @return a set of recognized named entities
      */
     public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation) {
+        return recognize(softwareArchitectureDocumentation, Map.of());
+    }
+
+    /**
+     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation} using a set of entity names (that are suspected to occur
+     * in the SAD) as support.
+     * <p>
+     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of
+     * {@link NamedEntity} instances.
+     * </p>
+     *
+     * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that
+     *                         should be recognized with their corresponding types).
+     * @return a set of recognized named entities
+     */
+    public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, Map<NamedEntityType, Set<String>> possibleEntities) {
         logger.info("calling LLM...");
-        String answer = prompt.process(chatModel, softwareArchitectureDocumentation);
+        String answer = prompt.process(chatModel, softwareArchitectureDocumentation, possibleEntities);
 
         try {
             return prompt.parseAnswer(answer, softwareArchitectureDocumentation); //if everything works as intended, this does not fail
@@ -78,23 +94,6 @@ public class NamedEntityRecognizer {
                 throw new UncheckedIOException("Both original and repair attempts failed", e2);
             }
         }
-    }
-
-    /**
-     * Recognizes {@link NamedEntity} instances in the given {@link SoftwareArchitectureDocumentation} using a set of entity names (that are suspected to occur
-     * in the SAD) as support.
-     * <p>
-     * This method first sends the SAD text along with the prompt to the configured chat model and afterward parses the chat models response into a set of
-     * {@link NamedEntity} instances.
-     * </p>
-     *
-     * @param possibleEntities a map containing potential named entities where the keys are entity names and their values are entity types (e.g., names that
-     *                         should be recognized with their corresponding types).
-     * @return a set of recognized named entities
-     */
-    public Set<NamedEntity> recognize(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, Map<NamedEntityType, Set<String>> possibleEntities) {
-        prompt.addPossibleEntities(possibleEntities);
-        return recognize(softwareArchitectureDocumentation);
     }
 
     /**

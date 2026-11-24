@@ -83,10 +83,7 @@ public class NamedEntityParser {
             lines[i] = lines[i].trim();
         }
 
-        boolean parsingAlternativeNames = false;
-        NamedEntityType currentEntityType = null;
-
-        processLines(softwareArchitectureDocumentation, lines, parsingAlternativeNames, currentEntityType, entityMap, entityOccurencesMap);
+        processLines(softwareArchitectureDocumentation, lines, entityMap, entityOccurencesMap);
 
         //add occurrences with correct reference types
         for (NamedEntity entity : entityMap.values()) {
@@ -98,40 +95,44 @@ public class NamedEntityParser {
         return new LinkedHashSet<>(entityMap.values());
     }
 
-    private static void processLines(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String[] lines, boolean parsingAlternativeNames,
-            NamedEntityType currentEntityType, Map<String, NamedEntity> entityMap, Map<String, Set<Integer>> entityOccurencesMap) throws IOException {
+    private static void processLines(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String[] lines, Map<String, NamedEntity> entityMap,
+            Map<String, Set<Integer>> entityOccurencesMap) throws IOException {
+        ParserState state = new ParserState();
         for (String line : lines) {
-            if (line.isEmpty()) {
-                continue;
+            if (!line.isEmpty()) {
+                processLine(softwareArchitectureDocumentation, line, state, entityMap, entityOccurencesMap);
             }
+        }
+    }
 
-            // Check for section header: "<currentEntityType> entities recognized:"
-            if (line.endsWith("entities recognized:")) {
-                parsingAlternativeNames = false;
-                String typeString = line.substring(0, line.indexOf(" entities recognized:")).trim().toUpperCase();
-                try {
-                    currentEntityType = NamedEntityType.valueOf(typeString);
-                } catch (IllegalArgumentException e) {
-                    logger.error("Unknown entity type: '{}'", typeString);
-                    throw new IOException("Unknown entity type: '" + typeString + "'");
-                }
-                continue;
+    private static void processLine(SoftwareArchitectureDocumentation softwareArchitectureDocumentation, String line, ParserState state,
+            Map<String, NamedEntity> entityMap, Map<String, Set<Integer>> entityOccurencesMap) throws IOException {
+        // Check for section header: "<currentEntityType> entities recognized:"
+        if (line.endsWith("entities recognized:")) {
+            state.parsingAlternativeNames = false;
+            String typeString = line.substring(0, line.indexOf(" entities recognized:")).trim().toUpperCase();
+            try {
+                state.currentEntityType = NamedEntityType.valueOf(typeString);
+            } catch (IllegalArgumentException e) {
+                logger.error("Unknown entity type: '{}'", typeString);
+                throw new IOException("Unknown entity type: '" + typeString + "'");
             }
+            return;
+        }
 
-            if ((line.trim()).equalsIgnoreCase("Alternative names:")) {
-                parsingAlternativeNames = true;
-                continue;
-            }
+        if ((line.trim()).equalsIgnoreCase("Alternative names:")) {
+            state.parsingAlternativeNames = true;
+            return;
+        }
 
-            if (currentEntityType == null) {
-                throw new IOException("Entity type not specified before entries: '" + line + "'");
-            }
+        if (state.currentEntityType == null) {
+            throw new IOException("Entity type not specified before entries: '" + line + "'");
+        }
 
-            if (!parsingAlternativeNames) {
-                parseEntityOccurrence(softwareArchitectureDocumentation, line, entityMap, currentEntityType, entityOccurencesMap);
-            } else {
-                parseAlternativeNames(line, entityMap);
-            }
+        if (!state.parsingAlternativeNames) {
+            parseEntityOccurrence(softwareArchitectureDocumentation, line, entityMap, state.currentEntityType, entityOccurencesMap);
+        } else {
+            parseAlternativeNames(line, entityMap);
         }
     }
 
@@ -201,5 +202,13 @@ public class NamedEntityParser {
         }
         NamedEntityReferenceType referenceType = isDirect ? NamedEntityReferenceType.DIRECT : NamedEntityReferenceType.INDIRECT;
         entity.addOccurrence(lineNumber, referenceType);
+    }
+
+    /**
+     * Mutable state while parsing the lines of the structured text format.
+     */
+    private static final class ParserState {
+        private boolean parsingAlternativeNames;
+        private NamedEntityType currentEntityType;
     }
 }
