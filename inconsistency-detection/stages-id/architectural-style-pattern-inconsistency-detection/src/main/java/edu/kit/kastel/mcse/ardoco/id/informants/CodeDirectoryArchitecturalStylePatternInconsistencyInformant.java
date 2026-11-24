@@ -35,7 +35,7 @@ public class CodeDirectoryArchitecturalStylePatternInconsistencyInformant extend
         this.codeProjectPath = codeProjectPath;
 
         this.validationAgent = AiServices.builder(ArchitecturalStylePatternValidationLlmAgent.class)
-                .chatModel(validationAgentLlm.createUncached())
+                .chatModel(validationAgentLlm.create())
                 .tools(new CodeDirectoryReadOnlyTools(codeProjectPath))
                 .build();
 

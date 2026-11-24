@@ -33,7 +33,7 @@ public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends Abst
         this.codeProjectPath = codeProjectPath;
 
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(validationAgentLlm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
+                .chatModel(validationAgentLlm.create())
                 .tools(new CodeDirectoryReadOnlyTools(codeProjectPath))
                 .build();
 

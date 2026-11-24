@@ -34,7 +34,7 @@ public class CodeModelArchitecturalStylePatternInconsistencyInformant extends Ab
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
 
         this.validationAgent = AiServices.builder(ArchitecturalStylePatternValidationLlmAgent.class)
-                .chatModel(validationAgentLlm.createUncached())
+                .chatModel(validationAgentLlm.create())
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();

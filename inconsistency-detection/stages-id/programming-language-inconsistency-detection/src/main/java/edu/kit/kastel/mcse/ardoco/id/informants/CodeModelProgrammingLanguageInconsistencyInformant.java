@@ -32,7 +32,7 @@ public class CodeModelProgrammingLanguageInconsistencyInformant extends Abstract
 
         CodeModelReadOnlyTools codeModelReadOnlyTools = new CodeModelReadOnlyTools(dataRepository);
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
-                .chatModel(validationAgentLlm.createUncached()) //this is important because Ardoco CachedChatLanguageModel does not support Tool calling
+                .chatModel(validationAgentLlm.create())
                 .tools(codeModelReadOnlyTools)
                 .beforeToolExecution(before -> codeModelReadOnlyTools.initializeCodeModel())
                 .build();
