@@ -154,6 +154,7 @@
       </activation>
       <modules>
         <module>framework</module>
+        <module>naer</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
       </modules>
@@ -201,6 +202,7 @@
       </activation>
       <modules>
         <module>framework</module>
+        <module>naer</module>
         <module>pipeline-core</module>
         <module>tests-base</module>
       </modules>
