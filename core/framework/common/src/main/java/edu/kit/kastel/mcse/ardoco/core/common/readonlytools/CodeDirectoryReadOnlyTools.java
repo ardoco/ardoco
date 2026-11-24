@@ -177,7 +177,7 @@ public class CodeDirectoryReadOnlyTools {
                 return content;
             }
 
-            return content.substring(0, MAX_FILE_CHARS) + "\n" + "[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
+            return content.substring(0, MAX_FILE_CHARS) + "\n[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not read file: " + path, e);
@@ -320,10 +320,10 @@ public class CodeDirectoryReadOnlyTools {
             return "No matches found for: " + query;
         }
 
-        String result = String.join("\n" + "\n", results);
+        String result = String.join("\n\n", results);
 
         if (results.size() >= MAX_SEARCH_RESULTS) {
-            result += "\n" + "\n" + "[SEARCH RESULTS TRUNCATED]";
+            result += "\n\n[SEARCH RESULTS TRUNCATED]";
         }
 
         return result;
