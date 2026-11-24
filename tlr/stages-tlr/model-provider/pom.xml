@@ -113,6 +113,17 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <environmentVariables>
+            <!-- LLM tests run offline: the cache goes to target/ and a dummy key never reaches a paid API -->
+            <LLM_CACHE_DIR>${project.build.directory}/llm-cache-test</LLM_CACHE_DIR>
+            <OPENAI_API_KEY>dummy</OPENAI_API_KEY>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>3.6.1</version>

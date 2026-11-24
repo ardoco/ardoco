@@ -8,6 +8,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.llm.cache.Cache;
 import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheKey;
+import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheParameter;
 import edu.kit.kastel.mcse.ardoco.llm.chat.CachingChatModel;
 import edu.kit.kastel.mcse.ardoco.llm.chat.ChatModelPlatform;
 import edu.kit.kastel.mcse.ardoco.llm.chat.ChatModelProvider;
@@ -57,6 +58,15 @@ public enum LargeLanguageModel {
         ChatModelProvider provider = createProvider();
         Cache<ChatCacheKey> cache = LlmCache.cacheManager().getCache(provider.cacheParameters());
         return new CachingChatModel(provider.createChatModel(), cache);
+    }
+
+    /**
+     * Returns the parameters that identify the cache (file) of this model.
+     *
+     * @return The cache parameters of this model
+     */
+    ChatCacheParameter cacheParameters() {
+        return createProvider().cacheParameters();
     }
 
     public boolean isGeneric() {

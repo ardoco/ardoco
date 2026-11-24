@@ -66,6 +66,13 @@ public final class LlmCache {
     }
 
     /**
+     * Forgets the configured cache manager, so that the next use configures it again. Intended for tests.
+     */
+    static synchronized void reset() {
+        cacheManager = null;
+    }
+
+    /**
      * Returns the cache directory to use for the given value of {@code LLM_CACHE_DIR}.
      *
      * @param configured The configured directory, may be null or blank
