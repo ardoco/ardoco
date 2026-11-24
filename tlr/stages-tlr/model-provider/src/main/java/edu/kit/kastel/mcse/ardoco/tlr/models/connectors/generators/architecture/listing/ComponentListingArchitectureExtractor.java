@@ -1,4 +1,4 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.listing;
 
 import java.io.IOException;
