@@ -15,6 +15,13 @@ public abstract class Extractor {
 
     public abstract Model extractModel();
 
+    /**
+     * Returns the prefix of the ids that are generated while this extractor runs.
+     *
+     * @return the id prefix
+     */
+    public abstract String getIdPrefix();
+
     public final Metamodel getMetamodel() {
         return this.metamodelToExtract;
     }

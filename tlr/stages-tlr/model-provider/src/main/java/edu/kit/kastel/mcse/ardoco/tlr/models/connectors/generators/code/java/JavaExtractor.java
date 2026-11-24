@@ -41,6 +41,11 @@ public final class JavaExtractor extends CodeExtractor {
      * @param path               the path to the code
      * @param metamodelToExtract the metamodel to extract
      */
+    @Override
+    public String getIdPrefix() {
+        return "je";
+    }
+
     public JavaExtractor(CodeItemRepository codeItemRepository, String path, Metamodel metamodelToExtract) {
         super(codeItemRepository, path, metamodelToExtract);
     }

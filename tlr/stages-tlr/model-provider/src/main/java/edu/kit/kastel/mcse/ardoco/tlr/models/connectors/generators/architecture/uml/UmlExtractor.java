@@ -28,6 +28,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 @Deterministic
 public final class UmlExtractor extends ArchitectureExtractor {
 
+    @Override
+    public String getIdPrefix() {
+        return "umle";
+    }
+
     public UmlExtractor(String path, Metamodel metamodelToExtract) {
         super(path, metamodelToExtract);
     }

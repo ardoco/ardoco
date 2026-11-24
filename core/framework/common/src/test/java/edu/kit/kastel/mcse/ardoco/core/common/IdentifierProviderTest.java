@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.common;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,5 +16,13 @@ class IdentifierProviderTest {
         IdentifierProvider.reset();
         String architectureId = new ArchitectureMethod("m").getId();
         assertNotEquals(defaultId, architectureId);
+    }
+
+    @Test
+    void extractorPrefixIsUsedUntilNextReset() {
+        IdentifierProvider.reset("pcme");
+        assertTrue(new ArchitectureMethod("m").getId().startsWith("pcme"));
+        IdentifierProvider.reset();
+        assertTrue(new ArchitectureMethod("m").getId().startsWith("aam"));
     }
 }

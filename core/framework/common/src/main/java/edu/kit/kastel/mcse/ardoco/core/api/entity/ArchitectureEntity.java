@@ -19,7 +19,7 @@ public abstract non-sealed class ArchitectureEntity extends ModelEntity {
      * @param name the name of the architecture entity
      */
     protected ArchitectureEntity(String name) {
-        super(name, IdentifierProvider.createId("arc"));
+        super(name, IdentifierProvider.createId("aam"));
     }
 
     /**

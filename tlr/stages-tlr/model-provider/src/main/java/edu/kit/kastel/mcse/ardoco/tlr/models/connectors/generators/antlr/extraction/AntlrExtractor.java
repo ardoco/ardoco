@@ -30,6 +30,11 @@ public class AntlrExtractor extends CodeExtractor {
     }
 
     @Override
+    public String getIdPrefix() {
+        return "ae" + this.language.name().toLowerCase();
+    }
+
+    @Override
     public synchronized CodeModel extractModel() {
         if (!contentExtracted) {
             extractContent();
