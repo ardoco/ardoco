@@ -41,7 +41,7 @@ public class ExArch extends ArdocoRunner {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         definePipeline(inputText, codeConfiguration, additionalConfigs, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt);
         setOutputDirectory(outputDir);

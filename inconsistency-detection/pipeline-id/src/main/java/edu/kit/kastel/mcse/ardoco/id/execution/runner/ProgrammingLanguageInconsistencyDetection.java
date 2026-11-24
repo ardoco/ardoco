@@ -35,7 +35,7 @@ public class ProgrammingLanguageInconsistencyDetection extends ArdocoRunner {
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, LargeLanguageModel llmForNer,
             LargeLanguageModel validationAgentLlm) {
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");

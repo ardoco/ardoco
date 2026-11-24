@@ -42,7 +42,7 @@ public class ArtemisInExArch extends ArdocoRunner {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         definePipeline(inputText, codeConfiguration, additionalConfigs, llmForExArch, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt, llmForNer);
         setOutputDirectory(outputDir);

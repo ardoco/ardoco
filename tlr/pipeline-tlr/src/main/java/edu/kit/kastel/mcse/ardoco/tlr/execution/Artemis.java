@@ -62,7 +62,7 @@ public class Artemis extends ArdocoRunner {
                 .metamodel() != null)) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         DataRepositoryHelper.putInputText(getArdoco().getDataRepository(), CommonUtilities.readInputText(inputText));
         definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs, llm, strategies);
         isSetUp = true;

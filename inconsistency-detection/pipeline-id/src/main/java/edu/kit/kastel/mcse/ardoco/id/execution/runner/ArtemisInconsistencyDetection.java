@@ -49,7 +49,7 @@ public class ArtemisInconsistencyDetection extends ArdocoRunner {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
 
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         var text = CommonUtilities.readInputText(inputText);
         if (text.isBlank()) {
             throw new IllegalArgumentException("Cannot deal with empty input text. Maybe there was an error reading the file.");

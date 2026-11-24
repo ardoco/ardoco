@@ -39,7 +39,7 @@ public class ArtemisInTransArC extends ArdocoRunner {
         if (architectureConfiguration.metamodel() != null || codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
-        LlmCache.configure();
+        LlmCache.ensureConfigured();
         definePipeline(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llmForNer);
         setOutputDirectory(outputDir);
         isSetUp = true;
