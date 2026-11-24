@@ -24,13 +24,11 @@ public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends Abst
     private static final Logger logger = LoggerFactory.getLogger(CodeDirectoryProgrammingLanguageInconsistencyInformant.class);
     private static final int MAX_VALIDATION_RETRIES = 3;
 
-    private final String codeProjectPath;
     private final ProgrammingLanguageValidationLlmAgent validationAgent;
 
     public CodeDirectoryProgrammingLanguageInconsistencyInformant(DataRepository dataRepository, ArtemisNerStrategy nerStrategy, String codeProjectPath,
             LargeLanguageModel validationAgentLlm) {
         super("CodeDirectoryProgrammingLanguageInconsistencyInformant", dataRepository, nerStrategy);
-        this.codeProjectPath = codeProjectPath;
 
         this.validationAgent = AiServices.builder(ProgrammingLanguageValidationLlmAgent.class)
                 .chatModel(validationAgentLlm.create())
@@ -48,7 +46,7 @@ public class CodeDirectoryProgrammingLanguageInconsistencyInformant extends Abst
         for (int attempt = 1; attempt <= MAX_VALIDATION_RETRIES; attempt++) {
             try {
                 return validationAgent.validateProgrammingLanguageStatementAgainstCodeDirectory(namedEntityOccurrence, programmingLanguageName,
-                        fullDocumentationText, sentenceText, codeProjectPath);
+                        fullDocumentationText, sentenceText);
             } catch (IllegalArgumentException e) {
                 lastIllegalArgumentException = e;
                 logger.warn("Validation failed. Retrying ({}/{}).", attempt, MAX_VALIDATION_RETRIES, e);
