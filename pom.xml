@@ -90,6 +90,7 @@
     <metrics.version>0.3.0</metrics.version>
     <!-- Keep in line with llm-access; aligns the langchain4j modules of llm-access, NAER and model-provider -->
     <langchain4j.version>1.23.0</langchain4j.version>
+    <llm-access.version>0.3.0</llm-access.version>
   </properties>
 
   <dependencyManagement>
@@ -119,6 +120,11 @@
         <version>${langchain4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.github.ardoco</groupId>
+        <artifactId>llm-access</artifactId>
+        <version>${llm-access.version}</version>
       </dependency>
 
       <!-- Apache Commons -->
