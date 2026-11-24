@@ -88,7 +88,7 @@
     <!-- Jackson 2 is only used transitively (e.g., by langchain4j); the BOM keeps its modules aligned -->
     <jackson2.version>2.23.0</jackson2.version>
     <metrics.version>0.3.0</metrics.version>
-    <!-- Keep in line with llm-access; aligns the older langchain4j modules pulled in by named-architecture-entity-recognition -->
+    <!-- Keep in line with llm-access; aligns the langchain4j modules of llm-access, NAER and model-provider -->
     <langchain4j.version>1.23.0</langchain4j.version>
   </properties>
 
