@@ -1,0 +1,15 @@
+[
+  {
+    "modelProvider": "OPEN_AI",
+    "model": "gpt-4.1",
+    "modelTimeoutSeconds": 120,
+    "modelTemperature": 0.0,
+    "testProject": "all",
+    "useGoldstandardComponentNames": true,
+    "prompt": {
+      "first": "In the following text, identify all architecturally relevant components that are explicitly named.\n\nFor each component, provide:\n- The primary name (as it appears in the text)\n- All alternative names or abbreviations found in the text (case-insensitive match)\n- All complete lines where the component is mentioned.\n\nRules:\n- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)\n- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components\n\nReturn your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.\n",
+      "second": "Given the last answer (see below), for each component, return a JSON object containing:\n- \"name\": the primary name of the component (use the most descriptive name).\n- \"type\": \"COMPONENT\"\n- \"alternativeNames\": a list of alternative or ambiguous names, if applicable.\n- \"occurrences\": a list of lines where the component appears or is referenced.\n\nOutput should be a JSON array (and nothing else!), like:\n[\n    {\n        \"name\": \"...\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [...],\n        \"occurrences\": [...]\n    },\n    ...\n]\n\nExample:\n[\n    {\n        \"name\": \"AuthenticationService\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [\"service\"],\n        \"occurrences\": [\"The AuthenticationService handles login requests.\", \"It forwards valid credentials to the UserDatabase.\", \"The service logs each attempt.\"]\n    },\n    {\n        \"name\": \"UserDatabase\",\n        \"type\": \"COMPONENT\",\n        \"alternativeNames\": [\"DB\"],\n        \"occurrences\": [\"It forwards valid credentials to the UserDatabase.\", \"The DB then validates the credentials.\"]\n    }\n]\n",
+      "type": "TWO_PART_PROMPT"
+    }
+  }
+]

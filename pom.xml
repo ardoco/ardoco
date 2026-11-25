@@ -4,7 +4,7 @@
 
   <groupId>io.github.ardoco</groupId>
   <artifactId>parent</artifactId>
-  <version>2.2.0-SNAPSHOT</version>
+  <version>2.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>ARDoCo</name>
@@ -64,7 +64,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>2.2.0-SNAPSHOT</revision>
+    <revision>2.3.0-SNAPSHOT</revision>
     <ardoco.version>${revision}</ardoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -81,13 +81,15 @@
     <spotless.version>3.10.4</spotless.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <javaparser.version>3.28.2</javaparser.version>
-    <mockito.version>5.23.0</mockito.version>
+    <mockito.version>5.24.0</mockito.version>
     <stanford.corenlp.version>4.6.0</stanford.corenlp.version>
     <antlr.version>4.13.2</antlr.version>
     <jackson.version>3.3.0</jackson.version>
     <!-- Jackson 2 is only used transitively (e.g., by langchain4j); the BOM keeps its modules aligned -->
     <jackson2.version>2.23.0</jackson2.version>
     <metrics.version>0.3.0</metrics.version>
+    <!-- Aligns the langchain4j modules of NAER and its consumers -->
+    <langchain4j.version>1.23.0</langchain4j.version>
   </properties>
 
   <dependencyManagement>
@@ -110,6 +112,13 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.22.0</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-bom</artifactId>
+        <version>${langchain4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <!-- Apache Commons -->
@@ -373,7 +382,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.1</version>
           <executions>
             <execution>
               <goals>
@@ -428,7 +437,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>

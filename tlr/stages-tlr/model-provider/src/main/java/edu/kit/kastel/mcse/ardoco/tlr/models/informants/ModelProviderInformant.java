@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import java.io.File;
@@ -70,7 +70,7 @@ public final class ModelProviderInformant extends Informant {
             return;
         }
 
-        IdentifierProvider.reset();
+        IdentifierProvider.reset(this.extractor.getIdPrefix());
         this.getLogger().info("Extracting code model.");
         extractedModel = this.extractor.extractModel();
         this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
