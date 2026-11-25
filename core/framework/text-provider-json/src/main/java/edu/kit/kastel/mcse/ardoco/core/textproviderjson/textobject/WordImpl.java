@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.io.Serial;
@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
@@ -21,11 +22,11 @@ public class WordImpl implements Word {
     private static final long serialVersionUID = 411612592257031380L;
     private final Text parent;
     private final int indexInText;
-    private Word preWord;
-    private Word nextWord;
+    private @Nullable Word preWord;
+    private @Nullable Word nextWord;
 
     private final int sentenceNo;
-    private Phrase phrase;
+    private @Nullable Phrase phrase;
     private final String text;
     private final POSTag posTag;
     private final String lemma;
@@ -68,6 +69,7 @@ public class WordImpl implements Word {
     }
 
     @Override
+    @SuppressWarnings("NullAway") // Word#getPreWord is not annotated @Nullable, but the first word has no predecessor
     public Word getPreWord() {
         int preWordIndex = indexInText - 1;
         if (preWord == null && preWordIndex > 0) {
@@ -77,6 +79,7 @@ public class WordImpl implements Word {
     }
 
     @Override
+    @SuppressWarnings("NullAway") // Word#getNextWord is not annotated @Nullable, but the last word has no successor
     public Word getNextWord() {
         int nextWordIndex = indexInText + 1;
         if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {
@@ -111,10 +114,12 @@ public class WordImpl implements Word {
 
     @Override
     public Phrase getPhrase() {
-        if (this.phrase == null) {
-            this.phrase = loadPhrase();
+        var currentPhrase = this.phrase;
+        if (currentPhrase == null) {
+            currentPhrase = loadPhrase();
+            this.phrase = currentPhrase;
         }
-        return this.phrase;
+        return currentPhrase;
     }
 
     private Phrase loadPhrase() {

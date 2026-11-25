@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.dto;
 
 import java.util.Objects;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.*;
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 
 public class OutgoingDependencyDto {
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private DependencyTag dependencyType;
     private long targetWordId;
 

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.io.Serial;
@@ -63,7 +63,7 @@ public class TextImpl implements Text {
         if (wordsIndex.isEmpty()) {
             words();
         }
-        return wordsIndex.get(index);
+        return Objects.requireNonNull(wordsIndex.get(index), "No word at index " + index);
     }
 
     @Override
