@@ -153,6 +153,23 @@ public class PersistenceBridge extends AbstractConfigurable {
     }
 
     /**
+     * Returns the registered handler for a caller that needs Neo4j storage, such as a Neo4j run that is already in progress. Unlike
+     * {@link #getHandler()} it never returns {@code null}.
+     *
+     * @return the registered handler
+     * @throws IllegalStateException if the storage mode is not neo4j (for example because another configuration was applied during the run) or
+     *                               no handler is registered
+     */
+    public static PersistenceHandler requireHandler() {
+        PersistenceHandler current = getHandler();
+        if (current == null) {
+            throw new IllegalStateException(
+                    KEY_STORAGE + " is " + getStorage() + ", not neo4j, so no PersistenceHandler is available; " + "the persistence settings were changed while a Neo4j run was in progress");
+        }
+        return current;
+    }
+
+    /**
      * Saves a noun mapping in Neo4j storage mode. Inside {@link #withDeferredWrites} the save is deferred and batched with the other
      * noun-mapping saves of the scope; a pending deletion of the same {@code ardocoId} is cancelled (the node is updated instead of deleted and
      * recreated).

@@ -20,6 +20,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
 import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.RunMetadataFilter;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
@@ -206,10 +207,11 @@ public final class Ardoco extends Pipeline {
                 resolveConfiguredExportDirectory();
         this.pendingKnowledgeGraphExportDirectory = null;
 
-        PersistenceBridge.getHandler().saveRunMetadataFinish(this.projectName, Instant.now().toString());
+        PersistenceHandler persistenceHandler = PersistenceBridge.requireHandler();
+        persistenceHandler.saveRunMetadataFinish(this.projectName, Instant.now().toString());
 
         classLogger.info("Exporting the Neo4j knowledge graph...");
-        String json = PersistenceBridge.getHandler().exportGraphAsJson();
+        String json = persistenceHandler.exportGraphAsJson();
         File file = getOutputFile(this.projectName, exportDirectory, "knowledgeGraph_", ".json");
         try {
             Files.createDirectories(exportDirectory.toPath());
@@ -220,7 +222,7 @@ public final class Ardoco extends Pipeline {
         classLogger.info("Wrote the knowledge graph to {}", file);
 
         classLogger.info("Wiping the Neo4j database (transient per-run store; the export above is what is kept)...");
-        PersistenceBridge.getHandler().deleteAllData();
+        persistenceHandler.deleteAllData();
     }
 
     /**
@@ -253,7 +255,7 @@ public final class Ardoco extends Pipeline {
     private void wipeAfterFailure(Throwable cause) {
         classLogger.error("Run failed; wiping the Neo4j database so no partial results are kept", cause);
         try {
-            PersistenceBridge.getHandler().deleteAllData();
+            PersistenceBridge.requireHandler().deleteAllData();
         } catch (RuntimeException wipeException) {
             classLogger.warn("Failed to wipe Neo4j after the aborted run; a stale database may remain until the next run starts", wipeException);
         }
