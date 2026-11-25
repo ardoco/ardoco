@@ -51,9 +51,6 @@ public class ArCoTLInformant extends Informant {
             }
         }
 
-        Objects.requireNonNull(architectureModel, "No architecture model found in the data repository.");
-        Objects.requireNonNull(codeModel, "No code model found in the data repository.");
-
         Node root = TraceLinkGenerator.getRoot(); //TODO maybe add preprocessing
         var traceLinks = TraceLinkGenerator.generateTraceLinks(root, architectureModel, codeModel);
         samCodeTraceabilityState.addSamCodeTraceLinks(traceLinks);
