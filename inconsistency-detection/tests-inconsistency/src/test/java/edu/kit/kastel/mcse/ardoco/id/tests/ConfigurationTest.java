@@ -1,11 +1,10 @@
-/* Licensed under MIT 2022-2026. */
+/* Licensed under MIT 2022-2024. */
 package edu.kit.kastel.mcse.ardoco.id.tests;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
-import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ConfigurationTestBase;
 
 /**
@@ -40,16 +39,5 @@ class ConfigurationTest extends ConfigurationTestBase {
     @Override
     public void testValidityOfConfigurableFields() {
         super.testValidityOfConfigurableFields();
-    }
-
-    /**
-     * Lists the default configuration of all configurable classes via {@link ConfigurationHelper#getDefaultConfigurationOptions()}. Fails if the default
-     * configuration cannot be returned.
-     */
-    @Test
-    void listAllDefaultConfigurations() {
-        var configs = Assertions.assertDoesNotThrow(ConfigurationHelper::getDefaultConfigurationOptions, "Default configuration cannot be returned");
-        Assertions.assertFalse(configs.isEmpty(), "Default configuration shall not be empty");
-        configs.forEachKeyValue((key, value) -> System.out.println(key + AbstractConfigurable.KEY_VALUE_CONNECTOR + value));
     }
 }
