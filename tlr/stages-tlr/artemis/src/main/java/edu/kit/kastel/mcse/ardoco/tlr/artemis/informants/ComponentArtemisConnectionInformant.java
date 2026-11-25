@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,7 +38,9 @@ public class ComponentArtemisConnectionInformant extends ArtemisConnectionInform
         var similarityUtils = SimilarityUtils.getInstance();
 
         var state = DataRepositoryHelper.getArtemisConnectionStates(dataRepository).getState(strategy.getTarget());
-        var modelEndpoints = DataRepositoryHelper.getModelStatesData(dataRepository).getModel(strategy.getMetamodel()).getEndpoints();
+        var model = Objects.requireNonNull(DataRepositoryHelper.getModelStatesData(dataRepository).getModel(strategy.getMetamodel()),
+                "Model must be available");
+        var modelEndpoints = model.getEndpoints();
 
         var namedEntities = state.getNamedEntities();
         var unlinkedNamedEntities = Lists.mutable.withAll(namedEntities);
