@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
+
+import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -22,10 +24,10 @@ public abstract class Filter extends Informant {
     public void process() {
         var dataRepository = getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
-        var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
+        var inconsistencyStates = Objects.requireNonNull(DataRepositoryHelper.getInconsistencyStates(dataRepository), "InconsistencyStates must be available");
 
         for (var model : modelStates.getMetamodels()) {
-            var modelState = modelStates.getModel(model);
+            var modelState = Objects.requireNonNull(modelStates.getModel(model), "Model must be available");
             var inconsistencyState = inconsistencyStates.getInconsistencyState(modelState.getMetamodel());
             filterRecommendedInstances(inconsistencyState);
         }

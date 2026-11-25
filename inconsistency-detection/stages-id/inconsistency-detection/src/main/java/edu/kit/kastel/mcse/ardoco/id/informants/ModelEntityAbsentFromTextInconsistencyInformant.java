@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -77,10 +78,10 @@ public class ModelEntityAbsentFromTextInconsistencyInformant extends Informant {
         var dataRepository = this.getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
-        var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
+        var inconsistencyStates = Objects.requireNonNull(DataRepositoryHelper.getInconsistencyStates(dataRepository), "InconsistencyStates must be available");
 
         for (var metamodel : modelStates.getMetamodels()) {
-            var model = modelStates.getModel(metamodel);
+            var model = Objects.requireNonNull(modelStates.getModel(metamodel), "Model must be available");
             var connectionState = connectionStates.getConnectionState(metamodel);
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
 

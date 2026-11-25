@@ -1,7 +1,8 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.id.agents;
 
 import java.util.List;
+import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
@@ -24,9 +25,9 @@ public class InitialInconsistencyAgent extends PipelineAgent {
         var dataRepository = getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
-        var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
+        var inconsistencyStates = Objects.requireNonNull(DataRepositoryHelper.getInconsistencyStates(dataRepository), "InconsistencyStates must be available");
         for (var model : modelStates.getMetamodels()) {
-            var modelState = modelStates.getModel(model);
+            var modelState = Objects.requireNonNull(modelStates.getModel(model), "Model must be available");
             Metamodel metamodel = modelState.getMetamodel();
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
             var recommendationState = recommendationStates.getRecommendationState(metamodel);
