@@ -2,8 +2,6 @@
 package edu.kit.kastel.mcse.ardoco.tlr.tests.neo4jschema.util;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,16 +31,12 @@ public final class PersistenceTestSupport {
         if (!file.isFile()) {
             throw new IllegalStateException("Exported knowledge graph not found: " + file.getAbsolutePath());
         }
-        try {
-            return ExportedGraph.read(file);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return ExportedGraph.read(file);
     }
 
     public record ExportedGraph(long nodeCount, long relationshipCount, List<JsonNode> nodes, List<JsonNode> relationships) {
 
-        public static ExportedGraph read(File file) throws IOException {
+        public static ExportedGraph read(File file) {
             ObjectMapper mapper = JsonHandling.createObjectMapper();
             JsonNode root = mapper.readTree(file);
             List<JsonNode> nodes = new ArrayList<>();

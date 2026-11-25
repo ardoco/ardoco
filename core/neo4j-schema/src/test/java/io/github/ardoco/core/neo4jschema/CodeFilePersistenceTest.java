@@ -241,7 +241,7 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
                 .bind(codeFileId)
                 .to("id")
                 .fetchAs(List.class)
-                .mappedBy((typeSystem, record) -> record.get("l").asList(value -> value.asString()))
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("l").asList(value -> value.asString()))
                 .one()
                 .orElseThrow();
     }
@@ -251,7 +251,7 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
                 .bind(occurrenceId)
                 .to("id")
                 .fetchAs(Map.class)
-                .mappedBy((typeSystem, record) -> record.get("p").asMap())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("p").asMap())
                 .one()
                 .orElseThrow();
     }
@@ -287,7 +287,7 @@ class CodeFilePersistenceTest extends AbstractNeo4jTest {
                 .bind(codeFileId)
                 .to("id")
                 .fetchAs(Map.class)
-                .mappedBy((typeSystem, record) -> record.get("p").asMap())
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("p").asMap())
                 .one()
                 .orElseThrow();
     }

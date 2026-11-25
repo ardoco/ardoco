@@ -612,8 +612,8 @@ public class TraceLinkPersistenceService {
                 .bind(TraceLinkType.ARCHITECTURE_CODE.name())
                 .to("type2")
                 .fetchAs(TransitiveChainQueryResult.class)
-                .mappedBy((typeSystem, record) -> new TransitiveChainQueryResult(sentenceMapper.apply(typeSystem, record.get("s")), traceableMapper.apply(
-                        typeSystem, record.get("mid")), traceableMapper.apply(typeSystem, record.get("end"))))
+                .mappedBy((typeSystem, neo4jRecord) -> new TransitiveChainQueryResult(sentenceMapper.apply(typeSystem, neo4jRecord.get("s")), traceableMapper
+                        .apply(typeSystem, neo4jRecord.get("mid")), traceableMapper.apply(typeSystem, neo4jRecord.get("end"))))
                 .all()
                 .stream()
                 .map(this::createTransitiveLink)

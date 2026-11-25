@@ -25,13 +25,13 @@ public abstract class InconsistencyNode {
     @Relationship(type = "HAS_INCONSISTENCY", direction = Relationship.Direction.INCOMING)
     protected TraceableNode traceableNode;
 
-    public InconsistencyNode(String reason, String type) {
+    protected InconsistencyNode(String reason, String type) {
         this.reason = reason;
         this.type = type;
         traceableNode = null;
     }
 
-    public InconsistencyNode() {
+    protected InconsistencyNode() {
         traceableNode = null;
     }
 

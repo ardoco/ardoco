@@ -11,7 +11,7 @@ public abstract class ArchitectureItemNode extends TraceableNode {
 
     protected String name;
 
-    public ArchitectureItemNode(String name, String ardocoId) {
+    protected ArchitectureItemNode(String name, String ardocoId) {
         super(ardocoId);
         this.name = name;
     }

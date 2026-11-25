@@ -109,8 +109,6 @@ class DocumentationPersistenceTest extends AbstractPersistenceTest {
     @Test
     void testSaveAndLoadDocumentationFromNLPProvider() {
         DataRepository dataRepository = new DataRepository();
-        // this.inputText is the path to the input file (see RunnerBaseTest), not its content - read the content first;
-        // feeding the raw path string to CoreNLP fed it a nonsensical "document".
         DataRepositoryHelper.putInputText(dataRepository, CommonUtilities.readInputText(new File(this.inputText)));
 
         CoreNLPProvider provider = new CoreNLPProvider(dataRepository);

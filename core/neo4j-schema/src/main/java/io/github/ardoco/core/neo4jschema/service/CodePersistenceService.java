@@ -43,6 +43,11 @@ public class CodePersistenceService {
     private static final String LANGUAGE = "language";
     private static final String ARDOCO_ID = "ardocoId";
     private static final String COMPILATION_UNIT_ID = "compilationUnitId";
+    private static final String PROPS = "props";
+    private static final String PATH_ELEMENTS = "pathElements";
+    private static final String EXTENSION = "extension";
+    private static final String SOURCE_ID = "sourceId";
+    private static final String TARGET_ID = "targetId";
     private static final ObjectMapper OBJECT_MAPPER = JsonHandling.createObjectMapper();
 
     private final CodeModelRepository repository;
@@ -100,7 +105,7 @@ public class CodePersistenceService {
                 .bind(metamodel.name())
                 .to("mt")
                 .fetchAs(String.class)
-                .mappedBy((typeSystem, record) -> record.get(MODEL_ID).asString(null))
+                .mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get(MODEL_ID).asString(null))
                 .all());
         modelIds.removeIf(java.util.Objects::isNull);
         if (modelIds.isEmpty()) {
@@ -121,7 +126,7 @@ public class CodePersistenceService {
         for (Map<String, Object> row : itemRows) {
             String id = (String) row.get("id");
             @SuppressWarnings("unchecked") List<String> labels = (List<String>) row.get("labels");
-            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get("props");
+            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get(PROPS);
             nodeMap.put(id, instantiateItemNode(id, labels, props));
         }
 
@@ -161,12 +166,12 @@ public class CodePersistenceService {
                 """).bind(modelId).to(MODEL_ID).fetch().all();
         List<CodeFile> codeFiles = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get("props");
+            @SuppressWarnings("unchecked") Map<String, Object> props = (Map<String, Object>) row.get(PROPS);
             Map<String, Object> json = new LinkedHashMap<>();
             json.put("id", props.get(ARDOCO_ID));
             json.put("name", props.get("name"));
-            json.put("pathElements", props.get("pathElements"));
-            json.put("extension", props.get("extension"));
+            json.put(PATH_ELEMENTS, props.get(PATH_ELEMENTS));
+            json.put(EXTENSION, props.get(EXTENSION));
             json.put(COMPILATION_UNIT_ID, props.get(COMPILATION_UNIT_ID));
             codeFiles.add(OBJECT_MAPPER.convertValue(json, CodeFile.class));
         }
@@ -183,8 +188,7 @@ public class CodePersistenceService {
         if (labels.contains("CodePackage")) {
             node = new CodePackageNode(name, id);
         } else if (labels.contains("CodeCompilationUnit")) {
-            node = new CodeCompilationUnitNode(name, id, (String) props.get("extension"), (String) props.get(LANGUAGE), toStringList(props.get(
-                    "pathElements")));
+            node = new CodeCompilationUnitNode(name, id, (String) props.get(EXTENSION), (String) props.get(LANGUAGE), toStringList(props.get(PATH_ELEMENTS)));
         } else if (labels.contains("CodeAssembly")) {
             node = new CodeAssemblyNode(name, id, (String) props.get(LANGUAGE));
         } else if (labels.contains("ClassUnit")) {
@@ -205,7 +209,7 @@ public class CodePersistenceService {
         // Preserve null (property absent) vs empty list: toStringList() would collapse a missing property into [], which then overwrites a null domain content list.
         node.setContentIds(toStringListOrNull(props.get("contentIds")));
         if (node instanceof DatatypeNode datatypeNode) {
-            datatypeNode.setCompilationUnitId((String) props.get("compilationUnitId"));
+            datatypeNode.setCompilationUnitId((String) props.get(COMPILATION_UNIT_ID));
             datatypeNode.setParentDatatypeId((String) props.get("parentDatatypeId"));
             // A property that was null/empty on save is absent here, so these come back null - which is exactly what the domain needs to distinguish a null id list
             // from an empty one.
@@ -313,13 +317,13 @@ public class CodePersistenceService {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(ARDOCO_ID, codeFile.getId());
             putIfNotNull(props, "name", codeFile.getName());
-            props.put("pathElements", codeFile.getPathElements());
-            props.put("extension", codeFile.getExtension());
+            props.put(PATH_ELEMENTS, codeFile.getPathElements());
+            props.put(EXTENSION, codeFile.getExtension());
             codeFile.getCompilationUnitId().ifPresent(compilationUnitId -> {
                 props.put(COMPILATION_UNIT_ID, compilationUnitId);
-                fileOfEdges.add(Map.of("sourceId", codeFile.getId(), "targetId", compilationUnitId));
+                fileOfEdges.add(Map.of(SOURCE_ID, codeFile.getId(), TARGET_ID, compilationUnitId));
             });
-            rows.add(Map.of("index", (long) index, "props", props));
+            rows.add(Map.of("index", (long) index, PROPS, props));
         }
         for (List<Map<String, Object>> chunk : chunk(rows, BATCH_CHUNK_SIZE)) {
             neo4jClient.query("""
@@ -365,9 +369,9 @@ public class CodePersistenceService {
         for (CodeItemNode node : items) {
             Map<String, Object> props = baseItemProps(node);
             if (node instanceof CodeCompilationUnitNode c) {
-                putIfNotNull(props, "extension", c.getExtension());
+                putIfNotNull(props, EXTENSION, c.getExtension());
                 putIfNotNull(props, LANGUAGE, c.getLanguage());
-                putIfNotNull(props, "pathElements", c.getPathElements());
+                putIfNotNull(props, PATH_ELEMENTS, c.getPathElements());
                 compilationUnits.put(node.getArdocoId(), props);
             } else if (node instanceof CodeAssemblyNode c) {
                 putIfNotNull(props, LANGUAGE, c.getLanguage());
@@ -400,7 +404,7 @@ public class CodePersistenceService {
 
     private Map<String, Object> baseItemProps(CodeItemNode node) {
         Map<String, Object> props = new LinkedHashMap<>();
-        props.put("ardocoId", node.getArdocoId());
+        props.put(ARDOCO_ID, node.getArdocoId());
         putIfNotNull(props, "name", node.getName());
         putIfNotNull(props, "comment", node.getComment());
         putIfNotNull(props, "parentModuleId", node.getParentModuleId());
@@ -409,7 +413,7 @@ public class CodePersistenceService {
     }
 
     private void addDatatypeProps(Map<String, Object> props, DatatypeNode node) {
-        putIfNotNull(props, "compilationUnitId", node.getCompilationUnitId());
+        putIfNotNull(props, COMPILATION_UNIT_ID, node.getCompilationUnitId());
         putIfNotNull(props, "parentDatatypeId", node.getParentDatatypeId());
         putIfNotNull(props, "extendedDataTypesIds", node.getExtendedDataTypesIds());
         putIfNotNull(props, "implementedDataTypesIds", node.getImplementedDataTypesIds());
@@ -440,7 +444,7 @@ public class CodePersistenceService {
         List<Map<String, Object>> edges = new ArrayList<>();
         for (CodeItemNode parent : items) {
             for (CodeItemNode child : parent.getContent()) {
-                edges.add(Map.of("sourceId", parent.getArdocoId(), "targetId", child.getArdocoId()));
+                edges.add(Map.of(SOURCE_ID, parent.getArdocoId(), TARGET_ID, child.getArdocoId()));
             }
         }
         createTraceableToTraceableEdges("CONTAINS_CODE_ITEM", edges, errors);
@@ -489,7 +493,7 @@ public class CodePersistenceService {
             return;
         }
         for (String targetId : targetIds) {
-            edges.add(Map.of("sourceId", sourceId, "targetId", targetId));
+            edges.add(Map.of(SOURCE_ID, sourceId, TARGET_ID, targetId));
         }
     }
 

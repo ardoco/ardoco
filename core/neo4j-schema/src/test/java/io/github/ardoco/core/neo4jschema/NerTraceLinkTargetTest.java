@@ -45,9 +45,9 @@ class NerTraceLinkTargetTest extends AbstractNeo4jTest {
         var entity = new NamedArchitectureEntity("Gateway", new TreeSet<>(), List.of(occurrence));
         persistenceHandler.saveNamedArchitectureEntity(entity, new ArtemisTarget(Metamodel.ARCHITECTURE_WITH_COMPONENTS, NamedEntityType.COMPONENT), false);
         var target = new FakeArchitectureEntity("Gateway", "ner_unknown_target", "component");
-        var link = new NamedArchitectureEntityToModelTraceLink(occurrence, target);
+        var links = List.of(new NamedArchitectureEntityToModelTraceLink(occurrence, target));
 
-        IllegalStateException thrown = Assertions.assertThrows(IllegalStateException.class, () -> persistenceHandler.saveTraceLinks(List.of(link)));
+        IllegalStateException thrown = Assertions.assertThrows(IllegalStateException.class, () -> persistenceHandler.saveTraceLinks(links));
 
         Assertions.assertTrue(thrown.getMessage().contains(FakeArchitectureEntity.class.getName()), thrown.getMessage());
         Assertions.assertEquals(0L, neo4jClient.query("MATCH ()-[r:TRACES_TO]->() RETURN count(r) AS c").fetchAs(Long.class).one().orElseThrow());
