@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
 
+import edu.kit.kastel.mcse.ardoco.core.configuration.NoDefaultConfiguration;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
@@ -13,6 +14,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
+// TODO: Check how to provide the default configuration: its constructor needs an ArchitectureConfiguration and a CodeConfiguration.
+@NoDefaultConfiguration
 public class ArtemisPreprocessing extends AbstractExecutionStage {
 
     public ArtemisPreprocessing(DataRepository dataRepository, @Nullable ArchitectureConfiguration architectureConfiguration,
