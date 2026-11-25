@@ -82,7 +82,7 @@ public class CodeModelReadOnlyTools {
             return "(empty)";
         }
 
-        return entries.stream().limit(MAX_DIRECTORY_ENTRIES).collect(Collectors.joining("\n"));
+        return entries.stream().limit(MAX_DIRECTORY_ENTRIES).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
@@ -136,7 +136,7 @@ public class CodeModelReadOnlyTools {
         }
 
         if (entries.size() > MAX_TREE_ENTRIES) {
-            result.append("\n").append("[TREE TRUNCATED]");
+            result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
         }
 
         return result.toString();
@@ -178,7 +178,7 @@ public class CodeModelReadOnlyTools {
                 .filter(path -> matcher.matches(Path.of(path)))
                 .sorted()
                 .limit(MAX_SEARCH_RESULTS)
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining(System.lineSeparator()));
 
         if (result.isEmpty()) {
             return "No files found for glob: " + glob;
@@ -335,7 +335,7 @@ public class CodeModelReadOnlyTools {
     private void appendTreeEntry(StringBuilder result, String relativePath, boolean directory) {
         int depth = Math.max(0, relativePath.split("/").length - 1);
 
-        result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath).append("\n");
+        result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath).append(System.lineSeparator());
     }
 
     private String normalizeDirectoryPath(String path) {

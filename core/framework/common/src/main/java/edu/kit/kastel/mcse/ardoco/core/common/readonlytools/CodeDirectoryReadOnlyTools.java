@@ -8,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -101,7 +101,7 @@ public class CodeDirectoryReadOnlyTools {
             return stream.sorted(Comparator.comparing(Path::toString))
                     .limit(MAX_DIRECTORY_ENTRIES)
                     .map(this::formatDirectoryEntry)
-                    .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining(System.lineSeparator()));
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not list directory: " + path, e);
@@ -134,15 +134,15 @@ public class CodeDirectoryReadOnlyTools {
             return "Path is not a directory: " + path;
         }
 
-        TreeBuilder builder = new TreeBuilder(root, maxDepth);
+        TreeVisitor visitor = new TreeVisitor(root, maxDepth);
 
         try {
-            builder.addChildren(root);
+            Files.walkFileTree(root, visitor);
         } catch (IOException e) {
             throw new UncheckedIOException("Could not create tree for: " + path, e);
         }
 
-        return builder.render();
+        return visitor.render();
     }
 
     // -------------------------------------------------------------------------
@@ -177,7 +177,7 @@ public class CodeDirectoryReadOnlyTools {
                 return content;
             }
 
-            return content.substring(0, MAX_FILE_CHARS) + "\n[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
+            return content.substring(0, MAX_FILE_CHARS) + System.lineSeparator() + "[TRUNCATED: file exceeds " + MAX_FILE_CHARS + " characters]";
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not read file: " + path, e);
@@ -234,7 +234,7 @@ public class CodeDirectoryReadOnlyTools {
                 currentLine++;
 
                 if (currentLine >= startLine) {
-                    result.append(currentLine).append(": ").append(line).append("\n");
+                    result.append(currentLine).append(": ").append(line).append(System.lineSeparator());
                 }
             }
 
@@ -280,7 +280,7 @@ public class CodeDirectoryReadOnlyTools {
             var result = stream.filter(Files::isRegularFile).filter(path -> !isInsideIgnoredDirectory(path)).filter(path -> {
                 Path relative = projectRoot.relativize(path);
                 return matcher.matches(relative);
-            }).map(this::toRelativeString).sorted().limit(MAX_SEARCH_RESULTS).collect(Collectors.joining("\n"));
+            }).sorted().limit(MAX_SEARCH_RESULTS).map(this::toRelativeString).collect(Collectors.joining(System.lineSeparator()));
             return result.isEmpty() ? "No files found matching glob pattern: " + glob : result;
 
         } catch (IOException e) {
@@ -314,16 +314,16 @@ public class CodeDirectoryReadOnlyTools {
             throw new UncheckedIOException("Could not search project.", e);
         }
 
-        List<String> results = visitor.search();
+        List<String> results = visitor.results;
 
         if (results.isEmpty()) {
             return "No matches found for: " + query;
         }
 
-        String result = String.join("\n\n", results);
+        String result = String.join(System.lineSeparator() + System.lineSeparator(), results);
 
         if (results.size() >= MAX_SEARCH_RESULTS) {
-            result += "\n\n[SEARCH RESULTS TRUNCATED]";
+            result += System.lineSeparator() + System.lineSeparator() + "[SEARCH RESULTS TRUNCATED]";
         }
 
         return result;
@@ -335,7 +335,7 @@ public class CodeDirectoryReadOnlyTools {
 
     @Tool("""
             Returns metadata about a project-relative file or directory,
-            including type and size.
+            including type, size, and last modification time.
             """)
     public String getFileInfo(String path) {
         LOGGER.debug("Getting file info: {}", path);
@@ -359,12 +359,14 @@ public class CodeDirectoryReadOnlyTools {
 
             long size = Files.isRegularFile(file) ? Files.size(file) : 0;
 
-            // No modification time: it differs between checkouts and would make the (cached) tool replies differ as well.
+            Instant modified = Files.getLastModifiedTime(file).toInstant();
+
             return """
                     Path: %s
                     Type: %s
                     Size: %d bytes
-                    """.formatted(toRelativeString(file), type, size);
+                    Last modified: %s
+                    """.formatted(toRelativeString(file), type, size, modified);
 
         } catch (IOException e) {
             throw new UncheckedIOException("Could not get file information: " + path, e);
@@ -472,49 +474,52 @@ public class CodeDirectoryReadOnlyTools {
     }
 
     /**
-     * Collects a bounded tree listing. Entries of a directory are visited in the order of their names, so the listing does
-     * not depend on the file system.
+     * Collects a bounded tree listing while walking the file tree.
      */
-    private final class TreeBuilder {
+    private final class TreeVisitor extends SimpleFileVisitor<Path> {
         private final Path root;
         private final int maxDepth;
         private final StringBuilder result = new StringBuilder();
         private int entryCount = 0;
 
-        private TreeBuilder(Path root, int maxDepth) {
+        private TreeVisitor(Path root, int maxDepth) {
             this.root = root;
             this.maxDepth = maxDepth;
         }
 
-        private void addChildren(Path directory) throws IOException {
-            // The children of this directory would be deeper than maxDepth.
-            if (depthOf(directory) >= maxDepth) {
-                return;
+        @Override
+        public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) {
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
             }
 
-            List<Path> children;
-            try (Stream<Path> stream = Files.list(directory)) {
-                children = stream.sorted(Comparator.comparing(child -> child.getFileName().toString())).toList();
+            boolean isRoot = directory.equals(root);
+            if (!isRoot && shouldIgnoreDirectory(directory)) {
+                return FileVisitResult.SKIP_SUBTREE;
             }
 
-            for (Path child : children) {
-                if (isLimitReached()) {
-                    return;
-                }
-
-                if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
-                    if (!shouldIgnoreDirectory(child)) {
-                        addEntry(child, true);
-                        addChildren(child);
-                    }
-                } else {
-                    addEntry(child, false);
-                }
+            if (root.relativize(directory).getNameCount() > maxDepth) {
+                return FileVisitResult.SKIP_SUBTREE;
             }
+
+            if (!isRoot) {
+                addEntry(directory, true);
+            }
+
+            return FileVisitResult.CONTINUE;
         }
 
-        private int depthOf(Path path) {
-            return path.equals(root) ? 0 : root.relativize(path).getNameCount();
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
+            }
+
+            if (root.relativize(file).getNameCount() <= maxDepth) {
+                addEntry(file, false);
+            }
+
+            return FileVisitResult.CONTINUE;
         }
 
         private boolean isLimitReached() {
@@ -528,7 +533,7 @@ public class CodeDirectoryReadOnlyTools {
 
         private String render() {
             if (isLimitReached()) {
-                result.append("\n").append("[TREE TRUNCATED]");
+                result.append(System.lineSeparator()).append("[TREE TRUNCATED]");
             }
 
             if (result.isEmpty()) {
@@ -542,16 +547,15 @@ public class CodeDirectoryReadOnlyTools {
 
             int depth = Math.max(0, relativePath.getNameCount() - 1);
 
-            result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath.toString().replace('\\', '/')).append("\n");
+            result.append("  ".repeat(depth)).append(directory ? "dir: " : "file: ").append(relativePath).append(System.lineSeparator());
         }
     }
 
     /**
-     * Collects the files to search while walking the project tree and searches them afterwards.
+     * Collects search results while walking the project tree.
      */
     private final class SearchVisitor extends SimpleFileVisitor<Path> {
         private final String normalizedQuery;
-        private final List<Path> files = new ArrayList<>();
         private final List<String> results = new ArrayList<>();
 
         private SearchVisitor(String normalizedQuery) {
@@ -564,41 +568,38 @@ public class CodeDirectoryReadOnlyTools {
                 return FileVisitResult.SKIP_SUBTREE;
             }
 
-            return FileVisitResult.CONTINUE;
+            return continueOrTerminate();
         }
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            if (Files.isRegularFile(file)) {
-                files.add(file);
-            }
-            return FileVisitResult.CONTINUE;
-        }
-
-        /**
-         * Searches the collected files in the order of their project-relative paths, so the (possibly truncated) results do
-         * not depend on the order in which the file system lists them.
-         */
-        private List<String> search() {
-            List<Path> sortedFiles = files.stream().sorted(Comparator.comparing(CodeDirectoryReadOnlyTools.this::toRelativeString)).toList();
-
-            for (Path file : sortedFiles) {
-                if (isLimitReached()) {
-                    break;
-                }
-
-                if (matchesPath(file)) {
-                    results.add(toRelativeString(file) + ": [path match]");
-                } else if (!isProbablyBinaryOrTooLarge(file)) {
-                    searchFileContent(file);
-                }
+            if (isLimitReached()) {
+                return FileVisitResult.TERMINATE;
             }
 
-            return results;
+            if (!Files.isRegularFile(file)) {
+                return FileVisitResult.CONTINUE;
+            }
+
+            if (matchesPath(file)) {
+                results.add(toRelativeString(file) + ": [path match]");
+                return continueOrTerminate();
+            }
+
+            if (isProbablyBinaryOrTooLarge(file)) {
+                return FileVisitResult.CONTINUE;
+            }
+
+            searchFileContent(file);
+            return continueOrTerminate();
         }
 
         private boolean isLimitReached() {
             return results.size() >= MAX_SEARCH_RESULTS;
+        }
+
+        private FileVisitResult continueOrTerminate() {
+            return isLimitReached() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
         }
 
         private boolean matchesPath(Path path) {
@@ -608,7 +609,7 @@ public class CodeDirectoryReadOnlyTools {
 
         private void searchFileContent(Path file) {
 
-            String relativePath = toRelativeString(file);
+            Path relativePath = projectRoot.relativize(file);
 
             try {
                 List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
@@ -646,10 +647,10 @@ public class CodeDirectoryReadOnlyTools {
                             snippet.append("   ");
                         }
 
-                        snippet.append(lineIndex + 1).append(": ").append(contextLine).append("\n");
+                        snippet.append(lineIndex + 1).append(": ").append(contextLine).append(System.lineSeparator());
                     }
 
-                    results.add(relativePath + "\n" + snippet);
+                    results.add(relativePath + System.lineSeparator() + snippet);
                 }
 
             } catch (IOException | RuntimeException e) {
