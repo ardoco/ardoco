@@ -1,12 +1,15 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
@@ -48,7 +51,7 @@ public class NodeResult {
      * @param endpointTuple the endpoint tuple for which the confidence is to be returned
      * @return the confidence of the endpoint tuple, or null if it doesn't exist yet
      */
-    public Confidence getConfidence(Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple) {
+    public @Nullable Confidence getConfidence(Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple) {
         return this.confidenceMap.get(endpointTuple);
     }
 
@@ -136,7 +139,7 @@ public class NodeResult {
         for (var entry : this.confidenceMap.entrySet()) {
             Pair<ArchitectureItem, CodeCompilationUnit> tuple = entry.getKey();
             Confidence confidence = entry.getValue();
-            if (resultToFilter.getConfidence(tuple).hasValue()) {
+            if (Objects.requireNonNull(resultToFilter.getConfidence(tuple), "Missing confidence for endpoint tuple").hasValue()) {
                 result.add(tuple, new Confidence());
             } else {
                 result.add(tuple, confidence);

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class ComponentNameResemblanceTest extends DependentHeuristic {
     }
 
     private Confidence calculateNameResemblance(ArchitectureItem archEndpoint, CodeCompilationUnit compUnit) {
-        if (this.getNodeResult().getConfidence(new Pair<>(archEndpoint, compUnit)).hasValue()) {
+        if (this.getRequiredConfidence(new Pair<>(archEndpoint, compUnit)).hasValue()) {
             return new Confidence();
         }
         SortedSet<String> filteredCommonWords = new TreeSet<>(commonWords);
@@ -52,7 +52,7 @@ public class ComponentNameResemblanceTest extends DependentHeuristic {
                     filteredCommonWords)) {
                 continue;
             }
-            Confidence extendedConfidence = this.getNodeResult().getConfidence(new Pair<>(archEndpoint, linkedCompUnit));
+            Confidence extendedConfidence = this.getRequiredConfidence(new Pair<>(archEndpoint, linkedCompUnit));
             if (extendedConfidence.compareTo(maxConfidence) > 0) {
                 maxConfidence = extendedConfidence;
             }

@@ -1,10 +1,13 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
@@ -37,11 +40,12 @@ public class ComputationResult {
      * @param endpointTuple the endpoint tuple for which a confidence is to be returned
      * @return the confidence of the combination of computation node and endpoint tuple, or null if it doesn't exist yet
      */
-    public Confidence getConfidence(Node node, Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple) {
-        if (!this.exists(node)) {
+    public @Nullable Confidence getConfidence(Node node, Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple) {
+        var nodeResult = this.resultMap.get(node);
+        if (nodeResult == null) {
             return null;
         }
-        return this.resultMap.get(node).getConfidence(endpointTuple);
+        return nodeResult.getConfidence(endpointTuple);
     }
 
     /**
@@ -51,7 +55,7 @@ public class ComputationResult {
      * @param node the computation node for which the result is to be returned
      * @return the result of the computation node, or null if it doesn't exist yet
      */
-    public NodeResult getNodeResult(Node node) {
+    public @Nullable NodeResult getNodeResult(Node node) {
         return this.resultMap.get(node);
     }
 
@@ -64,10 +68,10 @@ public class ComputationResult {
      * @return trace links for every endpoint tuple whose confidence in the specified computation node's result has a value
      */
     public Set<ArchitectureCodeTraceLink> getTraceLinks(Node node) {
-        if (!this.exists(node)) {
+        NodeResult nodeResult = this.resultMap.get(node);
+        if (nodeResult == null) {
             return new java.util.LinkedHashSet<>();
         }
-        NodeResult nodeResult = this.resultMap.get(node);
         return nodeResult.getTraceLinks();
     }
 
@@ -116,7 +120,7 @@ public class ComputationResult {
 
     private Map<String, Integer> getConfidenceStringsToLevelMap(Node node, Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple, int level) {
         Map<String, Integer> confidenceToLevel = new LinkedHashMap<>();
-        Confidence confidence = this.getNodeResult(node).getConfidence(endpointTuple);
+        Confidence confidence = Objects.requireNonNull(this.getNodeResult(node), "Node result must have been calculated").getConfidence(endpointTuple);
         String confidenceString = "Level " + level + ": " + node.toString() + ", Confidence: " + confidence;
         confidenceToLevel.put(confidenceString, level);
         for (Node child : node.getChildren()) {

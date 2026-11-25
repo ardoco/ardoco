@@ -1,7 +1,10 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
+import java.util.Objects;
+
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -20,10 +23,11 @@ public class ArCoTLInformant extends Informant {
     public void process() {
         var dataRepository = this.getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
-        var samCodeTraceabilityState = DataRepositoryHelper.getCodeTraceabilityState(dataRepository);
+        var samCodeTraceabilityState = Objects.requireNonNull(DataRepositoryHelper.getCodeTraceabilityState(dataRepository),
+                "CodeTraceabilityState must be available");
 
-        ArchitectureModel architectureModel = null;
-        CodeModel codeModel = null;
+        @Nullable ArchitectureModel architectureModel = null;
+        @Nullable CodeModel codeModel = null;
 
         for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);
@@ -46,6 +50,9 @@ public class ArCoTLInformant extends Informant {
                 }
             }
         }
+
+        Objects.requireNonNull(architectureModel, "No architecture model found in the data repository.");
+        Objects.requireNonNull(codeModel, "No code model found in the data repository.");
 
         Node root = TraceLinkGenerator.getRoot(); //TODO maybe add preprocessing
         var traceLinks = TraceLinkGenerator.generateTraceLinks(root, architectureModel, codeModel);

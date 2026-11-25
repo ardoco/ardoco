@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.SortedSet;
@@ -28,7 +28,7 @@ public class SubpackageFilter2 extends DependentHeuristic {
 
     private Confidence calculateSubpackageFilter(ArchitectureItem archEndpoint, CodeCompilationUnit compUnit) {
         Pair<ArchitectureItem, CodeCompilationUnit> thisTuple = new Pair<>(archEndpoint, compUnit);
-        if (!this.getNodeResult().getConfidence(thisTuple).hasValue()) {
+        if (!this.getRequiredConfidence(thisTuple).hasValue()) {
             return new Confidence();
         }
         int i = 0;

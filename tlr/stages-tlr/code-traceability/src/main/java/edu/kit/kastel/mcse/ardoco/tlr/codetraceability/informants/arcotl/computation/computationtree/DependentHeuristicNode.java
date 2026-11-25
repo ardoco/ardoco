@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree;
 
 import java.util.Objects;
@@ -31,7 +31,8 @@ public class DependentHeuristicNode extends HeuristicNode {
 
     @Override
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, ComputationResult result) {
-        return dependentHeuristic.calculateConfidences(archModel, codeModel, result.getNodeResult(getChild()));
+        return dependentHeuristic.calculateConfidences(archModel, codeModel, Objects.requireNonNull(result.getNodeResult(getChild()),
+                "Node result must have been calculated"));
     }
 
     @Override

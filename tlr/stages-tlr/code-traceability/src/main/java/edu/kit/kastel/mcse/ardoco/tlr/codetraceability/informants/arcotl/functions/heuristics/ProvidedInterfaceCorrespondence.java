@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class ProvidedInterfaceCorrespondence extends DependentHeuristic {
     }
 
     private Confidence calculateProvidedInterfaceCorrespondence(ArchitectureComponent archComponent, CodeCompilationUnit compUnit) {
-        if (!this.getNodeResult().getConfidence(new Pair<>(archComponent, compUnit)).hasValue() || !compUnit.hasParent()) {
+        if (!this.getRequiredConfidence(new Pair<>(archComponent, compUnit)).hasValue() || !compUnit.hasParent()) {
             return new Confidence();
         }
 
