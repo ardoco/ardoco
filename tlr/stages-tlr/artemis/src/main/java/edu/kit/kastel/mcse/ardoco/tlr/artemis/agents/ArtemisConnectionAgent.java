@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.configuration.NoDefaultConfiguration;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
@@ -15,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.ComponentArtemisConnect
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.informants.DatafileArtemisConnectionInformant;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 
+// TODO: Check how to provide the default configuration: its informants depend on the ArtemisNerStrategy passed to the constructor.
+@NoDefaultConfiguration
 public class ArtemisConnectionAgent extends PipelineAgent {
     private static final Logger logger = LoggerFactory.getLogger(ArtemisConnectionAgent.class);
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
+import edu.kit.kastel.mcse.ardoco.core.configuration.NoDefaultConfiguration;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.AbstractExecutionStage;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
@@ -15,6 +16,8 @@ import edu.kit.kastel.mcse.ardoco.id.states.ArchitecturalStylePatternInconsisten
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 
+// TODO: Check how to provide the default configuration: its agents depend on the PipelineAgent passed to the private constructor.
+@NoDefaultConfiguration
 public class ArchitecturalStylePatternInconsistencyChecker extends AbstractExecutionStage {
 
     private ArchitecturalStylePatternInconsistencyChecker(DataRepository dataRepository, PipelineAgent agent) {

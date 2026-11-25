@@ -23,7 +23,8 @@ public final class ConfigurationInstantiatorUtils {
     }
 
     /**
-     * Creates an {@link AbstractConfigurable} instance by reflection, trying various constructor signatures.
+     * Creates an {@link AbstractConfigurable} instance by reflection, trying various constructor signatures. A constructor that only takes
+     * {@link DataRepository} and enum parameters is invoked with a new data repository and the first constant of each enum.
      *
      * @param clazz the class of the AbstractConfigurable
      * @return the abstract configurable
@@ -64,8 +65,22 @@ public final class ConfigurationInstantiatorUtils {
             return result;
         }
 
+        var dataRepositoryAndEnumConstructor = constructors.stream().filter(ConfigurationInstantiatorUtils::hasOnlyDataRepositoryOrEnumParameters).findFirst();
+        if (dataRepositoryAndEnumConstructor.isPresent()) {
+            var constructor = dataRepositoryAndEnumConstructor.get();
+            var parameters = Arrays.stream(constructor.getParameterTypes())
+                    .map(t -> t == DataRepository.class ? new DataRepository() : t.getEnumConstants()[0])
+                    .toArray();
+            constructor.setAccessible(true);
+            return (AbstractConfigurable) constructor.newInstance(parameters);
+        }
+
         throw new IllegalArgumentException("Cannot create default configuration instance for " + clazz
                 .getName() + " because no supported constructor is available.");
+    }
+
+    private static boolean hasOnlyDataRepositoryOrEnumParameters(Constructor<?> constructor) {
+        return Arrays.stream(constructor.getParameterTypes()).allMatch(t -> t == DataRepository.class || (t.isEnum() && t.getEnumConstants().length > 0));
     }
 
     private static AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector, Object[] parameters)

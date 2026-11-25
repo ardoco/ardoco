@@ -8,16 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUtils;
+import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 
 /**
  * This test class deals with the configurations.
@@ -26,7 +24,6 @@ import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUt
  */
 @SuppressWarnings({ "java:S106", "java:S3011" })
 public abstract class ConfigurationTestBase {
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationTestBase.class);
 
     private static final String ARDOCO = "edu.kit.kastel.mcse.ardoco";
 
@@ -41,23 +38,7 @@ public abstract class ConfigurationTestBase {
      * @throws Exception if anything goes wrong
      */
     protected void showCurrentConfiguration() throws Exception {
-        Map<String, String> configs = new TreeMap<>();
-        var reflectAccess = new Reflections(ARDOCO);
-        var classesThatMayBeConfigured = reflectAccess.getSubTypesOf(AbstractConfigurable.class)
-                .stream()
-                .filter(c -> c.getPackageName().startsWith(ARDOCO))
-                .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                .filter(c -> !c.getPackageName().contains("tests"))
-                .toList();
-        for (var clazz : classesThatMayBeConfigured) {
-            try {
-                processConfigurationOfClass(configs, clazz);
-            } catch (IllegalArgumentException e) {
-                logger.debug("Skipping default configuration extraction for {}: {}", clazz.getName(), e.getMessage());
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            }
-        }
+        Map<String, String> configs = ConfigurationHelper.getDefaultConfigurationOptions().castToSortedMap();
         assertFalse(configs.isEmpty(), "Configuration shall not be empty");
 
         System.out.println("-".repeat(50));
