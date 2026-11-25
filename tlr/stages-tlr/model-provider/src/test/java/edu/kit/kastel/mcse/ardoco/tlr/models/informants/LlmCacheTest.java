@@ -3,14 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
@@ -18,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheParameter;
 
 /**
@@ -58,7 +57,7 @@ class LlmCacheTest {
 
     @Test
     void cacheManagerConfiguresItselfOnFirstUse() throws IOException {
-        Path expectedDir = Path.of(LlmCache.cacheDirectory(LlmEnvironment.INSTANCE.getenv("LLM_CACHE_DIR")));
+        Path expectedDir = Path.of(LlmCache.cacheDirectory(Environment.getEnv("LLM_CACHE_DIR")));
         Path cacheFile = expectedDir.resolve("Chat_first-use-test_1.json");
         Files.deleteIfExists(cacheFile);
 
@@ -75,18 +74,9 @@ class LlmCacheTest {
 
     @Test
     void createWorksWithoutExplicitConfiguration() {
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("OPENAI_API_KEY") != null,
-                "OPENAI_API_KEY is only set (to a dummy) by the surefire configuration");
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null, "OPENAI_API_KEY is only set (to a dummy) by the surefire configuration");
         // Creating the model sends no request.
         assertNotNull(LargeLanguageModel.GPT_4_O.create());
     }
 
-    @Test
-    void blankEnvironmentValuesAreUnset() {
-        var environment = new LlmEnvironment(Map.of("BLANK", " ", "EMPTY", "", "SET", "value")::get);
-        assertNull(environment.getenv("BLANK"));
-        assertNull(environment.getenv("EMPTY"));
-        assertNull(environment.getenv("MISSING"));
-        assertEquals("value", environment.getenv("SET"));
-    }
 }

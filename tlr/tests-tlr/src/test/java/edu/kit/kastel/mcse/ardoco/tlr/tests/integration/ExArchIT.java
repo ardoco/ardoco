@@ -26,11 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.ClassificationMetricsCalculator;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmEnvironment;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArdocodeEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.integration.evaluation.ExArchEvaluation;
 
@@ -44,7 +44,7 @@ class ExArchIT {
     @BeforeAll
     static void beforeAll() {
         System.setProperty(LOGGING_ARDOCO_CORE, "info");
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("OPENAI_API_KEY") != null || LlmEnvironment.INSTANCE.getenv("OLLAMA_HOST") != null);
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
     }
 
     @AfterAll
@@ -56,7 +56,7 @@ class ExArchIT {
     @ParameterizedTest(name = "{0} ({1})")
     @MethodSource("llmsXprojects")
     void evaluateExArch(ArdocodeEvaluationProject project, LargeLanguageModel llm) {
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("CI") == null);
+        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
 
         LlmArchitecturePrompt docPrompt = LlmArchitecturePrompt.EXTRACT_FROM_ARCHITECTURE;
         LlmArchitecturePrompt codePrompt = null;

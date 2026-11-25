@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.model.chat.ChatModel;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.llm.cache.Cache;
 import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheKey;
 import edu.kit.kastel.mcse.ardoco.llm.cache.chat.ChatCacheParameter;
@@ -18,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.llm.chat.LlmConfiguration;
  * The chat models available to ARDoCo. Model creation, authentication, and response caching are provided by
  * the {@code llm-access} library; this enum only selects the platform, model name, and temperature. Ollama
  * token authentication (via {@code OLLAMA_TOKEN}) and an optional {@code OPENAI_ORGANIZATION_ID} are handled
- * by the library. Credentials and hosts are read via {@link LlmEnvironment}.
+ * by the library. Credentials and hosts are read via {@link Environment}.
  */
 @Deterministic
 public enum LargeLanguageModel {
@@ -30,9 +31,9 @@ public enum LargeLanguageModel {
     GPT_5_4_MINI("GPT-5.4 mini", ChatModelPlatform.OPENAI, "gpt-5.4-mini-2026-03-17", 0.0), //
     GPT_5_4("GPT-5.4", ChatModelPlatform.OPENAI, "gpt-5.4-2026-03-05", 0.0), //
     GPT_5("GPT-5", ChatModelPlatform.OPENAI, "gpt-5-2025-08-07", 1.0), //
-    OPENAI_GENERIC(LlmEnvironment.INSTANCE.getenv("OPENAI_MODEL_NAME"), ChatModelPlatform.OPENAI, LlmEnvironment.INSTANCE.getenv("OPENAI_MODEL_NAME"), 0.0), //
+    OPENAI_GENERIC(Environment.getEnv("OPENAI_MODEL_NAME"), ChatModelPlatform.OPENAI, Environment.getEnv("OPENAI_MODEL_NAME"), 0.0), //
     // OLLAMA
-    OLLAMA_GENERIC(LlmEnvironment.INSTANCE.getenv("OLLAMA_MODEL_NAME"), ChatModelPlatform.OLLAMA, LlmEnvironment.INSTANCE.getenv("OLLAMA_MODEL_NAME"), 0.0);
+    OLLAMA_GENERIC(Environment.getEnv("OLLAMA_MODEL_NAME"), ChatModelPlatform.OLLAMA, Environment.getEnv("OLLAMA_MODEL_NAME"), 0.0);
 
     private static final Logger logger = LoggerFactory.getLogger(LargeLanguageModel.class);
 
@@ -91,12 +92,12 @@ public enum LargeLanguageModel {
                 .modelName(modelName)
                 .seed(SEED)
                 .temperature(temperature)
-                .environment(LlmEnvironment.INSTANCE)
+                .environment(Environment::getEnv)
                 .build());
     }
 
     private static int loadSeed() {
-        String seedEnv = LlmEnvironment.INSTANCE.getenv("SEED");
+        String seedEnv = Environment.getEnv("SEED");
         if (seedEnv == null) {
             return 422413373;
         }

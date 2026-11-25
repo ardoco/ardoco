@@ -21,6 +21,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.Nam
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingConfiguration;
@@ -28,7 +29,6 @@ import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingCreator;
 import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingPlatform;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmEnvironment;
 
 /**
  * Base class for Artemis informants that create trace links between named architecture entities and model entities.
@@ -149,7 +149,7 @@ public abstract class ArtemisConnectionInformant extends Informant {
         if (embeddingCreator == null) {
             embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI)
                     .modelName("text-embedding-3-large")
-                    .environment(LlmEnvironment.INSTANCE)
+                    .environment(Environment::getEnv)
                     .build(), LlmCache.cacheManager());
         }
         return embeddingCreator;

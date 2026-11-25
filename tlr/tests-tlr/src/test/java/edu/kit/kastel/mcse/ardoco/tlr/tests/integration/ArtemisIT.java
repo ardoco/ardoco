@@ -17,9 +17,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.metrics.result.SingleClassificationResult;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
-import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmEnvironment;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ArtemisEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ClassArtemisEvaluationProject;
 import edu.kit.kastel.mcse.ardoco.tlr.tests.approach.ComponentArtemisEvaluationProject;
@@ -35,8 +35,8 @@ public class ArtemisIT extends AbstractArdocoIT {
 
     @BeforeAll
     static void beforeAll() {
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("OPENAI_API_KEY") != null || LlmEnvironment.INSTANCE.getenv("OLLAMA_HOST") != null);
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("CI") == null);
+        Assumptions.assumeTrue(Environment.getEnv("OPENAI_API_KEY") != null || Environment.getEnv("OLLAMA_HOST") != null);
+        Assumptions.assumeTrue(Environment.getEnv("CI") == null);
     }
 
     private static <T extends Enum<T>> Stream<Arguments> llmsXProjects(T[] projects) {

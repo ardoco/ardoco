@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.llm.cache.CacheManager;
 
 /**
@@ -30,7 +31,7 @@ public final class LlmCache {
      * {@code .cache-llm/} when it is not set or blank.
      */
     public static synchronized void configure() {
-        configure(cacheDirectory(LlmEnvironment.INSTANCE.getenv("LLM_CACHE_DIR")));
+        configure(cacheDirectory(Environment.getEnv("LLM_CACHE_DIR")));
     }
 
     /**
@@ -40,7 +41,7 @@ public final class LlmCache {
      */
     public static synchronized void configure(String cacheDir) {
         try {
-            cacheManager = new CacheManager(Path.of(cacheDir), LlmEnvironment.INSTANCE);
+            cacheManager = new CacheManager(Path.of(cacheDir), Environment::getEnv);
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize the LLM cache directory: " + cacheDir, e);
         }

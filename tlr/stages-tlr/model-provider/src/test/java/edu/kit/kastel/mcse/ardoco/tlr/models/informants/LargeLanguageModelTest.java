@@ -16,6 +16,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
+
 /**
  * Guards the cache identity of the models: changing the platform, model name, seed or temperature of a constant would
  * silently stop using its existing cache file.
@@ -47,7 +49,7 @@ class LargeLanguageModelTest {
     @ParameterizedTest
     @EnumSource(value = LargeLanguageModel.class, mode = Mode.EXCLUDE, names = { "OPENAI_GENERIC", "OLLAMA_GENERIC" })
     void cacheFileNameIsStable(LargeLanguageModel model) {
-        Assumptions.assumeTrue(LlmEnvironment.INSTANCE.getenv("SEED") == null, "SEED overrides the default seed");
+        Assumptions.assumeTrue(Environment.getEnv("SEED") == null, "SEED overrides the default seed");
         String expected = CACHE_FILES.get(model);
         assertNotNull(expected, "Add the cache file name of " + model);
         assertTrue(model.isOpenAi());
