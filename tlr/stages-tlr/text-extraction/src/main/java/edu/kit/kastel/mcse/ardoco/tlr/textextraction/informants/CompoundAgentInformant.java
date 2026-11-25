@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction.informants;
 
 import java.util.StringJoiner;
@@ -66,6 +66,7 @@ public class CompoundAgentInformant extends TextExtractionInformant {
         return filteredWords.toImmutable();
     }
 
+    @SuppressWarnings("NullAway") // TextState#removeNounMapping accepts a null replacement but its parameter is not annotated @Nullable
     private void addCompoundNounMapping(ImmutableList<Word> compoundWords, TextState textState) {
         var reference = CommonUtilities.createReferenceForCompound(compoundWords);
         var similarReferenceNounMappings = textState.getNounMappingsWithSimilarReference(reference);

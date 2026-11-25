@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import java.util.Arrays;
@@ -86,8 +86,8 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
 
     @Override
     public void mergeNounMappings(NounMapping nounMapping, NounMapping textuallyEqualNounMapping, Claimant claimant) {
-        this.mergeNounMappings(nounMapping, textuallyEqualNounMapping, null, null, nounMapping.getKind(), claimant, nounMapping.getProbabilityForKind(
-                nounMapping.getKind()));
+        this.mergeNounMappings(nounMapping, textuallyEqualNounMapping, nounMapping.getReferenceWords(), nounMapping.getReference(), nounMapping.getKind(),
+                claimant, nounMapping.getProbabilityForKind(nounMapping.getKind()));
 
     }
 
