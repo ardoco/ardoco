@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,7 @@ public class NamedEntityParser {
 
         //add occurrences with correct reference types
         for (NamedEntity entity : entityMap.values()) {
-            for (int lineNumber : entityOccurencesMap.get(entity.getName())) {
+            for (int lineNumber : Objects.requireNonNull(entityOccurencesMap.get(entity.getName()), "occurrences are registered together with the entity")) {
                 addOccurrenceWithDeductedReferenceType(entity, lineNumber, softwareArchitectureDocumentation);
             }
         }
@@ -151,13 +152,15 @@ public class NamedEntityParser {
         int lineNumber = softwareArchitectureDocumentation.getLineNumber(textLine);
 
         NamedEntity entity = entityMap.get(name);
-        if (entity == null) {
+        Set<Integer> occurrenceLines = entityOccurencesMap.get(name);
+        if (entity == null || occurrenceLines == null) {
             entity = new NamedEntity(name, currentEntityType);
             entity.setSourceText(softwareArchitectureDocumentation);
             entityMap.put(name, entity);
-            entityOccurencesMap.put(name, new LinkedHashSet<>());
+            occurrenceLines = new LinkedHashSet<>();
+            entityOccurencesMap.put(name, occurrenceLines);
         }
-        entityOccurencesMap.get(name).add(lineNumber);
+        occurrenceLines.add(lineNumber);
     }
 
     private static void parseAlternativeNames(String line, Map<String, NamedEntity> entityMap) throws IOException {
@@ -209,6 +212,6 @@ public class NamedEntityParser {
      */
     private static final class ParserState {
         private boolean parsingAlternativeNames;
-        private NamedEntityType currentEntityType;
+        private @Nullable NamedEntityType currentEntityType;
     }
 }
