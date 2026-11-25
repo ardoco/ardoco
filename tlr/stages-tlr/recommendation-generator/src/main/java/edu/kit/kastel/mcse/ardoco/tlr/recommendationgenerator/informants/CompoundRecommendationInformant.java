@@ -9,6 +9,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -151,8 +152,8 @@ public class CompoundRecommendationInformant extends Informant {
         return typeMappings.toImmutable();
     }
 
-    private void addRecommendedInstanceIfCompoundWithOtherWord(NounMapping nounMapping, Word word, TextState textState, RecommendationState recommendationState,
-            Model model) {
+    private void addRecommendedInstanceIfCompoundWithOtherWord(NounMapping nounMapping, @Nullable Word word, TextState textState,
+            RecommendationState recommendationState, Model model) {
         if (word == null) {
             return;
         }

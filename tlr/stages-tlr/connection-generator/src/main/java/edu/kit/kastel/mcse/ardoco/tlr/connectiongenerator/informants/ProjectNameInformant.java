@@ -3,11 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.Objects;
 import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
@@ -122,7 +123,7 @@ public class ProjectNameInformant extends Informant {
         this.expandWordForName(name, currWord, words, Word::getNextWord, (text, addition) -> text + addition);
     }
 
-    private void expandWordForName(String name, Word currWord, MutableList<Word> words, UnaryOperator<Word> wordExpansion,
+    private void expandWordForName(String name, Word currWord, MutableList<Word> words, Function<Word, @Nullable Word> wordExpansion,
             BinaryOperator<String> concatenation) {
         Objects.requireNonNull(name);
         if (words.isEmpty()) {
@@ -133,7 +134,7 @@ public class ProjectNameInformant extends Informant {
         while (name.contains(testWordText)) {
             words.add(currWord);
 
-            currWord = wordExpansion.apply(currWord);
+            currWord = wordExpansion.apply(Objects.requireNonNull(currWord, "No further word to expand the name with"));
             var wordText = "NON-MATCHING";
             if (currWord != null) {
                 wordText = currWord.getText().toLowerCase();

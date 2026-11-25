@@ -1,9 +1,10 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.text;
 
 import java.io.Serializable;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a word in a text.
@@ -41,15 +42,17 @@ public interface Word extends Comparable<Word>, Serializable {
     /**
      * Returns the previous word in the sentence.
      *
-     * @return the previous word
+     * @return the previous word, or {@code null} if there is none
      */
+    @Nullable
     Word getPreWord();
 
     /**
      * Returns the next word in the sentence.
      *
-     * @return the next word
+     * @return the next word, or {@code null} if there is none
      */
+    @Nullable
     Word getNextWord();
 
     /**

@@ -87,8 +87,7 @@ class WordImpl implements Word {
     }
 
     @Override
-    @SuppressWarnings("NullAway") // Word#getPreWord is not annotated @Nullable, but the first word has no predecessor
-    public Word getPreWord() {
+    public @Nullable Word getPreWord() {
         int preWordIndex = index - 1;
         if (preWord == null && preWordIndex > 0) {
             preWord = parent.getWord(preWordIndex);
@@ -97,8 +96,7 @@ class WordImpl implements Word {
     }
 
     @Override
-    @SuppressWarnings("NullAway") // Word#getNextWord is not annotated @Nullable, but the last word has no successor
-    public Word getNextWord() {
+    public @Nullable Word getNextWord() {
         int nextWordIndex = index + 1;
         if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {
             nextWord = parent.getWord(nextWordIndex);
