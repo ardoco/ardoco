@@ -1,16 +1,11 @@
 /* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.tests;
 
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-import org.reflections.Reflections;
 
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
+import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 import edu.kit.kastel.mcse.ardoco.core.tests.eval.ConfigurationTestBase;
 
 /**
@@ -48,19 +43,13 @@ class ConfigurationTest extends ConfigurationTestBase {
     }
 
     /**
-     * Lists the default configuration of all configurable classes. Fails for each class whose default configuration cannot be returned.
+     * Lists the default configuration of all configurable classes via {@link ConfigurationHelper#getDefaultConfigurationOptions()}. Fails if the default
+     * configuration cannot be returned.
      */
     @Test
     void listAllDefaultConfigurations() {
-        Map<String, String> configs = new TreeMap<>();
-        var configurables = new Reflections("edu.kit.kastel.mcse.ardoco").getSubTypesOf(AbstractConfigurable.class)
-                .stream()
-                .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                .filter(c -> !c.getPackageName().contains("tests"))
-                .toList();
-
-        Assertions.assertAll(configurables.stream().map(c -> (Executable) () -> processConfigurationOfClass(configs, c)));
-
-        configs.forEach((key, value) -> System.out.println(key + AbstractConfigurable.KEY_VALUE_CONNECTOR + value));
+        var configs = Assertions.assertDoesNotThrow(ConfigurationHelper::getDefaultConfigurationOptions, "Default configuration cannot be returned");
+        Assertions.assertFalse(configs.isEmpty(), "Default configuration shall not be empty");
+        configs.forEachKeyValue((key, value) -> System.out.println(key + AbstractConfigurable.KEY_VALUE_CONNECTOR + value));
     }
 }
