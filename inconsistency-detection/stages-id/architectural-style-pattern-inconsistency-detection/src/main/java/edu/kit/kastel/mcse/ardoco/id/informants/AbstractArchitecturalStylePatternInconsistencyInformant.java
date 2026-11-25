@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,7 @@ public abstract class AbstractArchitecturalStylePatternInconsistencyInformant ex
                         sentenceText));
     }
 
-    protected String getCodeProjectPathOrNull() {
+    protected @Nullable String getCodeProjectPathOrNull() {
         return null;
     }
 
