@@ -1,9 +1,10 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.common.util;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 public final class Environment {
     private static final Logger logger = LoggerFactory.getLogger(Environment.class);
     /** The loaded .env configuration, or null if no .env file exists */
-    private static final Dotenv DOTENV = load();
+    private static final @Nullable Dotenv DOTENV = load();
 
     private Environment() {
         throw new IllegalAccessError("Utility class");
@@ -92,7 +93,7 @@ public final class Environment {
      *
      * @return The loaded Dotenv configuration, or null if no .env file exists
      */
-    private static synchronized Dotenv load() {
+    private static synchronized @Nullable Dotenv load() {
         if (DOTENV != null) {
             return DOTENV;
         }

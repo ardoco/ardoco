@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -26,7 +28,7 @@ public final class ControlElement extends ComputationalObject {
     private int endLine = -1;
 
     @JsonProperty
-    private List<String> calleeNames;
+    private @Nullable List<String> calleeNames;
 
     /**
      * Default constructor for Jackson.

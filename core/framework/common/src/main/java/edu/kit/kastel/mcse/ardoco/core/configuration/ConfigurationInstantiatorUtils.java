@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
@@ -83,8 +85,8 @@ public final class ConfigurationInstantiatorUtils {
         return Arrays.stream(constructor.getParameterTypes()).allMatch(t -> t == DataRepository.class || (t.isEnum() && t.getEnumConstants().length > 0));
     }
 
-    private static AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector, Object[] parameters)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static @Nullable AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector,
+            Object[] parameters) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (constructors.stream().noneMatch(selector)) {
             return null;
         }

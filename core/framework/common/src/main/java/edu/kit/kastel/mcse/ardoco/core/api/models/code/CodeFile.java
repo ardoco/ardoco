@@ -38,7 +38,8 @@ public final class CodeFile extends CodeEntity {
     /**
      * Default constructor for Jackson.
      */
-    @SuppressWarnings("unused")
+    // Jackson sets the name and the fields reflectively during deserialization.
+    @SuppressWarnings({ "unused", "NullAway" })
     private CodeFile() {
         // Jackson
         super(null);
@@ -52,7 +53,7 @@ public final class CodeFile extends CodeEntity {
      * @param extension         the file extension without leading dot
      * @param compilationUnitId the id of the corresponding compilation unit, or {@code null}
      */
-    public CodeFile(String name, List<String> pathElements, String extension, String compilationUnitId) {
+    public CodeFile(String name, List<String> pathElements, String extension, @Nullable String compilationUnitId) {
         super(name);
         this.pathElements = List.copyOf(pathElements);
         this.extension = Objects.requireNonNullElse(extension, "");
@@ -78,7 +79,7 @@ public final class CodeFile extends CodeEntity {
      * @param compilationUnitId the id of the corresponding compilation unit, or {@code null}
      * @return the code file
      */
-    public static CodeFile fromRelativePath(String relativePath, String compilationUnitId) {
+    public static CodeFile fromRelativePath(String relativePath, @Nullable String compilationUnitId) {
         Objects.requireNonNull(relativePath);
 
         int lastSlash = relativePath.lastIndexOf('/');

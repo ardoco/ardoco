@@ -3,13 +3,15 @@ package edu.kit.kastel.mcse.ardoco.core.common;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Utility class for generating and resetting unique identifiers used throughout the codebase.
  */
 public class IdentifierProvider {
     private static final int INITIAL_VALUE = 1337;
     private static final AtomicInteger COUNTER = new AtomicInteger(INITIAL_VALUE);
-    private static volatile String extractorPrefix = null;
+    private static volatile @Nullable String extractorPrefix = null;
 
     private IdentifierProvider() {
         throw new IllegalAccessError("IdentifierProvider is a utility class and cannot be instantiated.");
@@ -49,7 +51,7 @@ public class IdentifierProvider {
      *
      * @param prefix the prefix of the extractor that is about to run, or null to use the default prefixes
      */
-    public static void reset(String prefix) {
+    public static void reset(@Nullable String prefix) {
         extractorPrefix = prefix;
         COUNTER.set(INITIAL_VALUE);
     }
