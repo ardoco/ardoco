@@ -1,7 +1,8 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.PreprocessingData;
 import edu.kit.kastel.mcse.ardoco.core.api.text.NlpInformant;
@@ -12,9 +13,10 @@ import edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp.textproc
 
 public class CoreNLPProvider extends NlpInformant {
 
-    private Text annotatedText;
+    private @Nullable Text annotatedText;
 
     // Needed for Configuration Generation
+    @SuppressWarnings("NullAway") // no data repository is needed (and available) for configuration generation
     private CoreNLPProvider() {
         super(CoreNLPProvider.class.getSimpleName(), null);
     }
@@ -40,15 +42,17 @@ public class CoreNLPProvider extends NlpInformant {
 
     @Override
     public synchronized Text getAnnotatedText() {
-        if (this.annotatedText == null) {
+        var currentText = this.annotatedText;
+        if (currentText == null) {
             if (DataRepositoryHelper.hasAnnotatedText(this.getDataRepository())) {
-                this.annotatedText = DataRepositoryHelper.getAnnotatedText(this.getDataRepository());
+                currentText = DataRepositoryHelper.getAnnotatedText(this.getDataRepository());
             } else {
                 String text = DataRepositoryHelper.getInputText(this.getDataRepository());
-                this.annotatedText = this.processText(text);
+                currentText = this.processText(text);
             }
+            this.annotatedText = currentText;
         }
-        return this.annotatedText;
+        return currentText;
     }
 
     private Text processText(String inputText) {

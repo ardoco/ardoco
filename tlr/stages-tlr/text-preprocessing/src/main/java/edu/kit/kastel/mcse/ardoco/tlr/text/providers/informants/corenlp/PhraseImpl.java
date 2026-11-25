@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.Serial;
@@ -13,6 +13,7 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PhraseType;
@@ -30,7 +31,7 @@ public class PhraseImpl implements Phrase {
 
     private final SentenceImpl parent;
 
-    private String text = null;
+    private @Nullable String text = null;
 
     public PhraseImpl(Tree tree, ImmutableList<Word> words, SentenceImpl parent) {
         this.tree = tree;
@@ -45,10 +46,12 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public String getText() {
-        if (text == null) {
-            text = tree.spanString();
+        var currentText = text;
+        if (currentText == null) {
+            currentText = tree.spanString();
+            text = currentText;
         }
-        return text;
+        return currentText;
     }
 
     @Override

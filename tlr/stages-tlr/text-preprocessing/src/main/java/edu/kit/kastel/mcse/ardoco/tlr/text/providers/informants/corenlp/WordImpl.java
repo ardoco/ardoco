@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.Serial;
@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.DependencyTag;
 import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
@@ -27,11 +28,11 @@ class WordImpl implements Word {
     private final CoreLabel token;
     private final TextImpl parent;
     private final int index;
-    private Word preWord = null;
-    private Word nextWord = null;
+    private @Nullable Word preWord = null;
+    private @Nullable Word nextWord = null;
 
     private final int sentenceNo;
-    private Phrase phrase;
+    private @Nullable Phrase phrase;
     private final String text;
     private final POSTag posTag;
 
@@ -57,10 +58,12 @@ class WordImpl implements Word {
 
     @Override
     public Phrase getPhrase() {
-        if (this.phrase == null) {
-            this.phrase = loadPhrase();
+        var currentPhrase = this.phrase;
+        if (currentPhrase == null) {
+            currentPhrase = loadPhrase();
+            this.phrase = currentPhrase;
         }
-        return this.phrase;
+        return currentPhrase;
     }
 
     private Phrase loadPhrase() {
@@ -84,6 +87,7 @@ class WordImpl implements Word {
     }
 
     @Override
+    @SuppressWarnings("NullAway") // Word#getPreWord is not annotated @Nullable, but the first word has no predecessor
     public Word getPreWord() {
         int preWordIndex = index - 1;
         if (preWord == null && preWordIndex > 0) {
@@ -93,6 +97,7 @@ class WordImpl implements Word {
     }
 
     @Override
+    @SuppressWarnings("NullAway") // Word#getNextWord is not annotated @Nullable, but the last word has no successor
     public Word getNextWord() {
         int nextWordIndex = index + 1;
         if (nextWord == null && nextWordIndex < parent.getNumberOfWords()) {

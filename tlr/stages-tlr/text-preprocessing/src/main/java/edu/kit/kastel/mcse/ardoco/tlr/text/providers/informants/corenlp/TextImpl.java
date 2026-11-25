@@ -1,10 +1,11 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.text.providers.informants.corenlp;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -43,7 +44,7 @@ public class TextImpl implements Text {
         if (wordsIndex.isEmpty()) {
             words();
         }
-        return wordsIndex.get(index);
+        return Objects.requireNonNull(wordsIndex.get(index), "No word at index " + index);
     }
 
     @Override
