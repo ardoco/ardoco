@@ -1,6 +1,8 @@
 /* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 
@@ -20,7 +22,7 @@ public abstract class Extractor {
      *
      * @return the id prefix, or null to use the default prefix of the created entity kind
      */
-    public String getIdPrefix() {
+    public @Nullable String getIdPrefix() {
         return null;
     }
 

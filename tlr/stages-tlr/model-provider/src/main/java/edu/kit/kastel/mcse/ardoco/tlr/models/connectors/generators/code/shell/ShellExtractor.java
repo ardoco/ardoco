@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
@@ -14,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
 
 public final class ShellExtractor extends CodeExtractor {
 
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     @Override
     public String getIdPrefix() {
@@ -27,10 +29,12 @@ public final class ShellExtractor extends CodeExtractor {
 
     @Override
     public synchronized CodeModel extractModel() {
-        if (codeModel == null) {
-            this.codeModel = parseCode(new File(path));
+        CodeModel model = this.codeModel;
+        if (model == null) {
+            model = parseCode(new File(path));
+            this.codeModel = model;
         }
-        return this.codeModel;
+        return model;
     }
 
     private CodeModel parseCode(File file) {

@@ -7,11 +7,13 @@ import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePr
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ public class LlmArchitectureProviderInformant extends Informant {
 
     private static final Logger logger = LoggerFactory.getLogger(LlmArchitectureProviderInformant.class);
 
-    private final ChatModel chatLanguageModel;
+    private final @Nullable ChatModel chatLanguageModel;
     private final LlmArchitecturePrompt documentationPrompt;
     private final LlmArchitecturePrompt codePrompt;
     private final LlmArchitecturePrompt aggregationPrompt;
@@ -79,7 +81,7 @@ public class LlmArchitectureProviderInformant extends Informant {
 
         if (aggregationPrompt != null) {
             var allComponentNames = Stream.concat(componentNamesDocumentation.stream(), componentNamesCode.stream()).toList();
-            var aggregation = chatLanguageModel.chat(aggregationPrompt.getTemplates().getFirst().formatted(String.join("\n", allComponentNames)));
+            var aggregation = requireChatModel().chat(aggregationPrompt.getTemplates().getFirst().formatted(String.join("\n", allComponentNames)));
             logger.info("Response (Aggregation): {}", aggregation);
             parseComponentNames(aggregation, componentNames);
         } else if (documentationPrompt != null && codePrompt != null) {
@@ -101,6 +103,10 @@ public class LlmArchitectureProviderInformant extends Informant {
             logger.info("Component names:\n{}", String.join("\n", componentNames));
         }
         buildModel(componentNames);
+    }
+
+    private ChatModel requireChatModel() {
+        return Objects.requireNonNull(this.chatLanguageModel, "No large language model provided");
     }
 
     private String toCamelCase(String name) {
@@ -175,13 +181,14 @@ public class LlmArchitectureProviderInformant extends Informant {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(UserMessage.from(startMessage));
 
-        var initialResponse = chatLanguageModel.chat(messages).aiMessage();
+        ChatModel chatModel = requireChatModel();
+        var initialResponse = chatModel.chat(messages).aiMessage();
         messages.add(initialResponse);
         logger.info("Initial Response: {}", initialResponse.text());
 
         for (String nextMessage : templates.stream().skip(1).toList()) {
             messages.add(UserMessage.from(nextMessage));
-            var response = chatLanguageModel.chat(messages).aiMessage();
+            var response = chatModel.chat(messages).aiMessage();
             logger.info("Response: {}", response.text());
             messages.add(response);
         }

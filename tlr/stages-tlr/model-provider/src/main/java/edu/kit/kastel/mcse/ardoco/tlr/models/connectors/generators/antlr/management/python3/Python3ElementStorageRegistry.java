@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.python3;
 
 import java.util.List;
@@ -93,23 +93,23 @@ public class Python3ElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public VariableElement getVariable(ElementIdentifier identifier) {
-        return new VariableElement(getElement(identifier, VariableElement.class));
+        return new VariableElement(requireElement(identifier, VariableElement.class));
     }
 
     public Element getFunction(ElementIdentifier identifier) {
-        return new Element(getElement(identifier, Element.class));
+        return new Element(requireElement(identifier, Element.class));
     }
 
     public ClassElement getClass(ElementIdentifier identifier) {
-        return new ClassElement(getElement(identifier, ClassElement.class));
+        return new ClassElement(requireElement(identifier, ClassElement.class));
     }
 
     public Element getModule(ElementIdentifier identifier) {
-        return new Element(getElement(identifier, Element.class));
+        return new Element(requireElement(identifier, Element.class));
     }
 
     public PackageElement getPackage(ElementIdentifier identifier) {
-        return new PackageElement(getElement(identifier, PackageElement.class));
+        return new PackageElement(requireElement(identifier, PackageElement.class));
     }
 
     public List<VariableElement> getVariables() {

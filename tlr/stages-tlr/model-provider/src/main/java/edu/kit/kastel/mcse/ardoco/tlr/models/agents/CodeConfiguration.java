@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -42,8 +43,9 @@ public record CodeConfiguration(File code, CodeConfigurationType type, @Nullable
 
     public List<Extractor> extractors() {
         if (this.type == CodeConfigurationType.DIRECTORY) {
+            Metamodel metamodel = Objects.requireNonNull(this.metamodel, "The metamodel must be set to create extractors");
             CodeItemRepository codeItemRepository = new CodeItemRepository();
-            CodeExtractor codeExtractor = new AllLanguagesExtractor(codeItemRepository, this.code.getAbsolutePath(), this.metamodel);
+            CodeExtractor codeExtractor = new AllLanguagesExtractor(codeItemRepository, this.code.getAbsolutePath(), metamodel);
             return List.of(codeExtractor);
         }
         throw new IllegalStateException("CodeConfigurationType not supported");

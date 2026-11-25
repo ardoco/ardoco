@@ -1,14 +1,17 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.parser;
 
 import java.util.List;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.parser.xmlelements.PackagedElement;
 
 public class UmlComponent extends UmlElement {
 
-    private List<UmlInterface> requiredInterfaces;
-    private List<UmlInterface> providedInterfaces;
+    private @Nullable List<UmlInterface> requiredInterfaces;
+    private @Nullable List<UmlInterface> providedInterfaces;
 
     UmlComponent(PackagedElement componentElement) {
         super(componentElement);
@@ -42,10 +45,10 @@ public class UmlComponent extends UmlElement {
     }
 
     public List<UmlInterface> getRequired() {
-        return requiredInterfaces;
+        return Objects.requireNonNull(requiredInterfaces, "The component has not been initialized");
     }
 
     public List<UmlInterface> getProvided() {
-        return providedInterfaces;
+        return Objects.requireNonNull(providedInterfaces, "The component has not been initialized");
     }
 }

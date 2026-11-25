@@ -18,7 +18,9 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 public class AntlrExtractor extends CodeExtractor {
     private final ProgrammingLanguage language;
+    @SuppressWarnings("NullAway.Init") // initialized in the constructors of the implementing subclasses
     protected ModelMapper mapper; // Needs to be initialized in the constructor of implementing subclasses
+    @SuppressWarnings("NullAway.Init") // initialized in the constructors of the implementing subclasses
     protected ElementExtractor elementExtractor; // Needs to be initialized in the constructor of implementing subclasses
     private boolean contentExtracted;
 

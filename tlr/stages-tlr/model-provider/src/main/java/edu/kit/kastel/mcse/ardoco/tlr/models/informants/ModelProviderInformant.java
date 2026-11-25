@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -22,11 +23,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 public final class ModelProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
-    private final Extractor extractor;
-    private final File fromFile;
-    private final Metamodel metamodel;
+    private final @Nullable Extractor extractor;
+    private final @Nullable File fromFile;
+    private final @Nullable Metamodel metamodel;
 
     // Needed for Configuration Generation
+    @SuppressWarnings("NullAway") // only used reflectively for configuration generation, never processed
     private ModelProviderInformant() {
         super(null, null);
         this.extractor = null;
@@ -65,20 +67,22 @@ public final class ModelProviderInformant extends Informant {
         Model extractedModel;
 
         if (this.fromFile != null) {
-            extractedModel = CodeExtractor.readInCodeModel(this.fromFile, metamodel);
+            Metamodel fileMetamodel = Objects.requireNonNull(this.metamodel, "The metamodel must be set when reading from a file");
+            extractedModel = Objects.requireNonNull(CodeExtractor.readInCodeModel(this.fromFile, fileMetamodel), "The code model could not be read from file");
             this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
             return;
         }
 
-        IdentifierProvider.reset(this.extractor.getIdPrefix());
+        Extractor extractor = Objects.requireNonNull(this.extractor, "No extractor available");
+        IdentifierProvider.reset(extractor.getIdPrefix());
         this.getLogger().info("Extracting code model.");
-        extractedModel = this.extractor.extractModel();
+        extractedModel = extractor.extractModel();
         this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
-        if (this.extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
+        if (extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
             this.getLogger().info("Writing out code model to file in directory.");
             codeExtractor.writeOutCodeModel(codeModel);
         }
-        this.addModelStateToDataRepository(this.extractor.getMetamodel(), extractedModel);
+        this.addModelStateToDataRepository(extractor.getMetamodel(), extractedModel);
     }
 
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {

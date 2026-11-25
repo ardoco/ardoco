@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.io.File;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -31,10 +32,11 @@ public record ArchitectureConfiguration(File architectureFile, ModelFormat type,
     }
 
     public Extractor extractor() {
+        Metamodel metamodel = Objects.requireNonNull(this.metamodel, "The metamodel must be set to create an extractor");
         return switch (this.type) {
-            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
-            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
-            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
+            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), metamodel);
+            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), metamodel);
+            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), metamodel);
             case ACM -> throw new IllegalArgumentException("ACM model is not supported for this project.");
         };
     }

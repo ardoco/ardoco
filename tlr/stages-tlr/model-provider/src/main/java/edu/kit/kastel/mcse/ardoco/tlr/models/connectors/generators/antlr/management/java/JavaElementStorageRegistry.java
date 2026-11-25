@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.management.java;
 
 import java.util.List;
@@ -104,27 +104,27 @@ public class JavaElementStorageRegistry extends ElementStorageRegistry {
     }
 
     public VariableElement getVariable(ElementIdentifier identifier) {
-        return new VariableElement(getElement(identifier, VariableElement.class));
+        return new VariableElement(requireElement(identifier, VariableElement.class));
     }
 
     public Element getFunction(ElementIdentifier identifier) {
-        return new Element(getElement(identifier, Element.class));
+        return new Element(requireElement(identifier, Element.class));
     }
 
     public JavaClassElement getClass(ElementIdentifier identifier) {
-        return new JavaClassElement(getElement(identifier, JavaClassElement.class));
+        return new JavaClassElement(requireElement(identifier, JavaClassElement.class));
     }
 
     public Element getInterface(ElementIdentifier identifier) {
-        return new Element(getElement(identifier, Element.class));
+        return new Element(requireElement(identifier, Element.class));
     }
 
     public Element getCompilationUnitElement(ElementIdentifier identifier) {
-        return new Element(getElement(identifier, Element.class));
+        return new Element(requireElement(identifier, Element.class));
     }
 
     public PackageElement getPackage(ElementIdentifier identifier) {
-        return new PackageElement(getElement(identifier, PackageElement.class));
+        return new PackageElement(requireElement(identifier, PackageElement.class));
     }
 
     public List<VariableElement> getVariables() {
