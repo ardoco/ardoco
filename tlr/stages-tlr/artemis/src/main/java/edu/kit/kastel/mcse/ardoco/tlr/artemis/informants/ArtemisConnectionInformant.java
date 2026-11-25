@@ -8,12 +8,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Lists;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.artemis.NamedArchitectureEntity;
@@ -25,7 +24,11 @@ import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingConfiguration;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingCreator;
+import edu.kit.kastel.mcse.ardoco.llm.embedding.EmbeddingPlatform;
 import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 
 /**
  * Base class for Artemis informants that create trace links between named architecture entities and model entities.
@@ -44,6 +47,7 @@ public abstract class ArtemisConnectionInformant extends Informant {
     protected final ArtemisNerStrategy strategy;
     private final Map<ModelEntity, List<Embedding>> modelEntityEmbeddings = new LinkedHashMap<>();
     private final Map<NamedArchitectureEntity, List<Embedding>> namedArchitectureEntityEmbeddings = new LinkedHashMap<>();
+    private @Nullable EmbeddingCreator embeddingCreator;
 
     protected ArtemisConnectionInformant(DataRepository dataRepository, ArtemisNerStrategy strategy) {
         super(strategy.getId() + "ConnectionInformant", dataRepository);
@@ -126,13 +130,28 @@ public abstract class ArtemisConnectionInformant extends Informant {
         return traceLinks;
     }
 
-    private List<Embedding> embed(List<String> names) {
-        var openaiApiKey = Environment.getEnv("OPENAI_API_KEY");
-        if (openaiApiKey == null) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set. Please set it to use the OpenAI embedding model.");
+    /**
+     * Writes new embeddings to the cache, which otherwise keeps them in memory until the JVM shuts down.
+     */
+    @Override
+    protected void after() {
+        if (embeddingCreator != null) {
+            LlmCache.cacheManager().flush();
         }
-        var embeddingModel = new OpenAiEmbeddingModel.OpenAiEmbeddingModelBuilder().modelName("text-embedding-3-large").apiKey(openaiApiKey).build();
-        var segments = names.stream().map(TextSegment::from).toList();
-        return embeddingModel.embedAll(segments).content();
+    }
+
+    private List<Embedding> embed(List<String> names) {
+        var vectors = getEmbeddingCreator().calculateEmbeddings(names);
+        return vectors.stream().map(Embedding::from).toList();
+    }
+
+    private EmbeddingCreator getEmbeddingCreator() {
+        if (embeddingCreator == null) {
+            embeddingCreator = EmbeddingCreator.create(EmbeddingConfiguration.builder(EmbeddingPlatform.OPENAI)
+                    .modelName("text-embedding-3-large")
+                    .environment(Environment::getEnv)
+                    .build(), LlmCache.cacheManager());
+        }
+        return embeddingCreator;
     }
 }

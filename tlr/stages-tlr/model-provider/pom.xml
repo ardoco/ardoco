@@ -11,18 +11,6 @@
   <name>ARDoCo Model Provider</name>
   <description>Model provider stage for loading and processing software architecture models.</description>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>dev.langchain4j</groupId>
-        <artifactId>langchain4j-bom</artifactId>
-        <version>1.19.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -36,20 +24,8 @@
     </dependency>
 
     <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-ollama</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-open-ai</artifactId>
+      <groupId>io.github.ardoco</groupId>
+      <artifactId>llm-access</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.ardoco</groupId>
@@ -135,6 +111,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <environmentVariables>
+            <!-- LLM tests run offline: the cache goes to target/ and a dummy key never reaches a paid API -->
+            <LLM_CACHE_DIR>${project.build.directory}/llm-cache-test</LLM_CACHE_DIR>
+            <OPENAI_API_KEY>dummy</OPENAI_API_KEY>
+          </environmentVariables>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
