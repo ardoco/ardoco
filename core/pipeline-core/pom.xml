@@ -53,8 +53,9 @@
               <goal>testCompile</goal>
             </goals>
             <phase>test-compile</phase>
-            <configuration combine.self="override">
-              <!-- Enforce compilation of test classes -->
+            <configuration>
+              <!-- Enforce compilation of test classes (deployment profiles skip it), the test jar is used by other modules -->
+              <skip>false</skip>
             </configuration>
           </execution>
         </executions>
