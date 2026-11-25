@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -62,7 +63,8 @@ public class NameTypeConnectionInformant extends Informant {
             if (model == null) {
                 continue;
             }
-            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(model.getMetamodel()),
+                    "No recommendation state for metamodel " + model.getMetamodel());
             this.checkForNameAfterType(textState, textStateStrategy, word, model, recommendationState);
             this.checkForNameBeforeType(textState, textStateStrategy, word, model, recommendationState);
             this.checkForNortBeforeType(textState, textStateStrategy, word, model, recommendationState);

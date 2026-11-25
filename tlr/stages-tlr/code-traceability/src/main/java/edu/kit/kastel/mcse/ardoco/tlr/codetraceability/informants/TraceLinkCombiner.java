@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.io.Serial;
+import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
@@ -55,7 +56,8 @@ public class TraceLinkCombiner extends Informant {
 
         if (swattrConnectionState.isPresent()) {
 
-            var connectionState = swattrConnectionState.get().getConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS);
+            var connectionState = Objects.requireNonNull(swattrConnectionState.get().getConnectionState(Metamodel.ARCHITECTURE_WITH_COMPONENTS),
+                    "No connection state for metamodel " + Metamodel.ARCHITECTURE_WITH_COMPONENTS);
             //evtl CodeAsArchitecture, assumed that only one leads to transitive tracelinks
             var sadSamTraceLinks = connectionState.getTraceLinks();
 

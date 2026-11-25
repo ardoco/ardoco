@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
+
+import java.util.Objects;
 
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
@@ -36,7 +38,8 @@ public class ReferenceInformant extends Informant {
             if (model == null) {
                 continue;
             }
-            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(metamodel),
+                    "No recommendation state for metamodel " + metamodel);
             this.findRecommendedInstancesFromNounMappingsThatAreSimilarToInstances(model, recommendationState, textState);
         }
     }

@@ -3,7 +3,8 @@ package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 
 import java.io.Serial;
 import java.util.EnumMap;
-import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
@@ -27,7 +28,7 @@ public class RecommendationStatesImpl implements RecommendationStates {
     }
 
     @Override
-    public RecommendationStateImpl getRecommendationState(Metamodel metamodel) {
-        return Objects.requireNonNull(this.recommendationStates.get(metamodel), "No recommendation state for metamodel " + metamodel);
+    public @Nullable RecommendationStateImpl getRecommendationState(Metamodel metamodel) {
+        return this.recommendationStates.get(metamodel);
     }
 }

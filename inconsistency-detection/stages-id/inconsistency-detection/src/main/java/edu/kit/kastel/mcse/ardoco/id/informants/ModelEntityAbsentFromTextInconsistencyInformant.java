@@ -82,7 +82,7 @@ public class ModelEntityAbsentFromTextInconsistencyInformant extends Informant {
 
         for (var metamodel : modelStates.getMetamodels()) {
             var model = Objects.requireNonNull(modelStates.getModel(metamodel), "Model must be available");
-            var connectionState = connectionStates.getConnectionState(metamodel);
+            var connectionState = Objects.requireNonNull(connectionStates.getConnectionState(metamodel), "No connection state for metamodel " + metamodel);
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
 
             var linkedModelInstances = connectionState.getInstanceLinks().collect(TraceLink::getSecondEndpoint).distinct();

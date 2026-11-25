@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.Objects;
@@ -50,7 +50,8 @@ public class ProjectNameInformant extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var recommendationStates = DataRepositoryHelper.getRecommendationStates(dataRepository);
         for (var metamodel : modelStates.getMetamodels()) {
-            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(metamodel),
+                    "No recommendation state for metamodel " + metamodel);
 
             this.checkForProjectNameInRecommendedInstances(projectName, recommendationState);
             this.checkForProjectNameInRecommendedInstances(projectName.toLowerCase(), recommendationState);

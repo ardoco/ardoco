@@ -50,7 +50,7 @@ public class TextEntityAbsentFromModelInconsistencyInformant extends Informant {
     private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates, Model model) {
         Metamodel metamodel = model.getMetamodel();
         var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
-        var connectionState = connectionStates.getConnectionState(metamodel);
+        var connectionState = Objects.requireNonNull(connectionStates.getConnectionState(metamodel), "No connection state for metamodel " + metamodel);
 
         var candidates = Lists.mutable.<MissingElementInconsistencyCandidate>empty();
 

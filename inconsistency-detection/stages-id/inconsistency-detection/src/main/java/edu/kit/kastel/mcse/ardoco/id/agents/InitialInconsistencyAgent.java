@@ -30,7 +30,8 @@ public class InitialInconsistencyAgent extends PipelineAgent {
             var modelState = Objects.requireNonNull(modelStates.getModel(model), "Model must be available");
             Metamodel metamodel = modelState.getMetamodel();
             var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
-            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(metamodel),
+                    "No recommendation state for metamodel " + metamodel);
 
             inconsistencyState.addRecommendedInstances(recommendationState.getRecommendedInstances().toImmutable());
         }

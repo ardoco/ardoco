@@ -45,7 +45,9 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
 
         @Nullable CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages = this.findCoarseGrainedCodeModel(modelStatesData);
 
-        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES).getTraceLinks()) {
+        var connectionState = Objects.requireNonNull(connectionStates.getConnectionState(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES),
+                "No connection state for metamodel " + Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        for (var traceLink : connectionState.getTraceLinks()) {
             var modelElement = traceLink.getSecondEndpoint();
             var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, Objects.requireNonNull(
                     codeModelWithCompilationUnitsAndPackages, "No code model with compilation units and packages found"));
