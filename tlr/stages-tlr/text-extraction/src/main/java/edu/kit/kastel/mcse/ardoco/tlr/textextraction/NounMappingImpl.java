@@ -41,7 +41,7 @@ public class NounMappingImpl implements NounMapping {
     private static final long serialVersionUID = -1848153982944207492L;
 
     private static final AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
-    private final @Nullable Long earliestCreationTime;
+    private final Long earliestCreationTime;
     private final MutableSortedSet<Word> words;
     private @Nullable MutableSortedSet<Phrase> phrases;
     private final MutableSortedMap<MappingKind, Confidence> distribution;
@@ -91,7 +91,7 @@ public class NounMappingImpl implements NounMapping {
      * @param reference            the String reference
      */
 
-    public NounMappingImpl(@Nullable Long earliestCreationTime, ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
+    public NounMappingImpl(Long earliestCreationTime, ImmutableSortedSet<Word> words, ImmutableSortedMap<MappingKind, Confidence> distribution,
             ImmutableList<Word> referenceWords, ImmutableList<String> surfaceForms, String reference) {
         this.earliestCreationTime = earliestCreationTime;
         this.words = words.toSortedSet();
@@ -224,18 +224,21 @@ public class NounMappingImpl implements NounMapping {
         return this.surfaceForms.toImmutable();
     }
 
-    public static @Nullable Long earliestCreationTime(NounMapping... nounMappings) {
+    public static Long earliestCreationTime(NounMapping... nounMappings) {
         Long earliest = Long.MAX_VALUE;
         for (var mapping : nounMappings) {
             if (mapping instanceof NounMappingImpl impl && impl.earliestCreationTime() < earliest) {
                 earliest = impl.earliestCreationTime();
             }
         }
-        return earliest == Long.MAX_VALUE ? null : earliest;
+        if (earliest == Long.MAX_VALUE) {
+            throw new IllegalArgumentException("None of the noun mappings has a creation time");
+        }
+        return earliest;
     }
 
     public Long earliestCreationTime() {
-        return Objects.requireNonNull(this.earliestCreationTime, "Earliest creation time is not set");
+        return this.earliestCreationTime;
     }
 
     public ImmutableSortedSet<Word> words() {
