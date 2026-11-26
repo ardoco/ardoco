@@ -40,15 +40,12 @@ public class Python3ElementExtractor extends ElementExtractor {
     private final LinkedHashMap<String, List<String>> pendingImportsByPath = new LinkedHashMap<>();
 
     public Python3ElementExtractor() {
-        super();
-        this.elementRegistry = new Python3ElementStorageRegistry();
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
+        this(new Python3ElementStorageRegistry());
     }
 
     public Python3ElementExtractor(Python3ElementStorageRegistry elementRegistry) {
-        super();
+        super(new Python3CommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
     }
 
     @Override

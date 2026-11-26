@@ -22,9 +22,12 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
  * ElementStorageRegistry.
  */
 public abstract class ElementExtractor {
-    @SuppressWarnings("NullAway.Init") // initialized in the constructors of the implementing subclasses
-    protected CommentExtractor commentExtractor;
+    private final CommentExtractor commentExtractor;
     protected final Logger logger = LoggerFactory.getLogger(ElementExtractor.class);
+
+    protected ElementExtractor(CommentExtractor commentExtractor) {
+        this.commentExtractor = commentExtractor;
+    }
 
     public abstract ElementStorageRegistry getElements();
 

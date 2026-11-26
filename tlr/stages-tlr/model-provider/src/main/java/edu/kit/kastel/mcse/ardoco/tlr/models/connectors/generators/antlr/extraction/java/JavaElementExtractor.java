@@ -37,15 +37,12 @@ public class JavaElementExtractor extends ElementExtractor {
     private final JavaElementStorageRegistry elementRegistry;
 
     public JavaElementExtractor() {
-        super();
-        this.elementRegistry = new JavaElementStorageRegistry();
-        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
+        this(new JavaElementStorageRegistry());
     }
 
     public JavaElementExtractor(JavaElementStorageRegistry elementRegistry) {
-        super();
+        super(new JavaCommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
     }
 
     @Override

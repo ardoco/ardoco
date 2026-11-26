@@ -37,13 +37,12 @@ public class CppElementExtractor extends ElementExtractor {
     private final CppElementStorageRegistry elementRegistry;
 
     public CppElementExtractor() {
-        this.elementRegistry = new CppElementStorageRegistry();
-        this.commentExtractor = new CppCommentExtractor(elementRegistry);
+        this(new CppElementStorageRegistry());
     }
 
     public CppElementExtractor(CppElementStorageRegistry elementRegistry) {
+        super(new CppCommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new CppCommentExtractor(elementRegistry);
     }
 
     @Override
