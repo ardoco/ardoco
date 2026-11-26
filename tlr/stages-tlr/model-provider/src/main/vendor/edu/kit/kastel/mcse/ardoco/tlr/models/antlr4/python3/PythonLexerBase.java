@@ -1,11 +1,42 @@
-/* Licensed under MIT 2021-2026. */
+/*
+The MIT License (MIT)
+Copyright (c) 2021 Robert Einhorn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+ */
+
+/*
+ *
+ * Project : A helper class for an ANTLR4 Python lexer grammar that assists in tokenizing indentation,
+ *           interpolated strings, and encoding declaration.
+ *
+ * Developed by : Robert Einhorn, robert.einhorn.hu@gmail.com
+ *
+ */
+
+// ****  Implemented in Java 8 for compatibility with ANTLR4 Java runtime ****
+
 package edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3;
 
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
@@ -128,8 +159,7 @@ public abstract class PythonLexerBase extends Lexer {
     }
 
     private void processCurrentToken() {
-        if (this.previousPendingTokenType == Token.EOF)
-            return;
+        if (this.previousPendingTokenType == Token.EOF) return;
 
         this.setCurrentAndFollowingTokens();
         if (this.indentationLengthStack.isEmpty()) { // We're at the first token
@@ -174,11 +204,15 @@ public abstract class PythonLexerBase extends Lexer {
     }
 
     private void setCurrentAndFollowingTokens() {
-        this.curToken = this.laToken == null ? super.nextToken() : this.laToken;
+        this.curToken = this.laToken == null ?
+                super.nextToken() :
+                this.laToken;
 
         this.normalizeCurToken(); // Do not use laToken in this method or any of its submethods — it hasn't been set yet!
 
-        this.laToken = this.curToken.getType() == Token.EOF ? this.curToken : super.nextToken();
+        this.laToken = this.curToken.getType() == Token.EOF ?
+                this.curToken :
+                super.nextToken();
     }
 
     // ===================== Leading‑Token Preprocessing =====================
@@ -217,8 +251,7 @@ public abstract class PythonLexerBase extends Lexer {
     }
 
     private void insertENCODINGtoken() { // https://peps.python.org/pep-0263/
-        if (this.encodingName.isEmpty())
-            return;
+        if (this.encodingName.isEmpty()) return;
 
         final Pair<TokenSource, CharStream> sourcePair = this._tokenFactorySourcePair;
         final CommonToken encodingToken = new CommonToken(sourcePair, PythonLexer.ENCODING, Token.HIDDEN_CHANNEL, 0, 0);
@@ -273,7 +306,9 @@ public abstract class PythonLexerBase extends Lexer {
             default:
                 this.addPendingToken(nlToken);
                 if (isLookingAhead) { // We're on a whitespace(s) followed by a statement
-                    final int indentationLength = this.laToken.getType() == Token.EOF ? 0 : this.getIndentationLength(this.curToken.getText());
+                    final int indentationLength = this.laToken.getType() == Token.EOF ?
+                            0 :
+                            this.getIndentationLength(this.curToken.getText());
 
                     if (indentationLength != PythonLexerBase.INVALID_LENGTH) {
                         this.addPendingToken(this.curToken); // WS token
@@ -470,8 +505,7 @@ public abstract class PythonLexerBase extends Lexer {
     private void setLexerModeByCOLONorCOLONEQUALtoken() {
         // Exit early when the current lexer mode indicates an open parenthesis/bracket
         final boolean opened = this.parenOrBracketOpenedStack.peek() != 0;
-        if (opened)
-            return;
+        if (opened) return;
 
         // COLONEQUAL token will be replaced with a COLON token in processCurrentToken()
         final int prevLexerMode = lexerModeStack.peek();
@@ -598,7 +632,8 @@ public abstract class PythonLexerBase extends Lexer {
     }
 
     private void handleCOLONEQUALtokenInIString() { // ISTRING = interpolated string (FSTRING or TSTRING)
-        if (!this.lexerModeStack.isEmpty() && this.parenOrBracketOpenedStack.peek() == 0) {
+        if (!this.lexerModeStack.isEmpty() &&
+                this.parenOrBracketOpenedStack.peek() == 0) {
 
             // In an f/t-string, the walrus operator (:=) is only allowed inside parentheses.
             // If used outside, split the COLONEQUAL token into a COLON
@@ -740,7 +775,9 @@ public abstract class PythonLexerBase extends Lexer {
         token.setType(tokenType);
         token.setChannel(Token.DEFAULT_CHANNEL);
         token.setStopIndex(originalToken.getStartIndex() - 1);
-        token.setText(text == null ? "<" + this.getVocabulary().getSymbolicName(tokenType) + ">" : text);
+        token.setText(text == null ?
+                "<" + this.getVocabulary().getSymbolicName(tokenType) + ">" :
+                text);
 
         this.addPendingToken(token);
     }
@@ -761,8 +798,7 @@ public abstract class PythonLexerBase extends Lexer {
     // parser receives accurate context for recovery.
 
     private void reportLexerError(final String errMsg) {
-        this.getErrorListenerDispatch()
-                .syntaxError(this, this.curToken.getType(), this.curToken.getLine(), this.curToken.getCharPositionInLine(), " LEXER" + ERR_TXT + errMsg, null);
+        this.getErrorListenerDispatch().syntaxError(this, this.curToken.getType(), this.curToken.getLine(), this.curToken.getCharPositionInLine(), " LEXER" + ERR_TXT + errMsg, null);
     }
 
     private void reportError(final String errMsg) {
