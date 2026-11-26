@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
-import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -23,30 +22,19 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 public final class ModelProviderInformant extends Informant {
     private static final String MODEL_STATES_DATA = "ModelStatesData";
-    private final @Nullable Extractor extractor;
-    private final @Nullable File fromFile;
-    private final @Nullable Metamodel metamodel;
 
-    // Needed for Configuration Generation
-    @SuppressWarnings("NullAway") // only used reflectively for configuration generation, never processed
-    private ModelProviderInformant() {
-        super(null, null);
-        this.extractor = null;
-        this.fromFile = null;
-        this.metamodel = null;
-    }
+    private final ModelSource source;
 
     /**
      * Instantiates a new model provider to extract information into the {@link DataRepository}.
      *
      * @param dataRepository the data repository
-     * @param fromFile       whether the model should be read from a file
+     * @param fromFile       the file the code model is read from
+     * @param metamodel      the metamodel of the code model in the file
      */
     public ModelProviderInformant(DataRepository dataRepository, File fromFile, Metamodel metamodel) {
         super("Extractor File", dataRepository);
-        this.fromFile = Objects.requireNonNull(fromFile);
-        this.metamodel = Objects.requireNonNull(metamodel);
-        this.extractor = null;
+        this.source = new FromFile(Objects.requireNonNull(fromFile), Objects.requireNonNull(metamodel));
     }
 
     /**
@@ -56,33 +44,29 @@ public final class ModelProviderInformant extends Informant {
      * @param extractor      the model connector
      */
     public ModelProviderInformant(DataRepository dataRepository, Extractor extractor) {
-        super("Extractor " + (extractor == null ? "File" : extractor.getClass().getSimpleName()), dataRepository);
-        this.extractor = extractor;
-        this.fromFile = null;
-        this.metamodel = null;
+        super("Extractor " + extractor.getClass().getSimpleName(), dataRepository);
+        this.source = new FromExtractor(extractor);
     }
 
     @Override
     public void process() {
-        Model extractedModel;
-
-        if (this.fromFile != null) {
-            Metamodel fileMetamodel = Objects.requireNonNull(this.metamodel, "The metamodel must be set when reading from a file");
-            extractedModel = Objects.requireNonNull(CodeExtractor.readInCodeModel(this.fromFile, fileMetamodel), "The code model could not be read from file");
-            this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
-            return;
+        switch (this.source) {
+            case FromFile(File file, Metamodel metamodel) -> {
+                Model extractedModel = Objects.requireNonNull(CodeExtractor.readInCodeModel(file, metamodel), "The code model could not be read from file");
+                this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
+            }
+            case FromExtractor(Extractor extractor) -> {
+                IdentifierProvider.reset(extractor.getIdPrefix());
+                this.getLogger().info("Extracting code model.");
+                Model extractedModel = extractor.extractModel();
+                this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
+                if (extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
+                    this.getLogger().info("Writing out code model to file in directory.");
+                    codeExtractor.writeOutCodeModel(codeModel);
+                }
+                this.addModelStateToDataRepository(extractor.getMetamodel(), extractedModel);
+            }
         }
-
-        Extractor extractor = Objects.requireNonNull(this.extractor, "No extractor available");
-        IdentifierProvider.reset(extractor.getIdPrefix());
-        this.getLogger().info("Extracting code model.");
-        extractedModel = extractor.extractModel();
-        this.addModelStateToDataRepository(extractedModel.getMetamodel(), extractedModel);
-        if (extractor instanceof CodeExtractor codeExtractor && extractedModel instanceof CodeModel codeModel) {
-            this.getLogger().info("Writing out code model to file in directory.");
-            codeExtractor.writeOutCodeModel(codeModel);
-        }
-        this.addModelStateToDataRepository(extractor.getMetamodel(), extractedModel);
     }
 
     private void addModelStateToDataRepository(Metamodel metamodel, Model model) {
@@ -100,5 +84,17 @@ public final class ModelProviderInformant extends Informant {
     @Override
     protected void delegateApplyConfigurationToInternalObjects(ImmutableSortedMap<String, String> map) {
         // empty
+    }
+
+    /**
+     * Where the model comes from: read from a file or extracted by an {@link Extractor}.
+     */
+    private sealed interface ModelSource permits FromFile, FromExtractor {
+    }
+
+    private record FromFile(File file, Metamodel metamodel) implements ModelSource {
+    }
+
+    private record FromExtractor(Extractor extractor) implements ModelSource {
     }
 }
