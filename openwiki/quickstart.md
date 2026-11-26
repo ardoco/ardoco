@@ -1,114 +1,233 @@
 ---
 type: "Reference"
 title: "ARDoCo — OpenWiki Quickstart"
-description: "Entry point to the ARDoCo OpenWiki: repository overview, build prerequisites, documentation map, and links to architecture, TLR, inconsistency detection, and operations pages."
+description: "Entry point to the ARDoCo OpenWiki: what ARDoCo is, the monorepo module layout, build prerequisites and commands, environment configuration summary, documentation map, and task routing to the domain pages."
+tags: [quickstart, monorepo, maven, build, environment, overview]
 openwiki:
   roles: [repository, architecture]
-  source_paths: [pom.xml, README.md]
+  source_paths: [README.md, docs/Home.md, docs/Quickstart.md, pom.xml, sample.env]
   invariants: ["Monorepo of core, tlr, and inconsistency-detection modules under parent io.github.ardoco:parent"]
-  validation_commands: ["mvn clean install"]
+  validation_commands: ["mvn clean install", "mvn -pl core clean verify", "mvn -pl tlr clean verify", "mvn -pl inconsistency-detection clean verify"]
+sources:
+  - id: openwiki-source-42f45bc41f41d8a905bc2d9e
+    resource: repo://.github/workflows/deploy-snapshot.yml
+  - id: openwiki-source-d558e38ccd1b08e055e4f3f5
+    resource: repo://.github/workflows/docs.yml
+  - id: openwiki-source-6d3ac2bdfb0e76882a670989
+    resource: repo://.github/workflows/openwiki.yml
+  - id: openwiki-source-ca8f496ee5e50bf320eaf78a
+    resource: repo://core/.github/dependabot.yml
+  - id: openwiki-source-64c4c51956e735b4f8b4f2ad
+    resource: repo://core/.mvn/jvm.config
+  - id: openwiki-source-85d7e1bba1ef1c69d3421831
+    resource: repo://core/.mvn/maven.config
+  - id: openwiki-source-46076f2b227dff6775e63f89
+    resource: repo://core/framework/common/src/main/java/edu/kit/kastel/mcse/ardoco/core/common/util/Environment.java
+  - id: openwiki-source-b04125c9ac927fa0d9397cf1
+    resource: repo://core/framework/pom.xml
+  - id: openwiki-source-8461f9d3c6ce6ece9e1ae7ae
+    resource: repo://core/pipeline-core/src/main/java/edu/kit/kastel/mcse/ardoco/core/execution/Ardoco.java
+  - id: openwiki-source-4953616e2e42dce9b871023a
+    resource: repo://core/pom.xml
+  - id: openwiki-source-e6a9915b73df8322a4b13396
+    resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/architecture/BasicArchitectureTest.java
+  - id: openwiki-source-ddf1b7f2e4ba84326ad31c9f
+    resource: repo://core/tests-base/src/main/java/edu/kit/kastel/mcse/ardoco/core/tests/eval/EvaluationProject.java
+  - id: openwiki-source-cd73574c04943e56a29dd96f
+    resource: repo://core/tests-base/src/main/resources/benchmark/README.md
+  - id: openwiki-source-7d177c0f26ceaecd7fd6d232
+    resource: repo://docs/Home.md
+  - id: openwiki-source-a07d83c86ab5dff75745e6ce
+    resource: repo://docs/Quickstart.md
+  - id: openwiki-source-032eecef581f79839de83eb9
+    resource: repo://inconsistency-detection/pipeline-id/src/main/java/edu/kit/kastel/mcse/ardoco/id/execution/runner/InconsistencyDetection.java
+  - id: openwiki-source-b40e29eb69418d1b82bc9a2b
+    resource: repo://inconsistency-detection/pom.xml
+  - id: openwiki-source-17e801a0d4e1b83de6d7102e
+    resource: repo://inconsistency-detection/stages-id/pom.xml
+  - id: openwiki-source-2355f81d7cf522f8dbdaabd4
+    resource: repo://pom.xml
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
+  - id: openwiki-source-cc2828785988d51226a4241e
+    resource: repo://renovate.json
+  - id: openwiki-source-05268939a714aa11095abad9
+    resource: repo://sample.env
+  - id: openwiki-source-c3324edd02fb573e63e5301b
+    resource: repo://tlr/pipeline-tlr/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/execution/Swattr.java
+  - id: openwiki-source-ca56ac93c4121e1f63ec2ebf
+    resource: repo://tlr/pom.xml
+  - id: openwiki-source-e6a11af18d07af19ac0ed272
+    resource: repo://tlr/stages-tlr/artemis/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/artemis/informants/ArtemisConnectionInformant.java
+  - id: openwiki-source-fb84ef887f21fdedcc742e23
+    resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/CachedChatLanguageModel.java
+  - id: openwiki-source-13a39754b1871635f3d3754d
+    resource: repo://tlr/stages-tlr/model-provider/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/models/informants/LargeLanguageModel.java
+  - id: openwiki-source-9c80623f9bfadd1c3b52923a
+    resource: repo://tlr/stages-tlr/pom.xml
+  - id: openwiki-source-5e389d3989eaef1939dbaded
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/config/ConfigManager.java
+  - id: openwiki-source-450804860414bc3b2e2751f7
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/java/edu/kit/kastel/mcse/ardoco/tlr/text/providers/informants/corenlp/textprocessor/HttpCommunicator.java
+  - id: openwiki-source-6fc674d44f4df015eca8837e
+    resource: repo://tlr/stages-tlr/text-preprocessing/src/main/resources/config.properties
+generated: { by: "openwiki/0.9.0", at: "2026-11-23T16:40:38.555Z" }
+verified:
+  - by: openwiki/0.9.0
+    at: 2026-11-23T16:40:38.555Z
 ---
 
 # ARDoCo — OpenWiki Quickstart
 
-Welcome to the OpenWiki documentation for **ARDoCo** (Automating Requirements and Documentation Comprehension). This page is your entry point. Start here, then follow the links below to dive deeper.
+Welcome to the OpenWiki documentation for **ARDoCo**. This page is the entry point: it explains what ARDoCo is, how the monorepo is organized, how to build and configure it, and where to go next for each change area. Start here, then follow the [documentation map](#documentation-map) and the [task routing table](#task-routing).
 
 ## What is ARDoCo?
 
-ARDoCo is a research framework that connects software architecture documentation and models using **Traceability Link Recovery (TLR)**, then leverages those links to detect **inconsistencies** — missing or deviating elements between artifacts. An element can be any representable item of the model, such as a component or a relation.
+ARDoCo (**A**utomating **R**equirements and **Do**cumentation **Co**mprehension) is a research framework whose goal is to connect architecture documentation and models with **Traceability Link Recovery (TLR)** while identifying missing or deviating elements (**inconsistencies**). An element can be any representable item of the model, like a component or a relation. ARDoCo first creates trace links between artifacts (software architecture documentation, software architecture models, code) and then makes use of them — plus other information — to detect inconsistencies.
 
-The project is developed by the [MCSE group](https://mcse.kastel.kit.edu) at KASTEL, Karlsruhe Institute of Technology (KIT). Recent approaches like [LiSSA](https://ardoco.de/approaches/lissa/) use LLMs and Information Retrieval for generic TLR.
+Recent approaches such as [LiSSA](https://ardoco.de/approaches/lissa/) leverage Large Language Models (LLMs) and Information Retrieval (IR) for more generic TLR across artifact types, including requirements-to-code, documentation-to-code, and architecture-to-code tracing.
 
-## Repository Overview
+The project is actively developed by the [MCSE group](https://mcse.kastel.kit.edu) of [KASTEL](https://kastel.kit.edu) at the [Karlsruhe Institute of Technology (KIT)](https://www.kit.edu). Website: [ardoco.de](https://ardoco.de).
 
-This is a **monorepo** containing three major modules. The standalone `ardoco/core`, `ardoco/tlr`, and `ardoco/inconsistency-detection` repositories are archived; the project now lives only in this monorepo:
+## Repository Layout
 
-| Module | Path | Maven Coordinates | Purpose |
-|--------|------|-------------------|---------|
-| **Core** | `/core` | `io.github.ardoco.core` | Framework: pipeline engine, data model, API interfaces, text/code/architecture representations, execution runners |
-| **TLR** | `/tlr` | `io.github.ardoco.tlr` | Traceability Link Recovery: all TLR approaches (SWATTR, ArDoCode, ArCoTL, TransArC, ExArch, ArTEMiS) and their pipeline stages |
-| **Inconsistency Detection** | `/inconsistency-detection` | `io.github.ardoco.id` | Inconsistency detection between SAD and SAM (TEAM and MEAT inconsistencies) |
+This repository is the **monorepo** containing the framework and all approaches: the pipeline and data-handling definitions as well as the individual pipeline steps, inputs, and outputs. The root POM `io.github.ardoco:parent` (version `2.2.0-SNAPSHOT` via the CI-friendly `${revision}` placeholder, MIT license) is the parent for three top-level module trees:
 
-The root `pom.xml` (`io.github.ardoco:parent`) is the parent POM that defines shared dependency versions, plugin configuration, and build settings for all three modules.
+| Module | Path | Aggregator POM | Purpose | Submodules |
+|--------|------|----------------|---------|------------|
+| **Core** | `/core` | `io.github.ardoco.core:parent-core` | Framework: pipeline engine, data model, API interfaces, common utilities, execution runners | `framework` (with `common`, `text-provider-json`), `pipeline-core`, `tests-base` |
+| **TLR** | `/tlr` | `io.github.ardoco.tlr:parent-tlr` | Traceability Link Recovery: SWATTR, ArDoCode, ArCoTL, TransArC, ExArch, ArTEMiS and their pipeline stages | `pipeline-tlr`, `stages-tlr` (with `artemis`, `code-traceability`, `connection-generator`, `model-provider`, `recommendation-generator`, `text-extraction`, `text-preprocessing`), `tests-tlr` |
+| **Inconsistency Detection** | `/inconsistency-detection` | `io.github.ardoco.id:parent-id` | Classic TEAM/MEAT inconsistency detection between SAD and SAM, plus LLM-validated checkers against code | `pipeline-id`, `stages-id` (with `artemis-inconsistency-detection`, `inconsistency-detection`, `programming-language-inconsistency-detection`), `architectural-style-pattern-inconsistency-detection` (declared directly under the parent-id aggregator), `tests-inconsistency` |
+
+Two Maven profiles control what gets built, and they are defined in the root POM and in each module POM:
+
+- **`complete`** (`activeByDefault=true`) — the default. The root profile lists `core`, `inconsistency-detection`, `tlr`; each tree's profile also includes its test module (`tests-base`, `tests-tlr`, `tests-inconsistency`), so a plain `mvn` invocation builds everything including tests.
+- **`deployment`** — restricts each tree to its publishable modules (core: `framework`, `pipeline-core`, `tests-base`; tlr: `pipeline-tlr`, `stages-tlr`; id: `pipeline-id`, `stages-id`), skips test compilation, and GPG-signs artifacts for Maven Central. The root POM additionally carries a `deployment-parent` profile with the same build tweaks for the root POM itself.
 
 ## System Requirements
 
-- **Java**: JDK 21 or higher
-- **Maven**: 3.9 or higher
-- **RAM**: At least 4 GB recommended
+- **Java**: JDK 21 or higher (`java.version=21` drives `maven.compiler.release` in the root [pom.xml](../pom.xml)).
+- **Maven**: 3.9 or higher.
+- **RAM**: at least 4 GB advised.
+- **IDE**: IntelliJ IDEA, Eclipse, or VS Code with Java extensions (optional).
+
+Each module tree ships its own `.mvn/` configuration (`maven.config` enables parallel builds with `-T1C`; `jvm.config` tunes the JVM for the forking compiler and Mockito/ByteBuddy under JDK 21). These apply when invoking Maven inside `core/`, `tlr/`, or `inconsistency-detection/`; from the repository root the default `complete` profile aggregates all three trees.
 
 ## Build
 
 ```bash
-mvn clean install
+mvn clean install     # Full build with tests, install to local repository
+mvn spotless:apply    # Apply code formatting before committing
+mvn clean verify      # Full build with tests, no install
 ```
 
-This builds all three modules and their submodules. To run formatting checks and verification:
+`mvn clean verify` runs both the Surefire unit/architecture tests and the Failsafe integration tests (the root POM pins `maven-failsafe-plugin` 3.6.1 in `pluginManagement` with goals `integration-test` + `verify` bound to the `integration-test` phase). The LLM-gated and full-clone integration tests skip automatically when their environment variables are absent — see [Testing & Evaluation](testing.md) for the gating matrix.
+
+Per-module validation (from the repository root):
 
 ```bash
-mvn spotless:apply   # Apply code formatting
-mvn clean verify     # Full build with tests
+mvn -pl core clean verify                  # Framework, pipeline-core, tests-base
+mvn -pl tlr clean verify                   # pipeline-tlr, stages-tlr, tests-tlr
+mvn -pl inconsistency-detection clean verify   # pipeline-id, stages-id, tests-inconsistency
 ```
 
+Build gotchas worth knowing before your first change:
+
+- **Pinned `flatten-maven-plugin`**: all POMs resolve `${revision}` through `flatten-maven-plugin`, pinned to `1.9.0` because the unversioned "latest" resolution (1.8.0) has an upstream NPE in the CI-friendly interpolator. Do not remove the pin.
+- **Spotless** enforces formatting with the per-tree `formatter.xml`, `spotless.importorder`, and `license-header` files and only touches files changed relative to `origin/main` (`ratchetFrom`); `mvn spotless:check` verifies without rewriting.
+- **JSpecify**: `package-info.java` files with `@NullMarked` are generated into your source directories during the build and are git-ignored — do not commit them.
+- **Dependency updates run through Renovate**: [`renovate.json`](../renovate.json) extends the shared `local>ArDoCo/actions:renovate-preset` preset; there is no root `.github/dependabot.yml`, so dependency updates arrive as Renovate PRs — do not add Dependabot config back (the per-tree `*/.github/dependabot.yml` copies are not read by GitHub, which only honors the root-level file).
+
+Details, publishing, and CI workflows: [Operations](operations.md).
+
 ## Using ARDoCo as a Dependency
+
+ARDoCo releases are published to Maven Central; embed any subproject by adding it as a dependency:
 
 ```xml
 <dependencies>
   <dependency>
-    <groupId>io.github.ardoco.core</groupId>
-    <artifactId>pipeline-core</artifactId> <!-- or another published module such as io.github.ardoco.tlr:pipeline-tlr -->
+    <groupId>io.github.ardoco</groupId>
+    <artifactId>parent</artifactId> <!-- or any other subproject, e.g. io.github.ardoco.core:pipeline-core -->
     <version>VERSION</version>
   </dependency>
 </dependencies>
 ```
 
-See the [main pom.xml](../pom.xml) for available modules and coordinates.
+See the root [pom.xml](../pom.xml) for all available module coordinates. Development (`-SNAPSHOT`) versions have two publish targets: the root and aggregator POMs' `distributionManagement` points `mvn deploy` at Sonatype Central Snapshots (`https://central.sonatype.com/repository/maven-snapshots/`), while the manual [`deploy-snapshot.yml`](../.github/workflows/deploy-snapshot.yml) workflow (manual trigger only) delegates to the reusable `ardoco/actions` maven-snapshot workflow to deploy a selected branch to the ARDoCo mirror group's package registry on gitlab.kit.edu (project 203206); it only deploys `-SNAPSHOT` versions and needs the `GITLAB_SNAPSHOT_TOKEN` secret. Consumers resolve snapshots through the `ardocoSnapshots` repository entry (gitlab.kit.edu mirror group) — the `mavenSnapshot` entry adds Sonatype Central Snapshots — see [Operations](operations.md) for the publish recipe.
+
+## Running a Pipeline
+
+End-user entry points are `ArdocoRunner` subclasses that assemble a pipeline and run it against input files:
+
+- The eight TLR runners live in `tlr/pipeline-tlr/.../execution/`: `Swattr`, `Ardocode`, `Arcotl`, `Transarc`, `ExArch`, `Artemis`, `ArtemisInExArch`, and `ArtemisInTransArC`. Each `setUp(...)` validates inputs, wires its stage composition, and pins the metamodels — see [TLR Approaches](tlr-approaches.md).
+- The four ID runners live in `inconsistency-detection/pipeline-id/.../execution/`: `InconsistencyDetection` (the classic TEAM/MEAT runner, which appends the `InconsistencyChecker` stage to the SWATTR-style pipeline), `ArtemisInconsistencyDetection`, `ProgrammingLanguageInconsistencyDetection`, and `ArchitecturalStylePatternInconsistencyDetection` (the newer LLM-validated checkers, which accept separate `llmForNer` and `validationAgentLlm` models) — see [Inconsistency Detection](inconsistency-detection.md).
+- Every runner wraps an `Ardoco` pipeline (`core/pipeline-core`) and inherits `ArdocoRunner` (`core/pipeline-core/.../execution/runner/`); `runAndSave(outputDir)` writes `traceLinks_<project>.txt`, a trace-link CSV, and `inconsistencyDetection_<project>.txt`.
 
 ## Environment Configuration
 
-ARDoCo supports local NLP preprocessing (via Stanford CoreNLP) or a remote microservice. LLM-based approaches require API keys. See [`/sample.env`](../sample.env) for all available environment variables. Key variables:
+All environment lookups funnel through the `Environment` utility (`core/framework/common`), backed by `dotenv-java`. If a `.env` file exists in the working directory, it is loaded once and its values **take precedence over system environment variables**; missing values resolve to system env or `null`. An ArchUnit rule (`noGetEnv`) forbids every other class from calling `System.getenv`, so this utility is the single environment gateway. Copy [`/sample.env`](../sample.env) as a starting point.
 
-- `NLP_PROVIDER_SOURCE` — set to `microservice` to use the remote StanfordCoreNLP service
-- `MICROSERVICE_URL`, `SCNLP_SERVICE_USER`, `SCNLP_SERVICE_PASSWORD` — microservice credentials
-- `OPENAI_API_KEY`, `OPENAI_ORGANIZATION_ID` — for LLM-based approaches
-- `OLLAMA_HOST`, `OLLAMA_USER`, `OLLAMA_PASSWORD`, `OLLAMA_TOKEN` — for local LLM via Ollama
-- `LLM_CACHE_DIR` — caching directory for LLM requests
-- `SEED` — random seed for reproducibility
+| Variable | Consumed by | Purpose |
+|----------|-------------|---------|
+| `NLP_PROVIDER_SOURCE` | text-preprocessing `ConfigManager` | `microservice` selects the remote Stanford CoreNLP service; anything else uses local CoreNLP |
+| `MICROSERVICE_URL` | text-preprocessing `ConfigManager` | URL of the StanfordCoreNLP provider service (default `http://localhost:8080`) |
+| `SCNLP_SERVICE_USER` / `SCNLP_SERVICE_PASSWORD` | `HttpCommunicator` | HTTP basic-auth credentials for the microservice |
+| `OPENAI_API_KEY` | `LargeLanguageModel`, `LlmArchitectureProviderInformant`, `ArtemisConnectionInformant` | OpenAI chat models; also required for ArTEMiS embedding similarity (`text-embedding-3-large`) |
+| `OPENAI_ORGANIZATION_ID` | `LargeLanguageModel`, `LlmArchitectureProviderInformant` | Required for OpenAI chat-model creation |
+| `OPENAI_MODEL_NAME` | `LargeLanguageModel.OPENAI_GENERIC` | Custom OpenAI chat model name |
+| `OLLAMA_HOST` | `LargeLanguageModel` (and test gating) | Ollama host URL for local LLMs |
+| `OLLAMA_USER` / `OLLAMA_PASSWORD` | `LargeLanguageModel` | Ollama basic-auth header |
+| `OLLAMA_TOKEN` | `LargeLanguageModel` | OpenAI-compatible token against the Ollama host |
+| `OLLAMA_MODEL_NAME` | `LargeLanguageModel.OLLAMA_GENERIC` | Custom Ollama model name |
+| `LLM_CACHE_DIR` | `CachedChatLanguageModel` | Prompt/response cache directory for LLM runs (default `.cache-llm/`) |
+| `SEED` | `LargeLanguageModel` | Random seed for reproducibility (default `422413373`; an unparsable value aborts model creation) |
+| `MODEL_NAME_NER` | — | Declared in `sample.env` as a template placeholder; currently no consumer in the codebase |
+
+The `LargeLanguageModel` enum currently pins GPT-5.5 (`gpt-5.5-2026-04-23`), the GPT-5.4 family (`GPT_5_4`, `GPT_5_4_MINI`, `GPT_5_4_NANO`), GPT-5, GPT-4o, and GPT-4.1, plus the `OPENAI_GENERIC` and `OLLAMA_GENERIC` variants for custom model names. Model selection, disk caching, prompt resources, and the validation-agent tooling are documented in [LLM Integration](llm-integration.md).
+
+Test-selection variables (`CI`, `testCodeFull`, `testBaseline`, `mutipleRuns`) and their effects are covered in [Testing & Evaluation](testing.md).
 
 ## Documentation Map
 
 | Page | Covers |
 |------|--------|
-| [Architecture](architecture.md) | Pipeline composite pattern, DataRepository blackboard, intermediate artifacts (Text, SAM, Code Model) |
-| [TLR Approaches](tlr-approaches.md) | All traceability link recovery approaches, their pipeline compositions, and stage modules |
-| [Inconsistency Detection](inconsistency-detection.md) | TEAM and MEAT inconsistency types, detection pipeline, configuration options |
-| [Operations](operations.md) | Build system, code formatting, JSpecify nullness, CI, monorepo sync scripts, external services |
+| [Architecture](architecture.md) | Pipeline composite pattern (stage → agent → informant), `DataRepository` blackboard, intermediate artifacts (Text, SAM, Code Model), configuration system, execution runners |
+| [Code Model](code-model.md) | The sealed `CodeModel`/`CodeItem` class family in `core/framework/common`, the `.acm` persistence format with the shared Jackson mapper, and the model-provider extraction backends (Eclipse JDT Java, ANTLR Python3/C++, Shell, `AllLanguagesExtractor`) that feed TLR and LLM stages |
+| [Constraints](constraints.md) | Every machine-enforced invariant a change can violate: ArchUnit rule suites (layering, naming, `noGetEnv`, `@Deterministic`, Jackson rules), JSpecify `NullMarked` generation, Spotless ratchet formatting, the `Configurable` configuration contract, and Renovate tooling, with the commands that enforce each |
+| [TLR Approaches](tlr-approaches.md) | All eight TLR approaches and runners, the seven stage modules, model/code extraction backends, ArCoTL heuristic computation tree, ArTEMiS NER strategies |
+| [LLM Integration](llm-integration.md) | The shared LLM machinery: the `LargeLanguageModel` enum and model selection, `CachedChatLanguageModel` disk caching and deterministic seeding, per-stage prompt resources, and the langchain4j AiServices validation agents with read-only code tools |
+| [Inconsistency Detection](inconsistency-detection.md) | TEAM and MEAT inconsistency types, the `InconsistencyChecker` stage and its three agents, the LLM-validated programming-language and architectural-style/pattern checkers, pre-filter funnel, configuration options, hold-back evaluation harness |
+| [Operations](operations.md) | Build system and module matrix, pinned-plugin gotchas, code formatting and JSpecify nullness, CI/CD workflows, publishing, environment configuration, external services |
+| [Testing & Evaluation](testing.md) | Shared ArchUnit rule suites, benchmark projects and gold standards, env-gated TLR integration tests, ID hold-back harness, run recipes, the `ExpectedResults` invariant |
 
 ## Task Routing
 
-When changing a specific area, start at the listed page and use the focused validation command. All commands run from the repository root.
+When changing a specific area, start at the listed page and validate with the focused command. All commands run from the repository root.
 
 | Change area / intent | Wiki page | Source entry points | Key symbols / types | Focused tests | Minimal validation |
-|----------------------|----------|---------------------|---------------------|---------------|--------------------|
-| Add or modify a pipeline stage/agent/informant | [Architecture](architecture.md) | `core/framework/common/.../pipeline/`, `tlr/stages-tlr/` | `AbstractPipelineStep`, `AbstractExecutionStage`, `PipelineAgent`, `Informant`, `DataRepository` | `core/tests-base` architecture tests | `mvn -pl core clean verify` |
-| Add or change a TLR approach / runner | [TLR Approaches](tlr-approaches.md) | `tlr/pipeline-tlr/.../execution/`, `tlr/stages-tlr/` | `Swattr`, `Arcotl`, `Transarc`, `ArCoTLInformant`, `TraceLinkGenerator` | `tlr/tests-tlr` integration tests (`*IT.java`) | `mvn -pl tlr clean verify` |
-| Modify ArCoTL heuristics or transitive linking | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/code-traceability/.../arcotl/`, `.../informants/TraceLinkCombiner.java` | `TraceLinkGenerator`, `TraceLinkCombiner` | `tlr/tests-tlr` integration tests | `mvn -pl tlr/stages-tlr/code-traceability clean verify` |
-| Change LLM/NER-based TLR (ExArch, ArTEMiS) | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/`, `tlr/stages-tlr/connection-generator-ner/` | `LlmArchitectureProviderInformant`, `NerConnectionGenerator`, `NerAgent` | `tlr/tests-tlr` integration tests | `mvn -pl tlr clean verify` |
-| Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/inconsistency-detection/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `TextEntityAbsentFromModelInconsistencyAgent`, `ModelEntityAbsentFromTextInconsistencyAgent` | `tests-inconsistency` integration tests | `mvn -pl inconsistency-detection clean verify` |
-| Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` | `mvn spotless:check && mvn clean verify` |
-| Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureItem`, `CodeItem`, `Entity` | `core/tests-base` | `mvn -pl core/framework/common clean verify` |
-| Code model data model (line ranges, content, id, imports, callees) | [Architecture](architecture.md) | `core/framework/common/.../api/models/code/`, `.../api/models/Model.java`, `.../api/models/CodeModel.java` | `Datatype`, `ClassUnit`, `InterfaceUnit`, `ControlElement` (`calleeNames`), `CodeCompilationUnit` (`importedModuleNames`), `CodeAssembly` (`importedModuleNames`), `Model`, `CodeModelDto` | `tlr/stages-tlr/model-provider` mapper/extractor tests (`JavaControlExtractorTest`, `JavaModelMapperTest`, `Python3ModelMapperTest`, `JavaExtractorTest`) | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
-| Code model extraction / ANTLR mappers / legacy JavaModel | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/model-provider/.../antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `tlr/stages-tlr/model-provider` tests | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
+|----------------------|-----------|---------------------|---------------------|---------------|--------------------|
+| Add or modify a pipeline stage/agent/informant | [Architecture](architecture.md) | `core/framework/common/.../pipeline/` (incl. `pipeline/agent/`), `tlr/stages-tlr/` | `AbstractPipelineStep`, `Pipeline`, `AbstractExecutionStage`, `PipelineAgent`, `Informant`, `DataRepository` | `core/tests-base` ArchUnit suites (re-enabled per test tree) | `mvn -pl core clean verify` |
+| Add or change a TLR approach / runner | [TLR Approaches](tlr-approaches.md) | `tlr/pipeline-tlr/.../execution/`, `tlr/stages-tlr/` | `Swattr`, `Ardocode`, `Arcotl`, `Transarc`, `Artemis`, `ArdocoRunner`, `ModelProviderAgent` | `tlr/tests-tlr` integration tests (`*IT.java`) | `mvn -pl tlr clean verify` |
+| Modify ArCoTL heuristics or transitive linking | [TLR Approaches](tlr-approaches.md) | `tlr/stages-tlr/code-traceability/.../informants/arcotl/`, `.../informants/TraceLinkCombiner.java` | `TraceLinkGenerator`, `TraceLinkCombiner`, `ArCoTLInformant` | `tlr/tests-tlr` integration tests (`ArcotlIT`, `TransarcIT`) | `mvn -pl tlr/stages-tlr/code-traceability clean verify` |
+| Change LLM usage (models, caching, prompts, validation agents) | [LLM Integration](llm-integration.md) | `tlr/stages-tlr/model-provider/`, `tlr/stages-tlr/artemis/`, `inconsistency-detection/stages-id/{programming-language,architectural-style-pattern}-inconsistency-detection/` | `LargeLanguageModel`, `CachedChatLanguageModel`, `ArtemisNerInformant`, `ArtemisConnectionInformant`, `LlmArchitectureProviderInformant`, `CodeModelReadOnlyTools` | `ArtemisIT`, `ArtemisInTransarcIT` (env-gated) | `mvn -pl tlr clean verify` |
+| Add or modify inconsistency detection | [Inconsistency Detection](inconsistency-detection.md) | `inconsistency-detection/stages-id/{inconsistency-detection,artemis-inconsistency-detection,programming-language-inconsistency-detection,architectural-style-pattern-inconsistency-detection}/`, `inconsistency-detection/pipeline-id/` | `InconsistencyChecker`, `ArtemisInconsistencyChecker`, `ProgrammingLanguageInconsistencyChecker`, `ArchitecturalStylePatternInconsistencyChecker`, `InconsistencyDetection` | `tests-inconsistency` (`InconsistencyDetectionEvaluationIT`) | `mvn -pl inconsistency-detection clean verify` |
+| Build, dependencies, CI, formatting, env config | [Operations](operations.md) | `pom.xml`, `.github/workflows/`, `{module}/formatter.xml` | parent POM, Spotless, JSpecify, flatten-maven-plugin | `format.yml`, `verify.yml` workflows | `mvn spotless:check && mvn clean verify` |
+| Machine-enforced invariants (ArchUnit rules, formatting gate, nullness, determinism, Renovate) | [Constraints](constraints.md) | `core/tests-base/.../tests/architecture/`, root `pom.xml` (Spotless, jspecify-maven-plugin, flatten pin), `renovate.json` | `BasicArchitectureTest`, `ArchitectureTest`, `DeterministicArdocoTest`, `AbstractConfigurable`, `Environment` | `tests-tlr`/`tests-inconsistency` Surefire suites | `mvn clean verify` |
+| Intermediate artifact / data model (Text, SAM, Code) | [Architecture](architecture.md) | `core/framework/common/.../api/` | `Text`, `ArchitectureModel`, `CodeModel`, `ModelStates`, `ArdocoResult` | `core/tests-base` ArchUnit suites | `mvn -pl core/framework/common clean verify` |
+| Code model data model (`.acm` format, `CodeItemRepository` identity, line ranges, imports, callees) | [Code Model](code-model.md) | `core/framework/common/.../api/models/` (+ `api/models/code/`), `tlr/stages-tlr/model-provider/.../generators/code/CodeExtractor.java` | `CodeModel`/`CodeModelDto`, `CodeItem`, `CodeItemRepository`, `CodeCompilationUnit`, `ControlElement`, `CodeFile` | `core/framework/common` mapper tests, model-provider extractor tests | `mvn -pl core/framework/common clean verify && mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Code model extraction / ANTLR mappers / legacy JavaModel | [Code Model](code-model.md) | `tlr/stages-tlr/model-provider/.../generators/antlr/mapping/{cpp,java,python3}/mappers/`, `.../generators/code/java/JavaModel.java` | `ClassMapper`, `FunctionMapper`, `InterfaceMapper`, `JavaModel` | `JavaControlExtractorTest`, `JavaModelMapperTest`, `Python3ModelMapperTest`, `JavaExtractorTest` | `mvn -pl tlr/stages-tlr/model-provider clean verify` |
+| Test or evaluation behavior (gold standards, metric gating, test selection) | [Testing & Evaluation](testing.md) | `core/tests-base/`, `tlr/tests-tlr/`, `inconsistency-detection/tests-inconsistency/` | `ExpectedResults`, `EvaluationProject`, `AbstractArdocoIT`, `InconsistencyDetectionEvaluationIT` | the suites themselves | `mvn clean verify` (env-gated tests skip without credentials) |
 
-## Existing Wiki Documentation
+## Where the Docs Live
 
-The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) with source files in [`/docs`](../docs/Home.md). This OpenWiki serves as an opinionated map and synthesis over those docs, with added source-level detail for developers and agents.
+The project maintains a [GitHub Wiki](https://github.com/ardoco/ardoco/wiki) whose source files live in [`/docs`](../docs/Home.md) (sidebar: [`_Sidebar.md`](../docs/_Sidebar.md)). This OpenWiki is an opinionated map and synthesis over those pages with added source-level detail for developers and agents. CI republishes the wiki on every push to `main` that touches `docs/**` or `openwiki/**` ([`docs.yml`](../.github/workflows/docs.yml)); each root-level `/openwiki/*.md` page is rendered as `OpenWiki-<name>.md`, so **wiki pages must stay flat in `/openwiki/`** (subdirectories are never rendered) — see [Operations](operations.md). The OpenWiki content itself is refreshed by the scheduled [`openwiki.yml`](../.github/workflows/openwiki.yml) workflow (weekly, Monday 06:00 UTC, plus manual dispatch).
 
 ## External Repositories
 
 - [LiSSA](https://github.com/ardoco/lissa) — LLM-based generic TLR framework
 - [StanfordCoreNLP-Provider-Service](https://github.com/ardoco/StanfordCoreNLP-Provider-Service) — text preprocessing microservice
-- [Benchmark](https://github.com/ardoco/benchmark) — evaluation benchmarks and datasets
-- [Evaluator](https://github.com/ardoco/evaluator) — evaluation code for comparing results
+- [Benchmark](https://github.com/ardoco/benchmark) — evaluation benchmarks and datasets (vendored as a snapshot under [`core/tests-base/src/main/resources/benchmark/`](../core/tests-base/src/main/resources/benchmark/); `EvaluationProject` loads the SAD text, PCM/UML architecture model, and `.acm` code model from these classpath resources and shallow-clones the pinned code repositories for code evaluations — the five classic TLR benchmarks (mediastore, teastore, teammates, bigbluebutton, jabref) plus newer documentation-to-code benchmarks such as zengarden, scons, beets, rod, and coronawarnapp)
+- [Evaluator](https://github.com/ardoco/evaluator) — evaluation code for comparing results (`io.github.ardoco:metrics`)
 - [TraceView](https://github.com/ardoco/traceview-v2) — visualization tool for TLR and ID outputs
-- [Actions](https://github.com/ardoco/actions) — reusable GitHub Actions
+- [Actions](https://github.com/ardoco/actions) — reusable GitHub Actions (Maven verify and OpenWiki workflows)

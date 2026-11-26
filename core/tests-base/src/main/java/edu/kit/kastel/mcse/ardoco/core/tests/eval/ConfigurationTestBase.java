@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.tests.eval;
 
 import java.lang.reflect.Field;
@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
@@ -16,6 +15,7 @@ import org.reflections.Reflections;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUtils;
+import edu.kit.kastel.mcse.ardoco.core.execution.ConfigurationHelper;
 
 /**
  * This test class deals with the configurations.
@@ -38,17 +38,7 @@ public abstract class ConfigurationTestBase {
      * @throws Exception if anything goes wrong
      */
     protected void showCurrentConfiguration() throws Exception {
-        Map<String, String> configs = new TreeMap<>();
-        var reflectAccess = new Reflections(ARDOCO);
-        var classesThatMayBeConfigured = reflectAccess.getSubTypesOf(AbstractConfigurable.class)
-                .stream()
-                .filter(c -> c.getPackageName().startsWith(ARDOCO))
-                .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                .filter(c -> !c.getPackageName().contains("tests"))
-                .toList();
-        for (var clazz : classesThatMayBeConfigured) {
-            processConfigurationOfClass(configs, clazz);
-        }
+        Map<String, String> configs = ConfigurationHelper.getDefaultConfigurationOptions().castToSortedMap();
         assertFalse(configs.isEmpty(), "Configuration shall not be empty");
 
         System.out.println("-".repeat(50));

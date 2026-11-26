@@ -1,0 +1,10 @@
+sentence,style/pattern,valid
+120,pipe-and-filter,false
+125,strategy,false
+128,blackboard,false
+130,microkernel,false
+131,observer,false
+122,adapter,false
+123,command,false
+126,abstract factory,false
+127,template method,false

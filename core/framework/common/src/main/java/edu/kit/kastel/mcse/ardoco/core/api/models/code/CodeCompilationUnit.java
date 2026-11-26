@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -28,12 +30,13 @@ public final class CodeCompilationUnit extends CodeModule {
     @JsonProperty
     private ProgrammingLanguage language;
     @JsonProperty
-    private List<String> importedModuleNames;
+    private @Nullable List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
      */
-    @SuppressWarnings("unused")
+    // Jackson sets the fields reflectively during deserialization.
+    @SuppressWarnings({ "unused", "NullAway.Init" })
     private CodeCompilationUnit() {
         // Jackson
     }
@@ -120,12 +123,12 @@ public final class CodeCompilationUnit extends CodeModule {
      */
     public List<String> getParentPackageNames() {
         List<String> parents = new ArrayList<>();
-        CodeModule parent = this;
-        while (parent.hasParent()) {
-            parent = parent.getParent();
+        CodeModule parent = this.getParent();
+        while (parent != null) {
             if (parent instanceof CodePackage) {
                 parents.addFirst(parent.getName());
             }
+            parent = parent.getParent();
         }
         return parents;
     }

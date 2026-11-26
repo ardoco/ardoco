@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.parser;
 
 import java.io.File;
@@ -15,30 +15,31 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 
 public class UmlModel {
 
-    private UmlModelRoot model;
+    private final UmlModelRoot model;
 
     public UmlModel(File umlModel) throws IllegalArgumentException {
         try (var inputStream = new FileInputStream(umlModel)) {
-            this.load(inputStream);
+            this.model = load(inputStream);
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
     public UmlModel(InputStream umlModelStream) throws IllegalArgumentException {
-        this.load(umlModelStream);
+        this.model = load(umlModelStream);
     }
 
     public UmlModelRoot getModel() {
         return model;
     }
 
-    private void load(InputStream repositoryStream) throws IllegalArgumentException {
+    private static UmlModelRoot load(InputStream repositoryStream) throws IllegalArgumentException {
         try (repositoryStream) {
             XML2Object xml2Object = new XML2Object();
             xml2Object.registerClasses(UmlModelRoot.class, PackagedElement.class, OwnedOperation.class, Reference.class);
-            model = xml2Object.parseXML(repositoryStream, UmlModelRoot.class);
+            UmlModelRoot model = xml2Object.parseXML(repositoryStream, UmlModelRoot.class);
             model.init();
+            return model;
         } catch (ReflectiveOperationException | IOException | XMLException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }

@@ -1,7 +1,8 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -22,8 +23,8 @@ public class ArCoTLInformant extends Informant {
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var samCodeTraceabilityState = DataRepositoryHelper.getCodeTraceabilityState(dataRepository);
 
-        ArchitectureModel architectureModel = null;
-        CodeModel codeModel = null;
+        @Nullable ArchitectureModel architectureModel = null;
+        @Nullable CodeModel codeModel = null;
 
         for (var metamodel : modelStates.getMetamodels()) {
             var model = modelStates.getModel(metamodel);

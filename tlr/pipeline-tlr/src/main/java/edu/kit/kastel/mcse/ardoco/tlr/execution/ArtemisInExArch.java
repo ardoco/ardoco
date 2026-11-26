@@ -2,22 +2,28 @@
 package edu.kit.kastel.mcse.ardoco.tlr.execution;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisConnectionGenerator;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.ArtemisNer;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ArtemisNerStrategy;
+import edu.kit.kastel.mcse.ardoco.tlr.artemis.strategies.ComponentArtemisNerStrategy;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SadSamCodeTraceabilityLinkRecovery;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
-import edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.ner.NerConnectionGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -32,11 +38,13 @@ public class ArtemisInExArch extends ArdocoRunner {
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel llmForExArch, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
+            LargeLanguageModel llmForExArch, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.ensureConfigured();
         definePipeline(inputText, codeConfiguration, additionalConfigs, llmForExArch, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt, llmForNer);
         setOutputDirectory(outputDir);
@@ -44,8 +52,9 @@ public class ArtemisInExArch extends ArdocoRunner {
     }
 
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            LargeLanguageModel llmForExArch, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
+            LargeLanguageModel llmForExArch, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt, LargeLanguageModel llmForNer) {
         Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
@@ -64,8 +73,9 @@ public class ArtemisInExArch extends ArdocoRunner {
                 documentationExtractionPrompt, codeExtractionPrompt, codeFeatures, aggregationPrompt);
         arDoCo.addPipelineStep(llmArchitectureProviderAgent);
 
-        NerConnectionGenerator nerConnectionGenerator = NerConnectionGenerator.get(additionalConfigs, dataRepository, llmForNer);
-        this.getArdoco().addPipelineStep(nerConnectionGenerator);
+        List<ArtemisNerStrategy> artemisStrategies = List.of(new ComponentArtemisNerStrategy());
+        this.getArdoco().addPipelineStep(ArtemisNer.get(additionalConfigs, dataRepository, llmForNer, artemisStrategies));
+        this.getArdoco().addPipelineStep(ArtemisConnectionGenerator.get(additionalConfigs, dataRepository, artemisStrategies));
 
         arDoCo.addPipelineStep(SamCodeTraceabilityLinkRecovery.get(additionalConfigs, dataRepository));
 

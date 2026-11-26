@@ -1,0 +1,15 @@
+sentence,style/pattern,valid
+120,hexagonal architecture,false
+121,adapter,false
+122,adapter,false
+125,event-driven architecture,false
+128,command pattern,false
+130,strategy pattern,false
+133,flyweight pattern,false
+134,interpreter pattern,false
+136,blackboard pattern,false
+139,chain of responsibility,false
+123,pipe-and-filter,false
+127,observer pattern,false
+132,abstract factory pattern,false
+138,facade pattern,false

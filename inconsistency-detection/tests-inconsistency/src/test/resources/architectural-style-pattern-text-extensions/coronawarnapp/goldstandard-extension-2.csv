@@ -1,0 +1,14 @@
+sentence,style/pattern,valid
+373,command pattern,false
+376,event-driven architecture,false
+377,transactional outbox pattern,false
+378,broker architectural pattern,false
+382,strategy pattern,false
+384,state pattern,false
+386,chain of responsibility,false
+388,decorator pattern,false
+390,abstract factory pattern,false
+370,hexagonal architecture,false
+374,command query responsibility segregation,false
+380,microkernel,false
+391,mediator,false

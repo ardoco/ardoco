@@ -24,6 +24,7 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.configuration.AbstractConfigurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
 import edu.kit.kastel.mcse.ardoco.core.configuration.ConfigurationInstantiatorUtils;
+import edu.kit.kastel.mcse.ardoco.core.configuration.NoDefaultConfiguration;
 
 @Deterministic
 public class ConfigurationHelper {
@@ -82,6 +83,8 @@ public class ConfigurationHelper {
                 .filter(c -> c.getPackageName().startsWith("edu.kit.kastel.mcse.ardoco"))
                 .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                 .filter(c -> !c.getPackageName().contains("tests"))
+                .filter(c -> !c.isAnnotationPresent(NoDefaultConfiguration.class))
+                .filter(ConfigurationHelper::hasConfigurableFields)
                 .toList();
         for (var clazz : classesThatMayBeConfigured) {
             try {
@@ -91,6 +94,12 @@ public class ConfigurationHelper {
             }
         }
         return configs.toImmutable();
+    }
+
+    private static boolean hasConfigurableFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        findImportantFields(clazz, fields);
+        return !fields.isEmpty();
     }
 
     /**

@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.SortedSet;
@@ -19,7 +19,7 @@ public class Required extends DependentHeuristic {
     }
 
     private Confidence calculateReq(ArchitectureComponent archEndpoint, CodeCompilationUnit compUnit) {
-        if (!this.getNodeResult().getConfidence(new Pair<>(archEndpoint, compUnit)).hasValue()) {
+        if (!this.getRequiredConfidence(new Pair<>(archEndpoint, compUnit)).hasValue()) {
             return new Confidence();
         }
         SortedSet<ArchitectureComponent> allLinks = new TreeSet<>();

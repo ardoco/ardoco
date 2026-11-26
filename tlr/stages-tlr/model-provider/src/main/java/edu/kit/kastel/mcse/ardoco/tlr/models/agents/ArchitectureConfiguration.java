@@ -1,7 +1,10 @@
-/* Licensed under MIT 2024-2025. */
+/* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.io.File;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelFormat;
@@ -10,7 +13,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm.PcmExtractor;
 import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.uml.UmlExtractor;
 
-public record ArchitectureConfiguration(File architectureFile, ModelFormat type, Metamodel metamodel) {
+public record ArchitectureConfiguration(File architectureFile, ModelFormat type, @Nullable Metamodel metamodel) {
     public ArchitectureConfiguration(File architectureFile, ModelFormat type) {
         this(architectureFile, type, null);
     }
@@ -30,10 +33,14 @@ public record ArchitectureConfiguration(File architectureFile, ModelFormat type,
 
     public Extractor extractor() {
         return switch (this.type) {
-            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
-            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
-            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), this.metamodel);
+            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
+            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
+            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
             case ACM -> throw new IllegalArgumentException("ACM model is not supported for this project.");
         };
+    }
+
+    private Metamodel requireMetamodel() {
+        return Objects.requireNonNull(this.metamodel, "The metamodel must be set to create an extractor");
     }
 }

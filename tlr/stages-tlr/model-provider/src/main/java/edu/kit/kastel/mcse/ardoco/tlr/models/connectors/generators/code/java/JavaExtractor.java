@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.java;
 
 import java.net.URI;
@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,12 @@ public final class JavaExtractor extends CodeExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
+
+    @Override
+    public String getIdPrefix() {
+        return "je";
+    }
 
     /**
      * Creates a new JavaExtractor instance.
@@ -52,13 +58,15 @@ public final class JavaExtractor extends CodeExtractor {
      */
     @Override
     public synchronized CodeModel extractModel() {
-        if (codeModel == null) {
+        CodeModel model = this.codeModel;
+        if (model == null) {
             Path directoryPath = Path.of(path);
             SortedMap<String, CompilationUnit> compUnitMap = parseDirectory(directoryPath);
             JavaModel javaModel = new JavaModel(codeItemRepository, compUnitMap);
-            this.codeModel = javaModel.getCodeModel(metamodelToExtract);
+            model = javaModel.getCodeModel(metamodelToExtract);
+            this.codeModel = model;
         }
-        return this.codeModel;
+        return model;
     }
 
     private static SortedMap<String, CompilationUnit> parseDirectory(Path dir) {
@@ -67,7 +75,7 @@ public final class JavaExtractor extends CodeExtractor {
         final String[] encodings = new String[sources.length];
         Arrays.fill(encodings, StandardCharsets.UTF_8.toString());
         final SortedMap<String, CompilationUnit> compilationUnits = new TreeMap<>();
-        parser.setEnvironment(new String[0], new String[0], new String[0], false);
+        parser.setEnvironment(new String[0], new String[0], new String[0], true);
         parser.createASTs(sources, encodings, new String[0], new FileASTRequestor() {
             @Override
             public void acceptAST(final String sourceFilePath, final CompilationUnit ast) {
@@ -86,7 +94,6 @@ public final class JavaExtractor extends CodeExtractor {
         parser.setStatementsRecovery(true);
         parser.setCompilerOptions(Map.of(JavaCore.COMPILER_SOURCE, javaCoreVersion, JavaCore.COMPILER_COMPLIANCE, javaCoreVersion,
                 JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, javaCoreVersion));
-        parser.setResolveBindings(false);
         return parser;
     }
 

@@ -1,12 +1,14 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.set.MutableSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
@@ -41,11 +43,14 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
             return;
         }
 
-        CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages = this.findCoarseGrainedCodeModel(modelStatesData);
+        @Nullable CodeModelWithCompilationUnitsAndPackages codeModelWithCompilationUnitsAndPackages = this.findCoarseGrainedCodeModel(modelStatesData);
 
-        for (var traceLink : connectionStates.getConnectionState(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES).getTraceLinks()) {
+        var connectionState = Objects.requireNonNull(connectionStates.getConnectionState(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES),
+                "No connection state for metamodel " + Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        for (var traceLink : connectionState.getTraceLinks()) {
             var modelElement = traceLink.getSecondEndpoint();
-            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, codeModelWithCompilationUnitsAndPackages);
+            var mentionedCodeModelElements = this.findMentionedCodeModelElementsById(modelElement, Objects.requireNonNull(
+                    codeModelWithCompilationUnitsAndPackages, "No code model with compilation units and packages found"));
             for (var mid : mentionedCodeModelElements) {
                 sadCodeTracelinks.add(new SentenceModelTraceLink(traceLink.getFirstEndpoint(), mid));
             }
@@ -110,7 +115,7 @@ public class ArchitectureLinkToCodeLinkTransformerInformant extends Informant {
         throw new IllegalStateException("Could not find model element " + modelElementId);
     }
 
-    private CodeModelWithCompilationUnitsAndPackages findCoarseGrainedCodeModel(ModelStates models) {
+    private @Nullable CodeModelWithCompilationUnitsAndPackages findCoarseGrainedCodeModel(ModelStates models) {
         for (var metamodel : models.getMetamodels()) {
             var model = models.getModel(metamodel);
             if (model instanceof CodeModelWithCompilationUnitsAndPackages codeModel) {

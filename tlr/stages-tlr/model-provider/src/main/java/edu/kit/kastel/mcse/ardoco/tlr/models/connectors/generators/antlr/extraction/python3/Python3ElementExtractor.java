@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.PythonLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.PythonParser;
@@ -40,15 +41,12 @@ public class Python3ElementExtractor extends ElementExtractor {
     private final LinkedHashMap<String, List<String>> pendingImportsByPath = new LinkedHashMap<>();
 
     public Python3ElementExtractor() {
-        super();
-        this.elementRegistry = new Python3ElementStorageRegistry();
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
+        this(new Python3ElementStorageRegistry());
     }
 
     public Python3ElementExtractor(Python3ElementStorageRegistry elementRegistry) {
-        super();
+        super(new Python3CommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
     }
 
     @Override
@@ -118,7 +116,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
     }
 
-    public ElementIdentifier visitClass_def(PythonParser.Class_defContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitClass_def(PythonParser.Class_defContext ctx, ElementIdentifier parentIdentifier) {
         PythonParser.Class_def_rawContext raw = ctx.class_def_raw();
         if (raw == null || raw.name() == null) {
             return null;
@@ -136,7 +134,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitFunction_def(PythonParser.Function_defContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitFunction_def(PythonParser.Function_defContext ctx, ElementIdentifier parentIdentifier) {
         PythonParser.Function_def_rawContext raw = ctx.function_def_raw();
         if (raw == null || raw.name() == null) {
             return null;
@@ -238,6 +236,9 @@ public class Python3ElementExtractor extends ElementExtractor {
         int endLine = ctx.getStop().getLine();
 
         if (varNames.size() != values.size()) {
+            // If the number of variables and values does not match, we cannot reliably extract them.
+            // This can happen in tuple unpacking with mismatching sizes or multiple assignments with different structures.
+            logger.warn("Skipping extraction of the following variables because the number of variable names and values does not match: {}", varNames);
             return;
         }
 

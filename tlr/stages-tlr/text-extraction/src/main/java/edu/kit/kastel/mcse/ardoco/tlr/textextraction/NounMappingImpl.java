@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.textextraction;
 
 import static edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions.AVERAGE;
@@ -16,6 +16,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -42,7 +43,7 @@ public class NounMappingImpl implements NounMapping {
     private static final AggregationFunctions DEFAULT_AGGREGATOR = AVERAGE;
     private final Long earliestCreationTime;
     private final MutableSortedSet<Word> words;
-    private MutableSortedSet<Phrase> phrases;
+    private @Nullable MutableSortedSet<Phrase> phrases;
     private final MutableSortedMap<MappingKind, Confidence> distribution;
     private final MutableList<Word> referenceWords;
     private final MutableList<String> surfaceForms;
@@ -154,21 +155,23 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public ImmutableSortedSet<Phrase> getPhrases() {
-        if (this.phrases == null) {
-            this.phrases = SortedSets.mutable.empty();
+        var currentPhrases = this.phrases;
+        if (currentPhrases == null) {
+            currentPhrases = SortedSets.mutable.empty();
             for (Word word : this.words) {
-                if (this.phrases.contains(word.getPhrase())) {
+                if (currentPhrases.contains(word.getPhrase())) {
                     continue;
                 }
-                this.phrases.add(word.getPhrase());
+                currentPhrases.add(word.getPhrase());
             }
+            this.phrases = currentPhrases;
         }
-        return this.phrases.toImmutable();
+        return currentPhrases.toImmutable();
     }
 
     @Override
     public void addKindWithProbability(MappingKind kind, Claimant claimant, double probability) {
-        var currentProbability = this.distribution.get(kind);
+        var currentProbability = this.getConfidence(kind);
         Objects.requireNonNull(claimant);
         currentProbability.addAgentConfidence(claimant, probability);
     }
@@ -180,13 +183,17 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public double getProbability() {
-        return this.distribution.get(this.getKind()).getConfidence();
+        return this.getConfidence(this.getKind()).getConfidence();
+    }
+
+    private Confidence getConfidence(MappingKind kind) {
+        return Objects.requireNonNull(this.distribution.get(kind), "No confidence for mapping kind " + kind);
     }
 
     @Override
     public MappingKind getKind() {
-        var probName = this.distribution.get(MappingKind.NAME).getConfidence();
-        var probType = this.distribution.get(MappingKind.TYPE).getConfidence();
+        var probName = this.getConfidence(MappingKind.NAME).getConfidence();
+        var probType = this.getConfidence(MappingKind.TYPE).getConfidence();
         if (probName >= probType) {
             return MappingKind.NAME;
         }
@@ -209,7 +216,7 @@ public class NounMappingImpl implements NounMapping {
 
     @Override
     public double getProbabilityForKind(MappingKind mappingKind) {
-        return this.distribution.get(mappingKind).getConfidence();
+        return this.getConfidence(mappingKind).getConfidence();
     }
 
     @Override
@@ -224,7 +231,10 @@ public class NounMappingImpl implements NounMapping {
                 earliest = impl.earliestCreationTime();
             }
         }
-        return earliest == Long.MAX_VALUE ? null : earliest;
+        if (earliest == Long.MAX_VALUE) {
+            throw new IllegalArgumentException("None of the noun mappings has a creation time");
+        }
+        return earliest;
     }
 
     public Long earliestCreationTime() {

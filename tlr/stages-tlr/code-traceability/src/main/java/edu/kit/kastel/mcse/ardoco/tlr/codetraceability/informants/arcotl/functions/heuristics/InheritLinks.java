@@ -1,6 +1,7 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
+import java.util.Objects;
 import java.util.SortedSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
@@ -46,10 +47,12 @@ public class InheritLinks extends DependentHeuristic {
 
         Confidence maxConfidence = new Confidence();
         for (Datatype extendedType : extendedTypes) {
-            if (areInDifferentPackages(codeType.getCompilationUnit(), extendedType.getCompilationUnit())) {
+            var codeTypeUnit = Objects.requireNonNull(codeType.getCompilationUnit(), "Datatype without compilation unit");
+            var extendedTypeUnit = Objects.requireNonNull(extendedType.getCompilationUnit(), "Datatype without compilation unit");
+            if (areInDifferentPackages(codeTypeUnit, extendedTypeUnit)) {
                 continue;
             }
-            Confidence extendedConfidence = this.getNodeResult().getConfidence(new Pair<>(archEndpoint, extendedType.getCompilationUnit()));
+            Confidence extendedConfidence = this.getRequiredConfidence(new Pair<>(archEndpoint, extendedTypeUnit));
             if (extendedConfidence.compareTo(maxConfidence) > 0) {
                 maxConfidence = extendedConfidence;
             }
@@ -58,10 +61,12 @@ public class InheritLinks extends DependentHeuristic {
     }
 
     public static boolean areInDifferentPackages(CodeCompilationUnit fileA, CodeCompilationUnit fileB) {
-        if (fileA.hasParent() != fileB.hasParent()) {
-            return true;
+        var parentA = fileA.getParent();
+        var parentB = fileB.getParent();
+        if (parentA == null || parentB == null) {
+            return parentA != parentB;
         }
-        return fileA.hasParent() && fileB.hasParent() && !fileA.getParent().equals(fileB.getParent());
+        return !parentA.equals(parentB);
     }
 
     @Override

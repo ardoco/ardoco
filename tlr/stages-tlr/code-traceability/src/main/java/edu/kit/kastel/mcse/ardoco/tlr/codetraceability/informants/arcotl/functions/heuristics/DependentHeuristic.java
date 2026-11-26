@@ -1,10 +1,16 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureItem;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeCompilationUnit;
+import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
+import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.NodeResult;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.DependentHeuristicNode;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
@@ -16,19 +22,23 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
  */
 public abstract class DependentHeuristic extends Heuristic {
 
-    private NodeResult nodeResult;
-    private ArchitectureModel archModel;
+    private @Nullable NodeResult nodeResult;
+    private @Nullable ArchitectureModel archModel;
 
     public DependentHeuristicNode getNode(Node child) {
         return new DependentHeuristicNode(this, child);
     }
 
     protected NodeResult getNodeResult() {
-        return nodeResult;
+        return Objects.requireNonNull(nodeResult, "Confidences have not been calculated yet");
+    }
+
+    protected Confidence getRequiredConfidence(Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple) {
+        return Objects.requireNonNull(getNodeResult().getConfidence(endpointTuple), "Missing confidence for endpoint tuple");
     }
 
     protected ArchitectureModel getArchModel() {
-        return archModel;
+        return Objects.requireNonNull(archModel, "Confidences have not been calculated yet");
     }
 
     public final NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, NodeResult nodeResult) {

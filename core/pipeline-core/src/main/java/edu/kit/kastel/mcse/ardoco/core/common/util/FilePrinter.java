@@ -63,7 +63,10 @@ public final class FilePrinter {
      * @param text the text to write
      */
     public static void writeToFile(Path file, String text) {
-        file.getParent().toFile().mkdirs();
+        var parent = file.getParent();
+        if (parent != null) {
+            parent.toFile().mkdirs();
+        }
         try (BufferedWriter writer = Files.newBufferedWriter(file, UTF_8)) {
             writer.write(text);
         } catch (IOException e) {

@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
@@ -17,7 +19,8 @@ public interface RecommendationStates extends PipelineStepData {
      * Returns the recommendation state for the given metamodel.
      *
      * @param metamodel the metamodel
-     * @return the recommendation state
+     * @return the recommendation state, or {@code null} if there is none for the metamodel
      */
+    @Nullable
     RecommendationState getRecommendationState(Metamodel metamodel);
 }

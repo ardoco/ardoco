@@ -1,0 +1,13 @@
+sentence,style/pattern,valid
+199,event-driven architectural style,false
+201,publish-subscribe pattern,false
+203,hexagonal architecture style,false
+205,adapter pattern,false
+206,circuit breaker pattern,false
+208,command query responsibility segregation,false
+210,mediator pattern,false
+212,saga pattern,false
+213,saga pattern,false
+214,builder pattern,false
+216,specification pattern,false
+217,specification pattern,false

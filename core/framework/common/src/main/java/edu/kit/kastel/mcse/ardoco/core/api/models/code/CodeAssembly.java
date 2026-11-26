@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -20,10 +22,10 @@ public final class CodeAssembly extends CodeModule {
     private static final long serialVersionUID = 3082912967900986071L;
 
     @JsonProperty
-    private String language;
+    private @Nullable String language;
 
     @JsonProperty
-    private List<String> importedModuleNames;
+    private @Nullable List<String> importedModuleNames;
 
     /**
      * Default constructor for Jackson.
@@ -76,9 +78,9 @@ public final class CodeAssembly extends CodeModule {
     /**
      * Returns the programming language of this assembly.
      *
-     * @return the language string
+     * @return the language string, or {@code null} if unknown
      */
-    public String getLanguage() {
+    public @Nullable String getLanguage() {
         return language;
     }
 

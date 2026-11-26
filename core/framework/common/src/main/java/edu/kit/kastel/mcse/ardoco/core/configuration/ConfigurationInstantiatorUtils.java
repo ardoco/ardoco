@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.configuration;
 
 import java.lang.reflect.Constructor;
@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
@@ -23,7 +25,8 @@ public final class ConfigurationInstantiatorUtils {
     }
 
     /**
-     * Creates an {@link AbstractConfigurable} instance by reflection, trying various constructor signatures.
+     * Creates an {@link AbstractConfigurable} instance by reflection, trying various constructor signatures. A constructor that only takes
+     * {@link DataRepository} and enum parameters is invoked with a new data repository and the first constant of each enum.
      *
      * @param clazz the class of the AbstractConfigurable
      * @return the abstract configurable
@@ -64,18 +67,26 @@ public final class ConfigurationInstantiatorUtils {
             return result;
         }
 
-        var c = constructors.stream().findFirst().orElseThrow(() -> new IllegalStateException("Not reachable code reached for class " + clazz.getName()));
-
-        var arguments = new Object[c.getParameterCount()];
-        for (int i = 0; i < c.getParameterTypes().length; i++) {
-            var type = c.getParameterTypes()[i];
-            arguments[i] = type.isAssignableFrom(DataRepository.class) ? new DataRepository() : null;
+        var dataRepositoryAndEnumConstructor = constructors.stream().filter(ConfigurationInstantiatorUtils::hasOnlyDataRepositoryOrEnumParameters).findFirst();
+        if (dataRepositoryAndEnumConstructor.isPresent()) {
+            var constructor = dataRepositoryAndEnumConstructor.get();
+            var parameters = Arrays.stream(constructor.getParameterTypes())
+                    .map(t -> t == DataRepository.class ? new DataRepository() : t.getEnumConstants()[0])
+                    .toArray();
+            constructor.setAccessible(true);
+            return (AbstractConfigurable) constructor.newInstance(parameters);
         }
-        return (AbstractConfigurable) c.newInstance(arguments);
+
+        throw new IllegalArgumentException("Cannot create default configuration instance for " + clazz
+                .getName() + " because no supported constructor is available.");
     }
 
-    private static AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector, Object[] parameters)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static boolean hasOnlyDataRepositoryOrEnumParameters(Constructor<?> constructor) {
+        return Arrays.stream(constructor.getParameterTypes()).allMatch(t -> t == DataRepository.class || (t.isEnum() && t.getEnumConstants().length > 0));
+    }
+
+    private static @Nullable AbstractConfigurable findAndCreate(Collection<Constructor<?>> constructors, Predicate<Constructor<?>> selector,
+            Object[] parameters) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (constructors.stream().noneMatch(selector)) {
             return null;
         }

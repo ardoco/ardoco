@@ -1,8 +1,10 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * The calculated confidence of an endpoint tuple. The confidence has a value
@@ -18,7 +20,7 @@ import java.util.Objects;
  */
 public class Confidence implements Comparable<Confidence> {
 
-    private final Double confidenceValue;
+    private final @Nullable Double confidenceValue;
 
     /**
      * Creates a new confidence that doesn't have a value.

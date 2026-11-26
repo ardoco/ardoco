@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.pcm;
 
 import java.io.File;
@@ -27,6 +27,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.architecture.
  */
 @Deterministic
 public final class PcmExtractor extends ArchitectureExtractor {
+
+    @Override
+    public String getIdPrefix() {
+        return "pcme";
+    }
 
     public PcmExtractor(String path, Metamodel metamodelToExtract) {
         super(path, metamodelToExtract);

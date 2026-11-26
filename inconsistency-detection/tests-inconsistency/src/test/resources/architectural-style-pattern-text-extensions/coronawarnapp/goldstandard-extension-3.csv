@@ -1,0 +1,17 @@
+sentence,style/pattern,valid
+370,hexagonal architecture,false
+372,event sourcing,false
+373,command query responsibility segregation,false
+374,pipe-and-filter,false
+376,broker,false
+378,anti-corruption layer,false
+379,layered architecture,false
+380,strategy,false
+381,abstract factory,false
+382,adapter,false
+383,facade,false
+384,state,false
+386,chain of responsibility,false
+387,repository,false
+388,unit of work,false
+389,circuit breaker,false

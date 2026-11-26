@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -18,14 +18,22 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.CodeExtr
  */
 public class AntlrExtractor extends CodeExtractor {
     private final ProgrammingLanguage language;
-    protected ModelMapper mapper; // Needs to be initialized in the constructor of implementing subclasses
-    protected ElementExtractor elementExtractor; // Needs to be initialized in the constructor of implementing subclasses
+    private final ModelMapper mapper;
+    private final ElementExtractor elementExtractor;
     private boolean contentExtracted;
 
-    protected AntlrExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language) {
+    @Override
+    public String getIdPrefix() {
+        return "ae" + this.language.name().toLowerCase();
+    }
+
+    protected AntlrExtractor(CodeItemRepository codeItemRepository, String path, ProgrammingLanguage language, ModelMapper mapper,
+            ElementExtractor elementExtractor) {
         // TODO Allow different meta models
         super(codeItemRepository, path, Metamodel.CODE_WITH_COMPILATION_UNITS);
         this.language = language;
+        this.mapper = mapper;
+        this.elementExtractor = elementExtractor;
         this.contentExtracted = false;
     }
 

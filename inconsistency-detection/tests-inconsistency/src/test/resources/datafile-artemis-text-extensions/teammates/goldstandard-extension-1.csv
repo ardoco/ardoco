@@ -1,0 +1,12 @@
+sentenceID,file
+200,InstructorFeedbackSessionCreatePageE2ETest.json
+201,InstructorFeedbackSessionCreatePageE2ETest.json
+202,InstructorFeedbackSessionEditPageE2ETest.json
+204,InstructorFeedbackSessionCopyPageE2ETest.json
+206,InstructorFeedbackSessionPublishPageE2ETest.json
+208,InstructorFeedbackSessionRemindPageE2ETest.json
+210,InstructorFeedbackSessionDeletePageE2ETest.json
+212,InstructorCourseArchivePageE2ETest.json
+214,InstructorCourseDeletePageE2ETest.json
+216,InstructorCourseRestorePageE2ETest.json
+218,InstructorStudentRecordsEditPageE2ETest.json

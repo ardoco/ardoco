@@ -1,0 +1,52 @@
+componentName,sentence
+UI,1
+Logic,1
+Storage,1
+Common,1
+Test Driver,1
+E2E,1
+Client,1
+UI,4
+UI,5
+UI,7
+Logic,7
+GAE Datastore,9
+Storage,9
+Test Driver,10
+E2E,15
+Client,18
+Common,20
+UI,25
+UI,29
+Logic,47
+Logic,68
+Logic,77
+Logic,78
+UI,81
+UI,85
+Logic,87
+Storage,88
+UI,97
+Logic,97
+Storage,101
+Storage,118
+Storage,120
+Logic,122
+GAE Datastore,122
+Storage,123
+Storage,128
+Logic,129
+Logic,131
+GAE Datastore,137
+GAE Datastore,138
+GAE Datastore,141
+Common,155
+Test Driver,163
+Test Driver,168
+Common,174
+Common,175
+Logic,176
+Storage,177
+E2E,185
+Logic,185
+Client,194

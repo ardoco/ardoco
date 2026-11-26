@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction.python3;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItemRepository;
@@ -13,10 +13,11 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
 public class Python3Extractor extends AntlrExtractor {
 
     public Python3Extractor(CodeItemRepository repository, String path) {
-        super(repository, path, ProgrammingLanguage.PYTHON3);
-        Python3ElementStorageRegistry elementManager = new Python3ElementStorageRegistry();
-        this.mapper = new Python3ModelMapper(repository, elementManager);
-        this.elementExtractor = new Python3ElementExtractor(elementManager);
+        this(repository, path, new Python3ElementStorageRegistry());
+    }
+
+    private Python3Extractor(CodeItemRepository repository, String path, Python3ElementStorageRegistry elementManager) {
+        super(repository, path, ProgrammingLanguage.PYTHON, new Python3ModelMapper(repository, elementManager), new Python3ElementExtractor(elementManager));
     }
 
 }

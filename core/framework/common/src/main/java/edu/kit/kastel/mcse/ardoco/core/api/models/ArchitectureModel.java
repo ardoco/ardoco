@@ -81,7 +81,7 @@ public abstract sealed class ArchitectureModel extends Model permits Architectur
                 .stream()
                 .map(ArchitectureInterface::getId)
                 .collect(Collectors.toCollection(TreeSet::new));
-        repository.put(component.getId(), new ComponentDto(component.getId(), component.getName(), component.getType().orElse(null), subcomponentIds,
+        repository.put(component.getId(), new ComponentDto(component.getId(), component.getName(), component.getType().orElseThrow(), subcomponentIds,
                 providedIds, requiredIds));
         for (ArchitectureComponent sub : component.getSubcomponents()) {
             collectItem(sub, repository);

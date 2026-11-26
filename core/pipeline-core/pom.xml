@@ -20,6 +20,12 @@
     </dependency>
     <dependency>
       <groupId>io.github.ardoco.tlr</groupId>
+      <artifactId>artemis</artifactId>
+      <version>${revision}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.ardoco.tlr</groupId>
       <artifactId>model-provider</artifactId>
       <version>${revision}</version>
       <scope>test</scope>
@@ -32,6 +38,7 @@
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -46,8 +53,9 @@
               <goal>testCompile</goal>
             </goals>
             <phase>test-compile</phase>
-            <configuration combine.self="override">
-              <!-- Enforce compilation of test classes -->
+            <configuration>
+              <!-- Enforce compilation of test classes (deployment profiles skip it), the test jar is used by other modules -->
+              <skip>false</skip>
             </configuration>
           </execution>
         </executions>

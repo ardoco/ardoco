@@ -37,6 +37,11 @@ class JavaExtractorTest {
         CodeCompilationUnit aClass = allCompilationUnits.stream().filter(u -> "AClass".equals(u.getName())).findFirst().orElseThrow();
         Assertions.assertTrue(aClass.getImportedModuleNames().contains("edu.zwei.OtherInterface"));
 
+        var aClassType = aClass.getAllDataTypes().stream().filter(d -> "AClass".equals(d.getName())).findFirst().orElseThrow();
+        Assertions.assertTrue(aClassType.getExtendedTypes().stream().anyMatch(d -> "Superclass".equals(d.getName())));
+        Assertions.assertTrue(aClassType.getImplementedTypes().stream().anyMatch(d -> "AnInterface".equals(d.getName())));
+        Assertions.assertTrue(aClassType.getDatatypeReferences().stream().anyMatch(d -> "AnEnum".equals(d.getName())));
+
         CodeCompilationUnit callsUnit = allCompilationUnits.stream().filter(u -> "AClassWithCalls".equals(u.getName())).findFirst().orElseThrow();
         SortedSet<ControlElement> allMethods = new TreeSet<>();
         for (var dt : callsUnit.getAllDataTypes()) {
@@ -50,5 +55,18 @@ class JavaExtractorTest {
 
         ControlElement helper = allMethods.stream().filter(m -> "helper".equals(m.getName())).findFirst().orElseThrow();
         Assertions.assertTrue(helper.getCalleeNames().isEmpty());
+    }
+
+    @Test
+    void externalSupertypesAreSkipped() {
+        var extractor = new JavaExtractor(new CodeItemRepository(), "src/test/resources/external-supertypes", Metamodel.CODE_WITH_COMPILATION_UNITS);
+        CodeModel model = extractor.extractModel();
+
+        var types = model.getAllPackages().stream().flatMap(p -> p.getCompilationUnits().stream()).flatMap(u -> u.getAllDataTypes().stream()).toList();
+        var impl = types.stream().filter(d -> "Impl".equals(d.getName())).findFirst().orElseThrow();
+        var sub = types.stream().filter(d -> "SubInterface".equals(d.getName())).findFirst().orElseThrow();
+
+        Assertions.assertEquals(List.of("LocalInterface"), impl.getImplementedTypes().stream().map(Entity::getName).toList());
+        Assertions.assertEquals(List.of("LocalInterface"), sub.getExtendedTypes().stream().map(Entity::getName).toList());
     }
 }

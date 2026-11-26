@@ -1,0 +1,5 @@
+line,pattern/style,valid
+5,layered architecture,true
+31,master-slave,true
+72,lazy load,true
+115,proxy,true

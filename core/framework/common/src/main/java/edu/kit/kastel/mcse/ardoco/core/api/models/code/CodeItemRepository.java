@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.jspecify.annotations.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,11 +43,21 @@ public class CodeItemRepository implements Serializable {
         return this.repository.containsKey(id);
     }
 
-    CodeItem getCodeItem(String id) {
+    @Nullable
+    CodeItem getCodeItem(@Nullable String id) {
         if (id == null) {
             return null;
         }
         return this.repository.get(id);
+    }
+
+    /**
+     * Returns a list of all {@link ClassUnit} instances contained within the repository.
+     *
+     * @return list of all class units present in the repository
+     */
+    public List<ClassUnit> getAllClassUnits() {
+        return this.repository.values().stream().filter(ClassUnit.class::isInstance).map(ClassUnit.class::cast).toList();
     }
 
     /**

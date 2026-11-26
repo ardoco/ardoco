@@ -1,0 +1,85 @@
+1:------------
+In the following text, which architecturally relevant components are directly named?
+For each component, provide its name, all alternative names, and the lines where it appears.
+
+1:------------
+In the following text, which architecturally relevant components are directly named?
+For each component, provide its name, all alternative names, and the lines where it appears.
+Be careful to only name real components and no interfaces or external libraries etc.
+
+1:------------
+In the following text, identify all architecturally relevant components that are explicitly named.
+
+For each component, provide:
+- The primary name (as it appears in the text)
+- All alternative names or abbreviations found in the text (case-insensitive match)
+- All complete lines where the component is mentioned.
+
+Rules:
+- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+
+1:------------
+In the following text, identify all architecturally relevant components that are explicitly named.
+
+For each component, provide:
+- The primary name (as it appears in the text)
+- All alternative names or abbreviations found in the text (case-insensitive match)
+- All complete lines where the component is mentioned.
+
+Rules:
+- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+
+Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
+
+1:------------
+In the following text, identify all architecturally relevant components that are explicitly named.
+
+For each component, provide:
+- The primary name (as it appears in the text)
+- All alternative names or abbreviations found in the text (case-insensitive match)
+- All complete lines where the component is mentioned.
+
+Rules:
+- Only include actual architecturally relevant components (e.g., modules, services, subsystems, layers)
+- Do not include: interfaces, external libraries, frameworks, or technologies unless they are implemented in this architecture as components
+- Include all indirect references to components as well.
+  For example, if a sentence says “Component X handles requests.”, and the following sentence says “It interacts with Component Y.”, then both sentences must be included for Component X, because “It” indirectly refers to Component X.
+
+Return your findings in a clear, unambiguous, structured text format so that a follow-up transformation into JSON is easy.
+
+2:------------
+Given the last answer (see below), for each component, return a JSON object containing:
+- "name": the primary name of the component (use the most descriptive name).
+- "type": "COMPONENT"
+- "alternativeNames": a list of alternative or ambiguous names, if applicable.
+- "occurrences": a list of lines where the component appears or is referenced.
+
+Output should be a JSON array (and nothing else!), like:
+[
+    {
+        "name": "...",
+        "type": "COMPONENT",
+        "alternativeNames": [...],
+        "occurrences": [...]
+    },
+    ...
+]
+
+Example:
+[
+    {
+        "name": "AuthenticationService",
+        "type": "COMPONENT",
+        "alternativeNames": ["service"],
+        "occurrences": ["The AuthenticationService handles login requests.", "It forwards valid credentials to the UserDatabase.", "The service logs each attempt."]
+    },
+    {
+        "name": "UserDatabase",
+        "type": "COMPONENT",
+        "alternativeNames": ["DB"],
+        "occurrences": ["It forwards valid credentials to the UserDatabase.", "The DB then validates the credentials."]
+    }
+]
+

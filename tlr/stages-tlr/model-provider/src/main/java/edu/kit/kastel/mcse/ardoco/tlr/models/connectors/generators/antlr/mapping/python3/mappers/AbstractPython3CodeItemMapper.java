@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping.python3.mappers;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping
  */
 public abstract class AbstractPython3CodeItemMapper extends AbstractCodeItemMapper {
     protected final Python3ElementStorageRegistry elementRegistry;
-    private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.PYTHON3;
+    private static final ProgrammingLanguage programmingLanguage = ProgrammingLanguage.PYTHON;
 
     protected AbstractPython3CodeItemMapper(CodeItemRepository repository, CodeItemMapperCollection pythonCodeItemMappers,
             Python3ElementStorageRegistry elementRegistry) {
