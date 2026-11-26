@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
@@ -36,8 +37,9 @@ public class ExArch extends ArdocoRunner {
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt) {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
@@ -49,8 +51,9 @@ public class ExArch extends ArdocoRunner {
     }
 
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt) {
         Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 
