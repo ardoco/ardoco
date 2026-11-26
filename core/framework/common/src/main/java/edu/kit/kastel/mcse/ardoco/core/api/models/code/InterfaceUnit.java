@@ -32,6 +32,18 @@ public final class InterfaceUnit extends Datatype {
     }
 
     /**
+     * Creates a new interface unit with the specified id, name, and content.
+     *
+     * @param id                 the identifier of the interface unit
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the interface unit
+     * @param content            the content of the interface unit
+     */
+    public InterfaceUnit(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name, content);
+    }
+
+    /**
      * Creates a new interface unit with the specified name, content, and source location.
      *
      * @param codeItemRepository the code item repository

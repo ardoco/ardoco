@@ -1,0 +1,129 @@
+/* Licensed under MIT 2026. */
+package io.github.ardoco.core.neo4jschema.service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.stream.StreamSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import io.github.ardoco.core.neo4jschema.entities.recommendation.RecommendedInstanceNode;
+import io.github.ardoco.core.neo4jschema.mapper.RecommendedInstanceMapper;
+import io.github.ardoco.core.neo4jschema.repository.recommendation.RecommendedInstanceRepository;
+
+/**
+ * Persists RecommendationStates with Spring Data Neo4j, alongside the in-memory state.
+ * {@link #loadRecommendedInstances} maps stored instances back to the domain.
+ */
+@Service
+public class RecommendationPersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RecommendationPersistenceService.class);
+
+    private final RecommendedInstanceRepository recommendedInstanceRepository;
+    private final RecommendedInstanceMapper recommendedInstanceMapper;
+
+    public RecommendationPersistenceService(RecommendedInstanceRepository recommendedInstanceRepository, RecommendedInstanceMapper recommendedInstanceMapper) {
+        this.recommendedInstanceRepository = recommendedInstanceRepository;
+        this.recommendedInstanceMapper = recommendedInstanceMapper;
+    }
+
+    /**
+     * Creates or updates a RecommendedInstance node and replaces its outgoing HAS_NAME_MAPPING and HAS_TYPE_MAPPING edges.
+     * <p>
+     * Deliberately does not use {@code recommendedInstanceRepository.save(RecommendedInstanceNode)}: that requires loading every referenced
+     * NounMapping node with its (cyclic) Word/Phrase subgraph and then cascades through that subgraph on save. Here NounMapping nodes are only
+     * matched by their indexed {@code ardocoId}, never loaded or written.
+     *
+     * @param recommendedInstance the domain recommended instance
+     * @param metamodel           the metamodel of the recommendation state the instance belongs to
+     */
+    @Transactional
+    public void saveRecommendedInstance(RecommendedInstance recommendedInstance, Metamodel metamodel) {
+        String ardocoId = recommendedInstance.getId();
+        List<String> nameMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getNameMappings());
+        List<String> typeMappingIds = RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getTypeMappings());
+
+        long missing = orZero(recommendedInstanceRepository.saveWithMappings(ardocoId, recommendedInstanceMapper.toProperties(recommendedInstance, metamodel),
+                nameMappingIds, typeMappingIds));
+        if (missing > 0) {
+            LinkTargetErrors errors = new LinkTargetErrors("RecommendedInstance");
+            errors.missing("HAS_NAME_MAPPING/HAS_TYPE_MAPPING", missing, ardocoId + ": " + missing + " NounMapping target(s) missing");
+            errors.throwIfAny(logger);
+        }
+        logger.debug("Saved RecommendedInstance {} ({})", ardocoId, recommendedInstance.getName());
+    }
+
+    /**
+     * Batched form of {@link #saveRecommendedInstance}: upserts every instance (all for the same metamodel) and replaces its
+     * HAS_NAME_MAPPING/HAS_TYPE_MAPPING edges in one round trip instead of one transaction per instance. Used by the stage-level write-behind
+     * ({@code PersistenceBridge::withDeferredWrites}).
+     *
+     * @param recommendedInstances the domain recommended instances to save; a no-op if empty
+     * @param metamodel            the metamodel of the recommendation state the instances belong to (one batch is always one metamodel)
+     */
+    @Transactional
+    public void saveRecommendedInstances(Collection<RecommendedInstance> recommendedInstances, Metamodel metamodel) {
+        if (recommendedInstances.isEmpty()) {
+            return;
+        }
+        List<Map<String, Object>> items = new ArrayList<>(recommendedInstances.size());
+        for (RecommendedInstance recommendedInstance : recommendedInstances) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("ardocoId", recommendedInstance.getId());
+            item.put("props", recommendedInstanceMapper.toProperties(recommendedInstance, metamodel));
+            item.put("nameMappingIds", RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getNameMappings()));
+            item.put("typeMappingIds", RecommendedInstanceMapper.ardocoIdsOf(recommendedInstance.getTypeMappings()));
+            items.add(item);
+        }
+
+        List<String> unresolvedItems = recommendedInstanceRepository.saveAllWithMappings(items);
+        LinkTargetErrors errors = new LinkTargetErrors("RecommendedInstance");
+        unresolvedItems.forEach(description -> errors.missing("HAS_NAME_MAPPING/HAS_TYPE_MAPPING", 1, description));
+        errors.throwIfAny(logger);
+        logger.debug("Saved {} RecommendedInstances in one batch ({})", recommendedInstances.size(), metamodel);
+    }
+
+    private static long orZero(Long value) {
+        return value == null ? 0 : value;
+    }
+
+    public boolean hasRecommendedInstances() {
+        return recommendedInstanceRepository.count() > 0;
+    }
+
+    /**
+     * Loads recommended instances for a metamodel. {@code nounMappingsById} must contain the NounMappings
+     * the instances reference.
+     */
+    @Transactional(readOnly = true)
+    public Collection<RecommendedInstance> loadRecommendedInstances(Metamodel metamodel, SortedMap<String, NounMapping> nounMappingsById) {
+        List<RecommendedInstance> result = new ArrayList<>();
+        String metamodelName = metamodel.name();
+        for (RecommendedInstanceNode node : recommendedInstanceRepository.findAll()) {
+            if (!metamodelName.equals(node.getMetamodel())) {
+                continue;
+            }
+            result.add(recommendedInstanceMapper.toDomain(node, nounMappingsById));
+        }
+        logger.info("Loaded {} RecommendedInstances for {} from Neo4j", result.size(), metamodelName);
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<RecommendedInstance> loadAllRecommendedInstances(SortedMap<String, NounMapping> nounMappingsById) {
+        return StreamSupport.stream(recommendedInstanceRepository.findAll().spliterator(), false)
+                .map(node -> recommendedInstanceMapper.toDomain(node, nounMappingsById))
+                .toList();
+    }
+}

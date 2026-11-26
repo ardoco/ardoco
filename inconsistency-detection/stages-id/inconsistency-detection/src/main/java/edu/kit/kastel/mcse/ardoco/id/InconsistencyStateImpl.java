@@ -2,14 +2,17 @@
 package edu.kit.kastel.mcse.ardoco.id;
 
 import java.io.Serial;
+import java.util.List;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.AbstractInconsistencyState;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.Inconsistency;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.InconsistencyState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 
 public class InconsistencyStateImpl extends AbstractInconsistencyState implements InconsistencyState {
 
@@ -21,6 +24,21 @@ public class InconsistencyStateImpl extends AbstractInconsistencyState implement
     public InconsistencyStateImpl() {
         super();
         this.recommendedInstances = Lists.mutable.empty();
+    }
+
+    /**
+     * Add an Inconsistency to this state. Does not add duplicate inconsistencies.
+     *
+     * @param inconsistency the inconsistency to add
+     * @return true if added successfully
+     */
+    @Override
+    public boolean addInconsistency(Inconsistency inconsistency) {
+        if (!super.addInconsistency(inconsistency)) {
+            return false;
+        }
+        PersistenceBridge.addInconsistencies(List.of(inconsistency));
+        return true;
     }
 
     @Override

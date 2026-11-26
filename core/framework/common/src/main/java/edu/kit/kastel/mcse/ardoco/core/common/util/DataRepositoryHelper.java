@@ -14,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SimpleText;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 
@@ -275,15 +276,22 @@ public final class DataRepositoryHelper {
      */
     public static void putPreprocessingData(DataRepository dataRepository, PreprocessingData preprocessingData) {
         dataRepository.addData(PreprocessingData.ID, preprocessingData);
+        if (PersistenceBridge.isNeo4jStorage()) {
+            PersistenceBridge.getHandler().savePreprocessedText(preprocessingData.getText(), PreprocessingData.ID);
+        }
     }
 
     /**
      * Put the given {@link SimplePreprocessingData} into the given {@link DataRepository}. This will override existing data!
+     * Dual-writes SimpleText to Neo4j in Neo4j storage mode.
      *
      * @param dataRepository    the dataRepository
      * @param preprocessingData the preprocessingData
      */
     public static void putSimplePreprocessingData(DataRepository dataRepository, SimplePreprocessingData preprocessingData) {
         dataRepository.addData(SimplePreprocessingData.ID, preprocessingData);
+        if (PersistenceBridge.isNeo4jStorage()) {
+            PersistenceBridge.getHandler().saveSimpleText(preprocessingData.getText(), SimplePreprocessingData.ID);
+        }
     }
 }

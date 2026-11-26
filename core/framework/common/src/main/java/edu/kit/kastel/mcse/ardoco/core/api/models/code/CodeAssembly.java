@@ -47,6 +47,20 @@ public final class CodeAssembly extends CodeModule {
     }
 
     /**
+     * Constructs a new CodeAssembly with the given id and language information.
+     *
+     * @param id                 the identifier of the assembly
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the assembly
+     * @param content            the content of the assembly
+     * @param language           the programming language
+     */
+    public CodeAssembly(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content, String language) {
+        super(id, codeItemRepository, name, content);
+        this.language = language;
+    }
+
+    /**
      * Constructs a new CodeAssembly with language information.
      *
      * @param codeItemRepository the code item repository

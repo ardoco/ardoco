@@ -23,11 +23,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextStateStrateg
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.common.tuple.Pair;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
+import edu.kit.kastel.mcse.ardoco.core.data.DataRepositorySyncer;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
 @Deterministic
@@ -95,9 +97,13 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
     public void mergePhraseMappingsAndNounMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping,
             MutableList<Pair<NounMapping, NounMapping>> similarNounMappings, Claimant claimant) {
         this.mergePhraseMappings(phraseMapping, similarPhraseMapping);
-        for (Pair<NounMapping, NounMapping> nounMappingPair : similarNounMappings) {
-            this.mergeNounMappings(nounMappingPair.first(), nounMappingPair.second(), claimant);
-        }
+        // One write scope for all merges: each affected recommended instance is saved once, after all merges.
+        PersistenceBridge.withDeferredWrites(() -> {
+            for (Pair<NounMapping, NounMapping> nounMappingPair : similarNounMappings) {
+                this.mergeNounMappings(nounMappingPair.first(), nounMappingPair.second(), claimant);
+            }
+            return null;
+        });
     }
 
     private void mergePhraseMappings(PhraseMapping phraseMapping, PhraseMapping similarPhraseMapping) {
@@ -163,8 +169,10 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
 
         String mergedReference = mergedReferenceWords.collect(Word::getText).makeString(" ");
 
-        return new NounMappingImpl(NounMappingImpl.earliestCreationTime(firstNounMapping, secondNounMapping), mergedWords.toSortedSet().toImmutable(),
-                mergedDistribution.toImmutable(), mergedReferenceWords.toImmutable(), mergedSurfaceForms.toImmutable(), mergedReference);
+        // Keep the ardocoId of the chronologically earlier mapping so Neo4j upserts stay stable across merges.
+        return new NounMappingImpl(NounMappingImpl.ardocoIdOfEarliest(firstNounMapping, secondNounMapping), NounMappingImpl.earliestCreationTime(
+                firstNounMapping, secondNounMapping), mergedWords.toSortedSet().toImmutable(), mergedDistribution.toImmutable(), mergedReferenceWords
+                        .toImmutable(), mergedSurfaceForms.toImmutable(), mergedReference);
     }
 
     @Override
@@ -173,12 +181,17 @@ public final class DefaultTextStateStrategy implements TextStateStrategy {
         var mergedNounMapping = this.mergeNounMappingsStateless(firstNounMapping, secondNounMapping, referenceWords, reference, mappingKind, claimant,
                 probability);
 
-        // We just need to remove them plain from the state -> no cascade.
-        this.textState.removeNounMapping(this.dataRepository, firstNounMapping, mergedNounMapping, false);
-        this.textState.removeNounMapping(this.dataRepository, secondNounMapping, mergedNounMapping, false);
+        // One write scope per merge (see PersistenceBridge#withDeferredWrites): the merged noun mapping is upserted under the surviving ardocoId,
+        // every recommended instance referencing it is saved once afterwards, and only the obsolete noun mapping is deleted, last.
+        return PersistenceBridge.withDeferredWrites(() -> {
+            // We just need to remove them plain from the state -> no cascade.
+            this.textState.removeNounMapping(this.dataRepository, firstNounMapping, mergedNounMapping, false);
+            this.textState.removeNounMapping(this.dataRepository, secondNounMapping, mergedNounMapping, false);
 
-        this.textState.addNounMapping(mergedNounMapping);
-        return mergedNounMapping;
+            this.textState.addNounMapping(mergedNounMapping);
+            DataRepositorySyncer.repersistRecommendedInstancesReferencing(this.dataRepository, mergedNounMapping);
+            return mergedNounMapping;
+        });
     }
 
 }

@@ -5,6 +5,8 @@ import java.io.Serial;
 import java.util.EnumMap;
 
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
@@ -12,6 +14,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.Recomme
 public class RecommendationStatesImpl implements RecommendationStates {
     @Serial
     private static final long serialVersionUID = -6792479283538202394L;
+    private static final Logger logger = LoggerFactory.getLogger(RecommendationStatesImpl.class);
     private final EnumMap<Metamodel, RecommendationStateImpl> recommendationStates;
 
     private RecommendationStatesImpl() {
@@ -22,7 +25,7 @@ public class RecommendationStatesImpl implements RecommendationStates {
         logger.info("Building recommendation states for {} metamodels", metamodels.length);
         var recStates = new RecommendationStatesImpl();
         for (Metamodel mm : metamodels) {
-            recStates.recommendationStates.put(mm, new RecommendationStateImpl());
+            recStates.recommendationStates.put(mm, new RecommendationStateImpl(mm));
         }
         return recStates;
     }

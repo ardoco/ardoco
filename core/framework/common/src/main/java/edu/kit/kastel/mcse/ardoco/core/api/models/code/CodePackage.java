@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models.code;
 
 import java.io.Serial;
@@ -29,6 +29,17 @@ public final class CodePackage extends CodeModule {
      */
     public CodePackage(CodeItemRepository codeItemRepository, String name) {
         super(codeItemRepository, name, new TreeSet<>());
+    }
+
+    /**
+     * Creates a new code package with the specified name and id.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code package
+     * @param id                 the unique identifier
+     */
+    public CodePackage(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name, new TreeSet<>());
     }
 
     /**

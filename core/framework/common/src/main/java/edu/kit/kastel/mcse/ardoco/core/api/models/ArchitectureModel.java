@@ -26,6 +26,14 @@ import edu.kit.kastel.mcse.ardoco.core.architecture.NoHashCodeEquals;
 @NoHashCodeEquals
 public abstract sealed class ArchitectureModel extends Model permits ArchitectureComponentModel, ArchitectureModelWithComponentsAndInterfaces {
 
+    protected ArchitectureModel() {
+        super();
+    }
+
+    protected ArchitectureModel(String id) {
+        super(id);
+    }
+
     /**
      * Returns the content of the architecture model.
      *

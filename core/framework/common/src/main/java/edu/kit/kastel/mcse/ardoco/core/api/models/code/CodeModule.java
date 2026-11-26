@@ -59,6 +59,22 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     }
 
     /**
+     * Creates a new code module with the specified name and content.
+     *
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the code module
+     * @param content            the content of the code module
+     */
+    public CodeModule(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+        this.parentId = null;
+    }
+
+    /**
      * Returns the content IDs of this code module.
      *
      * @return list of content IDs
@@ -66,6 +82,25 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     @JsonGetter("content")
     protected List<String> getContentIds() {
         return this.content;
+    }
+
+    /**
+     * Returns the raw content-id list exactly as stored (may be {@code null}). Prefer {@link #getContent()} for resolved access; use this for lossless
+     * persistence round trips where {@code null} vs empty and dangling ids must be preserved.
+     *
+     * @return the raw content id list, possibly {@code null}
+     */
+    public List<String> getRawContentIds() {
+        return this.content;
+    }
+
+    /**
+     * Replaces the raw content-id list. See {@link #getRawContentIds()} for the semantics.
+     *
+     * @param contentIds the raw id list to set (may be {@code null})
+     */
+    public void setRawContentIds(List<String> contentIds) {
+        this.content = contentIds;
     }
 
     /**

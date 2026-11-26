@@ -198,7 +198,6 @@
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
-
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
@@ -216,6 +215,14 @@
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>1.21.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>tools.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
@@ -224,6 +231,7 @@
         <scope>import</scope>
       </dependency>
     </dependencies>
+
   </dependencyManagement>
 
   <dependencies>
@@ -272,6 +280,7 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
   <repositories>
     <repository>

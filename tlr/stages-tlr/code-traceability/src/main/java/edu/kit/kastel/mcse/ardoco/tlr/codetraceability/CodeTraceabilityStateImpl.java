@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability;
 
 import java.io.Serial;
@@ -16,6 +16,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.CodeTraceabili
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
 import edu.kit.kastel.mcse.ardoco.core.architecture.Deterministic;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 
 @Deterministic
@@ -32,7 +33,9 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public boolean addSamCodeTraceLinks(Collection<? extends TraceLink<? extends ArchitectureEntity, ? extends ModelEntity>> traceLinks) {
-        return this.samCodeTraceLinks.addAll(traceLinks);
+        boolean added = this.samCodeTraceLinks.addAll(traceLinks);
+        PersistenceBridge.saveTraceLinks(traceLinks);
+        return added;
     }
 
     @Override
@@ -42,7 +45,9 @@ public class CodeTraceabilityStateImpl extends AbstractState implements CodeTrac
 
     @Override
     public boolean addSadCodeTraceLinks(Collection<? extends TraceLink<SentenceEntity, ? extends ModelEntity>> traceLinks) {
-        return this.transitiveTraceLinks.addAll(traceLinks);
+        boolean added = this.transitiveTraceLinks.addAll(traceLinks);
+        PersistenceBridge.saveTraceLinks(traceLinks);
+        return added;
     }
 
     @Override

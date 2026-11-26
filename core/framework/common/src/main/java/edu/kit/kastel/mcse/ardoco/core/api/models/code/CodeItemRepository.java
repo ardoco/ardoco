@@ -35,16 +35,15 @@ public class CodeItemRepository implements Serializable {
         return new TreeMap<>(this.repository);
     }
 
-    void addCodeItem(CodeItem codeItem) {
+    public void addCodeItem(CodeItem codeItem) {
         this.repository.put(codeItem.getId(), codeItem);
     }
 
-    boolean containsCodeItem(String id) {
+    public boolean containsCodeItem(String id) {
         return this.repository.containsKey(id);
     }
 
-    @Nullable
-    CodeItem getCodeItem(@Nullable String id) {
+    public @Nullable CodeItem getCodeItem(@Nullable String id) {
         if (id == null) {
             return null;
         }

@@ -8,6 +8,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
@@ -42,6 +43,7 @@ public class Artemis extends ArdocoRunner {
      */
     public void setUp(File inputText, @Nullable ArchitectureConfiguration architectureConfiguration, @Nullable CodeConfiguration codeConfiguration,
             ImmutableSortedMap<String, String> additionalConfigs, File outputDir, LargeLanguageModel llm, List<ArtemisNerStrategy> strategies) {
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         setOutputDirectory(outputDir);
         setUp(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llm, strategies);
     }

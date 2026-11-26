@@ -1,0 +1,465 @@
+/* Licensed under MIT 2026. */
+package io.github.ardoco.core.neo4jschema;
+
+import java.util.List;
+import java.util.TreeSet;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.neo4j.core.Neo4jClient;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModelWithComponentsAndInterfaces;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureComponent;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureInterface;
+import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureMethod;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.codetraceability.ArchitectureCodeTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.text.Text;
+import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TransitiveTraceLink;
+import edu.kit.kastel.mcse.ardoco.id.types.ModelEntityAbsentFromTextInconsistency;
+import edu.kit.kastel.mcse.ardoco.id.types.TextEntityAbsentFromModelInconsistency;
+import io.github.ardoco.core.neo4jschema.adapter.Neo4jTextInconsistency;
+import io.github.ardoco.core.neo4jschema.service.MissingTraceLinkEndpointException;
+import io.github.ardoco.core.neo4jschema.service.TraceLinkPersistenceService;
+import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelEqualityHelper;
+import io.github.ardoco.core.neo4jschema.util.models.ArchitectureModelFactory;
+import io.github.ardoco.core.neo4jschema.util.models.CodeModelEqualityHelper;
+import io.github.ardoco.core.neo4jschema.util.models.CodeModelFactory;
+import io.github.ardoco.core.neo4jschema.util.models.TextEqualityHelper;
+import io.github.ardoco.core.neo4jschema.util.models.TextFactory;
+
+@SpringBootTest(classes = io.github.ardoco.core.neo4jschema.Main.class)
+public class Neo4jPersistenceHandlerFacadeTest extends AbstractNeo4jTest {
+
+    @Autowired
+    protected Neo4jPersistenceHandler persistenceHandler;
+
+    @Autowired
+    private Neo4jClient neo4jClient;
+
+    @BeforeEach
+    void clearDatabase() {
+        neo4jClient.query("MATCH (n) DETACH DELETE n").run();
+
+        // --- VISUALIZATION BLOCK ---
+        System.out.println("----------------------------------------------------------");
+        System.out.println("neo4j browser: " + neo4jContainer.getHttpUrl()); // e.g., http://localhost:32789
+        System.out.println("password:      " + neo4jContainer.getAdminPassword());
+        System.out.println("Connect URL:   " + neo4jContainer.getBoltUrl());
+        System.out.println("----------------------------------------------------------");
+    }
+
+    @Test
+    @DisplayName("Facade: Code Model Persistence and Metamodel Lookup")
+    void testCodeModelPersistence() {
+        CodeModelWithCompilationUnitsAndPackages codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var storedMetamodels = persistenceHandler.getStoredMetamodels();
+        Assertions.assertTrue(storedMetamodels.contains(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        Assertions.assertNotNull(loaded);
+        Assertions.assertEquals(codeModel.getId(), loaded.getId());
+        CodeModelEqualityHelper.assertCodeModelsEqual(codeModel, loaded);
+    }
+
+    @Test
+    @DisplayName("Facade: Code item comment is stored as a node property and loaded back")
+    void testCodeItemCommentPersistence() {
+        CodeModelWithCompilationUnitsAndPackages codeModel = CodeModelFactory.createCodeModel();
+        String comment = "Authenticates users against an LDAP directory.";
+        codeModel.createCodeModelDto().codeItemRepository().getCodeItem("id_cls_ldap").setComment(comment);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        String stored = neo4jClient.query("MATCH (c:ClassUnit {ardocoId: 'id_cls_ldap'}) RETURN coalesce(c.comment, '') AS comment")
+                .fetchAs(String.class)
+                .one()
+                .orElseThrow();
+        Assertions.assertEquals(comment, stored);
+        Boolean interfaceHasComment = neo4jClient.query("MATCH (i:InterfaceUnit {ardocoId: 'id_iface_auth'}) RETURN i.comment IS NOT NULL AS hasComment")
+                .fetchAs(Boolean.class)
+                .one()
+                .orElseThrow();
+        Assertions.assertFalse(interfaceHasComment);
+
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        var loadedRepository = loaded.createCodeModelDto().codeItemRepository();
+        Assertions.assertEquals(comment, loadedRepository.getCodeItem("id_cls_ldap").getComment());
+        Assertions.assertNull(loadedRepository.getCodeItem("id_iface_auth").getComment());
+    }
+
+    @Test
+    @DisplayName("Facade: Architecture Model Persistence and Metamodel Lookup")
+    void testArchitectureModelPersistence() {
+        ArchitectureModelWithComponentsAndInterfaces archModel = ArchitectureModelFactory.createArchitectureModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+
+        var storedMetamodels = persistenceHandler.getStoredMetamodels();
+        Assertions.assertTrue(storedMetamodels.contains(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
+
+        var loaded = (ArchitectureModelWithComponentsAndInterfaces) persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+        Assertions.assertNotNull(loaded);
+        Assertions.assertEquals(archModel.getId(), loaded.getId());
+        ArchitectureModelEqualityHelper.assertArchitectureModelsEqual(archModel, loaded);
+    }
+
+    @Test
+    @DisplayName("Facade: Overwriting existing model with smaller version")
+    void testModelOverwrite() {
+
+        var largeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, largeModel);
+
+        var smallModel = CodeModelFactory.createSimpleCodeModel(largeModel.getId());
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, smallModel);
+
+        CodeModel loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        CodeModelEqualityHelper.assertCodeModelsEqual(smallModel, loaded);
+
+        Long totalCodeItemsInDb = neo4jClient.query("MATCH (n:CodeItem) RETURN count(n)").fetchAs(Long.class).one().orElse(0L);
+
+        int expectedCount = smallModel.getContent().size() + 1; // +1 for the CodeModel node itself, which also has CodeItem properties
+
+        Assertions.assertEquals((long) expectedCount, totalCodeItemsInDb, "Database contains dangling CodeItem nodes from the previous large model!");
+
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        var storedMetamodels = persistenceHandler.getStoredMetamodels();
+        Assertions.assertEquals(2, storedMetamodels.size());
+        Assertions.assertTrue(storedMetamodels.contains(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
+        Assertions.assertTrue(storedMetamodels.contains(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+    }
+
+    @Test
+    @DisplayName("Facade: re-saving an architecture model doesn't duplicate interfaces/methods reachable only via a component's provided/required interfaces")
+    void testArchitectureModelResaveNoOrphanedInterfacesOrMethods() {
+        // Unlike ArchitectureModelFactory's fixture, this interface is NOT a top-level model item (no HAS_INTERFACE edge) - it is reachable
+        // only via the component's PROVIDES_INTERFACE edge, matching real PCM extraction output (e.g. TeaStore), which never attaches
+        // interfaces to the model directly.
+        var method = new ArchitectureMethod("ping()");
+        var iface = new ArchitectureInterface("IPing", "id_iface_ping", new TreeSet<>(List.of(method)));
+        var component = new ArchitectureComponent("PingService", "id_comp_ping", new TreeSet<>(), new TreeSet<>(List.of(iface)), new TreeSet<>(), "Service");
+        var model = new ArchitectureModelWithComponentsAndInterfaces(List.of(component));
+
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, model);
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, model);
+
+        Long interfaceCount = neo4jClient.query("MATCH (n:ArchitectureInterface) RETURN count(n)").fetchAs(Long.class).one().orElse(0L);
+        Long methodCount = neo4jClient.query("MATCH (n:ArchitectureMethod) RETURN count(n)").fetchAs(Long.class).one().orElse(0L);
+
+        Assertions.assertEquals(1L, interfaceCount, "Re-saving duplicated an interface only reachable via a component's provided/required set");
+        Assertions.assertEquals(1L, methodCount, "Re-saving duplicated a method of an interface only reachable via a component's provided/required set");
+    }
+
+    @Test
+    @DisplayName("Facade: Documentation Persistence")
+    void testDocumentationModelPersistence() {
+        Text documentation = TextFactory.createComplexText();
+        persistenceHandler.savePreprocessedText(documentation, "identifier_01");
+
+        Assertions.assertTrue(persistenceHandler.hasPreprocessedText("identifier_01"));
+        Text loaded = persistenceHandler.loadPreprocessedText("identifier_01");
+        Assertions.assertNotNull(loaded);
+        TextEqualityHelper.assertTextsEqual(documentation, loaded);
+    }
+
+    @Test
+    @DisplayName("Facade: Documentation with empty text")
+    void testEmptyTextPersistence() {
+        // Some NLP providers might return a text object with 0 sentences
+        Text emptyText = TextFactory.createEmptyText();
+        persistenceHandler.savePreprocessedText(emptyText, "empty_id");
+
+        Assertions.assertTrue(persistenceHandler.hasPreprocessedText("empty_id"));
+        Text loaded = persistenceHandler.loadPreprocessedText("empty_id");
+        Assertions.assertEquals(0, loaded.getSentences().size());
+    }
+
+    @Test
+    @DisplayName("Facade: Trace Link to non-existent model entity")
+    void testTraceLinkWithMissingTarget() {
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var archEntity = new ArchitectureMethod("fakeEntity", "ghost_id");
+        var codeEntity = codeModel.getEndpoints().getFirst();
+
+        ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
+        List<ArchitectureCodeTraceLink> links = List.of(link);
+
+        Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(links));
+
+        var loaded = persistenceHandler.loadArchitectureCodeTraceLinks();
+        Assertions.assertTrue(loaded.stream().noneMatch(l -> l.getFirstEndpoint().getId().equals("ghost_id")));
+    }
+
+    @Test
+    @DisplayName("Facade: a trace link with a missing endpoint is an error naming the type and id, and no edge is written")
+    void testMissingEndpointTraceLinkIsAnError() {
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var archEntity = archModel.getEndpoints().getFirst();
+        var codeItem = codeModel.getEndpoints().getFirst();
+
+        Logger traceLinkServiceLogger = (Logger) LoggerFactory.getLogger(TraceLinkPersistenceService.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        traceLinkServiceLogger.addAppender(appender);
+        MissingTraceLinkEndpointException thrown;
+        List<ArchitectureCodeTraceLink> links = List.of(new ArchitectureCodeTraceLink(archEntity, codeItem));
+        try {
+            thrown = Assertions.assertThrows(MissingTraceLinkEndpointException.class, () -> persistenceHandler.saveTraceLinks(links));
+        } finally {
+            traceLinkServiceLogger.detachAppender(appender);
+        }
+
+        Long edgeCount = neo4jClient.query("""
+                MATCH ()-[r:TRACES_TO]->() WHERE r.traceLinkType = 'ARCHITECTURE_CODE' RETURN count(r) AS c
+                """).fetchAs(Long.class).mappedBy((typeSystem, neo4jRecord) -> neo4jRecord.get("c").asLong()).one().orElse(0L);
+        Assertions.assertEquals(0L, edgeCount, "No edge must be created when an endpoint is unresolved");
+
+        List<String> errors = appender.list.stream().filter(event -> event.getLevel() == Level.ERROR).map(ILoggingEvent::getFormattedMessage).toList();
+        Assertions.assertEquals(1, errors.size(), errors.toString());
+        String error = errors.getFirst();
+        Assertions.assertTrue(error.contains("ARCHITECTURE_CODE: 1 (source 1, target 0)"), error);
+        Assertions.assertTrue(error.contains(archEntity.getId()), error);
+        Assertions.assertEquals(error, thrown.getMessage());
+        Assertions.assertTrue(appender.list.stream().noneMatch(event -> event.getLevel() == Level.WARN), appender.list.toString());
+    }
+
+    @Test
+    @DisplayName("Facade: Test Roundtrip for Architecture-Code Trace Links")
+    void testArchitectureCodeTraceLinkPersistence() {
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var archEntity = archModel.getEndpoints().getFirst();
+        var codeEntity = codeModel.getEndpoints().getFirst();
+
+        ArchitectureCodeTraceLink link = new ArchitectureCodeTraceLink(archEntity, codeEntity);
+
+        persistenceHandler.saveTraceLinks(List.of(link));
+        var loadedLinks = persistenceHandler.loadArchitectureCodeTraceLinks();
+
+        Assertions.assertFalse(loadedLinks.isEmpty());
+        Assertions.assertTrue(loadedLinks.stream()
+                .anyMatch(l -> l.getFirstEndpoint().getId().equals(archEntity.getId()) && l.getSecondEndpoint().getId().equals(codeEntity.getId()) && l
+                        .getFirstEndpoint()
+                        .getName()
+                        .equals(archEntity.getName()) && l.getSecondEndpoint().getName().equals(codeEntity.getName())));
+    }
+
+    @Test
+    @DisplayName("Facade: Test Roundtrip for Transitive Trace Links")
+    void testTransitiveTraceLinkPersistence() {
+        Text text = TextFactory.createComplexText();
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var codeModel = CodeModelFactory.createCodeModel();
+
+        persistenceHandler.savePreprocessedText(text, "PreprocessingData");
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var sentence = text.getSentences().get(0);
+        var archEntity = archModel.getEndpoints().get(0);
+        var codeItem = codeModel.getEndpoints().get(0);
+
+        var link1 = new SentenceModelTraceLink(sentence, archEntity);
+        var link2 = new ArchitectureCodeTraceLink(archEntity, codeItem);
+
+        var transitiveLink = TransitiveTraceLink.createTransitiveTraceLink(link1, link2)
+                .orElseThrow(() -> new IllegalStateException("Failed to create transitive link - IDs didn't match"));
+
+        persistenceHandler.saveTraceLinks(List.of(transitiveLink));
+        var loaded = persistenceHandler.loadTransitiveTraceLinks();
+
+        Assertions.assertFalse(loaded.isEmpty(), "Transitive link should be persisted");
+        Assertions.assertTrue(loaded.stream().anyMatch(TransitiveTraceLink.class::isInstance));
+    }
+
+    @Test
+    @DisplayName("Facade: Test Roundtrip for SentenceModelTraceLinks")
+    void testSentenceModelTraceLinkPersistence() {
+        Text text = TextFactory.createComplexText();
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.savePreprocessedText(text, "PreprocessingData");
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var sentence = text.getSentences().get(0);
+        var codeItem = codeModel.getEndpoints().get(0);
+
+        SentenceModelTraceLink link = new SentenceModelTraceLink(sentence, codeItem);
+
+        persistenceHandler.saveTraceLinks(List.of(link));
+        var loaded = persistenceHandler.loadSentenceModelTraceLinks();
+
+        Assertions.assertFalse(loaded.isEmpty());
+        Assertions.assertTrue(loaded.stream().anyMatch(l -> l.getSentenceNumber() == sentence.getSentenceNumber()));
+    }
+
+    @Test
+    @DisplayName("Facade: Test Roundtrip for Inconsistencies")
+    void testInconsistencyPersistence() {
+
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        var archEntity = archModel.getEndpoints().get(0);
+
+        Text text = TextFactory.createComplexText();
+        persistenceHandler.savePreprocessedText(text, "PreprocessingData");
+        var sentenceNumber = text.getSentences().get(0).getSentenceNumber() + 1;
+
+        var modelInc = new ModelEntityAbsentFromTextInconsistency(archEntity);
+        var textInc = new TextEntityAbsentFromModelInconsistency("MissingComponent", sentenceNumber, 0.95, null);
+
+        persistenceHandler.addInconsistencies(List.of(modelInc, textInc));
+        var loaded = persistenceHandler.getInconsistencies();
+
+        Assertions.assertEquals(2, loaded.size(), "Should have loaded both inconsistencies");
+
+        boolean foundModelInc = loaded.stream()
+                .filter(ModelEntityAbsentFromTextInconsistency.class::isInstance)
+                .map(i -> (ModelEntityAbsentFromTextInconsistency) i)
+                .anyMatch(i -> i.getModelInstanceUid().equals(archEntity.getId()));
+
+        boolean foundTextInc = loaded.stream()
+                .filter(Neo4jTextInconsistency.class::isInstance)
+                .map(i -> (Neo4jTextInconsistency) i)
+                .anyMatch(i -> i.getSentenceNumber() == sentenceNumber);
+
+        Assertions.assertTrue(foundModelInc, "ModelEntityAbsentFromTextInconsistency should be restored with correct ID");
+        Assertions.assertTrue(foundTextInc, "TextEntityAbsentFromModelInconsistency should be restored with correct sentence number.");
+    }
+
+    //-----------------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Facade: Delete specific model and its items")
+    void testDeleteModel() {
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+
+        Assertions.assertNull(persistenceHandler.loadModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES));
+        Assertions.assertNotNull(persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES));
+
+        Long archItemsCount = neo4jClient.query("MATCH (n:ArchitectureItem) RETURN count(n)").fetchAs(Long.class).one().get();
+        Assertions.assertEquals(0L, archItemsCount, "Architecture items were not cleaned up!");
+    }
+
+    @Test
+    @DisplayName("Facade: Delete model should cascade to TraceLinks")
+    void testDeleteModelCascadesToTraceLinks() {
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var link = new ArchitectureCodeTraceLink(archModel.getEndpoints().get(0), codeModel.getEndpoints().get(0));
+        persistenceHandler.saveTraceLinks(List.of(link));
+        Long codeItemsCountBefore = neo4jClient.query("MATCH (n:CodeItem) RETURN count(n)").fetchAs(Long.class).one().get();
+
+        persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+
+        var links = persistenceHandler.loadArchitectureCodeTraceLinks();
+        Assertions.assertTrue(links.isEmpty(), "TraceLink should have been deleted when its endpoint model was removed.");
+        Long archItemsCount = neo4jClient.query("MATCH (n:ArchitectureItem) RETURN count(n)").fetchAs(Long.class).one().get();
+        Assertions.assertEquals(0L, archItemsCount, "Architecture items were not cleaned up!");
+        Long codeItemsCountAfter = neo4jClient.query("MATCH (n:CodeItem) RETURN count(n)").fetchAs(Long.class).one().get();
+        Assertions.assertEquals(codeItemsCountBefore, codeItemsCountAfter, "Code items have been lost!");
+    }
+
+    @Test
+    @DisplayName("Facade: Delete documentation and associated inconsistencies")
+    void testDeleteDocumentationCascades() {
+        Text text = TextFactory.createComplexText();
+        persistenceHandler.savePreprocessedText(text, "PreprocessingData");
+
+        var textInc = new TextEntityAbsentFromModelInconsistency("Missing", text.getSentences().get(0).getSentenceNumber() + 1, 1.0, null);
+        persistenceHandler.addInconsistencies(List.of(textInc));
+        Assertions.assertEquals(1, persistenceHandler.getInconsistencies().size(), "Precondition: the inconsistency is attached to the text");
+
+        persistenceHandler.deletePreprocessedText("PreprocessingData");
+
+        Assertions.assertFalse(persistenceHandler.hasPreprocessedText("PreprocessingData"));
+        Assertions.assertTrue(persistenceHandler.getInconsistencies().isEmpty(), "Inconsistency should be gone after text deletion.");
+
+        Long wordCount = neo4jClient.query("MATCH (w:Word) RETURN count(w)").fetchAs(Long.class).one().get();
+        Assertions.assertEquals(0L, wordCount, "Words from deleted text are still in the DB!");
+    }
+
+    @Test
+    @DisplayName("Facade: Global deleteAllData should leave DB empty")
+    void testDeleteAllData() {
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, ArchitectureModelFactory.createArchitectureModel());
+        persistenceHandler.savePreprocessedText(TextFactory.createComplexText(), "test_id");
+
+        persistenceHandler.deleteAllData();
+
+        Long nodeCount = neo4jClient.query("MATCH (n) RETURN count(n)").fetchAs(Long.class).one().get();
+        Assertions.assertEquals(0L, nodeCount, "Database is not empty after deleteAllData!");
+    }
+
+    @Test
+    @DisplayName("Edge Case: Breaking a transitive chain by deleting the middle element")
+    void testBreakTransitiveChain() {
+        Text text = TextFactory.createComplexText();
+        var archModel = ArchitectureModelFactory.createArchitectureModel();
+        var codeModel = CodeModelFactory.createCodeModel();
+        persistenceHandler.savePreprocessedText(text, "doc_id");
+        persistenceHandler.saveModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES, archModel);
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, codeModel);
+
+        var archItem = archModel.getEndpoints().get(0);
+        var link1 = new SentenceModelTraceLink(text.getSentences().get(0), archItem);
+        var link2 = new ArchitectureCodeTraceLink(archItem, codeModel.getEndpoints().get(0));
+        persistenceHandler.saveTraceLinks(List.of(link1, link2));
+
+        persistenceHandler.deleteModel(Metamodel.ARCHITECTURE_WITH_COMPONENTS_AND_INTERFACES);
+        Assertions.assertTrue(persistenceHandler.loadArchitectureCodeTraceLinks().isEmpty(), "Arch-Code link should be gone");
+        Assertions.assertTrue(persistenceHandler.loadSentenceModelTraceLinks().isEmpty(), "Sentence-Arch link should be gone");
+        Assertions.assertTrue(persistenceHandler.loadTransitiveTraceLinks().isEmpty(), "Transitive reconstruction should fail");
+    }
+
+    @Test
+    @DisplayName("Edge Case: Replacing a model with a completely different ID under same Metamodel type")
+    void testMetamodelBucketReplacement() {
+        var modelOne = CodeModelFactory.createCodeModel(); // ID: "Model_A"
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, modelOne);
+
+        var modelTwo = CodeModelFactory.createCodeModel(); // ID: "Model_B" (different UUID)
+        persistenceHandler.saveModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES, modelTwo);
+
+        var loaded = (CodeModel) persistenceHandler.loadModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
+        Assertions.assertEquals(modelTwo.getId(), loaded.getId(), "The second model should have replaced the first");
+
+        // Verify no nodes from Model One remain
+        Long modelOneNodes = neo4jClient.query("MATCH (n:CodeItem {modelId: $id}) RETURN count(n)")
+                .bind(modelOne.getId())
+                .to("id")
+                .fetchAs(Long.class)
+                .one()
+                .get();
+        Assertions.assertEquals(0L, modelOneNodes, "Nodes from the first model still exist in the database");
+    }
+
+}

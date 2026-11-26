@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
@@ -40,6 +41,7 @@ public class ArtemisInTransArC extends ArdocoRunner {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
         LlmCache.ensureConfigured();
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llmForNer);
         setOutputDirectory(outputDir);
         isSetUp = true;

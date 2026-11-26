@@ -49,6 +49,17 @@ public final class ControlElement extends ComputationalObject {
     }
 
     /**
+     * Creates a new control element with the specified id and name.
+     *
+     * @param id                 the id of the control element
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the control element
+     */
+    public ControlElement(String id, CodeItemRepository codeItemRepository, String name) {
+        super(id, codeItemRepository, name);
+    }
+
+    /**
      * Creates a new control element with the specified name and source location.
      *
      * @param codeItemRepository the code item repository

@@ -52,4 +52,11 @@ public interface RecommendationState extends IConfigurable {
      */
     void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement);
 
+    /**
+     * Persists again all recommended instances that reference the given noun mapping (name or type side).
+     *
+     * @param nounMapping the noun mapping
+     */
+    void repersistInstancesReferencing(NounMapping nounMapping);
+
 }

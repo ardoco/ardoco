@@ -9,9 +9,11 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.jspecify.annotations.Nullable;
 
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.similarity.SimilarityUtils;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
@@ -23,14 +25,25 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
 
     @Serial
     private static final long serialVersionUID = 3088770775218314854L;
+    private final Metamodel metamodel;
     private final MutableSortedSet<RecommendedInstance> recommendedInstances;
 
     /**
-     * Creates a new recommendation state.
+     * Creates a new recommendation state for the given metamodel.
+     *
+     * @param metamodel the metamodel this state belongs to
+     */
+    public RecommendationStateImpl(Metamodel metamodel) {
+        super();
+        this.metamodel = metamodel;
+        this.recommendedInstances = SortedSets.mutable.empty();
+    }
+
+    /**
+     * Creates a new recommendation state without a metamodel (tests / legacy).
      */
     public RecommendationStateImpl() {
-        super();
-        this.recommendedInstances = SortedSets.mutable.empty();
+        this(null);
     }
 
     /**
@@ -69,6 +82,7 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
     public RecommendedInstance addRecommendedInstance(String name, String type, Claimant claimant, double probability, ImmutableList<NounMapping> nameMappings,
             ImmutableList<NounMapping> typeMappings) {
         var recommendedInstance = new RecommendedInstanceImpl(name, type, claimant, probability, nameMappings, typeMappings);
+        recommendedInstance.setMetamodel(this.metamodel);
         this.addRecommendedInstance(recommendedInstance);
 
         return recommendedInstance;
@@ -96,6 +110,7 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
     private void processRecommendedInstancesWithNoExactNameAndType(RecommendedInstance ri, ImmutableList<RecommendedInstance> risWithExactName) {
         if (risWithExactName.isEmpty()) {
             this.recommendedInstances.add(ri);
+            persistRecommendedInstance(ri);
         } else {
             var added = false;
 
@@ -110,6 +125,7 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
 
             if (!added && !ri.getType().isBlank()) {
                 this.recommendedInstances.add(ri);
+                persistRecommendedInstance(ri);
             }
         }
     }
@@ -123,5 +139,22 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
         for (RecommendedInstance ri : this.recommendedInstances.toImmutable()) {
             ri.onNounMappingDeletion(nounMapping, replacement);
         }
+    }
+
+    @Override
+    public void repersistInstancesReferencing(NounMapping nounMapping) {
+        for (RecommendedInstance ri : this.recommendedInstances) {
+            if (referencesMapping(ri, nounMapping)) {
+                persistRecommendedInstance(ri);
+            }
+        }
+    }
+
+    private static boolean referencesMapping(RecommendedInstance ri, NounMapping nounMapping) {
+        return ri.getNameMappings().contains(nounMapping) || ri.getTypeMappings().contains(nounMapping);
+    }
+
+    private void persistRecommendedInstance(RecommendedInstance recommendedInstance) {
+        PersistenceBridge.saveRecommendedInstance(recommendedInstance, this.metamodel);
     }
 }

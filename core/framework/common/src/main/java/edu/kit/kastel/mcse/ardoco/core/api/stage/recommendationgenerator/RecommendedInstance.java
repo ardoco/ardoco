@@ -7,6 +7,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -101,4 +102,20 @@ public abstract class RecommendedInstance extends TextEntity {
      * @param replacement the replacement noun mapping, or {@code null} if there is none
      */
     public abstract void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement);
+
+    /**
+     * Metamodel bucket of this instance. {@code null} until the recommendation stage assigns it.
+     *
+     * @return the metamodel, or {@code null} if unknown
+     */
+    public @Nullable Metamodel getMetamodel() {
+        return null;
+    }
+
+    /**
+     * Assigns the metamodel bucket. Implemented by {@code RecommendedInstanceImpl}.
+     *
+     * @param metamodel the metamodel
+     */
+    public abstract void setMetamodel(Metamodel metamodel);
 }

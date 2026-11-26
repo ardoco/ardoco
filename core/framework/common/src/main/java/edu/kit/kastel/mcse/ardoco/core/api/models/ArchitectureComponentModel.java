@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.models;
 
 import java.util.ArrayList;
@@ -23,6 +23,18 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
      * @param architectureModel the architecture model
      */
     public ArchitectureComponentModel(ArchitectureModel architectureModel) {
+        this.architectureModel = Objects.requireNonNull(architectureModel);
+    }
+
+    /**
+     * Creates a new ArchitectureComponentModel with the specified id.
+     * This constructor is used for restoring models with a specific id from persistence.
+     *
+     * @param id                the identifier of the model
+     * @param architectureModel the architecture model
+     */
+    public ArchitectureComponentModel(String id, ArchitectureModel architectureModel) {
+        super(id);
         this.architectureModel = Objects.requireNonNull(architectureModel);
     }
 
@@ -60,6 +72,11 @@ public final class ArchitectureComponentModel extends ArchitectureModel {
     @Override
     public Metamodel getMetamodel() {
         return Metamodel.ARCHITECTURE_WITH_COMPONENTS;
+    }
+
+    @Override
+    public String getId() {
+        return architectureModel.getId();
     }
 
     /**

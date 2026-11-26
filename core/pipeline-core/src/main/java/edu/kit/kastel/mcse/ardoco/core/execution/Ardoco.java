@@ -2,19 +2,32 @@
 package edu.kit.kastel.mcse.ardoco.core.execution;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.kastel.mcse.ardoco.core.api.InputTextData;
 import edu.kit.kastel.mcse.ardoco.core.api.output.ArdocoResult;
+import edu.kit.kastel.mcse.ardoco.core.common.JsonHandling;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceHandler;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.RunMetadataFilter;
+import edu.kit.kastel.mcse.ardoco.core.common.util.Environment;
 import edu.kit.kastel.mcse.ardoco.core.common.util.FilePrinter;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.data.ProjectPipelineData;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.Pipeline;
+import tools.jackson.core.JacksonException;
 
 /**
  * The Pipeline defines and manages the execution of agents.
@@ -23,7 +36,21 @@ public final class Ardoco extends Pipeline {
 
     private static final Logger classLogger = LoggerFactory.getLogger(Ardoco.class);
 
+    /** Config key read from {@link PersistenceBridge#getInstance()}'s last applied configuration; see {@link #resolveConfiguredExportDirectory}. */
+    private static final String CONFIGURED_EXPORT_PATH_KEY = "PersistenceBridge::knowledgeGraphExportPath";
+
+    private static final String CONFIGURED_EXPORT_PATH_ENV_VAR = "ARDOCO_KNOWLEDGE_GRAPH_EXPORT_PATH";
+
+    /** Fallback export directory, relative to the current working directory, when nothing else is configured. */
+    private static final String DEFAULT_EXPORT_DIRECTORY = "knowledge-graph";
+
     private final String projectName;
+
+    /** Set by {@link #runAndSave} right before {@link #run()}; read and cleared by {@link #exportAndWipeKnowledgeGraph}. */
+    private @Nullable File pendingKnowledgeGraphExportDirectory;
+
+    /** Persistence settings in effect when the runner of this instance was set up; {@code null} if no runner recorded them. */
+    private PersistenceBridge.@Nullable Settings settingsAtSetUp;
 
     /**
      * Default constructor to simplify tests that do not require the project's name. Also needed for testing configurations.
@@ -56,7 +83,84 @@ public final class Ardoco extends Pipeline {
     }
 
     /**
-     * Runs the ARDoCo pipeline and saves the results to the specified output directory.
+     * Records the persistence settings in effect now, i.e. right after the runner applied its configuration. {@link #run()} fails if they have
+     * changed by then.
+     */
+    public void rememberPersistenceSettings() {
+        this.settingsAtSetUp = PersistenceBridge.currentSettings();
+    }
+
+    /**
+     * Runs the pipeline. In Neo4j mode ({@code PersistenceBridge::storage=neo4j}), this is the single lifecycle point
+     * for both {@link #runAndSave} and a bare {@code run()} (e.g. via {@code ArdocoRunner#runWithoutSaving}, which
+     * has no output directory): clean the database first (a crashed earlier run cannot clean up after itself), run
+     * the pipeline, then on success export the knowledge graph and wipe, or on failure wipe (best-effort) and
+     * rethrow so the run aborts with no partial results, matching the {@link DataRepository}-only failsafe. The
+     * export destination is {@link #runAndSave}'s output directory if this call came from there, otherwise
+     * {@link #resolveConfiguredExportDirectory}, which always resolves to a usable directory (falling back to a
+     * default one) so a run never silently loses its one deliverable.
+     * <p>
+     * The persistence settings are global per JVM. If another runner was set up after this one with a different storage mode, connection or, in
+     * neo4j mode, configuration, the run fails before any write instead of running with the other runner's settings.
+     *
+     * @throws IllegalStateException if the persistence settings changed since this instance's runner was set up
+     */
+    @Override
+    public void run() {
+        PersistenceBridge.Settings currentSettings = PersistenceBridge.currentSettings();
+        if (this.settingsAtSetUp != null && !this.settingsAtSetUp.equals(currentSettings)) {
+            throw new IllegalStateException("The persistence settings changed after this runner was set up: it was set up with storage " + this.settingsAtSetUp
+                    .storage() + ", the current storage is " + currentSettings
+                            .storage() + " (or the Neo4j connection or configuration differs). Another runner was set up " + "in between; set up and run one runner at a time.");
+        }
+        boolean neo4jMode = PersistenceBridge.isNeo4jStorage();
+        if (neo4jMode) {
+            classLogger.info("Neo4j mode: cleaning the database before the run (a crashed earlier run may have left data behind)");
+            PersistenceBridge.getHandler().deleteAllData();
+        }
+
+        try {
+            if (neo4jMode) {
+                writeRunMetadataStart();
+                writeProjectMetadata();
+            }
+            super.run();
+        } catch (RuntimeException | Error ex) {
+            if (neo4jMode) {
+                wipeAfterFailure(ex);
+            }
+            throw ex;
+        }
+
+        if (neo4jMode) {
+            exportAndWipeKnowledgeGraph();
+        }
+    }
+
+    private void writeRunMetadataStart() {
+        List<String> droppedKeys = new ArrayList<>();
+        var filteredConfiguration = RunMetadataFilter.filterSecrets(PersistenceBridge.getInstance().getLastAppliedConfiguration(), droppedKeys);
+        if (!droppedKeys.isEmpty()) {
+            classLogger.info("Run metadata: dropped {} secret-like configuration key(s): {}", droppedKeys.size(), droppedKeys);
+        }
+        String configurationJson;
+        try {
+            configurationJson = JsonHandling.createObjectMapper().writeValueAsString(filteredConfiguration);
+        } catch (JacksonException e) {
+            throw new IllegalStateException("Failed to serialize the run configuration for run metadata", e);
+        }
+        PersistenceBridge.getHandler().saveRunMetadataStart(this.projectName, Instant.now().toString(), configurationJson);
+    }
+
+    private void writeProjectMetadata() {
+        this.getDataRepository()
+                .getData(InputTextData.ID, InputTextData.class)
+                .ifPresent(inputText -> PersistenceBridge.getHandler().saveProjectMetadata(this.projectName, inputText.getText()));
+    }
+
+    /**
+     * Runs the ARDoCo pipeline and saves the results to the specified output directory. The Neo4j-mode lifecycle
+     * (clean/export/wipe) runs inside {@link #run()}; this method only has to tell it where to export.
      *
      * @param outputDir the directory where output files should be saved
      * @return the ARDoCo result containing all analysis data, or null if the pipeline is not properly initialized
@@ -69,6 +173,7 @@ public final class Ardoco extends Pipeline {
             return null;
         }
 
+        this.pendingKnowledgeGraphExportDirectory = outputDir;
         var startTime = Instant.now();
         this.run();
         var endTime = Instant.now();
@@ -87,20 +192,89 @@ public final class Ardoco extends Pipeline {
         return arDoCoResult;
     }
 
+    /**
+     * Writes the run's knowledge graph as a lossless JSON dump, then wipes the database: in Neo4j mode, Neo4j is a
+     * transient per-run store like the {@link DataRepository}, so nothing but the exported graph survives. The
+     * export directory is {@link #runAndSave}'s output directory if set, otherwise
+     * {@link #resolveConfiguredExportDirectory} - which always returns a usable directory, falling back to a default
+     * one, so the wipe below never discards the graph silently. Both steps are unguarded: a
+     * failure here means the run's one deliverable - the knowledge graph - was not safely captured, so the run must
+     * abort rather than silently lose it.
+     */
+    private void exportAndWipeKnowledgeGraph() {
+        File exportDirectory = this.pendingKnowledgeGraphExportDirectory != null ?
+                this.pendingKnowledgeGraphExportDirectory :
+                resolveConfiguredExportDirectory();
+        this.pendingKnowledgeGraphExportDirectory = null;
+
+        PersistenceHandler persistenceHandler = PersistenceBridge.requireHandler();
+        persistenceHandler.saveRunMetadataFinish(this.projectName, Instant.now().toString());
+
+        classLogger.info("Exporting the Neo4j knowledge graph...");
+        String json = persistenceHandler.exportGraphAsJson();
+        File file = getOutputFile(this.projectName, exportDirectory, "knowledgeGraph_", ".json");
+        try {
+            Files.createDirectories(exportDirectory.toPath());
+            Files.writeString(file.toPath(), json, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to write the knowledge graph export to " + file, e);
+        }
+        classLogger.info("Wrote the knowledge graph to {}", file);
+
+        classLogger.info("Wiping the Neo4j database (transient per-run store; the export above is what is kept)...");
+        persistenceHandler.deleteAllData();
+    }
+
+    /**
+     * Resolves the export directory for a bare {@code run()} that did not go through {@link #runAndSave} (e.g.
+     * {@code ArdocoRunner#runWithoutSaving}, which has no output directory): the {@value #CONFIGURED_EXPORT_PATH_KEY}
+     * configuration key, then the {@value #CONFIGURED_EXPORT_PATH_ENV_VAR} environment variable, else
+     * {@value #DEFAULT_EXPORT_DIRECTORY} in the current working directory. Always returns a directory - the wipe in
+     * {@link #exportAndWipeKnowledgeGraph} must never discard the graph silently for lack of a destination.
+     */
+    private static File resolveConfiguredExportDirectory() {
+        String configured = PersistenceBridge.getInstance().getLastAppliedConfiguration().get(CONFIGURED_EXPORT_PATH_KEY);
+        if (configured == null) {
+            configured = Environment.getEnv(CONFIGURED_EXPORT_PATH_ENV_VAR);
+        }
+        if (configured != null) {
+            return new File(configured);
+        }
+        File defaultDirectory = new File(DEFAULT_EXPORT_DIRECTORY);
+        classLogger.info("Neo4j mode: no output directory and no configured export path ({}); exporting to the default directory {}",
+                CONFIGURED_EXPORT_PATH_KEY, defaultDirectory.getAbsolutePath());
+        return defaultDirectory;
+    }
+
+    /**
+     * Best-effort wipe after a failed run: the original failure ({@code cause}) is what gets rethrown and must
+     * abort the run either way, so a failure to wipe here is logged, not rethrown (it would otherwise mask the
+     * original cause). A database left behind after an aborted run is cleaned up by the next run's own start-of-run
+     * wipe.
+     */
+    private void wipeAfterFailure(Throwable cause) {
+        classLogger.error("Run failed; wiping the Neo4j database so no partial results are kept", cause);
+        try {
+            PersistenceBridge.requireHandler().deleteAllData();
+        } catch (RuntimeException wipeException) {
+            classLogger.warn("Failed to wipe Neo4j after the aborted run; a stale database may remain until the next run starts", wipeException);
+        }
+    }
+
     private static void saveOutput(String name, File outputDir, ArdocoResult arDoCoResult) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(outputDir);
         Objects.requireNonNull(arDoCoResult);
 
         classLogger.info("Starting to write output...");
-        FilePrinter.writeTraceabilityLinkRecoveryOutput(getOutputFile(name, outputDir, "traceLinks_"), arDoCoResult);
+        FilePrinter.writeTraceabilityLinkRecoveryOutput(getOutputFile(name, outputDir, "traceLinks_", ".txt"), arDoCoResult);
         FilePrinter.writeTraceLinksAsCsv(arDoCoResult, outputDir);
-        FilePrinter.writeInconsistencyOutput(getOutputFile(name, outputDir, "inconsistencyDetection_"), arDoCoResult);
+        FilePrinter.writeInconsistencyOutput(getOutputFile(name, outputDir, "inconsistencyDetection_", ".txt"), arDoCoResult);
         classLogger.info("Finished to write output.");
     }
 
-    private static File getOutputFile(String name, File outputDir, String prefix) {
-        var filename = prefix + name + ".txt";
+    private static File getOutputFile(String name, File outputDir, String prefix, String extension) {
+        var filename = prefix + name + extension;
         var filepath = outputDir.toPath().resolve(filename);
         return filepath.toFile();
     }

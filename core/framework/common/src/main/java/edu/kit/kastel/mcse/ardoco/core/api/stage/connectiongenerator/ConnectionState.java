@@ -1,4 +1,4 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator;
 
 import org.eclipse.collections.api.factory.Sets;
@@ -7,6 +7,7 @@ import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
@@ -29,18 +30,30 @@ public interface ConnectionState extends IConfigurable {
     ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> getInstanceLinks();
 
     /**
-     * Returns a list of trace links that are contained within this connection state.
+     * Returns the metamodel this connection state belongs to.
      *
-     * @return list of trace links within this connection state
+     * @return the metamodel of this connection state
+     */
+    Metamodel getMetamodel();
+
+    /**
+     * Returns the sentence-to-model trace links of this connection state.
+     * <p>
+     * The links are derived from the in-memory instance links, which are authoritative during a run (same rule as for {@code ModelStates} and the code
+     * traceability state).
+     *
+     * @return the sentence-to-model trace links of this connection state
      */
     default ImmutableSet<TraceLink<SentenceEntity, ModelEntity>> getTraceLinks() {
+        ImmutableList<TraceLink<RecommendedInstance, ModelEntity>> instanceLinks = this.getInstanceLinks();
         MutableSet<TraceLink<SentenceEntity, ModelEntity>> traceLinks = Sets.mutable.empty();
-        for (var instanceLink : this.getInstanceLinks()) {
+
+        for (var instanceLink : instanceLinks) {
             var textualInstance = instanceLink.getFirstEndpoint();
+            ModelEntity target = instanceLink.getSecondEndpoint();
             for (var nm : textualInstance.getNameMappings()) {
                 for (var word : nm.getWords()) {
-                    var traceLink = new SentenceModelTraceLink(word.getSentence(), instanceLink.getSecondEndpoint());
-                    traceLinks.add(traceLink);
+                    traceLinks.add(new SentenceModelTraceLink(word.getSentence(), target));
                 }
             }
         }

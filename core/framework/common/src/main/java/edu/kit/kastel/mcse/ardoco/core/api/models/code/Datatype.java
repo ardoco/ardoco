@@ -106,6 +106,25 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     }
 
     /**
+     * Creates a new datatype with the specified id, name, and content.
+     *
+     * @param id                 the identifier of the datatype
+     * @param codeItemRepository the code item repository
+     * @param name               the name of the datatype
+     * @param content            the content of the datatype
+     */
+    public Datatype(String id, CodeItemRepository codeItemRepository, String name, SortedSet<? extends CodeItem> content) {
+        super(id, codeItemRepository, name);
+        this.extendedDataTypesIds = new ArrayList<>();
+        this.implementedDataTypesIds = new ArrayList<>();
+        this.datatypeReferencesIds = new ArrayList<>();
+        this.content = new ArrayList<>();
+        for (var codeItem : content) {
+            this.content.add(codeItem.getId());
+        }
+    }
+
+    /**
      * Returns the compilation unit associated with this datatype.
      *
      * @return the compilation unit, or null if not set
@@ -169,6 +188,9 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
      * @return sorted set of datatype references
      */
     public SortedSet<Datatype> getDatatypeReferences() {
+        if (this.datatypeReferencesIds == null) {
+            return new TreeSet<>();
+        }
         return this.datatypeReferencesIds.stream().map(id -> {
             CodeItem codeItem = this.codeItemRepository.getCodeItem(id);
             if (codeItem instanceof Datatype datatype) {
@@ -197,6 +219,15 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
     @JsonGetter("content")
     public List<String> getContentIds() {
         return new ArrayList<>(this.content);
+    }
+
+    /**
+     * Replaces the raw content-id list. Used by persistence for a lossless round trip.
+     *
+     * @param contentIds the raw id list to set
+     */
+    public void setRawContentIds(List<String> contentIds) {
+        this.content = contentIds;
     }
 
     /**
@@ -272,6 +303,61 @@ public sealed class Datatype extends CodeItem permits ClassUnit, InterfaceUnit {
         for (Datatype datatype : datatypeDependencies) {
             this.datatypeReferencesIds.add(datatype.getId());
         }
+    }
+
+    /**
+     * Returns the raw list of extended-datatype ids exactly as stored (may be {@code null} and may contain ids that do not resolve to a datatype in the current
+     * repository). Intended for persistence layers that need to round-trip the state verbatim; prefer {@link #getExtendedTypes()} for resolved access.
+     *
+     * @return the raw extended-datatype id list, possibly {@code null}
+     */
+    public List<String> getExtendedDataTypesIds() {
+        return this.extendedDataTypesIds;
+    }
+
+    /**
+     * Replaces the raw list of extended-datatype ids. See {@link #getExtendedDataTypesIds()} for the semantics.
+     *
+     * @param extendedDataTypesIds the raw id list to set (may be {@code null})
+     */
+    public void setExtendedDataTypesIds(List<String> extendedDataTypesIds) {
+        this.extendedDataTypesIds = extendedDataTypesIds;
+    }
+
+    /**
+     * Returns the raw list of implemented-datatype ids exactly as stored (may be {@code null}). See {@link #getExtendedDataTypesIds()} for the semantics.
+     *
+     * @return the raw implemented-datatype id list, possibly {@code null}
+     */
+    public List<String> getImplementedDataTypesIds() {
+        return this.implementedDataTypesIds;
+    }
+
+    /**
+     * Replaces the raw list of implemented-datatype ids. See {@link #getExtendedDataTypesIds()} for the semantics.
+     *
+     * @param implementedDataTypesIds the raw id list to set (may be {@code null})
+     */
+    public void setImplementedDataTypesIds(List<String> implementedDataTypesIds) {
+        this.implementedDataTypesIds = implementedDataTypesIds;
+    }
+
+    /**
+     * Returns the raw list of datatype-reference ids exactly as stored (may be {@code null}). See {@link #getExtendedDataTypesIds()} for the semantics.
+     *
+     * @return the raw datatype-reference id list, possibly {@code null}
+     */
+    public List<String> getDatatypeReferencesIds() {
+        return this.datatypeReferencesIds;
+    }
+
+    /**
+     * Replaces the raw list of datatype-reference ids. See {@link #getExtendedDataTypesIds()} for the semantics.
+     *
+     * @param datatypeReferencesIds the raw id list to set (may be {@code null})
+     */
+    public void setDatatypeReferencesIds(List<String> datatypeReferencesIds) {
+        this.datatypeReferencesIds = datatypeReferencesIds;
     }
 
     @Override

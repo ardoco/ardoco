@@ -6,6 +6,7 @@ import java.io.File;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
 import edu.kit.kastel.mcse.ardoco.core.execution.runner.ArdocoRunner;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.SamCodeTraceabilityLinkRecovery;
@@ -31,6 +32,7 @@ public class Arcotl extends ArdocoRunner {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner define the metamodels.");
         }
 
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(architectureConfiguration, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;

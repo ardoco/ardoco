@@ -4,8 +4,10 @@ package edu.kit.kastel.mcse.ardoco.core.data;
 import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationStates;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 
 /**
  * Utility class for synchronizing changes in the data repository across different components and states.
@@ -32,6 +34,29 @@ public final class DataRepositorySyncer {
             var recommendationState = recommendationStates.get().getRecommendationState(mm);
             if (recommendationState != null) {
                 recommendationState.onNounMappingDeletion(nounMapping, replacement);
+            }
+        }
+    }
+
+    /**
+     * Re-saves recommended instances that reference the given noun mapping in Neo4j.
+     * Used after noun-mapping merges so {@code HAS_NAME_MAPPING} / {@code HAS_TYPE_MAPPING} edges match in-memory state.
+     *
+     * @param dataRepository the data repository
+     * @param nounMapping    the mapping that was just merged or updated
+     */
+    public static void repersistRecommendedInstancesReferencing(DataRepository dataRepository, NounMapping nounMapping) {
+        if (!PersistenceBridge.isNeo4jStorage()) {
+            return;
+        }
+        var recommendationStates = dataRepository.getData(RecommendationStates.ID, RecommendationStates.class);
+        if (recommendationStates.isEmpty()) {
+            return;
+        }
+        for (Metamodel mm : Metamodel.values()) {
+            RecommendationState recommendationState = recommendationStates.get().getRecommendationState(mm);
+            if (recommendationState != null) {
+                recommendationState.repersistInstancesReferencing(nounMapping);
             }
         }
     }

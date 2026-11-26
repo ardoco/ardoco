@@ -11,6 +11,7 @@ import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.TextState;
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.configuration.Configurable;
@@ -75,6 +76,8 @@ public class CompoundAgentInformant extends TextExtractionInformant {
                     .addNounMapping(compoundWords.toImmutableSortedSet(), MappingKind.NAME, this, this.compoundConfidence, compoundWords.toImmutableList(),
                             compoundWords.collect(Word::getText).toImmutableList(), createReferenceForCompound(compoundWords));
             ((NounMappingImpl) nounMapping).setIsDefinedAsCompound(true);
+            // The mapping was saved before the flag was set; save again so Neo4j stores isCompound = true.
+            PersistenceBridge.saveNounMapping(nounMapping);
         } else {
             for (var nounMapping : similarReferenceNounMappings) {
 
@@ -88,6 +91,7 @@ public class CompoundAgentInformant extends TextExtractionInformant {
                                 nounMapping.getReference());
                 DataRepositorySyncer.onNounMappingDeletion(this.dataRepository, nounMapping, compoundMapping);
                 ((NounMappingImpl) compoundMapping).setIsDefinedAsCompound(true);
+                PersistenceBridge.saveNounMapping(compoundMapping);
             }
         }
     }

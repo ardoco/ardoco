@@ -14,10 +14,12 @@ import org.eclipse.collections.api.list.MutableList;
 import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.MappingKind;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.common.AggregationFunctions;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.data.Confidence;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
@@ -25,6 +27,10 @@ import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 /**
  * This class represents recommended instances. These instances should be contained by the model. The likelihood is measured by the probability. Every
  * recommended instance has a unique name.
+ *
+ * <p>Entity {@code id} is a UUID for new instances. A predefined id can be supplied when mapping a persisted instance back via
+ * {@link #RecommendedInstanceImpl(String, String, String)}. {@code equals}/{@code hashCode}/{@code compareTo} use
+ * name and type only, so restoring an id does not change collection semantics.
  */
 public final class RecommendedInstanceImpl extends RecommendedInstance implements Claimant {
 
@@ -42,9 +48,18 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     private final Confidence internalConfidence;
     private final MutableList<NounMapping> typeMappings;
     private final MutableList<NounMapping> nameMappings;
+    private Metamodel metamodel;
 
-    private RecommendedInstanceImpl(String name, String type) {
-        super(name, UUID.randomUUID().toString());
+    /**
+     * Creates a recommended instance with a predefined entity id (e.g. mapper {@code toDomain}).
+     * Collection equality remains based on {@code name} and {@code type} only.
+     *
+     * @param name the name of the instance
+     * @param type the type of the instance
+     * @param id   stable entity id; must not be {@code null}
+     */
+    public RecommendedInstanceImpl(String name, String type, String id) {
+        super(name, Objects.requireNonNull(id, "id"));
         this.type = type;
         this.name = name;
         this.internalConfidence = new Confidence(AggregationFunctions.AVERAGE);
@@ -52,18 +67,28 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
         this.typeMappings = Lists.mutable.empty();
     }
 
+    private RecommendedInstanceImpl(String name, String type) {
+        this(name, type, UUID.randomUUID().toString());
+    }
+
     @Override
     public void onNounMappingDeletion(NounMapping deletedNounMapping, @Nullable NounMapping replacement) {
+        boolean replaced = false;
         if (this.nameMappings.remove(deletedNounMapping)) {
             if (replacement == null) {
                 throw new IllegalArgumentException("Replacement cannot be null");
             }
             this.nameMappings.add(replacement);
+            replaced = true;
         } else if (this.typeMappings.remove(deletedNounMapping)) {
             if (replacement == null) {
                 throw new IllegalArgumentException("Replacement cannot be null");
             }
             this.typeMappings.add(replacement);
+            replaced = true;
+        }
+        if (replaced) {
+            persistIfEnabled();
         }
     }
 
@@ -83,6 +108,35 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
 
         this.nameMappings.addAll(nameNodes.castToCollection());
         this.typeMappings.addAll(typeNodes.castToCollection());
+    }
+
+    /**
+     * Restores a recommended instance with a predefined id and mappings.
+     *
+     * @param name        the name of the instance
+     * @param type        the type of the instance
+     * @param id          stable entity id from persistence
+     * @param claimant    claimant for the restored probability
+     * @param probability the stored probability
+     * @param nameNodes   the involved name mappings
+     * @param typeNodes   the involved type mappings
+     */
+    public RecommendedInstanceImpl(String name, String type, String id, Claimant claimant, double probability, ImmutableList<NounMapping> nameNodes,
+            ImmutableList<NounMapping> typeNodes) {
+        this(name, type, id);
+        this.internalConfidence.addAgentConfidence(claimant, probability);
+        this.nameMappings.addAll(nameNodes.castToCollection());
+        this.typeMappings.addAll(typeNodes.castToCollection());
+    }
+
+    @Override
+    public void setMetamodel(Metamodel metamodel) {
+        this.metamodel = metamodel;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+        return this.metamodel;
     }
 
     private static double calculateMappingProbability(ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings) {
@@ -145,6 +199,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     public void addMappings(ImmutableList<NounMapping> nameMapping, ImmutableList<NounMapping> typeMapping) {
         nameMapping.forEach(this::addName);
         typeMapping.forEach(this::addType);
+        persistIfEnabled();
     }
 
     /**
@@ -196,6 +251,11 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     @Override
     public void addProbability(Claimant claimant, double probability) {
         this.internalConfidence.addAgentConfidence(claimant, probability);
+        persistIfEnabled();
+    }
+
+    private void persistIfEnabled() {
+        PersistenceBridge.saveRecommendedInstance(this, this.metamodel);
     }
 
     @Override

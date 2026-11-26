@@ -6,6 +6,7 @@ import java.io.File;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.common.util.CommonUtilities;
 import edu.kit.kastel.mcse.ardoco.core.common.util.DataRepositoryHelper;
 import edu.kit.kastel.mcse.ardoco.core.execution.Ardoco;
@@ -33,6 +34,7 @@ public class Ardocode extends ArdocoRunner {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, codeConfiguration, additionalConfigs);
         setOutputDirectory(outputDir);
         isSetUp = true;

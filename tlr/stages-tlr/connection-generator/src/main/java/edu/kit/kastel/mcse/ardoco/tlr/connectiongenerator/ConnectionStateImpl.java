@@ -1,17 +1,25 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator;
 
 import java.io.Serial;
+import java.util.Collection;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 
+import edu.kit.kastel.mcse.ardoco.core.api.entity.ArchitectureEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
+import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
+import edu.kit.kastel.mcse.ardoco.core.api.models.code.CodeItem;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.ConnectionState;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.RecommendationModelTraceLink;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.connectiongenerator.SentenceModelTraceLink;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendedInstance;
+import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
+import edu.kit.kastel.mcse.ardoco.core.api.text.SentenceEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.tracelink.TraceLink;
+import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.AbstractState;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Claimant;
 
@@ -24,13 +32,22 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Serial
     private static final long serialVersionUID = 3340998661239696150L;
     private final MutableList<TraceLink<RecommendedInstance, ModelEntity>> instanceLinks;
+    private final Metamodel metamodel;
 
     /**
-     * Creates a new connection state.
+     * Creates a new connection state for the given metamodel.
+     *
+     * @param metamodel the metamodel this state belongs to
      */
-    public ConnectionStateImpl() {
+    public ConnectionStateImpl(Metamodel metamodel) {
         super();
         this.instanceLinks = Lists.mutable.empty();
+        this.metamodel = metamodel;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+        return this.metamodel;
     }
 
     /**
@@ -54,9 +71,20 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
     @Override
     public void addToLinks(RecommendedInstance recommendedModelInstance, ModelEntity modelEntity, Claimant claimant, double probability) {
 
+        // Persist RI→Architecture and RI→Code instance links (and derived sentence→model edges).
+        boolean persistLinks = PersistenceBridge.isNeo4jStorage() && (modelEntity instanceof ArchitectureEntity || modelEntity instanceof CodeItem);
+        MutableList<TraceLink<SentenceEntity, ModelEntity>> linksToPersist = Lists.mutable.empty();
+        MutableList<TraceLink<?, ?>> instanceLinksToPersist = Lists.mutable.empty();
+
         var newInstanceLink = new RecommendationModelTraceLink(recommendedModelInstance, modelEntity, claimant, probability);
         if (!this.isContainedByInstanceLinks(newInstanceLink)) {
             this.instanceLinks.add(newInstanceLink);
+
+            if (persistLinks) {
+                linksToPersist.addAll(generateLinksFromInstance(recommendedModelInstance, modelEntity));
+                instanceLinksToPersist.add(newInstanceLink);
+            }
+
         } else {
             var optionalInstanceLink = this.instanceLinks.stream().filter(il -> il.equals(newInstanceLink)).findFirst();
             if (optionalInstanceLink.isPresent()) {
@@ -64,8 +92,26 @@ public class ConnectionStateImpl extends AbstractState implements ConnectionStat
                 var newNameMappings = newInstanceLink.getFirstEndpoint().getNameMappings();
                 var newTypeMappings = newInstanceLink.getFirstEndpoint().getTypeMappings();
                 existingInstanceLink.getFirstEndpoint().addMappings(newNameMappings, newTypeMappings);
+
+                if (persistLinks) {
+                    for (var nm : newNameMappings) {
+                        linksToPersist.addAll(generateLinksFromNameMapping(nm, modelEntity));
+                    }
+                    instanceLinksToPersist.add(existingInstanceLink);
+                }
             }
         }
+
+        PersistenceBridge.saveTraceLinks(linksToPersist);
+        PersistenceBridge.saveTraceLinks(instanceLinksToPersist);
+    }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromInstance(RecommendedInstance recommendedInstance, ModelEntity modelEntity) {
+        return recommendedInstance.getNameMappings().stream().flatMap(nm -> generateLinksFromNameMapping(nm, modelEntity).stream()).toList();
+    }
+
+    private Collection<SentenceModelTraceLink> generateLinksFromNameMapping(NounMapping nm, ModelEntity modelEntity) {
+        return nm.getWords().stream().map(word -> new SentenceModelTraceLink(word.getSentence(), modelEntity)).toList();
     }
 
     /**

@@ -34,7 +34,7 @@ public class ArtemisConnectionStatesImpl extends AbstractState implements Artemi
     private ArtemisConnectionStatesImpl(Collection<ArtemisTarget> targets) {
         this();
         for (ArtemisTarget target : targets) {
-            addState(target, new ArtemisConnectionStateImpl());
+            addState(target, new ArtemisConnectionStateImpl(target));
         }
     }
 
@@ -45,7 +45,7 @@ public class ArtemisConnectionStatesImpl extends AbstractState implements Artemi
     @Override
     public ArtemisConnectionState getState(ArtemisTarget target) {
         Objects.requireNonNull(target);
-        return this.states.computeIfAbsent(target, ignored -> new ArtemisConnectionStateImpl());
+        return this.states.computeIfAbsent(target, ArtemisConnectionStateImpl::new);
     }
 
     public void addState(ArtemisTarget target, ArtemisConnectionState state) {
