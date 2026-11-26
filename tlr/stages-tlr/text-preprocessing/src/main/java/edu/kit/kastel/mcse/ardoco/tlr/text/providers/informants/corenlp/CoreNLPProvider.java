@@ -15,12 +15,6 @@ public class CoreNLPProvider extends NlpInformant {
 
     private @Nullable Text annotatedText;
 
-    // Needed for Configuration Generation
-    @SuppressWarnings("NullAway") // no data repository is needed (and available) for configuration generation
-    private CoreNLPProvider() {
-        super(CoreNLPProvider.class.getSimpleName(), null);
-    }
-
     public CoreNLPProvider(DataRepository data) {
         super(CoreNLPProvider.class.getSimpleName(), data);
         this.annotatedText = null;
