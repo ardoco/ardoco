@@ -622,11 +622,11 @@ public class TraceLinkPersistenceService {
     }
 
     private Optional<TransitiveTraceLink<SentenceEntity, ? extends ModelEntity>> createTransitiveLink(TransitiveChainQueryResult chain) {
-        Sentence domainSentence = documentationMapper.mapSentenceToDomain(chain.getSentence(), new HashMap<>());
+        Sentence domainSentence = documentationMapper.mapSentenceToDomain(chain.sentence(), new HashMap<>());
 
         SentenceEntity sentenceEntity = new SentenceEntity(domainSentence);
-        ArchitectureItem archMid = mapToArchitectureItem(chain.getArchitecture());
-        CodeItem codeEnd = mapToCodeItem(chain.getCode());
+        ArchitectureItem archMid = mapToArchitectureItem(chain.architecture());
+        CodeItem codeEnd = mapToCodeItem(chain.code());
 
         var transitiveLink = TransitiveTraceLink.createTransitiveTraceLink(new SentenceModelTraceLink(sentenceEntity, archMid), new ArchitectureCodeTraceLink(
                 archMid, codeEnd));

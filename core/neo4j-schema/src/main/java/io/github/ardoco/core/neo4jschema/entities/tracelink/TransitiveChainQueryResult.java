@@ -2,13 +2,13 @@
 package io.github.ardoco.core.neo4jschema.entities.tracelink;
 
 import io.github.ardoco.core.neo4jschema.entities.documentation.SentenceNode;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public class TransitiveChainQueryResult {
-    private final SentenceNode sentence;
-    private final TraceableNode architecture; //  mid node
-    private final TraceableNode code;         //  end node
+/**
+ * One sentence-architecture-code chain returned by the transitive trace link query.
+ *
+ * @param sentence     the start node
+ * @param architecture the architecture node in the middle
+ * @param code         the code node at the end
+ */
+public record TransitiveChainQueryResult(SentenceNode sentence, TraceableNode architecture, TraceableNode code) {
 }
