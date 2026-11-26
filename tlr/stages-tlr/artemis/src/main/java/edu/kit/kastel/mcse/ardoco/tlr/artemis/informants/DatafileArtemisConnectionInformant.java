@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.artemis.informants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.collections.api.factory.Lists;
 
@@ -37,7 +38,8 @@ public class DatafileArtemisConnectionInformant extends ArtemisConnectionInforma
     @Override
     protected void process() {
         var state = DataRepositoryHelper.getArtemisConnectionStates(dataRepository).getState(strategy.getTarget());
-        var codeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository).getModel(strategy.getMetamodel());
+        var codeModel = (CodeModelWithCompilationUnits) Objects.requireNonNull(DataRepositoryHelper.getModelStatesData(dataRepository)
+                .getModel(strategy.getMetamodel()), "Model must be available");
         var datafiles = getCodeFiles(codeModel);
 
         var namedEntities = state.getNamedEntities();

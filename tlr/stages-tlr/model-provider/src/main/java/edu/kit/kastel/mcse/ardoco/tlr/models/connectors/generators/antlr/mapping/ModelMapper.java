@@ -1,9 +1,12 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.mapping;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
@@ -21,7 +24,7 @@ public class ModelMapper {
     protected final CodeItemRepository codeItemRepository;
     protected final ElementStorageRegistry elementRegistry;
     protected final CodeItemMapperCollection codeItemMappers;
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     public ModelMapper(CodeItemRepository codeItemRepository, CodeItemMapperCollection codeItemMappers, ElementStorageRegistry elementRegistry) {
         this.codeItemRepository = codeItemRepository;
@@ -30,7 +33,7 @@ public class ModelMapper {
     }
 
     public CodeModel getCodeModel() {
-        return codeModel;
+        return Objects.requireNonNull(codeModel, "The code model has not been created yet");
     }
 
     public void mapToCodeModel() {
@@ -50,11 +53,11 @@ public class ModelMapper {
     }
 
     protected CodeItem buildSubtree(ElementIdentifier identifier) {
-        Element element = elementRegistry.getElement(identifier);
+        Element element = Objects.requireNonNull(elementRegistry.getElement(identifier), () -> "No element found for identifier " + identifier);
         return buildCodeItem(element);
     }
 
     private CodeItem buildCodeItem(Element element) {
-        return this.codeItemMappers.buildCodeItem(element);
+        return Objects.requireNonNull(this.codeItemMappers.buildCodeItem(element), () -> "No code item could be built for element " + element.getName());
     }
 }

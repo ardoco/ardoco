@@ -12,7 +12,7 @@ import edu.kit.kastel.mcse.ardoco.core.api.models.architecture.ArchitectureCompo
  *
  * @param id                    unique identifier
  * @param name                  component name
- * @param componentType         component type string, may be null
+ * @param componentType         component type string
  * @param subcomponentsIds      IDs of direct subcomponents
  * @param providedInterfacesIds IDs of provided interfaces
  * @param requiredInterfacesIds IDs of required interfaces

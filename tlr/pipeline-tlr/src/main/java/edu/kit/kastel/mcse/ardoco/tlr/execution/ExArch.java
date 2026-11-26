@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.execution;
 import java.io.File;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
@@ -19,6 +20,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.LlmArchitectureProviderAgent
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePrompt;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.RecommendationGenerator;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.TextPreprocessingAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.textextraction.TextExtraction;
@@ -36,11 +38,13 @@ public class ExArch extends ArdocoRunner {
     }
 
     public void setUp(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs, File outputDir,
-            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt) {
         if (codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.ensureConfigured();
         PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, codeConfiguration, additionalConfigs, largeLanguageModel, documentationExtractionPrompt, codeExtractionPrompt, codeFeatures,
                 aggregationPrompt);
@@ -49,8 +53,9 @@ public class ExArch extends ArdocoRunner {
     }
 
     private void definePipeline(File inputText, CodeConfiguration codeConfiguration, ImmutableSortedMap<String, String> additionalConfigs,
-            LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentationExtractionPrompt, LlmArchitecturePrompt codeExtractionPrompt,
-            LlmArchitecturePrompt.Features codeFeatures, LlmArchitecturePrompt aggregationPrompt) {
+            LargeLanguageModel largeLanguageModel, @Nullable LlmArchitecturePrompt documentationExtractionPrompt,
+            @Nullable LlmArchitecturePrompt codeExtractionPrompt, LlmArchitecturePrompt.@Nullable Features codeFeatures,
+            @Nullable LlmArchitecturePrompt aggregationPrompt) {
         Ardoco arDoCo = this.getArdoco();
         var dataRepository = arDoCo.getDataRepository();
 

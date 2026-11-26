@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public final class JavaExtractor extends CodeExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaExtractor.class);
 
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     @Override
     public String getIdPrefix() {
@@ -57,13 +58,15 @@ public final class JavaExtractor extends CodeExtractor {
      */
     @Override
     public synchronized CodeModel extractModel() {
-        if (codeModel == null) {
+        CodeModel model = this.codeModel;
+        if (model == null) {
             Path directoryPath = Path.of(path);
             SortedMap<String, CompilationUnit> compUnitMap = parseDirectory(directoryPath);
             JavaModel javaModel = new JavaModel(codeItemRepository, compUnitMap);
-            this.codeModel = javaModel.getCodeModel(metamodelToExtract);
+            model = javaModel.getCodeModel(metamodelToExtract);
+            this.codeModel = model;
         }
-        return this.codeModel;
+        return model;
     }
 
     private static SortedMap<String, CompilationUnit> parseDirectory(Path dir) {

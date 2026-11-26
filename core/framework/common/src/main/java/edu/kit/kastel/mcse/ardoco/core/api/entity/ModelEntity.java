@@ -1,7 +1,8 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.entity;
 
 import java.io.Serial;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.collections.api.factory.Lists;
@@ -35,6 +36,16 @@ public abstract sealed class ModelEntity extends Entity permits ArchitectureEnti
      */
     protected ModelEntity(String name, String id) {
         super(name, id);
+    }
+
+    /**
+     * Returns the entity's name. Model entities always have a name: the constructors require one and deserialization sets it.
+     *
+     * @return the entity's name
+     */
+    @Override
+    public String getName() {
+        return Objects.requireNonNull(super.getName(), "Model entity without name");
     }
 
     /**

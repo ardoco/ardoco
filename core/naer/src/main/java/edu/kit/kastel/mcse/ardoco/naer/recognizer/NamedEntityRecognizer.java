@@ -4,8 +4,10 @@ package edu.kit.kastel.mcse.ardoco.naer.recognizer;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +43,8 @@ public class NamedEntityRecognizer {
      * @param builder the Builder instance containing the configured parameters
      */
     private NamedEntityRecognizer(Builder builder) {
-        this.chatModel = builder.chatModel;
-        this.prompt = builder.prompt;
+        this.chatModel = Objects.requireNonNull(builder.chatModel, "chat model must be set");
+        this.prompt = Objects.requireNonNull(builder.prompt, "prompt must be set");
     }
 
     /**
@@ -102,8 +104,8 @@ public class NamedEntityRecognizer {
     public static class Builder {
         private final Logger logger = LoggerFactory.getLogger(Builder.class);
 
-        private ChatModel chatModel;
-        private Prompt prompt;
+        private @Nullable ChatModel chatModel;
+        private @Nullable Prompt prompt;
 
         /**
          * Sets the chat model to use.

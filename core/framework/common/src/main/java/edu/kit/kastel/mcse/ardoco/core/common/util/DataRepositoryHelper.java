@@ -243,10 +243,7 @@ public final class DataRepositoryHelper {
      * @return the state
      */
     public static InconsistencyStates getInconsistencyStates(DataRepository dataRepository) {
-        if (hasInconsistencyStates(dataRepository)) {
-            return dataRepository.getData(InconsistencyStates.ID, InconsistencyStates.class).orElseThrow();
-        }
-        return null;
+        return dataRepository.getData(InconsistencyStates.ID, InconsistencyStates.class).orElseThrow();
     }
 
     /**
@@ -268,10 +265,7 @@ public final class DataRepositoryHelper {
      * @return the state
      */
     public static CodeTraceabilityState getCodeTraceabilityState(DataRepository dataRepository) {
-        if (hasCodeTraceabilityState(dataRepository)) {
-            return dataRepository.getData(CodeTraceabilityState.ID, CodeTraceabilityState.class).orElseThrow();
-        }
-        return null;
+        return dataRepository.getData(CodeTraceabilityState.ID, CodeTraceabilityState.class).orElseThrow();
     }
 
     /**

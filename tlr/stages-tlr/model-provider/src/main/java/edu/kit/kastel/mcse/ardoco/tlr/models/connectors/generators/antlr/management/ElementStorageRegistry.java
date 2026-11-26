@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.manage
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public abstract class ElementStorageRegistry {
 
         for (Element element : elements) {
             ElementIdentifier identifier = element.getParentIdentifier();
-            if (hasNotBeenAdded(identifier, identifiers) && checkIfElementWithIdentifierIsRoot(identifier)) {
+            if (identifier != null && hasNotBeenAdded(identifier, identifiers) && checkIfElementWithIdentifierIsRoot(identifier)) {
                 identifiers.add(new ElementIdentifier(identifier.name(), identifier.path(), identifier.type()));
             }
         }
@@ -72,9 +73,14 @@ public abstract class ElementStorageRegistry {
     }
 
     public boolean checkIfElementWithIdentifierIsRoot(ElementIdentifier identifier) {
-        ElementStorage<?> storage = getTypedStorage(identifier.type());
+        Type type = identifier.type();
+        if (type == null) {
+            return false;
+        }
+        ElementStorage<?> storage = getTypedStorage(type);
         if (storage != null) {
-            return storage.getElement(identifier) != null && storage.getElement(identifier).getParentIdentifier() == null;
+            Element element = storage.getElement(identifier);
+            return element != null && element.getParentIdentifier() == null;
         }
         return false;
     }
@@ -122,18 +128,21 @@ public abstract class ElementStorageRegistry {
     }
 
     protected <T extends Element> @Nullable T getElement(ElementIdentifier identifier, Class<T> clazz) {
-        if (identifier.type() == null || !verifyAllowed(identifier.type(), clazz)) {
+        Type type = identifier.type();
+        if (type == null || !verifyAllowed(type, clazz)) {
             return null;
         }
-        ElementStorage<T> storage = getTypedStorage(identifier.type());
-        assert storage != null;
+        ElementStorage<T> storage = Objects.requireNonNull(getTypedStorage(type));
         return storage.getElement(identifier);
+    }
+
+    protected <T extends Element> T requireElement(ElementIdentifier identifier, Class<T> clazz) {
+        return Objects.requireNonNull(getElement(identifier, clazz), () -> "No element found for identifier " + identifier);
     }
 
     protected <T extends Element> List<T> getElements(Type type, Class<T> clazz) {
         if (hasStorage(type, clazz)) {
-            ElementStorage<T> storage = getStorage(type, clazz);
-            assert storage != null;
+            ElementStorage<T> storage = Objects.requireNonNull(getStorage(type, clazz));
             return storage.getElements();
         }
         return new ArrayList<>();
@@ -141,17 +150,15 @@ public abstract class ElementStorageRegistry {
 
     protected <T extends Element> boolean containsElement(Type type, T element) {
         if (hasStorage(type)) {
-            ElementStorage<T> storage = getTypedStorage(type);
-            assert storage != null;
+            ElementStorage<T> storage = Objects.requireNonNull(getTypedStorage(type));
             return storage.contains(element);
         }
         return false;
     }
 
-    protected <T extends Element> @Nullable List<T> getContentOfIdentifier(Type type, ElementIdentifier identifier) {
+    protected <T extends Element> List<T> getContentOfIdentifier(Type type, ElementIdentifier identifier) {
         if (hasStorage(type)) {
-            ElementStorage<T> storage = getTypedStorage(type);
-            assert storage != null;
+            ElementStorage<T> storage = Objects.requireNonNull(getTypedStorage(type));
             return storage.getContentOfIdentifier(identifier);
         }
         return new ArrayList<>();
@@ -167,7 +174,10 @@ public abstract class ElementStorageRegistry {
 
     @SuppressWarnings("unchecked")
     private <T extends Element> @Nullable ElementStorage<T> getTypedStorage(Type type) {
-        Class<T> clazz = (Class<T>) typeOfClass.get(type);
+        @Nullable Class<T> clazz = (Class<T>) typeOfClass.get(type);
+        if (clazz == null) {
+            return null;
+        }
         return getStorage(type, clazz);
     }
 
@@ -197,7 +207,7 @@ public abstract class ElementStorageRegistry {
         }
     }
 
-    private boolean hasNotBeenAdded(@Nullable ElementIdentifier identifier, List<ElementIdentifier> identifiers) {
-        return identifier != null && !identifiers.contains(identifier);
+    private boolean hasNotBeenAdded(ElementIdentifier identifier, List<ElementIdentifier> identifiers) {
+        return !identifiers.contains(identifier);
     }
 }

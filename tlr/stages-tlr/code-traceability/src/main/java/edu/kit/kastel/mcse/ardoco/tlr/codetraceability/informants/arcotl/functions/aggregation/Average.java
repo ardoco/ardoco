@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.aggregation;
 
 import java.util.ArrayList;
@@ -16,10 +16,6 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
 public class Average extends ConfidenceAggregator {
 
     private final List<Double> weights;
-
-    private Average() {
-        weights = null;
-    }
 
     private Average(List<Double> weights) {
         if (weights.isEmpty()) {

@@ -1,5 +1,7 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator.informants;
+
+import java.util.Objects;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 
@@ -57,7 +59,8 @@ public class NameTypeInformant extends Informant {
             if (model == null) {
                 continue;
             }
-            var recommendationState = recommendationStates.getRecommendationState(metamodel);
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(metamodel),
+                    "No recommendation state for metamodel " + metamodel);
 
             this.addRecommendedInstanceIfNameAfterType(textState, textStateStrategy, word, model, recommendationState);
             this.addRecommendedInstanceIfNameBeforeType(textState, textStateStrategy, word, model, recommendationState);
@@ -81,7 +84,11 @@ public class NameTypeInformant extends Informant {
         if (!similarTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
-            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(word.getPreWord(), MappingKind.NAME);
+            var preWord = word.getPreWord();
+            if (preWord == null) {
+                return;
+            }
+            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(preWord, MappingKind.NAME);
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
 
             CommonUtilities.addRecommendedInstancesFromNounMappings(similarTypes, nameMappings, typeMappings, recommendationState, this, this.probability);
@@ -103,7 +110,11 @@ public class NameTypeInformant extends Informant {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(word.getNextWord(), MappingKind.NAME);
+            var nextWord = word.getNextWord();
+            if (nextWord == null) {
+                return;
+            }
+            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(nextWord, MappingKind.NAME);
 
             CommonUtilities.addRecommendedInstancesFromNounMappings(sameLemmaTypes, nameMappings, typeMappings, recommendationState, this, this.probability);
         }
@@ -125,7 +136,11 @@ public class NameTypeInformant extends Informant {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(word.getPreWord(), MappingKind.NAME, MappingKind.TYPE);
+            var preWord = word.getPreWord();
+            if (preWord == null) {
+                return;
+            }
+            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(preWord, MappingKind.NAME, MappingKind.TYPE);
 
             CommonUtilities.addRecommendedInstancesFromNounMappings(sameLemmaTypes, nortMappings, typeMappings, recommendationState, this, this.probability);
         }
@@ -152,7 +167,11 @@ public class NameTypeInformant extends Informant {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(word.getNextWord(), MappingKind.NAME, MappingKind.TYPE);
+            var nextWord = word.getNextWord();
+            if (nextWord == null) {
+                return;
+            }
+            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(nextWord, MappingKind.NAME, MappingKind.TYPE);
 
             CommonUtilities.addRecommendedInstancesFromNounMappings(sameLemmaTypes, nortMappings, typeMappings, recommendationState, this, this.probability);
         }

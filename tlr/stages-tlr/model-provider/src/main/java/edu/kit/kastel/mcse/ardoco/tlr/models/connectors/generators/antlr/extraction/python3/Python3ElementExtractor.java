@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Lexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.python3.Python3Parser;
@@ -39,15 +40,12 @@ public class Python3ElementExtractor extends ElementExtractor {
     private final LinkedHashMap<String, List<String>> pendingImportsByPath = new LinkedHashMap<>();
 
     public Python3ElementExtractor() {
-        super();
-        this.elementRegistry = new Python3ElementStorageRegistry();
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
+        this(new Python3ElementStorageRegistry());
     }
 
     public Python3ElementExtractor(Python3ElementStorageRegistry elementRegistry) {
-        super();
+        super(new Python3CommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new Python3CommentExtractor(elementRegistry);
     }
 
     @Override
@@ -123,7 +121,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         }
     }
 
-    public ElementIdentifier visitClassdef(Python3Parser.ClassdefContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitClassdef(Python3Parser.ClassdefContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.name() == null) {
             return null;
         }
@@ -144,7 +142,7 @@ public class Python3ElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitFuncdef(Python3Parser.FuncdefContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitFuncdef(Python3Parser.FuncdefContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.name() == null) {
             return null;
         }

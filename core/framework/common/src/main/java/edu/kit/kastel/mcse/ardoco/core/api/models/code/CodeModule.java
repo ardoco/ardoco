@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -30,10 +32,12 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
     private static final long serialVersionUID = -7941299662945801101L;
 
     @JsonProperty
-    private String parentId;
+    private @Nullable String parentId;
     @JsonProperty
     private List<String> content;
 
+    // Jackson sets the fields reflectively during deserialization.
+    @SuppressWarnings("NullAway.Init")
     CodeModule() {
         // Jackson
     }
@@ -144,7 +148,7 @@ public sealed class CodeModule extends CodeItem permits CodeAssembly, CodeCompil
      *
      * @return parent code module, or null if none
      */
-    public CodeModule getParent() {
+    public @Nullable CodeModule getParent() {
         CodeItem codeItem = this.codeItemRepository.getCodeItem(this.parentId);
         if (codeItem instanceof CodeModule codeModule) {
             return codeModule;

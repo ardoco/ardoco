@@ -1,6 +1,7 @@
 /* Licensed under MIT 2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class ArtemisMeatInconsistencyInformant extends ArtemisInconsistencyInfor
     @Override
     public void process() {
         var modelStates = DataRepositoryHelper.getModelStatesData(getDataRepository());
-        var model = modelStates.getModel(getStrategy().getMetamodel());
+        var model = Objects.requireNonNull(modelStates.getModel(getStrategy().getMetamodel()), "Model must be available");
         var traceabilityState = DataRepositoryHelper.getArtemisConnectionStates(getDataRepository()).getState(getTarget());
         var inconsistencyState = DataRepositoryHelper.getArtemisInconsistencyStates(getDataRepository()).getState(getTarget());
 

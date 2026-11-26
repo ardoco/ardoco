@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +21,14 @@ public class ChatModelFactory {
     private static final Logger logger = LoggerFactory.getLogger(ChatModelFactory.class);
     // Input validation is implemented in each method
 
-    private ModelProvider provider;
+    private final ModelProvider provider;
     private double temperature = 0.0; //default
     private int timeoutSeconds = 60;  //default
-    private String modelName = null;
+    private @Nullable String modelName = null;
+
+    private ChatModelFactory(ModelProvider provider) {
+        this.provider = provider;
+    }
 
     /**
      * Creates a new factory instance with the specified model provider.
@@ -37,9 +42,7 @@ public class ChatModelFactory {
             throw new IllegalArgumentException("Provider cannot be null");
         }
 
-        ChatModelFactory factory = new ChatModelFactory();
-        factory.provider = provider;
-        return factory;
+        return new ChatModelFactory(provider);
     }
 
     /**

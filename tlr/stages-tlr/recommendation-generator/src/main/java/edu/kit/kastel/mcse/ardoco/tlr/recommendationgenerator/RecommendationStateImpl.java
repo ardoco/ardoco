@@ -7,6 +7,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator.RecommendationState;
@@ -134,7 +135,7 @@ public class RecommendationStateImpl extends AbstractState implements Recommenda
     }
 
     @Override
-    public void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement) {
+    public void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement) {
         for (RecommendedInstance ri : this.recommendedInstances.toImmutable()) {
             ri.onNounMappingDeletion(nounMapping, replacement);
         }

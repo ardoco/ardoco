@@ -9,6 +9,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.common.persistence.PersistenceBridge;
 import edu.kit.kastel.mcse.ardoco.core.data.PipelineStepData;
 
@@ -76,9 +78,9 @@ public final class ModelStates implements PipelineStepData {
      * Returns the {@link Model} with the given id.
      *
      * @param id the id
-     * @return the corresponding {@link Model}
+     * @return the corresponding {@link Model}, or {@code null} if there is none
      */
-    public Model getModel(Metamodel id) {
+    public @Nullable Model getModel(Metamodel id) {
         return this.models.get(id);
     }
 

@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Metamodel;
@@ -71,7 +72,7 @@ public final class RecommendedInstanceImpl extends RecommendedInstance implement
     }
 
     @Override
-    public void onNounMappingDeletion(NounMapping deletedNounMapping, NounMapping replacement) {
+    public void onNounMappingDeletion(NounMapping deletedNounMapping, @Nullable NounMapping replacement) {
         boolean replaced = false;
         if (this.nameMappings.remove(deletedNounMapping)) {
             if (replacement == null) {

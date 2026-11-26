@@ -165,7 +165,7 @@ public final class Ardoco extends Pipeline {
      * @param outputDir the directory where output files should be saved
      * @return the ARDoCo result containing all analysis data, or null if the pipeline is not properly initialized
      */
-    public ArdocoResult runAndSave(File outputDir) {
+    public @Nullable ArdocoResult runAndSave(File outputDir) {
         classLogger.info("Starting {}", this.projectName);
 
         if (!this.hasPipelineSteps()) {

@@ -3,10 +3,12 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
 
+import edu.kit.kastel.mcse.ardoco.core.configuration.NoDefaultConfiguration;
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.Informant;
 import edu.kit.kastel.mcse.ardoco.core.pipeline.agent.PipelineAgent;
@@ -16,6 +18,8 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.informants.ModelProviderInformant;
 /**
  * Agent that provides information from models.
  */
+// TODO: Check how to provide the default configuration: its constructor needs an ArchitectureConfiguration and a CodeConfiguration.
+@NoDefaultConfiguration
 public class ModelProviderAgent extends PipelineAgent {
 
     /**
@@ -39,7 +43,8 @@ public class ModelProviderAgent extends PipelineAgent {
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
+            informants.add(new ModelProviderInformant(data, codeConfiguration.code(), Objects.requireNonNull(codeConfiguration.metamodel(),
+                    "The metamodel must be set for ACM files")));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {

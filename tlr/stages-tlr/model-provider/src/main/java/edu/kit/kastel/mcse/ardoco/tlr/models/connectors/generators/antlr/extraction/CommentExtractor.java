@@ -1,4 +1,4 @@
-/* Licensed under MIT 2025. */
+/* Licensed under MIT 2025-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.extraction;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.antlr.managem
  */
 public abstract class CommentExtractor {
     private final ElementStorageRegistry elementRegistry;
-    private List<Comment> currentComments;
+    private List<Comment> currentComments = new ArrayList<>();
 
     protected CommentExtractor(ElementStorageRegistry elementRegistry) {
         this.elementRegistry = elementRegistry;

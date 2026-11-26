@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.dto;
 
 import java.util.ArrayList;
@@ -15,10 +15,13 @@ import edu.kit.kastel.mcse.ardoco.core.api.text.POSTag;
 public class WordDto {
     private long id;
     private List<IncomingDependencyDto> incomingDependencies = new ArrayList<>();
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private String lemma;
     private List<OutgoingDependencyDto> outgoingDependencies = new ArrayList<>();
     private long sentenceNo;
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private String text;
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private POSTag posTag;
 
     /**

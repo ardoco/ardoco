@@ -22,6 +22,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ArchitectureConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.CodeConfiguration;
 import edu.kit.kastel.mcse.ardoco.tlr.models.agents.ModelProviderAgent;
 import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LargeLanguageModel;
+import edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmCache;
 import edu.kit.kastel.mcse.ardoco.tlr.text.providers.SimpleTextPreprocessingAgent;
 
 /**
@@ -39,6 +40,7 @@ public class ArtemisInTransArC extends ArdocoRunner {
         if (architectureConfiguration.metamodel() != null || codeConfiguration.metamodel() != null) {
             throw new IllegalArgumentException("Metamodel shall not be set in configurations. The runner defines the metamodels.");
         }
+        LlmCache.ensureConfigured();
         PersistenceBridge.getInstance().applyConfiguration(additionalConfigs); // before definePipeline, which may already persist
         definePipeline(inputText, architectureConfiguration, codeConfiguration, additionalConfigs, llmForNer);
         setOutputDirectory(outputDir);

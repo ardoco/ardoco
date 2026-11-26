@@ -1,8 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,14 +23,18 @@ public class NameComparisonUtils {
         throw new IllegalStateException("No instantiation provided");
     }
 
+    private static String nameOf(Entity entity) {
+        return Objects.requireNonNull(entity.getName(), "Entity without name");
+    }
+
     //
 
     public static boolean areEqual(Entity namedEntity1, Entity namedEntity2) {
-        return areEqual(namedEntity1.getName(), namedEntity2.getName(), PreprocessingMethod.NONE);
+        return areEqual(nameOf(namedEntity1), nameOf(namedEntity2), PreprocessingMethod.NONE);
     }
 
     public static double getContainedRatio(Entity namedEntity, List<String> names, PreprocessingMethod methodToUse) {
-        List<String> namesSplit = getProcessedSplit(namedEntity.getName());
+        List<String> namesSplit = getProcessedSplit(nameOf(namedEntity));
         List<List<String>> allSublists = getAllSublists(namesSplit);
         int max = 0;
         for (List<String> sublist : allSublists) {
@@ -43,23 +48,23 @@ public class NameComparisonUtils {
 
     // checks if b contains a while respecting word boundaries
     public static boolean isContained(Entity a, Entity b, PreprocessingMethod methodToUse) {
-        return isContained(a.getName(), b.getName(), methodToUse);
+        return isContained(nameOf(a), nameOf(b), methodToUse);
     }
 
     public static boolean isInterfaceContained(Entity interfaceNamedEntity, Entity otherNamedEntity, PreprocessingMethod methodToUse) {
-        String name = interfaceNamedEntity.getName();
+        String name = nameOf(interfaceNamedEntity);
         if (!name.matches("I[A-Z].*$")) {
             return false;
         }
-        return isContained(name.substring(1), otherNamedEntity.getName(), methodToUse);
+        return isContained(name.substring(1), nameOf(otherNamedEntity), methodToUse);
     }
 
     public static double getRatio(Entity namedEntity1, Entity namedEntity2) {
-        return Math.min(1, (double) getWordCount(namedEntity1.getName()) / getWordCount(namedEntity2.getName()));
+        return Math.min(1, (double) getWordCount(nameOf(namedEntity1)) / getWordCount(nameOf(namedEntity2)));
     }
 
     public static double getInterfaceRatio(Entity interfaceEntity, Entity otherNamedEntity) {
-        return Math.min(1, (double) (getWordCount(interfaceEntity.getName().substring(1))) / getWordCount(otherNamedEntity.getName()));
+        return Math.min(1, (double) (getWordCount(nameOf(interfaceEntity).substring(1))) / getWordCount(nameOf(otherNamedEntity)));
     }
 
     //
@@ -83,7 +88,7 @@ public class NameComparisonUtils {
     //
 
     public static List<String> removeWords(Entity namedEntity, SortedSet<String> wordsToRemove) {
-        List<String> words = NameComparisonUtils.getProcessedSplit(namedEntity.getName());
+        List<String> words = NameComparisonUtils.getProcessedSplit(nameOf(namedEntity));
         for (String word : wordsToRemove) {
             words.remove(NameComparisonUtils.preprocess(word));
         }
@@ -92,7 +97,7 @@ public class NameComparisonUtils {
 
     public static SortedSet<String> removeWords(SortedSet<String> words, Entity namedEntity) {
         SortedSet<String> result = new TreeSet<>();
-        List<String> wordsToRemove = NameComparisonUtils.getProcessedSplit(namedEntity.getName());
+        List<String> wordsToRemove = NameComparisonUtils.getProcessedSplit(nameOf(namedEntity));
         for (String word : words) {
             word = preprocess(word);
             if (!wordsToRemove.contains(word)) {
@@ -111,7 +116,7 @@ public class NameComparisonUtils {
             return List.of();
         }
         List<CodePackage> matchedPackages = new ArrayList<>();
-        List<CodePackage> p2 = getPackageList(compUnit.getParent());
+        List<CodePackage> p2 = getPackageList(Objects.requireNonNull(compUnit.getParent(), "Compilation unit without parent"));
         for (int i = p.size() - 1; i > 0; i--) {
             double similarity2 = NameComparisonUtils.getContainedRatio(archEndpoint, p.subList(0, i), PreprocessingMethod.STEMMING);
             if (similarity2 < similarity) {
@@ -130,8 +135,9 @@ public class NameComparisonUtils {
         if (parent instanceof CodePackage parentPackage) {
             parents.addFirst(parentPackage);
         }
-        while (parent.hasParent()) {
-            parent = parent.getParent();
+        CodeModule next;
+        while ((next = parent.getParent()) != null) {
+            parent = next;
             if (parent instanceof CodePackage parentPackage) {
                 parents.addFirst(parentPackage);
             }

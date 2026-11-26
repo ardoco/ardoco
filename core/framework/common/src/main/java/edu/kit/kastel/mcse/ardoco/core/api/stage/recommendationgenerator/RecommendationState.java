@@ -2,6 +2,7 @@
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -47,9 +48,9 @@ public interface RecommendationState extends IConfigurable {
      * Sync noun mappings. This method will be invoked if a noun mapping gets removed from the text extraction state.
      *
      * @param nounMapping the noun mapping to delete
-     * @param replacement the replacement noun mapping
+     * @param replacement the replacement noun mapping, or {@code null} if there is none
      */
-    void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
+    void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement);
 
     /**
      * Persists again all recommended instances that reference the given noun mapping (name or type side).

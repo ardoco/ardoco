@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.text.similarity.JaccardSimilarity;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class SoftwareArchitectureDocumentation {
     /**
      * path to the SAD (if available - otherwise it is null)
      */
-    private final Path filePath;
+    private final @Nullable Path filePath;
 
     /**
      * Constructs a {@link SoftwareArchitectureDocumentation} instance by loading the content of the specified file into memory.
@@ -131,7 +132,7 @@ public class SoftwareArchitectureDocumentation {
         return lines.length;
     }
 
-    public Path getFilePath() {
+    public @Nullable Path getFilePath() {
         return filePath;
     }
 

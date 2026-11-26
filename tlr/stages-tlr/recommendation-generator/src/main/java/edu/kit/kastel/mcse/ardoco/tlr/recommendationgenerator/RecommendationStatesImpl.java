@@ -4,6 +4,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.recommendationgenerator;
 import java.io.Serial;
 import java.util.EnumMap;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class RecommendationStatesImpl implements RecommendationStates {
     }
 
     @Override
-    public RecommendationStateImpl getRecommendationState(Metamodel metamodel) {
+    public @Nullable RecommendationStateImpl getRecommendationState(Metamodel metamodel) {
         return this.recommendationStates.get(metamodel);
     }
 }

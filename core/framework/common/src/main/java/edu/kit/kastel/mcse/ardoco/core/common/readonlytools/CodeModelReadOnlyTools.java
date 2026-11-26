@@ -39,7 +39,6 @@ public class CodeModelReadOnlyTools {
     public static final String PATH_DOES_NOT_EXIST = "Path does not exist: ";
 
     private final DataRepository dataRepository;
-    private CodeModelWithCompilationUnits codeModel;
 
     public CodeModelReadOnlyTools(DataRepository dataRepository) {
         this.dataRepository = Objects.requireNonNull(dataRepository, "Data Repository must not be null.");
@@ -65,7 +64,7 @@ public class CodeModelReadOnlyTools {
 
         Set<String> entries = new TreeSet<>();
 
-        for (CodeFile codeFile : codeModel.getCodeFiles()) {
+        for (CodeFile codeFile : getCodeModel().getCodeFiles()) {
             String filePath = normalizeFilePath(codeFile.getPath());
 
             if (!isDirectlyBelow(normalizedPath, filePath)) {
@@ -116,7 +115,7 @@ public class CodeModelReadOnlyTools {
     }
 
     private Set<TreeEntry> collectTreeEntries(String normalizedPath, int boundedMaxDepth) {
-        return codeModel.getCodeFiles()
+        return getCodeModel().getCodeFiles()
                 .stream()
                 .map(codeFile -> normalizeFilePath(codeFile.getPath()))
                 .filter(filePath -> isBelowOrEqual(normalizedPath, filePath))
@@ -171,7 +170,8 @@ public class CodeModelReadOnlyTools {
             return "Invalid glob pattern: " + glob;
         }
 
-        String result = currentCodeModel.getCodeFiles()
+        String result = Objects.requireNonNull(currentCodeModel, "Code model must not be null.")
+                .getCodeFiles()
                 .stream()
                 .map(CodeFile::getPath)
                 .map(this::normalizeFilePath)
@@ -237,7 +237,7 @@ public class CodeModelReadOnlyTools {
     }
 
     private String directoryInfo(String directoryPath) {
-        long directFiles = codeModel.getCodeFiles()
+        long directFiles = getCodeModel().getCodeFiles()
                 .stream()
                 .map(CodeFile::getPath)
                 .map(this::normalizeFilePath)
@@ -245,7 +245,7 @@ public class CodeModelReadOnlyTools {
                 .filter(filePath -> !hasRemainingPathBelow(directoryPath, filePath))
                 .count();
 
-        long directDirectories = codeModel.getCodeFiles()
+        long directDirectories = getCodeModel().getCodeFiles()
                 .stream()
                 .map(CodeFile::getPath)
                 .map(this::normalizeFilePath)
@@ -255,7 +255,7 @@ public class CodeModelReadOnlyTools {
                 .distinct()
                 .count();
 
-        long containedFiles = codeModel.getCodeFiles()
+        long containedFiles = getCodeModel().getCodeFiles()
                 .stream()
                 .map(CodeFile::getPath)
                 .map(this::normalizeFilePath)
@@ -272,7 +272,7 @@ public class CodeModelReadOnlyTools {
     }
 
     private java.util.Optional<CodeFile> findCodeFile(String normalizedPath) {
-        return codeModel.getCodeFiles().stream().filter(codeFile -> normalizeFilePath(codeFile.getPath()).equals(normalizedPath)).findFirst();
+        return getCodeModel().getCodeFiles().stream().filter(codeFile -> normalizeFilePath(codeFile.getPath()).equals(normalizedPath)).findFirst();
     }
 
     private boolean directoryExists(String normalizedDirectoryPath) {
@@ -282,7 +282,7 @@ public class CodeModelReadOnlyTools {
 
         String prefix = normalizedDirectoryPath + "/";
 
-        return codeModel.getCodeFiles().stream().map(CodeFile::getPath).map(this::normalizeFilePath).anyMatch(path -> path.startsWith(prefix));
+        return getCodeModel().getCodeFiles().stream().map(CodeFile::getPath).map(this::normalizeFilePath).anyMatch(path -> path.startsWith(prefix));
     }
 
     private boolean isDirectlyBelow(String directoryPath, String filePath) {
@@ -418,18 +418,17 @@ public class CodeModelReadOnlyTools {
         return path.substring(slashIndex + 1);
     }
 
+    /**
+     * Checks that the code model is available. The tools are created while the pipeline is set up, before the code model exists, so this is called right
+     * before a tool is executed.
+     */
     public void initializeCodeModel() {
-        if (codeModel != null) {
-            return;
-        }
+        getCodeModel();
+    }
 
-        LOGGER.debug("Initializing code model...");
-
-        codeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository).getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
-
-        Objects.requireNonNull(codeModel, "Code model must not be null.");
-
-        LOGGER.debug("Code model initialized.");
+    private CodeModelWithCompilationUnits getCodeModel() {
+        return (CodeModelWithCompilationUnits) Objects.requireNonNull(DataRepositoryHelper.getModelStatesData(dataRepository)
+                .getModel(Metamodel.CODE_WITH_COMPILATION_UNITS), "Code model must not be null.");
     }
 
     private record TreeEntry(String relativePath, boolean directory) implements Comparable<TreeEntry> {
