@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,6 @@ public class CodeModelReadOnlyTools {
     public static final String PATH_DOES_NOT_EXIST = "Path does not exist: ";
 
     private final DataRepository dataRepository;
-    private @Nullable CodeModelWithCompilationUnits codeModel;
 
     public CodeModelReadOnlyTools(DataRepository dataRepository) {
         this.dataRepository = Objects.requireNonNull(dataRepository, "Data Repository must not be null.");
@@ -420,22 +418,17 @@ public class CodeModelReadOnlyTools {
         return path.substring(slashIndex + 1);
     }
 
+    /**
+     * Checks that the code model is available. The tools are created while the pipeline is set up, before the code model exists, so this is called right
+     * before a tool is executed.
+     */
     public void initializeCodeModel() {
-        if (codeModel != null) {
-            return;
-        }
-
-        LOGGER.debug("Initializing code model...");
-
-        codeModel = (CodeModelWithCompilationUnits) DataRepositoryHelper.getModelStatesData(dataRepository).getModel(Metamodel.CODE_WITH_COMPILATION_UNITS);
-
-        Objects.requireNonNull(codeModel, "Code model must not be null.");
-
-        LOGGER.debug("Code model initialized.");
+        getCodeModel();
     }
 
     private CodeModelWithCompilationUnits getCodeModel() {
-        return Objects.requireNonNull(codeModel, "Code model is not initialized.");
+        return (CodeModelWithCompilationUnits) Objects.requireNonNull(DataRepositoryHelper.getModelStatesData(dataRepository)
+                .getModel(Metamodel.CODE_WITH_COMPILATION_UNITS), "Code model must not be null.");
     }
 
     private record TreeEntry(String relativePath, boolean directory) implements Comparable<TreeEntry> {
