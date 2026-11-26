@@ -26,16 +26,13 @@ public final class UmlModelRoot {
     private @Nullable List<UmlInterface> interfaces;
 
     public void init() {
-        this.interfaces = loadInterfaces();
-        List<UmlComponent> loadedComponents = loadComponents();
-        this.components = loadedComponents;
-        for (UmlComponent umlComponent : loadedComponents) {
-            umlComponent.init(this);
-        }
+        List<UmlInterface> loadedInterfaces = loadInterfaces();
+        this.interfaces = loadedInterfaces;
+        this.components = loadComponents(loadedInterfaces);
     }
 
-    private List<UmlComponent> loadComponents() {
-        return interfacesAndComponents.stream().filter(PackagedElement::isComponent).map(UmlComponent::new).toList();
+    private List<UmlComponent> loadComponents(List<UmlInterface> umlInterfaces) {
+        return interfacesAndComponents.stream().filter(PackagedElement::isComponent).map(it -> new UmlComponent(it, umlInterfaces)).toList();
     }
 
     private List<UmlInterface> loadInterfaces() {
