@@ -39,7 +39,7 @@ public class TextEntityAbsentFromModelInconsistencyInformant extends Informant {
         var dataRepository = this.getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
         var connectionStates = DataRepositoryHelper.getConnectionStates(dataRepository);
-        var inconsistencyStates = Objects.requireNonNull(DataRepositoryHelper.getInconsistencyStates(dataRepository), "InconsistencyStates must be available");
+        var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
         for (var metamodel : modelStates.getMetamodels()) {
             var model = Objects.requireNonNull(modelStates.getModel(metamodel), "Model must be available");

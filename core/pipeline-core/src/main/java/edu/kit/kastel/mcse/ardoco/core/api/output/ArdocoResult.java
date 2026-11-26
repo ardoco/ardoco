@@ -285,10 +285,6 @@ public record ArdocoResult(DataRepository dataRepository) {
     public @Nullable InconsistencyState getInconsistencyState(Metamodel metamodel) {
         if (DataRepositoryHelper.hasInconsistencyStates(this.dataRepository)) {
             var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(this.dataRepository);
-            if (inconsistencyStates == null) {
-                logger.warn("No InconsistencyState found.");
-                return null;
-            }
             return inconsistencyStates.getInconsistencyState(metamodel);
         }
         logger.warn("No InconsistencyState found.");

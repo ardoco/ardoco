@@ -24,7 +24,7 @@ public abstract class Filter extends Informant {
     public void process() {
         var dataRepository = getDataRepository();
         var modelStates = DataRepositoryHelper.getModelStatesData(dataRepository);
-        var inconsistencyStates = Objects.requireNonNull(DataRepositoryHelper.getInconsistencyStates(dataRepository), "InconsistencyStates must be available");
+        var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
         for (var model : modelStates.getMetamodels()) {
             var modelState = Objects.requireNonNull(modelStates.getModel(model), "Model must be available");
