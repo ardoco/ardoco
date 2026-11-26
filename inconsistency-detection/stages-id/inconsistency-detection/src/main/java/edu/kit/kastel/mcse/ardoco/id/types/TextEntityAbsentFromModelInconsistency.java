@@ -7,12 +7,13 @@ import java.util.Objects;
 import org.eclipse.collections.api.collection.ImmutableCollection;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.stage.inconsistency.TextInconsistency;
 import edu.kit.kastel.mcse.ardoco.id.MissingElementInconsistencyCandidate;
 
-public record TextEntityAbsentFromModelInconsistency(String name, int sentence, double confidence, MissingElementInconsistencyCandidate origin) implements
-        TextInconsistency {
+public record TextEntityAbsentFromModelInconsistency(String name, int sentence, double confidence, @Nullable MissingElementInconsistencyCandidate origin)
+        implements TextInconsistency {
 
     private static final String INCONSISTENCY_TYPE_NAME = "TextEntityAbsentFromModel";
 

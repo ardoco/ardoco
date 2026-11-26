@@ -1,4 +1,4 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.textobject;
 
 import java.io.Serial;
@@ -13,6 +13,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Phrase;
 import edu.kit.kastel.mcse.ardoco.core.api.text.PhraseType;
@@ -28,12 +29,12 @@ public class PhraseImpl implements Phrase {
     private final PhraseType type;
     private MutableList<Phrase> childPhrases;
     private MutableList<Word> nonPhraseWords;
-    private MutableList<Word> phraseWords;
-    private MutableList<Word> containedWords;
-    private MutableList<Phrase> subphrases;
-    private MutableSortedMap<Word, Integer> phraseVector;
+    private @Nullable MutableList<Word> phraseWords;
+    private @Nullable MutableList<Word> containedWords;
+    private @Nullable MutableList<Phrase> subphrases;
+    private @Nullable MutableSortedMap<Word, Integer> phraseVector;
     private int sentenceNo = -1;
-    private String text;
+    private @Nullable String text;
 
     public PhraseImpl(ImmutableList<Word> nonPhraseWords, PhraseType type, List<Phrase> childPhrases) {
         this.nonPhraseWords = nonPhraseWords == null ? Lists.mutable.empty() : nonPhraseWords.toList();
@@ -51,14 +52,16 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public String getText() {
-        if (this.text == null) {
+        var currentText = this.text;
+        if (currentText == null) {
             MutableList<Word> wordList = getContainedWords().toList();
             wordList.sort(Comparator.comparingInt(Word::getPosition));
             List<String> wordText = wordList.collect(Word::getText);
             // Join string with spaces but remove spaces before punctuation and brackets
-            this.text = String.join(" ", wordText).replaceAll(PUNCTUATION_WITH_SPACE, "$1").replaceAll(BRACKETS_WITH_SPACE, "$1");
+            currentText = String.join(" ", wordText).replaceAll(PUNCTUATION_WITH_SPACE, "$1").replaceAll(BRACKETS_WITH_SPACE, "$1");
+            this.text = currentText;
         }
-        return this.text;
+        return currentText;
     }
 
     @Override
@@ -68,32 +71,38 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public synchronized ImmutableList<Word> getContainedWords() {
-        if (containedWords == null) {
-            if (phraseWords == null) {
+        var currentContainedWords = containedWords;
+        if (currentContainedWords == null) {
+            var currentPhraseWords = phraseWords;
+            if (currentPhraseWords == null) {
                 List<Word> collectedWords = new ArrayList<>();
                 for (Phrase subphrase : childPhrases) {
                     collectedWords.addAll(subphrase.getContainedWords().castToList());
                 }
-                this.phraseWords = Lists.mutable.ofAll(collectedWords);
+                currentPhraseWords = Lists.mutable.ofAll(collectedWords);
+                this.phraseWords = currentPhraseWords;
             }
 
-            containedWords = Lists.mutable.ofAll(nonPhraseWords);
-            containedWords.addAllIterable(phraseWords);
-            containedWords.sortThis(Comparator.comparingInt(Word::getPosition));
+            currentContainedWords = Lists.mutable.ofAll(nonPhraseWords);
+            currentContainedWords.addAllIterable(currentPhraseWords);
+            currentContainedWords.sortThis(Comparator.comparingInt(Word::getPosition));
+            containedWords = currentContainedWords;
         }
 
-        return containedWords.toImmutable();
+        return currentContainedWords.toImmutable();
     }
 
     @Override
     public synchronized ImmutableList<Phrase> getSubphrases() {
-        if (subphrases == null) {
-            subphrases = Lists.mutable.ofAll(childPhrases);
+        var currentSubphrases = subphrases;
+        if (currentSubphrases == null) {
+            currentSubphrases = Lists.mutable.ofAll(childPhrases);
             for (Phrase childPhrase : childPhrases) {
-                subphrases.addAll(childPhrase.getSubphrases().toList());
+                currentSubphrases.addAll(childPhrase.getSubphrases().toList());
             }
+            subphrases = currentSubphrases;
         }
-        return subphrases.toImmutable();
+        return currentSubphrases.toImmutable();
     }
 
     @Override
@@ -130,12 +139,15 @@ public class PhraseImpl implements Phrase {
 
     @Override
     public synchronized ImmutableSortedMap<Word, Integer> getPhraseVector() {
-        if (phraseVector == null) {
-            phraseVector = SortedMaps.mutable.empty();
+        var currentPhraseVector = phraseVector;
+        if (currentPhraseVector == null) {
+            MutableSortedMap<Word, Integer> newPhraseVector = SortedMaps.mutable.empty();
             var grouped = getContainedWords().groupBy(Word::getText).toMap();
-            grouped.forEach((key, value) -> phraseVector.put(value.getAny(), value.size()));
+            grouped.forEach((key, value) -> newPhraseVector.put(value.getAny(), value.size()));
+            phraseVector = newPhraseVector;
+            currentPhraseVector = newPhraseVector;
         }
-        return phraseVector.toImmutable();
+        return currentPhraseVector.toImmutable();
     }
 
     @Override

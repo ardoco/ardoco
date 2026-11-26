@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public abstract class CodeExtractor extends Extractor {
         writeOutCodeModel(codeModel, file);
     }
 
-    public static CodeModel readInCodeModel(File codeModelFile, Metamodel metamodelToExtract) {
+    public static @Nullable CodeModel readInCodeModel(File codeModelFile, Metamodel metamodelToExtract) {
         if (codeModelFile != null && codeModelFile.isFile()) {
             logger.info("Reading in existing code model.");
             ObjectMapper objectMapper = createObjectMapper();

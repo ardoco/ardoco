@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaLexer;
 import edu.kit.kastel.mcse.ardoco.tlr.models.antlr4.java.JavaParser;
@@ -36,15 +37,12 @@ public class JavaElementExtractor extends ElementExtractor {
     private final JavaElementStorageRegistry elementRegistry;
 
     public JavaElementExtractor() {
-        super();
-        this.elementRegistry = new JavaElementStorageRegistry();
-        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
+        this(new JavaElementStorageRegistry());
     }
 
     public JavaElementExtractor(JavaElementStorageRegistry elementRegistry) {
-        super();
+        super(new JavaCommentExtractor(elementRegistry));
         this.elementRegistry = elementRegistry;
-        this.commentExtractor = new JavaCommentExtractor(elementRegistry);
     }
 
     @Override
@@ -108,7 +106,7 @@ public class JavaElementExtractor extends ElementExtractor {
         }
     }
 
-    public ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitClassDeclaration(JavaParser.ClassDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -139,7 +137,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitEnumDeclaration(JavaParser.EnumDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -153,7 +151,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitRecordDeclaration(JavaParser.RecordDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -169,7 +167,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }
@@ -183,7 +181,7 @@ public class JavaElementExtractor extends ElementExtractor {
         return identifier;
     }
 
-    public ElementIdentifier visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx, ElementIdentifier parentIdentifier) {
+    public @Nullable ElementIdentifier visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx, ElementIdentifier parentIdentifier) {
         if (ctx.identifier() == null) {
             return null;
         }

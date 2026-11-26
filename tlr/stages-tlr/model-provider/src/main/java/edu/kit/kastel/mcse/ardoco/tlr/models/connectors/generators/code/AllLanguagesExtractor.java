@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnits;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModelWithCompilationUnitsAndPackages;
@@ -25,7 +27,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.models.connectors.generators.code.shell.Sh
 public final class AllLanguagesExtractor extends CodeExtractor {
 
     private final Map<ProgrammingLanguage, CodeExtractor> codeExtractors;
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     @Override
     public String getIdPrefix() {
@@ -43,27 +45,28 @@ public final class AllLanguagesExtractor extends CodeExtractor {
     @Override
     public synchronized CodeModel extractModel() {
 
-        if (this.codeModel == null) {
+        CodeModel model = this.codeModel;
+        if (model == null) {
             List<CodeModel> models = new ArrayList<>();
             for (CodeExtractor extractor : this.codeExtractors.values()) {
-                var model = extractor.extractModel();
-                models.add(model);
+                models.add(extractor.extractModel());
             }
             SortedSet<CodeItem> codeEndpoints = new TreeSet<>();
-            for (CodeModel model : models) {
-                codeEndpoints.addAll(model.getContent());
+            for (CodeModel extractedModel : models) {
+                codeEndpoints.addAll(extractedModel.getContent());
             }
 
             List<CodeFile> codeFiles = extractCodeFiles(codeEndpoints);
 
             switch (this.metamodelToExtract) {
-                case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> this.codeModel = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository,
-                        codeEndpoints, codeFiles);
-                case CODE_WITH_COMPILATION_UNITS -> this.codeModel = new CodeModelWithCompilationUnits(this.codeItemRepository, codeEndpoints, codeFiles);
+                case CODE_WITH_COMPILATION_UNITS_AND_PACKAGES -> model = new CodeModelWithCompilationUnitsAndPackages(this.codeItemRepository, codeEndpoints,
+                        codeFiles);
+                case CODE_WITH_COMPILATION_UNITS -> model = new CodeModelWithCompilationUnits(this.codeItemRepository, codeEndpoints, codeFiles);
                 default -> throw new IllegalStateException("This extractor does not support this metamodel");
             }
+            this.codeModel = model;
         }
-        return this.codeModel;
+        return model;
     }
 
 }

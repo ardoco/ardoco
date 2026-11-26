@@ -1,6 +1,8 @@
 /* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.id.informants;
 
+import java.util.Objects;
+
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
@@ -40,7 +42,7 @@ public class TextEntityAbsentFromModelInconsistencyInformant extends Informant {
         var inconsistencyStates = DataRepositoryHelper.getInconsistencyStates(dataRepository);
 
         for (var metamodel : modelStates.getMetamodels()) {
-            var model = modelStates.getModel(metamodel);
+            var model = Objects.requireNonNull(modelStates.getModel(metamodel), "Model must be available");
             this.findMissingModelElementInconsistencies(connectionStates, inconsistencyStates, model);
         }
     }
@@ -48,7 +50,7 @@ public class TextEntityAbsentFromModelInconsistencyInformant extends Informant {
     private void findMissingModelElementInconsistencies(ConnectionStates connectionStates, InconsistencyStates inconsistencyStates, Model model) {
         Metamodel metamodel = model.getMetamodel();
         var inconsistencyState = inconsistencyStates.getInconsistencyState(metamodel);
-        var connectionState = connectionStates.getConnectionState(metamodel);
+        var connectionState = Objects.requireNonNull(connectionStates.getConnectionState(metamodel), "No connection state for metamodel " + metamodel);
 
         var candidates = Lists.mutable.<MissingElementInconsistencyCandidate>empty();
 

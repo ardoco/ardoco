@@ -3,6 +3,7 @@ package edu.kit.kastel.mcse.ardoco.tlr.models.agents;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
 import org.jspecify.annotations.Nullable;
@@ -42,7 +43,8 @@ public class ModelProviderAgent extends PipelineAgent {
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.ACM_FILE) {
-            informants.add(new ModelProviderInformant(data, codeConfiguration.code(), codeConfiguration.metamodel()));
+            informants.add(new ModelProviderInformant(data, codeConfiguration.code(), Objects.requireNonNull(codeConfiguration.metamodel(),
+                    "The metamodel must be set for ACM files")));
         }
 
         if (codeConfiguration != null && codeConfiguration.type() == CodeConfiguration.CodeConfigurationType.DIRECTORY) {

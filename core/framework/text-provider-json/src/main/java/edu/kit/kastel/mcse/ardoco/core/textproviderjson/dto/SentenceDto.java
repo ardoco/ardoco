@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.core.textproviderjson.dto;
 
 import java.util.List;
@@ -10,9 +10,12 @@ import com.fasterxml.jackson.annotation.*;
  * Sentence in a text
  */
 public class SentenceDto {
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private String constituencyTree;
     private long sentenceNo;
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private String text;
+    @SuppressWarnings("NullAway.Init") // set by Jackson during deserialization
     private List<WordDto> words;
 
     /**

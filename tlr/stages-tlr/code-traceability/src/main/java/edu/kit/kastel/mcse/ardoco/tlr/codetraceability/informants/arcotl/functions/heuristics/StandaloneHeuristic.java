@@ -1,7 +1,9 @@
-/* Licensed under MIT 2023-2025. */
+/* Licensed under MIT 2023-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.functions.heuristics;
 
 import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -13,14 +15,14 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
  */
 public abstract class StandaloneHeuristic extends Heuristic {
 
-    private CodeModel codeModel;
+    private @Nullable CodeModel codeModel;
 
     public StandaloneHeuristicNode getNode() {
         return new StandaloneHeuristicNode(this);
     }
 
     protected CodeModel getCodeModel() {
-        return codeModel;
+        return Objects.requireNonNull(codeModel, "Confidences have not been calculated yet");
     }
 
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel) {

@@ -1,9 +1,10 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.recommendationgenerator;
 
 import java.io.Serial;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.entity.TextEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction.NounMapping;
@@ -97,7 +98,7 @@ public abstract class RecommendedInstance extends TextEntity {
      * Handles the deletion of a noun mapping by replacing it with another.
      *
      * @param nounMapping the noun mapping to delete
-     * @param replacement the replacement noun mapping
+     * @param replacement the replacement noun mapping, or {@code null} if there is none
      */
-    public abstract void onNounMappingDeletion(NounMapping nounMapping, NounMapping replacement);
+    public abstract void onNounMappingDeletion(NounMapping nounMapping, @Nullable NounMapping replacement);
 }

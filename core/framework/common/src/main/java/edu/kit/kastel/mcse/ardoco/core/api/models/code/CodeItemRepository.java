@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -41,7 +43,8 @@ public class CodeItemRepository implements Serializable {
         return this.repository.containsKey(id);
     }
 
-    CodeItem getCodeItem(String id) {
+    @Nullable
+    CodeItem getCodeItem(@Nullable String id) {
         if (id == null) {
             return null;
         }

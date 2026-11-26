@@ -3,10 +3,12 @@ package edu.kit.kastel.mcse.ardoco.id.informants.validators;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import edu.kit.kastel.mcse.ardoco.core.data.DataRepository;
 
 public record ArchitecturalStylePatternValidationContext(DataRepository dataRepository, String namedEntityOccurrence, String architecturalStylePatternName,
-                                                         String fullDocumentationText, String sentenceText, String codeProjectPath) {
+                                                         String fullDocumentationText, String sentenceText, @Nullable String codeProjectPath) {
 
     public ArchitecturalStylePatternValidationContext {
         Objects.requireNonNull(dataRepository, "dataRepository must not be null");

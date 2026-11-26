@@ -1,15 +1,16 @@
-/* Licensed under MIT 2022-2025. */
+/* Licensed under MIT 2022-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.connectiongenerator.informants;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.ImmutableSortedMap;
+import org.jspecify.annotations.Nullable;
 
-import edu.kit.kastel.mcse.ardoco.core.api.entity.Entity;
 import edu.kit.kastel.mcse.ardoco.core.api.entity.ModelEntity;
 import edu.kit.kastel.mcse.ardoco.core.api.models.Model;
 import edu.kit.kastel.mcse.ardoco.core.api.models.ModelStates;
@@ -62,7 +63,8 @@ public class NameTypeConnectionInformant extends Informant {
             if (model == null) {
                 continue;
             }
-            var recommendationState = recommendationStates.getRecommendationState(model.getMetamodel());
+            var recommendationState = Objects.requireNonNull(recommendationStates.getRecommendationState(model.getMetamodel()),
+                    "No recommendation state for metamodel " + model.getMetamodel());
             this.checkForNameAfterType(textState, textStateStrategy, word, model, recommendationState);
             this.checkForNameBeforeType(textState, textStateStrategy, word, model, recommendationState);
             this.checkForNortBeforeType(textState, textStateStrategy, word, model, recommendationState);
@@ -86,6 +88,9 @@ public class NameTypeConnectionInformant extends Informant {
 
         if (!similarTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (preWord == null) {
+                return;
+            }
 
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(preWord, MappingKind.NAME);
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
@@ -115,6 +120,9 @@ public class NameTypeConnectionInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (after == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(after, MappingKind.NAME);
@@ -140,6 +148,9 @@ public class NameTypeConnectionInformant extends Informant {
 
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (preWord == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(preWord, MappingKind.NAME, MappingKind.TYPE);
@@ -164,6 +175,9 @@ public class NameTypeConnectionInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (after == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
             var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(after, MappingKind.NAME, MappingKind.TYPE);
@@ -184,8 +198,8 @@ public class NameTypeConnectionInformant extends Informant {
      * @param typeMappings        the type mappings
      */
     private void addRecommendedInstanceIfNodeNotNull(//
-            Word currentWord, TextState textExtractionState, Entity entity, ImmutableList<NounMapping> nameMappings, ImmutableList<NounMapping> typeMappings,
-            RecommendationState recommendationState) {
+            Word currentWord, TextState textExtractionState, @Nullable ModelEntity entity, ImmutableList<NounMapping> nameMappings,
+            ImmutableList<NounMapping> typeMappings, RecommendationState recommendationState) {
         var nounMappingsByCurrentWord = textExtractionState.getNounMappingsByWord(currentWord);
         if (entity != null && nounMappingsByCurrentWord != null) {
             for (NounMapping nmapping : nounMappingsByCurrentWord) {
@@ -205,7 +219,7 @@ public class NameTypeConnectionInformant extends Informant {
      * @param word                the node for name identification
      * @return the unique matching instance
      */
-    private Entity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, Word word, Model model) {
+    private @Nullable ModelEntity tryToIdentify(TextState textExtractionState, ImmutableList<String> similarTypes, Word word, Model model) {
         if (textExtractionState == null || similarTypes == null || word == null) {
             return null;
         }

@@ -34,7 +34,7 @@ public class ComponentArtemisNerStrategy implements ArtemisNerStrategy {
         possibleEntities.put(NamedEntityType.COMPONENT, new TreeSet<>());
 
         var modelStatesData = DataRepositoryHelper.getModelStatesData(dataRepository);
-        var model = modelStatesData.getModel(getMetamodel());
+        var model = Objects.requireNonNull(modelStatesData.getModel(getMetamodel()), "Model must be available");
         for (var endpoint : model.getEndpoints()) {
             String endpointName = endpoint.getName();
             possibleEntities.get(NamedEntityType.COMPONENT).add(Objects.requireNonNull(endpointName));

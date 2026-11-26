@@ -3,6 +3,8 @@ package edu.kit.kastel.mcse.ardoco.naer.model;
 
 import java.util.*;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,7 +25,7 @@ public class NamedEntity {
     /**
      * the software architecture documentation (text) in which the named entity has been recognized
      */
-    private SoftwareArchitectureDocumentation sourceText;
+    private @Nullable SoftwareArchitectureDocumentation sourceText;
 
     /**
      * Creates a {@link NamedEntity} with the given name, type, alternative names, and occurrences.
@@ -57,7 +59,7 @@ public class NamedEntity {
         this.occurrences = new TreeSet<>();
     }
 
-    public SoftwareArchitectureDocumentation getSourceText() {
+    public @Nullable SoftwareArchitectureDocumentation getSourceText() {
         return sourceText;
     }
 

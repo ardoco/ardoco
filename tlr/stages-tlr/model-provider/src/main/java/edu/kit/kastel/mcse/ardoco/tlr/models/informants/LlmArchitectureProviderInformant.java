@@ -7,11 +7,13 @@ import static edu.kit.kastel.mcse.ardoco.tlr.models.informants.LlmArchitecturePr
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,20 +44,21 @@ public class LlmArchitectureProviderInformant extends Informant {
     private static final Logger logger = LoggerFactory.getLogger(LlmArchitectureProviderInformant.class);
 
     private final ChatModel chatLanguageModel;
-    private final LlmArchitecturePrompt documentationPrompt;
-    private final LlmArchitecturePrompt codePrompt;
-    private final LlmArchitecturePrompt aggregationPrompt;
-    private final LlmArchitecturePrompt.Features codeFeature;
+    // A null prompt means that the corresponding step is not used.
+    private final @Nullable LlmArchitecturePrompt documentationPrompt;
+    private final @Nullable LlmArchitecturePrompt codePrompt;
+    private final @Nullable LlmArchitecturePrompt aggregationPrompt;
+    private final LlmArchitecturePrompt.@Nullable Features codeFeature;
 
-    public LlmArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, LlmArchitecturePrompt documentation,
-            LlmArchitecturePrompt code, LlmArchitecturePrompt.Features codeFeature, LlmArchitecturePrompt aggregation) {
+    public LlmArchitectureProviderInformant(DataRepository dataRepository, LargeLanguageModel largeLanguageModel, @Nullable LlmArchitecturePrompt documentation,
+            @Nullable LlmArchitecturePrompt code, LlmArchitecturePrompt.@Nullable Features codeFeature, @Nullable LlmArchitecturePrompt aggregation) {
         super(LlmArchitectureProviderInformant.class.getSimpleName(), dataRepository);
-        this.chatLanguageModel = largeLanguageModel == null ? null : largeLanguageModel.create();
+        this.chatLanguageModel = largeLanguageModel.create();
         this.documentationPrompt = documentation;
         this.codePrompt = code;
         this.codeFeature = codeFeature;
         this.aggregationPrompt = aggregation;
-        if (largeLanguageModel != null && documentationPrompt == null && codePrompt == null) {
+        if (documentationPrompt == null && codePrompt == null) {
             throw new IllegalArgumentException("At least one prompt must be provided");
         }
         if (documentationPrompt != null && codePrompt != null && aggregationPrompt == null) {
@@ -71,9 +74,9 @@ public class LlmArchitectureProviderInformant extends Informant {
         List<String> componentNamesDocumentation = new ArrayList<>();
         List<String> componentNamesCode = new ArrayList<>();
         if (documentationPrompt != null)
-            documentationToArchitecture(componentNamesDocumentation);
+            documentationToArchitecture(documentationPrompt, componentNamesDocumentation);
         if (codePrompt != null)
-            codeToArchitecture(componentNamesCode);
+            codeToArchitecture(codePrompt, Objects.requireNonNull(codeFeature, "checked in the constructor"), componentNamesCode);
 
         List<String> componentNames = new ArrayList<>();
 
@@ -135,12 +138,12 @@ public class LlmArchitectureProviderInformant extends Informant {
         return componentNames;
     }
 
-    private void documentationToArchitecture(List<String> componentNames) {
+    private void documentationToArchitecture(LlmArchitecturePrompt prompt, List<String> componentNames) {
         var inputText = DataRepositoryHelper.getInputText(dataRepository);
-        parseComponentsFromAiRequests(componentNames, documentationPrompt.getTemplates(), inputText);
+        parseComponentsFromAiRequests(componentNames, prompt.getTemplates(), inputText);
     }
 
-    private void codeToArchitecture(List<String> componentNames) {
+    private void codeToArchitecture(LlmArchitecturePrompt prompt, LlmArchitecturePrompt.Features feature, List<String> componentNames) {
         var models = DataRepositoryHelper.getModelStatesData(dataRepository);
         CodeModel codeModel = (CodeModel) models.getModel(Metamodel.CODE_WITH_COMPILATION_UNITS_AND_PACKAGES);
         if (codeModel == null) {
@@ -148,10 +151,10 @@ public class LlmArchitectureProviderInformant extends Informant {
             return;
         }
 
-        switch (this.codeFeature) {
+        switch (feature) {
             case PACKAGES -> {
                 var packages = codeModel.getAllPackages().stream().filter(it -> !it.getContent().isEmpty()).toList();
-                parseComponentsFromAiRequests(componentNames, codePrompt.getTemplates(PACKAGES), String.join("\n", packages.stream()
+                parseComponentsFromAiRequests(componentNames, prompt.getTemplates(PACKAGES), String.join("\n", packages.stream()
                         .map(this::getPackageName)
                         .toList()));
             }
@@ -164,7 +167,7 @@ public class LlmArchitectureProviderInformant extends Informant {
                     return packageName + " (" + String.join(", ", classes) + ")";
                 }).toList();
 
-                parseComponentsFromAiRequests(componentNames, codePrompt.getTemplates(PACKAGES_AND_THEIR_CLASSES), String.join("\n", packagesWithClasses));
+                parseComponentsFromAiRequests(componentNames, prompt.getTemplates(PACKAGES_AND_THEIR_CLASSES), String.join("\n", packagesWithClasses));
             }
         }
 

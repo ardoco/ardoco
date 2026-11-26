@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -30,8 +32,10 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
 
     @JsonIgnore
     protected CodeItemRepository codeItemRepository;
-    protected String comment;
+    protected @Nullable String comment;
 
+    // Jackson sets the name reflectively during deserialization, and CodeItemRepository.init() registers the repository afterwards.
+    @SuppressWarnings("NullAway")
     CodeItem() {
         // Jackson
         super(null);
@@ -120,7 +124,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
         return new TreeSet<>();
     }
 
-    public String getComment() {
+    public @Nullable String getComment() {
         return this.comment;
     }
 

@@ -1,8 +1,9 @@
-/* Licensed under MIT 2021-2025. */
+/* Licensed under MIT 2021-2026. */
 package edu.kit.kastel.mcse.ardoco.core.api.stage.textextraction;
 
 import org.eclipse.collections.api.block.predicate.Predicate;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import edu.kit.kastel.mcse.ardoco.core.api.text.Word;
 import edu.kit.kastel.mcse.ardoco.core.configuration.IConfigurable;
@@ -30,7 +31,7 @@ public interface TextState extends IConfigurable, PipelineStepData {
      * @param replacement    the replacement noun mapping (optional)
      * @param cascade        whether to cascade the removal
      */
-    void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, NounMapping replacement, boolean cascade);
+    void removeNounMapping(DataRepository dataRepository, NounMapping nounMapping, @Nullable NounMapping replacement, boolean cascade);
 
     /**
      * Adds a phrase mapping to the state.
