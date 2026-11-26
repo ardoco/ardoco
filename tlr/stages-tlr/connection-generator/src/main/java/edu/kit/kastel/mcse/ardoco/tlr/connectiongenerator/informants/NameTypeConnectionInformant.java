@@ -88,8 +88,11 @@ public class NameTypeConnectionInformant extends Informant {
 
         if (!similarTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (preWord == null) {
+                return;
+            }
 
-            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(Objects.requireNonNull(preWord, "Word without predecessor"), MappingKind.NAME);
+            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(preWord, MappingKind.NAME);
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
 
             var entity = this.tryToIdentify(textExtractionState, similarTypes, preWord, model);
@@ -117,9 +120,12 @@ public class NameTypeConnectionInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (after == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(Objects.requireNonNull(after, "Word without successor"), MappingKind.NAME);
+            var nameMappings = textExtractionState.getMappingsThatCouldBeOfKind(after, MappingKind.NAME);
 
             var instance = this.tryToIdentify(textExtractionState, sameLemmaTypes, after, model);
             this.addRecommendedInstanceIfNodeNotNull(word, textExtractionState, instance, nameMappings, typeMappings, recommendationState);
@@ -142,10 +148,12 @@ public class NameTypeConnectionInformant extends Informant {
 
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (preWord == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(Objects.requireNonNull(preWord, "Word without predecessor"),
-                    MappingKind.NAME, MappingKind.TYPE);
+            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(preWord, MappingKind.NAME, MappingKind.TYPE);
 
             var instance = this.tryToIdentify(textExtractionState, sameLemmaTypes, preWord, model);
             this.addRecommendedInstanceIfNodeNotNull(word, textExtractionState, instance, nortMappings, typeMappings, recommendationState);
@@ -167,10 +175,12 @@ public class NameTypeConnectionInformant extends Informant {
         var sameLemmaTypes = CommonUtilities.getSimilarTypes(word, model);
         if (!sameLemmaTypes.isEmpty()) {
             textStateStrategy.addNounMapping(word, MappingKind.TYPE, this, this.probability);
+            if (after == null) {
+                return;
+            }
 
             var typeMappings = textExtractionState.getMappingsThatCouldBeOfKind(word, MappingKind.TYPE);
-            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(Objects.requireNonNull(after, "Word without successor"),
-                    MappingKind.NAME, MappingKind.TYPE);
+            var nortMappings = textExtractionState.getMappingsThatCouldBeMultipleKinds(after, MappingKind.NAME, MappingKind.TYPE);
 
             var instance = this.tryToIdentify(textExtractionState, sameLemmaTypes, after, model);
             this.addRecommendedInstanceIfNodeNotNull(word, textExtractionState, instance, nortMappings, typeMappings, recommendationState);
