@@ -128,7 +128,7 @@ public abstract sealed class CodeItem extends CodeEntity permits CodeModule, Com
         return this.comment;
     }
 
-    public void setComment(@Nullable String comment) {
+    public void setComment(String comment) {
         this.comment = comment;
     }
 }
