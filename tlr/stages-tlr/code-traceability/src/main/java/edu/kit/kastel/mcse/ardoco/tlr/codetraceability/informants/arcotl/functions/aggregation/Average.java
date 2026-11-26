@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.jspecify.annotations.Nullable;
-
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.Confidence;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.AggregationNode;
 import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree.Node;
@@ -17,11 +15,7 @@ import edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computa
  */
 public class Average extends ConfidenceAggregator {
 
-    private final @Nullable List<Double> weights;
-
-    private Average() {
-        weights = null;
-    }
+    private final List<Double> weights;
 
     private Average(List<Double> weights) {
         if (weights.isEmpty()) {
@@ -74,7 +68,7 @@ public class Average extends ConfidenceAggregator {
     }
 
     private double getWeight(int index) {
-        if (weights == null || weights.isEmpty()) {
+        if (weights.isEmpty()) {
             return 1.0;
         }
         return weights.get(index);
