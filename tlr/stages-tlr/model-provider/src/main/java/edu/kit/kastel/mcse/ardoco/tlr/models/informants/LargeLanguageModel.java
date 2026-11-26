@@ -1,6 +1,9 @@
 /* Licensed under MIT 2024-2026. */
 package edu.kit.kastel.mcse.ardoco.tlr.models.informants;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +42,19 @@ public enum LargeLanguageModel {
 
     private static final int SEED = loadSeed();
 
-    private final String humanReadableName;
+    private final @Nullable String humanReadableName;
     private final ChatModelPlatform platform;
-    private final String modelName;
+    private final @Nullable String modelName;
     private final double temperature;
 
-    LargeLanguageModel(String humanReadableName, ChatModelPlatform platform, String modelName, double temperature) {
+    LargeLanguageModel(@Nullable String humanReadableName, ChatModelPlatform platform, @Nullable String modelName, double temperature) {
         this.humanReadableName = humanReadableName;
         this.platform = platform;
         this.modelName = modelName;
         this.temperature = temperature;
     }
 
-    public String getHumanReadableName() {
+    public @Nullable String getHumanReadableName() {
         return humanReadableName;
     }
 
@@ -89,7 +92,9 @@ public enum LargeLanguageModel {
 
     private ChatModelProvider createProvider() {
         return new ChatModelProvider(LlmConfiguration.builder(platform)
-                .modelName(modelName)
+                .modelName(Objects.requireNonNull(modelName, () -> this.name() + " has no model name; set " + (isOpenAi() ?
+                        "OPENAI_MODEL_NAME" :
+                        "OLLAMA_MODEL_NAME")))
                 .seed(SEED)
                 .temperature(temperature)
                 .environment(Environment::getEnv)
