@@ -1,9 +1,8 @@
-/* Licensed under MIT 2023-2026. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import edu.kit.kastel.mcse.ardoco.core.api.models.ArchitectureModel;
 import edu.kit.kastel.mcse.ardoco.core.api.models.CodeModel;
@@ -96,7 +95,7 @@ public abstract class Node {
             }
         }
         if (existingResult.exists(this)) {
-            result.addNodeResult(this, Objects.requireNonNull(existingResult.getNodeResult(this), "Node result must have been calculated"));
+            result.addNodeResult(this, existingResult.getNodeResult(this));
             return result;
         }
         NodeResult nodeResult = calculateConfidences(archModel, codeModel, result);

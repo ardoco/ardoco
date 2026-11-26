@@ -1,4 +1,4 @@
-/* Licensed under MIT 2023-2026. */
+/* Licensed under MIT 2023-2025. */
 package edu.kit.kastel.mcse.ardoco.tlr.codetraceability.informants.arcotl.computation.computationtree;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class AggregationNode extends Node {
     public NodeResult calculateConfidences(ArchitectureModel archModel, CodeModel codeModel, ComputationResult result) {
         List<NodeResult> childrenResults = new ArrayList<>();
         for (Node child : getChildren()) {
-            childrenResults.add(Objects.requireNonNull(result.getNodeResult(child), "Node result must have been calculated"));
+            childrenResults.add(result.getNodeResult(child));
         }
         return aggregation.calculateConfidences(archModel, codeModel, childrenResults);
     }

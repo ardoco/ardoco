@@ -49,14 +49,14 @@ public class ComputationResult {
     }
 
     /**
-     * Returns the {@link NodeResult result} of the specified computation node or null if it doesn't exist yet. A computation node's final result are the
-     * calculated confidences of every endpoint tuple.
+     * Returns the {@link NodeResult result} of the specified computation node. The node's result must already have been calculated (see
+     * {@link #exists(Node)}). A computation node's final result are the calculated confidences of every endpoint tuple.
      *
      * @param node the computation node for which the result is to be returned
-     * @return the result of the computation node, or null if it doesn't exist yet
+     * @return the result of the computation node
      */
-    public @Nullable NodeResult getNodeResult(Node node) {
-        return this.resultMap.get(node);
+    public NodeResult getNodeResult(Node node) {
+        return Objects.requireNonNull(this.resultMap.get(node), "Node result must have been calculated");
     }
 
     /**
@@ -120,7 +120,7 @@ public class ComputationResult {
 
     private Map<String, Integer> getConfidenceStringsToLevelMap(Node node, Pair<ArchitectureItem, CodeCompilationUnit> endpointTuple, int level) {
         Map<String, Integer> confidenceToLevel = new LinkedHashMap<>();
-        Confidence confidence = Objects.requireNonNull(this.getNodeResult(node), "Node result must have been calculated").getConfidence(endpointTuple);
+        Confidence confidence = this.getNodeResult(node).getConfidence(endpointTuple);
         String confidenceString = "Level " + level + ": " + node.toString() + ", Confidence: " + confidence;
         confidenceToLevel.put(confidenceString, level);
         for (Node child : node.getChildren()) {
