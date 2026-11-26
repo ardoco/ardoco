@@ -32,12 +32,15 @@ public record ArchitectureConfiguration(File architectureFile, ModelFormat type,
     }
 
     public Extractor extractor() {
-        Metamodel metamodel = Objects.requireNonNull(this.metamodel, "The metamodel must be set to create an extractor");
         return switch (this.type) {
-            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), metamodel);
-            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), metamodel);
-            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), metamodel);
+            case PCM -> new PcmExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
+            case UML -> new UmlExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
+            case COMPONENT_LISTING -> new ComponentListingArchitectureExtractor(this.architectureFile.getAbsolutePath(), requireMetamodel());
             case ACM -> throw new IllegalArgumentException("ACM model is not supported for this project.");
         };
+    }
+
+    private Metamodel requireMetamodel() {
+        return Objects.requireNonNull(this.metamodel, "The metamodel must be set to create an extractor");
     }
 }
